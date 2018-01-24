@@ -2,79 +2,86 @@ import numpy as np
 from scipy.stats import poisson, norm
 from scipy.optimize import minimize
 
-def poisson_val(n,lam):
-    #use continuous gaussian approx, b/c asimov data may not be integer
-    return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
+class hfpdf(object):
+    def __init__(self, signal_func, constants):
+        self.signal_func = signal_func
+        self.constants   = constants
 
-def model_expected_background(nuisance_pars, constants):
-    background_counts = nuisance_pars
-    return background_counts
+    @staticmethod
+    def _poisson_impl(n, lam):
+        #use continuous gaussian approx, b/c asimov data may not be integer
+        return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
-def model_expected_actualdata(s,poi,nuisance_pars, constants):
-    signal_counts     = s(poi)
-    background_counts = model_expected_background(nuisance_pars,constants)
-    return [s+b for s,b in zip(signal_counts, background_counts)]
+    def _constraint_pars(self, nuisance_pars):
+        #convert nuisance parameters into form that is understood by
+        #constraint_pdf (i.e alphas)
+        return self.expected_auxdata(nuisance_pars)
 
-def model_expected_auxdata(nuisance_pars, constants):
-    ### probably more correctly this should be the mode of the constraint_pdf
-    background_counts = model_expected_background(nuisance_pars,constants)
-    tau_constants     = constants
-    return [tau*b for b,tau in zip(background_counts, tau_constants)]
+    def constraint_pdf(self,auxdata, nuisance_pars):
+        #constraint_pdf
+        constraint_alphas = self._constraint_pars(nuisance_pars)
+        constraint_func = self._poisson_impl
+        product = 1.0
+        for a,alpha in zip(auxdata, constraint_alphas):
+            product = product * constraint_func(a, alpha)
+        return product
 
-def constraint_pars(nuisance_pars, constants):
-    #convert nuisance parameters into form that is understood by
-    #constraint_pdf (i.e alphas)
-    return model_expected_auxdata(nuisance_pars, constants)
+    def expected_background(self,nuisance_pars):
+        background_counts = nuisance_pars
+        return background_counts
 
-def constraint_pdf(auxdata, nuisance_pars,constants):
-    #constraint_pdf
-    constraint_alphas = constraint_pars(nuisance_pars, constants)
-    constraint_func = poisson_val
-    product = 1.0
-    for a,alpha in zip(auxdata, constraint_alphas):
-        product = product * constraint_func(a, alpha)
-    return product
+    def expected_actualdata(self, poi, nuisance_pars):
+        signal_counts     = self.signal_func(poi)
+        background_counts = self.expected_background(nuisance_pars)
+        return [s+b for s,b in zip(signal_counts, background_counts)]
 
-def model_pdf(pars, data, s, constants):
-    poi = pars[0]
-    nuisance_pars = pars[1:]
+    def expected_auxdata(self, nuisance_pars):
+        ### probably more correctly this should be the mode of the constraint_pdf
+        background_counts = self.expected_background(nuisance_pars)
+        tau_constants     = self.constants
+        return [tau*b for b,tau in zip(background_counts, tau_constants)]
 
-    lambdas_data = model_expected_actualdata(s,poi, nuisance_pars, constants)
-    actual_data,aux_data = data[:len(lambdas_data)], data[len(lambdas_data):]
+    def pdf(self, pars, data):
+        poi = pars[0]
+        nuisance_pars = pars[1:]
 
-    product = 1
-    for d,lam in zip(actual_data, lambdas_data):
-        product = product * poisson_val(d, lam)
+        lambdas_data = self.expected_actualdata(poi, nuisance_pars)
+        actual_data,aux_data = data[:len(lambdas_data)], data[len(lambdas_data):]
 
-    product = product * constraint_pdf(aux_data, nuisance_pars,constants)
-    return product
+        product = 1
+        for d,lam in zip(actual_data, lambdas_data):
+            product = product * self._poisson_impl(d, lam)
 
-def model_expected_data(pars,s,constants):
-    poi = pars[0]
-    nuisance_pars = pars[1:]
+        product = product * self.constraint_pdf(aux_data, nuisance_pars)
+        return product
 
-    expected_actual      = model_expected_actualdata(s,poi, nuisance_pars, constants)
-    expected_constraints = model_expected_auxdata(nuisance_pars, constants)
-    expected = expected_actual + expected_constraints
-    return expected
+    def expected_data(self, pars, include_auxdata = True):
+        poi = pars[0]
+        nuisance_pars = pars[1:]
 
-def generate_asimov_data(asimov_mu,data,constants,s, init_pars,par_bounds):
-    bestfit_nuisance_asimov = constrained_bestfit(asimov_mu,data,constants,s, init_pars,par_bounds)
-    return model_expected_data(bestfit_nuisance_asimov,s,constants)
+        expected_actual      = self.expected_actualdata(poi, nuisance_pars)
+        if not include_auxdata: return expected_actual
+
+        expected_constraints = self.expected_auxdata(nuisance_pars)
+        return expected_actual + expected_constraints
+
+def generate_asimov_data(asimov_mu, data, pdf, init_pars,par_bounds):
+    bestfit_nuisance_asimov = constrained_bestfit(asimov_mu,data, pdf, init_pars,par_bounds)
+    return pdf.expected_data(bestfit_nuisance_asimov)
 
 ##########################
 
-def loglambdav(pars, data, constants, s):
+def loglambdav(pars, data, pdf):
     poi = pars[0]
     nuisance_pars = pars[1:]
-    return -2*np.log(model_pdf(pars, data, s, constants))
+    return -2*np.log(pdf.pdf(pars, data))
 
 
 ### The Test Statistic
-def qmu(mu,data,constants,s, init_pars,par_bounds):
-    mubhathat = constrained_bestfit(mu,data,constants,s, init_pars,par_bounds)
-    muhatbhat = unconstrained_bestfit(data,constants,s, init_pars,par_bounds)
-    qmu = loglambdav(mubhathat, data, constants,s)-loglambdav(muhatbhat, data, constants,s)
+def qmu(mu,data, pdf, init_pars,par_bounds):
+    mubhathat = constrained_bestfit(mu,data,pdf, init_pars,par_bounds)
+    muhatbhat = unconstrained_bestfit(data,pdf, init_pars,par_bounds)
+    qmu = loglambdav(mubhathat, data,pdf)-loglambdav(muhatbhat, data,pdf)
     if muhatbhat[0] > mu:
         return 0.0
     if -1e-6 < qmu <0:
@@ -83,8 +90,8 @@ def qmu(mu,data,constants,s, init_pars,par_bounds):
     return qmu
 
 ### The Global Fit
-def unconstrained_bestfit(data, constants,s, init_pars,par_bounds):
-    result = minimize(loglambdav, init_pars, method='SLSQP', args = (data,constants,s), bounds = par_bounds)
+def unconstrained_bestfit(data,pdf, init_pars,par_bounds):
+    result = minimize(loglambdav, init_pars, method='SLSQP', args = (data,pdf), bounds = par_bounds)
     try:
         assert result.success
     except AssertionError:
@@ -92,9 +99,9 @@ def unconstrained_bestfit(data, constants,s, init_pars,par_bounds):
     return result.x
 
 ### The Fit Conditions on a specific POI value
-def constrained_bestfit(constrained_mu,data, constants,s, init_pars,par_bounds):
+def constrained_bestfit(constrained_mu,data,pdf, init_pars,par_bounds):
     cons = {'type': 'eq', 'fun': lambda v: v[0]-constrained_mu}
-    result = minimize(loglambdav, init_pars, constraints=cons, method='SLSQP',args = (data,constants,s), bounds = par_bounds)
+    result = minimize(loglambdav, init_pars, constraints=cons, method='SLSQP',args = (data,pdf), bounds = par_bounds)
     try:
         assert result.success
     except AssertionError:
@@ -107,16 +114,12 @@ def pvals_from_teststat(sqrtqmu_v,sqrtqmuA_v):
     CLs  = CLb/CLsb
     return CLsb,CLb,CLs
 
-def runOnePoint(muTest, data,constants,s,init_pars,par_bounds):
-#     print 'DATALEN',len(data)
-#     print 'CONSTANTLEN',len(constants)
-#     print 'PARLEN',len(init_pars)
-
+def runOnePoint(muTest, data,pdf,init_pars,par_bounds):
     asimov_mu = 0.0
-    asimov_data = generate_asimov_data(asimov_mu,data,constants,s,init_pars,par_bounds)
+    asimov_data = generate_asimov_data(asimov_mu,data,pdf,init_pars,par_bounds)
 
-    qmu_v  = qmu(muTest,data, constants,s, init_pars,par_bounds)
-    qmuA_v = qmu(muTest,asimov_data, constants,s,init_pars,par_bounds)
+    qmu_v  = qmu(muTest,data,pdf, init_pars,par_bounds)
+    qmuA_v = qmu(muTest,asimov_data,pdf,init_pars,par_bounds)
     sqrtqmu_v = np.sqrt(qmu_v)
     sqrtqmuA_v = np.sqrt(qmuA_v)
 
