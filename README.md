@@ -18,8 +18,8 @@ and validates it against output computed from HistFactory workspaces
 nobs = 55, b = 50, db = 7, nom_sig = 10.
 ```
 
-<img src="img/manual_1bin_55_50_7.png" alt="manual" width="500"/>
-<img src="img/hfh_1bin_55_50_7.png" alt="manual" width="500"/>
+<img src="docs/img/manual_1bin_55_50_7.png" alt="manual" width="500"/>
+<img src="docs/img/hfh_1bin_55_50_7.png" alt="manual" width="500"/>
 
 
 ## A two bin example
