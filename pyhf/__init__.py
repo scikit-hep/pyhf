@@ -109,10 +109,29 @@ class hfpdf(object):
         mods = [m['name'] for m in self.samples[sample]['mods'] if m['type'] in multiplicative_types]
         return [pars[self.config.par_slice(m)] for m in mods]
 
+    def _normsysfactor(self, sample, pars):
+        nom  = self.samples[sample]['data']
+        return np.ones(len(nom))
+
+    def _histosysdelta(self, sample, pars):
+        nom  = self.samples[sample]['data']
+        return np.zeros(len(nom))
+
     def expected_sample(self,name,pars):
-        facs = self._multiplicative_factors(name,pars)
+        # for each sample the expected ocunts are
+        # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
+        #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
+        # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
+        # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0], anchors[i][0], val=alpha) for i in range(histosys_alphas))
+
         nom  = self.samples[name]['data']
-        factors = facs + [nom]
+        histosys_delta = self._histosysdelta(name, pars)
+        interp_histo   = np.sum([nom,histosys_delta], axis=0)
+
+        factors = []
+        factors += self._multiplicative_factors(name,pars)
+        factors += [self._normsysfactor(name, pars)]
+        factors += [interp_histo]
         return _multiply_arrays_or_scalars(*factors)
 
     def expected_auxdata(self, pars):
