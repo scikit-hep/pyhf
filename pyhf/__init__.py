@@ -23,10 +23,9 @@ class hfpdf(object):
         for b, deltab in zip(
                 self.samples['background']['data'],
                 self.samples['background']['systs'][0]['data']):
-            tau = b/deltab/deltab
-
-            self.bkg_over_db_squared.append(tau*b)
-            self.auxdata.append(tau*b)
+            bkg_over_bsq = b*b/deltab/deltab # tau*b
+            self.bkg_over_db_squared.append(bkg_over_bsq)
+            self.auxdata.append(bkg_over_bsq)
 
     def expected_signal(self, poi, nuisance_pars):
         nominal_signals = self.samples['signal']['data']
