@@ -8,6 +8,13 @@ def _poisson_impl(n, lam):
 
 @np.vectorize
 def _multiply_arrays_or_scalars(*args):
+    '''
+    calling this function with arrays (a and b) and/or scalers (s1,s2) it will broadcast as usua
+    result is a array with the row-wise products
+    r1 = | a1 | * s1 * | b1 | * s2
+    r2 = | a2 | * s1 * | b2 | * s2
+    r3 = | a3 | * s1 * | b3 | * s2
+    '''
     return np.prod(np.array(args))
 
 class shapesys_constraint(object):
@@ -92,7 +99,7 @@ class hfpdf(object):
                     #we reserve one parameter for each bin
                     mod = shapesys_constraint(sample_def['data'],mod_def['data'])
                     self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
-
+                    
                      #it's a constraint, so this implies more data
                     self.auxdata += self.config.mod(mod_def['name']).auxdata
                     self.auxdata_order.append(mod_def['name'])
@@ -143,18 +150,18 @@ class hfpdf(object):
         return product
 
     def pdf(self, pars, data):
-        lambdas_data = self.expected_actualdata(pars)
-
         # split data in actual data and aux_data (inputs into constraints)
-        actual_data,aux_data = data[:len(lambdas_data)], data[len(lambdas_data):]
+        cut = len(data) - len(self.auxdata)
+        actual_data, aux_data = data[:cut], data[cut:]
 
         product = 1
+
+        lambdas_data = self.expected_actualdata(pars)
         for d,lam in zip(actual_data, lambdas_data):
             product = product * _poisson_impl(d, lam)
 
         product = product * self.constraint_pdf(aux_data, pars)
         return product
-
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars,par_bounds):
     bestfit_nuisance_asimov = constrained_bestfit(asimov_mu,data, pdf, init_pars,par_bounds)
