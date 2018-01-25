@@ -110,9 +110,8 @@ class hfpdf(object):
         return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
 
     def expected_actualdata(self, pars):
-        signal_counts     = self.expected_sample('signal',pars)
-        background_counts = self.expected_sample('background',pars)
-        return [s+b for s,b in zip(signal_counts, background_counts)]
+        counts = [self.expected_sample(sname,pars) for sname in self.samples]
+        return [sum(sample_counts) for sample_counts in zip(*counts)]
 
     def expected_data(self, pars, include_auxdata = True):
 
