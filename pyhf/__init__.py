@@ -28,16 +28,17 @@ class modelconfig(object):
     def __init__(self):
         self.poi_index = 0
         self.nuis_map = {}
+
     def par_slice(self,name):
         return self.nuis_map[name]['slice']
 
-    def constraint(self,name):
-        return self.nuis_map[name]['constraint']
+    def mod(self,name):
+        return self.nuis_map[name]['mod']
 
-    def add_constraint(self,name, slice, constraint):
+    def add_mod(self,name, slice, mod):
         self.nuis_map[name] = {
             'slice': slice,
-            'constraint': constraint
+            'mod': mod
         }
 
 class hfpdf(object):
@@ -51,6 +52,7 @@ class hfpdf(object):
                     {
                         'name': 'mu',
                         'type': 'normfac',
+                        'data': None
                     }
                 ]
             },
@@ -66,13 +68,13 @@ class hfpdf(object):
             }
         }
         self.auxdata   = []
-        self.config.add_constraint('bkg_shape_sys',slice(1,None),
+        self.config.add_mod('bkg_shape_sys',slice(1,None),
             shapesys_constraint(
                 self.samples['background']['data'],
                 self.samples['background']['mods'][0]['data']
             )
         )
-        self.auxdata += self.config.constraint('bkg_shape_sys').auxdata
+        self.auxdata += self.config.mod('bkg_shape_sys').auxdata
 
     def expected_signal(self, pars):
         poi = pars[0]
@@ -80,16 +82,18 @@ class hfpdf(object):
         return [poi*snom for snom in nominal_signals]
 
     def expected_background(self,pars):
-        return [gamma * b0 for gamma,b0 in zip(
-            pars[self.config.par_slice('bkg_shape_sys')],
-            self.samples['background']['data'])
-        ]
+        nom = self.samples['background']['data']      #nominal histo
+        sl  = self.config.par_slice('bkg_shape_sys')  #bin-wise factors
+        return [gamma * b0 for gamma,b0 in zip(pars[sl],nom)]
 
     def expected_auxdata(self, pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
         ### or for the constraints we are using (single par constraings with mean == mode), we can
         ### just return the alphas
-        return self.config.constraint('bkg_shape_sys').expected_data(pars[self.config.par_slice('bkg_shape_sys')])
+
+        ### need to figure out how to iterate all nuis pars in order
+        modname = 'bkg_shape_sys'
+        return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
 
     def expected_actualdata(self, pars):
         signal_counts     = self.expected_signal(pars)
@@ -107,8 +111,12 @@ class hfpdf(object):
 
     def constraint_pdf(self,auxdata, pars):
         product = 1.0
-        for a,alpha in zip(auxdata, self.config.constraint('bkg_shape_sys').alphas(pars[self.config.par_slice('bkg_shape_sys')])):
-            product = product * self.config.constraint('bkg_shape_sys').pdf(a, alpha)
+        #iterate over all constraints
+        for cname in ['bkg_shape_sys']:
+            mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
+            modalphas = mod.alphas(pars[modslice])
+            for a,alpha in zip(auxdata, modalphas):
+                product = product * mod.pdf(a, alpha)
         return product
 
     def pdf(self, pars, data):
