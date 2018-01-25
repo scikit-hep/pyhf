@@ -99,17 +99,15 @@ class hfpdf(object):
                     #we reserve one parameter for each bin
                     mod = shapesys_constraint(sample_def['data'],mod_def['data'])
                     self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
-                    
+
                      #it's a constraint, so this implies more data
                     self.auxdata += self.config.mod(mod_def['name']).auxdata
                     self.auxdata_order.append(mod_def['name'])
 
-
     def _multiplicative_factors(self,sample,pars):
-        if sample=='signal':
-            return [pars[self.config.par_slice('mu')]]
-        if sample=='background':
-            return [pars[self.config.par_slice('uncorr_bkguncrt')]]
+        multiplicative_types = ['shapesys','normfactor']
+        mods = [m['name'] for m in self.samples[sample]['mods'] if m['type'] in multiplicative_types]
+        return [pars[self.config.par_slice(m)] for m in mods]
 
     def expected_sample(self,name,pars):
         facs = self._multiplicative_factors(name,pars)
