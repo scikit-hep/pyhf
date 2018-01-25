@@ -34,6 +34,10 @@ class modelconfig(object):
         self.nuis_map    = {}
         self.next_index = 0
 
+    def all_mods(self, only_constraints = False):
+        if not only_constraints: return self.nuis_map.keys()
+        return [k for k,v in self.nuis_map.items() if v['mod'] is not None]
+
     def par_slice(self,name):
         return self.nuis_map[name]['slice']
 
@@ -75,6 +79,9 @@ class hfpdf(object):
             }
         }
         self.auxdata   = []
+        #hacky, need to keep track in which order we added the constraints
+        #so that we can generate correctly-ordered data
+        self.auxdata_order = []
         for sample, sample_def in self.samples.items():
             for mod_def in sample_def['mods']:
                 mod = None
@@ -82,11 +89,14 @@ class hfpdf(object):
                     mod = None # no object for factors
                     self.config.add_mod(mod_def['name'],npars = 1,mod = mod)
                 if mod_def['type'] == 'shapesys':
-                    mod = shapesys_constraint(sample_def['data'],mod_def['data'])
-                     #it's a constraint, so this implies more data
-                    self.auxdata += mod.auxdata
                     #we reserve one parameter for each bin
+                    mod = shapesys_constraint(sample_def['data'],mod_def['data'])
                     self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
+
+                     #it's a constraint, so this implies more data
+                    self.auxdata += self.config.mod(mod_def['name']).auxdata
+                    self.auxdata_order.append(mod_def['name'])
+
 
     def _multiplicative_factors(self,sample,pars):
         if sample=='signal':
@@ -105,9 +115,9 @@ class hfpdf(object):
         ### or for the constraints we are using (single par constraings with mean == mode), we can
         ### just return the alphas
 
-        ### need to figure out how to iterate all constraints in order
-        modname = 'uncorr_bkguncrt'
-        return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
+        ### order matters! because we generated auxdata in a certain order
+        for modname in self.auxdata_order:
+            return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
 
     def expected_actualdata(self, pars):
         counts = [self.expected_sample(sname,pars) for sname in self.samples]
@@ -124,8 +134,8 @@ class hfpdf(object):
 
     def constraint_pdf(self,auxdata, pars):
         product = 1.0
-        #iterate over all constraints
-        for cname in ['uncorr_bkguncrt']:
+        #iterate over all constraints order doesn't matter....
+        for cname in self.config.all_mods(only_constraints=True):
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
             for a,alpha in zip(auxdata, modalphas):
