@@ -2,10 +2,42 @@ import numpy as np
 from scipy.stats import poisson, norm
 from scipy.optimize import minimize
 
+def _poisson_impl(n, lam):
+    #use continuous gaussian approx, b/c asimov data may not be integer
+    return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
+
+class shapesys_constraint(object):
+    def __init__(self, nom_data, mod_data):
+        self.auxdata = []
+        self.bkg_over_db_squared = []
+        for b, deltab in zip(nom_data, mod_data):
+            bkg_over_bsq = b*b/deltab/deltab # tau*b
+            self.bkg_over_db_squared.append(bkg_over_bsq)
+            self.auxdata.append(bkg_over_bsq)
+
+    def alphas(self,pars):
+        return [gamma * c for gamma, c in zip(pars, self.bkg_over_db_squared)]
+
+    def pdf(self, a, alpha):
+        return _poisson_impl(a, alpha)
+
+    def expected_data(self,pars):
+        return self.alphas(pars)
+
 class modelconfig(object):
     def __init__(self):
         self.poi_index = 0
-        self.nuis_map = {
+        self.nuis_map = {}
+    def par_slice(self,name):
+        return self.nuis_map[name]['slice']
+
+    def constraint(self,name):
+        return self.nuis_map[name]['constraint']
+
+    def add_constraint(self,name, slice, constraint):
+        self.nuis_map[name] = {
+            'slice': slice,
+            'constraint': constraint
         }
 
 class hfpdf(object):
@@ -34,35 +66,30 @@ class hfpdf(object):
             }
         }
         self.auxdata   = []
-        self.bkg_over_db_squared = []
-        for b, deltab in zip(
+        self.config.add_constraint('bkg_shape_sys',slice(1,None),
+            shapesys_constraint(
                 self.samples['background']['data'],
-                self.samples['background']['mods'][0]['data']):
-            bkg_over_bsq = b*b/deltab/deltab # tau*b
-            self.bkg_over_db_squared.append(bkg_over_bsq)
-            self.auxdata.append(bkg_over_bsq)
+                self.samples['background']['mods'][0]['data']
+            )
+        )
+        self.auxdata += self.config.constraint('bkg_shape_sys').auxdata
 
     def expected_signal(self, pars):
         poi = pars[0]
-        nuisance_pars = pars[1:]
         nominal_signals = self.samples['signal']['data']
         return [poi*snom for snom in nominal_signals]
 
     def expected_background(self,pars):
-        nuisance_pars = pars[1:]
-        background_gammas = nuisance_pars
-        return [gamma * b0 for gamma,b0 in zip(background_gammas,self.samples['background']['data'])]
+        return [gamma * b0 for gamma,b0 in zip(
+            pars[self.config.par_slice('bkg_shape_sys')],
+            self.samples['background']['data'])
+        ]
 
     def expected_auxdata(self, pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
-        ### or for the constraints we are using (with mean == mode), the mode
-        ### could be taken from a pdf object via pdf.expectation_value(pars)
-
-        ### Poisson    Pois(m | tau b) = Pois(tau*b0 | tau * b)
-        ### constraint       = Pois(b0*b0/db/db | gam * b0*b0/db/db)
-        nuisance_pars = pars[1:]
-        background_gammas = nuisance_pars
-        return [gamma * c for gamma, c in zip(background_gammas, self.bkg_over_db_squared)]
+        ### or for the constraints we are using (single par constraings with mean == mode), we can
+        ### just return the alphas
+        return self.config.constraint('bkg_shape_sys').expected_data(pars[self.config.par_slice('bkg_shape_sys')])
 
     def expected_actualdata(self, pars):
         signal_counts     = self.expected_signal(pars)
@@ -78,23 +105,10 @@ class hfpdf(object):
         expected_constraints = self.expected_auxdata(pars)
         return expected_actual + expected_constraints
 
-    @staticmethod
-    def _poisson_impl(n, lam):
-        #use continuous gaussian approx, b/c asimov data may not be integer
-        return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
-
-    def _constraint_pars(self, pars):
-        #convert nuisance parameters into form that is understood by
-        #constraint_pdf (i.e alphas)
-        return self.expected_auxdata(pars)
-
     def constraint_pdf(self,auxdata, pars):
-        #constraint_pdf
-        constraint_alphas = self._constraint_pars(pars)
-        constraint_func = self._poisson_impl
         product = 1.0
-        for a,alpha in zip(auxdata, constraint_alphas):
-            product = product * constraint_func(a, alpha)
+        for a,alpha in zip(auxdata, self.config.constraint('bkg_shape_sys').alphas(pars[self.config.par_slice('bkg_shape_sys')])):
+            product = product * self.config.constraint('bkg_shape_sys').pdf(a, alpha)
         return product
 
     def pdf(self, pars, data):
@@ -105,7 +119,7 @@ class hfpdf(object):
 
         product = 1
         for d,lam in zip(actual_data, lambdas_data):
-            product = product * self._poisson_impl(d, lam)
+            product = product * _poisson_impl(d, lam)
 
         product = product * self.constraint_pdf(aux_data, pars)
         return product
