@@ -2,16 +2,31 @@ import numpy as np
 from scipy.stats import poisson, norm
 from scipy.optimize import minimize
 
+class modelconfig(object):
+    def __init__(self):
+        self.poi_index = 0
+        self.nuis_map = {
+        }
+
 class hfpdf(object):
     def __init__(self, signal_data, bkg_data, bkg_uncerts):
+        self.config = modelconfig()
+
         self.samples = {
             'signal': {
-                'data': signal_data
+                'data': signal_data,
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfac',
+                    }
+                ]
             },
             'background': {
                 'data': bkg_data,
-                'systs': [
+                'mods': [
                     {
+                        'name': 'uncorr_bkguncrt',
                         'type': 'shapesys',
                         'data': bkg_uncerts
                     }
@@ -22,44 +37,45 @@ class hfpdf(object):
         self.bkg_over_db_squared = []
         for b, deltab in zip(
                 self.samples['background']['data'],
-                self.samples['background']['systs'][0]['data']):
+                self.samples['background']['mods'][0]['data']):
             bkg_over_bsq = b*b/deltab/deltab # tau*b
             self.bkg_over_db_squared.append(bkg_over_bsq)
             self.auxdata.append(bkg_over_bsq)
 
-    def expected_signal(self, poi, nuisance_pars):
+    def expected_signal(self, pars):
+        poi = pars[0]
+        nuisance_pars = pars[1:]
         nominal_signals = self.samples['signal']['data']
         return [poi*snom for snom in nominal_signals]
 
-    def expected_background(self,nuisance_pars):
+    def expected_background(self,pars):
+        nuisance_pars = pars[1:]
         background_gammas = nuisance_pars
         return [gamma * b0 for gamma,b0 in zip(background_gammas,self.samples['background']['data'])]
 
-    def expected_auxdata(self, nuisance_pars):
+    def expected_auxdata(self, pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
         ### or for the constraints we are using (with mean == mode), the mode
         ### could be taken from a pdf object via pdf.expectation_value(pars)
 
         ### Poisson    Pois(m | tau b) = Pois(tau*b0 | tau * b)
         ### constraint       = Pois(b0*b0/db/db | gam * b0*b0/db/db)
-
+        nuisance_pars = pars[1:]
         background_gammas = nuisance_pars
         return [gamma * c for gamma, c in zip(background_gammas, self.bkg_over_db_squared)]
 
-    def expected_actualdata(self, poi, nuisance_pars):
-        signal_counts     = self.expected_signal(poi, nuisance_pars)
-        background_counts = self.expected_background(nuisance_pars)
+    def expected_actualdata(self, pars):
+        signal_counts     = self.expected_signal(pars)
+        background_counts = self.expected_background(pars)
         return [s+b for s,b in zip(signal_counts, background_counts)]
 
     def expected_data(self, pars, include_auxdata = True):
-        poi = pars[0]
-        nuisance_pars = pars[1:]
 
-        expected_actual = self.expected_actualdata(poi, nuisance_pars)
+        expected_actual = self.expected_actualdata(pars)
         if not include_auxdata:
             return expected_actual
 
-        expected_constraints = self.expected_auxdata(nuisance_pars)
+        expected_constraints = self.expected_auxdata(pars)
         return expected_actual + expected_constraints
 
     @staticmethod
@@ -67,14 +83,14 @@ class hfpdf(object):
         #use continuous gaussian approx, b/c asimov data may not be integer
         return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
-    def _constraint_pars(self, nuisance_pars):
+    def _constraint_pars(self, pars):
         #convert nuisance parameters into form that is understood by
         #constraint_pdf (i.e alphas)
-        return self.expected_auxdata(nuisance_pars)
+        return self.expected_auxdata(pars)
 
-    def constraint_pdf(self,auxdata, nuisance_pars):
+    def constraint_pdf(self,auxdata, pars):
         #constraint_pdf
-        constraint_alphas = self._constraint_pars(nuisance_pars)
+        constraint_alphas = self._constraint_pars(pars)
         constraint_func = self._poisson_impl
         product = 1.0
         for a,alpha in zip(auxdata, constraint_alphas):
@@ -82,10 +98,7 @@ class hfpdf(object):
         return product
 
     def pdf(self, pars, data):
-        poi = pars[0]
-        nuisance_pars = pars[1:]
-
-        lambdas_data = self.expected_actualdata(poi, nuisance_pars)
+        lambdas_data = self.expected_actualdata(pars)
 
         # split data in actual data and aux_data (inputs into constraints)
         actual_data,aux_data = data[:len(lambdas_data)], data[len(lambdas_data):]
@@ -94,7 +107,7 @@ class hfpdf(object):
         for d,lam in zip(actual_data, lambdas_data):
             product = product * self._poisson_impl(d, lam)
 
-        product = product * self.constraint_pdf(aux_data, nuisance_pars)
+        product = product * self.constraint_pdf(aux_data, pars)
         return product
 
 
@@ -105,8 +118,6 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars,par_bounds):
 ##########################
 
 def loglambdav(pars, data, pdf):
-    poi = pars[0]
-    nuisance_pars = pars[1:]
     return -2*np.log(pdf.pdf(pars, data))
 
 ### The Test Statistic
