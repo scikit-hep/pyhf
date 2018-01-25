@@ -6,12 +6,20 @@ def _poisson_impl(n, lam):
     #use continuous gaussian approx, b/c asimov data may not be integer
     # print 'pois', n,lam
     # return poisson.pmf(n,lam)
+    # print 'lam,sqrtlam',lam,np.sqrt(lam)
     return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
 def _gaussian_impl(x, mu, sigma):
     #use continuous gaussian approx, b/c asimov data may not be integer
     # print 'gaus', x, mu, sigma
     return norm.pdf(x, loc = mu, scale = sigma)
+
+def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
+    @np.vectorize
+    def func(alpha):
+        if alpha >  0   : return (at_plus_one-at_zero)*alpha
+        if alpha <= 0   : return (at_zero-at_minus_one)*alpha
+    return func
 
 def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
     @np.vectorize
@@ -49,6 +57,23 @@ class normsys_constraint(object):
         # print 'normsys gaussian'
         return _gaussian_impl(a, alpha , 1)
 
+
+class histosys_constraint(object):
+    def __init__(self, nom_data, mod_data):
+        self.at_zero      = nom_data
+        self.at_minus_one = mod_data['lo_hist']
+        self.at_plus_one  = mod_data['hi_hist']
+        self.auxdata = [0] #observed data is always at a = 1
+
+    def alphas(self,pars):
+        return pars #the nuisance parameters correspond directly to the alpha
+
+    def expected_data(self,pars):
+        return self.alphas(pars)
+
+    def pdf(self, a, alpha):
+        # print 'normsys gaussian'
+        return _gaussian_impl(a, alpha , 1)
 
 class shapesys_constraint(object):
     def __init__(self, nom_data, mod_data):
@@ -147,6 +172,15 @@ class hfpdf(object):
                      #it's a constraint, so this implies more data
                     self.auxdata += self.config.mod(mod_def['name']).auxdata
                     self.auxdata_order.append(mod_def['name'])
+                if mod_def['type'] == 'histosys':
+                    mod = histosys_constraint(sample_def['data'],mod_def['data'])
+                    self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
+                     #it's a constraint, so this implies more data
+                    self.auxdata += self.config.mod(mod_def['name']).auxdata
+                    # print 'aux!!',self.config.mod(mod_def['name']).auxdata
+                    self.auxdata_order.append(mod_def['name'])
+
+
 
     def _multiplicative_factors(self,sample,pars):
         multiplicative_types = ['shapesys','normfactor']
@@ -154,6 +188,7 @@ class hfpdf(object):
         return [pars[self.config.par_slice(m)] for m in mods]
 
     def _normsysfactor(self, sample, pars):
+        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         nom  = self.samples[sample]['data']
         mods = [m['name'] for m in self.samples[sample]['mods'] if m['type'] == 'normsys']
         factor =  1
@@ -168,7 +203,34 @@ class hfpdf(object):
 
     def _histosysdelta(self, sample, pars):
         nom  = self.samples[sample]['data']
-        return np.zeros(len(nom))
+        # return np.zeros(len(nom))
+        # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0], anchors[i][0], val=alpha) for i in range(histosys_alphas))
+        nom  = self.samples[sample]['data']
+        mods = [m['name'] for m in self.samples[sample]['mods'] if m['type'] == 'histosys']
+
+        nom  = self.samples[sample]['data']
+
+        deltas = []
+        for m in mods:
+            mod = self.config.mod(m)
+            val = pars[self.config.par_slice(m)]
+            assert len(val)==1
+            #intepolate for each bin
+            mod_delta = []
+            for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one,mod.at_zero,mod.at_plus_one):
+
+                interp = _hfinterp_code0(lo_bin,nom_bin,up_bin)
+
+                interp_val = float(interp(val[0]))
+                mod_delta.append(interp_val)
+
+            deltas = np.sum([deltas,mod_delta],axis=0)
+            # print 'MOD DELTA',m,mod_delta
+
+        interpolated = np.sum([nom,deltas], axis=0)
+        # print 'ALL MODS',deltas
+        # print 'ALL MODS',interpolated
+        return deltas
 
     def expected_sample(self,name,pars):
         # for each sample the expected ocunts are
@@ -226,6 +288,8 @@ class hfpdf(object):
         return np.log(self.pdf(pars,data))
 
     def pdf(self, pars, data):
+        # print "???", pars
+        # if np.any(np.isnan(pars)): return 0
         cut = len(data) - len(self.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
 
