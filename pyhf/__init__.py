@@ -6,6 +6,10 @@ def _poisson_impl(n, lam):
     #use continuous gaussian approx, b/c asimov data may not be integer
     return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
+@np.vectorize
+def _multiply_arrays_or_scalars(*args):
+    return np.prod(np.array(args))
+
 class shapesys_constraint(object):
     def __init__(self, nom_data, mod_data):
         self.auxdata = []
@@ -27,7 +31,8 @@ class shapesys_constraint(object):
 class modelconfig(object):
     def __init__(self):
         self.poi_index = 0
-        self.nuis_map = {}
+        self.nuis_map    = {}
+        self.next_index = 0
 
     def par_slice(self,name):
         return self.nuis_map[name]['slice']
@@ -35,9 +40,11 @@ class modelconfig(object):
     def mod(self,name):
         return self.nuis_map[name]['mod']
 
-    def add_mod(self,name, slice, mod):
+    def add_mod(self,name, npars, mod):
+        sl = slice(self.next_index, self.next_index + npars)
+        self.next_index = self.next_index + npars
         self.nuis_map[name] = {
-            'slice': slice,
+            'slice': sl,
             'mod': mod
         }
 
@@ -51,7 +58,7 @@ class hfpdf(object):
                 'mods': [
                     {
                         'name': 'mu',
-                        'type': 'normfac',
+                        'type': 'normfactor',
                         'data': None
                     }
                 ]
@@ -68,36 +75,43 @@ class hfpdf(object):
             }
         }
         self.auxdata   = []
-        self.config.add_mod('bkg_shape_sys',slice(1,None),
-            shapesys_constraint(
-                self.samples['background']['data'],
-                self.samples['background']['mods'][0]['data']
-            )
-        )
-        self.auxdata += self.config.mod('bkg_shape_sys').auxdata
+        for sample, sample_def in self.samples.items():
+            for mod_def in sample_def['mods']:
+                mod = None
+                if mod_def['type'] == 'normfactor':
+                    mod = None # no object for factors
+                    self.config.add_mod(mod_def['name'],npars = 1,mod = mod)
+                if mod_def['type'] == 'shapesys':
+                    mod = shapesys_constraint(sample_def['data'],mod_def['data'])
+                     #it's a constraint, so this implies more data
+                    self.auxdata += mod.auxdata
+                    #we reserve one parameter for each bin
+                    self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
 
-    def expected_signal(self, pars):
-        poi = pars[0]
-        nominal_signals = self.samples['signal']['data']
-        return [poi*snom for snom in nominal_signals]
+    def _multiplicative_factors(self,sample,pars):
+        if sample=='signal':
+            return [pars[self.config.par_slice('mu')]]
+        if sample=='background':
+            return [pars[self.config.par_slice('uncorr_bkguncrt')]]
 
-    def expected_background(self,pars):
-        nom = self.samples['background']['data']      #nominal histo
-        sl  = self.config.par_slice('bkg_shape_sys')  #bin-wise factors
-        return [gamma * b0 for gamma,b0 in zip(pars[sl],nom)]
+    def expected_sample(self,name,pars):
+        facs = self._multiplicative_factors(name,pars)
+        nom  = self.samples[name]['data']
+        factors = facs + [nom]
+        return _multiply_arrays_or_scalars(*factors)
 
     def expected_auxdata(self, pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
         ### or for the constraints we are using (single par constraings with mean == mode), we can
         ### just return the alphas
 
-        ### need to figure out how to iterate all nuis pars in order
-        modname = 'bkg_shape_sys'
+        ### need to figure out how to iterate all constraints in order
+        modname = 'uncorr_bkguncrt'
         return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
 
     def expected_actualdata(self, pars):
-        signal_counts     = self.expected_signal(pars)
-        background_counts = self.expected_background(pars)
+        signal_counts     = self.expected_sample('signal',pars)
+        background_counts = self.expected_sample('background',pars)
         return [s+b for s,b in zip(signal_counts, background_counts)]
 
     def expected_data(self, pars, include_auxdata = True):
@@ -112,7 +126,7 @@ class hfpdf(object):
     def constraint_pdf(self,auxdata, pars):
         product = 1.0
         #iterate over all constraints
-        for cname in ['bkg_shape_sys']:
+        for cname in ['uncorr_bkguncrt']:
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
             for a,alpha in zip(auxdata, modalphas):
