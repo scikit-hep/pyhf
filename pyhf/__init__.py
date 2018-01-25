@@ -19,12 +19,13 @@ class hfpdf(object):
             }
         }
         self.auxdata   = []
-        self.background_taus = []
+        self.bkg_over_db_squared = []
         for b, deltab in zip(
                 self.samples['background']['data'],
                 self.samples['background']['systs'][0]['data']):
             tau = b/deltab/deltab
-            self.background_taus.append(tau)
+
+            self.bkg_over_db_squared.append(tau*b)
             self.auxdata.append(tau*b)
 
     def expected_signal(self, poi, nuisance_pars):
@@ -32,15 +33,19 @@ class hfpdf(object):
         return [poi*snom for snom in nominal_signals]
 
     def expected_background(self,nuisance_pars):
-        background_counts = nuisance_pars
-        return background_counts
+        background_gammas = nuisance_pars
+        return [gamma * b0 for gamma,b0 in zip(background_gammas,self.samples['background']['data'])]
 
     def expected_auxdata(self, nuisance_pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
         ### or for the constraints we are using (with mean == mode), the mode
         ### could be taken from a pdf object via pdf.expectation_value(pars)
-        background_counts = self.expected_background(nuisance_pars)
-        return [tau*b for b,tau in zip(background_counts, self.background_taus)]
+
+        ### Poisson    Pois(m | tau b) = Pois(tau*b0 | tau * b)
+        ### constraint       = Pois(b0*b0/db/db | gam * b0*b0/db/db)
+
+        background_gammas = nuisance_pars
+        return [gamma * c for gamma, c in zip(background_gammas, self.bkg_over_db_squared)]
 
     def expected_actualdata(self, poi, nuisance_pars):
         signal_counts     = self.expected_signal(poi, nuisance_pars)
@@ -145,8 +150,6 @@ def pvals_from_teststat(sqrtqmu_v,sqrtqmuA_v):
 def runOnePoint(muTest, data,pdf,init_pars,par_bounds):
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu,data,pdf,init_pars,par_bounds)
-
-    # print 'asimov!', asimov_data
 
     qmu_v  = qmu(muTest,data,pdf, init_pars,par_bounds)
     qmuA_v = qmu(muTest,asimov_data,pdf,init_pars,par_bounds)
