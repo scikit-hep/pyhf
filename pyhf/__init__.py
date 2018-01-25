@@ -1,10 +1,25 @@
 import numpy as np
 from scipy.stats import poisson, norm
 from scipy.optimize import minimize
-
+from scipy.interpolate import interp1d
 def _poisson_impl(n, lam):
     #use continuous gaussian approx, b/c asimov data may not be integer
+    # print 'pois', n,lam
+    # return poisson.pmf(n,lam)
     return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
+
+def _gaussian_impl(x, mu, sigma):
+    #use continuous gaussian approx, b/c asimov data may not be integer
+    # print 'gaus', x, mu, sigma
+    return norm.pdf(x, loc = mu, scale = sigma)
+
+def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
+    @np.vectorize
+    def func(alpha):
+        if alpha >  0   : return pow(at_plus_one/at_zero, alpha)
+        if alpha <= 0   : return pow(at_minus_one/at_zero, -alpha)
+    return func
+
 
 @np.vectorize
 def _multiply_arrays_or_scalars(*args):
@@ -16,6 +31,24 @@ def _multiply_arrays_or_scalars(*args):
     r3 = | a3 | * s1 * | b3 | * s2
     '''
     return np.prod(np.array(args))
+
+class normsys_constraint(object):
+    def __init__(self, nom_data, mod_data):
+        self.at_zero      = 1
+        self.at_minus_one = mod_data['lo']
+        self.at_plus_one  = mod_data['hi']
+        self.auxdata = [0] #observed data is always at a = 1
+
+    def alphas(self,pars):
+        return pars #the nuisance parameters correspond directly to the alpha
+
+    def expected_data(self,pars):
+        return self.alphas(pars)
+
+    def pdf(self, a, alpha):
+        # print 'normsys gaussian'
+        return _gaussian_impl(a, alpha , 1)
+
 
 class shapesys_constraint(object):
     def __init__(self, nom_data, mod_data):
@@ -60,10 +93,9 @@ class modelconfig(object):
         }
 
 class hfpdf(object):
-    def __init__(self, signal_data, bkg_data, bkg_uncerts):
-        self.config = modelconfig()
-
-        self.samples = {
+    @classmethod
+    def hepdata_like(cls,signal_data, bkg_data, bkg_uncerts):
+        spec = {
             'signal': {
                 'data': signal_data,
                 'mods': [
@@ -85,6 +117,12 @@ class hfpdf(object):
                 ]
             }
         }
+        return cls(spec)
+
+
+    def __init__(self, samples):
+        self.samples = samples
+        self.config = modelconfig()
         self.auxdata   = []
         #hacky, need to keep track in which order we added the constraints
         #so that we can generate correctly-ordered data
@@ -103,6 +141,12 @@ class hfpdf(object):
                      #it's a constraint, so this implies more data
                     self.auxdata += self.config.mod(mod_def['name']).auxdata
                     self.auxdata_order.append(mod_def['name'])
+                if mod_def['type'] == 'normsys':
+                    mod = normsys_constraint(sample_def['data'],mod_def['data'])
+                    self.config.add_mod(mod_def['name'],npars = len(sample_def['data']), mod = mod)
+                     #it's a constraint, so this implies more data
+                    self.auxdata += self.config.mod(mod_def['name']).auxdata
+                    self.auxdata_order.append(mod_def['name'])
 
     def _multiplicative_factors(self,sample,pars):
         multiplicative_types = ['shapesys','normfactor']
@@ -111,7 +155,16 @@ class hfpdf(object):
 
     def _normsysfactor(self, sample, pars):
         nom  = self.samples[sample]['data']
-        return np.ones(len(nom))
+        mods = [m['name'] for m in self.samples[sample]['mods'] if m['type'] == 'normsys']
+        factor =  1
+
+        for m in mods:
+            mod = self.config.mod(m)
+            val = pars[self.config.par_slice(m)]
+            assert len(val)==1
+            interp = _hfinterp_code1(mod.at_minus_one,mod.at_zero,mod.at_plus_one)
+            factor = factor * interp(val[0])
+        return factor
 
     def _histosysdelta(self, sample, pars):
         nom  = self.samples[sample]['data']
@@ -123,7 +176,6 @@ class hfpdf(object):
         #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
         # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0], anchors[i][0], val=alpha) for i in range(histosys_alphas))
-
         nom  = self.samples[name]['data']
         histosys_delta = self._histosysdelta(name, pars)
         interp_histo   = np.sum([nom,histosys_delta], axis=0)
@@ -140,34 +192,40 @@ class hfpdf(object):
         ### just return the alphas
 
         ### order matters! because we generated auxdata in a certain order
+        auxdata = []
         for modname in self.auxdata_order:
-            return self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
+            thisaux = self.config.mod(modname).expected_data(pars[self.config.par_slice(modname)])
+            auxdata = np.append(auxdata,thisaux)
+        return auxdata
 
     def expected_actualdata(self, pars):
         counts = [self.expected_sample(sname,pars) for sname in self.samples]
         return [sum(sample_counts) for sample_counts in zip(*counts)]
 
     def expected_data(self, pars, include_auxdata = True):
-
         expected_actual = self.expected_actualdata(pars)
+
         if not include_auxdata:
             return expected_actual
-
         expected_constraints = self.expected_auxdata(pars)
-        return expected_actual + expected_constraints
+        return np.concatenate([expected_actual, expected_constraints])
 
     def constraint_pdf(self,auxdata, pars):
         product = 1.0
         #iterate over all constraints order doesn't matter....
         for cname in self.config.all_mods(only_constraints=True):
+            # print 'ADDING constraint pdf term for ', cname
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
             for a,alpha in zip(auxdata, modalphas):
+                # print "constraint",a,alpha
                 product = product * mod.pdf(a, alpha)
         return product
 
+    def logpdf(self, pars, data):
+        return np.log(self.pdf(pars,data))
+
     def pdf(self, pars, data):
-        # split data in actual data and aux_data (inputs into constraints)
         cut = len(data) - len(self.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
 
@@ -175,6 +233,7 @@ class hfpdf(object):
 
         lambdas_data = self.expected_actualdata(pars)
         for d,lam in zip(actual_data, lambdas_data):
+            # print "actual bin",d,lam
             product = product * _poisson_impl(d, lam)
 
         product = product * self.constraint_pdf(aux_data, pars)
@@ -187,7 +246,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars,par_bounds):
 ##########################
 
 def loglambdav(pars, data, pdf):
-    return -2*np.log(pdf.pdf(pars, data))
+    return -2*pdf.logpdf(pars, data)
 
 ### The Test Statistic
 def qmu(mu,data, pdf, init_pars,par_bounds):
@@ -230,8 +289,13 @@ def runOnePoint(muTest, data,pdf,init_pars,par_bounds):
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu,data,pdf,init_pars,par_bounds)
 
+    # print 'ASIMOV MY FRIEND', asimov_data
     qmu_v  = qmu(muTest,data,pdf, init_pars,par_bounds)
     qmuA_v = qmu(muTest,asimov_data,pdf,init_pars,par_bounds)
+
+
+    # print 'QMUS! MY FRIEND', qmu_v, qmuA_v
+
     sqrtqmu_v = np.sqrt(qmu_v)
     sqrtqmuA_v = np.sqrt(qmuA_v)
 

@@ -7,6 +7,9 @@ infile = ROOT.TFile.Open(infile)
 workspace = infile.Get("combined")
 data = workspace.data("obsData")
 
+
+
+
 sbModel = workspace.obj("ModelConfig")
 poi = sbModel.GetParametersOfInterest().first()
 
@@ -18,6 +21,7 @@ poi.setVal(0)
 bModel.SetSnapshot(ROOT.RooArgSet(poi))
 
 ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
+ac.SetPrintLevel(10)
 ac.SetOneSided(True)
 ac.SetQTilde(True)
 
