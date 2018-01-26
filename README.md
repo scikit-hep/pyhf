@@ -8,15 +8,15 @@ This repo has some example code for multi-bin histogram-based analysis based on 
 ## What does it support
 
 Implemented variations
-[x] HistoSys
-[x] OverallSys
-[x] ShapeSys
-[x] NormFactor
+- [x] HistoSys
+- [x] OverallSys
+- [x] ShapeSys
+- [x] NormFactor
 
 ## Todo
-[ ] ShapeFactor
-[ ] Multiple Channels
-[ ] Non-asymptotic calculators
+- [ ] ShapeFactor
+- [ ] Multiple Channels
+- [ ] Non-asymptotic calculators
 
 results obtained from this package are validated against output computed from HistFactory workspaces
 
