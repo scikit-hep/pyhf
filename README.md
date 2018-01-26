@@ -5,12 +5,20 @@ of ROOT, RooFit, RooStats framework.
 
 This repo has some example code for multi-bin histogram-based analysis based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)].
 
-So far it only implements a simple model of
+## What does it support
 
-* one signal histogram with a NormFactor
-* one background histogram with a ShapeSys (uncorrelated bin-by-bin uncertainties)
+Implemented variations
+[x] HistoSys
+[x] OverallSys
+[x] ShapeSys
+[x] NormFactor
 
-and validates it against output computed from HistFactory workspaces
+## Todo
+[ ] ShapeFactor
+[ ] Multiple Channels
+[ ] Non-asymptotic calculators
+
+results obtained from this package are validated against output computed from HistFactory workspaces
 
 ## A one bin example
 
