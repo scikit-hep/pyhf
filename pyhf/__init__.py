@@ -2,6 +2,10 @@ import numpy as np
 from scipy.stats import poisson, norm
 from scipy.optimize import minimize
 from scipy.interpolate import interp1d
+import logging
+
+log = logging.getLogger(__name__)
+
 def _poisson_impl(n, lam):
     #use continuous gaussian approx, b/c asimov data may not be integer
     # print 'pois', n,lam
@@ -27,7 +31,6 @@ def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
         if alpha >  0   : return pow(at_plus_one/at_zero, alpha)
         if alpha <= 0   : return pow(at_minus_one/at_zero, -alpha)
     return func
-
 
 @np.vectorize
 def _multiply_arrays_or_scalars(*args):
@@ -320,7 +323,7 @@ def qmu(mu,data, pdf, init_pars,par_bounds):
     if muhatbhat[0] > mu:
         return 0.0
     if -1e-6 < qmu <0:
-        print 'WARNING: qmu negative: ', qmu
+        log.warning('WARNING: qmu negative: %s', qmu)
         return 0.0
     return qmu
 
@@ -330,7 +333,7 @@ def unconstrained_bestfit(data,pdf, init_pars,par_bounds):
     try:
         assert result.success
     except AssertionError:
-        print result
+        log.error(result)
     return result.x
 
 ### The Fit Conditions on a specific POI value
@@ -340,7 +343,7 @@ def constrained_bestfit(constrained_mu,data,pdf, init_pars,par_bounds):
     try:
         assert result.success
     except AssertionError:
-        print result
+        log.error(result)
     return result.x
 
 def pvals_from_teststat(sqrtqmu_v,sqrtqmuA_v):
