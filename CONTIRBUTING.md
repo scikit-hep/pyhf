@@ -1,0 +1,5 @@
+## Running the tests
+
+```
+pytest
+```
