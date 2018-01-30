@@ -2,7 +2,9 @@ import pyhf
 import numpy as np
 import json
 
-def test_validation_1bin_example_1():
+VALIDATION_TOLERANCE = 1e-7
+
+def test_validation_1bin_shapesys():
     expected_result = {
         'obs': 0.450337178157,
         'exp': [
@@ -13,7 +15,6 @@ def test_validation_1bin_example_1():
             0.8636787737204704
         ]
     }
-    tolerance = 0.0001
 
 
     source = json.load(open('validation/data/1bin_example1.json'))
@@ -25,6 +26,63 @@ def test_validation_1bin_example_1():
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
     cls_obs = 1./clsobs
     cls_exp = [1./x for x in cls_exp]
-    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < tolerance
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
     for result,expected_result in zip(cls_exp, expected_result['exp']):
-        assert (result-expected_result)/expected_result < tolerance
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+def test_validation_1bin_normsys():
+    expected_result = {
+        'obs': 0.0007930094233140433,
+        'exp': [
+            1.2529050370718884e-09,
+            8.932001833559302e-08,
+            5.3294967286010575e-06,
+            0.00022773982308763686,
+            0.0054897420571466075
+        ]
+    }
+    source = {
+      "binning": [2,-0.5,1.5],
+      "bindata": {
+        "data":    [120.0, 180.0],
+        "bkg":     [100.0, 150.0],
+        "sig":     [30.0, 95.0]
+      }
+    }
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfactor',
+                        'data': None
+                    }
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    {
+                        'name': 'bkg_norm',
+                        'type': 'normsys',
+                        'data': {'lo': 0.90, 'hi': 1.10}
+                    }
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    data = source['bindata']['data'] + pdf.auxdata
+
+    muTest = 1.0
+    init_pars  = [1.0, 0.0] #mu + alpha
+    par_bounds = [[0,10],[-5,5]]
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
