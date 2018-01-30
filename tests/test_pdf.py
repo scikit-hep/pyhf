@@ -1,5 +1,6 @@
 import pyhf
 import numpy as np
+import json
 
 def test_interpcode_0():
     f = pyhf._hfinterp_code0(at_minus_one = 0.5, at_zero =1, at_plus_one = 2.0)
