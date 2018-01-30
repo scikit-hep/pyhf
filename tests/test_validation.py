@@ -21,6 +21,31 @@ def test_validation_1bin_shapesys():
     pdf  = pyhf.hfpdf.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
     data = source['bindata']['data'] + pdf.auxdata
     muTest = 1.0
+    init_pars  = [1.0] #mu + gam1
+    par_bounds = [[0,10]] * 2
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+def test_validation_2bin_shapesys():
+    expected_result = {
+        'obs': 0.002295914517360494,
+        'exp': [
+            3.0094970386926022e-09,
+            1.8859829895130575e-07,
+            9.903669010880023e-06,
+            0.0003731544824991546,
+            0.007956953323759787
+        ]
+    }
+    source = json.load(open('validation/data/2bin_example1.json'))
+    pdf  = pyhf.hfpdf.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+    data = source['bindata']['data'] + pdf.auxdata
+    muTest = 1.0
     init_pars  = [1.0]*3 #mu + gam1 + gam2
     par_bounds = [[0,10]] * 3
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
@@ -30,8 +55,7 @@ def test_validation_1bin_shapesys():
     for result,expected_result in zip(cls_exp, expected_result['exp']):
         assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
 
-
-def test_validation_1bin_normsys():
+def test_validation_2bin_normsys():
     expected_result = {
         'obs': 0.0007930094233140433,
         'exp': [
