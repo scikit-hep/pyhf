@@ -2,7 +2,7 @@ import pyhf
 import numpy as np
 import json
 
-VALIDATION_TOLERANCE = 1e-7
+VALIDATION_TOLERANCE = 1e-5
 
 def test_validation_1bin_shapesys():
     expected_result = {
@@ -19,10 +19,15 @@ def test_validation_1bin_shapesys():
 
     source = json.load(open('validation/data/1bin_example1.json'))
     pdf  = pyhf.hfpdf.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+
     data = source['bindata']['data'] + pdf.auxdata
     muTest = 1.0
-    init_pars  = [1.0]*2 #mu + gam1
-    par_bounds = [[0,10]] * 2
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+    init_pars  = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
     cls_obs = 1./clsobs
     cls_exp = [1./x for x in cls_exp]
@@ -75,11 +80,17 @@ def test_validation_1bin_normsys():
         }
     }
     pdf  = pyhf.hfpdf(spec)
+
     data = source['bindata']['data'] + pdf.auxdata
 
     muTest = 1.0
-    init_pars  = [1.0, 0.0] #mu + alpha
-    par_bounds = [[0,10],[-5,5]]
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+    init_pars  = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
     cls_obs = 1./clsobs
     cls_exp = [1./x for x in cls_exp]
@@ -128,11 +139,17 @@ def test_validation_2bin_histosys():
         }
     }
     pdf  = pyhf.hfpdf(spec)
+
     data = source['bindata']['data'] + pdf.auxdata
 
     muTest = 1.0
-    init_pars  = [1.0, 0.0] #mu + alpha
-    par_bounds = [[0,10],[-5,5]]
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+    init_pars  = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
     cls_obs = 1./clsobs
     cls_exp = [1./x for x in cls_exp]
@@ -197,8 +214,12 @@ def test_validation_2bin_2channel():
     data = data + pdf.auxdata
 
     muTest = 1.0
-    init_pars  = [1.0] * 5 # 1 mu POI 2 gammas for each channel
-    par_bounds = [[0,10]] * 5
+
+    assert len(pdf.config.suggested_init())   == 5 # 1 mu + 2 gammas for 2 channels each
+    assert len(pdf.config.suggested_bounds()) == 5
+    init_pars  = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
     clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
     cls_obs = 1./clsobs
     cls_exp = [1./x for x in cls_exp]
