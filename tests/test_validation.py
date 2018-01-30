@@ -139,3 +139,69 @@ def test_validation_2bin_histosys():
     assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
     for result,expected_result in zip(cls_exp, expected_result['exp']):
         assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+
+def test_validation_2bin_2channel():
+    expected_result = {
+        'obs': 0.05691881515460979,
+        'exp': [
+            0.0004448774256747925,
+            0.0034839534635069816,
+            0.023684793938725246,
+            0.12294326553585197,
+            0.4058143629613449
+        ]
+    }
+    source = json.load(open('validation/data/2bin_2channel_example1.json'))
+    spec =  {
+        'signal': {
+            'signal': {
+                'data': source['channels']['signal']['bindata']['sig'],
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfactor',
+                        'data': None
+                    }
+                ]
+            },
+            'background': {
+                'data': source['channels']['signal']['bindata']['bkg'],
+                'mods': [
+                    {
+                        'name': 'uncorr_bkguncrt_signal',
+                        'type': 'shapesys',
+                        'data': source['channels']['signal']['bindata']['bkgerr']
+                    }
+                ]
+            }
+        },
+        'control': {
+            'background': {
+                'data': source['channels']['control']['bindata']['bkg'],
+                'mods': [
+                    {
+                        'name': 'uncorr_bkguncrt_control',
+                        'type': 'shapesys',
+                        'data': source['channels']['control']['bindata']['bkgerr']
+                    }
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.channel_order:
+        data += source['channels'][c]['bindata']['data']
+    data = data + pdf.auxdata
+
+    muTest = 1.0
+    init_pars  = [1.0] * 5 # 1 mu POI 2 gammas for each channel
+    par_bounds = [[0,10]] * 5
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
