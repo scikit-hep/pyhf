@@ -1,6 +1,7 @@
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 [![Build Status](https://travis-ci.org/lukasheinrich/pyhf.svg?branch=master)](https://travis-ci.org/lukasheinrich/pyhf)
+[![Coverage Status](https://coveralls.io/repos/github/lukasheinrich/pyhf/badge.svg?branch=master)](https://coveralls.io/github/lukasheinrich/pyhf?branch=master)
 
 The HistFactory p.d.f. template is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
 of ROOT, RooFit, RooStats framework.
