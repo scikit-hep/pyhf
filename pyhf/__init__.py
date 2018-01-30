@@ -140,35 +140,6 @@ class modelconfig(object):
         }
 
 class hfpdf(object):
-    @classmethod
-    def hepdata_like(cls,signal_data, bkg_data, bkg_uncerts):
-        spec = {
-            'singlechannel': {
-                'signal': {
-                    'data': signal_data,
-                    'mods': [
-                        {
-                            'name': 'mu',
-                            'type': 'normfactor',
-                            'data': None
-                        }
-                    ]
-                },
-                'background': {
-                    'data': bkg_data,
-                    'mods': [
-                        {
-                            'name': 'uncorr_bkguncrt',
-                            'type': 'shapesys',
-                            'data': bkg_uncerts
-                        }
-                    ]
-                }
-            }
-        }
-        return cls(spec)
-
-
     def __init__(self, channels):
         self.channels = channels
         self.config = modelconfig()
