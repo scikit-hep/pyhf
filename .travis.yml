@@ -5,4 +5,4 @@ install:
 - pip install -U --process-dependency-links -e .[develop]
 script:
 - pyflakes pyhf
-- pytest --cov=pyhf
+- pytest
