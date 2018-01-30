@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.stats import poisson, norm
+from scipy.stats import norm
 from scipy.optimize import minimize
-from scipy.interpolate import interp1d
 import logging
 
 log = logging.getLogger(__name__)
@@ -202,7 +201,6 @@ class hfpdf(object):
 
     def _normsysfactor(self, channel, sample, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        nom  = self.channels[channel][sample]['data']
         mods = [m['name'] for m in self.channels[channel][sample]['mods'] if m['type'] == 'normsys']
         factor =  1
 
@@ -215,14 +213,7 @@ class hfpdf(object):
         return factor
 
     def _histosysdelta(self, channel, sample, pars):
-        nom  = self.channels[channel][sample]['data']
-        # return np.zeros(len(nom))
-        # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0], anchors[i][0], val=alpha) for i in range(histosys_alphas))
-        nom  = self.channels[channel][sample]['data']
         mods = [m['name'] for m in self.channels[channel][sample]['mods'] if m['type'] == 'histosys']
-
-        nom  = self.channels[channel][sample]['data']
-
         deltas = []
         for m in mods:
             mod = self.config.mod(m)
@@ -240,9 +231,6 @@ class hfpdf(object):
             deltas = np.sum([deltas,mod_delta],axis=0)
             # print 'MOD DELTA',m,mod_delta
 
-        interpolated = np.sum([nom,deltas], axis=0)
-        # print 'ALL MODS',deltas
-        # print 'ALL MODS',interpolated
         return deltas
 
     def expected_sample(self,channel,sample,pars):
