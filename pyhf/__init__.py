@@ -18,17 +18,18 @@ def _gaussian_impl(x, mu, sigma):
     return norm.pdf(x, loc = mu, scale = sigma)
 
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
-    @np.vectorize
     def func(alpha):
-        if alpha >  0   : return (at_plus_one-at_zero)*alpha
-        if alpha <= 0   : return (at_zero-at_minus_one)*alpha
+        alpha     = np.array(alpha)
+        base      = np.where(alpha < 0, at_zero-at_minus_one, at_plus_one-at_zero)
+        return base * alpha
     return func
 
 def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
-    @np.vectorize
     def func(alpha):
-        if alpha >  0   : return pow(at_plus_one/at_zero, alpha)
-        if alpha <= 0   : return pow(at_minus_one/at_zero, -alpha)
+        alpha     = np.array(alpha)
+        base      = np.where(alpha < 0,  at_minus_one/at_zero, at_plus_one/at_zero)
+        exponents = np.where(alpha < 0, -alpha, alpha)
+        return np.power(base, exponents)
     return func
 
 @np.vectorize
