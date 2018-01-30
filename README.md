@@ -12,10 +12,10 @@ Implemented variations
 - [x] OverallSys
 - [x] ShapeSys
 - [x] NormFactor
+- [x] Multiple Channels
 
 ## Todo
 - [ ] ShapeFactor
-- [ ] Multiple Channels
 - [ ] Non-asymptotic calculators
 
 results obtained from this package are validated against output computed from HistFactory workspaces
