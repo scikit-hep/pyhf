@@ -6,3 +6,5 @@ install:
 script:
 - pyflakes pyhf
 - pytest
+after_success:
+- coveralls
