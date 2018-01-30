@@ -55,4 +55,6 @@ pip uninstall pyhf
 
 ## Authors
 
-- Primary Author: [Lukas Heinrich](https://github.com/lukasheinrich)
+Please check the contribution statistics for a list of contributors
+
+https://github.com/lukasheinrich/pyhf/graphs/contributors
