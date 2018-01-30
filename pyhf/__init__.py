@@ -187,7 +187,7 @@ class hfpdf(object):
                             name = mod_def['name'],
                             mod  = mod,
                             npars = 1,
-                            suggested_init   = [[1.0]],
+                            suggested_init   = [1.0],
                             suggested_bounds = [[0,10]]
                         )
                         self.config.poi_index = self.config.par_slice(mod_def['name']).start
@@ -197,7 +197,7 @@ class hfpdf(object):
                         self.config.add_mod(
                             name  = mod_def['name'],
                             npars = len(sample_def['data']),
-                            suggested_init   = [[1.0]] * len(sample_def['data']),
+                            suggested_init   = [1.0] * len(sample_def['data']),
                             suggested_bounds = [[0,10]] * len(sample_def['data']),
                             mod = mod,
                         )
@@ -209,7 +209,7 @@ class hfpdf(object):
                             name = mod_def['name'],
                             npars = 1,
                             mod = mod,
-                            suggested_init   = [[1.0]],
+                            suggested_init   = [1.0],
                             suggested_bounds = [[-5,5]]
                         )
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
@@ -220,7 +220,7 @@ class hfpdf(object):
                             mod_def['name'],
                             npars = 1,
                             mod = mod,
-                            suggested_init   = [[1.0]],
+                            suggested_init   = [1.0],
                             suggested_bounds = [[-5,5]])
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
                         self.auxdata_order.append(mod_def['name'])
@@ -386,7 +386,7 @@ def pvals_from_teststat(sqrtqmu_v,sqrtqmuA_v):
     CLs  = CLb/CLsb
     return CLsb,CLb,CLs
 
-def runOnePoint(muTest, data,pdf,init_pars,par_bounds):
+def runOnePoint(muTest, data,pdf, init_pars,par_bounds):
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu,data,pdf,init_pars,par_bounds)
 
