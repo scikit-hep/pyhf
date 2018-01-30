@@ -1,4 +1,5 @@
 import pyhf
+import pyhf.simplemodels
 import numpy as np
 import json
 
@@ -18,7 +19,7 @@ def test_validation_1bin_shapesys():
 
 
     source = json.load(open('validation/data/1bin_example1.json'))
-    pdf  = pyhf.hfpdf.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+    pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
 
     data = source['bindata']['data'] + pdf.auxdata
     muTest = 1.0
