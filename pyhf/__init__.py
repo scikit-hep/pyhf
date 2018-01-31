@@ -100,7 +100,7 @@ class shapesys_constraint(object):
             self.auxdata.append(bkg_over_bsq)
 
     def alphas(self,pars):
-        return [gamma * c for gamma, c in zip(pars, self.bkg_over_db_squared)]
+        return np.product([pars,self.bkg_over_db_squared], axis=0)
 
     def pdf(self, a, alpha):
         return _poisson_impl(a, alpha)
@@ -115,10 +115,6 @@ class modelconfig(object):
         self.next_index = 0
         self.snapshots  = {}
         self.par_order  = []
-
-    def all_mods(self, only_constraints = False):
-        if not only_constraints: return self.par_map.keys()
-        return [k for k,v in self.par_map.items() if v['mod'] is not None]
 
     def suggested_init(self):
         init = []
@@ -309,19 +305,18 @@ class hfpdf(object):
         summands = []
         for cname in self.auxdata_order:
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
-            modalphas = mod.alphas(pars[modslice])
-            end_index = start_index+len(modalphas)
+            modalphas   = mod.alphas(pars[modslice])
+            end_index   = start_index+len(modalphas)
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            summands += [np.log(mod.pdf(a, alpha)) for a,alpha in zip(thisauxdata, modalphas)]
+            summands = np.concatenate([summands,np.log(mod.pdf(thisauxdata, modalphas))])
         return np.sum(summands)
 
     def logpdf(self, pars, data):
         cut = len(data) - len(self.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
-
-        summands = [np.log(_poisson_impl(d, lam)) for d,lam in zip(actual_data, lambdas_data)]
+        summands = np.log(_poisson_impl(actual_data, lambdas_data))
         return np.sum(summands) + self.constraint_logpdf(aux_data, pars)
 
     def pdf(self, pars, data):
