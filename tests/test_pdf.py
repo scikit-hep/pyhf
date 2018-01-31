@@ -1,4 +1,5 @@
 import pyhf
+import pyhf.simplemodels
 import numpy as np
 import json
 
@@ -23,3 +24,27 @@ def test_interpcode_1():
     assert f(2) == 1.1**2
 
     assert np.all(f([-2,-1,0,1,2]) == [0.9**2, 0.9, 1.0, 1.1, 1.1**2])
+
+def test_numpy_pdf_inputs():
+    source = {
+      "binning": [2,-0.5,1.5],
+      "bindata": {
+        "data":    [55.0],
+        "bkg":     [50.0],
+        "bkgerr":  [7.0],
+        "sig":     [10.0]
+      }
+    }
+    pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+
+    pars = pdf.config.suggested_init()
+    data = source['bindata']['data'] + pdf.auxdata
+
+
+    np_data       = np.array(data)
+    np_parameters = np.array(pars)
+
+    assert len(data) == np_data.shape[0]
+    assert len(pars) == np_parameters.shape[0]
+    assert pdf.logpdf(pars,data) == pdf.logpdf(np_parameters,np_data)
+    assert np.array(pdf.logpdf(np_parameters,np_data)).shape == ()
