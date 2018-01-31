@@ -100,7 +100,7 @@ class shapesys_constraint(object):
             self.auxdata.append(bkg_over_bsq)
 
     def alphas(self,pars):
-        return [gamma * c for gamma, c in zip(pars, self.bkg_over_db_squared)]
+        return np.product([pars,self.bkg_over_db_squared], axis=0)
 
     def pdf(self, a, alpha):
         return _poisson_impl(a, alpha)
@@ -115,10 +115,6 @@ class modelconfig(object):
         self.next_index = 0
         self.snapshots  = {}
         self.par_order  = []
-
-    def all_mods(self, only_constraints = False):
-        if not only_constraints: return self.par_map.keys()
-        return [k for k,v in self.par_map.items() if v['mod'] is not None]
 
     def suggested_init(self):
         init = []
@@ -250,12 +246,9 @@ class hfpdf(object):
             #intepolate for each bin
             mod_delta = []
             for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one[channel][sample],mod.at_zero[channel][sample],mod.at_plus_one[channel][sample]):
-
                 interp = _hfinterp_code0(lo_bin,nom_bin,up_bin)
-
                 interp_val = float(interp(val[0]))
                 mod_delta.append(interp_val)
-
             deltas = np.sum([deltas,mod_delta],axis=0)
         return deltas
 
@@ -303,31 +296,24 @@ class hfpdf(object):
         return np.concatenate([expected_actual, expected_constraints])
 
     def constraint_logpdf(self,auxdata, pars):
-        sum = 0
         #iterate over all constraints order doesn't matter....
         start_index = 0
+        summands = []
         for cname in self.auxdata_order:
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
-            modalphas = mod.alphas(pars[modslice])
-            end_index = start_index+len(modalphas)
+            modalphas   = mod.alphas(pars[modslice])
+            end_index   = start_index+len(modalphas)
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            for a,alpha in zip(thisauxdata, modalphas):
-                sum = sum + np.log(mod.pdf(a, alpha))
-        return sum
+            summands = np.concatenate([summands,np.log(mod.pdf(thisauxdata, modalphas))])
+        return np.sum(summands)
 
     def logpdf(self, pars, data):
         cut = len(data) - len(self.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
-
-        sum = 0
-
         lambdas_data = self.expected_actualdata(pars)
-        for d,lam in zip(actual_data, lambdas_data):
-            sum = sum + np.log(_poisson_impl(d, lam))
-
-        sum = sum + self.constraint_logpdf(aux_data, pars)
-        return sum
+        summands = np.log(_poisson_impl(actual_data, lambdas_data))
+        return np.sum(summands) + self.constraint_logpdf(aux_data, pars)
 
     def pdf(self, pars, data):
         return np.exp(self.logpdf(pars, data))
