@@ -246,12 +246,9 @@ class hfpdf(object):
             #intepolate for each bin
             mod_delta = []
             for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one[channel][sample],mod.at_zero[channel][sample],mod.at_plus_one[channel][sample]):
-
                 interp = _hfinterp_code0(lo_bin,nom_bin,up_bin)
-
                 interp_val = float(interp(val[0]))
                 mod_delta.append(interp_val)
-
             deltas = np.sum([deltas,mod_delta],axis=0)
         return deltas
 
@@ -299,7 +296,6 @@ class hfpdf(object):
         return np.concatenate([expected_actual, expected_constraints])
 
     def constraint_logpdf(self,auxdata, pars):
-        sum = 0
         #iterate over all constraints order doesn't matter....
         start_index = 0
         summands = []
