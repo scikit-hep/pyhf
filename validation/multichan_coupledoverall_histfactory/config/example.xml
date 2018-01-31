@@ -1,0 +1,24 @@
+<!--
+//============================================================================
+// Name        : example.xml
+//============================================================================
+-->
+
+<!--
+    Top-level configuration,  details for the example channel are in example_channel.xml.
+    This is the input file to the executable.
+
+    Note: Config.dtd needs to be accessible.  It can be found in ROOT release area.
+    The file system path is relative to location of this XML file, not the executable.
+-->
+
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+
+<Combination OutputFilePrefix="./results/example">
+  <Input>./config/example_signal.xml</Input>
+  <Input>./config/example_control.xml</Input>
+  <Measurement Name="GaussExample" Lumi="1." LumiRelErr="0.1" ExportOnly="True">
+    <POI>SigXsecOverSM</POI>
+    <ParamSetting Const="True">Lumi</ParamSetting>
+  </Measurement>
+</Combination>
