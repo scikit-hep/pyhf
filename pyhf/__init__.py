@@ -306,28 +306,23 @@ class hfpdf(object):
         sum = 0
         #iterate over all constraints order doesn't matter....
         start_index = 0
+        summands = []
         for cname in self.auxdata_order:
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
             end_index = start_index+len(modalphas)
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            for a,alpha in zip(thisauxdata, modalphas):
-                sum = sum + np.log(mod.pdf(a, alpha))
-        return sum
+            summands += [np.log(mod.pdf(a, alpha)) for a,alpha in zip(thisauxdata, modalphas)]
+        return np.sum(summands)
 
     def logpdf(self, pars, data):
         cut = len(data) - len(self.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
-
-        sum = 0
-
         lambdas_data = self.expected_actualdata(pars)
-        for d,lam in zip(actual_data, lambdas_data):
-            sum = sum + np.log(_poisson_impl(d, lam))
 
-        sum = sum + self.constraint_logpdf(aux_data, pars)
-        return sum
+        summands = [np.log(_poisson_impl(d, lam)) for d,lam in zip(actual_data, lambdas_data)]
+        return np.sum(summands) + self.constraint_logpdf(aux_data, pars)
 
     def pdf(self, pars, data):
         return np.exp(self.logpdf(pars, data))
