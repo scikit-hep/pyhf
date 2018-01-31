@@ -2,6 +2,8 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
 import logging
+from scipy.special import gammaln
+
 
 log = logging.getLogger(__name__)
 
@@ -10,6 +12,7 @@ def _poisson_impl(n, lam):
     # print 'pois', n,lam
     # return poisson.pmf(n,lam)
     # print 'lam,sqrtlam',lam,np.sqrt(lam)
+    # return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
     return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
 def _gaussian_impl(x, mu, sigma):
@@ -43,11 +46,15 @@ def _multiply_arrays_or_scalars(*args):
     return np.prod(np.array(args))
 
 class normsys_constraint(object):
-    def __init__(self, nom_data, mod_data):
+    def __init__(self):
         self.at_zero      = 1
-        self.at_minus_one = mod_data['lo']
-        self.at_plus_one  = mod_data['hi']
+        self.at_minus_one = {}
+        self.at_plus_one  = {}
         self.auxdata = [0] #observed data is always at a = 1
+
+    def add_sample(self, channel, sample, nominal, mod_data):
+        self.at_minus_one.setdefault(channel,{})[sample] = mod_data['lo']
+        self.at_plus_one.setdefault(channel,{})[sample]  = mod_data['hi']
 
     def alphas(self,pars):
         return pars #the nuisance parameters correspond directly to the alpha
@@ -129,6 +136,9 @@ class modelconfig(object):
         sl = slice(self.next_index, self.next_index + npars)
         self.next_index = self.next_index + npars
         if name in self.par_map:
+            # if type(mod) == normsys_constraint:
+            #     log.info('accepting existing normsys')
+            #     return
             raise RuntimeError('shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
         self.par_order.append(name)
@@ -204,13 +214,16 @@ class hfpdf(object):
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
                         self.auxdata_order.append(mod_def['name'])
                     if mod_def['type'] == 'normsys':
-                        mod = normsys_constraint(sample_def['data'],mod_def['data'])
+                        mod = normsys_constraint()
                         self.config.add_mod(
                             name = mod_def['name'],
                             npars = 1,
                             mod = mod,
-                            suggested_init   = [1.0],
-                            suggested_bounds = [[-5,5]]
+                            suggested_init   = [0.0],
+                            suggested_bounds = [[-5,5]],
+                        )
+                        self.config.mod(mod_def['name']).add_sample(
+                            ch, sample, sample_def['data'],mod_def['data']
                         )
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
                         self.auxdata_order.append(mod_def['name'])
@@ -239,7 +252,7 @@ class hfpdf(object):
             mod = self.config.mod(m)
             val = pars[self.config.par_slice(m)]
             assert len(val)==1
-            interp = _hfinterp_code1(mod.at_minus_one,mod.at_zero,mod.at_plus_one)
+            interp = _hfinterp_code1(mod.at_minus_one[channel][sample],mod.at_zero,mod.at_plus_one[channel][sample])
             factor = factor * interp(val[0])
         return factor
 
