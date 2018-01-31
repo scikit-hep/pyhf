@@ -2,7 +2,6 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
 import logging
-from scipy.special import gammaln
 
 
 log = logging.getLogger(__name__)
@@ -12,6 +11,7 @@ def _poisson_impl(n, lam):
     # print 'pois', n,lam
     # return poisson.pmf(n,lam)
     # print 'lam,sqrtlam',lam,np.sqrt(lam)
+    # from scipy.special import gammaln
     # return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
     return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
@@ -68,11 +68,17 @@ class normsys_constraint(object):
 
 
 class histosys_constraint(object):
-    def __init__(self, nom_data, mod_data):
-        self.at_zero      = nom_data
-        self.at_minus_one = mod_data['lo_hist']
-        self.at_plus_one  = mod_data['hi_hist']
+    def __init__(self):
+        self.at_zero      = {}
+        self.at_minus_one = {}
+        self.at_plus_one  = {}
         self.auxdata = [0] #observed data is always at a = 1
+
+    def add_sample(self, channel, sample, nominal, mod_data):
+        self.at_zero.setdefault(channel,{})[sample]      = nominal
+        self.at_minus_one.setdefault(channel,{})[sample] = mod_data['lo_hist']
+        self.at_plus_one.setdefault(channel,{})[sample]  = mod_data['hi_hist']
+
 
     def alphas(self,pars):
         return pars #the nuisance parameters correspond directly to the alpha
@@ -228,13 +234,16 @@ class hfpdf(object):
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
                         self.auxdata_order.append(mod_def['name'])
                     if mod_def['type'] == 'histosys':
-                        mod = histosys_constraint(sample_def['data'],mod_def['data'])
+                        mod = histosys_constraint()
                         self.config.add_mod(
                             mod_def['name'],
                             npars = 1,
                             mod = mod,
                             suggested_init   = [1.0],
                             suggested_bounds = [[-5,5]])
+                        self.config.mod(mod_def['name']).add_sample(
+                            ch, sample, sample_def['data'],mod_def['data']
+                        )
                         self.auxdata += self.config.mod(mod_def['name']).auxdata
                         self.auxdata_order.append(mod_def['name'])
 
@@ -265,7 +274,7 @@ class hfpdf(object):
             assert len(val)==1
             #intepolate for each bin
             mod_delta = []
-            for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one,mod.at_zero,mod.at_plus_one):
+            for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one[channel][sample],mod.at_zero[channel][sample],mod.at_plus_one[channel][sample]):
 
                 interp = _hfinterp_code0(lo_bin,nom_bin,up_bin)
 
