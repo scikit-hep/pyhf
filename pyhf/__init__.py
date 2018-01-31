@@ -64,7 +64,6 @@ class normsys_constraint(object):
         return self.alphas(pars)
 
     def pdf(self, a, alpha):
-        # print 'normsys gaussian'
         return _gaussian_impl(a, alpha , 1)
 
 
@@ -140,14 +139,15 @@ class modelconfig(object):
         return self.par_map[name]['mod']
 
     def add_mod(self,name, npars, mod, suggested_init, suggested_bounds):
-        sl = slice(self.next_index, self.next_index + npars)
-        self.next_index = self.next_index + npars
         if name in self.par_map:
             if type(mod) == normsys_constraint:
                 log.info('accepting existing normsys')
                 return False
             raise RuntimeError('shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
+
+        sl = slice(self.next_index, self.next_index + npars)
+        self.next_index = self.next_index + npars
         self.par_order.append(name)
         self.par_map[name] = {
             'slice': sl,
@@ -257,8 +257,6 @@ class hfpdf(object):
                 mod_delta.append(interp_val)
 
             deltas = np.sum([deltas,mod_delta],axis=0)
-            # print 'MOD DELTA',m,mod_delta
-
         return deltas
 
     def expected_sample(self,channel,sample,pars):
@@ -309,13 +307,11 @@ class hfpdf(object):
         #iterate over all constraints order doesn't matter....
         start_index = 0
         for cname in self.auxdata_order:
-            # print 'ADDING constraint pdf term for ', cname
             mod, modslice = self.config.mod(cname), self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
             end_index = start_index+len(modalphas)
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            # print 'a / alphas {} | {}'.format(thisauxdata, modalphas)
             for a,alpha in zip(thisauxdata, modalphas):
                 sum = sum + np.log(mod.pdf(a, alpha))
         return sum
@@ -327,7 +323,6 @@ class hfpdf(object):
         sum = 0
 
         lambdas_data = self.expected_actualdata(pars)
-        # print 'data / lamds {} | {}'.format(actual_data, lambdas_data)
         for d,lam in zip(actual_data, lambdas_data):
             sum = sum + np.log(_poisson_impl(d, lam))
 
@@ -387,12 +382,8 @@ def runOnePoint(muTest, data,pdf, init_pars,par_bounds):
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu,data,pdf,init_pars,par_bounds)
 
-    # print 'ASIMOV MY FRIEND', asimov_data
     qmu_v  = qmu(muTest,data,pdf, init_pars,par_bounds)
     qmuA_v = qmu(muTest,asimov_data,pdf,init_pars,par_bounds)
-
-
-    # print 'QMUS! MY FRIEND', qmu_v, qmuA_v
 
     sqrtqmu_v = np.sqrt(qmu_v)
     sqrtqmuA_v = np.sqrt(qmuA_v)

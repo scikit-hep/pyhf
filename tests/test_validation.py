@@ -227,3 +227,82 @@ def test_validation_2bin_2channel():
     assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
     for result,expected_result in zip(cls_exp, expected_result['exp']):
         assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+
+def test_validation_2bin_2channel_couplednorm():
+    expected_result = {
+        'obs': 0.5999662863185762,
+        'exp': [0.06596134134354742,
+          0.15477912571478988,
+          0.33323967895587736,
+          0.6096429330789306,
+          0.8688213053042003
+        ]
+    }
+    source = json.load(open('validation/data/2bin_2channel_couplednorm.json'))
+    spec = {
+        'signal': {
+            'signal': {
+                'data': source['channels']['signal']['bindata']['sig'],
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfactor',
+                        'data': None
+                    }
+                ]
+            },
+            'bkg1': {
+                'data': source['channels']['signal']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_normsys',
+                        'type': 'normsys',
+                        'data':  {'lo': 0.9, 'hi': 1.1}
+                    }
+                ]
+            },
+            'bkg2': {
+                'data': source['channels']['signal']['bindata']['bkg2'],
+                'mods': [
+                    {
+                        'name': 'coupled_normsys',
+                        'type': 'normsys',
+                        'data':  {'lo': 0.5, 'hi': 1.5}
+                    }
+                ]
+            }
+        },
+        'control': {
+            'background': {
+                'data': source['channels']['control']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_normsys',
+                        'type': 'normsys',
+                        'data': {'lo': 0.9, 'hi': 1.1}
+                    }
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.channel_order:
+        data += source['channels'][c]['bindata']['data']
+    data = data + pdf.auxdata
+
+
+    muTest = 1.0
+    assert len(pdf.config.suggested_init())   == 2 # 1 mu + 1 alpha
+    assert len(pdf.config.suggested_bounds()) == 2 # 1 mu + 1 alpha
+    init_pars  = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
