@@ -142,9 +142,9 @@ class modelconfig(object):
         sl = slice(self.next_index, self.next_index + npars)
         self.next_index = self.next_index + npars
         if name in self.par_map:
-            # if type(mod) == normsys_constraint:
-            #     log.info('accepting existing normsys')
-            #     return
+            if type(mod) == normsys_constraint:
+                log.info('accepting existing normsys')
+                return False
             raise RuntimeError('shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
         self.par_order.append(name)
@@ -154,6 +154,7 @@ class modelconfig(object):
             'suggested_init': suggested_init,
             'suggested_bounds': suggested_bounds
         }
+        return True
 
 class hfpdf(object):
     @classmethod
@@ -210,18 +211,19 @@ class hfpdf(object):
                     if mod_def['type'] == 'shapesys':
                         #we reserve one parameter for each bin
                         mod = shapesys_constraint(sample_def['data'],mod_def['data'])
-                        self.config.add_mod(
+                        just_added = self.config.add_mod(
                             name  = mod_def['name'],
                             npars = len(sample_def['data']),
-                            suggested_init   = [1.0] * len(sample_def['data']),
+                            suggested_init   = [1.0]    * len(sample_def['data']),
                             suggested_bounds = [[0,10]] * len(sample_def['data']),
                             mod = mod,
                         )
-                        self.auxdata += self.config.mod(mod_def['name']).auxdata
-                        self.auxdata_order.append(mod_def['name'])
+                        if just_added:
+                            self.auxdata += self.config.mod(mod_def['name']).auxdata
+                            self.auxdata_order.append(mod_def['name'])
                     if mod_def['type'] == 'normsys':
                         mod = normsys_constraint()
-                        self.config.add_mod(
+                        just_added = self.config.add_mod(
                             name = mod_def['name'],
                             npars = 1,
                             mod = mod,
@@ -231,8 +233,9 @@ class hfpdf(object):
                         self.config.mod(mod_def['name']).add_sample(
                             ch, sample, sample_def['data'],mod_def['data']
                         )
-                        self.auxdata += self.config.mod(mod_def['name']).auxdata
-                        self.auxdata_order.append(mod_def['name'])
+                        if just_added:
+                            self.auxdata += self.config.mod(mod_def['name']).auxdata
+                            self.auxdata_order.append(mod_def['name'])
                     if mod_def['type'] == 'histosys':
                         mod = histosys_constraint()
                         self.config.add_mod(
