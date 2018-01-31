@@ -306,3 +306,83 @@ def test_validation_2bin_2channel_couplednorm():
     assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
     for result,expected_result in zip(cls_exp, expected_result['exp']):
         assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+
+def test_validation_2bin_2channel_coupledhistosys():
+    expected_result = {
+    'obs': 0.06406791030101676,
+     'exp': [
+        1.6538409169005294e-05,
+        0.0002490863040337432,
+        0.0032056269173357244,
+        0.03060508439328246,
+        0.17574126217230668
+    ]
+    }
+    source = json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
+    spec   =  {
+        'signal': {
+            'signal': {
+                'data': source['channels']['signal']['bindata']['sig'],
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfactor',
+                        'data': None
+                    }
+                ]
+            },
+            'bkg1': {
+                'data': source['channels']['signal']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_histosys',
+                        'type': 'histosys',
+                        'data':  {'lo_hist': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg1_up']}
+                    }
+                ]
+            },
+            'bkg2': {
+                'data': source['channels']['signal']['bindata']['bkg2'],
+                'mods': [
+                    {
+                        'name': 'coupled_histosys',
+                        'type': 'histosys',
+                        'data':  {'lo_hist': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg2_up']}
+                    }
+                ]
+            }
+        },
+        'control': {
+            'background': {
+                'data': source['channels']['control']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_histosys',
+                        'type': 'histosys',
+                        'data':  {'lo_hist': source['channels']['control']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['control']['bindata']['bkg1_up']}
+                    }
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.channel_order:
+        data += source['channels'][c]['bindata']['data']
+    data = data + pdf.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    assert len(init_pars)  == 2 #1 mu 1 shared histosys
+    assert len(par_bounds) == 2
+
+    muTest = 1.0
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE

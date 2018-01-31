@@ -79,7 +79,6 @@ class histosys_constraint(object):
         self.at_minus_one.setdefault(channel,{})[sample] = mod_data['lo_hist']
         self.at_plus_one.setdefault(channel,{})[sample]  = mod_data['hi_hist']
 
-
     def alphas(self,pars):
         return pars #the nuisance parameters correspond directly to the alpha
 
@@ -138,6 +137,9 @@ class modelconfig(object):
         if name in self.par_map:
             if type(mod) == normsys_constraint:
                 log.info('accepting existing normsys')
+                return False
+            if type(mod) == histosys_constraint:
+                log.info('accepting existing histosys')
                 return False
             raise RuntimeError('shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
