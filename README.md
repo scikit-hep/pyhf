@@ -16,9 +16,12 @@ Implemented variations
 - [x] ShapeSys
 - [x] NormFactor
 - [x] Multiple Channels
+- [x] Import from XML + ROOT via `uproot` (https://github.com/scikit-hep/uproot)
 
 ## Todo
 - [ ] ShapeFactor
+- [ ] StatError
+- [ ] StatConfig
 - [ ] Non-asymptotic calculators
 
 results obtained from this package are validated against output computed from HistFactory workspaces
