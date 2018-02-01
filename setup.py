@@ -13,6 +13,9 @@ setup(
     'scipy'
   ],
   extras_require = {
+    'xmlimport': [
+       'uproot',
+     ],
     'develop': [
        'pyflakes',
        'pytest>=3.2.0',
@@ -20,6 +23,7 @@ setup(
        'python-coveralls',
        'matplotlib',
        'jupyter',
+       'uproot',
     ]
   },
   entry_points = {
