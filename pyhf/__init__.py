@@ -21,10 +21,16 @@ def _gaussian_impl(x, mu, sigma):
     return norm.pdf(x, loc = mu, scale = sigma)
 
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
-    def func(alpha):
-        alpha     = np.array(alpha)
-        base      = np.where(alpha < 0, at_zero-at_minus_one, at_plus_one-at_zero)
-        return base * alpha
+    at_minus_one = np.array(at_minus_one)
+    at_zero      = np.array(at_zero)
+    at_plus_one  = np.array(at_plus_one)
+    def func(alphas):
+        alphas = np.array(alphas)
+        iplus_izero   = at_plus_one - at_zero
+        izero_iminus  = at_zero - at_minus_one
+        mask          = np.outer(alphas < 0 , np.ones(iplus_izero.shape))
+        interpolated  = np.where(mask, np.outer(alphas,izero_iminus), np.outer(alphas,iplus_izero))
+        return interpolated
     return func
 
 def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
@@ -240,19 +246,14 @@ class hfpdf(object):
 
     def _histosysdelta(self, channel, sample, pars):
         mods = [m['name'] for m in self.channels[channel][sample]['mods'] if m['type'] == 'histosys']
-        deltas = []
+        summands = []
         for m in mods:
-            mod = self.config.mod(m)
-            val = pars[self.config.par_slice(m)]
-            assert len(val)==1
-            #intepolate for each bin
-            mod_delta = []
-            for lo_bin, nom_bin, up_bin, in zip(mod.at_minus_one[channel][sample],mod.at_zero[channel][sample],mod.at_plus_one[channel][sample]):
-                interp = _hfinterp_code0(lo_bin,nom_bin,up_bin)
-                interp_val = float(interp(val[0]))
-                mod_delta.append(interp_val)
-            deltas = np.sum([deltas,mod_delta],axis=0)
-        return deltas
+            mod, modpars = self.config.mod(m), pars[self.config.par_slice(m)]
+            assert len(modpars)==1
+            interpfunc = _hfinterp_code0(mod.at_minus_one[channel][sample],mod.at_zero[channel][sample],mod.at_plus_one[channel][sample])
+            mod_delta  = interpfunc(modpars)[0]
+            summands.append(mod_delta)
+        return np.sum(summands, axis=0)
 
     def expected_sample(self,channel,sample,pars):
         # for each sample the expected ocunts are
