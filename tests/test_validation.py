@@ -7,13 +7,13 @@ VALIDATION_TOLERANCE = 1e-5
 
 def test_validation_1bin_shapesys():
     expected_result = {
-        'obs': 0.450337178157,
+        'obs': 0.4541865416107029,
         'exp': [
-            0.06154653039922158,
-            0.1472337570386738,
-            0.3227412178815565,
-            0.5995781547454528,
-            0.8636787737204704
+            0.06371799398864626,
+            0.15096503398048894,
+            0.3279606950533305,
+            0.6046087303039118,
+            0.8662627605298466
         ]
     }
 
@@ -102,7 +102,7 @@ def test_validation_1bin_normsys():
 
 def test_validation_2bin_histosys():
     expected_result = {
-        'obs': 0.09436700514736625,
+        'obs': 0.10014623469489856,
         'exp': [
             8.131143652258812e-06,
             0.0001396307700293439,
@@ -311,7 +311,7 @@ def test_validation_2bin_2channel_couplednorm():
 
 def test_validation_2bin_2channel_coupledhistosys():
     expected_result = {
-    'obs': 0.06406791030101676,
+    'obs': 0.06855563832508986,
      'exp': [
         1.6538409169005294e-05,
         0.0002490863040337432,

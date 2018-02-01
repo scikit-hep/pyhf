@@ -12,10 +12,11 @@ def _poisson_impl(n, lam):
     # print 'pois', n,lam
     # return poisson.pmf(n,lam)
     # print 'lam,sqrtlam',lam,np.sqrt(lam)
-    # from scipy.special import gammaln
-    # return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
-    return norm.pdf(n, loc=lam, scale=np.sqrt(lam))
-
+    n = np.array(n)
+    from scipy.special import gammaln
+    return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
+    # return np.exp(k*np.log(r)-r-gammaln(k+1.))
+    # return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
 def _gaussian_impl(x, mu, sigma):
     # use continuous gaussian approx, b/c asimov data may not be integer
