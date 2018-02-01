@@ -73,3 +73,117 @@ def test_core_pdf_broadcasting():
     assert np.array(data).shape == np.array(sigmas).shape
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
+
+def test_pdf_integration_histosys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    { 'name': 'bkg_norm', 'type': 'histosys',
+                      'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+
+
+    pars = [None,None]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False) == [102,190]
+
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [2.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)  == [104,230]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False) == [ 98,100]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-2.0]]
+    assert pdf.expected_data(pars, include_auxdata = False) == [ 96, 50]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[1.0], [1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)  == [102+30,190+95]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[1.0], [-1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)== [ 98+30,100+95]
+
+
+def test_pdf_integration_normsys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+
+    pars = [None,None]
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150*1.1]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100*0.9,150*0.9]
+
+def test_pdf_integration_shapesys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+
+
+
+    pars = [None,None]
+
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0,1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.1,1.0]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0,1.1]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150*1.1]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.1, 0.9]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150*0.9]
+
+    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.9,1.1]]
+    assert pdf.expected_data(pars, include_auxdata = False)   == [100*0.9,150*1.1]
