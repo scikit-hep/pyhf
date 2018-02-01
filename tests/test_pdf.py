@@ -73,3 +73,88 @@ def test_core_pdf_broadcasting():
     assert np.array(data).shape == np.array(sigmas).shape
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
+
+def test_pdf_integration_histosys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    { 'name': 'bkg_norm', 'type': 'histosys',
+                      'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    assert pdf.expected_data([0.0,1.0]).tolist()  == [102,190,1.]
+    assert pdf.expected_data([0.0,2.0]).tolist()  == [104,230,2.]
+
+    assert pdf.expected_data([0.0,-1.0]).tolist() == [ 98,100,-1.]
+    assert pdf.expected_data([0.0,-2.0]).tolist() == [ 96, 50,-2.]
+
+    assert pdf.expected_data([1.0,1.0]).tolist()  == [102+30,190+95 , 1.]
+    assert pdf.expected_data([1.0,-1.0]).tolist() == [ 98+30,100+95 ,-1.]
+
+
+def test_pdf_integration_normsys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    assert pdf.expected_data([0.0,0.0]).tolist()  == [100,150,0.]
+
+    assert pdf.expected_data([0.0, 1.0]).tolist()  == [100 * 1.1,150 * 1.1, 1.]
+    assert pdf.expected_data([0.0,-1.0]).tolist()  == [100 * 0.9,150 * 0.9,-1.]
+
+def test_pdf_integration_shapesys():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'singlechannel': {
+            'signal': {
+                'data': source['bindata']['sig'],
+                'mods': [
+                    {'name': 'mu', 'type': 'normfactor', 'data': None}
+                ]
+            },
+            'background': {
+                'data': source['bindata']['bkg'],
+                'mods': [
+                    {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+
+    tau_times_b = [100.*100./10./10., 150.*150./10./10.]
+    assert pdf.auxdata == tau_times_b
+
+    assert pdf.expected_data([0.0,1.0,1.0]).tolist()   == [100,150] + tau_times_b
+
+    assert pdf.expected_data([0.0,1.1,1.0]).tolist()[:2]   == [100*1.1,150]
+    assert pdf.expected_data([0.0,1.0,1.1]).tolist()[:2]   == [100,150*1.1]
+
+    assert pdf.expected_data([0.0,1.1,0.9]).tolist()[:2]   == [100*1.1,150*0.9]
+    assert pdf.expected_data([0.0,0.9,1.1]).tolist()[:2]   == [100*0.9,150*1.1]
