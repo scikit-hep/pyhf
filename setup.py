@@ -15,7 +15,7 @@ setup(
   extras_require = {
     'xmlimport': [
        'uproot',
-     ]
+     ],
     'develop': [
        'pyflakes',
        'pytest>=3.2.0',
