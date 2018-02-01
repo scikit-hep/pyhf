@@ -41,17 +41,6 @@ def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
         return np.power(base, exponents)
     return func
 
-@np.vectorize
-def _multiply_arrays_or_scalars(*args):
-    '''
-    calling this function with arrays (a and b) and/or scalers (s1,s2) it will broadcast as usua
-    result is a array with the row-wise products
-    r1 = | a1 | * s1 * | b1 | * s2
-    r2 = | a2 | * s1 * | b2 | * s2
-    r3 = | a3 | * s1 * | b3 | * s2
-    '''
-    return np.prod(np.array(args))
-
 class normsys_constraint(object):
     def __init__(self):
         self.at_zero      = 1
@@ -269,7 +258,7 @@ class hfpdf(object):
         factors += self._multiplicative_factors(channel,sample,pars)
         factors += [self._normsysfactor(channel,sample, pars)]
         factors += [interp_histo]
-        return _multiply_arrays_or_scalars(*factors)
+        return np.prod(np.vstack(np.broadcast_arrays(*factors)), axis=0)
 
     def expected_auxdata(self, pars):
         ### probably more correctly this should be the expectation value of the constraint_pdf
