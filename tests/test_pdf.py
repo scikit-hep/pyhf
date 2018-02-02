@@ -38,7 +38,7 @@ def test_numpy_pdf_inputs():
     pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
 
     pars = pdf.config.suggested_init()
-    data = source['bindata']['data'] + pdf.auxdata
+    data = source['bindata']['data'] + pdf.config.auxdata
 
 
     np_data       = np.array(data)

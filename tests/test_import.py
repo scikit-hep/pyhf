@@ -5,7 +5,7 @@ def test_import_prepHistFactory():
     spec = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/')
     pdf = pyhf.hfpdf(spec['channels'])
 
-    data = [binvalue for k in pdf.channel_order for binvalue in spec['data'][k]] + pdf.auxdata
+    data = [binvalue for k in pdf.config.channel_order for binvalue in spec['data'][k]] + pdf.config.auxdata
 
     assert data == [122.0, 112.0, 0, 0, 0]
 
