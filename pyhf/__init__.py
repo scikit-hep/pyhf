@@ -21,35 +21,28 @@ def _gaussian_impl(x, mu, sigma):
     return norm.pdf(x, loc=mu, scale=sigma)
 
 
-def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
+def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
     at_minus_one = np.asarray(at_minus_one)
     at_zero = np.asarray(at_zero)
     at_plus_one = np.asarray(at_plus_one)
 
-    def func(alphas):
-        '''
-        return: interpolated values (np.ndarray)
-        '''
-        alphas = np.asarray(alphas)
-        iplus_izero = at_plus_one - at_zero
-        izero_iminus = at_zero - at_minus_one
-        mask = np.outer(alphas < 0, np.ones(iplus_izero.shape))
-        interpolated = np.where(mask, np.outer(alphas, izero_iminus),
-                                np.outer(alphas, iplus_izero))
-        return interpolated
-    return func
+    alphas = np.asarray(alphas)
+    iplus_izero = at_plus_one - at_zero
+    izero_iminus = at_zero - at_minus_one
+    mask = np.outer(alphas < 0, np.ones(iplus_izero.shape))
+    interpolated = np.where(mask, np.outer(alphas, izero_iminus),
+                            np.outer(alphas, iplus_izero))
+    return interpolated
 
-def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
+def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
     base_positive = np.divide(at_plus_one,  at_zero)
     base_negative = np.divide(at_minus_one, at_zero)
-    def func(alphas):
-        alphas = np.asarray(alphas)
-        expo_positive = np.outer(alphas, np.ones(base_positive.shape))
-        mask = np.outer(alphas > 0, np.ones(base_positive.shape))
-        bases = mask * base_positive + (1-mask)*base_negative
-        exponents = mask * expo_positive  + (1-mask)*(-expo_positive)
-        return np.power(bases, exponents)
-    return func
+    alphas = np.asarray(alphas)
+    expo_positive = np.outer(alphas, np.ones(base_positive.shape))
+    mask = np.outer(alphas > 0, np.ones(base_positive.shape))
+    bases = mask * base_positive + (1-mask)*base_negative
+    exponents = mask * expo_positive  + (1-mask)*(-expo_positive)
+    return np.power(bases, exponents)
 
 class normsys_constraint(object):
 
@@ -247,10 +240,10 @@ class hfpdf(object):
         for m in mods:
             mod, modpars = self.config.mod(m), pars[self.config.par_slice(m)]
             assert len(modpars) == 1
-            interpfunc = _hfinterp_code1(mod.at_minus_one[channel][sample],
+            mod_factor = _hfinterp_code1(mod.at_minus_one[channel][sample],
                                          mod.at_zero,
-                                         mod.at_plus_one[channel][sample])
-            mod_factor = interpfunc(modpars)[0]
+                                         mod.at_plus_one[channel][sample],
+                                         modpars)[0]
             factors.append(mod_factor)
         return np.prod(factors)
 
@@ -261,10 +254,10 @@ class hfpdf(object):
         for m in mods:
             mod, modpars = self.config.mod(m), pars[self.config.par_slice(m)]
             assert len(modpars) == 1
-            interpfunc = _hfinterp_code0(mod.at_minus_one[channel][sample],
+            mod_delta = _hfinterp_code0(mod.at_minus_one[channel][sample],
                                          mod.at_zero[channel][sample],
-                                         mod.at_plus_one[channel][sample])
-            mod_delta = interpfunc(modpars)[0]
+                                         mod.at_plus_one[channel][sample],
+                                         modpars)[0]
             summands.append(mod_delta)
         return np.sum(summands, axis=0)
 
