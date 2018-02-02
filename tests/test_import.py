@@ -15,8 +15,8 @@ def test_import_prepHistFactory():
     assert 'background2' in spec['channels']['channel1']
 
 
-    assert pdf.expected_actualdata(pdf.config.suggested_init()) == [120.0, 110.0]
+    assert pdf.expected_actualdata(pdf.config.suggested_init()).tolist() == [120.0, 110.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
-    assert pdf.expected_data(pars, include_auxdata = False) == [140,120]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist() == [140,120]

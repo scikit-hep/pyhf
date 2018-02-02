@@ -99,23 +99,23 @@ def test_pdf_integration_histosys():
     pars = [None,None]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False) == [102,190]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist() == [102,190]
 
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [2.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)  == [104,230]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()  == [104,230]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False) == [ 98,100]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist() == [ 98,100]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-2.0]]
-    assert pdf.expected_data(pars, include_auxdata = False) == [ 96, 50]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist() == [ 96, 50]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[1.0], [1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)  == [102+30,190+95]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()  == [102+30,190+95]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[1.0], [-1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)== [ 98+30,100+95]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist() == [ 98+30,100+95]
 
 
 def test_pdf_integration_normsys():
@@ -140,13 +140,13 @@ def test_pdf_integration_normsys():
 
     pars = [None,None]
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100,150]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150*1.1]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*1.1,150*1.1]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100*0.9,150*0.9]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*0.9]
 
 def test_pdf_integration_shapesys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
@@ -174,16 +174,16 @@ def test_pdf_integration_shapesys():
 
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0,1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100,150]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.1,1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*1.1,150]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0,1.1]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100,150*1.1]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100,150*1.1]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.1, 0.9]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100*1.1,150*0.9]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*1.1,150*0.9]
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.9,1.1]]
-    assert pdf.expected_data(pars, include_auxdata = False)   == [100*0.9,150*1.1]
+    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*1.1]

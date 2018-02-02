@@ -294,10 +294,8 @@ class hfpdf(object):
     def expected_actualdata(self, pars):
         data = []
         for channel in self.config.channel_order:
-            counts = [self.expected_sample(channel, sample, pars)
-                      for sample in self.channels[channel]]
-            data += [sum(sample_counts) for sample_counts in zip(*counts)]
-        return data
+            data.append(np.sum(np.stack([self.expected_sample(channel, sample, pars) for sample in self.channels[channel]]),axis=0))
+        return np.concatenate(data)
 
     def expected_data(self, pars, include_auxdata=True):
         expected_actual = self.expected_actualdata(pars)
