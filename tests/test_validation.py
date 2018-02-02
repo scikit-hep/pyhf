@@ -21,7 +21,7 @@ def test_validation_1bin_shapesys():
     source = json.load(open('validation/data/1bin_example1.json'))
     pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
 
-    data = source['bindata']['data'] + pdf.auxdata
+    data = source['bindata']['data'] + pdf.config.auxdata
     muTest = 1.0
 
     assert len(pdf.config.suggested_init()) == 2
@@ -82,7 +82,7 @@ def test_validation_1bin_normsys():
     }
     pdf  = pyhf.hfpdf(spec)
 
-    data = source['bindata']['data'] + pdf.auxdata
+    data = source['bindata']['data'] + pdf.config.auxdata
 
     muTest = 1.0
 
@@ -141,7 +141,7 @@ def test_validation_2bin_histosys():
     }
     pdf  = pyhf.hfpdf(spec)
 
-    data = source['bindata']['data'] + pdf.auxdata
+    data = source['bindata']['data'] + pdf.config.auxdata
 
     muTest = 1.0
 
@@ -210,9 +210,9 @@ def test_validation_2bin_2channel():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.channel_order:
+    for c in pdf.config.channel_order:
         data += source['channels'][c]['bindata']['data']
-    data = data + pdf.auxdata
+    data = data + pdf.config.auxdata
 
     muTest = 1.0
 
@@ -289,9 +289,9 @@ def test_validation_2bin_2channel_couplednorm():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.channel_order:
+    for c in pdf.config.channel_order:
         data += source['channels'][c]['bindata']['data']
-    data = data + pdf.auxdata
+    data = data + pdf.config.auxdata
 
 
     muTest = 1.0
@@ -311,13 +311,13 @@ def test_validation_2bin_2channel_couplednorm():
 
 def test_validation_2bin_2channel_coupledhistosys():
     expected_result = {
-    'obs': 0.06855563832508986,
+    'obs': 0.0796739833305826,
      'exp': [
-        1.6538409169005294e-05,
-        0.0002490863040337432,
-        0.0032056269173357244,
-        0.03060508439328246,
-        0.17574126217230668
+        1.765372502072074e-05,
+        0.00026265618793683054,
+        0.003340033567379219,
+        0.03152233566143051,
+        0.17907736639946248
     ]
     }
     source = json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
@@ -369,13 +369,14 @@ def test_validation_2bin_2channel_coupledhistosys():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.channel_order:
+    for c in pdf.config.channel_order:
         data += source['channels'][c]['bindata']['data']
-    data = data + pdf.auxdata
+    data = data + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
+    assert len(pdf.config.auxdata) == 1
     assert len(init_pars)  == 2 #1 mu 1 shared histosys
     assert len(par_bounds) == 2
 

@@ -116,15 +116,27 @@ class shapesys_constraint(object):
     def expected_data(self, pars):
         return self.alphas(pars)
 
-
 class modelconfig(object):
+    @classmethod
+    def from_spec(cls,spec):
+        # hacky, need to keep track in which order we added the constraints
+        # so that we can generate correctly-ordered data
+        instance = cls()
+        for ch, samples in spec.items():
+            instance.channel_order.append(ch)
+            for sample, sample_def in samples.items():
+                for mod_def in sample_def['mods']:
+                    instance.add_mod_from_def(ch, sample, sample_def, mod_def)
+        return instance
 
     def __init__(self):
         self.poi_index = None
         self.par_map = {}
-        self.next_index = 0
-        self.snapshots = {}
         self.par_order = []
+        self.auxdata = []
+        self.auxdata_order = []
+        self.channel_order = []
+        self.next_index = 0
 
     def suggested_init(self):
         init = []
@@ -145,6 +157,7 @@ class modelconfig(object):
         return self.par_map[name]['mod']
 
     def add_mod(self, name, npars, mod, suggested_init, suggested_bounds):
+        is_constraint = type(mod) in [histosys_constraint, normsys_constraint, shapesys_constraint]
         if name in self.par_map:
             if type(mod) == normsys_constraint:
                 log.info('accepting existing normsys')
@@ -165,75 +178,58 @@ class modelconfig(object):
             'suggested_init': suggested_init,
             'suggested_bounds': suggested_bounds
         }
+        if is_constraint:
+            self.auxdata += self.mod(name).auxdata
+            self.auxdata_order.append(name)
         return True
 
+    def add_mod_from_def(self, ch, sample, sample_def, mod_def):
+        if mod_def['type'] == 'normfactor':
+            mod = None  # no object for factors
+            self.add_mod(name=mod_def['name'],
+                                mod=mod,
+                                npars=1,
+                                suggested_init=[1.0],
+                                suggested_bounds=[[0, 10]])
+            self.poi_index = self.par_slice(
+                mod_def['name']).start
+        if mod_def['type'] == 'shapesys':
+            # we reserve one parameter for each bin
+            mod = shapesys_constraint(sample_def['data'], mod_def['data'])
+            self.add_mod(
+                name=mod_def['name'],
+                npars=len(sample_def['data']),
+                suggested_init=[1.0] * len(sample_def['data']),
+                suggested_bounds=[[0, 10]] *
+                len(sample_def['data']),
+                mod=mod,
+            )
+        if mod_def['type'] == 'normsys':
+            mod = normsys_constraint()
+            self.add_mod(name=mod_def['name'],
+                         npars=1,
+                         mod=mod,
+                         suggested_init=[0.0],
+                         suggested_bounds=[[-5, 5]])
+            self.mod(mod_def['name']).add_sample(
+                ch, sample, sample_def['data'], mod_def['data']
+            )
+        if mod_def['type'] == 'histosys':
+            mod = histosys_constraint()
+            self.add_mod(
+                mod_def['name'],
+                npars=1,
+                mod=mod,
+                suggested_init=[1.0],
+                suggested_bounds=[[-5, 5]])
+            self.mod(mod_def['name']).add_sample(
+                ch, sample, sample_def['data'], mod_def['data']
+            )
 
 class hfpdf(object):
-
-    def __init__(self, channels):
-        self.channels = channels
-        self.config = modelconfig()
-        self.auxdata = []
-        # hacky, need to keep track in which order we added the constraints
-        # so that we can generate correctly-ordered data
-        self.auxdata_order = []
-        self.channel_order = []
-        for ch, samples in self.channels.items():
-            self.channel_order.append(ch)
-            for sample, sample_def in samples.items():
-                for mod_def in sample_def['mods']:
-                    if mod_def['type'] == 'normfactor':
-                        mod = None  # no object for factors
-                        self.config.add_mod(name=mod_def['name'],
-                                            mod=mod,
-                                            npars=1,
-                                            suggested_init=[1.0],
-                                            suggested_bounds=[[0, 10]])
-                        self.config.poi_index = self.config.par_slice(
-                            mod_def['name']).start
-                    if mod_def['type'] == 'shapesys':
-                        # we reserve one parameter for each bin
-                        mod = shapesys_constraint(sample_def['data'],
-                                                  mod_def['data'])
-                        just_added = self.config.add_mod(
-                            name=mod_def['name'],
-                            npars=len(sample_def['data']),
-                            suggested_init=[1.0] * len(sample_def['data']),
-                            suggested_bounds=[[0, 10]] *
-                            len(sample_def['data']),
-                            mod=mod,
-                        )
-                        if just_added:
-                            self.auxdata += self.config.mod(
-                                mod_def['name']).auxdata
-                            self.auxdata_order.append(mod_def['name'])
-                    if mod_def['type'] == 'normsys':
-                        mod = normsys_constraint()
-                        just_added = self.config.add_mod(name=mod_def['name'],
-                                                         npars=1,
-                                                         mod=mod,
-                                                         suggested_init=[0.0],
-                                                         suggested_bounds=[[-5, 5]])
-                        self.config.mod(mod_def['name']).add_sample(
-                            ch, sample, sample_def['data'], mod_def['data'])
-                        if just_added:
-                            self.auxdata += self.config.mod(
-                                mod_def['name']).auxdata
-                            self.auxdata_order.append(mod_def['name'])
-                    if mod_def['type'] == 'histosys':
-                        mod = histosys_constraint()
-                        self.config.add_mod(
-                            mod_def['name'],
-                            npars=1,
-                            mod=mod,
-                            suggested_init=[1.0],
-                            suggested_bounds=[[-5, 5]])
-                        self.config.mod(mod_def['name']).add_sample(
-                            ch, sample, sample_def['data'], mod_def['data']
-                        )
-                        self.auxdata += self.config.mod(
-                            mod_def['name']).auxdata
-                        self.auxdata_order.append(mod_def['name'])
+    def __init__(self, spec):
+        self.config = modelconfig.from_spec(spec)
+        self.channels = spec
 
     def _multiplicative_factors(self, channel, sample, pars):
         multiplicative_types = ['shapesys', 'normfactor']
@@ -295,7 +291,7 @@ class hfpdf(object):
 
         # order matters! because we generated auxdata in a certain order
         auxdata = []
-        for modname in self.auxdata_order:
+        for modname in self.config.auxdata_order:
             thisaux = self.config.mod(modname).expected_data(
                 pars[self.config.par_slice(modname)])
             auxdata = np.append(auxdata, thisaux)
@@ -303,7 +299,7 @@ class hfpdf(object):
 
     def expected_actualdata(self, pars):
         data = []
-        for channel in self.channel_order:
+        for channel in self.config.channel_order:
             counts = [self.expected_sample(channel, sample, pars)
                       for sample in self.channels[channel]]
             data += [sum(sample_counts) for sample_counts in zip(*counts)]
@@ -321,7 +317,7 @@ class hfpdf(object):
         # iterate over all constraints order doesn't matter....
         start_index = 0
         summands = []
-        for cname in self.auxdata_order:
+        for cname in self.config.auxdata_order:
             mod, modslice = self.config.mod(cname), \
                 self.config.par_slice(cname)
             modalphas = mod.alphas(pars[modslice])
@@ -333,7 +329,7 @@ class hfpdf(object):
         return np.sum(summands)
 
     def logpdf(self, pars, data):
-        cut = len(data) - len(self.auxdata)
+        cut = len(data) - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
         summands = np.log(_poisson_impl(actual_data, lambdas_data))
