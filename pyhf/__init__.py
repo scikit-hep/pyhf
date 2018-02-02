@@ -1,36 +1,36 @@
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
+from scipy.special import gammaln
 import logging
 
 
 log = logging.getLogger(__name__)
 
-
 def _poisson_impl(n, lam):
-    # use continuous gaussian approx, b/c asimov data may not be integer
-    # print 'pois', n,lam
-    # return poisson.pmf(n,lam)
-    # print 'lam,sqrtlam',lam,np.sqrt(lam)
-    n = np.array(n)
-    from scipy.special import gammaln
+    '''
+    return: poisson pdf values (np.ndarray)
+    '''
+    n = np.asarray(n)
     return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
-    # return np.exp(k*np.log(r)-r-gammaln(k+1.))
-    # return norm.pdf(n, loc = lam, scale = np.sqrt(lam))
 
 def _gaussian_impl(x, mu, sigma):
-    # use continuous gaussian approx, b/c asimov data may not be integer
-    # print 'gaus', x, mu, sigma
+    '''
+    return: gausian pdf values (np.ndarray)
+    '''
     return norm.pdf(x, loc=mu, scale=sigma)
 
 
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
-    at_minus_one = np.array(at_minus_one)
-    at_zero = np.array(at_zero)
-    at_plus_one = np.array(at_plus_one)
+    at_minus_one = np.asarray(at_minus_one)
+    at_zero = np.asarray(at_zero)
+    at_plus_one = np.asarray(at_plus_one)
 
     def func(alphas):
-        alphas = np.array(alphas)
+        '''
+        return: interpolated values (np.ndarray)
+        '''
+        alphas = np.asarray(alphas)
         iplus_izero = at_plus_one - at_zero
         izero_iminus = at_zero - at_minus_one
         mask = np.outer(alphas < 0, np.ones(iplus_izero.shape))
@@ -39,16 +39,17 @@ def _hfinterp_code0(at_minus_one, at_zero, at_plus_one):
         return interpolated
     return func
 
-
 def _hfinterp_code1(at_minus_one, at_zero, at_plus_one):
-    def func(alpha):
-        alpha = np.array(alpha)
-        base = np.where(alpha < 0, at_minus_one / at_zero,
-                        at_plus_one / at_zero)
-        exponents = np.where(alpha < 0, -alpha, alpha)
-        return np.power(base, exponents)
+    base_positive = np.divide(at_plus_one,  at_zero)
+    base_negative = np.divide(at_minus_one, at_zero)
+    def func(alphas):
+        alphas = np.asarray(alphas)
+        expo_positive = np.outer(alphas, np.ones(base_positive.shape))
+        mask = np.outer(alphas > 0, np.ones(base_positive.shape))
+        bases = mask * base_positive + (1-mask)*base_negative
+        exponents = mask * expo_positive  + (1-mask)*(-expo_positive)
+        return np.power(bases, exponents)
     return func
-
 
 class normsys_constraint(object):
 
@@ -242,16 +243,16 @@ class hfpdf(object):
         # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         mods = [m['name'] for m in self.channels[channel][sample]['mods']
                 if m['type'] == 'normsys']
-        factor = 1
-
+        factors = []
         for m in mods:
-            mod = self.config.mod(m)
-            val = pars[self.config.par_slice(m)]
-            assert len(val) == 1
-            interp = _hfinterp_code1(mod.at_minus_one[channel][sample],
-                                     mod.at_zero, mod.at_plus_one[channel][sample])
-            factor = factor * interp(val[0])
-        return factor
+            mod, modpars = self.config.mod(m), pars[self.config.par_slice(m)]
+            assert len(modpars) == 1
+            interpfunc = _hfinterp_code1(mod.at_minus_one[channel][sample],
+                                         mod.at_zero,
+                                         mod.at_plus_one[channel][sample])
+            mod_factor = interpfunc(modpars)[0]
+            factors.append(mod_factor)
+        return np.prod(factors)
 
     def _histosysdelta(self, channel, sample, pars):
         mods = [m['name'] for m in self.channels[channel][sample]['mods']
@@ -329,11 +330,13 @@ class hfpdf(object):
         return np.sum(summands)
 
     def logpdf(self, pars, data):
+        pars, data = np.asarray(pars), np.asarray(data)
         cut = len(data) - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
         summands = np.log(_poisson_impl(actual_data, lambdas_data))
-        return np.sum(summands) + self.constraint_logpdf(aux_data, pars)
+        result = np.sum(summands) + self.constraint_logpdf(aux_data, pars)
+        return np.asarray(result)
 
     def pdf(self, pars, data):
         return np.exp(self.logpdf(pars, data))
