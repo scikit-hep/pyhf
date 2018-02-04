@@ -111,7 +111,7 @@ class shapesys_constraint(object):
 
 class modelconfig(object):
     @classmethod
-    def from_spec(cls,spec):
+    def from_spec(cls,spec,poiname = 'mu'):
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
@@ -120,6 +120,7 @@ class modelconfig(object):
             for sample, sample_def in samples.items():
                 for mod_def in sample_def['mods']:
                     instance.add_mod_from_def(ch, sample, sample_def, mod_def)
+        instance.set_poi(poiname)
         return instance
 
     def __init__(self):
@@ -148,6 +149,11 @@ class modelconfig(object):
 
     def mod(self, name):
         return self.par_map[name]['mod']
+
+    def set_poi(self,name):
+        s = self.par_slice(name)
+        assert s.stop-s.start == 1
+        self.poi_index = s.start
 
     def add_mod(self, name, npars, mod, suggested_init, suggested_bounds):
         is_constraint = type(mod) in [histosys_constraint, normsys_constraint, shapesys_constraint]
@@ -187,8 +193,6 @@ class modelconfig(object):
                                 npars=1,
                                 suggested_init=[1.0],
                                 suggested_bounds=[[0, 10]])
-            self.poi_index = self.par_slice(
-                mod_def['name']).start
         if mod_def['type'] == 'shapefactor':
             mod = None  # no object for factors
             self.add_mod(name=mod_def['name'],
@@ -230,8 +234,8 @@ class modelconfig(object):
             )
 
 class hfpdf(object):
-    def __init__(self, spec):
-        self.config = modelconfig.from_spec(spec)
+    def __init__(self, spec, **config_kwargs):
+        self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.channels = spec
 
     def _multiplicative_factors(self, channel, sample, pars):
