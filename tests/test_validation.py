@@ -387,3 +387,73 @@ def test_validation_2bin_2channel_coupledhistosys():
     assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
     for result,expected_result in zip(cls_exp, expected_result['exp']):
         assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE
+
+
+def test_validation_2bin_2channel_coupledshapefactor():
+    expected_result = {
+    'obs': 0.5421679124909312,
+     'exp': [
+        0.013753299929451691,
+        0.048887400056355966,
+        0.15555296253957684,
+        0.4007561343326305,
+        0.7357169630955912
+        ]
+    }
+    source = json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
+    spec =  {
+        'signal': {
+            'signal': {
+                'data': source['channels']['signal']['bindata']['sig'],
+                'mods': [
+                    {
+                        'name': 'mu',
+                        'type': 'normfactor',
+                        'data': None
+                    }
+                ]
+            },
+            'bkg1': {
+                'data': source['channels']['signal']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_shapefactor',
+                        'type': 'shapefactor',
+                        'data': None
+                    }
+                ]
+            }
+        },
+        'control': {
+            'background': {
+                'data': source['channels']['control']['bindata']['bkg1'],
+                'mods': [
+                    {
+                        'name': 'coupled_shapefactor',
+                        'type': 'shapefactor',
+                        'data': None
+                    }
+                ]
+            }
+        }
+    }
+    pdf  = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.config.channel_order:
+        data += source['channels'][c]['bindata']['data']
+    data = data + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    assert len(pdf.config.auxdata) == 0
+    assert len(init_pars)  == 3 #1 mu 2 shared shapefactors
+    assert len(par_bounds) == 3
+
+    muTest = 1.0
+    clsobs, cls_exp = pyhf.runOnePoint(muTest, data,pdf,init_pars,par_bounds)[-2:]
+    cls_obs = 1./clsobs
+    cls_exp = [1./x for x in cls_exp]
+    assert (cls_obs - expected_result['obs'])/expected_result['obs'] < VALIDATION_TOLERANCE
+    for result,expected_result in zip(cls_exp, expected_result['exp']):
+        assert (result-expected_result)/expected_result < VALIDATION_TOLERANCE

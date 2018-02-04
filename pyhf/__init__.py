@@ -65,7 +65,6 @@ class normsys_constraint(object):
     def pdf(self, a, alpha):
         return _gaussian_impl(a, alpha, 1)
 
-
 class histosys_constraint(object):
 
     def __init__(self):
@@ -159,6 +158,9 @@ class modelconfig(object):
             if type(mod) == histosys_constraint:
                 log.info('accepting existing histosys')
                 return False
+            if type(mod) == type(None):
+                log.info('accepting existing unconstrained factor ')
+                return False
             raise RuntimeError(
                 'shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
@@ -187,6 +189,14 @@ class modelconfig(object):
                                 suggested_bounds=[[0, 10]])
             self.poi_index = self.par_slice(
                 mod_def['name']).start
+        if mod_def['type'] == 'shapefactor':
+            mod = None  # no object for factors
+            self.add_mod(name=mod_def['name'],
+                                mod=mod,
+                                npars=len(sample_def['data']),
+                                suggested_init   =[1.0] * len(sample_def['data']),
+                                suggested_bounds=[[0, 10]] * len(sample_def['data'])
+                        )
         if mod_def['type'] == 'shapesys':
             # we reserve one parameter for each bin
             mod = shapesys_constraint(sample_def['data'], mod_def['data'])
@@ -194,8 +204,7 @@ class modelconfig(object):
                 name=mod_def['name'],
                 npars=len(sample_def['data']),
                 suggested_init=[1.0] * len(sample_def['data']),
-                suggested_bounds=[[0, 10]] *
-                len(sample_def['data']),
+                suggested_bounds=[[0, 10]] * len(sample_def['data']),
                 mod=mod,
             )
         if mod_def['type'] == 'normsys':
@@ -226,7 +235,7 @@ class hfpdf(object):
         self.channels = spec
 
     def _multiplicative_factors(self, channel, sample, pars):
-        multiplicative_types = ['shapesys', 'normfactor']
+        multiplicative_types = ['shapesys', 'normfactor', 'shapefactor']
         mods = [m['name'] for m in self.channels[channel][sample]['mods']
                 if m['type'] in multiplicative_types]
         return [pars[self.config.par_slice(m)] for m in mods]

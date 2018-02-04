@@ -17,9 +17,9 @@ Implemented variations
 - [x] NormFactor
 - [x] Multiple Channels
 - [x] Import from XML + ROOT via `uproot` (https://github.com/scikit-hep/uproot)
+- [x] ShapeFactor
 
 ## Todo
-- [ ] ShapeFactor
 - [ ] StatError
 - [ ] StatConfig
 - [ ] Non-asymptotic calculators
