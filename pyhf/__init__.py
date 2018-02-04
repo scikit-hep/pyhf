@@ -152,7 +152,7 @@ class modelconfig(object):
 
     def set_poi(self,name):
         s = self.par_slice(name)
-        s.stop-s.start == 1
+        assert s.stop-s.start == 1
         self.poi_index = s.start
 
     def add_mod(self, name, npars, mod, suggested_init, suggested_bounds):
