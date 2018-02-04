@@ -24,6 +24,7 @@ setup(
        'matplotlib',
        'jupyter',
        'uproot',
+       'papermill'
     ]
   },
   entry_points = {
