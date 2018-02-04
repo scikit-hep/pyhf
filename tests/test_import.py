@@ -3,7 +3,7 @@ def test_import_prepHistFactory():
     import pyhf.readxml
 
     spec = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/')
-    pdf = pyhf.hfpdf(spec['channels'])
+    pdf = pyhf.hfpdf(spec['channels'], poiname = 'SigXsecOverSM')
 
     data = [binvalue for k in pdf.config.channel_order for binvalue in spec['data'][k]] + pdf.config.auxdata
 
