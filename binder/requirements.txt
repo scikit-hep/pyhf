@@ -3,3 +3,4 @@ numpy
 papermill
 pyhf
 scipy
+uproot
