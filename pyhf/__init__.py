@@ -379,6 +379,7 @@ def unconstrained_bestfit(data, pdf, init_pars, par_bounds):
         assert result.success
     except AssertionError:
         log.error(result)
+        raise
     return result.x
 
 
@@ -392,6 +393,7 @@ def constrained_bestfit(constrained_mu, data, pdf, init_pars, par_bounds):
         assert result.success
     except AssertionError:
         log.error(result)
+        raise
     return result.x
 
 
