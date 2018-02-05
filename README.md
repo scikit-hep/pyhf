@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/lukasheinrich/pyhf.svg?branch=master)](https://travis-ci.org/lukasheinrich/pyhf)
 [![Coverage Status](https://coveralls.io/repos/github/lukasheinrich/pyhf/badge.svg?branch=master)](https://coveralls.io/github/lukasheinrich/pyhf?branch=master)
 [![PyPI version](https://badge.fury.io/py/pyhf.svg)](https://badge.fury.io/py/pyhf)
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/lukasheinrich/pyhf/master)
 
 The HistFactory p.d.f. template is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
 of ROOT, RooFit, RooStats framework.
@@ -59,6 +60,4 @@ pip uninstall pyhf
 
 ## Authors
 
-Please check the contribution statistics for a list of contributors
-
-https://github.com/lukasheinrich/pyhf/graphs/contributors
+Please check the [contribution statistics for a list of contributors](https://github.com/lukasheinrich/pyhf/graphs/contributors)
