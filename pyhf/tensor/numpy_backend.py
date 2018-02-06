@@ -12,10 +12,6 @@ class numpy_backend(object):
         tensor_in = self.astensor(tensor_in)
         return tensor_in.tolist()
 
-    def tolist(self,tensor_in):
-        tensor_in = self.astensor(tensor_in)
-        return tensor_in.tolist()
-
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)

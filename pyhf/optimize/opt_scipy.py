@@ -1,4 +1,6 @@
 from scipy.optimize import minimize
+import logging
+log = logging.getLogger(__name__)
 
 class scipy_optimizer(object):
     def __init__(self):

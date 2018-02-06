@@ -16,6 +16,9 @@ setup(
     'xmlimport': [
        'uproot',
      ],
+    'torch': [
+      'torch'
+    ],
     'develop': [
        'pyflakes',
        'pytest>=3.2.0',
@@ -24,7 +27,8 @@ setup(
        'matplotlib',
        'jupyter',
        'uproot',
-       'papermill'
+       'papermill',
+       'torch'
     ]
   },
   entry_points = {
