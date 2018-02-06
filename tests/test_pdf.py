@@ -47,7 +47,7 @@ def test_numpy_pdf_inputs():
     assert len(data) == np_data.shape[0]
     assert len(pars) == np_parameters.shape[0]
     assert pdf.logpdf(pars,data) == pdf.logpdf(np_parameters,np_data)
-    assert np.array(pdf.logpdf(np_parameters,np_data)).shape == ()
+    assert np.array(pdf.logpdf(np_parameters,np_data)).shape == (1,)
 
 
 def test_core_pdf_broadcasting():
