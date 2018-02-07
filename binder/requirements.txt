@@ -1,4 +1,6 @@
 matplotlib
 numpy
+papermill
 pyhf
 scipy
+uproot
