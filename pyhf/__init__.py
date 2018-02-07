@@ -5,6 +5,8 @@ from .optimize.opt_scipy import scipy_optimizer
 try:
     from .tensor.pytorch_backend import pytorch_backend
     from .optimize.opt_pytorch import pytorch_optimizer
+    assert pytorch_backend
+    assert pytorch_optimizer
 except ImportError:
     pass
 
