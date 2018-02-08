@@ -28,7 +28,8 @@ setup(
        'jupyter',
        'uproot',
        'papermill',
-       'torch'
+       'torch',
+       'tensorflow'
     ]
   },
   entry_points = {
