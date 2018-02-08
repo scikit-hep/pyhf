@@ -10,6 +10,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from .tensor.tensorflow_backend import tensorflow_backend
+    assert tensorflow_backend
+except ImportError:
+    pass
+
 
 tensorlib = numpy_backend()
 optimizer = scipy_optimizer()
@@ -106,7 +112,7 @@ class shapesys_constraint(object):
             self.auxdata.append(bkg_over_bsq)
 
     def alphas(self, pars):
-        return tensorlib.product([pars, self.bkg_over_db_squared], axis=0)
+        return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
 
     def pdf(self, a, alpha):
         return _poisson_impl(a, alpha)

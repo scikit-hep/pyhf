@@ -76,3 +76,37 @@ def test_pdf_eval():
     assert np.std(values) < 1e-6
 
     pyhf.tensorlib = oldlib
+
+
+def test_pdf_eval_2():
+    import pyhf
+    import numpy as np
+    oldlib = pyhf.tensorlib
+
+    tf_sess = tf.Session()
+    backends = [numpy_backend(poisson_from_normal = True), pytorch_backend(), tensorflow_backend(session = tf_sess)]
+
+    values = []
+    for b in backends:
+
+        pyhf.tensorlib = b
+
+        source = {
+          "binning": [2,-0.5,1.5],
+          "bindata": {
+            "data":    [120.0, 180.0],
+            "bkg":     [100.0, 150.0],
+            "bkgerr":     [10.0, 10.0],
+            "sig":     [30.0, 95.0]
+          }
+        }
+
+        pdf  = hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+        data = source['bindata']['data'] + pdf.config.auxdata
+
+        v1 = pdf.logpdf(pdf.config.suggested_init(), data)
+        values.append(pyhf.tensorlib.tolist(v1)[0])
+
+    assert np.std(values) < 1e-6
+
+    pyhf.tensorlib = oldlib
