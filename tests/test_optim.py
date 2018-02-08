@@ -55,6 +55,10 @@ def test_optim_numpy():
     v1 =  pdf.logpdf(init_pars,data)
     result = optim.unconstrained_bestfit(pyhf.loglambdav,data,pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
+
+
+    result = optim.constrained_bestfit(pyhf.loglambdav, 1.0, data,pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
     pyhf.tensorlib = oldlib
 
 
@@ -111,5 +115,7 @@ def test_optim_pytorch():
     result = optim.unconstrained_bestfit(pyhf.loglambdav,data,pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
+    result = optim.constrained_bestfit(pyhf.loglambdav, 1.0, data,pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
 
     pyhf.tensorlib = oldlib
