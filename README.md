@@ -24,9 +24,9 @@ Implemented variations:
 - [x] ShapeFactor
 
 Computational Backends:
-- numpy
-- pytorch
-- tensorflow
+- [x] numpy
+- [x] pytorch
+- [x] tensorflow
 
 ## Todo
 - [ ] StatError
