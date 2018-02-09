@@ -14,6 +14,7 @@ try:
     from .tensor.tensorflow_backend import tensorflow_backend
     from .optimize.opt_tflow import tflow_optimizer
     assert tensorflow_backend
+    assert tflow_optimizer
 except ImportError:
     pass
 
