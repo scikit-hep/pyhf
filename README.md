@@ -1,5 +1,6 @@
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
+[![DOI](https://zenodo.org/badge/118789569.svg)](https://zenodo.org/badge/latestdoi/118789569)
 [![Build Status](https://travis-ci.org/lukasheinrich/pyhf.svg?branch=master)](https://travis-ci.org/lukasheinrich/pyhf)
 [![Coverage Status](https://coveralls.io/repos/github/lukasheinrich/pyhf/badge.svg?branch=master)](https://coveralls.io/github/lukasheinrich/pyhf?branch=master)
 [![PyPI version](https://badge.fury.io/py/pyhf.svg)](https://badge.fury.io/py/pyhf)
