@@ -7,7 +7,7 @@
 [![PyPI version](https://badge.fury.io/py/pyhf.svg)](https://badge.fury.io/py/pyhf)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/lukasheinrich/pyhf/master)
 
-The HistFactory p.d.f. template [[CERN-OPEN-2012-016](cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
+The HistFactory p.d.f. template [[CERN-OPEN-2012-016](https://cds.cern.ch/record/1456844)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
 of ROOT, RooFit, RooStats framework.
 
 This repo has some example code for multi-bin histogram-based analysis based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)].
@@ -20,7 +20,7 @@ Implemented variations
 - [x] ShapeSys
 - [x] NormFactor
 - [x] Multiple Channels
-- [x] Import from XML + ROOT via `uproot` (https://github.com/scikit-hep/uproot)
+- [x] Import from XML + ROOT via [`uproot`](https://github.com/scikit-hep/uproot)
 - [x] ShapeFactor
 
 ## Todo
