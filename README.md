@@ -10,11 +10,11 @@
 The HistFactory p.d.f. template [[CERN-OPEN-2012-016](https://cds.cern.ch/record/1456844)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
 of ROOT, RooFit, RooStats framework.
 
-This repo has some example code for multi-bin histogram-based analysis based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)].
+This repo is a pure-python implementation of that statistical model for multi-bin histogram-based analysis and its interval estimation is based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)]. The aim is also support modern computational graph libraries such as PyTorch and Tensorflow in order to make use of features such as of autodifferentiation and GPU acceleration.
 
 ## What does it support
 
-Implemented variations
+Implemented variations:
 - [x] HistoSys
 - [x] OverallSys
 - [x] ShapeSys
@@ -22,6 +22,11 @@ Implemented variations
 - [x] Multiple Channels
 - [x] Import from XML + ROOT via [`uproot`](https://github.com/scikit-hep/uproot)
 - [x] ShapeFactor
+
+Computational Backends:
+- numpy
+- pytorch
+- tensorflow
 
 ## Todo
 - [ ] StatError
