@@ -12,6 +12,7 @@ except ImportError:
 
 try:
     from .tensor.tensorflow_backend import tensorflow_backend
+    from .optimize.opt_tflow import tflow_optimizer
     assert tensorflow_backend
 except ImportError:
     pass
@@ -354,8 +355,8 @@ class hfpdf(object):
         return tensorlib.sum(summands) if summands is not None else 0
 
     def logpdf(self, pars, data):
-        cut = len(data) - len(self.config.auxdata)
         pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
+        cut = int(data.shape[0]) - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
         summands = tensorlib.log(_poisson_impl(actual_data, lambdas_data))
