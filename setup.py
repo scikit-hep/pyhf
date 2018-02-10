@@ -19,6 +19,9 @@ setup(
     'torch': [
       'torch'
     ],
+    'mxnet':[
+      'mxnet',
+    ],
     'develop': [
        'pyflakes',
        'pytest>=3.2.0',
@@ -29,7 +32,9 @@ setup(
        'uproot',
        'papermill',
        'torch',
-       'tensorflow'
+       'tensorflow',
+       'mxnet>=1.0.0',
+       'graphviz'
     ]
   },
   entry_points = {
