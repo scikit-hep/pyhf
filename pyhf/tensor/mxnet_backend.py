@@ -1,6 +1,6 @@
-import mxnet as mx
 from mxnet import nd
 import logging
+import itertools  # Hack fix for mxnet_backend.outer()
 log = logging.getLogger(__name__)
 
 
@@ -34,9 +34,16 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The outer product
         """
+        # This is currently a rather stupid way to do things, so need to fix this
+        # Currently also is assuming only 1-d tensors, which is bad
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        pass
+        tensor_in_2 = tensor_in_2.T
+        outer = nd.ones((tensor_in_1.size, tensor_in_2.size))
+        for i, j in itertools.product(range(tensor_in_1.size),
+                                      range(tensor_in_2.size)):
+            outer[i, j] = nd.dot(tensor_in_1[i], tensor_in_2[j])
+        return outer
 
     def astensor(self, tensor_in):
         """
@@ -233,7 +240,6 @@ class mxnet_backend(object):
 
     def simple_broadcast(self, *args):
         """
-        Does this work?
         There should be a more MXNet-style way to do this
         """
         broadcast = []
@@ -247,13 +253,14 @@ class mxnet_backend(object):
         return self.normal(n, lam, self.sqrt(lam))
 
     def normal(self, x, mu, sigma):
+        """
+        Currently copying from PyTorch's source until can find a better way to do this
+        """
         import math
         from numbers import Number
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        # Is needed?
-        # normal = nd.random.normal(loc=mu, scale=sigma)
 
         def log_prob(value, loc, scale):
             variance = scale ** 2
