@@ -1,6 +1,5 @@
 from mxnet import nd
 import logging
-import itertools  # Hack fix for mxnet_backend.outer()
 log = logging.getLogger(__name__)
 
 
@@ -25,7 +24,7 @@ class mxnet_backend(object):
 
     def outer(self, tensor_in_1, tensor_in_2):
         """
-        The outer product of two tensors: u.v^T
+        The outer product of two tensors
 
         Args:
             tensor_in_1: tensor object
@@ -34,16 +33,21 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The outer product
         """
-        # This is currently a rather stupid way to do things, so need to fix this
-        # Currently also is assuming only 1-d tensors, which is bad
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        tensor_in_2 = tensor_in_2.T
-        outer = nd.ones((tensor_in_1.size, tensor_in_2.size))
-        for i, j in itertools.product(range(tensor_in_1.size),
-                                      range(tensor_in_2.size)):
-            outer[i, j] = nd.dot(tensor_in_1[i], tensor_in_2[j])
-        return outer
+
+        tensor_1_shape = tensor_in_1.shape
+        tensor_2_shape = tensor_in_2.shape
+        if len(tensor_1_shape) == 1:
+            tensor_1_shape = (*tensor_1_shape, 1)
+        if len(tensor_2_shape) == 1:
+            tensor_2_shape = (*tensor_2_shape, 1)
+
+        rows1, cols1 = tensor_1_shape
+        rows2, cols2 = tensor_2_shape
+        return nd.reshape(nd.dot(tensor_in_1.reshape((rows1, 1, cols1, 1)),
+                                 tensor_in_2.reshape((1, rows2, 1, cols2))),
+                          (rows1 * cols1, rows2 * cols2))
 
     def astensor(self, tensor_in):
         """
