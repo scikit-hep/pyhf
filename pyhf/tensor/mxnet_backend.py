@@ -39,9 +39,9 @@ class mxnet_backend(object):
         tensor_1_shape = tensor_in_1.shape
         tensor_2_shape = tensor_in_2.shape
         if len(tensor_1_shape) == 1:
-            tensor_1_shape = (*tensor_1_shape, 1)
+            tensor_1_shape = (tensor_1_shape[0], 1)
         if len(tensor_2_shape) == 1:
-            tensor_2_shape = (*tensor_2_shape, 1)
+            tensor_2_shape = (tensor_2_shape[0], 1)
 
         rows1, cols1 = tensor_1_shape
         rows2, cols2 = tensor_2_shape
