@@ -1,5 +1,7 @@
 from mxnet import nd
 import logging
+import math  # Required for normal()
+from numbers import Number  # Required for normal()
 log = logging.getLogger(__name__)
 
 
@@ -45,8 +47,8 @@ class mxnet_backend(object):
 
         rows1, cols1 = tensor_1_shape
         rows2, cols2 = tensor_2_shape
-        return nd.reshape(nd.dot(tensor_in_1.reshape((rows1, 1, cols1, 1)),
-                                 tensor_in_2.reshape((1, rows2, 1, cols2))),
+        return nd.reshape(nd.broadcast_mul(tensor_in_1.reshape((rows1, 1, cols1, 1)),
+                                           tensor_in_2.reshape((1, rows2, 1, cols2))),
                           (rows1 * cols1, rows2 * cols2))
 
     def astensor(self, tensor_in):
@@ -211,11 +213,11 @@ class mxnet_backend(object):
         Apply a boolean selection mask to the elements of the input tensors
 
         Example:
-            >>> mxnet_backend.where(
-                mxnet_backend.astensor([1, 0, 1]),
-                mxnet_backend.astensor([1, 1, 1]),
-                mxnet_backend.astensor([2, 2, 2]))
-            >>> [1. 2. 1.]
+            >>> where(
+                astensor([1, 0, 1]),
+                astensor([1, 1, 1]),
+                astensor([2, 2, 2]))
+            [1. 2. 1.]
 
         Args:
             mask: Boolean mask (boolean or tensor object of booleans)
@@ -228,7 +230,8 @@ class mxnet_backend(object):
         mask = self.astensor(mask)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return nd.multiply(mask, tensor_in_1) + nd.multiply(nd.subtract(1, mask), tensor_in_2)
+        return nd.add(nd.multiply(mask, tensor_in_1),
+                      nd.multiply(nd.subtract(1, mask), tensor_in_2))
 
     def concatenate(self, sequence):
         """
@@ -244,14 +247,32 @@ class mxnet_backend(object):
 
     def simple_broadcast(self, *args):
         """
-        There should be a more MXNet-style way to do this
+        Broadcast a sequence of 1 dimensional arrays
+
+        Example:
+            >>> simple_broadcast(
+                astensor([1]),
+                astensor([2, 2]),
+                astensor([3, 3, 3]))
+            [[1. 1. 1.]
+             [2. 2. 2.]
+             [3. 3. 3.]]
+
+        Args:
+            args: sequence of arrays
+
+        Returns:
+            MXNet NDArray: The sequence broadcast together
         """
-        broadcast = []
         max_dim = max(map(len, args))
+        broadcast = []
         for arg in args:
-            broadcast.append(self.astensor(arg)
-                             if len(arg) > 1 else arg * self.ones(max_dim))
-        return broadcast
+            if len(arg) < max_dim:
+                broadcast.append(nd.broadcast_axis(
+                    arg[0], axis=len(arg.shape) - 1, size=max_dim))
+            else:
+                broadcast.append(arg)
+        return nd.stack(*broadcast)
 
     def poisson(self, n, lam):
         return self.normal(n, lam, self.sqrt(lam))
@@ -260,8 +281,6 @@ class mxnet_backend(object):
         """
         Currently copying from PyTorch's source until can find a better way to do this
         """
-        import math
-        from numbers import Number
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
