@@ -18,6 +18,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from .tensor.mxnet_backend import mxnet_backend
+    assert mxnet_backend
+except ImportError:
+    pass
+
 
 tensorlib = numpy_backend()
 optimizer = scipy_optimizer()
