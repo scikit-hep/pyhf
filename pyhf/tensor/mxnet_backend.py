@@ -6,34 +6,34 @@ log = logging.getLogger(__name__)
 
 
 class mxnet_backend(object):
-    """Backend for MXNet"""
+    """MXNet backend for pyhf"""
 
     def __init__(self, **kwargs):
         pass
 
     def tolist(self, tensor_in):
         """
-        Convert a tensor to a list
+        Convert a tensor to a list.
 
         Args:
-            tensor_in: MXNet tensor
+            tensor_in (Tensor): Input MXNet tensor
 
         Returns:
-            The possibly nested list of tensor elements.
+            list: The possibly nested list of tensor elements.
         """
         tensor_in = self.astensor(tensor_in)
         return tensor_in.asnumpy().tolist()
 
     def outer(self, tensor_in_1, tensor_in_2):
         """
-        The outer product of two tensors
+        The outer product of two tensors.
 
         Args:
-            tensor_in_1: tensor object
-            tensor_in_2: tensor object
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: The outer product
+            MXNet NDArray: The outer product.
         """
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
@@ -53,13 +53,13 @@ class mxnet_backend(object):
 
     def astensor(self, tensor_in):
         """
-        Convert a tensor to an MXNet NDArray
+        Convert a tensor to an MXNet NDArray.
 
         Args:
-            tensor_in: tensor object
+            tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: a multi-dimensional, fixed-size homogenous array.
+            MXNet NDArray: A multi-dimensional, fixed-size homogenous array.
         """
         return nd.array(tensor_in)
 
@@ -68,11 +68,11 @@ class mxnet_backend(object):
         Compute the sum of array elements over given axes.
 
         Args:
-            tensor_in: tensor object
-            axis: the axes over which to sum
+            tensor_in (Tensor): Tensor object
+            axis (Number): The axes over which to sum
 
         Returns:
-            MXNet NDArray: ndarray of the sum over the axes
+            MXNet NDArray: ndarray of the sum over the axes.
         """
         tensor_in = self.astensor(tensor_in)
         if axis is None or tensor_in.shape == nd.array([]).size:
@@ -85,11 +85,11 @@ class mxnet_backend(object):
         Product of array elements over given axes.
 
         Args:
-            tensor_in: tensor object
-            axis: the axes over which to take the product
+            tensor_in (Tensor): Tensor object
+            axis (Number): The axes over which to take the product
 
         Returns:
-            MXNet NDArray: ndarray of the product over the axes
+            MXNet NDArray: ndarray of the product over the axes.
         """
         tensor_in = self.astensor(tensor_in)
         if axis is None:
@@ -102,10 +102,10 @@ class mxnet_backend(object):
         A new array filled with all ones, with the given shape.
 
         Args:
-            shape: the shape of the array
+            shape (Number): The shape of the array
 
         Returns:
-            MXNet NDArray: ndarray of 1's with given shape
+            MXNet NDArray: ndarray of 1's with given shape.
         """
         return nd.ones(shape)
 
@@ -114,10 +114,10 @@ class mxnet_backend(object):
         A new array filled with all zeros, with the given shape.
 
         Args:
-            shape: the shape of the array
+            shape (Number): The shape of the array
 
         Returns:
-            MXNet NDArray: ndarray of 0's with given shape
+            MXNet NDArray: ndarray of 0's with given shape.
         """
         return nd.zeros(shape)
 
@@ -127,11 +127,11 @@ class mxnet_backend(object):
         element-wise with broadcasting.
 
         Args:
-            tensor_in_1: tensor object
-            tensor_in_2: tensor object
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: first array elements raised to powers from second array
+            MXNet NDArray: First array elements raised to powers from second array.
         """
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
@@ -142,10 +142,10 @@ class mxnet_backend(object):
         Element-wise square-root value of the input.
 
         Args:
-            tensor_in: tensor object
+            tensor_in (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: element-wise square-root value
+            MXNet NDArray: Element-wise square-root value.
         """
         tensor_in = self.astensor(tensor_in)
         return nd.sqrt(tensor_in)
@@ -155,11 +155,11 @@ class mxnet_backend(object):
         Element-wise division of the input arrays with broadcasting.
 
         Args:
-            tensor_in_1: tensor object
-            tensor_in_2: tensor object
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: element-wise division of the input arrays
+            MXNet NDArray: Element-wise division of the input arrays.
         """
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
@@ -170,10 +170,10 @@ class mxnet_backend(object):
         Element-wise Natural logarithmic value of the input.
 
         Args:
-            tensor_in: tensor object
+            tensor_in (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: element-wise Natural logarithmic value
+            MXNet NDArray: Element-wise Natural logarithmic value.
         """
         tensor_in = self.astensor(tensor_in)
         return nd.log(tensor_in)
@@ -183,10 +183,10 @@ class mxnet_backend(object):
         Element-wise exponential value of the input.
 
         Args:
-            tensor_in: tensor object
+            tensor_in (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: element-wise exponential value
+            MXNet NDArray: Element-wise exponential value.
         """
         tensor_in = self.astensor(tensor_in)
         return nd.exp(tensor_in)
@@ -200,19 +200,20 @@ class mxnet_backend(object):
         if axis=-1 it will be the last dimension.
 
         Args:
-            sequence: sequence of arrays
-            axis: the axis along which to join the arrays
+            sequence (Array of Tensors): Sequence of arrays
+            axis (Number): The axis along which to join the arrays
 
         Returns:
-            MXNet NDArray: ndarray comprised of the elements of the sequence
+            MXNet NDArray: ndarray comprised of the elements of the sequence.
         """
         return nd.stack(*sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         """
-        Apply a boolean selection mask to the elements of the input tensors
+        Apply a boolean selection mask to the elements of the input tensors.
 
-        Example:
+        Example::
+
             >>> where(
                 astensor([1, 0, 1]),
                 astensor([1, 1, 1]),
@@ -220,12 +221,12 @@ class mxnet_backend(object):
             [1. 2. 1.]
 
         Args:
-            mask: Boolean mask (boolean or tensor object of booleans)
-            tensor_in_1: tensor object
-            tensor_in_2: tensor object
+            mask (bool): Boolean mask (boolean or tensor object of booleans)
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
 
         Returns:
-            MXNet NDArray: The result of the mask being applied to the tensors
+            MXNet NDArray: The result of the mask being applied to the tensors.
         """
         mask = self.astensor(mask)
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -235,21 +236,22 @@ class mxnet_backend(object):
 
     def concatenate(self, sequence):
         """
-        Join the elements of the sequence
+        Join the elements of the sequence.
 
         Args:
-            sequence: the sequence of arrays to join
+            sequence (Array of Tensors): The sequence of arrays to join
 
         Returns:
-            MXNet NDArray: The ndarray of the joined elements
+            MXNet NDArray: The ndarray of the joined elements.
         """
         return nd.concat(*sequence, dim=0)
 
     def simple_broadcast(self, *args):
         """
-        Broadcast a sequence of 1 dimensional arrays
+        Broadcast a sequence of 1 dimensional arrays.
 
-        Example:
+        Example::
+
             >>> simple_broadcast(
                 astensor([1]),
                 astensor([2, 2]),
@@ -259,10 +261,10 @@ class mxnet_backend(object):
              [3. 3. 3.]]
 
         Args:
-            args: sequence of arrays
+            args (Array of Tensors): Sequence of arrays
 
         Returns:
-            MXNet NDArray: The sequence broadcast together
+            MXNet NDArray: The sequence broadcast together.
         """
         max_dim = max(map(len, args))
         broadcast = []
@@ -275,16 +277,41 @@ class mxnet_backend(object):
         return nd.stack(*broadcast)
 
     def poisson(self, n, lam):
+        """
+        The continous approximation to the probability density function of the Poisson
+        distribution given the parameters evaluated at `n`.
+
+        Args:
+            n (Number or Tensor): The value at which to evaluate the Poisson distribution p.d.f.
+                                  (the observed number of events)
+            lam (Number or Tensor): The mean of the Poisson distribution p.d.f.
+                                    (the expected number of events)
+
+        Returns:
+            MXNet NDArray: Value of N(n|lam, sqrt(lam)), the continous approximation to Poisson(n|lam).
+        """
         return self.normal(n, lam, self.sqrt(lam))
 
     def normal(self, x, mu, sigma):
         """
-        Currently copying from PyTorch's source until can find a better way to do this
+        The probability density function of the Normal distribution given the parameters
+        evaluated at `x`.
+
+        Args:
+            x (Number or Tensor): The point at which to evaluate the Normal distribution p.d.f.
+            mu (Number or Tensor): The mean of the Normal distribution p.d.f.
+            sigma(Number or Tensor): The standard deviation of the Normal distribution p.d.f.
+
+        Returns:
+            MXNet NDArray: Value of N(x|mu, sigma).
         """
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
 
+        # This is currently copied directly from PyTorch's source until a better
+        # way can be found to do this in MXNet
+        # https://github.com/pytorch/pytorch/blob/master/torch/distributions/normal.py#L61-L66
         def log_prob(value, loc, scale):
             variance = scale ** 2
             log_scale = math.log(scale) if isinstance(
