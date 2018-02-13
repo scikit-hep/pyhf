@@ -19,6 +19,10 @@ If you would like to make a pull request please:
 5. Update your fork to make sure your changes don't conflict with the current state of the master branch
 6. Request your changes be accepted
 
+## Bug Reports
+
+If you have found a bug please report it by filling out the [bug report template](https://github.com/diana-hep/pyhf/issues/new?template=Bug-Report.md&labels=bug&title=Bug+Report+:+Title+Here).
+
 ## Installing the development environment
 
 You can install the development environment (which includes a number of extra) libraries via `pip`:
