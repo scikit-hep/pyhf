@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
   name = 'pyhf',
-  version = '0.0.5',
+  version = '0.0.7',
   description = '(partial) pure python histfactory implementation',
   url = '',
   author = 'Lukas Heinrich',
@@ -34,7 +34,8 @@ setup(
        'torch',
        'tensorflow',
        'mxnet>=1.0.0',
-       'graphviz'
+       'graphviz',
+       'sphinx'
     ]
   },
   entry_points = {
