@@ -28,6 +28,7 @@ after_success:
 jobs:
   include:
   - stage: docs
+    install: skip
     script:
     - cd docs && make html && cd -
     - touch docs/build/html/.nojekyll
@@ -39,6 +40,7 @@ jobs:
       on:
         tags: true
   - stage: deploy
+    install: skip
     deploy:
       provider: pypi
       on:
