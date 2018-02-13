@@ -27,7 +27,22 @@ after_success:
 - coveralls
 jobs:
   include:
+  - stage: docs
+    install:
+    - pip install sphinx
+    script:
+    - cd docs && make html && cd -
+    - touch docs/build/html/.nojekyll
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token: $GITHUB_TOKEN
+      local_dir: docs/build/html
+      on:
+        tags: true
   - stage: deploy
+    install: skip
+    script:  skip
     deploy:
       provider: pypi
       on:
