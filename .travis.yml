@@ -28,7 +28,8 @@ after_success:
 jobs:
   include:
   - stage: docs
-    install: skip
+    install:
+    - pip install sphinx
     script:
     - cd docs && make html && cd -
     - touch docs/build/html/.nojekyll
