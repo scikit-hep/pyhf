@@ -4,7 +4,6 @@ python:
 - '3.5'
 - '3.6'
 install:
-# Install pytorch in Travis
 - sudo apt-get update
 - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
 - bash miniconda.sh -b -p $HOME/miniconda
@@ -12,12 +11,10 @@ install:
 - hash -r
 - conda config --set always_yes yes --set changeps1 no
 - conda update -q conda
-# Useful for debugging any issues with conda
 - conda info -a
-
-- conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy -c pytorch
+- conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy
+  -c pytorch
 - source activate test-environment
-# Install pyhf dependencies
 - pip install -U --process-dependency-links -e .[develop]
 - pip install --upgrade pytest
 script:
@@ -42,12 +39,14 @@ jobs:
         tags: true
   - stage: deploy
     install: skip
-    script:  skip
+    script: skip
     deploy:
       provider: pypi
       on:
         tags: true
       username:
-        secure: "v0vpmWdTcorBuQ1YvMNN3fUSGfbjJGWA2lIw2/GD0OsTwWUbVnBq3f5yKyEm1PHNVAsDRZZ0Hbh0YFLjcxy5nVF1COaUVFWExETDJwTyclvjEsXCpdPt24LY3VC7aLS+bkJ1qo7xqlnPOgvdiNeO/bbZqta+9D6xFUrAo8Il/DU2HzehfURPSszFBqQF4zlA+CeOhwruguXZbhsYSBE2AwJ2m4In+jnXDONuz2Y8zsLZ6z+On9U7fg6g7/5ZtY9TA4aGdUhsx06JvuJ1ZedoJmB96hdDXOYprK9v/Dy5U2h/zljhATw9Cp2dSgm/fsdB+Kw/oJNmL9lTQTOT7e75LkZO9DfCyzDRgpv0jb7zAjrxiNQXFtQqZMMAQQLRRD1I2bbR7d1+qlxajrcPv1w/FkEIT9ZDCoX4X62mFIY/owkTVOWlqPSpPsZhU5blMHO2eu4xoInx3mmerVdqGFI4qhQDqGtZVitF/8wkA7wj1OTmifubaCdivaunZWaoF1G27yEk1RaouYC4Rw4gQDftjMd63sn9gGTTAmOkEio9zJ9DhWYLHSk+T7Rvtnfqb2ySlcl4HG3/x+doy09PBAyeYaUET/oM0W7Ap9OoA7J/M936b1PkCJAyZyeNLgFkefYXNOanp96ylLxMWKOqUshR9sJE+pZHMHsVyfgn8buIs6Y="
+        secure: v0vpmWdTcorBuQ1YvMNN3fUSGfbjJGWA2lIw2/GD0OsTwWUbVnBq3f5yKyEm1PHNVAsDRZZ0Hbh0YFLjcxy5nVF1COaUVFWExETDJwTyclvjEsXCpdPt24LY3VC7aLS+bkJ1qo7xqlnPOgvdiNeO/bbZqta+9D6xFUrAo8Il/DU2HzehfURPSszFBqQF4zlA+CeOhwruguXZbhsYSBE2AwJ2m4In+jnXDONuz2Y8zsLZ6z+On9U7fg6g7/5ZtY9TA4aGdUhsx06JvuJ1ZedoJmB96hdDXOYprK9v/Dy5U2h/zljhATw9Cp2dSgm/fsdB+Kw/oJNmL9lTQTOT7e75LkZO9DfCyzDRgpv0jb7zAjrxiNQXFtQqZMMAQQLRRD1I2bbR7d1+qlxajrcPv1w/FkEIT9ZDCoX4X62mFIY/owkTVOWlqPSpPsZhU5blMHO2eu4xoInx3mmerVdqGFI4qhQDqGtZVitF/8wkA7wj1OTmifubaCdivaunZWaoF1G27yEk1RaouYC4Rw4gQDftjMd63sn9gGTTAmOkEio9zJ9DhWYLHSk+T7Rvtnfqb2ySlcl4HG3/x+doy09PBAyeYaUET/oM0W7Ap9OoA7J/M936b1PkCJAyZyeNLgFkefYXNOanp96ylLxMWKOqUshR9sJE+pZHMHsVyfgn8buIs6Y=
       password:
-        secure: "p6kDYM0L6CX9RFNnBpwhWiKUijgYoUY0Alxxqb6L8csnLhuYSB5fVgqoF2Xb9YQv8OuwdBay+TbCHCdps4QnDxEitL1sF98OoN6nBv5s7RvAk1byzWoJQml16QJs2ZcH130/GBYfmAKrcy07mfWJfLrXfbncgr85v6OZkiwj4irzvMt3SBziLK5/FBLTgjwNj+JTUuG0CLkwunKO5oedQ8Ix+S3gHM3ne8osKPEJpHpxMcVWXdT/4UHqb3mn5bYHKqPGvHNJM4PpJqohhL5KZCmRA+juTNUMfh6XOWR9UokxUFQJcPSQWCDwejfaCV2jS2p/rfV+3aUGYkORvKqgVUoQMceqyCHQLKhfGnIU7L4osqehBVEKcEPVctPtqCmR1EzUmrk2penDc+mrkzl+3UL3DA7BFubVlNGfC/zetnSURI8tdUEOKecOL3mKk6IcmFXZFg0t5OvoTYtdGa9ksNV+Z8RBKX8wkEN9IPf1pH6chEW6NmPSyOGMYW4gzKwHfmPAucMY7x4zx2ypAwu+CzqBzw/TA1/D/y1eG4OvAQjrI6PekkQUt0nEqJfGWRZ0NA5f4eswlAe6lPrrpJETRaPWgUDDIn19QHA0JI9+tuabgMKHhWNMbFi6RmfLxkxmdbGrhNhbypcC368QuQNDlhaV2e1sXEaJid2GJO6DqQA="
+        secure: p6kDYM0L6CX9RFNnBpwhWiKUijgYoUY0Alxxqb6L8csnLhuYSB5fVgqoF2Xb9YQv8OuwdBay+TbCHCdps4QnDxEitL1sF98OoN6nBv5s7RvAk1byzWoJQml16QJs2ZcH130/GBYfmAKrcy07mfWJfLrXfbncgr85v6OZkiwj4irzvMt3SBziLK5/FBLTgjwNj+JTUuG0CLkwunKO5oedQ8Ix+S3gHM3ne8osKPEJpHpxMcVWXdT/4UHqb3mn5bYHKqPGvHNJM4PpJqohhL5KZCmRA+juTNUMfh6XOWR9UokxUFQJcPSQWCDwejfaCV2jS2p/rfV+3aUGYkORvKqgVUoQMceqyCHQLKhfGnIU7L4osqehBVEKcEPVctPtqCmR1EzUmrk2penDc+mrkzl+3UL3DA7BFubVlNGfC/zetnSURI8tdUEOKecOL3mKk6IcmFXZFg0t5OvoTYtdGa9ksNV+Z8RBKX8wkEN9IPf1pH6chEW6NmPSyOGMYW4gzKwHfmPAucMY7x4zx2ypAwu+CzqBzw/TA1/D/y1eG4OvAQjrI6PekkQUt0nEqJfGWRZ0NA5f4eswlAe6lPrrpJETRaPWgUDDIn19QHA0JI9+tuabgMKHhWNMbFi6RmfLxkxmdbGrhNhbypcC368QuQNDlhaV2e1sXEaJid2GJO6DqQA=
+GITHUB_TOKEN:
+  secure: ZfNtYENcNyYdC0U8bDCDNnn5N0bh3FjoOW98oMOjpF7UFi4zx3IDLyjlXvXl4kPikzGXnQDN8hL83bnkzWwNMMBCI2OIBCEe0vCTGicyzx5wgjcIUgJxFYYJtEnVmUwPlZ2Y3JqhwHCxRI2XgE/dFukn7Jg7bJaN40472Rp2aI+l2Ortpm9zwToSuhWur/9IPzIXxNvDZWOUpqtkLxcKa5bfhMFtxDPQrJW8ibtjiayyBfoqA62gS19G1goO09iY4qBtXlz2Tu4YWLqTEH/U+W4P+AUND45VWC0oLfD80Rz8S8lThHgOX+kiOvfus+ayxcgQenLOpY36RtIhqk6RrYXnM5daJ9eXm90s96Eu+9UWWav7evtsqSgy/NuCp+9xZaVRBzv5UmJu8SifXy8NvD0TfIe0/usT39wqFmiDfnQiLBRxLDVevJalrrgMcOTRt9tExfCMQi6IBC9YKa+sI4xz0esN3KxfIZZXS8gRzAgpQOI9qazn+mLLk29HSoscTezVaB6agFoRMd8PgneKRNXVpUSpMHjxrBKEfcG/GvPqj8LyKS1KBDmJpguxmvAVYbIXQo6N0iK5aex7Y1+dm9/oc1QjDON9YrNqiXFZx5cPw0sud5uIrEAabHsKEyxSTjiCxGFu6eKFvwShL8WUWpGa2++lVWct0I+i22Ustv4=
