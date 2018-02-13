@@ -34,7 +34,8 @@ setup(
        'torch',
        'tensorflow',
        'mxnet>=1.0.0',
-       'graphviz'
+       'graphviz',
+       'sphinx'
     ]
   },
   entry_points = {
