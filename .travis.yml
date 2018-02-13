@@ -42,6 +42,7 @@ jobs:
         tags: true
   - stage: deploy
     install: skip
+    script:  skip
     deploy:
       provider: pypi
       on:
