@@ -3,23 +3,23 @@ python:
 - '2.7'
 - '3.5'
 - '3.6'
-install:
-- sudo apt-get update
-- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-- bash miniconda.sh -b -p $HOME/miniconda
-- export PATH="$HOME/miniconda/bin:$PATH"
-- hash -r
-- conda config --set always_yes yes --set changeps1 no
-- conda update -q conda
-- conda info -a
-- conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy
-  -c pytorch
-- source activate test-environment
-- pip install -U --process-dependency-links -e .[develop]
-- pip install --upgrade pytest
-script:
-- pyflakes pyhf
-- pytest
+install: skip
+#- sudo apt-get update
+#- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+#- bash miniconda.sh -b -p $HOME/miniconda
+#- export PATH="$HOME/miniconda/bin:$PATH"
+#- hash -r
+#- conda config --set always_yes yes --set changeps1 no
+#- conda update -q conda
+#- conda info -a
+#- conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy
+#  -c pytorch
+#- source activate test-environment
+#- pip install -U --process-dependency-links -e .[develop]
+#- pip install --upgrade pytest
+script: skip
+#- pyflakes pyhf
+#- pytest
 after_success:
 - coveralls
 jobs:
@@ -35,8 +35,6 @@ jobs:
       skip_cleanup: true
       github_token: $GITHUB_TOKEN
       local_dir: docs/build/html
-#      on:
-#        tags: true
   - stage: deploy
     install: skip
     script: skip
@@ -50,4 +48,4 @@ jobs:
         secure: p6kDYM0L6CX9RFNnBpwhWiKUijgYoUY0Alxxqb6L8csnLhuYSB5fVgqoF2Xb9YQv8OuwdBay+TbCHCdps4QnDxEitL1sF98OoN6nBv5s7RvAk1byzWoJQml16QJs2ZcH130/GBYfmAKrcy07mfWJfLrXfbncgr85v6OZkiwj4irzvMt3SBziLK5/FBLTgjwNj+JTUuG0CLkwunKO5oedQ8Ix+S3gHM3ne8osKPEJpHpxMcVWXdT/4UHqb3mn5bYHKqPGvHNJM4PpJqohhL5KZCmRA+juTNUMfh6XOWR9UokxUFQJcPSQWCDwejfaCV2jS2p/rfV+3aUGYkORvKqgVUoQMceqyCHQLKhfGnIU7L4osqehBVEKcEPVctPtqCmR1EzUmrk2penDc+mrkzl+3UL3DA7BFubVlNGfC/zetnSURI8tdUEOKecOL3mKk6IcmFXZFg0t5OvoTYtdGa9ksNV+Z8RBKX8wkEN9IPf1pH6chEW6NmPSyOGMYW4gzKwHfmPAucMY7x4zx2ypAwu+CzqBzw/TA1/D/y1eG4OvAQjrI6PekkQUt0nEqJfGWRZ0NA5f4eswlAe6lPrrpJETRaPWgUDDIn19QHA0JI9+tuabgMKHhWNMbFi6RmfLxkxmdbGrhNhbypcC368QuQNDlhaV2e1sXEaJid2GJO6DqQA=
 env:
   global:
-    secure: mq8uVZWUop0PA4ohpy7hiPos+qgdlV16sN3VrLr/kv1r/PlCQnyRYy+c5IWzC6awG27s+hGIUXCFT+uWFld8XnxZahOlSph3FjyhOn06oomW/sQ8qkyWYWifOYlnSqYxIQu9gxry+du2GtCdnCDvbQWZmY1N/an2x2R3JJjSwHz53lniJUlEelK0ptQMeu/ilB8Cf/CDIcfvTd+uoCENg01rGBS6nUyAqkOFISrgTfb5fMBJLOpYWoBrLpIbiQDnSljplX5HH2aQne9Btu5jtaliX5vWqU9BFF8ZtanqvvPvz2UvmyNVcYiJq1Jou1IxqPw+vnn7n0AP/KXGfa8e8KdHeEkkld4iTzcRUbQU9II5fGHDL0wiOD2P9oXfw7oGTArchaqi31cmsu29FXZU4cdQV0E2tX5XnE/l/rNGtnG4RuT7nOE8R/a7zs5cipE3uUwvLv0yScsEUEvPRkLfnyLt4BjCtJjgEb7XjRjZkbEXXhIpKgf/uT512WGGoGk3b1ocma4RH6Ym+SG1e2+HGeR/JilEShwxnuWM8e/Xe4j51Bro1vBaa9O2cJSsLEqURMc/XPVDqgphwJ0G7zOF4Zi2pkNz9XS8vOKwoHXXUtv6+E0BRItgKHCoSux02aQsv/TGexe4CDMzBC+VMAMP4ZKI9qM0dfOYZHZkFYTcjBo=
+  - secure: fI08Hxg2PYUrvG9LHBqZZWRGGt7q4sAlWDQlwvpdrLgy/71dPOrNCiJrkhOjVBGc0/3aphgVPEu8ofHbcBWBWq4WJHmmz+nC8gEhjzn9ef0qSheLXoU+ee7ejxfIi2VD+M1BRRYSe9acHrUlXlCp4ffbpDeCF1zApGY7VWNVtuiKm8rOHDjc1aWuJ8FRpvNUbCQWi2CGop2FmzaXfYr9zC6lZlqNWD0/AckkWgig4ykrIZgYjonBl6HEF76WxRJcCyGKQQIx2MeTR0m1HXSgM3ZS2Iubf1H7xM6NJKDfgJOc8mLoDQJvP0ml0SJUL+Y1aYGoVgye1x3j4caB81DU/7OQK/0HPydCEpZekrR/1wRv3TJqPMxf/T2Kpj3mhiyM9GZg3P5sw7pS5gr3T9eqnfZor81sxtr5ZM7jUntXz7toLifz0j3mDpREgci1+u555QnakW6Xzfzz94DpKXSOLcH/iLl6EEXLvATopX2Ya822aXe9eazFAanNM/P49r91dxHYyvwse7z5Hwx+Mm71ckr1P53Z5U4QSKFOYUsWs+kw9PJWbz40Y08s6+DsCmdZ8IxWD4RCBUtqCjN+Up7ja77yuqDvYfoQbRrxYkPUYLCIeZ6bPxJYR6GWCc3F1wliRAZwmb/hnDKKSDx0mTOPA93uzDrXqF2vfRLwrd/u+00=
