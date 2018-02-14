@@ -1,6 +1,6 @@
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1172961.svg)](https://doi.org/10.5281/zenodo.1172961)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1172961)
 [![Build Status](https://travis-ci.org/diana-hep/pyhf.svg?branch=master)](https://travis-ci.org/diana-hep/pyhf)
 [![Coverage Status](https://coveralls.io/repos/github/diana-hep/pyhf/badge.svg?branch=master)](https://coveralls.io/github/diana-hep/pyhf?branch=master)
 [![Code Health](https://landscape.io/github/diana-hep/pyhf/master/landscape.svg?style=flat)](https://landscape.io/github/diana-hep/pyhf/master)
