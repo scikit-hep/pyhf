@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/diana-hep/pyhf.svg?branch=master)](https://travis-ci.org/diana-hep/pyhf)
 [![Coverage Status](https://coveralls.io/repos/github/diana-hep/pyhf/badge.svg?branch=master)](https://coveralls.io/github/diana-hep/pyhf?branch=master)
 [![Code Health](https://landscape.io/github/diana-hep/pyhf/master/landscape.svg?style=flat)](https://landscape.io/github/diana-hep/pyhf/master)
+[![Docs](https://img.shields.io/badge/docs-master-blue.svg)](diana-hep.github.io/pyhf)
 [![PyPI version](https://badge.fury.io/py/pyhf.svg)](https://badge.fury.io/py/pyhf)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/diana-hep/pyhf/master)
 
