@@ -7,6 +7,7 @@ from pyhf.simplemodels import hepdata_like
 import tensorflow as tf
 
 import pytest
+
 tf_sess = tf.Session()
 
 
@@ -61,11 +62,12 @@ def logpdf(source):
 
 # At the moment the backends aren't doing anything, but are POC
 @pytest.mark.parametrize('n_bins', [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 100])
-@pytest.mark.parametrize('backend', ['numpy', 'tensorflow', 'pytorch', 'mxnet'])
-def test_logpdf(benchmark, backend, n_bins):
+# @pytest.mark.parametrize('backend', ['numpy', 'tensorflow', 'pytorch', 'mxnet'])
+# def test_logpdf(benchmark, backend, n_bins):
+def test_logpdf(benchmark, n_bins):
     """
     Benchmark the performance of logpdf for various numbers of bins
     """
-    pyhf.tensorlib = select_backend(backend)
+    # pyhf.tensorlib = select_backend(backend)
     source = generate_source(n_bins)
     assert benchmark(logpdf, source) is not None
