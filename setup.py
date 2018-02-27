@@ -26,6 +26,7 @@ setup(
        'pyflakes',
        'pytest>=3.2.0',
        'pytest-cov>=2.5.1',
+       'pytest-benchmark',
        'python-coveralls',
        'matplotlib',
        'jupyter',
