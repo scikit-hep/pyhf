@@ -8,8 +8,6 @@ import tensorflow as tf
 
 import pytest
 
-tf_sess = tf.Session()
-
 
 def generate_source(n_bins):
     """
@@ -40,17 +38,6 @@ def generate_source(n_bins):
     return source
 
 
-def select_backend(backend):
-    if backend.lower() == 'numpy':
-        return numpy_backend(poisson_from_normal=True)
-    elif backend.lower() == 'tensorflow':
-        return tensorflow_backend(session=tf_sess)
-    elif backend.lower() == 'pytorch':
-        return pytorch_backend()
-    elif backend.lower() == 'mxnet':
-        return mxnet_backend()
-
-
 def logpdf(source):
     pdf = hepdata_like(source['bindata']['sig'],
                        source['bindata']['bkg'],
@@ -60,14 +47,20 @@ def logpdf(source):
     return pdf.logpdf(pdf.config.suggested_init(), data)
 
 
-# At the moment the backends aren't doing anything, but are POC
 @pytest.mark.parametrize('n_bins', [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 100])
-# @pytest.mark.parametrize('backend', ['numpy', 'tensorflow', 'pytorch', 'mxnet'])
-# def test_logpdf(benchmark, backend, n_bins):
-def test_logpdf(benchmark, n_bins):
+@pytest.mark.parametrize('backend', [numpy_backend(poisson_from_normal=True),
+                                     tensorflow_backend(session=tf.Session()),
+                                     pytorch_backend(),
+                                     mxnet_backend()],
+                         ids=['numpy', 'tensorflow', 'pytorch', 'mxnet'])
+def test_logpdf(benchmark, backend, n_bins):
     """
-    Benchmark the performance of logpdf for various numbers of bins
+    Benchmark the performance of hepdata_like.logpdf() for various numbers of bins
     """
-    # pyhf.tensorlib = select_backend(backend)
+    default_backend = pyhf.tensorlib
+    # At the moment the backends aren't doing anything, but are POC
+    pyhf.tensorlib = backend
     source = generate_source(n_bins)
     assert benchmark(logpdf, source) is not None
+    # Reset backend
+    pyhf.tensorlib = default_backend
