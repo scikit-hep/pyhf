@@ -1,30 +1,29 @@
 import pyhf
-from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
+from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
 import tensorflow as tf
+import numpy as np
 import pytest
 
 
 def generate_source(n_bins):
     """
     Create the source structure for the given number of bins.
-    Currently the data that are being put in is all the same
-    but in the future it should be generated pseudodata.
     """
-    binning = [n_bins, -0.5, 1.5]
+    binning = [n_bins, -0.5, n_bins + 0.5]
     data = [120.0]
     bkg = [100.0]
     bkgerr = [10.0]
     sig = [30.0]
     if n_bins > 1:
         for bin in range(1, n_bins):
-            data.append(180.0)
-            bkg.append(150.0)
-            bkgerr.append(10.0)
-            sig.append(95.0)
+            data.append(np.random.poisson(180.0))
+            bkg.append(np.random.poisson(150.0))
+            bkgerr.append(np.random.poisson(10.0))
+            sig.append(np.random.poisson(95.0))
     source = {
         'binning': binning,
         'bindata': {
@@ -58,8 +57,8 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
                          ids=['numpy', 'tensorflow', 'pytorch', 'mxnet'])
 def test_logpdf(benchmark, backend, n_bins):
     """
-    Benchmark the performance of hepdata_like.logpdf() for various numbers
-    of bins and different backends
+    Benchmark the performance of simplemodels.hepdata_like().logpdf()
+    for various numbers of bins and different backends
     """
     default_backend = pyhf.tensorlib
     pyhf.tensorlib = backend
