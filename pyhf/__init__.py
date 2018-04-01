@@ -20,7 +20,9 @@ except ImportError:
 
 try:
     from .tensor.mxnet_backend import mxnet_backend
+    # from .optimize.opt_mxnet import mxnet_optimizer
     assert mxnet_backend
+    # assert mxnet_optimizer
 except ImportError:
     pass
 
@@ -29,6 +31,36 @@ tensorlib = numpy_backend()
 optimizer = scipy_optimizer()
 
 log = logging.getLogger(__name__)
+
+
+def set_backend(backend):
+    """
+    Set the backend and the associated optimizer
+
+    Args:
+        backend: One of the supported pyhf backends: NumPy,
+                 TensorFlow, PyTorch, and MXNet
+
+    Returns:
+        None
+
+    Example:
+        pyhf.set_backend(tensorflow_backend(session=tf.Session()))
+    """
+    global tensorlib
+    global optimizer
+
+    tensorlib = backend
+    if isinstance(tensorlib, tensorflow_backend):
+        optimizer = tflow_optimizer(tensorlib)
+    elif isinstance(tensorlib, pytorch_backend):
+        optimizer = pytorch_optimizer(tensorlib=tensorlib)
+    # TODO: Add support for mxnet_optimizer()
+    # elif isinstance(tensorlib, mxnet_backend):
+    #     optimizer = mxnet_optimizer()
+    else:
+        optimizer = scipy_optimizer()
+
 
 def _poisson_impl(n, lam):
     return tensorlib.poisson(n,lam)
