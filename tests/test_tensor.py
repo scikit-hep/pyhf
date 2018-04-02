@@ -1,8 +1,12 @@
+import pyhf
+
 from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
+
+import numpy as np
 import tensorflow as tf
 
 
@@ -37,8 +41,6 @@ def test_common_tensor_backends():
 
 
 def test_pdf_eval():
-    import pyhf
-    import numpy as np
     oldlib = pyhf.tensorlib
 
     tf_sess = tf.Session()
@@ -49,7 +51,7 @@ def test_pdf_eval():
 
     values = []
     for b in backends:
-        pyhf.tensorlib = b
+        pyhf.set_backend(b)
 
         source = {
             "binning": [2, -0.5, 1.5],
@@ -83,12 +85,10 @@ def test_pdf_eval():
 
     assert np.std(values) < 1e-6
 
-    pyhf.tensorlib = oldlib
+    pyhf.set_backend(oldlib)
 
 
 def test_pdf_eval_2():
-    import pyhf
-    import numpy as np
     oldlib = pyhf.tensorlib
 
     tf_sess = tf.Session()
@@ -99,7 +99,7 @@ def test_pdf_eval_2():
 
     values = []
     for b in backends:
-        pyhf.tensorlib = b
+        pyhf.set_backend(b)
 
         source = {
             "binning": [2, -0.5, 1.5],
@@ -120,4 +120,4 @@ def test_pdf_eval_2():
 
     assert np.std(values) < 1e-6
 
-    pyhf.tensorlib = oldlib
+    pyhf.set_backend(oldlib)
