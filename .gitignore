@@ -16,7 +16,7 @@ __pycache__
 .DS_Store
 \#*#
 .#*
-.coverage
+.coverage*
 
 *.swp
 *.map
@@ -26,3 +26,7 @@ config.rst
 
 /.project
 /.pydevproject
+
+# pytest
+.pytest_cache
+htmlcov
