@@ -68,27 +68,37 @@ def generate_source_poisson(n_bins):
 
 
 def runOnePoint(pdf, data):
-    return pyhf.runOnePoint(1.0, data, pdf,
-                            pdf.config.suggested_init(),
-                            pdf.config.suggested_bounds())
+    result = pyhf.runOnePoint(1.0, data, pdf,
+                              pdf.config.suggested_init(),
+                              pdf.config.suggested_bounds())
+
+    # Reset the TensorFlow graph and session for each run
+    if isinstance(pyhf.tensorlib, tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
+    return result
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
-bins = [1, 10, 50, 100, 200]
+bins = [10, 100, 200]
 bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
-@pytest.mark.parametrize('backend', [numpy_backend(poisson_from_normal=True),
-                                     # tensorflow_backend(session=tf.Session()),
-                                     pytorch_backend(),
-                                     # mxnet_backend(),
-                                     ],
-                         ids=['numpy',
-                              # 'tensorflow',
-                              'pytorch',
-                              # 'mxnet',
-                              ])
+@pytest.mark.parametrize('backend',
+                         [
+                             numpy_backend(poisson_from_normal=True),
+                             tensorflow_backend(session=tf.Session()),
+                             pytorch_backend(),
+                             # mxnet_backend(),
+                         ],
+                         ids=[
+                             'numpy',
+                             'tensorflow',
+                             'pytorch',
+                             # 'mxnet',
+                         ])
 def test_runOnePoint(benchmark, backend, n_bins):
     """
     Benchmark the performance of pyhf.runOnePoint()
