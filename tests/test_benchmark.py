@@ -120,7 +120,10 @@ def test_runOnePoint(benchmark, backend, n_bins):
                        source['bindata']['bkg'],
                        source['bindata']['bkgerr'])
     data = source['bindata']['data'] + pdf.config.auxdata
-    assert benchmark(runOnePoint, pdf, data) is not None
+    try:
+        assert benchmark(runOnePoint, pdf, data) is not None
+    except AssertionError:
+        pyhf.set_backend(default_backend)
 
     # Reset backend
     pyhf.set_backend(default_backend)
