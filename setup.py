@@ -35,7 +35,8 @@ setup(
        'tensorflow',
        'mxnet>=1.0.0',
        'graphviz',
-       'sphinx'
+       'sphinx',
+       'jsonschema>=2.6.0'
     ]
   },
   entry_points = {

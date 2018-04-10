@@ -2,6 +2,7 @@ import pyhf
 import pyhf.simplemodels
 import numpy as np
 import json
+import jsonschema
 
 def test_interpcode_0():
     f = lambda x: pyhf._hfinterp_code0(at_minus_one = 0.5, at_zero =1, at_plus_one = 2.0, alphas = x)
@@ -75,6 +76,7 @@ def test_core_pdf_broadcasting():
     assert np.all(naive_python  == broadcasted)
 
 def test_pdf_integration_histosys():
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
@@ -93,6 +95,7 @@ def test_pdf_integration_histosys():
             }
         }
     }
+    jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
 
 
@@ -119,6 +122,7 @@ def test_pdf_integration_histosys():
 
 
 def test_pdf_integration_normsys():
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
@@ -136,6 +140,7 @@ def test_pdf_integration_normsys():
             }
         }
     }
+    jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
 
     pars = [None,None]
@@ -149,6 +154,7 @@ def test_pdf_integration_normsys():
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*0.9]
 
 def test_pdf_integration_shapesys():
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
@@ -166,6 +172,7 @@ def test_pdf_integration_shapesys():
             }
         }
     }
+    jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
 
 
