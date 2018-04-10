@@ -76,7 +76,7 @@ def test_core_pdf_broadcasting():
     assert np.all(naive_python  == broadcasted)
 
 def test_pdf_integration_histosys():
-    schema = json.load(file('validation/spec.json'))
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
@@ -122,7 +122,7 @@ def test_pdf_integration_histosys():
 
 
 def test_pdf_integration_normsys():
-    schema = json.load(file('validation/spec.json'))
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
@@ -154,7 +154,7 @@ def test_pdf_integration_normsys():
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*0.9]
 
 def test_pdf_integration_shapesys():
-    schema = json.load(file('validation/spec.json'))
+    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
