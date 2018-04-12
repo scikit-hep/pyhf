@@ -108,14 +108,15 @@ def test_runOnePoint_q_mu(n_bins,
     test_statistic = []
     for backend in backends:
         pyhf.set_backend(backend)
-        q_mu = pyhf.runOnePoint(1.0, data, pdf,
-                                pdf.config.suggested_init(),
-                                pdf.config.suggested_bounds())[0]
-        test_statistic.append(q_mu)
 
         if isinstance(pyhf.tensorlib, tensorflow_backend):
             tf.reset_default_graph()
             pyhf.tensorlib.session = tf.Session()
+
+        q_mu = pyhf.runOnePoint(1.0, data, pdf,
+                                pdf.config.suggested_init(),
+                                pdf.config.suggested_bounds())[0]
+        test_statistic.append(q_mu)
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)

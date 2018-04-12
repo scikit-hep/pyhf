@@ -68,16 +68,14 @@ def generate_source_poisson(n_bins):
 
 
 def runOnePoint(pdf, data):
-    result = pyhf.runOnePoint(1.0, data, pdf,
-                              pdf.config.suggested_init(),
-                              pdf.config.suggested_bounds())
-
-    # Reset the TensorFlow graph and session for each run
     if isinstance(pyhf.tensorlib, tensorflow_backend):
+        # Reset the TensorFlow graph and session for each run
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
 
-    return result
+    return pyhf.runOnePoint(1.0, data, pdf,
+                            pdf.config.suggested_init(),
+                            pdf.config.suggested_bounds())
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
