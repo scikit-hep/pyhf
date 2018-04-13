@@ -2,7 +2,6 @@
 language: python
 python:
   - '2.7'
-  - '3.5'
   - '3.6'
 # only test 'push' builds to master (including PRs that target master)
 branches:
@@ -31,11 +30,11 @@ after_success: coveralls
 stages:
   - test
   - name: benchmark
-    if: (branch = master) AND (NOT (type IN (push, pull_request)))
+    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
-    if: (branch = master) AND (NOT (type IN (push, pull_request)))
+    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
-    if: (branch = master) AND (NOT (type IN (push, pull_request)))
+    if: (branch = master) AND (NOT (type IN (pull_request)))
 
 env:
   global:
