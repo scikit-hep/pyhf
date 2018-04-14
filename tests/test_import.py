@@ -1,10 +1,14 @@
 import pyhf
 import pyhf.readxml
-
+import json
+import jsonschema
 
 def test_import_prepHistFactory():
+    schema = json.load(open('validation/spec.json'))
     spec = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                               'validation/xmlimport_input/')
+
+    jsonschema.validate(spec['channels'], schema)
     pdf = pyhf.hfpdf(spec['channels'], poiname='SigXsecOverSM')
 
     data = [binvalue for k in pdf.config.channel_order for binvalue

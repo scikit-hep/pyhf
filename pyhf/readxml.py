@@ -30,7 +30,7 @@ def process_sample(sample,rootdir,inputfile, histopath):
 
     return {
         'name': sample.attrib['Name'],
-        'data': import_root_histogram(rootdir, inputfile, histopath, histoname),
+        'data': import_root_histogram(rootdir, inputfile, histopath, histoname).tolist(),
         'mods': mods
     }
 

@@ -56,7 +56,7 @@
 
 	"type": "object",
 	"patternProperties": {
-		"^[a-zA-Z]+$": {
+		"^[a-zA-Z0-9]+$": {
 			"$ref": "#/definitions/channel"
 		}
 	},
