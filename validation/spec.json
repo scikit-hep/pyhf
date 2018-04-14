@@ -1,10 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
     "type": "object",
-    "patternProperties": {
-        "^[a-zA-Z0-9]+$": {
-            "$ref": "#/definitions/channel"
-        }
+    "properties": {
+        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
     },
     "additionalProperties": false,
 
@@ -12,8 +10,10 @@
         "channel": {
             "type": "object",
             "properties": {
+                "name": { "type": "string" },
                 "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
             },
+            "required": ["name", "samples"],
             "additionalProperties": false
         },
         "sample": {
