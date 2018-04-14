@@ -4,23 +4,19 @@
   "definitions": {
     "channel": {
       "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z]+$": {
-          "$ref": "#/definitions/sample"
-        }
+      "properties": {
+        "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
       },
       "additionalProperties": false
     },
     "sample": {
       "type": "object",
       "properties": {
-        "data": { "$ref": "#/definitions/data"},
-        "mods": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/modification"}
-        }
+        "name": { "type": "string" },
+        "data": { "$ref": "#/definitions/data" },
+        "mods": { "type": "array", "items": {"$ref": "#/definitions/modification"} }
       },
-      "required": ["data", "mods"],
+      "required": ["name", "data", "mods"],
       "additionalProperties": false
     },
     "modification": {
