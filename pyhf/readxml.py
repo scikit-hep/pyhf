@@ -28,7 +28,8 @@ def process_sample(sample,rootdir,inputfile, histopath):
                 'data': None
             })
 
-    return sample.attrib['Name'], {
+    return {
+        'name': sample.attrib['Name'],
         'data': import_root_histogram(rootdir, inputfile, histopath, histoname),
         'mods': mods
     }
@@ -52,7 +53,7 @@ def process_channel(channelxml,rootdir):
 
     data = channel.findall('Data')[0]
 
-    return  channel.attrib['Name'], process_data(data, rootdir, inputfile, histopath), {k:v for k,v in [process_sample(x, rootdir, inputfile, histopath) for x in samples]}
+    return  channel.attrib['Name'], process_data(data, rootdir, inputfile, histopath), [process_sample(x, rootdir, inputfile, histopath) for x in samples]
 
 def parse(configfile,rootdir):
     toplvl = ET.parse(configfile)
@@ -65,6 +66,6 @@ def parse(configfile,rootdir):
             'resultprefix':toplvl.getroot().attrib['OutputFilePrefix'],
             'measurements': {x.attrib['Name'] : {} for x in toplvl.findall('Measurement')}
         },
-        'channels': {k:v['samples'] for k,v in channels.items()},
+        'channels': {k: {'samples': v['samples']} for k,v in channels.items()},
         'data':     {k:v['data'] for k,v in channels.items()}
     }
