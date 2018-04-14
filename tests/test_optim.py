@@ -26,14 +26,14 @@ def test_optim_numpy():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                     ]
                 }
@@ -77,14 +77,14 @@ def test_optim_pytorch():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                     ]
                 }
@@ -128,14 +128,14 @@ def test_optim_tflow():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                     ]
                 }

@@ -12,17 +12,17 @@ def process_sample(sample,rootdir,inputfile, histopath):
     histopath = histopath or sample.attrib.get('HistoPath')
     histoname = sample.attrib['HistoName']
 
-    mods = []
+    modifiers = []
     for modtag in sample.iter():
         if modtag.tag == 'OverallSys':
-            mods.append({
+            modifiers.append({
                 'name': modtag.attrib['Name'],
                 'type': 'normsys',
                 'data': {'lo': float(modtag.attrib['Low']), 'hi': float(modtag.attrib['High'])}
             })
 
         if modtag.tag == 'NormFactor':
-            mods.append({
+            modifiers.append({
                 'name': modtag.attrib['Name'],
                 'type': 'normfactor',
                 'data': None
@@ -31,7 +31,7 @@ def process_sample(sample,rootdir,inputfile, histopath):
     return {
         'name': sample.attrib['Name'],
         'data': import_root_histogram(rootdir, inputfile, histopath, histoname).tolist(),
-        'mods': mods
+        'modifiers': modifiers
     }
 
 def process_data(sample,rootdir,inputfile, histopath):

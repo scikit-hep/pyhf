@@ -84,14 +84,14 @@ def test_pdf_integration_histosys():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                     ]
                 }
@@ -133,14 +133,14 @@ def test_pdf_integration_normsys():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
                     ]
                 }
@@ -169,14 +169,14 @@ def test_pdf_integration_shapesys():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                           {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
                     ]
                 }

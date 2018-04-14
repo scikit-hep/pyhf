@@ -69,12 +69,12 @@ def test_pdf_eval():
                     {
                         'name': 'signal',
                         'data': source['bindata']['sig'],
-                        'mods': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
+                        'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
                     },
                     {
                         'name': 'background',
                         'data': source['bindata']['bkg'],
-                        'mods': [
+                        'modifiers': [
                             {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                         ]
                     }

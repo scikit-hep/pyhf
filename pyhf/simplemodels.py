@@ -7,14 +7,14 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts):
                 {
                     'name': 'signal',
                     'data': signal_data,
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': bkg_data,
-                    'mods': [
+                    'modifiers': [
                         {'name': 'uncorr_bkguncrt', 'type': 'shapesys', 'data': bkg_uncerts}
                     ]
                 }

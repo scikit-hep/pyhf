@@ -62,14 +62,14 @@ def test_validation_1bin_normsys():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'normsys', 'data': {'lo': 0.90, 'hi': 1.10}}
                     ]
                 }
@@ -114,14 +114,14 @@ def test_validation_2bin_histosys():
                 {
                     'name': 'signal',
                     'data': source['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
                     ]
                 }
@@ -167,14 +167,14 @@ def test_validation_2bin_2channel():
                 {
                     'name': 'signal',
                     'data': source['channels']['signal']['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'background',
                     'data': source['channels']['signal']['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'uncorr_bkguncrt_signal', 'type': 'shapesys', 'data': source['channels']['signal']['bindata']['bkgerr']}
                     ]
                 }
@@ -185,7 +185,7 @@ def test_validation_2bin_2channel():
                 {
                     'name': 'background',
                     'data': source['channels']['control']['bindata']['bkg'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'uncorr_bkguncrt_control', 'type': 'shapesys', 'data': source['channels']['control']['bindata']['bkgerr']}
                     ]
                 }
@@ -231,21 +231,21 @@ def test_validation_2bin_2channel_couplednorm():
                 {
                     'name': 'signal',
                     'data': source['channels']['signal']['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'bkg1',
                     'data': source['channels']['signal']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.9, 'hi': 1.1}}
                     ]
                 },
                 {
                     'name': 'bkg2',
                     'data': source['channels']['signal']['bindata']['bkg2'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.5, 'hi': 1.5}}
                     ]
                 }
@@ -256,7 +256,7 @@ def test_validation_2bin_2channel_couplednorm():
                 {
                     'name': 'background',
                     'data': source['channels']['control']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_normsys', 'type': 'normsys', 'data': {'lo': 0.9, 'hi': 1.1}}
                     ]
                 }
@@ -303,21 +303,21 @@ def test_validation_2bin_2channel_coupledhistosys():
                 {
                     'name': 'signal',
                     'data': source['channels']['signal']['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'bkg1',
                     'data': source['channels']['signal']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_histosys','type': 'histosys', 'data': {'lo_hist': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg1_up']}}
                     ]
                 },
                 {
                     'name': 'bkg2',
                     'data': source['channels']['signal']['bindata']['bkg2'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_hist': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg2_up']}}
                     ]
                 }
@@ -328,7 +328,7 @@ def test_validation_2bin_2channel_coupledhistosys():
                 {
                     'name': 'background',
                     'data': source['channels']['control']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_hist': source['channels']['control']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['control']['bindata']['bkg1_up']}}
                     ]
                 }
@@ -375,14 +375,14 @@ def test_validation_2bin_2channel_coupledshapefactor():
                 {
                     'name': 'signal',
                     'data': source['channels']['signal']['bindata']['sig'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'mu', 'type': 'normfactor', 'data': None}
                     ]
                 },
                 {
                     'name': 'bkg1',
                     'data': source['channels']['signal']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
                     ]
                 }
@@ -393,7 +393,7 @@ def test_validation_2bin_2channel_coupledshapefactor():
                 {
                     'name': 'background',
                     'data': source['channels']['control']['bindata']['bkg1'],
-                    'mods': [
+                    'modifiers': [
                         {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
                     ]
                 }

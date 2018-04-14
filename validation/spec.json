@@ -21,12 +21,12 @@
             "properties": {
                 "name": { "type": "string" },
                 "data": { "$ref": "#/definitions/data" },
-                "mods": { "type": "array", "items": {"$ref": "#/definitions/modification"} }
+                "modifiers": { "type": "array", "items": {"$ref": "#/definitions/modifier"} }
             },
-            "required": ["name", "data", "mods"],
+            "required": ["name", "data", "modifiers"],
             "additionalProperties": false
         },
-        "modification": {
+        "modifier": {
             "type": "object",
             "properties": {
                 "name": {
