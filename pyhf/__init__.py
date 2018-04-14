@@ -103,9 +103,9 @@ class normsys_constraint(object):
         self.at_plus_one = {}
         self.auxdata = [0]  # observed data is always at a = 1
 
-    def add_sample(self, channel, sample, nominal, mod_data):
-        self.at_minus_one.setdefault(channel, {})[sample] = mod_data['lo']
-        self.at_plus_one.setdefault(channel, {})[sample] = mod_data['hi']
+    def add_sample(self, channel, sample_name, nominal, mod_data):
+        self.at_minus_one.setdefault(channel, {})[sample_name] = mod_data['lo']
+        self.at_plus_one.setdefault(channel, {})[sample_name] = mod_data['hi']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
@@ -124,10 +124,10 @@ class histosys_constraint(object):
         self.at_plus_one = {}
         self.auxdata = [0]  # observed data is always at a = 1
 
-    def add_sample(self, channel, sample, nominal, mod_data):
-        self.at_zero.setdefault(channel, {})[sample] = nominal
-        self.at_minus_one.setdefault(channel, {})[sample] = mod_data['lo_hist']
-        self.at_plus_one.setdefault(channel, {})[sample] = mod_data['hi_hist']
+    def add_sample(self, channel, sample_name, nominal, mod_data):
+        self.at_zero.setdefault(channel, {})[sample_name] = nominal
+        self.at_minus_one.setdefault(channel, {})[sample_name] = mod_data['lo_hist']
+        self.at_plus_one.setdefault(channel, {})[sample_name] = mod_data['hi_hist']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
@@ -168,9 +168,9 @@ class modelconfig(object):
         instance = cls()
         for ch, samples in spec.items():
             instance.channel_order.append(ch)
-            for sample, sample_def in samples.items():
-                for mod_def in sample_def['mods']:
-                    instance.add_mod_from_def(ch, sample, sample_def, mod_def)
+            for sample in samples:
+                for mod_def in sample['mods']:
+                    instance.add_mod_from_def(ch, sample, mod_def)
         instance.set_poi(poiname)
         return instance
 
@@ -236,7 +236,7 @@ class modelconfig(object):
             self.auxdata_order.append(name)
         return True
 
-    def add_mod_from_def(self, ch, sample, sample_def, mod_def):
+    def add_mod_from_def(self, ch, sample, mod_def):
         if mod_def['type'] == 'normfactor':
             mod = None  # no object for factors
             self.add_mod(name=mod_def['name'],
@@ -248,18 +248,18 @@ class modelconfig(object):
             mod = None  # no object for factors
             self.add_mod(name=mod_def['name'],
                                 mod=mod,
-                                npars=len(sample_def['data']),
-                                suggested_init   =[1.0] * len(sample_def['data']),
-                                suggested_bounds=[[0, 10]] * len(sample_def['data'])
+                                npars=len(sample['data']),
+                                suggested_init   =[1.0] * len(sample['data']),
+                                suggested_bounds=[[0, 10]] * len(sample['data'])
                         )
         if mod_def['type'] == 'shapesys':
             # we reserve one parameter for each bin
-            mod = shapesys_constraint(sample_def['data'], mod_def['data'])
+            mod = shapesys_constraint(sample['data'], mod_def['data'])
             self.add_mod(
                 name=mod_def['name'],
-                npars=len(sample_def['data']),
-                suggested_init=[1.0] * len(sample_def['data']),
-                suggested_bounds=[[0, 10]] * len(sample_def['data']),
+                npars=len(sample['data']),
+                suggested_init=[1.0] * len(sample['data']),
+                suggested_bounds=[[0, 10]] * len(sample['data']),
                 mod=mod,
             )
         if mod_def['type'] == 'normsys':
@@ -270,7 +270,7 @@ class modelconfig(object):
                          suggested_init=[0.0],
                          suggested_bounds=[[-5, 5]])
             self.mod(mod_def['name']).add_sample(
-                ch, sample, sample_def['data'], mod_def['data']
+                ch, sample['name'], sample['data'], mod_def['data']
             )
         if mod_def['type'] == 'histosys':
             mod = histosys_constraint()
@@ -281,7 +281,7 @@ class modelconfig(object):
                 suggested_init=[1.0],
                 suggested_bounds=[[-5, 5]])
             self.mod(mod_def['name']).add_sample(
-                ch, sample, sample_def['data'], mod_def['data']
+                ch, sample['name'], sample['data'], mod_def['data']
             )
 
 class hfpdf(object):
@@ -289,30 +289,30 @@ class hfpdf(object):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.channels = spec
 
-    def _multiplicative_factors(self, channel, sample, pars):
+    def _multiplicative_factors(self, channel, sample_name, pars):
         multiplicative_types = ['shapesys', 'normfactor', 'shapefactor']
-        mods = [m['name'] for m in self.channels[channel][sample]['mods']
+        mods = [m['name'] for m in self.channels[channel][sample_name]['mods']
                 if m['type'] in multiplicative_types]
         return [pars[self.config.par_slice(m)] for m in mods]
 
-    def _normsysfactor(self, channel, sample, pars):
+    def _normsysfactor(self, channel, sample_name, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
         # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        mods = [m['name'] for m in self.channels[channel][sample]['mods']
+        mods = [m['name'] for m in self.channels[channel][sample_name]['mods']
                 if m['type'] == 'normsys']
         factors = []
         for m in mods:
             mod, modpars = self.config.mod(m), pars[self.config.par_slice(m)]
             assert int(modpars.shape[0]) == 1
-            mod_factor = _hfinterp_code1(mod.at_minus_one[channel][sample],
+            mod_factor = _hfinterp_code1(mod.at_minus_one[channel][sample_name],
                                          mod.at_zero,
-                                         mod.at_plus_one[channel][sample],
+                                         mod.at_plus_one[channel][sample_name],
                                          modpars)[0]
             factors.append(mod_factor)
         return tensorlib.product(factors)
 
-    def _histosysdelta(self, channel, sample, pars):
-        mods = [m['name'] for m in self.channels[channel][sample]['mods']
+    def _histosysdelta(self, channel, sample_name, pars):
+        mods = [m['name'] for m in self.channels[channel][sample_name]['mods']
                 if m['type'] == 'histosys']
         stack = None
         for m in mods:
@@ -321,29 +321,29 @@ class hfpdf(object):
 
             # print 'MODPARS', type(modpars.data)
 
-            mod_delta = _hfinterp_code0(mod.at_minus_one[channel][sample],
-                                         mod.at_zero[channel][sample],
-                                         mod.at_plus_one[channel][sample],
+            mod_delta = _hfinterp_code0(mod.at_minus_one[channel][sample_name],
+                                         mod.at_zero[channel][sample_name],
+                                         mod.at_plus_one[channel][sample_name],
                                          modpars)[0]
             stack = tensorlib.stack([mod_delta]) if stack is None else tensorlib.stack([stack,mod_delta])
 
         return tensorlib.sum(stack, axis=0) if stack is not None else None
 
-    def expected_sample(self, channel, sample, pars):
+    def expected_sample(self, channel, sample_name, pars):
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
         #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
         # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0],
         # anchors[i][0], val=alpha) for i in range(histosys_alphas))
-        nom = tensorlib.astensor(self.channels[channel][sample]['data'])
-        histosys_delta = self._histosysdelta(channel, sample, pars)
+        nom = tensorlib.astensor(self.channels[channel][sample_name]['data'])
+        histosys_delta = self._histosysdelta(channel, sample_name, pars)
 
         interp_histo = tensorlib.sum(tensorlib.stack([nom, histosys_delta]), axis=0) if (histosys_delta is not None) else nom
 
         factors = []
-        factors += self._multiplicative_factors(channel, sample, pars)
-        factors += [self._normsysfactor(channel, sample, pars)]
+        factors += self._multiplicative_factors(channel, sample_name, pars)
+        factors += [self._normsysfactor(channel, sample_name, pars)]
         factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
@@ -365,7 +365,7 @@ class hfpdf(object):
         pars = tensorlib.astensor(pars)
         data = []
         for channel in self.config.channel_order:
-            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in self.channels[channel]]),axis=0))
+            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample['name'], pars) for sample in self.channels[channel]]),axis=0))
         return tensorlib.concatenate(data)
 
     def expected_data(self, pars, include_auxdata=True):
