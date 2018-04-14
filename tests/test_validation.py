@@ -122,7 +122,7 @@ def test_validation_2bin_histosys():
                     'name': 'background',
                     'data': source['bindata']['bkg'],
                     'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
                     ]
                 }
             ]
@@ -311,14 +311,14 @@ def test_validation_2bin_2channel_coupledhistosys():
                     'name': 'bkg1',
                     'data': source['channels']['signal']['bindata']['bkg1'],
                     'modifiers': [
-                        {'name': 'coupled_histosys','type': 'histosys', 'data': {'lo_hist': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg1_up']}}
+                        {'name': 'coupled_histosys','type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg1_up']}}
                     ]
                 },
                 {
                     'name': 'bkg2',
                     'data': source['channels']['signal']['bindata']['bkg2'],
                     'modifiers': [
-                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_hist': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_hist': source['channels']['signal']['bindata']['bkg2_up']}}
+                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg2_up']}}
                     ]
                 }
             ]
@@ -329,7 +329,7 @@ def test_validation_2bin_2channel_coupledhistosys():
                     'name': 'background',
                     'data': source['channels']['control']['bindata']['bkg1'],
                     'modifiers': [
-                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_hist': source['channels']['control']['bindata']['bkg1_dn'], 'hi_hist': source['channels']['control']['bindata']['bkg1_up']}}
+                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['control']['bindata']['bkg1_dn'], 'hi_data': source['channels']['control']['bindata']['bkg1_up']}}
                     ]
                 }
             ]

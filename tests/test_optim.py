@@ -34,7 +34,7 @@ def test_optim_numpy():
                     'name': 'background',
                     'data': source['bindata']['bkg'],
                     'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
                     ]
                 }
             ]
@@ -85,7 +85,7 @@ def test_optim_pytorch():
                     'name': 'background',
                     'data': source['bindata']['bkg'],
                     'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
                     ]
                 }
             ]
@@ -136,7 +136,7 @@ def test_optim_tflow():
                     'name': 'background',
                     'data': source['bindata']['bkg'],
                     'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
                     ]
                 }
             ]

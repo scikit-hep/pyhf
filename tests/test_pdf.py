@@ -92,7 +92,7 @@ def test_pdf_integration_histosys():
                     'name': 'background',
                     'data': source['bindata']['bkg'],
                     'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
                     ]
                 }
             ]

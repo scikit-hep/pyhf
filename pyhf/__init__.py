@@ -126,8 +126,8 @@ class histosys_constraint(object):
 
     def add_sample(self, channel, sample, modifier_data):
         self.at_zero.setdefault(channel, {})[sample['name']] = sample['data']
-        self.at_minus_one.setdefault(channel, {})[sample['name']] = modifier_data['lo_hist']
-        self.at_plus_one.setdefault(channel, {})[sample['name']] = modifier_data['hi_hist']
+        self.at_minus_one.setdefault(channel, {})[sample['name']] = modifier_data['lo_data']
+        self.at_plus_one.setdefault(channel, {})[sample['name']] = modifier_data['hi_data']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
