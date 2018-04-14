@@ -115,6 +115,7 @@ def test_validation_2bin_histosys():
         'channels': [
             {
                 'name': 'singlechannel',
+                'samples': [
                     {
                         'name': 'signal',
                         'data': source['bindata']['sig'],
