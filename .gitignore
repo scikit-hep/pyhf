@@ -30,3 +30,4 @@ config.rst
 # pytest
 .pytest_cache
 htmlcov
+.benchmarks
