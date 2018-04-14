@@ -1,63 +1,63 @@
 {
-	"$schema": "http://json-schema.org/draft-06/schema#",
-	"type": "object",
-	"patternProperties": {
-		"^[a-zA-Z0-9]+$": {
-			"$ref": "#/definitions/channel"
-		}
-	},
-	"additionalProperties": false,
-
-  "definitions": {
-    "channel": {
-      "type": "object",
-      "properties": {
-        "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
-      },
-      "additionalProperties": false
-    },
-    "sample": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "data": { "$ref": "#/definitions/data" },
-        "mods": { "type": "array", "items": {"$ref": "#/definitions/modification"} }
-      },
-      "required": ["name", "data", "mods"],
-      "additionalProperties": false
-    },
-    "modification": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["shapesys","normfactor","histosys","normsys"]
-        },
-        "data": { "$ref": "#/definitions/data"}
-      },
-      "additionalProperties": false
-    },
-    "data": {
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"type": "number"}
-        },
-        {
-          "type": "null"
-        },
-        {
-          "type": "object",
-          "required": ["lo_hist", "hi_hist"]
-        },
-        {
-          "type": "object",
-          "required": ["lo", "hi"]
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "patternProperties": {
+        "^[a-zA-Z0-9]+$": {
+            "$ref": "#/definitions/channel"
         }
-      ]
+    },
+    "additionalProperties": false,
+
+    "definitions": {
+        "channel": {
+            "type": "object",
+            "properties": {
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
+            },
+            "additionalProperties": false
+        },
+        "sample": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "$ref": "#/definitions/data" },
+                "mods": { "type": "array", "items": {"$ref": "#/definitions/modification"} }
+            },
+            "required": ["name", "data", "mods"],
+            "additionalProperties": false
+        },
+        "modification": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["shapesys","normfactor","histosys","normsys"]
+                },
+                "data": { "$ref": "#/definitions/data"}
+            },
+            "additionalProperties": false
+        },
+        "data": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {"type": "number"}
+                },
+                {
+                    "type": "null"
+                },
+                {
+                    "type": "object",
+                    "required": ["lo_hist", "hi_hist"]
+                },
+                {
+                    "type": "object",
+                    "required": ["lo", "hi"]
+                }
+            ]
+        }
     }
-  }
 }
