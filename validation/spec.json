@@ -1,5 +1,12 @@
 {
 	"$schema": "http://json-schema.org/draft-06/schema#",
+	"type": "object",
+	"patternProperties": {
+		"^[a-zA-Z0-9]+$": {
+			"$ref": "#/definitions/channel"
+		}
+	},
+	"additionalProperties": false,
 
   "definitions": {
     "channel": {
@@ -52,13 +59,5 @@
         }
       ]
     }
-  },
-
-	"type": "object",
-	"patternProperties": {
-		"^[a-zA-Z0-9]+$": {
-			"$ref": "#/definitions/channel"
-		}
-	},
-	"additionalProperties": false
+  }
 }
