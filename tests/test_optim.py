@@ -70,6 +70,9 @@ def test_optim(source, spec, backend):
     pyhf.set_backend(pyhf.tensor.tensorflow_backend())
     pyhf.tensorlib.session = tf.Session()
     optim = pyhf.optimizer
+    if isinstance(pyhf.tensorlib, tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
 
     result = optim.unconstrained_bestfit(
         pyhf.loglambdav, data, pdf, init_pars, par_bounds)
