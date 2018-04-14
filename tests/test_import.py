@@ -17,7 +17,7 @@ def test_import_prepHistFactory():
             in parsed_xml['data'][k['name']]] + pdf.config.auxdata
 
     channels = {channel['name'] for channel in pdf.spec['channels']}
-    samples = {'channel1': [sample['name'] for sample in pdf.spec['channels']['channel1']['samples']]}
+    samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
 
     assert data == [122.0, 112.0, 0, 0, 0]
 
