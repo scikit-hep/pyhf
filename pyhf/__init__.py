@@ -104,8 +104,8 @@ class normsys_constraint(object):
         self.auxdata = [0]  # observed data is always at a = 1
 
     def add_sample(self, channel, sample, modifier_data):
-        self.at_minus_one.setdefault(channel, {})[sample['name']] = modifier_data['lo']
-        self.at_plus_one.setdefault(channel, {})[sample['name']] = modifier_data['hi']
+        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo']
+        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
@@ -125,9 +125,9 @@ class histosys_constraint(object):
         self.auxdata = [0]  # observed data is always at a = 1
 
     def add_sample(self, channel, sample, modifier_data):
-        self.at_zero.setdefault(channel, {})[sample['name']] = sample['data']
-        self.at_minus_one.setdefault(channel, {})[sample['name']] = modifier_data['lo_data']
-        self.at_plus_one.setdefault(channel, {})[sample['name']] = modifier_data['hi_data']
+        self.at_zero.setdefault(channel['name'], {})[sample['name']] = sample['data']
+        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo_data']
+        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi_data']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
@@ -166,11 +166,10 @@ class modelconfig(object):
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
-        for ch, ch_def in spec.items():
-            instance.channel_order.append(ch)
-            for sample in ch_def['samples']:
+        for channel in spec['channels']:
+            for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
-                    instance.add_modifier_from_def(ch, sample, modifier_def)
+                    instance.add_modifier_from_def(channel, sample, modifier_def)
         instance.set_poi(poiname)
         return instance
 
@@ -180,7 +179,6 @@ class modelconfig(object):
         self.par_order = []
         self.auxdata = []
         self.auxdata_order = []
-        self.channel_order = []
         self.next_index = 0
 
     def suggested_init(self):
@@ -236,7 +234,7 @@ class modelconfig(object):
             self.auxdata_order.append(name)
         return True
 
-    def add_modifier_from_def(self, ch, sample, modifier_def):
+    def add_modifier_from_def(self, channel, sample, modifier_def):
         if modifier_def['type'] == 'normfactor':
             modifier = None  # no object for factors
             self.add_modifier(name=modifier_def['name'],
@@ -269,7 +267,7 @@ class modelconfig(object):
                          modifier=modifier,
                          suggested_init=[0.0],
                          suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(ch, sample, modifier_def['data'])
+            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
         if modifier_def['type'] == 'histosys':
             modifier = histosys_constraint()
             self.add_modifier(
@@ -278,12 +276,12 @@ class modelconfig(object):
                 modifier=modifier,
                 suggested_init=[1.0],
                 suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(ch, sample, modifier_def['data'])
+            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
-        self.channels = spec
+        self.spec = spec
 
     def _multiplicative_factors(self, channel, sample, pars):
         multiplicative_types = ['shapesys', 'normfactor', 'shapefactor']
@@ -298,9 +296,9 @@ class hfpdf(object):
         for m in modifiers:
             modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
             assert int(modpars.shape[0]) == 1
-            mod_factor = _hfinterp_code1(modifier.at_minus_one[channel][sample['name']],
+            mod_factor = _hfinterp_code1(modifier.at_minus_one[channel['name']][sample['name']],
                                          modifier.at_zero,
-                                         modifier.at_plus_one[channel][sample['name']],
+                                         modifier.at_plus_one[channel['name']][sample['name']],
                                          modpars)[0]
             factors.append(mod_factor)
         return tensorlib.product(factors)
@@ -315,9 +313,9 @@ class hfpdf(object):
 
             # print 'MODPARS', type(modpars.data)
 
-            mod_delta = _hfinterp_code0(modifier.at_minus_one[channel][sample['name']],
-                                        modifier.at_zero[channel][sample['name']],
-                                        modifier.at_plus_one[channel][sample['name']],
+            mod_delta = _hfinterp_code0(modifier.at_minus_one[channel['name']][sample['name']],
+                                        modifier.at_zero[channel['name']][sample['name']],
+                                        modifier.at_plus_one[channel['name']][sample['name']],
                                         modpars)[0]
             stack = tensorlib.stack([mod_delta]) if stack is None else tensorlib.stack([stack,mod_delta])
 
@@ -358,8 +356,8 @@ class hfpdf(object):
     def expected_actualdata(self, pars):
         pars = tensorlib.astensor(pars)
         data = []
-        for channel in self.config.channel_order:
-            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in self.channels[channel]['samples']]),axis=0))
+        for channel in self.spec['channels']:
+            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in channel['samples']]),axis=0))
         return tensorlib.concatenate(data)
 
     def expected_data(self, pars, include_auxdata=True):
