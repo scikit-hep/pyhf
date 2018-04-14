@@ -22,29 +22,22 @@ def test_optim_numpy():
     }
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {
-                        'name': 'mu',
-                        'type': 'normfactor',
-                        'data': None
-                    }
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    {
-                        'name': 'bkg_norm',
-                        'type': 'histosys',
-                        'data': {
-                            'lo_hist': source['bindata']['bkgsys_dn'],
-                            'hi_hist': source['bindata']['bkgsys_up'],
-                        }
-                    }
-                ]
-            }
+            'samples': [
+                {
+                  'name': 'signal',
+                  'data': source['bindata']['sig'],
+                  'mods': [
+                      {'name': 'mu', 'type': 'normfactor', 'data': None}
+                  ]
+                },
+                {
+                    'name': 'background',
+                    'data': source['bindata']['bkg'],
+                    'mods': [
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                    ]
+                }
+            ]
         }
     }
     pdf = pyhf.hfpdf(spec)
@@ -80,29 +73,22 @@ def test_optim_pytorch():
     }
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {
-                        'name': 'mu',
-                        'type': 'normfactor',
-                        'data': None
-                    }
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    {
-                        'name': 'bkg_norm',
-                        'type': 'histosys',
-                        'data': {
-                            'lo_hist': source['bindata']['bkgsys_dn'],
-                            'hi_hist': source['bindata']['bkgsys_up'],
-                        }
-                    }
-                ]
-            }
+            'samples': [
+                {
+                    'name': 'signal',
+                    'data': source['bindata']['sig'],
+                    'mods': [
+                        {'name': 'mu', 'type': 'normfactor', 'data': None}
+                    ]
+                },
+                {
+                    'name': 'background',
+                    'data': source['bindata']['bkg'],
+                    'mods': [
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                    ]
+                }
+            ]
         }
     }
     pdf = pyhf.hfpdf(spec)
@@ -138,29 +124,22 @@ def test_optim_tflow():
     }
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {
-                        'name': 'mu',
-                        'type': 'normfactor',
-                        'data': None
-                    }
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    {
-                        'name': 'bkg_norm',
-                        'type': 'histosys',
-                        'data': {
-                            'lo_hist': source['bindata']['bkgsys_dn'],
-                            'hi_hist': source['bindata']['bkgsys_up'],
-                        }
-                    }
-                ]
-            }
+              'samples': [
+                  {
+                      'name': 'signal',
+                      'data': source['bindata']['sig'],
+                      'mods': [
+                          {'name': 'mu', 'type': 'normfactor', 'data': None}
+                      ]
+                  },
+                  {
+                      'name': 'background',
+                      'data': source['bindata']['bkg'],
+                      'mods': [
+                          {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                      ]
+                  }
+              ]
         }
     }
     pdf = pyhf.hfpdf(spec)

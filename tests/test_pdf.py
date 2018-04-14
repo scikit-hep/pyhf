@@ -80,19 +80,22 @@ def test_pdf_integration_histosys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {'name': 'mu', 'type': 'normfactor', 'data': None}
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    { 'name': 'bkg_norm', 'type': 'histosys',
-                      'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
-                ]
-            }
+            'samples': [
+                {
+                    'name': 'signal',
+                    'data': source['bindata']['sig'],
+                    'mods': [
+                        {'name': 'mu', 'type': 'normfactor', 'data': None}
+                    ]
+                },
+                {
+                    'name': 'background',
+                    'data': source['bindata']['bkg'],
+                    'mods': [
+                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up']}}
+                    ]
+                }
+            ]
         }
     }
     jsonschema.validate(spec, schema)
@@ -126,18 +129,22 @@ def test_pdf_integration_normsys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {'name': 'mu', 'type': 'normfactor', 'data': None}
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
-                ]
-            }
+            'samples': [
+                {
+                    'name': 'signal',
+                    'data': source['bindata']['sig'],
+                    'mods': [
+                        {'name': 'mu', 'type': 'normfactor', 'data': None}
+                    ]
+                },
+                {
+                    'name': 'background',
+                    'data': source['bindata']['bkg'],
+                    'mods': [
+                        {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
+                    ]
+                }
+            ]
         }
     }
     jsonschema.validate(spec, schema)
@@ -158,18 +165,22 @@ def test_pdf_integration_shapesys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'singlechannel': {
-            'signal': {
-                'data': source['bindata']['sig'],
-                'mods': [
-                    {'name': 'mu', 'type': 'normfactor', 'data': None}
-                ]
-            },
-            'background': {
-                'data': source['bindata']['bkg'],
-                'mods': [
-                    {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
-                ]
-            }
+            'samples': [
+                {
+                    'name': 'signal',
+                    'data': source['bindata']['sig'],
+                    'mods': [
+                          {'name': 'mu', 'type': 'normfactor', 'data': None}
+                    ]
+                },
+                {
+                    'name': 'background',
+                    'data': source['bindata']['bkg'],
+                    'mods': [
+                        {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
+                    ]
+                }
+            ]
         }
     }
     jsonschema.validate(spec, schema)
