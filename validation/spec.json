@@ -1,68 +1,63 @@
 {
-	"$schema": "http://json-schema.org/draft-06/schema#",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "properties": {
+        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
+    },
+    "additionalProperties": false,
 
-  "definitions": {
-    "channel": {
-      "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z]+$": {
-          "$ref": "#/definitions/sample"
+    "definitions": {
+        "channel": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
+            },
+            "required": ["name", "samples"],
+            "additionalProperties": false
+        },
+        "sample": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "$ref": "#/definitions/data" },
+                "modifiers": { "type": "array", "items": {"$ref": "#/definitions/modifier"} }
+            },
+            "required": ["name", "data", "modifiers"],
+            "additionalProperties": false
+        },
+        "modifier": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["shapesys","normfactor","histosys","normsys"]
+                },
+                "data": { "$ref": "#/definitions/data"}
+            },
+            "additionalProperties": false
+        },
+        "data": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {"type": "number"}
+                },
+                {
+                    "type": "null"
+                },
+                {
+                    "type": "object",
+                    "required": ["lo_data", "hi_data"]
+                },
+                {
+                    "type": "object",
+                    "required": ["lo", "hi"]
+                }
+            ]
         }
-      },
-      "additionalProperties": false
-    },
-    "sample": {
-      "type": "object",
-      "properties": {
-        "data": { "$ref": "#/definitions/data"},
-        "mods": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/modification"}
-        }
-      },
-      "required": ["data", "mods"],
-      "additionalProperties": false
-    },
-    "modification": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["shapesys","normfactor","histosys","normsys"]
-        },
-        "data": { "$ref": "#/definitions/data"}
-      },
-      "additionalProperties": false
-    },
-    "data": {
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"type": "number"}
-        },
-        {
-          "type": "null"
-        },
-        {
-          "type": "object",
-          "required": ["lo_hist", "hi_hist"]
-        },
-        {
-          "type": "object",
-          "required": ["lo", "hi"]
-        }
-      ]
     }
-  },
-
-	"type": "object",
-	"patternProperties": {
-		"^[a-zA-Z]+$": {
-			"$ref": "#/definitions/channel"
-		}
-	},
-	"additionalProperties": false
 }

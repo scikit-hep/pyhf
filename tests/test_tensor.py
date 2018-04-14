@@ -64,18 +64,25 @@ def test_pdf_eval():
             }
         }
         spec = {
-            'singlechannel': {
-                'signal': {
-                    'data': source['bindata']['sig'],
-                    'mods': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
-                },
-                'background': {
-                    'data': source['bindata']['bkg'],
-                    'mods': [{'name': 'bkg_norm', 'type': 'histosys', 'data': {
-                        'lo_hist': source['bindata']['bkgsys_dn'], 'hi_hist': source['bindata']['bkgsys_up'],
-                    }}]
+            'channels': [
+                {
+                    'name': 'singlechannel',
+                    'samples': [
+                        {
+                            'name': 'signal',
+                            'data': source['bindata']['sig'],
+                            'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
+                        },
+                        {
+                            'name': 'background',
+                            'data': source['bindata']['bkg'],
+                            'modifiers': [
+                                {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
+                            ]
+                        }
+                    ]
                 }
-            }
+            ]
         }
         pdf = pyhf.hfpdf(spec)
         data = source['bindata']['data'] + pdf.config.auxdata
