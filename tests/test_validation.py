@@ -57,24 +57,26 @@ def test_validation_1bin_normsys():
       }
     }
     spec = {
-        'singlechannel': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'normsys', 'data': {'lo': 0.90, 'hi': 1.10}}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'singlechannel',
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'normsys', 'data': {'lo': 0.90, 'hi': 1.10}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
 
@@ -109,24 +111,26 @@ def test_validation_2bin_histosys():
     }
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
-        'singlechannel': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'singlechannel',
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
 
@@ -162,35 +166,39 @@ def test_validation_2bin_2channel():
     }
     source = json.load(open('validation/data/2bin_2channel_example1.json'))
     spec =  {
-        'signal': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['channels']['signal']['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['channels']['signal']['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'uncorr_bkguncrt_signal', 'type': 'shapesys', 'data': source['channels']['signal']['bindata']['bkgerr']}
-                    ]
-                }
-            ]
-        },
-        'control': {
-            'samples': [
-                {
-                    'name': 'background',
-                    'data': source['channels']['control']['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'uncorr_bkguncrt_control', 'type': 'shapesys', 'data': source['channels']['control']['bindata']['bkgerr']}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'signal',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['channels']['signal']['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['channels']['signal']['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'uncorr_bkguncrt_signal', 'type': 'shapesys', 'data': source['channels']['signal']['bindata']['bkgerr']}
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'control',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': source['channels']['control']['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'uncorr_bkguncrt_control', 'type': 'shapesys', 'data': source['channels']['control']['bindata']['bkgerr']}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
@@ -225,43 +233,47 @@ def test_validation_2bin_2channel_couplednorm():
         ]
     }
     source = json.load(open('validation/data/2bin_2channel_couplednorm.json'))
-    spec = {
-        'signal': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['channels']['signal']['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'bkg1',
-                    'data': source['channels']['signal']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.9, 'hi': 1.1}}
-                    ]
-                },
-                {
-                    'name': 'bkg2',
-                    'data': source['channels']['signal']['bindata']['bkg2'],
-                    'modifiers': [
-                        {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.5, 'hi': 1.5}}
-                    ]
-                }
-            ]
-        },
-        'control': {
-            'samples': [
-                {
-                    'name': 'background',
-                    'data': source['channels']['control']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_normsys', 'type': 'normsys', 'data': {'lo': 0.9, 'hi': 1.1}}
-                    ]
-                }
-            ]
-        }
+    spec =  {
+        'channels': [
+            {
+                'name': 'signal',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['channels']['signal']['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg1',
+                        'data': source['channels']['signal']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.9, 'hi': 1.1}}
+                        ]
+                    },
+                    {
+                        'name': 'bkg2',
+                        'data': source['channels']['signal']['bindata']['bkg2'],
+                        'modifiers': [
+                            {'name': 'coupled_normsys', 'type': 'normsys', 'data':  {'lo': 0.5, 'hi': 1.5}}
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'control',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': source['channels']['control']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_normsys', 'type': 'normsys', 'data': {'lo': 0.9, 'hi': 1.1}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
@@ -298,42 +310,46 @@ def test_validation_2bin_2channel_coupledhistosys():
     }
     source = json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
     spec   =  {
-        'signal': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['channels']['signal']['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'bkg1',
-                    'data': source['channels']['signal']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_histosys','type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg1_up']}}
-                    ]
-                },
-                {
-                    'name': 'bkg2',
-                    'data': source['channels']['signal']['bindata']['bkg2'],
-                    'modifiers': [
-                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg2_up']}}
-                    ]
-                }
-            ]
-        },
-        'control': {
-            'samples': [
-                {
-                    'name': 'background',
-                    'data': source['channels']['control']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['control']['bindata']['bkg1_dn'], 'hi_data': source['channels']['control']['bindata']['bkg1_up']}}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'signal',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['channels']['signal']['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg1',
+                        'data': source['channels']['signal']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_histosys','type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg1_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg1_up']}}
+                        ]
+                    },
+                    {
+                        'name': 'bkg2',
+                        'data': source['channels']['signal']['bindata']['bkg2'],
+                        'modifiers': [
+                            {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['signal']['bindata']['bkg2_dn'], 'hi_data': source['channels']['signal']['bindata']['bkg2_up']}}
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'control',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': source['channels']['control']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_histosys', 'type': 'histosys', 'data': {'lo_data': source['channels']['control']['bindata']['bkg1_dn'], 'hi_data': source['channels']['control']['bindata']['bkg1_up']}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
@@ -370,35 +386,39 @@ def test_validation_2bin_2channel_coupledshapefactor():
     }
     source = json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
     spec =  {
-        'signal': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['channels']['signal']['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'bkg1',
-                    'data': source['channels']['signal']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
-                    ]
-                }
-            ]
-        },
-        'control': {
-            'samples': [
-                {
-                    'name': 'background',
-                    'data': source['channels']['control']['bindata']['bkg1'],
-                    'modifiers': [
-                        {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'signal',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['channels']['signal']['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg1',
+                        'data': source['channels']['signal']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'control',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': source['channels']['control']['bindata']['bkg1'],
+                        'modifiers': [
+                            {'name': 'coupled_shapefactor', 'type': 'shapefactor', 'data': None}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     pdf  = pyhf.hfpdf(spec)
     data = []

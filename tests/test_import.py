@@ -14,11 +14,12 @@ def test_import_prepHistFactory():
     data = [binvalue for k in pdf.config.channel_order for binvalue
             in spec['data'][k]] + pdf.config.auxdata
 
+    channels = {channel['name'] for channel in spec['channels']}
     samples = {'channel1': [sample['name'] for sample in spec['channels']['channel1']['samples']]}
 
     assert data == [122.0, 112.0, 0, 0, 0]
 
-    assert 'channel1' in spec['channels']
+    assert 'channel1' in channels
     assert 'signal' in samples['channel1']
     assert 'background1' in samples['channel1']
     assert 'background2' in samples['channel1']

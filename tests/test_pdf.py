@@ -79,24 +79,27 @@ def test_pdf_integration_histosys():
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
-        'singlechannel': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
@@ -128,24 +131,27 @@ def test_pdf_integration_normsys():
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
-        'singlechannel': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['bindata']['sig'],
-                    'modifiers': [
-                        {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
@@ -164,24 +170,27 @@ def test_pdf_integration_shapesys():
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
-        'singlechannel': {
-            'samples': [
-                {
-                    'name': 'signal',
-                    'data': source['bindata']['sig'],
-                    'modifiers': [
-                          {'name': 'mu', 'type': 'normfactor', 'data': None}
-                    ]
-                },
-                {
-                    'name': 'background',
-                    'data': source['bindata']['bkg'],
-                    'modifiers': [
-                        {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
-                    ]
-                }
-            ]
-        }
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                              {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'shapesys','data': [10, 10]}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     jsonschema.validate(spec, schema)
     pdf  = pyhf.hfpdf(spec)
