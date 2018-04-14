@@ -3,9 +3,6 @@ language: python
 python:
   - '2.7'
   - '3.6'
-# only test 'push' builds to master (including PRs that target master)
-branches:
-  only: master
 install:
   - sudo apt-get update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -25,8 +22,8 @@ script:
   - pytest --ignore tests/benchmarks/
 after_success: coveralls
 
-# always test
-# benchmark, build docs, deploy to PyPI only when merged into master
+# always test (on both 'push' and 'pr' builds in Travis)
+# benchmark, build docs, deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - test
   - name: benchmark
