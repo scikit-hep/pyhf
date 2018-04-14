@@ -5,11 +5,12 @@ import jsonschema
 
 def test_import_prepHistFactory():
     schema = json.load(open('validation/spec.json'))
-    spec = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
+    parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                               'validation/xmlimport_input/')
 
-    jsonschema.validate(spec['channels'], schema)
-    pdf = pyhf.hfpdf(spec['channels'], poiname='SigXsecOverSM')
+    spec = {'channels': parsed_xml['channels']}
+    jsonschema.validate(spec, schema)
+    pdf = pyhf.hfpdf(spec, poiname='SigXsecOverSM')
 
     data = [binvalue for k in pdf.spec['channels'] for binvalue
             in spec['data'][k['name']]] + pdf.config.auxdata
