@@ -11,8 +11,8 @@ def test_import_prepHistFactory():
     jsonschema.validate(spec['channels'], schema)
     pdf = pyhf.hfpdf(spec['channels'], poiname='SigXsecOverSM')
 
-    data = [binvalue for k in pdf.config.channel_order for binvalue
-            in spec['data'][k]] + pdf.config.auxdata
+    data = [binvalue for k in pdf.spec['channels'] for binvalue
+            in spec['data'][k['name']]] + pdf.config.auxdata
 
     channels = {channel['name'] for channel in spec['channels']}
     samples = {'channel1': [sample['name'] for sample in spec['channels']['channel1']['samples']]}

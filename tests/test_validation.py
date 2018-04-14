@@ -204,8 +204,8 @@ def test_validation_2bin_2channel():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.config.channel_order:
-        data += source['channels'][c]['bindata']['data']
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
     data = data + pdf.config.auxdata
 
     muTest = 1.0
@@ -279,8 +279,8 @@ def test_validation_2bin_2channel_couplednorm():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.config.channel_order:
-        data += source['channels'][c]['bindata']['data']
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
     data = data + pdf.config.auxdata
 
 
@@ -355,8 +355,8 @@ def test_validation_2bin_2channel_coupledhistosys():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.config.channel_order:
-        data += source['channels'][c]['bindata']['data']
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
     data = data + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
@@ -424,8 +424,8 @@ def test_validation_2bin_2channel_coupledshapefactor():
     }
     pdf  = pyhf.hfpdf(spec)
     data = []
-    for c in pdf.config.channel_order:
-        data += source['channels'][c]['bindata']['data']
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
     data = data + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
