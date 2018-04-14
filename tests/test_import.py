@@ -8,15 +8,16 @@ def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                               'validation/xmlimport_input/')
 
+    # build the spec, strictly checks properties included
     spec = {'channels': parsed_xml['channels']}
     jsonschema.validate(spec, schema)
     pdf = pyhf.hfpdf(spec, poiname='SigXsecOverSM')
 
     data = [binvalue for k in pdf.spec['channels'] for binvalue
-            in spec['data'][k['name']]] + pdf.config.auxdata
+            in parsed_xml['data'][k['name']]] + pdf.config.auxdata
 
-    channels = {channel['name'] for channel in spec['channels']}
-    samples = {'channel1': [sample['name'] for sample in spec['channels']['channel1']['samples']]}
+    channels = {channel['name'] for channel in pdf.spec['channels']}
+    samples = {'channel1': [sample['name'] for sample in pdf.spec['channels']['channel1']['samples']]}
 
     assert data == [122.0, 112.0, 0, 0, 0]
 
