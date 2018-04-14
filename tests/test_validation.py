@@ -60,6 +60,7 @@ def test_validation_1bin_normsys():
         'channels': [
             {
                 'name': 'singlechannel',
+                'samples': [
                     {
                         'name': 'signal',
                         'data': source['bindata']['sig'],
