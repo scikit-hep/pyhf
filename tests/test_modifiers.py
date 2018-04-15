@@ -5,7 +5,7 @@ from six import with_metaclass
 
 import pyhf
 
-modifiers_to_test = ["histosys", "normsys", "shapesys"]
+modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys"]
 
 '''
 This is a teardown fixture to try and remove all traces of pyhf.<foo> from
@@ -17,12 +17,15 @@ re-added.
 '''
 @pytest.fixture
 def importer():
+    def empty_registry():
+      from pyhf import modifiers
+      for k in list(modifiers.registry.keys()):
+          del modifiers.registry[k]
+      for k in list(sys.modules.keys()):
+          if k.startswith('pyhf'): del sys.modules[k]
+    empty_registry()
     yield "importer"
-    from pyhf import modifiers
-    for k in list(modifiers.registry.keys()):
-        del modifiers.registry[k]
-    for k in list(sys.modules.keys()):
-        if k.startswith('pyhf'): del sys.modules[k]
+    empty_registry()
 
 # we make sure the registry is empty by default
 def test_empty_registry(importer):
@@ -34,8 +37,8 @@ def test_empty_registry(importer):
 def test_import_default_modifiers(importer, test_modifier):
     from pyhf import modifiers
     modifier = getattr(__import__('pyhf.modifiers', fromlist=[test_modifier]), test_modifier)
-    assert '{0:s}_constraint'.format(test_modifier) in modifiers.registry
-    assert isinstance(modifiers.registry['{0:s}_constraint'.format(test_modifier)], modifiers.IModifier)
+    assert test_modifier in modifiers.registry
+    assert callable(modifiers.registry[test_modifier])
 
 # we make sure decorate can use auto-naming
 def test_decorate_modifier_name_auto(importer):
@@ -79,36 +82,21 @@ def test_decorate_wrong_values(importer):
         class myCustomModifier(object):
             pass
 
-# we make sure metaclassing works
-def test_modifier_metaclass(importer):
-    from pyhf import modifiers
-
-    class myCustomModifier(with_metaclass(modifiers.IModifier, object)):
-        pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myCustomModifier' in modifiers.registry
-    assert modifiers.registry['myCustomModifier'] == myCustomModifier
-
 # we catch name clashes when adding duplicate names for modifiers
 def test_registry_name_clash(importer):
     from pyhf import modifiers
     from pyhf.modifiers import modifier
     from pyhf.modifiers import histosys
 
-    assert 'histosys_constraint' in modifiers.registry
+    assert 'histosys' in modifiers.registry
 
     with pytest.raises(KeyError):
-        @modifier('histosys_constraint')
+        @modifier('histosys')
         class myCustomModifier(object):
-            pass
-
-    with pytest.raises(KeyError):
-        class histosys_constraint(with_metaclass(modifiers.IModifier, object)):
             pass
 
     with pytest.raises(KeyError):
         class myCustomModifier(object):
             pass
 
-        modifiers.add_to_registry(myCustomModifier, 'histosys_constraint')
+        modifiers.add_to_registry(myCustomModifier, 'histosys')

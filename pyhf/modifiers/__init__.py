@@ -12,15 +12,6 @@ def add_to_registry(cls, cls_name=None):
   registry[cls_name] = cls
 
 '''
-Meta-class for auto-registering modifiers and injecting into a registry.
-'''
-class IModifier(type):
-    def __new__(cls, clsname, bases, attrs):
-        newclass = super(IModifier, cls).__new__(cls, clsname, bases, attrs)
-        add_to_registry(newclass)
-        return newclass
-
-'''
 Decorator for registering modifiers. Two ways to use it.
 
 Way 1: automatically determine the name of the modifier using cls.__name__

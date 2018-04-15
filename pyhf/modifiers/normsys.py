@@ -2,10 +2,11 @@ import logging
 log = logging.getLogger(__name__)
 
 from six import with_metaclass
-from . import IModifier
+from . import modifier
 from .. import tensorlib
 
-class normsys(with_metaclass(IModifier, object)):
+@modifier
+class normsys(object):
     is_constrained = True
 
     def __init__(self):
