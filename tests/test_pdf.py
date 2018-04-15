@@ -76,6 +76,7 @@ def test_core_pdf_broadcasting():
     assert np.all(naive_python  == broadcasted)
 
 def test_pdf_integration_histosys():
+    from pyhf.modifiers import normfactor, histosys
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -128,6 +129,7 @@ def test_pdf_integration_histosys():
 
 
 def test_pdf_integration_normsys():
+    from pyhf.modifiers import normfactor, normsys
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -167,6 +169,7 @@ def test_pdf_integration_normsys():
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*0.9]
 
 def test_pdf_integration_shapesys():
+    from pyhf.modifiers import normfactor, shapesys
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
