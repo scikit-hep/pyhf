@@ -2,58 +2,16 @@ import pyhf
 import pyhf.simplemodels
 
 import json
+import pytest
 
 
-def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
-    init_pars = pdf.config.suggested_init()
-    par_bounds = pdf.config.suggested_bounds()
-
-    CLs_obs, CLs_exp = pyhf.runOnePoint(
-        mu_test, data, pdf, init_pars, par_bounds)[-2:]
-    CLs_obs = 1. / CLs_obs
-    CLs_exp = [1. / x for x in CLs_exp]
-    assert (CLs_obs - expected_result['obs']) / \
-        expected_result['obs'] < tolerance
-    for result, expected_result in zip(CLs_exp, expected_result['exp']):
-        assert (result - expected_result) / \
-            expected_result < tolerance
+@pytest.fixture
+def source_1bin_example1(scope='module'):
+    return json.load(open('validation/data/1bin_example1.json'))
 
 
-def test_validation_1bin_shapesys():
-    expected_result = {
-        'obs': 0.4541865416107029,
-        'exp': [
-            0.06371799398864626,
-            0.15096503398048894,
-            0.3279606950533305,
-            0.6046087303039118,
-            0.8662627605298466
-        ]
-    }
-
-    source = json.load(open('validation/data/1bin_example1.json'))
-    pdf = pyhf.simplemodels.hepdata_like(source['bindata']['sig'],
-                                         source['bindata']['bkg'],
-                                         source['bindata']['bkgerr'])
-
-    data = source['bindata']['data'] + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2
-    assert len(pdf.config.suggested_bounds()) == 2
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
-
-
-def test_validation_1bin_normsys():
-    expected_result = {
-        'obs': 0.0007930094233140433,
-        'exp': [
-            1.2529050370718884e-09,
-            8.932001833559302e-08,
-            5.3294967286010575e-06,
-            0.00022773982308763686,
-            0.0054897420571466075
-        ]
-    }
+@pytest.fixture
+def source_1bin_normsys(scope='module'):
     source = {
         'binning': [2, -0.5, 1.5],
         'bindata': {
@@ -62,6 +20,12 @@ def test_validation_1bin_normsys():
             'sig': [30.0, 95.0]
         }
     }
+    return source
+
+
+@pytest.fixture
+def spec_1bin_normsys(source_1bin_normsys, scope='module'):
+    source = source_1bin_normsys
     spec = {
         'channels': [
             {
@@ -93,27 +57,17 @@ def test_validation_1bin_normsys():
             }
         ]
     }
-    pdf = pyhf.hfpdf(spec)
-
-    data = source['bindata']['data'] + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2
-    assert len(pdf.config.suggested_bounds()) == 2
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    return spec
 
 
-def test_validation_2bin_histosys():
-    expected_result = {
-        'obs': 0.10014623469489856,
-        'exp': [
-            8.131143652258812e-06,
-            0.0001396307700293439,
-            0.0020437905684851376,
-            0.022094931468776054,
-            0.14246926685789288,
-        ]
-    }
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+@pytest.fixture
+def source_2bin_histosys_example2(scope='module'):
+    return json.load(open('validation/data/2bin_histosys_example2.json'))
+
+
+@pytest.fixture
+def spec_2bin_histosys(source_2bin_histosys_example2, scope='module'):
+    source = source_2bin_histosys_example2
     spec = {
         'channels': [
             {
@@ -148,27 +102,17 @@ def test_validation_2bin_histosys():
             }
         ]
     }
-    pdf = pyhf.hfpdf(spec)
-
-    data = source['bindata']['data'] + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2
-    assert len(pdf.config.suggested_bounds()) == 2
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    return spec
 
 
-def test_validation_2bin_2channel():
-    expected_result = {
-        'obs': 0.05691881515460979,
-        'exp': [
-            0.0004448774256747925,
-            0.0034839534635069816,
-            0.023684793938725246,
-            0.12294326553585197,
-            0.4058143629613449
-        ]
-    }
-    source = json.load(open('validation/data/2bin_2channel_example1.json'))
+@pytest.fixture
+def source_2bin_2channel_example1(scope='module'):
+    return json.load(open('validation/data/2bin_2channel_example1.json'))
+
+
+@pytest.fixture
+def spec_2bin_2channel(source_2bin_2channel_example1, scope='module'):
+    source = source_2bin_2channel_example1
     spec = {
         'channels': [
             {
@@ -216,30 +160,17 @@ def test_validation_2bin_2channel():
             }
         ]
     }
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    # 1 mu + 2 gammas for 2 channels each
-    assert len(pdf.config.suggested_init()) == 5
-    assert len(pdf.config.suggested_bounds()) == 5
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    return spec
 
 
-def test_validation_2bin_2channel_couplednorm():
-    expected_result = {
-        'obs': 0.5999662863185762,
-        'exp': [
-            0.06596134134354742,
-            0.15477912571478988,
-            0.33323967895587736,
-            0.6096429330789306,
-            0.8688213053042003
-        ]
-    }
-    source = json.load(open('validation/data/2bin_2channel_couplednorm.json'))
+@pytest.fixture
+def source_2bin_2channel_couplednorm(scope='module'):
+    return json.load(open('validation/data/2bin_2channel_couplednorm.json'))
+
+
+@pytest.fixture
+def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm, scope='module'):
+    source = source_2bin_2channel_couplednorm
     spec = {
         'channels': [
             {
@@ -298,29 +229,17 @@ def test_validation_2bin_2channel_couplednorm():
             }
         ]
     }
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2  # 1 mu + 1 alpha
-    assert len(pdf.config.suggested_bounds()) == 2  # 1 mu + 1 alpha
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    return spec
 
 
-def test_validation_2bin_2channel_coupledhistosys():
-    expected_result = {
-        'obs': 0.0796739833305826,
-        'exp': [
-            1.765372502072074e-05,
-            0.00026265618793683054,
-            0.003340033567379219,
-            0.03152233566143051,
-            0.17907736639946248
-        ]
-    }
-    source = json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
+@pytest.fixture
+def source_2bin_2channel_coupledhisto(scope='module'):
+    return json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
+
+
+@pytest.fixture
+def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto, scope='module'):
+    source = source_2bin_2channel_coupledhisto
     spec = {
         'channels': [
             {
@@ -388,35 +307,17 @@ def test_validation_2bin_2channel_coupledhistosys():
             }
         ]
     }
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    init_pars = pdf.config.suggested_init()
-    par_bounds = pdf.config.suggested_bounds()
-
-    assert len(pdf.config.auxdata) == 1
-    assert len(init_pars) == 2  # 1 mu 1 shared histosys
-    assert len(par_bounds) == 2
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    return spec
 
 
-def test_validation_2bin_2channel_coupledshapefactor():
-    expected_result = {
-        'obs': 0.5421679124909312,
-        'exp': [
-            0.013753299929451691,
-            0.048887400056355966,
-            0.15555296253957684,
-            0.4007561343326305,
-            0.7357169630955912
-        ]
-    }
-    source = json.load(
-        open('validation/data/2bin_2channel_coupledshapefactor.json'))
+@pytest.fixture
+def source_2bin_2channel_coupledshapefactor(scope='module'):
+    return json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
+
+
+@pytest.fixture
+def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor, scope='module'):
+    source = source_2bin_2channel_coupledshapefactor
     spec = {
         'channels': [
             {
@@ -464,6 +365,200 @@ def test_validation_2bin_2channel_coupledshapefactor():
             }
         ]
     }
+    return spec
+
+
+def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    CLs_obs, CLs_exp = pyhf.runOnePoint(
+        mu_test, data, pdf, init_pars, par_bounds)[-2:]
+    CLs_obs = 1. / CLs_obs
+    CLs_exp = [1. / x for x in CLs_exp]
+    assert (CLs_obs - expected_result['obs']) / \
+        expected_result['obs'] < tolerance
+    for result, expected_result in zip(CLs_exp, expected_result['exp']):
+        assert (result - expected_result) / \
+            expected_result < tolerance
+
+
+def test_validation_1bin_shapesys(source_1bin_example1):
+    expected_result = {
+        'obs': 0.4541865416107029,
+        'exp': [
+            0.06371799398864626,
+            0.15096503398048894,
+            0.3279606950533305,
+            0.6046087303039118,
+            0.8662627605298466
+        ]
+    }
+
+    source = source_1bin_example1
+    pdf = pyhf.simplemodels.hepdata_like(source['bindata']['sig'],
+                                         source['bindata']['bkg'],
+                                         source['bindata']['bkgerr'])
+
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_1bin_normsys(source_1bin_normsys, spec_1bin_normsys):
+    expected_result = {
+        'obs': 0.0007930094233140433,
+        'exp': [
+            1.2529050370718884e-09,
+            8.932001833559302e-08,
+            5.3294967286010575e-06,
+            0.00022773982308763686,
+            0.0054897420571466075
+        ]
+    }
+
+    source = source_1bin_normsys
+    spec = spec_1bin_normsys
+
+    pdf = pyhf.hfpdf(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_2bin_histosys(source_2bin_histosys_example2, spec_2bin_histosys):
+    expected_result = {
+        'obs': 0.10014623469489856,
+        'exp': [
+            8.131143652258812e-06,
+            0.0001396307700293439,
+            0.0020437905684851376,
+            0.022094931468776054,
+            0.14246926685789288,
+        ]
+    }
+
+    source = source_2bin_histosys_example2
+    spec = spec_2bin_histosys
+
+    pdf = pyhf.hfpdf(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    assert len(pdf.config.suggested_init()) == 2
+    assert len(pdf.config.suggested_bounds()) == 2
+
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_2bin_2channel(source_2bin_2channel_example1, spec_2bin_2channel):
+    expected_result = {
+        'obs': 0.05691881515460979,
+        'exp': [
+            0.0004448774256747925,
+            0.0034839534635069816,
+            0.023684793938725246,
+            0.12294326553585197,
+            0.4058143629613449
+        ]
+    }
+
+    source = source_2bin_2channel_example1
+    spec = spec_2bin_2channel
+
+    pdf = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
+    data = data + pdf.config.auxdata
+
+    # 1 mu + 2 gammas for 2 channels each
+    assert len(pdf.config.suggested_init()) == 5
+    assert len(pdf.config.suggested_bounds()) == 5
+
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm,
+                                              spec_2bin_2channel_couplednorm):
+    expected_result = {
+        'obs': 0.5999662863185762,
+        'exp': [
+            0.06596134134354742,
+            0.15477912571478988,
+            0.33323967895587736,
+            0.6096429330789306,
+            0.8688213053042003
+        ]
+    }
+
+    source = source_2bin_2channel_couplednorm
+    spec = spec_2bin_2channel_couplednorm
+
+    pdf = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
+    data = data + pdf.config.auxdata
+
+    assert len(pdf.config.suggested_init()) == 2  # 1 mu + 1 alpha
+    assert len(pdf.config.suggested_bounds()) == 2  # 1 mu + 1 alpha
+
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto,
+                                                  spec_2bin_2channel_coupledhistosys):
+    expected_result = {
+        'obs': 0.0796739833305826,
+        'exp': [
+            1.765372502072074e-05,
+            0.00026265618793683054,
+            0.003340033567379219,
+            0.03152233566143051,
+            0.17907736639946248
+        ]
+    }
+
+    source = source_2bin_2channel_coupledhisto
+    spec = spec_2bin_2channel_coupledhistosys
+
+    pdf = pyhf.hfpdf(spec)
+    data = []
+    for c in pdf.spec['channels']:
+        data += source['channels'][c['name']]['bindata']['data']
+    data = data + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    assert len(pdf.config.auxdata) == 1
+    assert len(init_pars) == 2  # 1 mu 1 shared histosys
+    assert len(par_bounds) == 2
+
+    validate_runOnePoint(pdf, data, 1.0, expected_result)
+
+
+def test_validation_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor,
+                                                     spec_2bin_2channel_coupledshapefactor):
+    expected_result = {
+        'obs': 0.5421679124909312,
+        'exp': [
+            0.013753299929451691,
+            0.048887400056355966,
+            0.15555296253957684,
+            0.4007561343326305,
+            0.7357169630955912
+        ]
+    }
+
+    source = source_2bin_2channel_coupledshapefactor
+    spec = spec_2bin_2channel_coupledshapefactor
+
     pdf = pyhf.hfpdf(spec)
     data = []
     for c in pdf.spec['channels']:
