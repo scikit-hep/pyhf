@@ -2,7 +2,15 @@ from six import with_metaclass
 from . import IModifier
 from .. import tensorlib
 
-class histosys_constraint(with_metaclass(IModifier, object)):
+class histosys(with_metaclass(IModifier, object)):
+    @staticmethod
+    def suggested_init(n_parameters):
+        return [1.0]
+
+    @staticmethod
+    def suggested_bounds(n_parameters):
+        return [[-5, 5]]
+
     def __init__(self):
         self.at_zero = {}
         self.at_minus_one = {}

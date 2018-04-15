@@ -2,7 +2,15 @@ from six import with_metaclass
 from . import IModifier
 from .. import tensorlib
 
-class shapesys_constraint(with_metaclass(IModifier, object)):
+class shapesys(with_metaclass(IModifier, object)):
+    @staticmethod
+    def suggested_init(n_parameters):
+        return [1.0] * n_parameters
+
+    @staticmethod
+    def suggested_bounds(n_parameters):
+        return [[0, 10]] * n_parameters
+
     def __init__(self, nom_data, modifier_data):
         self.auxdata = []
         self.bkg_over_db_squared = []
