@@ -33,7 +33,8 @@ def spec(source, scope='module'):
                                 'name': 'mu',
                                 'type': 'normfactor',
                                 'data': None
-                            }]
+                            }
+                        ]
                     },
                     {
                         'name': 'background',
@@ -46,9 +47,12 @@ def spec(source, scope='module'):
                                     'lo_data': source['bindata']['bkgsys_dn'],
                                     'hi_data': source['bindata']['bkgsys_up']
                                 }
-                            }]
-                    }]
-            }]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     }
     return spec
 

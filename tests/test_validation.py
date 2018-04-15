@@ -2,13 +2,9 @@ import pyhf
 import pyhf.simplemodels
 
 import json
-import pytest
-
-VALIDATION_TOLERANCE = 1e-5
 
 
-@pytest.fixture
-def validate_runOnePoint(pdf, data, mu_test, expected_result, scope='function'):
+def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
@@ -17,10 +13,10 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, scope='function'):
     CLs_obs = 1. / CLs_obs
     CLs_exp = [1. / x for x in CLs_exp]
     assert (CLs_obs - expected_result['obs']) / \
-        expected_result['obs'] < VALIDATION_TOLERANCE
+        expected_result['obs'] < tolerance
     for result, expected_result in zip(CLs_exp, expected_result['exp']):
         assert (result - expected_result) / \
-            expected_result < VALIDATION_TOLERANCE
+            expected_result < tolerance
 
 
 def test_validation_1bin_shapesys():
@@ -130,7 +126,8 @@ def test_validation_2bin_histosys():
                             {
                                 'name': 'mu',
                                 'type': 'normfactor',
-                                'data': None}
+                                'data': None
+                            }
                         ]
                     },
                     {
@@ -234,12 +231,13 @@ def test_validation_2bin_2channel():
 def test_validation_2bin_2channel_couplednorm():
     expected_result = {
         'obs': 0.5999662863185762,
-        'exp': [0.06596134134354742,
-                0.15477912571478988,
-                0.33323967895587736,
-                0.6096429330789306,
-                0.8688213053042003
-                ]
+        'exp': [
+            0.06596134134354742,
+            0.15477912571478988,
+            0.33323967895587736,
+            0.6096429330789306,
+            0.8688213053042003
+        ]
     }
     source = json.load(open('validation/data/2bin_2channel_couplednorm.json'))
     spec = {
@@ -431,7 +429,8 @@ def test_validation_2bin_2channel_coupledshapefactor():
                             {
                                 'name': 'mu',
                                 'type': 'normfactor',
-                                'data': None}
+                                'data': None
+                            }
                         ]
                     },
                     {
