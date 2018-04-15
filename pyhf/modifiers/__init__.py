@@ -41,16 +41,18 @@ Should raise error if not passed in one argument (the class to wrap for automati
 '''
 def modifier(*args):
     if len(args) != 1:
-        raise TypeError('@modifier takes exactly 1 argument ({0:d} given)'.format(len(args)))
+        raise ValueError('@modifier takes exactly 1 argument ({0:d} given)'.format(len(args)))
 
     def _modifier(name):
         def wrapper(cls):
             add_to_registry(cls, name)
+            return cls
         return wrapper
 
     if callable(args[0]):
         add_to_registry(args[0])
+        return args[0]
     elif isinstance(args[0], basestring):
         return _modifier(args[0])
     else:
-        raise ValueError('@modifier must be given a basestring instance (string, unicode). You gave it {}'.format(type(args[0])))
+        raise TypeError('@modifier must be given a basestring instance (string, unicode). You gave it {}'.format(type(args[0])))
