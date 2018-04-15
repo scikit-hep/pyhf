@@ -24,8 +24,7 @@ def source_1bin_normsys(scope='module'):
 
 
 @pytest.fixture
-def spec_1bin_normsys(source_1bin_normsys, scope='module'):
-    source = source_1bin_normsys
+def spec_1bin_normsys(source=source_1bin_normsys(), scope='module'):
     spec = {
         'channels': [
             {
@@ -58,6 +57,20 @@ def spec_1bin_normsys(source_1bin_normsys, scope='module'):
         ]
     }
     return spec
+
+
+@pytest.fixture
+def expected_result_1bin_normsys(scope='module'):
+    return {
+        'obs': 0.0007930094233140433,
+        'exp': [
+            1.2529050370718884e-09,
+            8.932001833559302e-08,
+            5.3294967286010575e-06,
+            0.00022773982308763686,
+            0.0054897420571466075
+        ]
+    }
 
 
 @pytest.fixture
@@ -407,28 +420,25 @@ def test_validation_1bin_shapesys(source_1bin_example1):
     validate_runOnePoint(pdf, data, 1.0, expected_result)
 
 
-def test_validation_1bin_normsys(source_1bin_normsys, spec_1bin_normsys):
-    expected_result = {
-        'obs': 0.0007930094233140433,
-        'exp': [
-            1.2529050370718884e-09,
-            8.932001833559302e-08,
-            5.3294967286010575e-06,
-            0.00022773982308763686,
-            0.0054897420571466075
-        ]
-    }
-
-    source = source_1bin_normsys
-    spec = spec_1bin_normsys
+@pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
+    (source_1bin_normsys(),
+     spec_1bin_normsys(source_1bin_normsys()),
+     1.,
+     expected_result_1bin_normsys(),
+     {'init_pars': 2, 'par_bounds': 2}),
+],
+    ids=[
+    '1bin_normsys_mu1'
+])
+def test_validation_normsys(source, spec, mu, expected_result, config_len):
 
     pdf = pyhf.hfpdf(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    assert len(pdf.config.suggested_init()) == 2
-    assert len(pdf.config.suggested_bounds()) == 2
+    assert len(pdf.config.suggested_init()) == config_len['init_pars']
+    assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
 
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+    validate_runOnePoint(pdf, data, mu, expected_result)
 
 
 def test_validation_2bin_histosys(source_2bin_histosys_example2, spec_2bin_histosys):
