@@ -4,6 +4,7 @@ import json
 import jsonschema
 
 def test_import_prepHistFactory():
+    from pyhf.modifiers import normsys, normfactor
     schema = json.load(open('validation/spec.json'))
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                               'validation/xmlimport_input/')
