@@ -61,13 +61,6 @@ def set_backend(backend):
     else:
         optimizer = scipy_optimizer()
 
-
-def _poisson_impl(n, lam):
-    return tensorlib.poisson(n,lam)
-
-def _gaussian_impl(x, mu, sigma):
-    return tensorlib.normal(x,mu,sigma)
-
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
     at_minus_one = tensorlib.astensor(at_minus_one)
     at_zero = tensorlib.astensor(at_zero)
@@ -114,7 +107,7 @@ class normsys_constraint(object):
         return self.alphas(pars)
 
     def pdf(self, a, alpha):
-        return _gaussian_impl(a, alpha, 1)
+        return tensorlib.normal(a, alpha, 1)
 
 class histosys_constraint(object):
 
@@ -136,7 +129,7 @@ class histosys_constraint(object):
         return self.alphas(pars)
 
     def pdf(self, a, alpha):
-        return _gaussian_impl(a, alpha, [1])
+        return tensorlib.normal(a, alpha, [1])
 
 
 class shapesys_constraint(object):
@@ -155,7 +148,7 @@ class shapesys_constraint(object):
         return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
 
     def pdf(self, a, alpha):
-        return _poisson_impl(a, alpha)
+        return tensorlib.poisson(a, alpha)
 
     def expected_data(self, pars):
         return self.alphas(pars)
@@ -390,7 +383,7 @@ class hfpdf(object):
         cut = int(data.shape[0]) - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
-        summands = tensorlib.log(_poisson_impl(actual_data, lambdas_data))
+        summands = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
 
         result = tensorlib.sum(summands) + self.constraint_logpdf(aux_data, pars)
         return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy

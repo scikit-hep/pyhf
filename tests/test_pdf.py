@@ -54,9 +54,9 @@ def test_numpy_pdf_inputs():
 def test_core_pdf_broadcasting():
     data    = [10,11,12,13,14,15]
     lambdas = [15,14,13,12,11,10]
-    naive_python = [pyhf._poisson_impl(d, lam) for d,lam in zip(data, lambdas)]
+    naive_python = [pyhf.tensorlib.poisson(d, lam) for d,lam in zip(data, lambdas)]
 
-    broadcasted  = pyhf._poisson_impl(data, lambdas)
+    broadcasted  = pyhf.tensorlib.poisson(data, lambdas)
 
     assert np.array(data).shape == np.array(lambdas).shape
     assert broadcasted.shape    == np.array(data).shape
@@ -66,9 +66,9 @@ def test_core_pdf_broadcasting():
     data    = [10,11,12,13,14,15]
     mus     = [15,14,13,12,11,10]
     sigmas  = [1,2,3,4,5,6]
-    naive_python = [pyhf._gaussian_impl(d, mu,sig) for d,mu,sig in zip(data, mus, sigmas)]
+    naive_python = [pyhf.tensorlib.normal(d, mu,sig) for d,mu,sig in zip(data, mus, sigmas)]
 
-    broadcasted  = pyhf._gaussian_impl(data, mus, sigmas)
+    broadcasted  = pyhf.tensorlib.normal(data, mus, sigmas)
 
     assert np.array(data).shape == np.array(mus).shape
     assert np.array(data).shape == np.array(sigmas).shape
