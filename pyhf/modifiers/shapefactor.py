@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from six import with_metaclass
 from . import IModifier
 from .. import tensorlib
@@ -9,9 +12,6 @@ class shapefactor(with_metaclass(IModifier, object)):
         self.n_parameters = len(nom_data)
         self.suggested_init = [1.0] * self.n_parameters
         self.suggested_bounds = [[0, 10]] * self.n_parameters
-
-    def add_sample(self, channel, sample, modifier_data):
-        raise NotImplementedError
 
     def alphas(self, pars):
         raise NotImplementedError

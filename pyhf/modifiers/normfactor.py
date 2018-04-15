@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from six import with_metaclass
 from . import IModifier
 from .. import tensorlib
@@ -9,9 +12,6 @@ class normfactor(with_metaclass(IModifier, object)):
         self.n_parameters = 1
         self.suggested_init = [1.0]
         self.suggested_bounds = [[0, 10]]
-
-    def add_sample(self, channel, sample, modifier_data):
-        raise NotImplementedError
 
     def alphas(self, pars):
         raise NotImplementedError
