@@ -1,11 +1,4 @@
 import pyhf
-
-from pyhf.optimize.opt_scipy import scipy_optimizer
-from pyhf.tensor.pytorch_backend import pytorch_backend
-from pyhf.tensor.numpy_backend import numpy_backend
-from pyhf.optimize.opt_pytorch import pytorch_optimizer
-from pyhf.optimize.opt_tflow import tflow_optimizer
-
 import tensorflow as tf
 
 
@@ -50,7 +43,7 @@ def test_optim_numpy():
     par_bounds = pdf.config.suggested_bounds()
 
     oldlib = pyhf.tensorlib
-    pyhf.set_backend(pyhf.numpy_backend(poisson_from_normal=True))
+    pyhf.set_backend(pyhf.tensor.numpy_backend(poisson_from_normal=True))
     optim = pyhf.optimizer
 
     v1 = pdf.logpdf(init_pars, data)
@@ -105,7 +98,7 @@ def test_optim_pytorch():
 
     oldlib = pyhf.tensorlib
 
-    pyhf.set_backend(pyhf.pytorch_backend(poisson_from_normal=True))
+    pyhf.set_backend(pyhf.tensor.pytorch_backend(poisson_from_normal=True))
     optim = pyhf.optimizer
 
     result = optim.unconstrained_bestfit(pyhf.loglambdav, data, pdf, init_pars, par_bounds)
@@ -159,7 +152,7 @@ def test_optim_tflow():
 
     oldlib = pyhf.tensorlib
 
-    pyhf.set_backend(pyhf.tensorflow_backend())
+    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
     pyhf.tensorlib.session = tf.Session()
     optim = pyhf.optimizer
 
