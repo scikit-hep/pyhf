@@ -31,7 +31,7 @@ def test_empty_registry(importer):
 
 # we make sure we can import all of our pre-defined modifiers correctly
 @pytest.mark.parametrize("test_modifier", modifiers_to_test)
-def test_import_histosys(importer, test_modifier):
+def test_import_default_modifiers(importer, test_modifier):
     from pyhf import modifiers
     modifier = getattr(__import__('pyhf.modifiers', fromlist=[test_modifier]), test_modifier)
     assert '{0:s}_constraint'.format(test_modifier) in modifiers.registry
