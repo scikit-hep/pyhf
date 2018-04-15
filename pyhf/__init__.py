@@ -3,6 +3,37 @@ import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 import inspect
 
+from . import modifiers
+from .tensor.numpy_backend import numpy_backend
+from .optimize.opt_scipy import scipy_optimizer
+try:
+    from .tensor.pytorch_backend import pytorch_backend
+    from .optimize.opt_pytorch import pytorch_optimizer
+    assert pytorch_backend
+    assert pytorch_optimizer
+except ImportError:
+    pass
+
+try:
+    from .tensor.tensorflow_backend import tensorflow_backend
+    from .optimize.opt_tflow import tflow_optimizer
+    assert tensorflow_backend
+    assert tflow_optimizer
+except ImportError:
+    pass
+
+try:
+    from .tensor.mxnet_backend import mxnet_backend
+    # from .optimize.opt_mxnet import mxnet_optimizer
+    assert mxnet_backend
+    # assert mxnet_optimizer
+except ImportError:
+    pass
+
+
+tensorlib = numpy_backend()
+optimizer = scipy_optimizer()
+
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
@@ -151,6 +182,8 @@ class modelconfig(object):
         else:
           raise RuntimeError('modifier {0:s} has unknown __init__ parameters: {1:s}'.format(modifier_cls.__name__, str(args)))
         self.add_modifier(name=modifier_def['name'], modifier=modifier)
+        if hasattr(modifier, 'add_sample'):
+          modifier.add_sample(channel, sample, modifier_def['data'])
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
