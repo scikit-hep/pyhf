@@ -3,6 +3,8 @@ from . import IModifier
 from .. import tensorlib
 
 class histosys(with_metaclass(IModifier, object)):
+    is_constraint = True
+
     @staticmethod
     def suggested_init(n_parameters):
         return [1.0]
