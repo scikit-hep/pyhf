@@ -183,7 +183,7 @@ class modelconfig(object):
           raise RuntimeError('modifier {0:s} has unknown __init__ parameters: {1:s}'.format(modifier_cls.__name__, str(args)))
         self.add_modifier(name=modifier_def['name'], modifier=modifier)
         if hasattr(modifier, 'add_sample'):
-          modifier.add_sample(channel, sample, modifier_def['data'])
+          self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
@@ -219,7 +219,6 @@ class hfpdf(object):
             assert int(modpars.shape[0]) == 1
 
             # print 'MODPARS', type(modpars.data)
-
             mod_delta = _hfinterp_code0(modifier.at_minus_one[channel['name']][sample['name']],
                                         modifier.at_zero[channel['name']][sample['name']],
                                         modifier.at_plus_one[channel['name']][sample['name']],
