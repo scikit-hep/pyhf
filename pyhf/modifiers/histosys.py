@@ -20,6 +20,7 @@ class histosys(object):
         self.auxdata = [0]  # observed data is always at a = 1
 
     def add_sample(self, channel, sample, modifier_data):
+        log.info('Adding sample {0:s} to channel {1:s}'.format(sample['name'], channel['name']))
         self.at_zero.setdefault(channel['name'], {})[sample['name']] = sample['data']
         self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo_data']
         self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi_data']
