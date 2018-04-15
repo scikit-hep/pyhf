@@ -5,16 +5,10 @@ from .. import tensorlib
 class shapefactor(with_metaclass(IModifier, object)):
     is_constraint = False
 
-    @staticmethod
-    def suggested_init(n_parameters):
-        return [1.0] * n_parameters
-
-    @staticmethod
-    def suggested_bounds(n_parameters):
-        return [[0, 10]] * n_parameters
-
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, nom_data, modifier_data):
+        self.n_parameters = len(nom_data)
+        self.suggested_init = [1.0] * self.n_parameters
+        self.suggested_bounds = [[0, 10]] * self.n_parameters
 
     def add_sample(self, channel, sample, modifier_data):
         raise NotImplementedError

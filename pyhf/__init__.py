@@ -1,7 +1,7 @@
 import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
-
+import inspect
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -108,8 +108,11 @@ class modelconfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def add_modifier(self, name, npars, modifier, suggested_init, suggested_bounds):
+    def add_modifier(self, name, modifier):
         is_constraint = getattr(modifier, 'is_constraint', False)
+        npars = modifier.n_parameters
+        suggested_init = modifier.suggested_init
+        suggested_bounds = modifier.suggested_bounds
         if name in self.par_map:
             if is_constraint:
                 log.info('accepting existing {0:s} (type: {1:s})'.format(name, modifier.__class__.__name__))
@@ -135,16 +138,19 @@ class modelconfig(object):
 
     def add_modifier_from_def(self, channel, sample, modifier_def):
         # get the class associated with the modifier
-        modifier = modifiers.registry.get(modifier_def['type'], None)
-        if modifier is None:
+        modifier_cls = modifiers.registry.get(modifier_def['type'], None)
+        if modifier_cls is None:
             raise RuntimeError('shared systematic not implemented yet (processing {0:s})'.format(modifier_def['type']))
-        self.add_modifier(
-            name=modifier_def['name'],
-            npars=len(sample['data']) if modifier_def['type'] != 'normfactor' else 1,
-            suggested_init=modifier.suggested_init(len(sample['data'])),
-            suggested_bounds=modifier.suggested_bounds(len(sample['data'])),
-            modifier=modifier(sample['data'], modifier_def['data']),
-        )
+
+        # use inspect to figure out how to call the modifier
+        args = inspect.getargspec(modifier_cls.__init__).args
+        if len(args) == 1:
+            modifier = modifier_cls()
+        elif len(args) == 3 and 'nom_data' in args and 'modifier_data' in args:
+            modifier = modifier_cls(sample['data'], modifier_def['data'])
+        else:
+          raise RuntimeError('modifier {0:s} has unknown __init__ parameters: {1:s}'.format(modifier_cls.__name__, str(args)))
+        self.add_modifier(name=modifier_def['name'], modifier=modifier)
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):

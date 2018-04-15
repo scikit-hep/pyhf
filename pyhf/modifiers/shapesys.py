@@ -5,15 +5,11 @@ from .. import tensorlib
 class shapesys(with_metaclass(IModifier, object)):
     is_constraint = True
 
-    @staticmethod
-    def suggested_init(n_parameters):
-        return [1.0] * n_parameters
-
-    @staticmethod
-    def suggested_bounds(n_parameters):
-        return [[0, 10]] * n_parameters
-
     def __init__(self, nom_data, modifier_data):
+        self.n_parameters = len(nom_data)
+        self.suggested_init = [1.0] * self.n_parameters
+        self.suggested_bounds = [[0, 10]] * self.n_parameters
+
         self.auxdata = []
         self.bkg_over_db_squared = []
         for b, deltab in zip(nom_data, modifier_data):

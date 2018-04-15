@@ -5,16 +5,10 @@ from .. import tensorlib
 class normfactor(with_metaclass(IModifier, object)):
     is_constraint = False
 
-    @staticmethod
-    def suggested_init(n_parameters):
-        return [1.0]
-
-    @staticmethod
-    def suggested_bounds(n_parameters):
-        return [[0, 10]]
-
     def __init__(self):
-        raise NotImplementedError
+        self.n_parameters = 1
+        self.suggested_init = [1.0]
+        self.suggested_bounds = [[0, 10]]
 
     def add_sample(self, channel, sample, modifier_data):
         raise NotImplementedError

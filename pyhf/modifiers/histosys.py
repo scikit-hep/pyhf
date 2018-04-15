@@ -1,19 +1,16 @@
 from six import with_metaclass
-from . import IModifier
+from . import modifier
 from .. import tensorlib
 
-class histosys(with_metaclass(IModifier, object)):
+@modifier
+class histosys(object):
     is_constraint = True
 
-    @staticmethod
-    def suggested_init(n_parameters):
-        return [1.0]
-
-    @staticmethod
-    def suggested_bounds(n_parameters):
-        return [[-5, 5]]
-
     def __init__(self):
+        self.n_parameters = 1
+        self.suggested_init = [1.0]
+        self.suggested_bounds = [[-5, 5]]
+
         self.at_zero = {}
         self.at_minus_one = {}
         self.at_plus_one = {}

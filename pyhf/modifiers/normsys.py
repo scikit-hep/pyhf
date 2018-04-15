@@ -5,15 +5,11 @@ from .. import tensorlib
 class normsys(with_metaclass(IModifier, object)):
     is_constraint = True
 
-    @staticmethod
-    def suggested_init(n_parameters):
-        return [0.0]
-
-    @staticmethod
-    def suggested_bounds(n_parameters):
-        return [[-5, 5]]
-
     def __init__(self):
+        self.n_parameters = 1
+        self.suggested_init = [0.0]
+        self.suggested_bounds = [[-5, 5]]
+
         self.at_zero = 1
         self.at_minus_one = {}
         self.at_plus_one = {}
