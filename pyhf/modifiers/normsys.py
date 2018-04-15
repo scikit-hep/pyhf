@@ -6,7 +6,7 @@ from . import IModifier
 from .. import tensorlib
 
 class normsys(with_metaclass(IModifier, object)):
-    is_constraint = True
+    is_constrained = True
 
     def __init__(self):
         self.n_parameters = 1

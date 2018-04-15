@@ -6,7 +6,7 @@ from . import IModifier
 from .. import tensorlib
 
 class shapesys(with_metaclass(IModifier, object)):
-    is_constraint = True
+    is_constrained = True
 
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)

@@ -6,7 +6,7 @@ from . import IModifier
 from .. import tensorlib
 
 class normfactor(with_metaclass(IModifier, object)):
-    is_constraint = False
+    is_constrained = False
 
     def __init__(self):
         self.n_parameters = 1
