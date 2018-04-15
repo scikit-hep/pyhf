@@ -3,6 +3,7 @@ import tensorflow as tf
 
 
 def test_optim_numpy():
+    from pyhf.modifiers import normfactor, histosys
     source = {
       "binning": [2,-0.5,1.5],
       "bindata": {
@@ -54,6 +55,7 @@ def test_optim_numpy():
 
 
 def test_optim_pytorch():
+    from pyhf.modifiers import normfactor, histosys
     source = {
       "binning": [2,-0.5,1.5],
       "bindata": {
@@ -104,6 +106,7 @@ def test_optim_pytorch():
 
 
 def test_optim_tflow():
+    from pyhf.modifiers import normfactor, histosys
     source = {
       "binning": [2,-0.5,1.5],
       "bindata": {

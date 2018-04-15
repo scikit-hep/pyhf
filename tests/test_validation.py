@@ -38,6 +38,7 @@ def test_validation_1bin_shapesys():
 
 
 def test_validation_1bin_normsys():
+    from pyhf.modifiers import normfactor, normsys
     expected_result = {
         'obs': 0.0007930094233140433,
         'exp': [
@@ -100,6 +101,7 @@ def test_validation_1bin_normsys():
 
 
 def test_validation_2bin_histosys():
+    from pyhf.modifiers import normfactor, histosys
     expected_result = {
         'obs': 0.10014623469489856,
         'exp': [
@@ -156,6 +158,7 @@ def test_validation_2bin_histosys():
 
 
 def test_validation_2bin_2channel():
+    from pyhf.modifiers import shapesys
     expected_result = {
         'obs': 0.05691881515460979,
         'exp': [
@@ -225,6 +228,7 @@ def test_validation_2bin_2channel():
 
 
 def test_validation_2bin_2channel_couplednorm():
+    from pyhf.modifiers import normfactor, normsys
     expected_result = {
         'obs': 0.5999662863185762,
         'exp': [0.06596134134354742,
@@ -300,6 +304,7 @@ def test_validation_2bin_2channel_couplednorm():
 
 
 def test_validation_2bin_2channel_coupledhistosys():
+    from pyhf.modifiers import normfactor, histosys
     expected_result = {
     'obs': 0.0796739833305826,
      'exp': [
@@ -376,6 +381,7 @@ def test_validation_2bin_2channel_coupledhistosys():
 
 
 def test_validation_2bin_2channel_coupledshapefactor():
+    from pyhf.modifiers import normfactor, shapefactor
     expected_result = {
     'obs': 0.5421679124909312,
      'exp': [
