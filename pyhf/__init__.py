@@ -64,71 +64,6 @@ def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
     exponents = tensorlib.where(mask, expo_positive,-expo_positive)
     return tensorlib.power(bases, exponents)
 
-class normsys_constraint(object):
-
-    def __init__(self):
-        self.at_zero = 1
-        self.at_minus_one = {}
-        self.at_plus_one = {}
-        self.auxdata = [0]  # observed data is always at a = 1
-
-    def add_sample(self, channel, sample, modifier_data):
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo']
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi']
-
-    def alphas(self, pars):
-        return pars  # the nuisance parameters correspond directly to the alpha
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
-    def pdf(self, a, alpha):
-        return tensorlib.normal(a, alpha, 1)
-
-class histosys_constraint(object):
-
-    def __init__(self):
-        self.at_zero = {}
-        self.at_minus_one = {}
-        self.at_plus_one = {}
-        self.auxdata = [0]  # observed data is always at a = 1
-
-    def add_sample(self, channel, sample, modifier_data):
-        self.at_zero.setdefault(channel['name'], {})[sample['name']] = sample['data']
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo_data']
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi_data']
-
-    def alphas(self, pars):
-        return pars  # the nuisance parameters correspond directly to the alpha
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
-    def pdf(self, a, alpha):
-        return tensorlib.normal(a, alpha, [1])
-
-
-class shapesys_constraint(object):
-
-    def __init__(self, nom_data, modifier_data):
-        self.auxdata = []
-        self.bkg_over_db_squared = []
-        for b, deltab in zip(nom_data, modifier_data):
-            bkg_over_bsq = b * b / deltab / deltab  # tau*b
-            log.info('shapesys for b,delta b (%s, %s) -> tau*b = %s',
-                     b, deltab, bkg_over_bsq)
-            self.bkg_over_db_squared.append(bkg_over_bsq)
-            self.auxdata.append(bkg_over_bsq)
-
-    def alphas(self, pars):
-        return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
-
-    def pdf(self, a, alpha):
-        return tensorlib.poisson(a, alpha)
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
 class modelconfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
@@ -174,19 +109,14 @@ class modelconfig(object):
         self.poi_index = s.start
 
     def add_modifier(self, name, npars, modifier, suggested_init, suggested_bounds):
-        is_constraint = type(modifier) in [histosys_constraint, normsys_constraint, shapesys_constraint]
+        is_constraint = getattr(modifier, 'is_constraint', False)
         if name in self.par_map:
-            if type(modifier) == normsys_constraint:
-                log.info('accepting existing normsys')
+            if is_constraint:
+                log.info('accepting existing {0:s} (type: {1:s})'.format(name, modifier.__class__.__name__))
                 return False
-            if type(modifier) == histosys_constraint:
-                log.info('accepting existing histosys')
+            else:
+                log.info('accepting existing unconstrained factor')
                 return False
-            if type(modifier) == type(None):
-                log.info('accepting existing unconstrained factor ')
-                return False
-            raise RuntimeError(
-                'shared systematic not implemented yet (processing {})'.format(name))
         log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
 
         sl = slice(self.next_index, self.next_index + npars)
@@ -204,48 +134,17 @@ class modelconfig(object):
         return True
 
     def add_modifier_from_def(self, channel, sample, modifier_def):
-        if modifier_def['type'] == 'normfactor':
-            modifier = None  # no object for factors
-            self.add_modifier(name=modifier_def['name'],
-                                modifier=modifier,
-                                npars=1,
-                                suggested_init=[1.0],
-                                suggested_bounds=[[0, 10]])
-        if modifier_def['type'] == 'shapefactor':
-            modifier = None  # no object for factors
-            self.add_modifier(name=modifier_def['name'],
-                                modifier=modifier,
-                                npars=len(sample['data']),
-                                suggested_init   =[1.0] * len(sample['data']),
-                                suggested_bounds=[[0, 10]] * len(sample['data'])
-                        )
-        if modifier_def['type'] == 'shapesys':
-            # we reserve one parameter for each bin
-            modifier = shapesys_constraint(sample['data'], modifier_def['data'])
-            self.add_modifier(
-                name=modifier_def['name'],
-                npars=len(sample['data']),
-                suggested_init=[1.0] * len(sample['data']),
-                suggested_bounds=[[0, 10]] * len(sample['data']),
-                modifier=modifier,
-            )
-        if modifier_def['type'] == 'normsys':
-            modifier = normsys_constraint()
-            self.add_modifier(name=modifier_def['name'],
-                         npars=1,
-                         modifier=modifier,
-                         suggested_init=[0.0],
-                         suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
-        if modifier_def['type'] == 'histosys':
-            modifier = histosys_constraint()
-            self.add_modifier(
-                modifier_def['name'],
-                npars=1,
-                modifier=modifier,
-                suggested_init=[1.0],
-                suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
+        # get the class associated with the modifier
+        modifier = modifiers.registry.get(modifier_def['type'], None)
+        if modifier is None:
+            raise RuntimeError('shared systematic not implemented yet (processing {0:s})'.format(modifier_def['type']))
+        self.add_modifier(
+            name=modifier_def['name'],
+            npars=len(sample['data']) if modifier_def['type'] != 'normfactor' else 1,
+            suggested_init=modifier.suggested_init(len(sample['data'])),
+            suggested_bounds=modifier.suggested_bounds(len(sample['data'])),
+            modifier=modifier(sample['data'], modifier_def['data']),
+        )
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
