@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.fixture
-def source():
+def source(scope='module'):
     source = {
         'binning': [2, -0.5, 1.5],
         'bindata': {
@@ -19,30 +19,36 @@ def source():
 
 
 @pytest.fixture
-def spec(source):
+def spec(source, scope='module'):
     spec = {
-        'channels': [{
-            'name': 'singlechannel',
-            'samples': [{
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
                         'name': 'signal',
                         'data': source['bindata']['sig'],
-                        'modifiers': [{
+                        'modifiers': [
+                            {
                                 'name': 'mu',
                                 'type': 'normfactor',
                                 'data': None
-                        }]},
-                        {
+                            }]
+                    },
+                    {
                         'name': 'background',
                         'data': source['bindata']['bkg'],
-                        'modifiers': [{
+                        'modifiers': [
+                            {
                                 'name': 'bkg_norm',
                                 'type': 'histosys',
                                 'data': {
                                     'lo_data': source['bindata']['bkgsys_dn'],
                                     'hi_data': source['bindata']['bkgsys_up']
                                 }
-                        }]}]
-        }]
+                            }]
+                    }]
+            }]
     }
     return spec
 
