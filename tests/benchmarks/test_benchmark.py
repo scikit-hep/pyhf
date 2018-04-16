@@ -106,7 +106,6 @@ def test_runOnePoint(benchmark, backend, n_bins):
     Returns:
         None
     """
-    default_backend = pyhf.tensorlib
     pyhf.set_backend(backend)
 
     source = generate_source_static(n_bins)
@@ -118,8 +117,6 @@ def test_runOnePoint(benchmark, backend, n_bins):
         assert benchmark(runOnePoint, pdf, data) is not None
     except AssertionError:
         print('benchmarking has failed for n_bins = {}'.formant(n_bins))
-        pyhf.set_backend(default_backend)
         assert False
 
     # Reset backend
-    pyhf.set_backend(default_backend)
