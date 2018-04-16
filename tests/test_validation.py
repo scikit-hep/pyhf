@@ -5,13 +5,13 @@ import json
 import pytest
 
 
-@pytest.fixture
-def source_1bin_example1(scope='module'):
+@pytest.fixture(scope='module')
+def source_1bin_example1():
     return json.load(open('validation/data/1bin_example1.json'))
 
 
-@pytest.fixture
-def source_1bin_normsys(scope='module'):
+@pytest.fixture(scope='module')
+def source_1bin_normsys():
     source = {
         'binning': [2, -0.5, 1.5],
         'bindata': {
@@ -23,8 +23,8 @@ def source_1bin_normsys(scope='module'):
     return source
 
 
-@pytest.fixture
-def spec_1bin_normsys(source=source_1bin_normsys(), scope='module'):
+@pytest.fixture(scope='module')
+def spec_1bin_normsys(source=source_1bin_normsys()):
     spec = {
         'channels': [
             {
@@ -59,8 +59,8 @@ def spec_1bin_normsys(source=source_1bin_normsys(), scope='module'):
     return spec
 
 
-@pytest.fixture
-def expected_result_1bin_normsys(mu=1., scope='module'):
+@pytest.fixture(scope='module')
+def expected_result_1bin_normsys(mu=1.):
     if mu == 1:
         expected_result = {
             'obs': 0.0007930094233140433,
@@ -75,13 +75,13 @@ def expected_result_1bin_normsys(mu=1., scope='module'):
     return expected_result
 
 
-@pytest.fixture
-def source_2bin_histosys_example2(scope='module'):
+@pytest.fixture(scope='module')
+def source_2bin_histosys_example2():
     return json.load(open('validation/data/2bin_histosys_example2.json'))
 
 
-@pytest.fixture
-def spec_2bin_histosys(source=source_2bin_histosys_example2(), scope='module'):
+@pytest.fixture(scope='module')
+def spec_2bin_histosys(source=source_2bin_histosys_example2()):
     spec = {
         'channels': [
             {
@@ -119,8 +119,8 @@ def spec_2bin_histosys(source=source_2bin_histosys_example2(), scope='module'):
     return spec
 
 
-@pytest.fixture
-def expected_result_2bin_histosys(mu=1, scope='module'):
+@pytest.fixture(scope='module')
+def expected_result_2bin_histosys(mu=1):
     if mu == 1:
         expected_result = {
             'obs': 0.10014623469489856,
@@ -135,13 +135,13 @@ def expected_result_2bin_histosys(mu=1, scope='module'):
     return expected_result
 
 
-@pytest.fixture
-def source_2bin_2channel_example1(scope='module'):
+@pytest.fixture(scope='module')
+def source_2bin_2channel_example1():
     return json.load(open('validation/data/2bin_2channel_example1.json'))
 
 
-@pytest.fixture
-def spec_2bin_2channel(source=source_2bin_2channel_example1(), scope='module'):
+@pytest.fixture(scope='module')
+def spec_2bin_2channel(source=source_2bin_2channel_example1()):
     spec = {
         'channels': [
             {
@@ -192,8 +192,8 @@ def spec_2bin_2channel(source=source_2bin_2channel_example1(), scope='module'):
     return spec
 
 
-@pytest.fixture
-def expected_result_2bin_2channel(mu=1., scope='module'):
+@pytest.fixture(scope='module')
+def expected_result_2bin_2channel(mu=1.):
     if mu == 1:
         expected_result = {
             'obs': 0.05691881515460979,
@@ -208,13 +208,13 @@ def expected_result_2bin_2channel(mu=1., scope='module'):
     return expected_result
 
 
-@pytest.fixture
-def source_2bin_2channel_couplednorm(scope='module'):
+@pytest.fixture(scope='module')
+def source_2bin_2channel_couplednorm():
     return json.load(open('validation/data/2bin_2channel_couplednorm.json'))
 
 
-@pytest.fixture
-def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm, scope='module'):
+@pytest.fixture(scope='module')
+def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
     source = source_2bin_2channel_couplednorm
     spec = {
         'channels': [
@@ -277,13 +277,13 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm, scope='modu
     return spec
 
 
-@pytest.fixture
-def source_2bin_2channel_coupledhisto(scope='module'):
+@pytest.fixture(scope='module')
+def source_2bin_2channel_coupledhisto():
     return json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
 
 
-@pytest.fixture
-def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto, scope='module'):
+@pytest.fixture(scope='module')
+def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto):
     source = source_2bin_2channel_coupledhisto
     spec = {
         'channels': [
@@ -355,13 +355,13 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto, scope=
     return spec
 
 
-@pytest.fixture
-def source_2bin_2channel_coupledshapefactor(scope='module'):
+@pytest.fixture(scope='module')
+def source_2bin_2channel_coupledshapefactor():
     return json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
 
 
-@pytest.fixture
-def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor, scope='module'):
+@pytest.fixture(scope='module')
+def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
     source = source_2bin_2channel_coupledshapefactor
     spec = {
         'channels': [
@@ -540,8 +540,8 @@ def test_validation(source, spec, mu, expected_result, config_len):
 #     validate_runOnePoint(pdf, data, mu, expected_result)
 
 
-def test_validation_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm,
-                                              spec_2bin_2channel_couplednorm):
+def test_validation_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm(),
+                                              spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm)):
     expected_result = {
         'obs': 0.5999662863185762,
         'exp': [
