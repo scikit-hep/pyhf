@@ -25,7 +25,7 @@ Consistent add_to_registry() function that handles actually adding thing to the 
 Raises an error if the name to register for the modifier already exists in the registry,
 or if the modifier does not have the right structure.
 '''
-def add_to_registry(cls, cls_name=None, constrained=False):
+def add_to_registry(cls, cls_name=None, constrained=False, shared=False):
   global registry
   cls_name = cls_name if cls_name else cls.__name__
   if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
@@ -33,21 +33,43 @@ def add_to_registry(cls, cls_name=None, constrained=False):
   validate_modifier_structure(cls, constrained)
   # set is_constrained
   cls.is_constrained = constrained
+  cls.is_shared = shared
   registry[cls_name] = cls
 
 '''
 Decorator for registering modifiers. To flag the modifier as a constrained modifier, add `constrained=True`.
 
+
+Args:
+    name: the name of the modifier to use. Use the class name by default. (default: None)
+    constrained: whether the modifier is constrained or not. (default: False)
+    shared: whether the modifier is shared or not. (default: False)
+
+Returns:
+    modifier
+
+Raises:
+    ValueError: too many keyword arguments, or too many arguments, or wrong arguments
+    TypeError: provided name is not a string
+    InvalidModifier: object does not have necessary modifier structure
+
+Examples:
+
   >>> @modifiers.modifier
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
-  >>>
+
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
-  >>>
+
+  >>> @modifiers.modifier(shared=True)
+  >>> ... class myCustomSharedModifier(object):
+  >>> ...   def __init__(self): pass
+  >>> ...   def add_sample(self): pass
+
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
@@ -56,19 +78,17 @@ Decorator for registering modifiers. To flag the modifier as a constrained modif
   >>> ...   def pdf(self): pass
   >>> ...   def expected_data(self): pass
 
-Should raise error if not passed in one argument (the class to wrap for automatically grabbing the class name; or the string to name the class).
-
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
   >>>
   InvalidModifier: Expected alphas method on constrained modifier myCustomModifier
-
 '''
 def modifier(*args, **kwargs):
     name = kwargs.pop('name', None)
     constrained = bool(kwargs.pop('constrained', False))
+    shared = bool(kwargs.pop('shared', False))
     # check for unparsed keyword arguments
     if len(kwargs) != 0:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
@@ -76,20 +96,20 @@ def modifier(*args, **kwargs):
     if not isinstance(name, string_types) and name is not None:
         raise TypeError('@modifier must be given a string. You gave it {}'.format(type(name)))
 
-    def _modifier(name, constrained):
+    def _modifier(name, constrained, shared):
         def wrapper(cls):
-            add_to_registry(cls, cls_name=name, constrained=constrained)
+            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared)
             return cls
         return wrapper
 
     if len(args) == 0:
-        # called like @modifier(name='foo', constrained=False)
-        return _modifier(name, constrained)
+        # called like @modifier(name='foo', constrained=False, shared=False)
+        return _modifier(name, constrained, shared)
     elif len(args) == 1:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
-        add_to_registry(args[0], cls_name=name, constrained=constrained)
+        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared)
         return args[0]
     else:
         raise ValueError('@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(len(args)))

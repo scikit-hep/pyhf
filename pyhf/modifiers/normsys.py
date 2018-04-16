@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier(name='normsys', constrained=True)
+@modifier(name='normsys', constrained=True, shared=True)
 class normsys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1

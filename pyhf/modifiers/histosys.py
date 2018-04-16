@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier(name='histosys', constrained=True)
+@modifier(name='histosys', constrained=True, shared=True)
 class histosys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
