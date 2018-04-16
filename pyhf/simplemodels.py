@@ -1,5 +1,4 @@
 from . import hfpdf
-from .modifiers import normfactor, shapesys
 
 def hepdata_like(signal_data, bkg_data, bkg_uncerts):
     spec = {
