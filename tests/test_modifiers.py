@@ -9,13 +9,13 @@ modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapes
 
 # we make sure we can import all of our pre-defined modifiers correctly
 @pytest.mark.parametrize("test_modifier", modifiers_to_test)
-def test_import_default_modifiers(importer, test_modifier):
+def test_import_default_modifiers(test_modifier):
     modifier = getattr(__import__('pyhf.modifiers', fromlist=[test_modifier]), test_modifier)
     assert test_modifier in pyhf.modifiers.registry
     assert callable(pyhf.modifiers.registry[test_modifier])
 
 # we make sure decorate can use auto-naming
-def test_decorate_modifier_name_auto(importer):
+def test_decorate_modifier_name_auto():
     from pyhf.modifiers import modifier
 
     @modifier
@@ -25,9 +25,10 @@ def test_decorate_modifier_name_auto(importer):
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
+    del pyhf.modifiers.registry['myCustomModifier']
 
 # we make sure decorate allows for custom naming
-def test_decorate_modifier_name_custom(importer):
+def test_decorate_modifier_name_custom():
     from pyhf.modifiers import modifier
 
     @modifier('myCustomName')
@@ -38,9 +39,10 @@ def test_decorate_modifier_name_custom(importer):
     assert 'myCustomModifier' not in pyhf.modifiers.registry
     assert 'myCustomName' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myCustomName'] == myCustomModifier
+    del pyhf.modifiers.registry['myCustomName']
 
 # we make sure decorate raises errors if passed more than one argument, or not a string
-def test_decorate_wrong_values(importer):
+def test_decorate_wrong_values():
     from pyhf.modifiers import modifier
 
     with pytest.raises(ValueError):
@@ -54,7 +56,7 @@ def test_decorate_wrong_values(importer):
             pass
 
 # we catch name clashes when adding duplicate names for modifiers
-def test_registry_name_clash(importer):
+def test_registry_name_clash():
     from pyhf.modifiers import modifier
 
     with pytest.raises(KeyError):
