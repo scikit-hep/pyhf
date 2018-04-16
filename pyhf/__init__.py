@@ -2,12 +2,29 @@ import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 
-
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
+
+def get_backend():
+    """
+    Get the current backend and the associated optimizer
+
+    Returns:
+        backend, optimizer
+
+    Example:
+        backend, _ = pyhf.get_backend()
+    """
+    global tensorlib
+    global optimizer
+    return tensorlib, optimizer
+
+# modifiers need access to tensorlib
+#   make sure import is below get_backend()
+from . import modifiers
 
 def set_backend(backend):
     """
@@ -64,71 +81,6 @@ def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
     exponents = tensorlib.where(mask, expo_positive,-expo_positive)
     return tensorlib.power(bases, exponents)
 
-class normsys_constraint(object):
-
-    def __init__(self):
-        self.at_zero = 1
-        self.at_minus_one = {}
-        self.at_plus_one = {}
-        self.auxdata = [0]  # observed data is always at a = 1
-
-    def add_sample(self, channel, sample, modifier_data):
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo']
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi']
-
-    def alphas(self, pars):
-        return pars  # the nuisance parameters correspond directly to the alpha
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
-    def pdf(self, a, alpha):
-        return tensorlib.normal(a, alpha, 1)
-
-class histosys_constraint(object):
-
-    def __init__(self):
-        self.at_zero = {}
-        self.at_minus_one = {}
-        self.at_plus_one = {}
-        self.auxdata = [0]  # observed data is always at a = 1
-
-    def add_sample(self, channel, sample, modifier_data):
-        self.at_zero.setdefault(channel['name'], {})[sample['name']] = sample['data']
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo_data']
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi_data']
-
-    def alphas(self, pars):
-        return pars  # the nuisance parameters correspond directly to the alpha
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
-    def pdf(self, a, alpha):
-        return tensorlib.normal(a, alpha, [1])
-
-
-class shapesys_constraint(object):
-
-    def __init__(self, nom_data, modifier_data):
-        self.auxdata = []
-        self.bkg_over_db_squared = []
-        for b, deltab in zip(nom_data, modifier_data):
-            bkg_over_bsq = b * b / deltab / deltab  # tau*b
-            log.info('shapesys for b,delta b (%s, %s) -> tau*b = %s',
-                     b, deltab, bkg_over_bsq)
-            self.bkg_over_db_squared.append(bkg_over_bsq)
-            self.auxdata.append(bkg_over_bsq)
-
-    def alphas(self, pars):
-        return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
-
-    def pdf(self, a, alpha):
-        return tensorlib.poisson(a, alpha)
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
 class modelconfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
@@ -138,7 +90,8 @@ class modelconfig(object):
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
-                    instance.add_modifier_from_def(channel, sample, modifier_def)
+                    modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
+                    modifier.add_sample(channel, sample, modifier_def)
         instance.set_poi(poiname)
         return instance
 
@@ -153,13 +106,13 @@ class modelconfig(object):
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['suggested_init']
+            init = init + self.par_map[name]['modifier'].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['suggested_bounds']
+            bounds = bounds + self.par_map[name]['modifier'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
@@ -173,79 +126,50 @@ class modelconfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def add_modifier(self, name, npars, modifier, suggested_init, suggested_bounds):
-        is_constraint = type(modifier) in [histosys_constraint, normsys_constraint, shapesys_constraint]
-        if name in self.par_map:
-            if type(modifier) == normsys_constraint:
-                log.info('accepting existing normsys')
-                return False
-            if type(modifier) == histosys_constraint:
-                log.info('accepting existing histosys')
-                return False
-            if type(modifier) == type(None):
-                log.info('accepting existing unconstrained factor ')
-                return False
-            raise RuntimeError(
-                'shared systematic not implemented yet (processing {})'.format(name))
-        log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
+    def add_or_get_modifier(self, channel, sample, modifier_def):
+        """
+        Add a new modifier if it does not exist and return it
+        or get the existing modifier and return it
 
+        Args:
+            channel: current channel object (e.g. from spec)
+            sample: current sample object (e.g. from spec)
+            modifier_def: current modifier definitions (e.g. from spec)
+
+        Returns:
+            modifier object
+
+        Example:
+            modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
+        """
+        # get modifier class associated with modifier type
+        try:
+            modifier_cls = modifiers.registry.get(modifier_def['type'])
+        except KeyError:
+            raise RuntimeError('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+
+
+        # if modifier is shared, check if it already exists and use it
+        if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
+            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
+            return self.par_map[modifier_def['name']]['modifier']
+
+        # did not return, so create new modifier and return it
+        modifier = modifier_cls(sample['data'], modifier_def['data'])
+        npars = modifier.n_parameters
+
+        log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
         sl = slice(self.next_index, self.next_index + npars)
         self.next_index = self.next_index + npars
-        self.par_order.append(name)
-        self.par_map[name] = {
+        self.par_order.append(modifier_def['name'])
+        self.par_map[modifier_def['name']] = {
             'slice': sl,
-            'modifier': modifier,
-            'suggested_init': suggested_init,
-            'suggested_bounds': suggested_bounds
+            'modifier': modifier
         }
-        if is_constraint:
-            self.auxdata += self.modifier(name).auxdata
-            self.auxdata_order.append(name)
-        return True
-
-    def add_modifier_from_def(self, channel, sample, modifier_def):
-        if modifier_def['type'] == 'normfactor':
-            modifier = None  # no object for factors
-            self.add_modifier(name=modifier_def['name'],
-                                modifier=modifier,
-                                npars=1,
-                                suggested_init=[1.0],
-                                suggested_bounds=[[0, 10]])
-        if modifier_def['type'] == 'shapefactor':
-            modifier = None  # no object for factors
-            self.add_modifier(name=modifier_def['name'],
-                                modifier=modifier,
-                                npars=len(sample['data']),
-                                suggested_init   =[1.0] * len(sample['data']),
-                                suggested_bounds=[[0, 10]] * len(sample['data'])
-                        )
-        if modifier_def['type'] == 'shapesys':
-            # we reserve one parameter for each bin
-            modifier = shapesys_constraint(sample['data'], modifier_def['data'])
-            self.add_modifier(
-                name=modifier_def['name'],
-                npars=len(sample['data']),
-                suggested_init=[1.0] * len(sample['data']),
-                suggested_bounds=[[0, 10]] * len(sample['data']),
-                modifier=modifier,
-            )
-        if modifier_def['type'] == 'normsys':
-            modifier = normsys_constraint()
-            self.add_modifier(name=modifier_def['name'],
-                         npars=1,
-                         modifier=modifier,
-                         suggested_init=[0.0],
-                         suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
-        if modifier_def['type'] == 'histosys':
-            modifier = histosys_constraint()
-            self.add_modifier(
-                modifier_def['name'],
-                npars=1,
-                modifier=modifier,
-                suggested_init=[1.0],
-                suggested_bounds=[[-5, 5]])
-            self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
+        if modifier.is_constrained:
+            self.auxdata += self.modifier(modifier_def['name']).auxdata
+            self.auxdata_order.append(modifier_def['name'])
+        return modifier
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
@@ -281,7 +205,6 @@ class hfpdf(object):
             assert int(modpars.shape[0]) == 1
 
             # print 'MODPARS', type(modpars.data)
-
             mod_delta = _hfinterp_code0(modifier.at_minus_one[channel['name']][sample['name']],
                                         modifier.at_zero[channel['name']][sample['name']],
                                         modifier.at_plus_one[channel['name']][sample['name']],
