@@ -1,8 +1,4 @@
 import pyhf
-from pyhf.tensor.numpy_backend import numpy_backend
-from pyhf.tensor.tensorflow_backend import tensorflow_backend
-from pyhf.tensor.pytorch_backend import pytorch_backend
-from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
 import tensorflow as tf
 import numpy as np
@@ -99,9 +95,9 @@ def test_runOnePoint_q_mu(n_bins,
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
-        numpy_backend(poisson_from_normal=True),
-        tensorflow_backend(session=tf.Session()),
-        pytorch_backend(),
+        pyhf.tensor.numpy_backend(poisson_from_normal=True),
+        pyhf.tensor.tensorflow_backend(session=tf.Session()),
+        pyhf.tensor.pytorch_backend(),
         # mxnet_backend()
     ]
 
@@ -109,7 +105,7 @@ def test_runOnePoint_q_mu(n_bins,
     for backend in backends:
         pyhf.set_backend(backend)
 
-        if isinstance(pyhf.tensorlib, tensorflow_backend):
+        if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
             tf.reset_default_graph()
             pyhf.tensorlib.session = tf.Session()
 
