@@ -3,7 +3,6 @@ import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 import inspect
 
-from . import modifiers
 from .tensor.numpy_backend import numpy_backend
 from .optimize.opt_scipy import scipy_optimizer
 try:
@@ -39,6 +38,10 @@ tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
+
+# modifiers need access to tensorlib
+#   make sure import is below tensorlib definition
+from . import modifiers
 
 def set_backend(backend):
     """

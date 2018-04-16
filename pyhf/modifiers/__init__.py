@@ -47,3 +47,9 @@ def modifier(*args):
         return _modifier(args[0])
     else:
         raise TypeError('@modifier must be given a basestring instance (string, unicode). You gave it {}'.format(type(args[0])))
+
+from .histosys import histosys
+from .normfactor import normfactor
+from .normsys import normsys
+from .shapefactor import shapefactor
+from .shapesys import shapesys
