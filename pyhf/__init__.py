@@ -167,10 +167,10 @@ class modelconfig(object):
         # check if modifier of the given name already exists
         if modifier_def['name'] in self.par_map:
             if modifier_cls.is_constrained:
-                log.info('accepting existing {0:s} (type: {1:s})'.format(modifier_def['name'], modifier.__class__.__name__))
+                log.info('accepting existing {0:s} (type: {1:s})'.format(modifier_def['name'], modifier_cls.__name__))
             else:
                 log.info('accepting existing unconstrained factor')
-            return self.par_map[modifier_def['name']]
+            return self.par_map[modifier_def['name']]['modifier']
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
