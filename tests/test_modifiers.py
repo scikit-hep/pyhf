@@ -16,26 +16,92 @@ def test_import_default_modifiers(test_modifier):
     assert callable(modifier)
     assert hasattr(modifier, 'is_constrained')
 
+
+# we make sure modifiers have right structure
+def test_modifiers_structure():
+    from pyhf.modifiers import modifier, InvalidModifier
+
+    @modifier(name='myUnconstrainedModifier')
+    class myCustomModifier(object):
+        def __init__(self): pass
+        def add_sample(self): pass
+
+    assert inspect.isclass(myCustomModifier)
+    assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
+    assert pyhf.modifiers.registry['myUnconstrainedModifier'] == myCustomModifier
+    del pyhf.modifiers.registry['myUnconstrainedModifier']
+
+    @modifier(name='myConstrainedModifier', constrained=True)
+    class myCustomModifier(object):
+        def __init__(self): pass
+        def add_sample(self): pass
+        def pdf(self): pass
+        def alphas(self): pass
+        def expected_data(self): pass
+
+    assert inspect.isclass(myCustomModifier)
+    assert 'myConstrainedModifier' in pyhf.modifiers.registry
+    assert pyhf.modifiers.registry['myConstrainedModifier'] == myCustomModifier
+    del pyhf.modifiers.registry['myConstrainedModifier']
+
+    with pytest.raises(InvalidModifier):
+        @modifier
+        class myCustomModifier(object):
+            pass
+
+    with pytest.raises(InvalidModifier):
+        @modifier(constrained=True)
+        class myCustomModifier(object):
+            pass
+
+    with pytest.raises(InvalidModifier):
+        @modifier(name='myConstrainedModifier', constrained=True)
+        class myCustomModifier(object):
+            def __init__(self): pass
+            def add_sample(self): pass
+
+
 # we make sure decorate can use auto-naming
-def test_decorate_modifier_name_auto():
+def test_modifier_name_auto():
     from pyhf.modifiers import modifier
 
     @modifier
     class myCustomModifier(object):
-        pass
+        def __init__(self): pass
+        def add_sample(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
     del pyhf.modifiers.registry['myCustomModifier']
 
-# we make sure decorate allows for custom naming
-def test_decorate_modifier_name_custom():
+
+# we make sure decorate can use auto-naming with keyword arguments
+def test_modifier_name_auto_withkwargs():
     from pyhf.modifiers import modifier
 
-    @modifier('myCustomName')
+    @modifier(name=None, constrained=False)
     class myCustomModifier(object):
-        pass
+        def __init__(self): pass
+        def add_sample(self): pass
+
+    assert inspect.isclass(myCustomModifier)
+    assert 'myCustomModifier' in pyhf.modifiers.registry
+    assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
+    del pyhf.modifiers.registry['myCustomModifier']
+
+
+# we make sure decorate allows for custom naming
+def test_modifier_name_custom():
+    from pyhf.modifiers import modifier
+
+    @modifier(name='myCustomName')
+    class myCustomModifier(object):
+        def __init__(self):
+            pass
+
+        def add_sample(self):
+            pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' not in pyhf.modifiers.registry
@@ -43,8 +109,9 @@ def test_decorate_modifier_name_custom():
     assert pyhf.modifiers.registry['myCustomName'] == myCustomModifier
     del pyhf.modifiers.registry['myCustomName']
 
+
 # we make sure decorate raises errors if passed more than one argument, or not a string
-def test_decorate_wrong_values():
+def test_decorate_with_wrong_values():
     from pyhf.modifiers import modifier
 
     with pytest.raises(ValueError):
@@ -53,16 +120,22 @@ def test_decorate_wrong_values():
             pass
 
     with pytest.raises(TypeError):
-        @modifier(1.5)
+        @modifier(name=1.5)
         class myCustomModifier(object):
             pass
+
+    with pytest.raises(ValueError):
+        @modifier(unused='arg')
+        class myCustomModifier(object):
+            pass
+
 
 # we catch name clashes when adding duplicate names for modifiers
 def test_registry_name_clash():
     from pyhf.modifiers import modifier
 
     with pytest.raises(KeyError):
-        @modifier('histosys')
+        @modifier(name='histosys')
         class myCustomModifier(object):
             pass
 

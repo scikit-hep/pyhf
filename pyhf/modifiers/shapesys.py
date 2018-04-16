@@ -4,10 +4,8 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier
+@modifier(name='shapesys', constrained=True)
 class shapesys(object):
-    is_constrained = True
-
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
         self.suggested_init = [1.0] * self.n_parameters
