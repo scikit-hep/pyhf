@@ -142,21 +142,17 @@ class modelconfig(object):
         Example:
             modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
         """
-        # check if modifier type is implemented
-        if modifier_def['type'] not in modifiers.registry:
-            raise RuntimeError('modifier type not implemented yet (processing {0:s})'.format(modifier_def['type']))
-
         # get modifier class associated with modifier type
-        modifier_cls = modifiers.registry.get(modifier_def['type'])
+        try:
+            modifier_cls = modifiers.registry.get(modifier_def['type'])
+        except KeyError:
+            raise RuntimeError('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
 
-        # check if modifier of the given name already exists
-        if modifier_cls.is_shared:
-            if modifier_def['name'] in self.par_map:
-                if modifier_cls.is_constrained:
-                    log.info('accepting existing {0:s} (type: {1:s})'.format(modifier_def['name'], modifier_cls.__name__))
-                else:
-                    log.info('accepting existing unconstrained factor')
-                return self.par_map[modifier_def['name']]['modifier']
+
+        # if modifier is shared, check if it already exists and use it
+        if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
+            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
+            return self.par_map[modifier_def['name']]['modifier']
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
