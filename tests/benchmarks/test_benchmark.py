@@ -1,8 +1,4 @@
 import pyhf
-from pyhf.tensor.numpy_backend import numpy_backend
-from pyhf.tensor.tensorflow_backend import tensorflow_backend
-from pyhf.tensor.pytorch_backend import pytorch_backend
-from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
 import tensorflow as tf
 import numpy as np
@@ -68,7 +64,7 @@ def generate_source_poisson(n_bins):
 
 
 def runOnePoint(pdf, data):
-    if isinstance(pyhf.tensorlib, tensorflow_backend):
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         # Reset the TensorFlow graph and session for each run
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
@@ -86,9 +82,9 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('backend',
                          [
-                             numpy_backend(poisson_from_normal=True),
-                             tensorflow_backend(session=tf.Session()),
-                             pytorch_backend(),
+                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(),
                              # mxnet_backend(),
                          ],
                          ids=[
