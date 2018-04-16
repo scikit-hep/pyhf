@@ -60,17 +60,19 @@ def spec_1bin_normsys(source=source_1bin_normsys(), scope='module'):
 
 
 @pytest.fixture
-def expected_result_1bin_normsys(scope='module'):
-    return {
-        'obs': 0.0007930094233140433,
-        'exp': [
-            1.2529050370718884e-09,
-            8.932001833559302e-08,
-            5.3294967286010575e-06,
-            0.00022773982308763686,
-            0.0054897420571466075
-        ]
-    }
+def expected_result_1bin_normsys(mu=1., scope='module'):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.0007930094233140433,
+            'exp': [
+                1.2529050370718884e-09,
+                8.932001833559302e-08,
+                5.3294967286010575e-06,
+                0.00022773982308763686,
+                0.0054897420571466075
+            ]
+        }
+    return expected_result
 
 
 @pytest.fixture
@@ -79,8 +81,7 @@ def source_2bin_histosys_example2(scope='module'):
 
 
 @pytest.fixture
-def spec_2bin_histosys(source_2bin_histosys_example2, scope='module'):
-    source = source_2bin_histosys_example2
+def spec_2bin_histosys(source=source_2bin_histosys_example2(), scope='module'):
     spec = {
         'channels': [
             {
@@ -119,13 +120,28 @@ def spec_2bin_histosys(source_2bin_histosys_example2, scope='module'):
 
 
 @pytest.fixture
+def expected_result_2bin_histosys(mu=1, scope='module'):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.10014623469489856,
+            'exp': [
+                8.131143652258812e-06,
+                0.0001396307700293439,
+                0.0020437905684851376,
+                0.022094931468776054,
+                0.14246926685789288,
+            ]
+        }
+    return expected_result
+
+
+@pytest.fixture
 def source_2bin_2channel_example1(scope='module'):
     return json.load(open('validation/data/2bin_2channel_example1.json'))
 
 
 @pytest.fixture
-def spec_2bin_2channel(source_2bin_2channel_example1, scope='module'):
-    source = source_2bin_2channel_example1
+def spec_2bin_2channel(source=source_2bin_2channel_example1(), scope='module'):
     spec = {
         'channels': [
             {
@@ -174,6 +190,22 @@ def spec_2bin_2channel(source_2bin_2channel_example1, scope='module'):
         ]
     }
     return spec
+
+
+@pytest.fixture
+def expected_result_2bin_2channel(mu=1., scope='module'):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.05691881515460979,
+            'exp': [
+                0.0004448774256747925,
+                0.0034839534635069816,
+                0.023684793938725246,
+                0.12294326553585197,
+                0.4058143629613449
+            ]
+        }
+    return expected_result
 
 
 @pytest.fixture
@@ -421,19 +453,42 @@ def test_validation_1bin_shapesys(source_1bin_example1):
 
 
 @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
+    # normsys
     (source_1bin_normsys(),
      spec_1bin_normsys(source_1bin_normsys()),
      1.,
-     expected_result_1bin_normsys(),
+     expected_result_1bin_normsys(1.),
      {'init_pars': 2, 'par_bounds': 2}),
+    # histosys
+    (source_2bin_histosys_example2(),
+     spec_2bin_histosys(source_2bin_histosys_example2()),
+     1.,
+     expected_result_2bin_histosys(1.),
+     {'init_pars': 2, 'par_bounds': 2}),
+    # 2bin_2channel
+    (source_2bin_2channel_example1(),
+     spec_2bin_2channel(source_2bin_2channel_example1()),
+     1.,
+     expected_result_2bin_2channel(1.),
+     {'init_pars': 5, 'par_bounds': 5}),  # 1 mu + 2 gammas for 2 channels each
 ],
     ids=[
-    '1bin_normsys_mu1'
+    '1bin_normsys_mu1',
+    '2bin_histosys_mu1',
+    '2bin_2channel_mu1'
 ])
-def test_validation_normsys(source, spec, mu, expected_result, config_len):
-
+def test_validation(source, spec, mu, expected_result, config_len):
+    # def test_validation_normsys(source, spec, mu, expected_result,
+    # config_len):
     pdf = pyhf.hfpdf(spec)
-    data = source['bindata']['data'] + pdf.config.auxdata
+
+    if 'channels' in source:
+        data = []
+        for c in pdf.spec['channels']:
+            data += source['channels'][c['name']]['bindata']['data']
+        data = data + pdf.config.auxdata
+    else:
+        data = source['bindata']['data'] + pdf.config.auxdata
 
     assert len(pdf.config.suggested_init()) == config_len['init_pars']
     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
@@ -441,56 +496,48 @@ def test_validation_normsys(source, spec, mu, expected_result, config_len):
     validate_runOnePoint(pdf, data, mu, expected_result)
 
 
-def test_validation_2bin_histosys(source_2bin_histosys_example2, spec_2bin_histosys):
-    expected_result = {
-        'obs': 0.10014623469489856,
-        'exp': [
-            8.131143652258812e-06,
-            0.0001396307700293439,
-            0.0020437905684851376,
-            0.022094931468776054,
-            0.14246926685789288,
-        ]
-    }
-
-    source = source_2bin_histosys_example2
-    spec = spec_2bin_histosys
-
-    pdf = pyhf.hfpdf(spec)
-    data = source['bindata']['data'] + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2
-    assert len(pdf.config.suggested_bounds()) == 2
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
-
-
-def test_validation_2bin_2channel(source_2bin_2channel_example1, spec_2bin_2channel):
-    expected_result = {
-        'obs': 0.05691881515460979,
-        'exp': [
-            0.0004448774256747925,
-            0.0034839534635069816,
-            0.023684793938725246,
-            0.12294326553585197,
-            0.4058143629613449
-        ]
-    }
-
-    source = source_2bin_2channel_example1
-    spec = spec_2bin_2channel
-
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    # 1 mu + 2 gammas for 2 channels each
-    assert len(pdf.config.suggested_init()) == 5
-    assert len(pdf.config.suggested_bounds()) == 5
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
+# @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
+#     (source_2bin_histosys_example2(),
+#      spec_2bin_histosys(source_2bin_histosys_example2()),
+#      1.,
+#      expected_result_2bin_histosys(1.),
+#      {'init_pars': 2, 'par_bounds': 2}),
+# ],
+#     ids=[
+#     '2bin_histosys_mu1'
+# ])
+# def test_validation_histosys(source, spec, mu, expected_result, config_len):
+#     pdf = pyhf.hfpdf(spec)
+#     data = source['bindata']['data'] + pdf.config.auxdata
+#
+#     assert len(pdf.config.suggested_init()) == config_len['init_pars']
+#     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
+#
+#     validate_runOnePoint(pdf, data, mu, expected_result)
+#
+#
+# @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
+#     (source_2bin_2channel_example1(),
+#      spec_2bin_2channel(source_2bin_2channel_example1()),
+#      1.,
+#      expected_result_2bin_2channel(1.),
+#      {'init_pars': 5, 'par_bounds': 5}),
+# ],
+#     ids=[
+#     '2bin_2channel_mu1'
+# ])
+# def test_validation_2bin_2channel(source, spec, mu, expected_result, config_len):
+#     pdf = pyhf.hfpdf(spec)
+#     data = []
+#     for c in pdf.spec['channels']:
+#         data += source['channels'][c['name']]['bindata']['data']
+#     data = data + pdf.config.auxdata
+#
+#     # 1 mu + 2 gammas for 2 channels each
+#     assert len(pdf.config.suggested_init()) == config_len['init_pars']
+#     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
+#
+#     validate_runOnePoint(pdf, data, mu, expected_result)
 
 
 def test_validation_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm,
