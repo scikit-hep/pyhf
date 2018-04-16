@@ -10,9 +10,11 @@ modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapes
 # we make sure we can import all of our pre-defined modifiers correctly
 @pytest.mark.parametrize("test_modifier", modifiers_to_test)
 def test_import_default_modifiers(test_modifier):
-    modifier = getattr(__import__('pyhf.modifiers', fromlist=[test_modifier]), test_modifier)
+    modifier = pyhf.modifiers.registry.get(test_modifier, None)
     assert test_modifier in pyhf.modifiers.registry
-    assert callable(pyhf.modifiers.registry[test_modifier])
+    assert modifier is not None
+    assert callable(modifier)
+    assert hasattr(modifier, 'is_constrained')
 
 # we make sure decorate can use auto-naming
 def test_decorate_modifier_name_auto():

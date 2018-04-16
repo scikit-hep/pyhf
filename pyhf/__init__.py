@@ -143,12 +143,11 @@ class modelconfig(object):
         self.poi_index = s.start
 
     def add_modifier(self, name, modifier):
-        is_constrained = getattr(modifier, 'is_constrained', False)
         npars = modifier.n_parameters
         suggested_init = modifier.suggested_init
         suggested_bounds = modifier.suggested_bounds
         if name in self.par_map:
-            if is_constrained:
+            if modifier.is_constrained:
                 log.info('accepting existing {0:s} (type: {1:s})'.format(name, modifier.__class__.__name__))
                 return False
             else:
@@ -165,7 +164,7 @@ class modelconfig(object):
             'suggested_init': suggested_init,
             'suggested_bounds': suggested_bounds
         }
-        if is_constrained:
+        if modifier.is_constrained:
             self.auxdata += self.modifier(name).auxdata
             self.auxdata_order.append(name)
         return True
