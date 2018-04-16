@@ -1,7 +1,6 @@
 import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
-import inspect
 
 from .tensor.numpy_backend import numpy_backend
 from .optimize.opt_scipy import scipy_optimizer
@@ -107,7 +106,7 @@ class modelconfig(object):
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
-                    instance.add_modifier_from_def(channel, sample, modifier_def)
+                    instance.add_modifier(channel, sample, modifier_def)
         instance.set_poi(poiname)
         return instance
 
@@ -142,50 +141,47 @@ class modelconfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def add_modifier(self, name, modifier):
+    def _add_or_get_modifier(self, channel, sample, modifier_def):
+        # check if modifier type is implemented
+        if modifier_def['type'] not in modifiers.registry:
+            raise RuntimeError('modifier type not implemented yet (processing {0:s})'.format(modifier_def['type']))
+
+        # get modifier class associated with modifier type
+        modifier_cls = modifiers.registry.get(modifier_def['type'])
+
+        # check if modifier of the given name already exists
+        if modifier_def['name'] in self.par_map:
+            if modifier_cls.is_constrained:
+                log.info('accepting existing {0:s} (type: {1:s})'.format(modifier_def['name'], modifier.__class__.__name__))
+            else:
+                log.info('accepting existing unconstrained factor')
+            return self.par_map[modifier_def['name']]
+
+        # did not return, so create new modifier and return it
+        modifier = modifier_cls(sample['data'], modifier_def['data'])
         npars = modifier.n_parameters
         suggested_init = modifier.suggested_init
         suggested_bounds = modifier.suggested_bounds
-        if name in self.par_map:
-            if modifier.is_constrained:
-                log.info('accepting existing {0:s} (type: {1:s})'.format(name, modifier.__class__.__name__))
-                return False
-            else:
-                log.info('accepting existing unconstrained factor')
-                return False
-        log.info('adding modifier %s (%s new nuisance parameters)', name, npars)
 
+        log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
         sl = slice(self.next_index, self.next_index + npars)
         self.next_index = self.next_index + npars
-        self.par_order.append(name)
-        self.par_map[name] = {
+        self.par_order.append(modifier_def['name'])
+        self.par_map[modifier_def['name']] = {
             'slice': sl,
             'modifier': modifier,
             'suggested_init': suggested_init,
             'suggested_bounds': suggested_bounds
         }
         if modifier.is_constrained:
-            self.auxdata += self.modifier(name).auxdata
-            self.auxdata_order.append(name)
+            self.auxdata += self.modifier(modifier_def['name']).auxdata
+            self.auxdata_order.append(modifier_def['name'])
+        return modifier
+
+    def add_modifier(self, channel, sample, modifier_def):
+        modifier = self._add_or_get_modifier(channel, sample, modifier_def)
+        modifier.add_sample(channel, sample, modifier_def['data'])
         return True
-
-    def add_modifier_from_def(self, channel, sample, modifier_def):
-        # get the class associated with the modifier
-        modifier_cls = modifiers.registry.get(modifier_def['type'], None)
-        if modifier_cls is None:
-            raise RuntimeError('shared systematic not implemented yet (processing {0:s})'.format(modifier_def['type']))
-
-        # use inspect to figure out how to call the modifier
-        args = inspect.getargspec(modifier_cls.__init__).args
-        if len(args) == 1:
-            modifier = modifier_cls()
-        elif len(args) == 3 and 'nom_data' in args and 'modifier_data' in args:
-            modifier = modifier_cls(sample['data'], modifier_def['data'])
-        else:
-          raise RuntimeError('modifier {0:s} has unknown __init__ parameters: {1:s}'.format(modifier_cls.__name__, str(args)))
-        self.add_modifier(name=modifier_def['name'], modifier=modifier)
-        if hasattr(modifier, 'add_sample'):
-          self.modifier(modifier_def['name']).add_sample(channel, sample, modifier_def['data'])
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
