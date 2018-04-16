@@ -31,3 +31,6 @@ class shapesys(object):
 
     def expected_data(self, pars):
         return self.alphas(pars)
+
+    def add_sample(self, channel, sample, modifier_data):
+        pass

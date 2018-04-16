@@ -22,3 +22,6 @@ class shapefactor(object):
 
     def pdf(self, a, alpha):
         raise NotImplementedError
+
+    def add_sample(self, channel, sample, modifier_data):
+        pass

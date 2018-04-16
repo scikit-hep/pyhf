@@ -9,7 +9,7 @@ from .. import tensorlib
 class histosys(object):
     is_constrained = True
 
-    def __init__(self):
+    def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
         self.suggested_init = [1.0]
         self.suggested_bounds = [[-5, 5]]

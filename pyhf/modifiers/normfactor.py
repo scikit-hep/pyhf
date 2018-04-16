@@ -9,7 +9,7 @@ from .. import tensorlib
 class normfactor(object):
     is_constrained = False
 
-    def __init__(self):
+    def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
         self.suggested_init = [1.0]
         self.suggested_bounds = [[0, 10]]
@@ -22,3 +22,6 @@ class normfactor(object):
 
     def pdf(self, a, alpha):
         raise NotImplementedError
+
+    def add_sample(self, channel, sample, modifier_data):
+        pass
