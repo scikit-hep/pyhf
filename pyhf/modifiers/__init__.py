@@ -53,3 +53,5 @@ from .normfactor import normfactor
 from .normsys import normsys
 from .shapefactor import shapefactor
 from .shapesys import shapesys
+__all__ = [histosys,normfactor,normsys,shapefactor,shapesys]
+
