@@ -24,8 +24,9 @@ def get_backend():
     return tensorlib, optimizer
 
 # modifiers need access to tensorlib
-#   make sure import is below get_backend()
+# make sure import is below get_backend()
 from . import modifiers
+
 
 def set_backend(backend):
     """
@@ -39,7 +40,7 @@ def set_backend(backend):
         None
 
     Example:
-        pyhf.set_backend(tensorflow_backend(session=tf.Session()))
+        pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
@@ -47,10 +48,10 @@ def set_backend(backend):
     tensorlib = backend
     if isinstance(tensorlib, tensor.tensorflow_backend):
         optimizer = optimize.tflow_optimizer(tensorlib)
-    elif isinstance(tensorlib,tensor.pytorch_backend):
+    elif isinstance(tensorlib, tensor.pytorch_backend):
         optimizer = optimize.pytorch_optimizer(tensorlib=tensorlib)
     # TODO: Add support for mxnet_optimizer()
-    # elif isinstance(tensorlib, mxnet_backend):
+    # elif isinstance(tensorlib, tensor.mxnet_backend):
     #     optimizer = mxnet_optimizer()
     else:
         optimizer = optimize.scipy_optimizer()

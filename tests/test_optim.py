@@ -3,8 +3,8 @@ import tensorflow as tf
 import pytest
 
 
-@pytest.fixture
-def source(scope='module'):
+@pytest.fixture(scope='module')
+def source():
     source = {
         'binning': [2, -0.5, 1.5],
         'bindata': {
@@ -18,8 +18,8 @@ def source(scope='module'):
     return source
 
 
-@pytest.fixture
-def spec(source, scope='module'):
+@pytest.fixture(scope='module')
+def spec(source):
     spec = {
         'channels': [
             {
@@ -59,10 +59,10 @@ def spec(source, scope='module'):
 
 @pytest.mark.parametrize('backend',
                          [
-                             numpy_backend(poisson_from_normal=True),
-                             tensorflow_backend(session=tf.Session()),
-                             pytorch_backend(poisson_from_normal=True),
-                             # mxnet_backend(),
+                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
+                             # pyhf.tensor.mxnet_backend(),
                          ],
                          ids=[
                              'numpy',
@@ -77,27 +77,16 @@ def test_optim(source, spec, backend):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
-    pyhf.tensorlib.session = tf.Session()
+    pyhf.set_backend(backend)
     optim = pyhf.optimizer
-    if isinstance(pyhf.tensorlib, tensorflow_backend):
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
 
     result = optim.unconstrained_bestfit(
         pyhf.loglambdav, data, pdf, init_pars, par_bounds)
-    try:
-        assert pyhf.tensorlib.tolist(result)
-    except AssertionError:
-        print('unconstrained_bestfit failed')
-        pyhf.set_backend(oldlib)
-        assert False
+    assert pyhf.tensorlib.tolist(result)
 
     result = optim.constrained_bestfit(
         pyhf.loglambdav, 1.0, data, pdf, init_pars, par_bounds)
-    try:
-        assert pyhf.tensorlib.tolist(result)
-    except AssertionError:
-        print('constrained_bestfit failed')
-        pyhf.set_backend(oldlib)
-        assert False
+    assert pyhf.tensorlib.tolist(result)
