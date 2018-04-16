@@ -19,10 +19,10 @@ class normsys(object):
         self.at_plus_one = {}
         self.auxdata = [0]  # observed data is always at a = 1
 
-    def add_sample(self, channel, sample, modifier_data):
+    def add_sample(self, channel, sample, modifier_def):
         log.info('Adding sample {0:s} to channel {1:s}'.format(sample['name'], channel['name']))
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['lo']
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_data['hi']
+        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_def['data']['lo']
+        self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_def['data']['hi']
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha

@@ -54,7 +54,6 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
-
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
     at_minus_one = tensorlib.astensor(at_minus_one)
     at_zero = tensorlib.astensor(at_zero)
@@ -91,7 +90,8 @@ class modelconfig(object):
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
-                    instance.add_modifier(channel, sample, modifier_def)
+                    modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
+                    modifier.add_sample(channel, sample, modifier_def)
         instance.set_poi(poiname)
         return instance
 
@@ -126,7 +126,22 @@ class modelconfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def _add_or_get_modifier(self, channel, sample, modifier_def):
+    def add_or_get_modifier(self, channel, sample, modifier_def):
+        """
+        Add a new modifier if it does not exist and return it
+        or get the existing modifier and return it
+
+        Args:
+            channel: current channel object (e.g. from spec)
+            sample: current sample object (e.g. from spec)
+            modifier_def: current modifier definitions (e.g. from spec)
+
+        Returns:
+            modifier object
+
+        Example:
+            modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
+        """
         # check if modifier type is implemented
         if modifier_def['type'] not in modifiers.registry:
             raise RuntimeError('modifier type not implemented yet (processing {0:s})'.format(modifier_def['type']))
@@ -162,11 +177,6 @@ class modelconfig(object):
             self.auxdata += self.modifier(modifier_def['name']).auxdata
             self.auxdata_order.append(modifier_def['name'])
         return modifier
-
-    def add_modifier(self, channel, sample, modifier_def):
-        modifier = self._add_or_get_modifier(channel, sample, modifier_def)
-        modifier.add_sample(channel, sample, modifier_def['data'])
-        return True
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
