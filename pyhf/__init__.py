@@ -106,13 +106,13 @@ class modelconfig(object):
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['suggested_init']
+            init = init + self.par_map[name]['modifier'].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['suggested_bounds']
+            bounds = bounds + self.par_map[name]['modifier'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
@@ -161,8 +161,6 @@ class modelconfig(object):
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
         npars = modifier.n_parameters
-        suggested_init = modifier.suggested_init
-        suggested_bounds = modifier.suggested_bounds
 
         log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
         sl = slice(self.next_index, self.next_index + npars)
@@ -170,9 +168,7 @@ class modelconfig(object):
         self.par_order.append(modifier_def['name'])
         self.par_map[modifier_def['name']] = {
             'slice': sl,
-            'modifier': modifier,
-            'suggested_init': suggested_init,
-            'suggested_bounds': suggested_bounds
+            'modifier': modifier
         }
         if modifier.is_constrained:
             self.auxdata += self.modifier(modifier_def['name']).auxdata
