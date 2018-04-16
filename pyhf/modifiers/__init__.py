@@ -1,3 +1,5 @@
+from six import string_types
+
 registry = {}
 
 '''
@@ -43,10 +45,10 @@ def modifier(*args):
     if callable(args[0]):
         add_to_registry(args[0])
         return args[0]
-    elif isinstance(args[0], basestring):
+    elif isinstance(args[0], string_types):
         return _modifier(args[0])
     else:
-        raise TypeError('@modifier must be given a basestring instance (string, unicode). You gave it {}'.format(type(args[0])))
+        raise TypeError('@modifier must be given a string. You gave it {}'.format(type(args[0])))
 
 from .histosys import histosys
 from .normfactor import normfactor
