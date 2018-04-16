@@ -4,6 +4,10 @@ import tensorflow as tf
 import numpy as np
 import pytest
 
+#@pytest.fixture(scope='function', autouse=True)
+#def reset_backend():
+#  yield reset_backend
+#  pyhf.set_backend(pyhf.default_backend)
 
 def generate_source_static(n_bins):
     """
@@ -86,7 +90,6 @@ def test_runOnePoint_q_mu(n_bins,
     Returns:
         None
     """
-    default_backend = pyhf.tensorlib
 
     source = generate_source_static(n_bins)
     pdf = hepdata_like(source['bindata']['sig'],
@@ -128,15 +131,10 @@ def test_runOnePoint_q_mu(n_bins,
     except AssertionError:
         print('Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
             tolerance['numpy'], numpy_ratio_delta_unity.tolist()))
-        pyhf.set_backend(default_backend)
         assert False
     try:
         assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
     except AssertionError:
         print('Ratio between tensor backends exceeded tolerance of {}: {}'.format(
             tolerance['tensors'], tensors_ratio_delta_unity.tolist()))
-        pyhf.set_backend(default_backend)
         assert False
-
-    # Reset backend
-    pyhf.set_backend(default_backend)

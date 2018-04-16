@@ -5,7 +5,9 @@ import pyhf.tensor as tensor
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
+default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
+default_optimizer = optimizer
 
 def set_backend(backend):
     """

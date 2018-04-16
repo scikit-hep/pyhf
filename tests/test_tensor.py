@@ -41,8 +41,6 @@ def test_common_tensor_backends():
 
 
 def test_pdf_eval():
-    oldlib = pyhf.tensorlib
-
     tf_sess = tf.Session()
     backends = [numpy_backend(poisson_from_normal=True),
                 pytorch_backend(),
@@ -92,12 +90,8 @@ def test_pdf_eval():
 
     assert np.std(values) < 1e-6
 
-    pyhf.set_backend(oldlib)
-
 
 def test_pdf_eval_2():
-    oldlib = pyhf.tensorlib
-
     tf_sess = tf.Session()
     backends = [numpy_backend(poisson_from_normal=True),
                 pytorch_backend(),
@@ -126,5 +120,3 @@ def test_pdf_eval_2():
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
     assert np.std(values) < 1e-6
-
-    pyhf.set_backend(oldlib)
