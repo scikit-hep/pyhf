@@ -214,8 +214,7 @@ def source_2bin_2channel_couplednorm():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
-    source = source_2bin_2channel_couplednorm
+def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
     spec = {
         'channels': [
             {
@@ -278,13 +277,28 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
 
 
 @pytest.fixture(scope='module')
+def expected_result_2bin_2channel_couplednorm(mu=1.):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.5999662863185762,
+            'exp': [
+                0.06596134134354742,
+                0.15477912571478988,
+                0.33323967895587736,
+                0.6096429330789306,
+                0.8688213053042003
+            ]
+        }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
 def source_2bin_2channel_coupledhisto():
     return json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto):
-    source = source_2bin_2channel_coupledhisto
+def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto()):
     spec = {
         'channels': [
             {
@@ -356,13 +370,28 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto):
 
 
 @pytest.fixture(scope='module')
+def expected_result_2bin_2channel_coupledhistosys(mu=1.):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.0796739833305826,
+            'exp': [
+                1.765372502072074e-05,
+                0.00026265618793683054,
+                0.003340033567379219,
+                0.03152233566143051,
+                0.17907736639946248
+            ]
+        }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
 def source_2bin_2channel_coupledshapefactor():
     return json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
-    source = source_2bin_2channel_coupledshapefactor
+def spec_2bin_2channel_coupledshapefactor(source=source_2bin_2channel_coupledshapefactor()):
     spec = {
         'channels': [
             {
@@ -413,6 +442,22 @@ def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefacto
     return spec
 
 
+@pytest.fixture(scope='module')
+def expected_result_2bin_2channel_coupledshapefactor(mu=1.):
+    if mu == 1:
+        expected_result = {
+            'obs': 0.5421679124909312,
+            'exp': [
+                0.013753299929451691,
+                0.048887400056355966,
+                0.15555296253957684,
+                0.4007561343326305,
+                0.7357169630955912
+            ]
+        }
+    return expected_result
+
+
 def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
@@ -453,13 +498,13 @@ def test_validation_1bin_shapesys(source_1bin_example1):
 
 
 @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
-    # normsys
+    # 1bin_normsys
     (source_1bin_normsys(),
      spec_1bin_normsys(source_1bin_normsys()),
      1.,
      expected_result_1bin_normsys(1.),
      {'init_pars': 2, 'par_bounds': 2}),
-    # histosys
+    # 2bin_histosys
     (source_2bin_histosys_example2(),
      spec_2bin_histosys(source_2bin_histosys_example2()),
      1.,
@@ -471,15 +516,35 @@ def test_validation_1bin_shapesys(source_1bin_example1):
      1.,
      expected_result_2bin_2channel(1.),
      {'init_pars': 5, 'par_bounds': 5}),  # 1 mu + 2 gammas for 2 channels each
+    # 2bin_2channel_couplednorm
+    (source_2bin_2channel_couplednorm(),
+     spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm()),
+     1.,
+     expected_result_2bin_2channel_couplednorm(1.),
+     {'init_pars': 2, 'par_bounds': 2}),  # 1 mu + 1 alpha
+    # 2bin_2channel_coupledhistosys
+    (source_2bin_2channel_coupledhisto(),
+     spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto()),
+     1.,
+     expected_result_2bin_2channel_coupledhistosys(1.),
+     {'auxdata': 1, 'init_pars': 2, 'par_bounds': 2}),  # 1 mu 1 shared histosys
+    # 2bin_2channel_coupledshapefactor
+    (source_2bin_2channel_coupledshapefactor(),
+     spec_2bin_2channel_coupledshapefactor(
+         source_2bin_2channel_coupledshapefactor()),
+     1.,
+     expected_result_2bin_2channel_coupledshapefactor(1.),
+     {'auxdata': 0, 'init_pars': 3, 'par_bounds': 3}),  # 1 mu 2 shared shapefactors
 ],
     ids=[
     '1bin_normsys_mu1',
     '2bin_histosys_mu1',
-    '2bin_2channel_mu1'
+    '2bin_2channel_mu1',
+    '2bin_2channel_couplednorm_mu1',
+    '2bin_2channel_coupledhistosys_mu1',
+    '2bin_2channel_coupledshapefactor_mu1'
 ])
 def test_validation(source, spec, mu, expected_result, config_len):
-    # def test_validation_normsys(source, spec, mu, expected_result,
-    # config_len):
     pdf = pyhf.hfpdf(spec)
 
     if 'channels' in source:
@@ -490,143 +555,9 @@ def test_validation(source, spec, mu, expected_result, config_len):
     else:
         data = source['bindata']['data'] + pdf.config.auxdata
 
+    if 'auxdata' in config_len:
+        assert len(pdf.config.auxdata) == config_len['auxdata']
     assert len(pdf.config.suggested_init()) == config_len['init_pars']
     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
 
     validate_runOnePoint(pdf, data, mu, expected_result)
-
-
-# @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
-#     (source_2bin_histosys_example2(),
-#      spec_2bin_histosys(source_2bin_histosys_example2()),
-#      1.,
-#      expected_result_2bin_histosys(1.),
-#      {'init_pars': 2, 'par_bounds': 2}),
-# ],
-#     ids=[
-#     '2bin_histosys_mu1'
-# ])
-# def test_validation_histosys(source, spec, mu, expected_result, config_len):
-#     pdf = pyhf.hfpdf(spec)
-#     data = source['bindata']['data'] + pdf.config.auxdata
-#
-#     assert len(pdf.config.suggested_init()) == config_len['init_pars']
-#     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
-#
-#     validate_runOnePoint(pdf, data, mu, expected_result)
-#
-#
-# @pytest.mark.parametrize('source, spec, mu, expected_result, config_len', [
-#     (source_2bin_2channel_example1(),
-#      spec_2bin_2channel(source_2bin_2channel_example1()),
-#      1.,
-#      expected_result_2bin_2channel(1.),
-#      {'init_pars': 5, 'par_bounds': 5}),
-# ],
-#     ids=[
-#     '2bin_2channel_mu1'
-# ])
-# def test_validation_2bin_2channel(source, spec, mu, expected_result, config_len):
-#     pdf = pyhf.hfpdf(spec)
-#     data = []
-#     for c in pdf.spec['channels']:
-#         data += source['channels'][c['name']]['bindata']['data']
-#     data = data + pdf.config.auxdata
-#
-#     # 1 mu + 2 gammas for 2 channels each
-#     assert len(pdf.config.suggested_init()) == config_len['init_pars']
-#     assert len(pdf.config.suggested_bounds()) == config_len['par_bounds']
-#
-#     validate_runOnePoint(pdf, data, mu, expected_result)
-
-
-def test_validation_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm(),
-                                              spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm)):
-    expected_result = {
-        'obs': 0.5999662863185762,
-        'exp': [
-            0.06596134134354742,
-            0.15477912571478988,
-            0.33323967895587736,
-            0.6096429330789306,
-            0.8688213053042003
-        ]
-    }
-
-    source = source_2bin_2channel_couplednorm
-    spec = spec_2bin_2channel_couplednorm
-
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    assert len(pdf.config.suggested_init()) == 2  # 1 mu + 1 alpha
-    assert len(pdf.config.suggested_bounds()) == 2  # 1 mu + 1 alpha
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
-
-
-def test_validation_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto,
-                                                  spec_2bin_2channel_coupledhistosys):
-    expected_result = {
-        'obs': 0.0796739833305826,
-        'exp': [
-            1.765372502072074e-05,
-            0.00026265618793683054,
-            0.003340033567379219,
-            0.03152233566143051,
-            0.17907736639946248
-        ]
-    }
-
-    source = source_2bin_2channel_coupledhisto
-    spec = spec_2bin_2channel_coupledhistosys
-
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    init_pars = pdf.config.suggested_init()
-    par_bounds = pdf.config.suggested_bounds()
-
-    assert len(pdf.config.auxdata) == 1
-    assert len(init_pars) == 2  # 1 mu 1 shared histosys
-    assert len(par_bounds) == 2
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
-
-
-def test_validation_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor,
-                                                     spec_2bin_2channel_coupledshapefactor):
-    expected_result = {
-        'obs': 0.5421679124909312,
-        'exp': [
-            0.013753299929451691,
-            0.048887400056355966,
-            0.15555296253957684,
-            0.4007561343326305,
-            0.7357169630955912
-        ]
-    }
-
-    source = source_2bin_2channel_coupledshapefactor
-    spec = spec_2bin_2channel_coupledshapefactor
-
-    pdf = pyhf.hfpdf(spec)
-    data = []
-    for c in pdf.spec['channels']:
-        data += source['channels'][c['name']]['bindata']['data']
-    data = data + pdf.config.auxdata
-
-    init_pars = pdf.config.suggested_init()
-    par_bounds = pdf.config.suggested_bounds()
-
-    assert len(pdf.config.auxdata) == 0
-    assert len(init_pars) == 3  # 1 mu 2 shared shapefactors
-    assert len(par_bounds) == 3
-
-    validate_runOnePoint(pdf, data, 1.0, expected_result)
