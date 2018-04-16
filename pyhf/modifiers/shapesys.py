@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from six import with_metaclass
 from . import modifier
-from .. import tensorlib
+from .. import get_backend
 
 @modifier
 class shapesys(object):
@@ -24,9 +24,11 @@ class shapesys(object):
             self.auxdata.append(bkg_over_bsq)
 
     def alphas(self, pars):
+        tensorlib, _ = get_backend()
         return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
 
     def pdf(self, a, alpha):
+        tensorlib, _ = get_backend()
         return tensorlib.poisson(a, alpha)
 
     def expected_data(self, pars):

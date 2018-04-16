@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from six import with_metaclass
 from . import modifier
-from .. import tensorlib
+from .. import get_backend
 
 @modifier
 class normfactor(object):

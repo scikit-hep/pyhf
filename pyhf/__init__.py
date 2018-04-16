@@ -38,8 +38,22 @@ default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
 
+def get_backend():
+    """
+    Get the current backend and the associated optimizer
+
+    Returns:
+        backend, optimizer
+
+    Example:
+        backend, _ = pyhf.get_backend()
+    """
+    global tensorlib
+    global optimizer
+    return tensorlib, optimizer
+
 # modifiers need access to tensorlib
-#   make sure import is below tensorlib definition
+#   make sure import is below get_backend()
 from . import modifiers
 
 def set_backend(backend):
@@ -69,6 +83,7 @@ def set_backend(backend):
     #     optimizer = mxnet_optimizer()
     else:
         optimizer = optimize.scipy_optimizer()
+
 
 def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
     at_minus_one = tensorlib.astensor(at_minus_one)

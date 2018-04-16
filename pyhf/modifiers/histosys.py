@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from six import with_metaclass
 from . import modifier
-from .. import tensorlib
+from .. import get_backend
 
 @modifier
 class histosys(object):
@@ -32,4 +32,5 @@ class histosys(object):
         return self.alphas(pars)
 
     def pdf(self, a, alpha):
+        tensorlib, _ = get_backend()
         return tensorlib.normal(a, alpha, [1])
