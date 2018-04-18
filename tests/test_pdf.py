@@ -75,6 +75,24 @@ def test_core_pdf_broadcasting():
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
+def test_add_unknown_modifier():
+    spec = {
+        'channels': [
+            {
+                'name': 'channe',
+                'samples': [
+                    {
+                        'modifiers': [
+                            {'name': 'a_name', 'type': 'this_should_not_exist', 'data': None}
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+    pyhf.hfpdf(spec)
+
+
 def test_pdf_integration_histosys():
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
