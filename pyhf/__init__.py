@@ -144,10 +144,10 @@ class modelconfig(object):
         """
         # get modifier class associated with modifier type
         try:
-            modifier_cls = modifiers.registry.get(modifier_def['type'])
+            modifier_cls = modifiers.registry[modifier_def['type']]
         except KeyError:
-            raise RuntimeError('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
-
+            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+            raise
 
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
