@@ -19,7 +19,7 @@ def test_import_default_modifiers(test_modifier):
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():
-    from pyhf.modifiers import modifier, InvalidModifier
+    from pyhf.modifiers import modifier
 
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
@@ -59,17 +59,17 @@ def test_modifiers_structure():
     assert pyhf.modifiers.registry['myConstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myConstrainedModifier']
 
-    with pytest.raises(InvalidModifier):
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier
         class myCustomModifier(object):
             pass
 
-    with pytest.raises(InvalidModifier):
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier(constrained=True)
         class myCustomModifier(object):
             pass
 
-    with pytest.raises(InvalidModifier):
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier(name='myConstrainedModifier', constrained=True)
         class myCustomModifier(object):
             def __init__(self): pass
