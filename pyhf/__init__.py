@@ -1,6 +1,7 @@
 import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
+from . import exceptions
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -147,7 +148,7 @@ class modelconfig(object):
             modifier_cls = modifiers.registry[modifier_def['type']]
         except KeyError:
             log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
-            raise modifiers.InvalidModifier()
+            raise exceptions.InvalidModifier()
 
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
