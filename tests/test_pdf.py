@@ -1,5 +1,7 @@
 import pyhf
+import pytest
 import pyhf.simplemodels
+import pyhf.modifiers
 import numpy as np
 import json
 import jsonschema
@@ -74,6 +76,25 @@ def test_core_pdf_broadcasting():
     assert np.array(data).shape == np.array(sigmas).shape
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
+
+def test_add_unknown_modifier():
+    spec = {
+        'channels': [
+            {
+                'name': 'channe',
+                'samples': [
+                    {
+                        'modifiers': [
+                            {'name': 'a_name', 'type': 'this_should_not_exist', 'data': None}
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+    with pytest.raises(pyhf.modifiers.InvalidModifier):
+        pyhf.hfpdf(spec)
+
 
 def test_pdf_integration_histosys():
     schema = json.load(open('validation/spec.json'))
