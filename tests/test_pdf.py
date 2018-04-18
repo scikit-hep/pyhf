@@ -1,4 +1,5 @@
 import pyhf
+import pytest
 import pyhf.simplemodels
 import numpy as np
 import json
