@@ -2,10 +2,9 @@ from six import string_types
 import logging
 log = logging.getLogger(__name__)
 
-registry = {}
+from .. import exceptions
 
-class InvalidModifier(Exception):
-  pass
+registry = {}
 
 '''
 Check if given object contains the right structure for constrained and unconstrained modifiers
@@ -16,7 +15,7 @@ def validate_modifier_structure(modifier, constrained):
 
     for method in required_methods + required_constrained_methods*constrained:
         if not hasattr(modifier, method):
-          raise InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
+          raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
     return True
 
 '''
@@ -51,7 +50,7 @@ Returns:
 Raises:
     ValueError: too many keyword arguments, or too many arguments, or wrong arguments
     TypeError: provided name is not a string
-    InvalidModifier: object does not have necessary modifier structure
+    pyhf.exceptions.InvalidModifier: object does not have necessary modifier structure
 
 Examples:
 
@@ -83,7 +82,7 @@ Examples:
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
   >>>
-  InvalidModifier: Expected alphas method on constrained modifier myCustomModifier
+  pyhf.exceptions.InvalidModifier: Expected alphas method on constrained modifier myCustomModifier
 '''
 def modifier(*args, **kwargs):
     name = kwargs.pop('name', None)
