@@ -1,6 +1,7 @@
 import pyhf
 import pytest
 import pyhf.simplemodels
+import pyhf.modifiers
 import numpy as np
 import json
 import jsonschema
@@ -91,7 +92,7 @@ def test_add_unknown_modifier():
             }
         ]
     }
-    with pytest.raises(KeyError):
+    with pytest.raises(pyhf.modifiers.InvalidModifier):
         pyhf.hfpdf(spec)
 
 
