@@ -1,7 +1,7 @@
 import pyhf
-import pyhf.simplemodels
 
 import json
+import jsonschema
 import pytest
 
 
@@ -12,9 +12,39 @@ def source_1bin_example1():
 
 @pytest.fixture(scope='module')
 def spec_1bin_shapesys(source=source_1bin_example1()):
-    spec = source['bindata']['sig'], \
-        source['bindata']['bkg'], \
-        source['bindata']['bkgerr']
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {
+                                'name': 'mu',
+                                'type': 'normfactor',
+                                'data': None
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {
+                                'name': 'uncorr_bkguncrt',
+                                'type': 'shapesys',
+                                'data': source['bindata']['bkgerr']
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -47,8 +77,7 @@ def setup_1bin_shapesys(source=source_1bin_example1(),
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hepdata_like'
+        }
     }
 
 
@@ -98,6 +127,8 @@ def spec_1bin_normsys(source=source_1bin_normsys()):
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -130,8 +161,7 @@ def setup_1bin_normsys(source=source_1bin_normsys(),
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -176,6 +206,8 @@ def spec_2bin_histosys(source=source_2bin_histosys_example2()):
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -209,8 +241,7 @@ def setup_2bin_histosys(source=source_2bin_histosys_example2(),
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -268,6 +299,8 @@ def spec_2bin_2channel(source=source_2bin_2channel_example1()):
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -302,8 +335,7 @@ def setup_2bin_2channel(source=source_2bin_2channel_example1(),
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -372,6 +404,8 @@ def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -407,8 +441,7 @@ def setup_2bin_2channel_couplednorm(
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -486,6 +519,8 @@ def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto(
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -521,8 +556,7 @@ def setup_2bin_2channel_coupledhistosys(
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -580,6 +614,8 @@ def spec_2bin_2channel_coupledshapefactor(source=source_2bin_2channel_coupledsha
             }
         ]
     }
+    schema = json.load(open('validation/spec.json'))
+    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -615,8 +651,7 @@ def setup_2bin_2channel_coupledshapefactor(
         'expected': {
             'result': expected_result,
             'config': config
-        },
-        'pdf_type': 'hfpdf'
+        }
     }
 
 
@@ -655,10 +690,7 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
 ])
 def test_validation(setup):
     source = setup['source']
-    if setup['pdf_type'] == 'hepdata_like':
-        pdf = pyhf.simplemodels.hepdata_like(*setup['spec'])
-    else:
-        pdf = pyhf.hfpdf(setup['spec'])
+    pdf = pyhf.hfpdf(setup['spec'])
 
     if 'channels' in source:
         data = []
