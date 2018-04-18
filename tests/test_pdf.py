@@ -75,6 +75,51 @@ def test_core_pdf_broadcasting():
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
+def test_pdf_integration_staterror():
+    spec = {
+        'channels': [
+            {
+                'name': 'firstchannel',
+                'samples': [
+                    {
+                        'name': 'bkg1',
+                        'data': None,
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg2',
+                        'data': None,
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg3',
+                        'data': None,
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': None}
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'secondchannel',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': None,
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': None}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    assert False
+
 def test_pdf_integration_histosys():
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
