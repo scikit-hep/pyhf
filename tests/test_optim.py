@@ -57,6 +57,13 @@ def spec(source):
     return spec
 
 
+@pytest.mark.parametrize('mu',
+                         [
+                             1.,
+                         ],
+                         ids=[
+                             'mu=1',
+                         ])
 @pytest.mark.parametrize('backend',
                          [
                              pyhf.tensor.numpy_backend(poisson_from_normal=True),
@@ -70,7 +77,7 @@ def spec(source):
                              'pytorch',
                              # 'mxnet',
                          ])
-def test_optim(source, spec, backend):
+def test_optim(source, spec, mu, backend):
     pdf = pyhf.hfpdf(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
 
@@ -88,5 +95,5 @@ def test_optim(source, spec, backend):
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.constrained_bestfit(
-        pyhf.loglambdav, 1.0, data, pdf, init_pars, par_bounds)
+        pyhf.loglambdav, mu, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
