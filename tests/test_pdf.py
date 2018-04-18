@@ -90,7 +90,8 @@ def test_add_unknown_modifier():
             }
         ]
     }
-    pyhf.hfpdf(spec)
+    with pytest.raises(KeyError):
+        pyhf.hfpdf(spec)
 
 
 def test_pdf_integration_histosys():
