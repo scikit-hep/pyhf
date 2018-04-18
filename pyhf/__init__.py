@@ -40,7 +40,9 @@ def set_backend(backend):
         None
 
     Example:
-        pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
+        import pyhf.tensor as tensor
+        import tensorflow as tf
+        pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
