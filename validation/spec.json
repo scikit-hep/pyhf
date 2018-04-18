@@ -34,7 +34,7 @@
                 },
                 "type": {
                     "type": "string",
-                    "enum": ["shapesys","normfactor","histosys","normsys"]
+                    "enum": ["shapesys","normfactor","histosys","normsys","shapefactor"]
                 },
                 "data": { "$ref": "#/definitions/data"}
             },
