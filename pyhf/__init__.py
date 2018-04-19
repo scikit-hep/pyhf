@@ -153,16 +153,6 @@ class hfpdf(object):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
 
-    def _multiplicative_factors(self, channel, sample, pars):
-        multiplicative_types = ['shapesys', 'normfactor', 'shapefactor','staterror']
-        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] in multiplicative_types]
-        factors = []
-        for m in modifiers:
-            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            mod_factor = modifier.apply(channel, sample, modpars)
-            factors.append(mod_factor)
-        return factors
-
     def _normsysfactor(self, channel, sample, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
         # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
@@ -190,17 +180,34 @@ class hfpdf(object):
         # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0],
         # anchors[i][0], val=alpha) for i in range(histosys_alphas))
+        #
+        # Formula:
+        #     \nu_{cb} (\phi_p, \alpha_p, \gamma_p) = \lambda_{cs} \gamma_{cb} \phi_{cs}(\alpha) \eta_{cs}(\alpha) \sigma_{csb}(\alpha)
+        # \gamma == statsys, shapefactor
+        # \phi == normfactor, overallsys
+        # \sigma == histosysdelta + nominal
+
+        # first, collect the factors from all modifiers
+        results = {'shapesys': [],
+                   'normfactor': [],
+                   'shapefactor': [],
+                   'staterror': [],
+                   'histosys': [],
+                   'normsys': []}
+        for m in sample['modifiers']:
+            modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
+            results[m['type']].append(modifier.apply(channel, sample, modpars))
+
+
+        # start building the entire set of factors
+        factors = []
+        factors += results['shapesys'] + results['normfactor'] + results['shapefactor'] + results['staterror']
+
         nom = tensorlib.astensor(sample['data'])
         histosys_delta = self._histosysdelta(channel, sample, pars)
-
         interp_histo = tensorlib.sum(tensorlib.stack([nom, histosys_delta]), axis=0) if (histosys_delta is not None) else nom
 
-        factors = []
-        factors += self._multiplicative_factors(channel, sample, pars)
-
-        # print('sample factors {}'.format(factors))
-
-
+        #factors += self._multiplicative_factors(channel, sample, pars)
         factors += [self._normsysfactor(channel, sample, pars)]
         factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
