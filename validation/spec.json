@@ -5,6 +5,7 @@
         "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
     },
     "additionalProperties": false,
+    "required": ["channels"],
 
     "definitions": {
         "channel": {
@@ -21,24 +22,68 @@
             "properties": {
                 "name": { "type": "string" },
                 "data": { "$ref": "#/definitions/data" },
-                "modifiers": { "type": "array", "items": {"$ref": "#/definitions/modifier"} }
+                "modifiers": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/normfactor" },
+                            { "$ref": "#/definitions/modifier/normsys" },
+                            { "$ref": "#/definitions/modifier/shapefactor" },
+                            { "$ref": "#/definitions/modifier/shapesys" }
+                        ]
+                    }
+                }
             },
             "required": ["name", "data", "modifiers"],
             "additionalProperties": false
         },
         "modifier": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
+            "histosys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "const": "histosys" },
+                    "data": { "$ref": "#/definitions/data"}
                 },
-                "type": {
-                    "type": "string",
-                    "enum": ["shapesys","normfactor","histosys","normsys","shapefactor"]
-                },
-                "data": { "$ref": "#/definitions/data"}
+                "additionalProperties": false
             },
-            "additionalProperties": false
+            "normfactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "const": "normfactor" },
+                    "data": { "$ref": "#/definitions/data"}
+                },
+                "additionalProperties": false
+            },
+            "normsys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "const": "normsys" },
+                    "data": { "$ref": "#/definitions/data"}
+                },
+                "additionalProperties": false
+            },
+            "shapefactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "const": "shapefactor" },
+                    "data": { "$ref": "#/definitions/data"}
+                },
+                "additionalProperties": false
+            },
+            "shapesys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "const": "shapesys" },
+                    "data": { "$ref": "#/definitions/data"}
+                },
+                "additionalProperties": false
+            }
         },
         "data": {
             "oneOf": [
