@@ -179,7 +179,6 @@ class hfpdf(object):
         factors = []
         for m in modifiers:
             modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            mod_delta = modifier.apply(channel, sample, modpars)
             mod_factor = modifier.apply(channel, sample, modpars)
             factors.append(mod_factor)
         return tensorlib.sum(tensorlib.stack(factors), axis=0) if factors else None
