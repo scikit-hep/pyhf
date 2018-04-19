@@ -31,3 +31,6 @@ class histosys(object):
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
         return tensorlib.normal(a, alpha, [1])
+
+    def apply(self, channel, sample, pars):
+        pass

@@ -12,3 +12,6 @@ class normfactor(object):
 
     def add_sample(self, channel, sample, modifier_def):
         pass
+
+    def apply(self, channel, sample, pars):
+        pass
