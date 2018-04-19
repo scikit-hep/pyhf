@@ -153,15 +153,6 @@ class hfpdf(object):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
 
-    def _histosysdelta(self, channel, sample, pars):
-        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'histosys']
-        factors = []
-        for m in modifiers:
-            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            mod_factor = modifier.apply(channel, sample, modpars)
-            factors.append(mod_factor)
-        return tensorlib.sum(tensorlib.stack(factors), axis=0) if factors else None
-
     def expected_sample(self, channel, sample, pars):
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
@@ -195,13 +186,12 @@ class hfpdf(object):
         # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         factors += [tensorlib.product(results['normsys'])]
 
-        nom = tensorlib.astensor(sample['data'])
-        histosys_delta = self._histosysdelta(channel, sample, pars)
-        interp_histo = tensorlib.sum(tensorlib.stack([nom, histosys_delta]), axis=0) if (histosys_delta is not None) else nom
+        nominal = tensorlib.astensor(sample['data'])
+        factors += [tensorlib.sum(tensorlib.stack([
+          nominal,
+          tensorlib.sum(tensorlib.stack(results['histosys']), axis=0)
+        ]), axis=0) if len(results['histosys']) > 0 else nominal]
 
-        #factors += self._multiplicative_factors(channel, sample, pars)
-        #factors += [self._normsysfactor(channel, sample, pars)]
-        factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
     def expected_auxdata(self, pars):
