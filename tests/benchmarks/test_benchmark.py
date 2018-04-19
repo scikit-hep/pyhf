@@ -85,7 +85,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
                              pyhf.tensor.numpy_backend(poisson_from_normal=True),
                              pyhf.tensor.tensorflow_backend(session=tf.Session()),
                              pyhf.tensor.pytorch_backend(),
-                             # mxnet_backend(),
+                             # pyhf.tensor.mxnet_backend(),
                          ],
                          ids=[
                              'numpy',
@@ -113,10 +113,4 @@ def test_runOnePoint(benchmark, backend, n_bins):
                        source['bindata']['bkg'],
                        source['bindata']['bkgerr'])
     data = source['bindata']['data'] + pdf.config.auxdata
-    try:
-        assert benchmark(runOnePoint, pdf, data) is not None
-    except AssertionError:
-        print('benchmarking has failed for n_bins = {}'.formant(n_bins))
-        assert False
-
-    # Reset backend
+    assert benchmark(runOnePoint, pdf, data)
