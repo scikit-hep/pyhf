@@ -156,7 +156,12 @@ class hfpdf(object):
     def _multiplicative_factors(self, channel, sample, pars):
         multiplicative_types = ['shapesys', 'normfactor', 'shapefactor','staterror']
         modifiers = [m['name'] for m in sample['modifiers'] if m['type'] in multiplicative_types]
-        return [pars[self.config.par_slice(m)] for m in modifiers]
+        factors = []
+        for m in modifiers:
+            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
+            mod_factor = modifier.apply(channel, sample, modpars)
+            factors.append(mod_factor)
+        return factors
 
     def _normsysfactor(self, channel, sample, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],

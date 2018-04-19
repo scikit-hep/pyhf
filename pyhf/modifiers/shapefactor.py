@@ -14,4 +14,4 @@ class shapefactor(object):
         pass
 
     def apply(self, channel, sample, pars):
-        pass
+        return pars

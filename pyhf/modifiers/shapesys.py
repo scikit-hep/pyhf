@@ -35,4 +35,4 @@ class shapesys(object):
         pass
 
     def apply(self, channel, sample, pars):
-        pass
+        return pars
