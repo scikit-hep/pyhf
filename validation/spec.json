@@ -5,6 +5,7 @@
         "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
     },
     "additionalProperties": false,
+    "required": ["channels"],
 
     "definitions": {
         "channel": {
@@ -20,44 +21,74 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "data": { "$ref": "#/definitions/data" },
-                "modifiers": { "type": "array", "items": {"$ref": "#/definitions/modifier"} }
+                "data": { "type": "array", "items": {"type": "number"} },
+                "modifiers": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/normfactor" },
+                            { "$ref": "#/definitions/modifier/normsys" },
+                            { "$ref": "#/definitions/modifier/shapefactor" },
+                            { "$ref": "#/definitions/modifier/shapesys" }
+                        ]
+                    }
+                }
             },
             "required": ["name", "data", "modifiers"],
             "additionalProperties": false
         },
         "modifier": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
+            "histosys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "histosys" },
+                    "data": { "type": "object", "required": ["lo_data", "hi_data"] }
                 },
-                "type": {
-                    "type": "string",
-                    "enum": ["shapesys","normfactor","histosys","normsys","shapefactor"]
-                },
-                "data": { "$ref": "#/definitions/data"}
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
             },
-            "additionalProperties": false
-        },
-        "data": {
-            "oneOf": [
-                {
-                    "type": "array",
-                    "items": {"type": "number"}
+            "normfactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normfactor" },
+                    "data": { "type": "null" }
                 },
-                {
-                    "type": "null"
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "normsys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normsys" },
+                    "data": { "type": "object", "required": ["lo", "hi"] }
                 },
-                {
-                    "type": "object",
-                    "required": ["lo_data", "hi_data"]
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapefactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapefactor" },
+                    "data": { "type": "null" }
                 },
-                {
-                    "type": "object",
-                    "required": ["lo", "hi"]
-                }
-            ]
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapesys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapesys" },
+                    "data": { "type": "array", "items": {"type": "number"} }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            }
         }
     }
 }
