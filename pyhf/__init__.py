@@ -176,12 +176,13 @@ class hfpdf(object):
 
     def _histosysdelta(self, channel, sample, pars):
         modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'histosys']
-        stack = None
+        factors = []
         for m in modifiers:
             modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
             mod_delta = modifier.apply(channel, sample, modpars)
-            stack = tensorlib.stack([mod_delta]) if stack is None else tensorlib.stack([stack,mod_delta])
-        return tensorlib.sum(stack, axis=0) if stack is not None else None
+            mod_factor = modifier.apply(channel, sample, modpars)
+            factors.append(mod_factor)
+        return tensorlib.sum(tensorlib.stack(factors), axis=0) if factors else None
 
     def expected_sample(self, channel, sample, pars):
         # for each sample the expected ocunts are
