@@ -153,17 +153,6 @@ class hfpdf(object):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
 
-    def _normsysfactor(self, channel, sample, pars):
-        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
-        # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'normsys']
-        factors = []
-        for m in modifiers:
-            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            mod_factor = modifier.apply(channel, sample, modpars)
-            factors.append(mod_factor)
-        return tensorlib.product(factors)
-
     def _histosysdelta(self, channel, sample, pars):
         modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'histosys']
         factors = []
@@ -202,13 +191,16 @@ class hfpdf(object):
         # start building the entire set of factors
         factors = []
         factors += results['shapesys'] + results['normfactor'] + results['shapefactor'] + results['staterror']
+        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
+        # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
+        factors += [tensorlib.product(results['normsys'])]
 
         nom = tensorlib.astensor(sample['data'])
         histosys_delta = self._histosysdelta(channel, sample, pars)
         interp_histo = tensorlib.sum(tensorlib.stack([nom, histosys_delta]), axis=0) if (histosys_delta is not None) else nom
 
         #factors += self._multiplicative_factors(channel, sample, pars)
-        factors += [self._normsysfactor(channel, sample, pars)]
+        #factors += [self._normsysfactor(channel, sample, pars)]
         factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
