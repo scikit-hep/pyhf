@@ -58,33 +58,6 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
-def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-
-    alphas = tensorlib.astensor(alphas)
-
-    iplus_izero  = at_plus_one - at_zero
-    izero_iminus = at_zero - at_minus_one
-
-    mask = tensorlib.outer(alphas < 0, tensorlib.ones(iplus_izero.shape))
-    return tensorlib.where(mask, tensorlib.outer(alphas, izero_iminus), tensorlib.outer(alphas, iplus_izero))
-
-def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-    alphas = tensorlib.astensor(alphas)
-
-    base_positive = tensorlib.divide(at_plus_one,  at_zero)
-    base_negative = tensorlib.divide(at_minus_one, at_zero)
-    expo_positive = tensorlib.outer(alphas, tensorlib.ones(base_positive.shape))
-    mask = tensorlib.outer(alphas > 0, tensorlib.ones(base_positive.shape))
-    bases = tensorlib.where(mask,base_positive,base_negative)
-    exponents = tensorlib.where(mask, expo_positive,-expo_positive)
-    return tensorlib.power(bases, exponents)
-
 class modelconfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
@@ -192,29 +165,17 @@ class hfpdf(object):
         factors = []
         for m in modifiers:
             modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            assert int(modpars.shape[0]) == 1
-            mod_factor = _hfinterp_code1(modifier.at_minus_one[channel['name']][sample['name']],
-                                         modifier.at_zero,
-                                         modifier.at_plus_one[channel['name']][sample['name']],
-                                         modpars)[0]
+            mod_factor = modifier.apply(channel, sample, modpars)
             factors.append(mod_factor)
         return tensorlib.product(factors)
 
     def _histosysdelta(self, channel, sample, pars):
-        modifiers = [m['name'] for m in sample['modifiers']
-                if m['type'] == 'histosys']
+        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'histosys']
         stack = None
         for m in modifiers:
             modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            assert int(modpars.shape[0]) == 1
-
-            # print 'MODPARS', type(modpars.data)
-            mod_delta = _hfinterp_code0(modifier.at_minus_one[channel['name']][sample['name']],
-                                        modifier.at_zero[channel['name']][sample['name']],
-                                        modifier.at_plus_one[channel['name']][sample['name']],
-                                        modpars)[0]
+            mod_delta = modifier.apply(channel, sample, modpars)
             stack = tensorlib.stack([mod_delta]) if stack is None else tensorlib.stack([stack,mod_delta])
-
         return tensorlib.sum(stack, axis=0) if stack is not None else None
 
     def expected_sample(self, channel, sample, pars):

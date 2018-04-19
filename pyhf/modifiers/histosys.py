@@ -33,4 +33,21 @@ class histosys(object):
         return tensorlib.normal(a, alpha, [1])
 
     def apply(self, channel, sample, pars):
-        pass
+        assert int(pars.shape[0]) == 1
+        return self._apply(self.at_minus_one[channel['name']][sample['name']],
+                           self.at_zero[channel['name']][sample['name']],
+                           self.at_plus_one[channel['name']][sample['name']],
+                           pars)[0]
+
+    @staticmethod
+    def _apply(at_minus_one, at_zero, at_plus_one, alphas):
+        tensorlib, _ = get_backend()
+        at_minus_one = tensorlib.astensor(at_minus_one)
+        at_zero = tensorlib.astensor(at_zero)
+        at_plus_one = tensorlib.astensor(at_plus_one)
+        alphas = tensorlib.astensor(alphas)
+
+        iplus_izero  = at_plus_one - at_zero
+        izero_iminus = at_zero - at_minus_one
+        mask = tensorlib.outer(alphas < 0, tensorlib.ones(iplus_izero.shape))
+        return tensorlib.where(mask, tensorlib.outer(alphas, izero_iminus), tensorlib.outer(alphas, iplus_izero))

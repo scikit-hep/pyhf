@@ -32,4 +32,24 @@ class normsys(object):
         return tensorlib.normal(a, alpha, 1)
 
     def apply(self, channel, sample, pars):
-        pass
+        assert int(pars.shape[0]) == 1
+        return self._apply(self.at_minus_one[channel['name']][sample['name']],
+                           self.at_zero,
+                           self.at_plus_one[channel['name']][sample['name']],
+                           pars)[0]
+
+    @staticmethod
+    def _apply(at_minus_one, at_zero, at_plus_one, alphas):
+        tensorlib, _ = get_backend()
+        at_minus_one = tensorlib.astensor(at_minus_one)
+        at_zero = tensorlib.astensor(at_zero)
+        at_plus_one = tensorlib.astensor(at_plus_one)
+        alphas = tensorlib.astensor(alphas)
+
+        base_positive = tensorlib.divide(at_plus_one,  at_zero)
+        base_negative = tensorlib.divide(at_minus_one, at_zero)
+        expo_positive = tensorlib.outer(alphas, tensorlib.ones(base_positive.shape))
+        mask = tensorlib.outer(alphas > 0, tensorlib.ones(base_positive.shape))
+        bases = tensorlib.where(mask,base_positive,base_negative)
+        exponents = tensorlib.where(mask, expo_positive,-expo_positive)
+        return tensorlib.power(bases, exponents)
