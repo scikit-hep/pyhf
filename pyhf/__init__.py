@@ -317,8 +317,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 from scipy.stats import norm
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     # these pvals are from formula
-    # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(√q_mu - (mu-mu')/sigma)
-    # and  (mu-mu')/sigma = sqrt(Lambda) = sqrt(q_mu_A)
+    # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
+    # and  (mu-mu')/sigma = sqrt(Lambda)= sqrt(q_mu_A)
     CLsb = 1 - norm.cdf(sqrtqmu_v)
     CLb =  1 - norm.cdf(sqrtqmu_v - sqrtqmuA_v)
     oneOverCLs = CLb / CLsb
