@@ -76,6 +76,54 @@ def test_core_pdf_broadcasting():
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
+def test_pdf_integration_staterror():
+    spec = {
+        'channels': [
+            {
+                'name': 'firstchannel',
+                'samples': [
+                    {
+                        'name': 'mu',
+                        'data': [10.,10.],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'bkg1',
+                        'data': [50.0, 70.0],
+                        'modifiers': [
+                            {'name': 'stat_firstchannel', 'type': 'staterror', 'data': [12.,12.]}
+                        ]
+                    },
+                    {
+                        'name': 'bkg2',
+                        'data': [30.0, 20.],
+                        'modifiers': [
+                            {'name': 'stat_firstchannel', 'type': 'staterror', 'data': [5.,5.]}
+                        ]
+                    },
+                    {
+                        'name': 'bkg3',
+                        'data': [20.0, 15.0],
+                        'modifiers': [
+                        ]
+                    }
+                ]
+            },
+        ]
+    }
+    pdf = pyhf.hfpdf(spec)
+    par = pdf.config.par_slice('stat_firstchannel')
+    mod = pdf.config.modifier('stat_firstchannel')
+    assert mod.uncertainties == [[12.,12.],[5.,5.]]
+    assert mod.nominal_counts == [[50.,70.],[30.,20.]]
+
+    computed = pyhf.tensorlib.tolist(mod.pdf([1.0,1.0],[1.0,1.0]))
+    expected = pyhf.tensorlib.tolist(pyhf.tensorlib.normal([1.0,1.0], mu = [1.0,1.0], sigma = [13./80.,13./90.]))
+    for c,e in zip(computed,expected):
+        assert c==e
+
 def test_add_unknown_modifier():
     spec = {
         'channels': [
