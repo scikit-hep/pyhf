@@ -124,7 +124,7 @@ def test_pdf_integration_staterror():
     for c,e in zip(computed,expected):
         assert c==e
 
-        def test_add_unknown_modifier():
+def test_add_unknown_modifier():
     spec = {
         'channels': [
             {
