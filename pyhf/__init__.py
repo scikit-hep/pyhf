@@ -1,6 +1,7 @@
 import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
+from . import exceptions
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -23,8 +24,9 @@ def get_backend():
     return tensorlib, optimizer
 
 # modifiers need access to tensorlib
-#   make sure import is below get_backend()
+# make sure import is below get_backend()
 from . import modifiers
+
 
 def set_backend(backend):
     """
@@ -38,7 +40,9 @@ def set_backend(backend):
         None
 
     Example:
-        pyhf.set_backend(tensorflow_backend(session=tf.Session()))
+        import pyhf.tensor as tensor
+        import tensorflow as tf
+        pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
@@ -46,10 +50,10 @@ def set_backend(backend):
     tensorlib = backend
     if isinstance(tensorlib, tensor.tensorflow_backend):
         optimizer = optimize.tflow_optimizer(tensorlib)
-    elif isinstance(tensorlib,tensor.pytorch_backend):
+    elif isinstance(tensorlib, tensor.pytorch_backend):
         optimizer = optimize.pytorch_optimizer(tensorlib=tensorlib)
     # TODO: Add support for mxnet_optimizer()
-    # elif isinstance(tensorlib, mxnet_backend):
+    # elif isinstance(tensorlib, tensor.mxnet_backend):
     #     optimizer = mxnet_optimizer()
     else:
         optimizer = optimize.scipy_optimizer()
@@ -146,8 +150,8 @@ class modelconfig(object):
         try:
             modifier_cls = modifiers.registry[modifier_def['type']]
         except KeyError:
-            raise RuntimeError('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
-
+            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+            raise exceptions.InvalidModifier()
 
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:

@@ -1,4 +1,5 @@
 import pyhf
+import pytest
 import pyhf.simplemodels
 import numpy as np
 import json
@@ -122,6 +123,25 @@ def test_pdf_integration_staterror():
     expected = pyhf.tensorlib.tolist(pyhf.tensorlib.normal([1.0,1.0], mu = [1.0,1.0], sigma = [13./80.,13./90.]))
     for c,e in zip(computed,expected):
         assert c==e
+
+        def test_add_unknown_modifier():
+    spec = {
+        'channels': [
+            {
+                'name': 'channe',
+                'samples': [
+                    {
+                        'modifiers': [
+                            {'name': 'a_name', 'type': 'this_should_not_exist', 'data': None}
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        pyhf.hfpdf(spec)
+
 
 def test_pdf_integration_histosys():
     schema = json.load(open('validation/spec.json'))
