@@ -20,6 +20,10 @@ class staterror(object):
 
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
+        # this computes sum_i uncertainty_i for all samples
+        # (broadcastted for all bins in the channel)
+        # for each bin, the relative uncert is the width of a gaussian
+        # which is the constraint pdf; Prod_i Gaus(x = 1, mu = 1, sigma = unc_i)
         inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(self.uncertainties,2), axis=0))
         totals = tensorlib.sum(self.nominal_counts,axis=0)
         uncrts = tensorlib.divide(inquad,totals)
@@ -31,4 +35,3 @@ class staterror(object):
     def add_sample(self, channel, sample, modifier_def):
         self.nominal_counts.append(sample['data'])
         self.uncertainties.append(modifier_def['data'])
-        
