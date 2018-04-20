@@ -23,6 +23,7 @@ Implemented variations:
 - [x] Multiple Channels
 - [x] Import from XML + ROOT via [`uproot`](https://github.com/scikit-hep/uproot)
 - [x] ShapeFactor
+- [x] StatError
 
 Computational Backends:
 - [x] NumPy
@@ -31,7 +32,6 @@ Computational Backends:
 - [x] MXNet
 
 ## Todo
-- [ ] StatError
 - [ ] StatConfig
 - [ ] Non-asymptotic calculators
 
