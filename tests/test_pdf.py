@@ -5,7 +5,7 @@ import numpy as np
 import json
 import jsonschema
 
-def test_interpcode_0():
+def test_histosys_apply():
     f = lambda x: pyhf.modifiers.histosys._apply(at_minus_one = 0.5, at_zero =1, at_plus_one = 2.0, alphas = x)
     assert 1+f(-2) == 0.0
     assert 1+f(-1) == 0.5
@@ -16,7 +16,7 @@ def test_interpcode_0():
     #broadcasting
     assert [1 + x for x in f([-2,-1,0,1,2]).reshape(-1)] == [0,0.5,1.0,2.0,3.0]
 
-def test_interpcode_1():
+def test_normsys_apply():
     f = lambda x: pyhf.modifiers.normsys._apply(at_minus_one = 0.9, at_zero =1, at_plus_one = 1.1, alphas = x)
     assert f(-2) == 0.9**2
     assert f(-1) == 0.9
