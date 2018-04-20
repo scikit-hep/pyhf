@@ -32,6 +32,7 @@ class normsys(object):
         return tensorlib.normal(a, alpha, 1)
 
     def apply(self, channel, sample, pars):
+        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         assert int(pars.shape[0]) == 1
         return self._apply(self.at_minus_one[channel['name']][sample['name']],
                            self.at_zero,

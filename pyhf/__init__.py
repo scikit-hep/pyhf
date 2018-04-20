@@ -181,10 +181,11 @@ class hfpdf(object):
 
         # start building the entire set of factors
         factors = []
-        factors += results['shapesys'] + results['normfactor'] + results['shapefactor'] + results['staterror']
-        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
-        # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        factors += [tensorlib.product(results['normsys'])]
+        factors += results['shapesys']
+        factors += results['normfactor']
+        factors += results['shapefactor']
+        factors += results['staterror']
+        factors += results['normsys']
 
         nominal = tensorlib.astensor(sample['data'])
         factors += [tensorlib.sum(tensorlib.stack([
