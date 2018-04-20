@@ -177,7 +177,7 @@ class hfpdf(object):
         self.spec = spec
 
     def _multiplicative_factors(self, channel, sample, pars):
-        multiplicative_types = ['shapesys', 'normfactor', 'shapefactor']
+        multiplicative_types = ['shapesys', 'normfactor', 'shapefactor','staterror']
         modifiers = [m['name'] for m in sample['modifiers'] if m['type'] in multiplicative_types]
         return [pars[self.config.par_slice(m)] for m in modifiers]
 
@@ -227,6 +227,10 @@ class hfpdf(object):
 
         factors = []
         factors += self._multiplicative_factors(channel, sample, pars)
+
+        # print('sample factors {}'.format(factors))
+
+
         factors += [self._normsysfactor(channel, sample, pars)]
         factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
