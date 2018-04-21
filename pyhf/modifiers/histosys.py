@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from .. import get_backend
+from ..interpolate import interpolator
 
 @modifier(name='histosys', constrained=True, shared=True)
 class histosys(object):
@@ -31,3 +32,10 @@ class histosys(object):
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
         return tensorlib.normal(a, alpha, [1])
+
+    def apply(self, channel, sample, pars):
+        assert int(pars.shape[0]) == 1
+        return interpolator(0)(self.at_minus_one[channel['name']][sample['name']],
+                               self.at_zero[channel['name']][sample['name']],
+                               self.at_plus_one[channel['name']][sample['name']],
+                               pars)[0]

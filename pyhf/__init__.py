@@ -58,33 +58,6 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
-def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-
-    alphas = tensorlib.astensor(alphas)
-
-    iplus_izero  = at_plus_one - at_zero
-    izero_iminus = at_zero - at_minus_one
-
-    mask = tensorlib.outer(alphas < 0, tensorlib.ones(iplus_izero.shape))
-    return tensorlib.where(mask, tensorlib.outer(alphas, izero_iminus), tensorlib.outer(alphas, iplus_izero))
-
-def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-    alphas = tensorlib.astensor(alphas)
-
-    base_positive = tensorlib.divide(at_plus_one,  at_zero)
-    base_negative = tensorlib.divide(at_minus_one, at_zero)
-    expo_positive = tensorlib.outer(alphas, tensorlib.ones(base_positive.shape))
-    mask = tensorlib.outer(alphas > 0, tensorlib.ones(base_positive.shape))
-    bases = tensorlib.where(mask,base_positive,base_negative)
-    exponents = tensorlib.where(mask, expo_positive,-expo_positive)
-    return tensorlib.power(bases, exponents)
-
 class modelconfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
@@ -180,63 +153,87 @@ class hfpdf(object):
         self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
 
-    def _multiplicative_factors(self, channel, sample, pars):
-        multiplicative_types = ['shapesys', 'normfactor', 'shapefactor','staterror']
-        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] in multiplicative_types]
-        return [pars[self.config.par_slice(m)] for m in modifiers]
-
-    def _normsysfactor(self, channel, sample, pars):
-        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0],
-        # anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        modifiers = [m['name'] for m in sample['modifiers'] if m['type'] == 'normsys']
-        factors = []
-        for m in modifiers:
-            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            assert int(modpars.shape[0]) == 1
-            mod_factor = _hfinterp_code1(modifier.at_minus_one[channel['name']][sample['name']],
-                                         modifier.at_zero,
-                                         modifier.at_plus_one[channel['name']][sample['name']],
-                                         modpars)[0]
-            factors.append(mod_factor)
-        return tensorlib.product(factors)
-
-    def _histosysdelta(self, channel, sample, pars):
-        modifiers = [m['name'] for m in sample['modifiers']
-                if m['type'] == 'histosys']
-        stack = None
-        for m in modifiers:
-            modifier, modpars = self.config.modifier(m), pars[self.config.par_slice(m)]
-            assert int(modpars.shape[0]) == 1
-
-            # print 'MODPARS', type(modpars.data)
-            mod_delta = _hfinterp_code0(modifier.at_minus_one[channel['name']][sample['name']],
-                                        modifier.at_zero[channel['name']][sample['name']],
-                                        modifier.at_plus_one[channel['name']][sample['name']],
-                                        modpars)[0]
-            stack = tensorlib.stack([mod_delta]) if stack is None else tensorlib.stack([stack,mod_delta])
-
-        return tensorlib.sum(stack, axis=0) if stack is not None else None
-
     def expected_sample(self, channel, sample, pars):
+        """
+        The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
+
+            b1 = shapesys_1   |      shapef_1   |
+            b2 = shapesys_2   |      shapef_2   |
+            ...             normfac1    ..     normfac2
+                            (broad)            (broad)
+            bn = shapesys_n   |      shapef_1   |
+
+        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
+
+            >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+            ## also
+            >>> np.broadcast_arrays(2,[3,4,5],6,[7,8,9])
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+            ## also
+            >>> factors = [2,[3,4,5],6,[7,8,9]]
+            >>> np.broadcast_arrays(*factors)
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+        So that something like
+
+            np.product(np.broadcast_arrays([2],[3,4,5],[6],[7,8,9]),axis=0)
+
+        gives
+
+            [ 2*3*6*7, 2*4*6*8, 2*5*6*9]
+
+        Notice how some factors (for fixed channel c and sample s) depend on
+        bin b and some don't (eq 6 CERN-OPEN-2012-016). The broadcasting lets
+        you scale all bins the same way, such as when you have a ttbar
+        normalization factor that scales all bins.
+
+        Shape === affects each bin separately
+        Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
+        """
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
         #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
         # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0],
         # anchors[i][0], val=alpha) for i in range(histosys_alphas))
-        nom = tensorlib.astensor(sample['data'])
-        histosys_delta = self._histosysdelta(channel, sample, pars)
+        #
+        # Formula:
+        #     \nu_{cb} (\phi_p, \alpha_p, \gamma_p) = \lambda_{cs} \gamma_{cb} \phi_{cs}(\alpha) \eta_{cs}(\alpha) \sigma_{csb}(\alpha)
+        # \gamma == statsys, shapefactor
+        # \phi == normfactor, overallsys
+        # \sigma == histosysdelta + nominal
 
-        interp_histo = tensorlib.sum(tensorlib.stack([nom, histosys_delta]), axis=0) if (histosys_delta is not None) else nom
+        # first, collect the factors from all modifiers
+        results = {'shapesys': [],
+                   'normfactor': [],
+                   'shapefactor': [],
+                   'staterror': [],
+                   'histosys': [],
+                   'normsys': []}
+        for m in sample['modifiers']:
+            modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
+            results[m['type']].append(modifier.apply(channel, sample, modpars))
 
+
+        # start building the entire set of factors
         factors = []
-        factors += self._multiplicative_factors(channel, sample, pars)
+        # scalars that get broadcasted to shape of vectors
+        factors += results['normfactor']
+        factors += results['normsys']
+        # vectors
+        factors += results['shapesys']
+        factors += results['shapefactor']
+        factors += results['staterror']
 
-        # print('sample factors {}'.format(factors))
+        nominal = tensorlib.astensor(sample['data'])
+        factors += [tensorlib.sum(tensorlib.stack([
+          nominal,
+          tensorlib.sum(tensorlib.stack(results['histosys']), axis=0)
+        ]), axis=0) if len(results['histosys']) > 0 else nominal]
 
-
-        factors += [self._normsysfactor(channel, sample, pars)]
-        factors += [interp_histo]
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
     def expected_auxdata(self, pars):

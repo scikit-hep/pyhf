@@ -10,7 +10,7 @@ registry = {}
 Check if given object contains the right structure for constrained and unconstrained modifiers
 '''
 def validate_modifier_structure(modifier, constrained):
-    required_methods = ['__init__', 'add_sample']
+    required_methods = ['__init__', 'add_sample', 'apply']
     required_constrained_methods = ['alphas', 'pdf', 'expected_data']
 
     for method in required_methods + required_constrained_methods*constrained:
@@ -58,21 +58,25 @@ Examples:
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(shared=True)
   >>> ... class myCustomSharedModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
   >>> ...   def alphas(self): pass
   >>> ...   def pdf(self): pass
   >>> ...   def expected_data(self): pass
@@ -81,7 +85,8 @@ Examples:
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
-  >>>
+  >>> ...   def apply(self): pass
+  >>> ...
   pyhf.exceptions.InvalidModifier: Expected alphas method on constrained modifier myCustomModifier
 '''
 def modifier(*args, **kwargs):
