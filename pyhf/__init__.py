@@ -321,10 +321,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 
 from scipy.stats import norm
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
+    # these pvals are from formula
+    # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
+    # and  (mu-mu')/sigma = sqrt(Lambda)= sqrt(q_mu_A)
     CLsb = 1 - norm.cdf(sqrtqmu_v)
-    CLb = norm.cdf(sqrtqmuA_v - sqrtqmu_v)
-    CLs = CLb / CLsb
-    return CLsb, CLb, CLs
+    CLb =  1 - norm.cdf(sqrtqmu_v - sqrtqmuA_v)
+    oneOverCLs = CLb / CLsb
+    return CLsb, CLb, oneOverCLs
 
 import math
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
@@ -340,10 +343,10 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
 
     sigma = muTest / sqrtqmuA_v if sqrtqmuA_v > 0 else None
 
-    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
+    CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
-    CLs_exp = []
+    oneOverCLs_exp = []
     for nsigma in [-2, -1, 0, 1, 2]:
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
-        CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
-    return qmu_v, qmuA_v, sigma, CLsb, CLb, CLs, CLs_exp
+        oneOverCLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+    return qmu_v, qmuA_v, sigma, CLsb, CLb, oneOverCLs, oneOverCLs_exp
