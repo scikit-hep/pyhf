@@ -52,3 +52,7 @@ def test_import_histosys():
     samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
 
     assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'
+
+def test_import_multibin_multibjets():
+    schema = json.load(open('validation/spec.json'))
+    parsed_xml = pyhf.readxml.parse('validation/multibin_multibjets/config/NormalMeasurement.xml', 'validation/multibin_multibjets/config')

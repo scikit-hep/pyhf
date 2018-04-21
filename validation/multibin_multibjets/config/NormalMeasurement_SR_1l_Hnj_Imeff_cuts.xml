@@ -1,0 +1,40 @@
+<!--
+This xml file created automatically on: 
+2018-4-10
+-->
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>  
+
+  <Channel Name="SR_1l_Hnj_Imeff_cuts" InputFile="cache/3b_tag21.2.18_79900_multibin.root" >
+
+    <Data HistoName="hSig_Gtt_2400_5000_800dataBlind_SR_1l_Hnj_Imeff_obs" InputFile="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800_combined_NormalMeasurement_model.root" HistoPath="/SR_1l_Hnj_Imeff_cuts_hists/data/"  /> 
+
+    <StatErrorConfig RelErrorThreshold="0.05" ConstraintType="Gaussian" /> 
+
+    <Sample Name="ttbar"  HistoPath="/SR_1l_Hnj_Imeff_cuts_hists/ttbar/"  HistoName="httbarNom_SR_1l_Hnj_Imeff_obs_cuts"  InputFile="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800_combined_NormalMeasurement_model.root"  NormalizeByTheory="False" >
+      <StatError Activate="True"  InputFile=""  HistoName=""  HistoPath=""  /> 
+      <OverallSys Name="ttbar_syst_SR_1l_Hnj_Imeff"  High="1.55757"  Low="0.442427"   /> 
+      <NormFactor Name="mu_ttbar_Hnj_Imeff"  Val="1"  High="5"  Low="0"  Const="False"   /> 
+    </Sample>
+
+
+    <Sample Name="topEW"  HistoPath="/SR_1l_Hnj_Imeff_cuts_hists/topEW/"  HistoName="htopEWNom_SR_1l_Hnj_Imeff_obs_cuts"  InputFile="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800_combined_NormalMeasurement_model.root"  NormalizeByTheory="True" >
+      <StatError Activate="True"  InputFile=""  HistoName=""  HistoPath=""  /> 
+      <OverallSys Name="topEW_syst_SR_1l_Hnj_Imeff"  High="1.5"  Low="0.5"   /> 
+    </Sample>
+
+
+    <Sample Name="singletop"  HistoPath="/SR_1l_Hnj_Imeff_cuts_hists/singletop/"  HistoName="hsingletopNom_SR_1l_Hnj_Imeff_obs_cuts"  InputFile="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800_combined_NormalMeasurement_model.root"  NormalizeByTheory="True" >
+      <StatError Activate="True"  InputFile=""  HistoName=""  HistoPath=""  /> 
+      <OverallSys Name="st_syst_SR_1l_Hnj_Imeff"  High="2.18235"  Low="0.01"   /> 
+    </Sample>
+
+
+    <Sample Name="Gtt_2400_5000_800"  HistoPath="/SR_1l_Hnj_Imeff_cuts_hists/Gtt_2400_5000_800/"  HistoName="hGtt_2400_5000_800Nom_SR_1l_Hnj_Imeff_obs_cuts"  InputFile="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800_combined_NormalMeasurement_model.root"  NormalizeByTheory="True" >
+      <StatError Activate="True"  InputFile=""  HistoName=""  HistoPath=""  /> 
+      <OverallSys Name="SigXSec"  High="1.40795"  Low="0.592055"   /> 
+      <NormFactor Name="mu_SIG"  Val="1"  High="5"  Low="0"  Const="False"   /> 
+    </Sample>
+
+
+
+  </Channel>  
