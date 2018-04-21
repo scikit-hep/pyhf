@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from .. import get_backend
-from ..interpolation import interpolate
+from ..interpolate import interpolator
 
 @modifier(name='histosys', constrained=True, shared=True)
 class histosys(object):
@@ -35,7 +35,7 @@ class histosys(object):
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1
-        return interpolate(0)(self.at_minus_one[channel['name']][sample['name']],
-                              self.at_zero[channel['name']][sample['name']],
-                              self.at_plus_one[channel['name']][sample['name']],
-                              pars)[0]
+        return interpolator(0)(self.at_minus_one[channel['name']][sample['name']],
+                               self.at_zero[channel['name']][sample['name']],
+                               self.at_plus_one[channel['name']][sample['name']],
+                               pars)[0]

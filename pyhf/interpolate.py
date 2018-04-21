@@ -32,7 +32,7 @@ def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
     return tensorlib.power(bases, exponents)
 
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
-def interpolate(interpcode):
+def interpolator(interpcode):
     interpcodes = {0: _hfinterp_code0,
                    1: _hfinterp_code1}
     try:
