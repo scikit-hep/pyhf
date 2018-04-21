@@ -154,6 +154,39 @@ class hfpdf(object):
         self.spec = spec
 
     def expected_sample(self, channel, sample, pars):
+        """
+        The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
+
+            b1 = shapesys_1   |      shapef_1   |
+            b2 = shapesys_2   |      shapef_2   |
+            ...             normfac1    ..     normfac2
+                            (broad)            (broad)
+            bn = shapesys_n   |      shapef_1   |
+
+        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
+
+            >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+            ## also
+            >>> np.broadcast_arrays(2,[3,4,5],6,[7,8,9])
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+            ## also
+            >>> factors = [2,[3,4,5],6,[7,8,9]]
+            >>> np.broadcast_arrays(*factors)
+            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
+
+        So that something like
+
+            np.product(np.broadcast_arrays([2],[3,4,5],[6],[7,8,9]),axis=0)
+
+        gives
+
+            [ 2*3*6*7, 2*4*6*8, 2*5*6*9]
+
+        Notice how some factors (for fixed channel c and sample s) depend on bin b and some don't (eq 6 CERN-OPEN-2012-016).
+        """
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
         #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
@@ -181,11 +214,13 @@ class hfpdf(object):
 
         # start building the entire set of factors
         factors = []
-        factors += results['shapesys']
+        # scalars that get broadcasted to shape of vectors
         factors += results['normfactor']
+        factors += results['normsys']
+        # vectors
+        factors += results['shapesys']
         factors += results['shapefactor']
         factors += results['staterror']
-        factors += results['normsys']
 
         nominal = tensorlib.astensor(sample['data'])
         factors += [tensorlib.sum(tensorlib.stack([
