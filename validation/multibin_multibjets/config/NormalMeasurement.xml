@@ -1,5 +1,5 @@
 <!--
-This xml file created automatically on: 
+This xml file created automatically on:
 2018-4-10
 -->
 <!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
@@ -7,43 +7,43 @@ This xml file created automatically on:
 <Combination OutputFilePrefix="./results/3b_tag21.2.18_79900_multibin_excl_Gtt_2400_5000_800/Sig_Gtt_2400_5000_800" >
 
 
-  <Input>./NormalMeasurement_CR_Hnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Hnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_1l_Hnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Hnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_1l_Hnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Hnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Hnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_1l_Hnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Hnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_1l_Hnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Hnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Hnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_1l_Hnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Hnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_1l_Hnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Inj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Inj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_1l_Inj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Inj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_1l_Inj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Inj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Inj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_1l_Inj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Inj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_1l_Inj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Lnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Lnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Lnj_Hmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Lnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Lnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Lnj_Imeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_CR_Lnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_VR_0l_Lnj_Lmeff_cuts.xml</Input>
-  <Input>./NormalMeasurement_SR_0l_Lnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Hnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Hnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_1l_Hnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Hnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_1l_Hnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Hnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Hnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_1l_Hnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Hnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_1l_Hnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Hnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Hnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_1l_Hnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Hnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_1l_Hnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Inj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Inj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_1l_Inj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Inj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_1l_Inj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Inj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Inj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_1l_Inj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Inj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_1l_Inj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Lnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Lnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Lnj_Hmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Lnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Lnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Lnj_Imeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_CR_Lnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_VR_0l_Lnj_Lmeff_cuts.xml</Input>
+  <Input>./config/NormalMeasurement_SR_0l_Lnj_Lmeff_cuts.xml</Input>
 
   <Measurement Name="NormalMeasurement" Lumi="1" LumiRelErr="0.029" ExportOnly="True"  >
-    <POI>mu_SIG</POI>  
-  </Measurement> 
+    <POI>mu_SIG</POI>
+  </Measurement>
 
 </Combination>

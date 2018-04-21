@@ -55,4 +55,4 @@ def test_import_histosys():
 
 def test_import_multibin_multibjets():
     schema = json.load(open('validation/spec.json'))
-    parsed_xml = pyhf.readxml.parse('validation/multibin_multibjets/config/NormalMeasurement.xml', 'validation/multibin_multibjets/config')
+    parsed_xml = pyhf.readxml.parse('validation/multibin_multibjets/config/NormalMeasurement.xml', 'validation/multibin_multibjets/')
