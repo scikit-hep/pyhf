@@ -56,3 +56,16 @@ def test_import_histosys():
 def test_import_multibin_multibjets():
     schema = json.load(open('validation/spec.json'))
     parsed_xml = pyhf.readxml.parse('validation/multibin_multibjets/config/NormalMeasurement.xml', 'validation/multibin_multibjets/')
+
+    # build the spec, strictly checks properties included
+    spec = {'channels': parsed_xml['channels']}
+    jsonschema.validate(spec, schema)
+    pdf = pyhf.hfpdf(spec, poiname='mu_SIG')
+
+    data = [binvalue for k in pdf.spec['channels'] for binvalue
+            in parsed_xml['data'][k['name']]] + pdf.config.auxdata
+
+    channels = {channel['name'] for channel in pdf.spec['channels']}
+    samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
+
+    import pdb; pdb.set_trace
