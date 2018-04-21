@@ -7,3 +7,9 @@ InvalidModifier is raised when an invalid modifier is requested. This includes:
 """
 class InvalidModifier(Exception):
     pass
+
+"""
+InvalidInterpCode is raised when an invalid/unimplemented interpolation code is requested.
+"""
+class InvalidInterpCode(Exception):
+    pass

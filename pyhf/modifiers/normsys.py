@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from .. import get_backend
+from ..interpolation import interpolate
 
 @modifier(name='normsys', constrained=True, shared=True)
 class normsys(object):
@@ -34,23 +35,7 @@ class normsys(object):
     def apply(self, channel, sample, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         assert int(pars.shape[0]) == 1
-        return self._apply(self.at_minus_one[channel['name']][sample['name']],
-                           self.at_zero,
-                           self.at_plus_one[channel['name']][sample['name']],
-                           pars)[0]
-
-    @staticmethod
-    def _apply(at_minus_one, at_zero, at_plus_one, alphas):
-        tensorlib, _ = get_backend()
-        at_minus_one = tensorlib.astensor(at_minus_one)
-        at_zero = tensorlib.astensor(at_zero)
-        at_plus_one = tensorlib.astensor(at_plus_one)
-        alphas = tensorlib.astensor(alphas)
-
-        base_positive = tensorlib.divide(at_plus_one,  at_zero)
-        base_negative = tensorlib.divide(at_minus_one, at_zero)
-        expo_positive = tensorlib.outer(alphas, tensorlib.ones(base_positive.shape))
-        mask = tensorlib.outer(alphas > 0, tensorlib.ones(base_positive.shape))
-        bases = tensorlib.where(mask,base_positive,base_negative)
-        exponents = tensorlib.where(mask, expo_positive,-expo_positive)
-        return tensorlib.power(bases, exponents)
+        return interpolate(1)(self.at_minus_one[channel['name']][sample['name']],
+                              self.at_zero,
+                              self.at_plus_one[channel['name']][sample['name']],
+                              pars)[0]
