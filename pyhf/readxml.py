@@ -1,6 +1,9 @@
 import os
 import xml.etree.ElementTree as ET
 import numpy as np
+import logging
+
+log = logging.getLogger(__name__)
 
 def import_root_histogram(rootdir, filename, path, name):
     import uproot
@@ -34,29 +37,33 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname):
 
     modifiers = []
     for modtag in sample.iter():
+        if modtag == sample:
+            continue
         if modtag.tag == 'OverallSys':
             modifiers.append({
                 'name': modtag.attrib['Name'],
                 'type': 'normsys',
                 'data': {'lo': float(modtag.attrib['Low']), 'hi': float(modtag.attrib['High'])}
             })
-
-        if modtag.tag == 'NormFactor':
+        elif modtag.tag == 'NormFactor':
             modifiers.append({
                 'name': modtag.attrib['Name'],
                 'type': 'normfactor',
                 'data': None
             })
 
-        if modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
-            if modtag.attrib['HistoName'] == '':
+        elif modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
+            if modtag.attrib.get('HistoName','') == '':
                 modifiers.append({
                     'name': 'staterror_{}'.format(channelname),
                     'type': 'staterror',
                     'data': err
                 })
             else:
-                raise NotImplementedError
+                log.warning('not considering stat error with external uncrt %s', sample.attrib['Name'])
+        else:
+            log.warning('not considering modifier tag %s', modtag)
+
 
     return {
         'name': sample.attrib['Name'],
