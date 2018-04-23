@@ -314,9 +314,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     qmu = tensorlib.tolist(loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
     if muhatbhat[pdf.config.poi_index] > mu:
         return 0.0
-    if -1e-6 < qmu < 0:
-        log.warning('WARNING: qmu negative: %s', qmu)
-        return 0.0
+    qmu = tensorlib.tolist(tensorlib.clip([qmu], 0, max=None))[0]
     return qmu
 
 from scipy.stats import norm
