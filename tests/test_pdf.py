@@ -188,6 +188,9 @@ def test_pdf_integration_histosys():
                          ])
 def test_pdf_integration_normsys(backend):
     pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
