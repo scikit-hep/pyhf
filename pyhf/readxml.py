@@ -1,16 +1,36 @@
 import os
 import xml.etree.ElementTree as ET
+import numpy as np
 
 def import_root_histogram(rootdir, filename, path, name):
     import uproot
-    assert path == ''
+    #import pdb; pdb.set_trace()
+    #assert path == ''
+    # strip leading slashes as uproot doesn't use "/" for top-level
+    path = path.strip('/')
     f = uproot.open(os.path.join(rootdir, filename))
-    return f[name].numpy[0]
+    try:
+        h = f[name]
+        return h.numpy[0].tolist(), np.sqrt(h.fSumw2[1:-1]).tolist()
+    except KeyError:
+        pass
 
-def process_sample(sample,rootdir,inputfile, histopath):
-    inputfile = inputfile or sample.attrib.get('InputFile')
-    histopath = histopath or sample.attrib.get('HistoPath')
+    try:
+        h = f[os.path.join(path, name)]
+        return h.numpy[0].tolist(), np.sqrt(h.fSumw2[1:-1]).tolist()
+    except KeyError:
+        pass
+
+    raise KeyError('Both {0:s} and {1:s} were tried and not found in {2:s}'.format(name, os.path.join(path, name), os.path.join(rootdir, filename)))
+
+def process_sample(sample,rootdir,inputfile, histopath, channelname):
+    if 'InputFile' in sample.attrib:
+       inputfile = sample.attrib.get('InputFile')
+    if 'HistoPath' in sample.attrib:
+        histopath = sample.attrib.get('HistoPath')
     histoname = sample.attrib['HistoName']
+
+    data,err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
     modifiers = []
     for modtag in sample.iter():
@@ -28,19 +48,31 @@ def process_sample(sample,rootdir,inputfile, histopath):
                 'data': None
             })
 
+        if modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
+            if modtag.attrib['HistoName'] == '':
+                modifiers.append({
+                    'name': 'staterror_{}'.format(channelname),
+                    'type': 'staterror',
+                    'data': err
+                })
+            else:
+                raise NotImplementedError
+
     return {
         'name': sample.attrib['Name'],
-        'data': import_root_histogram(rootdir, inputfile, histopath, histoname).tolist(),
+        'data': data,
         'modifiers': modifiers
     }
 
 def process_data(sample,rootdir,inputfile, histopath):
-
-    inputfile = inputfile or sample.attrib.get('InputFile')
-    histopath = histopath or sample.attrib.get('HistoPath')
+    if 'InputFile' in sample.attrib:
+       inputfile = sample.attrib.get('InputFile')
+    if 'HistoPath' in sample.attrib:
+        histopath = sample.attrib.get('HistoPath')
     histoname = sample.attrib['HistoName']
 
-    return import_root_histogram(rootdir, inputfile, histopath, histoname)
+    data,_ = import_root_histogram(rootdir, inputfile, histopath, histoname)
+    return data
 
 def process_channel(channelxml,rootdir):
     channel = channelxml.getroot()
@@ -53,7 +85,8 @@ def process_channel(channelxml,rootdir):
 
     data = channel.findall('Data')[0]
 
-    return  channel.attrib['Name'], process_data(data, rootdir, inputfile, histopath), [process_sample(x, rootdir, inputfile, histopath) for x in samples]
+    channelname = channel.attrib['Name']
+    return  channelname, process_data(data, rootdir, inputfile, histopath), [process_sample(x, rootdir, inputfile, histopath, channelname) for x in samples]
 
 def parse(configfile,rootdir):
     toplvl = ET.parse(configfile)
