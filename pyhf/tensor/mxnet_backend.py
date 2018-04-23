@@ -11,6 +11,27 @@ class mxnet_backend(object):
     def __init__(self, **kwargs):
         pass
 
+    def clip(self, tensor_in, min, max):
+        """
+        Clips (limits) the tensor values to be within a specified min and max.
+
+        Example::
+
+            >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
+            >>> pyhf.tensorlib.clip(a, -1, 1)
+            array([-1, -1,  0,  1,  1])
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+            min (`scalar` or `tensor` or `None`): The minimum value to be cliped to
+            max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+
+        Returns:
+            MXNet NDArray: A clipped `tensor`
+        """
+        tensor_in = self.astensor(tensor_in)
+        return nd.clip(tensor_in, min, max)
+
     def tolist(self, tensor_in):
         """
         Convert a tensor to a list.
