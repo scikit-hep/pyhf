@@ -19,7 +19,12 @@ def test_import_prepHistFactory():
     channels = {channel['name'] for channel in pdf.spec['channels']}
     samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
 
-    assert data == [122.0, 112.0, 0, 0, 0]
+    assert data == [122.0, 112.0, 0, 0, 1.0, 1.0, 0.0]
+    ###
+    ### signal overallsys
+    ### bkg1 overallsys (stat ignored)
+    ### bkg2 stateror (2 bins)
+    ### bkg2 overallsys
 
     assert 'channel1' in channels
     assert 'signal' in samples['channel1']
