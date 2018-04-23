@@ -4,6 +4,7 @@ import pyhf.simplemodels
 import numpy as np
 import json
 import jsonschema
+import tensorflow as tf
 
 def test_numpy_pdf_inputs():
     source = {
@@ -173,7 +174,23 @@ def test_pdf_integration_histosys():
     assert pdf.expected_data(pars, include_auxdata = False).tolist() == [ 98+30,100+95]
 
 
-def test_pdf_integration_normsys():
+@pytest.mark.parametrize('backend',
+                         [
+                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
+                             # pyhf.tensor.mxnet_backend(),
+                         ],
+                         ids=[
+                             'numpy',
+                             'tensorflow',
+                             'pytorch',
+                         ])
+def test_pdf_integration_normsys(backend):
+    pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
     schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -204,13 +221,13 @@ def test_pdf_integration_normsys():
 
     pars = [None,None]
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.0]]
-    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100,150]
+    assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100,150])
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*1.1,150*1.1]
+    assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*1.1,150*1.1])
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
-    assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*0.9]
+    assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
 def test_pdf_integration_shapesys():
     schema = json.load(open('validation/spec.json'))
