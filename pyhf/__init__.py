@@ -314,9 +314,6 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     qmu = tensorlib.tolist(loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
     if muhatbhat[pdf.config.poi_index] > mu:
         return 0.0
-    if -1e-6 < qmu < 0:
-        log.warning('WARNING: qmu negative: %s', qmu)
-        return 0.0
     return qmu
 
 from scipy.stats import norm
@@ -338,8 +335,18 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
     qmu_v  = qmu(muTest, data, pdf, init_pars, par_bounds)
     qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
 
-    sqrtqmu_v  = math.sqrt(qmu_v)
-    sqrtqmuA_v = math.sqrt(qmuA_v)
+    try:
+        sqrtqmu_v = math.sqrt(qmu_v)
+    except ValueError:
+        log.warning('WARNING: qmu_v negative: %s', qmu_v)
+        qmu_v = tensorlib.tolist(tensorlib.clip(qmu_v, 0, max=None))
+        sqrtqmu_v = math.sqrt(qmu_v)
+    try:
+        sqrtqmuA_v = math.sqrt(qmuA_v)
+    except ValueError:
+        log.warning('WARNING: qmuA_v negative: %s', qmuA_v)
+        qmuA_v = tensorlib.tolist(tensorlib.clip(qmuA_v, 0, max=None))
+        sqrtqmuA_v = math.sqrt(qmuA_v)
 
     sigma = muTest / sqrtqmuA_v if sqrtqmuA_v > 0 else None
 
