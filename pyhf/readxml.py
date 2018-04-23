@@ -51,7 +51,6 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname):
                 'type': 'normfactor',
                 'data': None
             })
-
         elif modtag.tag == 'HistoSys':
             lo,_ = import_root_histogram(rootdir,
                     modtag.attrib.get('HistoFileLow',inputfile),
