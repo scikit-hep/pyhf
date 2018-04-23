@@ -33,6 +33,8 @@ def test_common_tensor_backends():
             tb.astensor([1, 0, 1]),
             tb.astensor([1, 1, 1]),
             tb.astensor([2, 2, 2]))) == [1, 2, 1]
+        assert tb.tolist(
+            tb.clip(tb.astensor([-2, -1, 0, 1, 2]), -1, 1)) == [-1, -1,  0,  1,  1]
 
         assert list(map(tb.tolist, tb.simple_broadcast(
             tb.astensor([1, 1, 1]),
