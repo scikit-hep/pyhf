@@ -3,7 +3,6 @@ import pyhf.tensor as tensor
 from . import exceptions
 
 import logging
-from scipy.stats import norm
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
