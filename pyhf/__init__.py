@@ -340,7 +340,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     qmu = tensorlib.tolist(
         loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
     qmu = tensorlib.tolist(
-        tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0, qmu))
+        tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu))
     return qmu
 
 
@@ -348,8 +348,8 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     # these pvals are from formula
     # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
     # and  (mu-mu')/sigma = sqrt(Lambda)= sqrt(q_mu_A)
-    CLsb = 1 - norm.cdf(sqrtqmu_v)
-    CLb =  1 - norm.cdf(sqrtqmu_v - sqrtqmuA_v)
+    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
+    CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
     oneOverCLs = CLb / CLsb
     return CLsb, CLb, oneOverCLs
 
