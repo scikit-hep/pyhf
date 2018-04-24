@@ -1,7 +1,10 @@
-import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
+
+import logging
+import math
+from scipy.stats import norm
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -316,7 +319,6 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         return 0.0
     return qmu
 
-from scipy.stats import norm
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     # these pvals are from formula
     # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
@@ -326,7 +328,6 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     oneOverCLs = CLb / CLsb
     return CLsb, CLb, oneOverCLs
 
-import math
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
     asimov_mu = 0.0
     asimov_data = tensorlib.tolist(generate_asimov_data(asimov_mu, data,
