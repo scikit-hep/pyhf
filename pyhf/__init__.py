@@ -343,6 +343,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0, qmu))
     return qmu
 
+
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     # these pvals are from formula
     # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
@@ -352,12 +353,13 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     oneOverCLs = CLb / CLsb
     return CLsb, CLb, oneOverCLs
 
-def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
-    asimov_mu = 0.0
-    asimov_data = tensorlib.tolist(generate_asimov_data(asimov_mu, data,
-                                   pdf, init_pars, par_bounds))
 
-    qmu_v  = qmu(muTest, data, pdf, init_pars, par_bounds)
+def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
+    asimov_mu = 0.
+    asimov_data = tensorlib.tolist(
+        generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds))
+
+    qmu_v = qmu(muTest, data, pdf, init_pars, par_bounds)
     qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
 
     try:
@@ -373,12 +375,11 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
         qmuA_v = tensorlib.tolist(tensorlib.clip(qmuA_v, 0, max=None))
         sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-    sigma = muTest / sqrtqmuA_v if sqrtqmuA_v > 0 else None
-
     CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
     oneOverCLs_exp = []
     for nsigma in [-2, -1, 0, 1, 2]:
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
-        oneOverCLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
-    return qmu_v, qmuA_v, sigma, CLsb, CLb, oneOverCLs, oneOverCLs_exp
+        oneOverCLs_exp.append(
+            pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+    return qmu_v, qmuA_v, CLsb, CLb, oneOverCLs, oneOverCLs_exp
