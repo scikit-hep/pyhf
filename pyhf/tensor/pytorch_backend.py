@@ -1,5 +1,6 @@
 import torch
 import torch.autograd
+import math  # Needed only for temp version of normal_cdf
 import logging
 log = logging.getLogger(__name__)
 
@@ -44,12 +45,16 @@ class pytorch_backend(object):
             try:
                 v = torch.autograd.Variable(torch.Tensor(tensor_in))
             except TypeError:
-                v = torch.autograd.Variable(tensor_in)
+                try:
+                    v = torch.autograd.Variable(tensor_in)
+                except RuntimeError:
+                    # Guard against a float being passed in and casuing a RuntimeError
+                    v = torch.autograd.Variable(torch.Tensor([tensor_in]))
         return v.type(torch.FloatTensor)
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return torch.sum(tensor_in) if (axis is None or  tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
+        return torch.sum(tensor_in) if (axis is None or tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -106,5 +111,34 @@ class pytorch_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        normal = torch.distributions.Normal(mu,sigma)
+        normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
+
+    def normal_cdf(self, x, mu=[0.], sigma=[1.]):
+        """
+        The cumulative distribution function for the Normal distribution
+
+        Example::
+
+            >>> pyhf.tensorlib.normal_cdf([0.8])
+            Variable containing:
+             0.7881
+            [torch.FloatTensor of size 1]
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable
+                                      to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            PyTorch FloatTensor: The CDF
+        """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        # Normal.cdf() is not yet in latest stable release: 0.3.1
+        # c.f. http://pytorch.org/docs/master/_modules/torch/distributions/normal.html#Normal.cdf
+        # normal = torch.distributions.Normal(mu, sigma)
+        # return normal.cdf(x)
+        return 0.5 * (1 + torch.erf((x - mu) * sigma.reciprocal() / math.sqrt(2)))
