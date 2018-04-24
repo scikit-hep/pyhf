@@ -2,6 +2,7 @@ from mxnet import nd
 import logging
 import math  # Required for normal()
 from numbers import Number  # Required for normal()
+from scipy.stats import norm  # Required for normal_cdf()
 log = logging.getLogger(__name__)
 
 
@@ -82,7 +83,17 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: A multi-dimensional, fixed-size homogenous array.
         """
-        return nd.array(tensor_in)
+        try:
+            tensor = nd.array(tensor_in)
+        except ValueError:
+            try:
+                # Guard against a float being passed
+                tensor = nd.array([tensor_in])
+                pass
+            except Exception as err:
+                log.warning('ERROR: astensor fails with: %s', err)
+                raise
+        return tensor
 
     def sum(self, tensor_in, axis=None):
         """
@@ -339,3 +350,31 @@ class mxnet_backend(object):
                 scale, Number) else scale.log()
             return -((value - loc) ** 2) / (2 * variance) - log_scale - math.log(math.sqrt(2 * math.pi))
         return self.exp(log_prob(x, mu, sigma))
+
+    def normal_cdf(self, x, mu=[0], sigma=[1]):
+        """
+        The cumulative distribution function for the Normal distribution
+
+        Example::
+
+            >>> pyhf.tensorlib.normal_cdf([0.8])
+
+            [0.7881446]
+            <NDArray 1 @cpu(0)>
+
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable
+                                      to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            MXNet NDArray: The CDF
+        """
+        # This is currently using SciPy stats until a better way can be found to
+        # do this in MXNet
+        x = self.astensor(x).asnumpy().tolist()[0]
+        mu = self.astensor(mu).asnumpy().tolist()[0]
+        sigma = self.astensor(sigma).asnumpy().tolist()[0]
+        return self.astensor([norm.cdf(x, loc=mu, scale=sigma)])
