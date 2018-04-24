@@ -97,3 +97,23 @@ class numpy_backend(object):
 
     def normal(self, x, mu, sigma):
         return norm.pdf(x, loc=mu, scale=sigma)
+
+    def normal_cdf(self, x, mu=0, sigma=1):
+        """
+        The cumulative distribution function for the Normal distribution
+
+        Example::
+
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            0.7881446014166034
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable
+                                      to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            NumPy float: The CDF
+        """
+        return norm.cdf(x, loc=mu, scale=sigma)
