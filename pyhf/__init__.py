@@ -310,12 +310,37 @@ def loglambdav(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
-    # The Test Statistic
-    mubhathat = tensorlib.tolist(optimizer.constrained_bestfit(loglambdav, mu, data, pdf, init_pars, par_bounds))
-    muhatbhat = tensorlib.tolist(optimizer.unconstrained_bestfit(loglambdav, data, pdf, init_pars, par_bounds))
-    qmu = tensorlib.tolist(loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
-    if muhatbhat[pdf.config.poi_index] > mu:
-        return 0.0
+    """
+    The test statistic, q_mu, for establishing an upper
+    limit on the strength parameter, mu, as defiend in
+    Equation (14) in arXiv:1007.1727
+
+    .. math::
+       :nowrap:
+
+       q_{\mu} = \left\{\begin{array}{ll}
+       -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
+       0, & \hat{\mu} > \mu
+       \end{array}\right.
+
+    Args:
+        mu (Number or Tensor): The signal strength parameter
+        data (Tensor): The data to be considered
+        pdf (Tensor): The model used in the likelihood ratio calculation
+        init_pars (Tensor): The initial parameters
+        par_bounds(Tensor): The bounds on the paramter values
+
+    Returns:
+        Float: The calculated test statistic, q_mu
+    """
+    mubhathat = tensorlib.tolist(optimizer.constrained_bestfit(
+        loglambdav, mu, data, pdf, init_pars, par_bounds))
+    muhatbhat = tensorlib.tolist(optimizer.unconstrained_bestfit(
+        loglambdav, data, pdf, init_pars, par_bounds))
+    qmu = tensorlib.tolist(
+        loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
+    qmu = tensorlib.tolist(
+        tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0, qmu))
     return qmu
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
