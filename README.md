@@ -32,6 +32,7 @@ Computational Backends:
 - [x] MXNet
 
 ## Todo
+- [ ] Lumi Uncertainty
 - [ ] StatConfig
 - [ ] Non-asymptotic calculators
 
