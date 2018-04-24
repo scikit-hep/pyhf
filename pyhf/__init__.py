@@ -3,7 +3,6 @@ import pyhf.tensor as tensor
 from . import exceptions
 
 import logging
-import math
 from scipy.stats import norm
 
 log = logging.getLogger(__name__)
@@ -337,17 +336,17 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
     qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
 
     try:
-        sqrtqmu_v = math.sqrt(qmu_v)
+        sqrtqmu_v = tensorlib.sqrt(qmu_v)
     except ValueError:
         log.warning('WARNING: qmu_v negative: %s', qmu_v)
         qmu_v = tensorlib.tolist(tensorlib.clip(qmu_v, 0, max=None))
-        sqrtqmu_v = math.sqrt(qmu_v)
+        sqrtqmu_v = tensorlib.sqrt(qmu_v)
     try:
-        sqrtqmuA_v = math.sqrt(qmuA_v)
+        sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
     except ValueError:
         log.warning('WARNING: qmuA_v negative: %s', qmuA_v)
         qmuA_v = tensorlib.tolist(tensorlib.clip(qmuA_v, 0, max=None))
-        sqrtqmuA_v = math.sqrt(qmuA_v)
+        sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     sigma = muTest / sqrtqmuA_v if sqrtqmuA_v > 0 else None
 
