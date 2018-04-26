@@ -308,6 +308,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
 def loglambdav(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
+
 def qmu(mu, data, pdf, init_pars, par_bounds):
     """
     The test statistic, q_mu, for establishing an upper
@@ -332,14 +333,12 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Returns:
         Float: The calculated test statistic, q_mu
     """
-    mubhathat = tensorlib.tolist(optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds))
-    muhatbhat = tensorlib.tolist(optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds))
-    qmu = tensorlib.tolist(
-        loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
-    qmu = tensorlib.tolist(
-        tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu))
+    mubhathat = optimizer.constrained_bestfit(
+        loglambdav, mu, data, pdf, init_pars, par_bounds)
+    muhatbhat = optimizer.unconstrained_bestfit(
+        loglambdav, data, pdf, init_pars, par_bounds)
+    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
+    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
     return qmu
 
 
@@ -355,8 +354,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
 
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
     asimov_mu = 0.
-    asimov_data = tensorlib.tolist(
-        generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds))
+    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
     qmu_v = qmu(muTest, data, pdf, init_pars, par_bounds)
     qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
@@ -365,13 +363,13 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
     except ValueError:
         log.warning('WARNING: qmu_v negative: %s', qmu_v)
-        qmu_v = tensorlib.tolist(tensorlib.clip(qmu_v, 0, max=None))
+        qmu_v = tensorlib.clip(qmu_v, 0, max=None)
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
     try:
         sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
     except ValueError:
         log.warning('WARNING: qmuA_v negative: %s', qmuA_v)
-        qmuA_v = tensorlib.tolist(tensorlib.clip(qmuA_v, 0, max=None))
+        qmuA_v = tensorlib.clip(qmuA_v, 0, max=None)
         sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
