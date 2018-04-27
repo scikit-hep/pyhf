@@ -1,8 +1,8 @@
+import logging
+
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
-
-import logging
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
