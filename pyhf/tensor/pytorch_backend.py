@@ -140,8 +140,5 @@ class pytorch_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        # Normal.cdf() is not yet in latest stable release: 0.3.1
-        # c.f. http://pytorch.org/docs/master/_modules/torch/distributions/normal.html#Normal.cdf
-        # normal = torch.distributions.Normal(mu, sigma)
-        # return normal.cdf(x)
-        return 0.5 * (1 + torch.erf((x - mu) * sigma.reciprocal() / math.sqrt(2)))
+        normal = torch.distributions.Normal(mu, sigma)
+        return normal.cdf(x)
