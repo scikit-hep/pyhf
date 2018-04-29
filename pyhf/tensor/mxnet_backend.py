@@ -351,13 +351,13 @@ class mxnet_backend(object):
             return -((value - loc) ** 2) / (2 * variance) - log_scale - math.log(math.sqrt(2 * math.pi))
         return self.exp(log_prob(x, mu, sigma))
 
-    def normal_cdf(self, x, mu=[0], sigma=[1]):
+    def normal_cdf(self, x, mu=0, sigma=1):
         """
         The cumulative distribution function for the Normal distribution
 
         Example::
 
-            >>> pyhf.tensorlib.normal_cdf([0.8])
+            >>> pyhf.tensorlib.normal_cdf(0.8)
 
             [0.7881446]
             <NDArray 1 @cpu(0)>
@@ -374,7 +374,7 @@ class mxnet_backend(object):
         """
         # This is currently using SciPy stats until a better way can be found to
         # do this in MXNet
-        x = self.astensor(x).asnumpy().tolist()[0]
-        mu = self.astensor(mu).asnumpy().tolist()[0]
-        sigma = self.astensor(sigma).asnumpy().tolist()[0]
-        return self.astensor([norm.cdf(x, loc=mu, scale=sigma)])
+        x = self.astensor(x).asnumpy()
+        mu = self.astensor(mu).asnumpy()
+        sigma = self.astensor(sigma).asnumpy()
+        return self.astensor(norm.cdf(x, loc=mu, scale=sigma))

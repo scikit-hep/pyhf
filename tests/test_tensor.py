@@ -14,8 +14,12 @@ import pytest
 
 def test_common_tensor_backends():
     tf_sess = tf.Session()
-    for tb in [numpy_backend(), pytorch_backend(),
-               tensorflow_backend(session=tf_sess), mxnet_backend()]:
+    for tb in [
+        numpy_backend(),
+        pytorch_backend(),
+        tensorflow_backend(session=tf_sess),
+        mxnet_backend()
+    ]:
         assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
         assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
         assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
