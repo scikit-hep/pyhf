@@ -1,6 +1,5 @@
 import torch
 import torch.autograd
-import math  # Needed only for temp version of normal_cdf
 import logging
 log = logging.getLogger(__name__)
 
