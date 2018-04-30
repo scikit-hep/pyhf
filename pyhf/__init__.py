@@ -354,23 +354,16 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
 
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
     asimov_mu = 0.
-    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
+    asimov_data = generate_asimov_data(
+        asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v = qmu(muTest, data, pdf, init_pars, par_bounds)
-    qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
+    qmu_v = tensorlib.clip(
+        qmu(muTest, data, pdf, init_pars, par_bounds), 0, max=None)
+    sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-    try:
-        sqrtqmu_v = tensorlib.sqrt(qmu_v)
-    except ValueError:
-        log.warning('WARNING: qmu_v negative: %s', qmu_v)
-        qmu_v = tensorlib.clip(qmu_v, 0, max=None)
-        sqrtqmu_v = tensorlib.sqrt(qmu_v)
-    try:
-        sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-    except ValueError:
-        log.warning('WARNING: qmuA_v negative: %s', qmuA_v)
-        qmuA_v = tensorlib.clip(qmuA_v, 0, max=None)
-        sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
+    qmuA_v = tensorlib.clip(
+        qmu(muTest, asimov_data, pdf, init_pars, par_bounds), 0, max=None)
+    sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 

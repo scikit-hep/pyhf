@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 import pytest
 
+
 def generate_source_static(n_bins):
     """
     Create the source structure for the given number of bins.

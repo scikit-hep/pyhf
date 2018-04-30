@@ -25,6 +25,10 @@ class tensorflow_backend(object):
             TensorFlow Tensor: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
+        if min is None:
+            min = tf.reduce_min(tensor_in)
+        if max is None:
+            max = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min, max)
 
     def tolist(self,tensor_in):
