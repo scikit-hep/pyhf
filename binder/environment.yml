@@ -85,7 +85,6 @@ dependencies:
   - ptyprocess>=0.5.2
   - py>=1.5.2
   - pygments>=2.2.0
-  - pyhf>=0.0.8
   - pyparsing>=2.2.0
   - pytest>=3.4.0
   - pytest-cov>=2.5.1
