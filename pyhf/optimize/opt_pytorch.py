@@ -10,9 +10,9 @@ class pytorch_optimizer(object):
         optimizer = torch.optim.Adam([init_pars])
         maxdelta = None
         for i in range(10000):
-            loss = objective(init_pars,data,pdf)
+            loss = objective(init_pars, data, pdf)
             optimizer.zero_grad()
-            loss.backward()
+            loss.backward(retain_graph=True)
             init_old = init_pars.data.clone()
             optimizer.step()
             maxdelta = (init_pars.data - init_old).abs().max()
@@ -35,9 +35,9 @@ class pytorch_optimizer(object):
         optimizer = torch.optim.Adam(nuis_pars)
         for i in range(10000):
             pars = assemble(poi_par, nuis_pars)
-            loss = objective(pars,data,pdf)
+            loss = objective(pars, data, pdf)
             optimizer.zero_grad()
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
 
             after_pars = assemble(poi_par, nuis_pars)

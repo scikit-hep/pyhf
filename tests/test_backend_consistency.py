@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 import pytest
 
+
 def generate_source_static(n_bins):
     """
     Create the source structure for the given number of bins.
@@ -110,7 +111,7 @@ def test_runOnePoint_q_mu(n_bins,
         q_mu = pyhf.runOnePoint(1.0, data, pdf,
                                 pdf.config.suggested_init(),
                                 pdf.config.suggested_bounds())[0]
-        test_statistic.append(q_mu)
+        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)

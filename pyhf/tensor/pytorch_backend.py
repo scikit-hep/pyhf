@@ -44,12 +44,16 @@ class pytorch_backend(object):
             try:
                 v = torch.autograd.Variable(torch.Tensor(tensor_in))
             except TypeError:
-                v = torch.autograd.Variable(tensor_in)
+                try:
+                    v = torch.autograd.Variable(tensor_in)
+                # Guard against passing in something that is not a list or tensor
+                except (TypeError, RuntimeError):
+                    v = torch.autograd.Variable(torch.Tensor([tensor_in]))
         return v.type(torch.FloatTensor)
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return torch.sum(tensor_in) if (axis is None or  tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
+        return torch.sum(tensor_in) if (axis is None or tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -106,5 +110,31 @@ class pytorch_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        normal = torch.distributions.Normal(mu,sigma)
+        normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
+
+    def normal_cdf(self, x, mu=[0.], sigma=[1.]):
+        """
+        The cumulative distribution function for the Normal distribution
+
+        Example::
+
+            >>> pyhf.tensorlib.normal_cdf([0.8])
+            Variable containing:
+             0.7881
+            [torch.FloatTensor of size 1]
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable
+                                      to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            PyTorch FloatTensor: The CDF
+        """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        normal = torch.distributions.Normal(mu, sigma)
+        return normal.cdf(x)

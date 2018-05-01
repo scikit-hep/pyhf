@@ -1,4 +1,5 @@
 import logging
+
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
@@ -307,53 +308,69 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
 def loglambdav(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
+
 def qmu(mu, data, pdf, init_pars, par_bounds):
-    # The Test Statistic
-    mubhathat = tensorlib.tolist(optimizer.constrained_bestfit(loglambdav, mu, data, pdf, init_pars, par_bounds))
-    muhatbhat = tensorlib.tolist(optimizer.unconstrained_bestfit(loglambdav, data, pdf, init_pars, par_bounds))
-    qmu = tensorlib.tolist(loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf))[0]
-    if muhatbhat[pdf.config.poi_index] > mu:
-        return 0.0
+    """
+    The test statistic, q_mu, for establishing an upper
+    limit on the strength parameter, mu, as defiend in
+    Equation (14) in arXiv:1007.1727
+
+    .. math::
+       :nowrap:
+
+       q_{\mu} = \left\{\begin{array}{ll}
+       -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
+       0, & \hat{\mu} > \mu
+       \end{array}\right.
+
+    Args:
+        mu (Number or Tensor): The signal strength parameter
+        data (Tensor): The data to be considered
+        pdf (Tensor): The model used in the likelihood ratio calculation
+        init_pars (Tensor): The initial parameters
+        par_bounds(Tensor): The bounds on the paramter values
+
+    Returns:
+        Float: The calculated test statistic, q_mu
+    """
+    mubhathat = optimizer.constrained_bestfit(
+        loglambdav, mu, data, pdf, init_pars, par_bounds)
+    muhatbhat = optimizer.unconstrained_bestfit(
+        loglambdav, data, pdf, init_pars, par_bounds)
+    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
+    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
     return qmu
 
-from scipy.stats import norm
+
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     # these pvals are from formula
     # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
     # and  (mu-mu')/sigma = sqrt(Lambda)= sqrt(q_mu_A)
-    CLsb = 1 - norm.cdf(sqrtqmu_v)
-    CLb =  1 - norm.cdf(sqrtqmu_v - sqrtqmuA_v)
+    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
+    CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
     oneOverCLs = CLb / CLsb
     return CLsb, CLb, oneOverCLs
 
-import math
+
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
-    asimov_mu = 0.0
-    asimov_data = tensorlib.tolist(generate_asimov_data(asimov_mu, data,
-                                   pdf, init_pars, par_bounds))
+    asimov_mu = 0.
+    asimov_data = generate_asimov_data(
+        asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v  = qmu(muTest, data, pdf, init_pars, par_bounds)
-    qmuA_v = qmu(muTest, asimov_data, pdf, init_pars, par_bounds)
+    qmu_v = tensorlib.clip(
+        qmu(muTest, data, pdf, init_pars, par_bounds), 0, max=None)
+    sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-    try:
-        sqrtqmu_v = math.sqrt(qmu_v)
-    except ValueError:
-        log.warning('WARNING: qmu_v negative: %s', qmu_v)
-        qmu_v = tensorlib.tolist(tensorlib.clip(qmu_v, 0, max=None))
-        sqrtqmu_v = math.sqrt(qmu_v)
-    try:
-        sqrtqmuA_v = math.sqrt(qmuA_v)
-    except ValueError:
-        log.warning('WARNING: qmuA_v negative: %s', qmuA_v)
-        qmuA_v = tensorlib.tolist(tensorlib.clip(qmuA_v, 0, max=None))
-        sqrtqmuA_v = math.sqrt(qmuA_v)
-
-    sigma = muTest / sqrtqmuA_v if sqrtqmuA_v > 0 else None
+    qmuA_v = tensorlib.clip(
+        qmu(muTest, asimov_data, pdf, init_pars, par_bounds), 0, max=None)
+    sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
     oneOverCLs_exp = []
     for nsigma in [-2, -1, 0, 1, 2]:
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
-        oneOverCLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
-    return qmu_v, qmuA_v, sigma, CLsb, CLb, oneOverCLs, oneOverCLs_exp
+        oneOverCLs_exp.append(
+            pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+    oneOverCLs_exp = tensorlib.astensor(oneOverCLs_exp)
+    return qmu_v, qmuA_v, CLsb, CLb, oneOverCLs, oneOverCLs_exp

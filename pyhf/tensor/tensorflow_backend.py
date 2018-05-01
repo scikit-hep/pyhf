@@ -25,6 +25,10 @@ class tensorflow_backend(object):
             TensorFlow Tensor: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
+        if min is None:
+            min = tf.reduce_min(tensor_in)
+        if max is None:
+            max = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min, max)
 
     def tolist(self,tensor_in):
@@ -116,5 +120,29 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        normal = tf.distributions.Normal(mu,sigma)
+        normal = tf.distributions.Normal(mu, sigma)
         return normal.prob(x)
+
+    def normal_cdf(self, x, mu=0, sigma=1):
+        """
+        The cumulative distribution function for the Normal distribution
+
+        Example::
+
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            0.7881446
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable
+                                      to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            TensorFlow Tensor: The CDF
+        """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        normal = tf.distributions.Normal(mu, sigma)
+        return normal.cdf(x)

@@ -9,11 +9,17 @@ from pyhf.simplemodels import hepdata_like
 import numpy as np
 import tensorflow as tf
 
+import pytest
+
 
 def test_common_tensor_backends():
     tf_sess = tf.Session()
-    for tb in [numpy_backend(), pytorch_backend(),
-               tensorflow_backend(session=tf_sess), mxnet_backend()]:
+    for tb in [
+        numpy_backend(),
+        pytorch_backend(),
+        tensorflow_backend(session=tf_sess),
+        mxnet_backend()
+    ]:
         assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
         assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
         assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
@@ -35,6 +41,8 @@ def test_common_tensor_backends():
             tb.astensor([2, 2, 2]))) == [1, 2, 1]
         assert tb.tolist(
             tb.clip(tb.astensor([-2, -1, 0, 1, 2]), -1, 1)) == [-1, -1,  0,  1,  1]
+        assert tb.tolist(
+            tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx([0.7881446014166034], 1e-07)
 
         assert list(map(tb.tolist, tb.simple_broadcast(
             tb.astensor([1, 1, 1]),

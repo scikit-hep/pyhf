@@ -14,7 +14,7 @@ except ImportError:
     pass
 
 try:
-    from mxnet_backend import mxnet_backend
+    from .mxnet_backend import mxnet_backend
     assert mxnet_backend
 except ImportError:
     pass
