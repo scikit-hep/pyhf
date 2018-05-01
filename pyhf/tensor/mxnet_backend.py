@@ -89,7 +89,6 @@ class mxnet_backend(object):
             try:
                 # Guard against a float being passed
                 tensor = nd.array([tensor_in])
-                pass
             except Exception as err:
                 log.warning('ERROR: astensor fails with: %s', err)
                 raise
