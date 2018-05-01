@@ -86,12 +86,7 @@ class mxnet_backend(object):
         try:
             tensor = nd.array(tensor_in)
         except ValueError:
-            try:
-                # Guard against a float being passed
-                tensor = nd.array([tensor_in])
-            except Exception as err:
-                log.warning('ERROR: astensor fails with: %s', err)
-                raise
+            tensor = nd.array([tensor_in])
         return tensor
 
     def sum(self, tensor_in, axis=None):
