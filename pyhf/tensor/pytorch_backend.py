@@ -46,11 +46,8 @@ class pytorch_backend(object):
             except TypeError:
                 try:
                     v = torch.autograd.Variable(tensor_in)
-                # Guard against not passing in something that is not a list
-                # or a tensor and causing a TypeError or RuntimeError
-                except TypeError:
-                    v = torch.autograd.Variable(torch.Tensor([tensor_in]))
-                except RuntimeError:
+                # Guard against passing in something that is not a list or tensor
+                except (TypeError, RuntimeError):
                     v = torch.autograd.Variable(torch.Tensor([tensor_in]))
         return v.type(torch.FloatTensor)
 
