@@ -371,8 +371,8 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The CDF
         """
-        # This is currently using SciPy stats until a better way can be found to
-        # do this in MXNet
+        log.warning(
+            'normal_cdf currently uses SciPy stats until pure MXNet distribuiton support is available.')
         x = self.astensor(x).asnumpy()
         mu = self.astensor(mu).asnumpy()
         sigma = self.astensor(sigma).asnumpy()
