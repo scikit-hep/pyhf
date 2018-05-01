@@ -372,4 +372,5 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
         oneOverCLs_exp.append(
             pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+    oneOverCLs_exp = tensorlib.astensor(oneOverCLs_exp)
     return qmu_v, qmuA_v, CLsb, CLb, oneOverCLs, oneOverCLs_exp
