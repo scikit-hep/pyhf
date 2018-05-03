@@ -1,0 +1,35 @@
+<!--
+This xml file created automatically on: 
+2018-5-1
+-->
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>  
+
+  <Channel Name="channel1" InputFile="" >
+
+    <Data HistoName="data_nominal" InputFile="data.root" HistoPath="/channel1_hists/data/"  /> 
+
+    <StatErrorConfig RelErrorThreshold="0.05" ConstraintType="Gaussian" /> 
+
+    <Sample Name="signal"  HistoPath="/channel1_hists/signal/"  HistoName="signal_nominal"  InputFile="data.root"  NormalizeByTheory="True" >
+      <NormFactor Name="SigXsecOverSM"  Val="1"  High="3"  Low="0"  Const="False"   /> 
+    </Sample>
+
+
+    <Sample Name="qcd"  HistoPath="/channel1_hists/qcd/"  HistoName="qcd_nominal"  InputFile="data.root"  NormalizeByTheory="True" >
+    </Sample>
+
+
+    <Sample Name="mc1"  HistoPath="/channel1_hists/mc1/"  HistoName="mc1_nominal"  InputFile="data.root"  NormalizeByTheory="True" >
+      <HistoSys Name="mc1_weight_var1"  HistoFileLow="data.root"  HistoNameLow="mc1_weight_var1_dn"  HistoPathLow="/channel1_hists/mc1/"  HistoFileHigh="data.root"  HistoNameHigh="mc1_weight_var1_up"  HistoPathHigh="/channel1_hists/mc1/"   /> 
+      <HistoSys Name="mc1_shape_conv"  HistoFileLow="data.root"  HistoNameLow="mc1_shape_conv_dn"  HistoPathLow="/channel1_hists/mc1/"  HistoFileHigh="data.root"  HistoNameHigh="mc1_shape_conv_up"  HistoPathHigh="/channel1_hists/mc1/"   /> 
+    </Sample>
+
+
+    <Sample Name="mc2"  HistoPath="/channel1_hists/mc2/"  HistoName="mc2_nominal"  InputFile="data.root"  NormalizeByTheory="True" >
+      <HistoSys Name="mc2_weight_var1"  HistoFileLow="data.root"  HistoNameLow="mc2_weight_var1_dn"  HistoPathLow="/channel1_hists/mc2/"  HistoFileHigh="data.root"  HistoNameHigh="mc2_weight_var1_up"  HistoPathHigh="/channel1_hists/mc2/"   /> 
+      <HistoSys Name="mc2_shape_conv"  HistoFileLow="data.root"  HistoNameLow="mc2_shape_conv_dn"  HistoPathLow="/channel1_hists/mc2/"  HistoFileHigh="data.root"  HistoNameHigh="mc2_shape_conv_up"  HistoPathHigh="/channel1_hists/mc2/"   /> 
+    </Sample>
+
+
+
+  </Channel>  

@@ -1,0 +1,16 @@
+<!--
+This xml file created automatically on: 
+2018-5-1
+-->
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+
+<Combination OutputFilePrefix="workspace" >
+
+
+  <Input>./meas_channel1.xml</Input>
+
+  <Measurement Name="meas" Lumi="1" LumiRelErr="0.1" ExportOnly="False"  >
+    <POI>SigXsecOverSM</POI>  
+  </Measurement> 
+
+</Combination>
