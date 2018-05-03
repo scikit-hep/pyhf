@@ -38,3 +38,21 @@ def test_import_prepHistFactory():
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
     assert pdf.expected_data(
         pars, include_auxdata=False).tolist() == [140, 120]
+
+def test_import_histosys():
+    schema = json.load(open('validation/spec.json'))
+    parsed_xml = pyhf.readxml.parse('validation/xmlimport_input2/config/example.xml',
+                              'validation/xmlimport_input2')
+
+    # build the spec, strictly checks properties included
+    spec = {'channels': parsed_xml['channels']}
+    jsonschema.validate(spec, schema)
+    pdf = pyhf.hfpdf(spec, poiname='SigXsecOverSM')
+
+    data = [binvalue for k in pdf.spec['channels'] for binvalue
+            in parsed_xml['data'][k['name']]] + pdf.config.auxdata
+
+    channels = {channel['name']:channel for channel in pdf.spec['channels']}
+    samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
+
+    assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'

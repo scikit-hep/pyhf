@@ -53,8 +53,16 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname):
             })
 
         elif modtag.tag == 'HistoSys':
-            lo,_ = import_root_histogram(rootdir, modtag.attrib['HistoFileLow'], modtag.attrib['HistoPathLow'], modtag.attrib['HistoNameLow'])
-            hi,_ = import_root_histogram(rootdir, modtag.attrib['HistoFileHigh'], modtag.attrib['HistoPathHigh'], modtag.attrib['HistoNameHigh'])
+            lo,_ = import_root_histogram(rootdir,
+                    modtag.attrib.get('HistoFileLow',inputfile),
+                    modtag.attrib.get('HistoPathLow',''),
+                    modtag.attrib['HistoNameLow']
+                    )
+            hi,_ = import_root_histogram(rootdir,
+                    modtag.attrib.get('HistoFileHigh',inputfile),
+                    modtag.attrib.get('HistoPathHigh',''),
+                    modtag.attrib['HistoNameHigh']
+                    )
             modifiers.append({
                 'name': modtag.attrib['Name'],
                 'type': 'histosys',
