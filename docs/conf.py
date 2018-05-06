@@ -88,7 +88,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -134,8 +134,13 @@ html_theme = 'bootstrap'
 # documentation.
 #
 html_theme_options = {
+    'source_link_position': 'footer',
+    'navbar_sidebarrel': False,
     'navbar_site_name': 'pyhf documentation',
-    'bootswatch_theme': 'flatly'
+    'bootswatch_theme': 'flatly',
+    'navbar_links': [
+                      ("Gallery", "examples"),
+                    ],
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
