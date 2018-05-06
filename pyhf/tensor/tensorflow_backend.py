@@ -10,7 +10,7 @@ class tensorflow_backend(object):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
-        Example::
+        Example:
 
             >>> import pyhf, tensorflow
             >>> sess = tensorflow.Session()
@@ -133,7 +133,7 @@ class tensorflow_backend(object):
         """
         The cumulative distribution function for the Normal distribution
 
-        Example::
+        Example:
 
             >>> import pyhf, tensorflow
             >>> sess = tensorflow.Session()
@@ -145,8 +145,7 @@ class tensorflow_backend(object):
             0.7881446
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable
-                                      to evaluate the CDF for
+            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
             mu (`tensor` or `float`): The mean of the Normal distribution
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
 

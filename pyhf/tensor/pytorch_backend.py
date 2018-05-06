@@ -11,7 +11,7 @@ class pytorch_backend(object):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
-        Example::
+        Example:
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
@@ -119,7 +119,7 @@ class pytorch_backend(object):
         """
         The cumulative distribution function for the Normal distribution
 
-        Example::
+        Example:
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
@@ -127,8 +127,7 @@ class pytorch_backend(object):
             tensor([ 0.7881])
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable
-                                      to evaluate the CDF for
+            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
             mu (`tensor` or `float`): The mean of the Normal distribution
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
 
