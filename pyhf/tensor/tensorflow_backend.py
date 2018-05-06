@@ -12,9 +12,15 @@ class tensorflow_backend(object):
 
         Example::
 
+            >>> import pyhf, tensorflow
+            >>> sess = tensorflow.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
-            >>> pyhf.tensorlib.clip(a, -1, 1)
-            array([-1, -1,  0,  1,  1])
+            >>> with sess.as_default():
+            ...   pyhf.tensorlib.clip(a, -1, 1).eval()
+            ...
+            array([-1., -1.,  0.,  1.,  1.], dtype=float32)
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -129,7 +135,13 @@ class tensorflow_backend(object):
 
         Example::
 
-            >>> pyhf.tensorlib.normal_cdf(0.8)
+            >>> import pyhf, tensorflow
+            >>> sess = tensorflow.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> with sess.as_default():
+            ...   pyhf.tensorlib.normal_cdf(0.8).eval()
+            ...
             0.7881446
 
         Args:

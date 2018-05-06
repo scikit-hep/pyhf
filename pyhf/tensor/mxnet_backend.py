@@ -18,9 +18,13 @@ class mxnet_backend(object):
 
         Example::
 
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
-            array([-1, -1,  0,  1,  1])
+            <BLANKLINE>
+            [-1. -1.  0.  1.  1.]
+            <NDArray 5 @cpu(0)>
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -240,11 +244,16 @@ class mxnet_backend(object):
 
         Example::
 
-            >>> where(
-                astensor([1, 0, 1]),
-                astensor([1, 1, 1]),
-                astensor([2, 2, 2]))
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> pyhf.tensorlib.where(
+            ...   pyhf.tensorlib.astensor([1, 0, 1]),
+            ...   pyhf.tensorlib.astensor([1, 1, 1]),
+            ...   pyhf.tensorlib.astensor([2, 2, 2]))
+            ...
+            <BLANKLINE>
             [1. 2. 1.]
+            <NDArray 3 @cpu(0)>
 
         Args:
             mask (bool): Boolean mask (boolean or tensor object of booleans)
@@ -278,13 +287,18 @@ class mxnet_backend(object):
 
         Example::
 
-            >>> simple_broadcast(
-                astensor([1]),
-                astensor([2, 2]),
-                astensor([3, 3, 3]))
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 2]),
+            ...   pyhf.tensorlib.astensor([3, 3, 3]))
+            ...
+            <BLANKLINE>
             [[1. 1. 1.]
              [2. 2. 2.]
              [3. 3. 3.]]
+            <NDArray 3x3 @cpu(0)>
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -351,11 +365,12 @@ class mxnet_backend(object):
 
         Example::
 
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
             >>> pyhf.tensorlib.normal_cdf(0.8)
-
+            <BLANKLINE>
             [0.7881446]
             <NDArray 1 @cpu(0)>
-
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable

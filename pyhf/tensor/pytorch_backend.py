@@ -13,9 +13,11 @@ class pytorch_backend(object):
 
         Example::
 
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
-            array([-1, -1,  0,  1,  1])
+            tensor([-1., -1.,  0.,  1.,  1.])
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -119,10 +121,10 @@ class pytorch_backend(object):
 
         Example::
 
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
             >>> pyhf.tensorlib.normal_cdf([0.8])
-            Variable containing:
-             0.7881
-            [torch.FloatTensor of size 1]
+            tensor([ 0.7881])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable
