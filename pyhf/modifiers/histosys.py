@@ -10,6 +10,7 @@ class histosys(object):
     """HistoSys modifier
 
         >>> import pyhf
+        >>> pyhf.set_backend(pyhf.default_backend)
         >>> mymod = pyhf.modifiers.histosys([1.0],[0.0])
         >>> mymod.alphas([1.0,2.0,3.0])
         [1.0, 2.0, 3.0]

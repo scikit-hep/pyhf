@@ -18,7 +18,9 @@ def get_backend():
         backend, optimizer
 
     Example:
-        >>> backend, _ = pyhf.get_backend()
+        >>> import pyhf
+        >>> pyhf.get_backend()
+        (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.opt_scipy.scipy_optimizer object at 0x...>)
 
     """
     global tensorlib
@@ -42,9 +44,9 @@ def set_backend(backend):
         None
 
     Example:
-        >>> import pyhf.tensor as tensor
+        >>> import pyhf
         >>> import tensorflow as tf
-        >>> pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
+        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
