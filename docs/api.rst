@@ -1,6 +1,28 @@
 API
 ===
 
+Top-Level
+---------
+
+.. currentmodule:: pyhf
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
+   default_backend
+   default_optimizer
+   generate_asimov_data
+   get_backend
+   hfpdf
+   loglambdav
+   modelconfig
+   pvals_from_teststat
+   qmu
+   runOnePoint
+   set_backend
+   tensorlib
+
 Backends
 --------
 

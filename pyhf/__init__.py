@@ -309,7 +309,7 @@ def loglambdav(pars, data, pdf):
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
-    """
+    r"""
     The test statistic, q_mu, for establishing an upper
     limit on the strength parameter, mu, as defiend in
     Equation (14) in arXiv:1007.1727
@@ -317,10 +317,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     .. math::
        :nowrap:
 
-       q_{\mu} = \left\{\begin{array}{ll}
-       -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
-       0, & \hat{\mu} > \mu
-       \end{array}\right.
+       \begin{equation}
+          q_{\mu} = \left\{\begin{array}{ll}
+          -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
+          0, & \hat{\mu} > \mu
+          \end{array}\right.
+        \end{equation}
+
 
     Args:
         mu (Number or Tensor): The signal strength parameter
