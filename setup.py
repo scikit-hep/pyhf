@@ -37,6 +37,8 @@ setup(
        'mxnet>=1.0.0',
        'graphviz',
        'sphinx',
+       'sphinx_bootstrap_theme',
+       'nbsphinx',
        'jsonschema>=2.6.0'
     ]
   },
