@@ -99,10 +99,30 @@ class pytorch_backend(object):
         return torch.cat(sequence)
 
     def simple_broadcast(self, *args):
+        """
+        Broadcast a sequence of 1 dimensional arrays.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 2]),
+            ...   pyhf.tensorlib.astensor([3, 3, 3]))
+            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  2.,  2.]), tensor([ 3.,  3.,  3.])]
+
+        Args:
+            args (Array of Tensors): Sequence of arrays
+
+        Returns:
+            Tensor: The sequence broadcast together.
+        """
         broadcast = []
-        maxdim = max(map(len,args))
+        max_dim = max(map(len, args))
         for a in args:
-            broadcast.append(self.astensor(a) if len(a) > 1 else a*self.ones(maxdim))
+            broadcast.append(
+                a[0].expand(max_dim) if len(a) < max_dim else self.astensor(a))
         return broadcast
 
     def poisson(self, n, lam):
