@@ -18,7 +18,8 @@ def get_backend():
         backend, optimizer
 
     Example:
-        backend, _ = pyhf.get_backend()
+        >>> backend, _ = pyhf.get_backend()
+
     """
     global tensorlib
     global optimizer
@@ -41,9 +42,9 @@ def set_backend(backend):
         None
 
     Example:
-        import pyhf.tensor as tensor
-        import tensorflow as tf
-        pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
+        >>> import pyhf.tensor as tensor
+        >>> import tensorflow as tf
+        >>> pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
@@ -117,8 +118,6 @@ class modelconfig(object):
         Returns:
             modifier object
 
-        Example:
-            modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
         """
         # get modifier class associated with modifier type
         try:
