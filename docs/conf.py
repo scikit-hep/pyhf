@@ -136,7 +136,7 @@ html_theme = 'bootstrap'
 html_theme_options = {
     'source_link_position': 'footer',
     'navbar_sidebarrel': False,
-    'navbar_site_name': 'pyhf documentation',
+    'navbar_site_name': 'Site',
     'bootswatch_theme': 'flatly',
     'navbar_links': [
                       ("Gallery", "examples"),
