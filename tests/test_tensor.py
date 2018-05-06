@@ -48,6 +48,10 @@ def test_common_tensor_backends():
             tb.astensor([1, 1, 1]),
             tb.astensor([2]),
             tb.astensor([3, 3, 3])))) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+        assert list(map(tb.tolist, tb.simple_broadcast(
+            tb.astensor([1]),
+            tb.astensor([2, 2]),
+            tb.astensor([3, 3, 3])))) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
 
 
 def test_pdf_eval():
