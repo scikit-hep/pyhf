@@ -89,6 +89,28 @@ class numpy_backend(object):
         return np.concatenate(sequence)
 
     def simple_broadcast(self, *args):
+        """
+        Broadcast a sequence of 1 dimensional arrays.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 2]),
+            ...   pyhf.tensorlib.astensor([3, 3, 3]))
+            [array([1, 1, 1]), array([2, 2, 2]), array([3, 3, 3])]
+
+        Args:
+            args (Array of Tensors): Sequence of arrays
+
+        Returns:
+            list of Tensors: The sequence broadcast together.
+        """
+        max_dim = np.max([arg.size for arg in args])
+        args = [self.astensor([arg[0]])
+                if arg.shape[0] < max_dim else arg for arg in args]
         return np.broadcast_arrays(*args)
 
     def poisson(self, n, lam):

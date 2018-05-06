@@ -293,7 +293,6 @@ class mxnet_backend(object):
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 2]),
             ...   pyhf.tensorlib.astensor([3, 3, 3]))
-            ...
             <BLANKLINE>
             [[1. 1. 1.]
              [2. 2. 2.]
