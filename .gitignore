@@ -3,9 +3,11 @@ build
 dist
 _build
 docs/man/*.gz
-docs/source/api/generated
-docs/source/config.rst
+docs/api/generated
+docs/config.rst
 docs/gh-pages
+docs/pyhf.*.rst
+docs/_*/
 *.py[co]
 __pycache__
 *.egg-info

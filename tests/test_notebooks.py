@@ -10,11 +10,11 @@ def test_notebooks(tmpdir):
     }
 
     pm.execute_notebook(
-        'examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
-    pm.execute_notebook('examples/notebooks/multichannel-coupled-histo.ipynb',
+        'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
+    pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',
                         parameters={'validation_datadir': 'validation/data'},
                         **common_kwargs)
-    pm.execute_notebook('examples/notebooks/multiBinPois.ipynb',
+    pm.execute_notebook('docs/examples/notebooks/multiBinPois.ipynb',
                         parameters={'validation_datadir': 'validation/data'},
                         **common_kwargs)
 

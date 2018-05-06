@@ -18,7 +18,10 @@ def get_backend():
         backend, optimizer
 
     Example:
-        backend, _ = pyhf.get_backend()
+        >>> import pyhf
+        >>> pyhf.get_backend()
+        (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.opt_scipy.scipy_optimizer object at 0x...>)
+
     """
     global tensorlib
     global optimizer
@@ -41,9 +44,9 @@ def set_backend(backend):
         None
 
     Example:
-        import pyhf.tensor as tensor
-        import tensorflow as tf
-        pyhf.set_backend(tensor.tensorflow_backend(session=tf.Session()))
+        >>> import pyhf
+        >>> import tensorflow as tf
+        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
@@ -117,8 +120,6 @@ class modelconfig(object):
         Returns:
             modifier object
 
-        Example:
-            modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
         """
         # get modifier class associated with modifier type
         try:
@@ -166,25 +167,24 @@ class hfpdf(object):
 
         this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
 
+            >>> import numpy as np
             >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
             [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
-
-            ## also
+            >>> ## also
             >>> np.broadcast_arrays(2,[3,4,5],6,[7,8,9])
             [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
-
-            ## also
+            >>> ## also
             >>> factors = [2,[3,4,5],6,[7,8,9]]
             >>> np.broadcast_arrays(*factors)
             [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
 
         So that something like
 
-            np.product(np.broadcast_arrays([2],[3,4,5],[6],[7,8,9]),axis=0)
+            >>> import numpy as np
+            >>> np.product(np.broadcast_arrays([2],[3,4,5],[6],[7,8,9]),axis=0)
+            array([252, 384, 540])
 
-        gives
-
-            [ 2*3*6*7, 2*4*6*8, 2*5*6*9]
+        which is just `[ 2*3*6*7, 2*4*6*8, 2*5*6*9]`.
 
         Notice how some factors (for fixed channel c and sample s) depend on
         bin b and some don't (eq 6 CERN-OPEN-2012-016). The broadcasting lets
@@ -310,7 +310,7 @@ def loglambdav(pars, data, pdf):
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
-    """
+    r"""
     The test statistic, q_mu, for establishing an upper
     limit on the strength parameter, mu, as defiend in
     Equation (14) in arXiv:1007.1727
@@ -318,10 +318,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     .. math::
        :nowrap:
 
-       q_{\mu} = \left\{\begin{array}{ll}
-       -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
-       0, & \hat{\mu} > \mu
-       \end{array}\right.
+       \begin{equation}
+          q_{\mu} = \left\{\begin{array}{ll}
+          -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
+          0, & \hat{\mu} > \mu
+          \end{array}\right.
+        \end{equation}
+
 
     Args:
         mu (Number or Tensor): The signal strength parameter
