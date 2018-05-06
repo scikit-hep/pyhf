@@ -11,8 +11,6 @@ class histosys(object):
 
         >>> import pyhf
         >>> mymod = pyhf.modifiers.histosys([1.0],[0.0])
-        >>> mymod
-        <pyhf.modifiers.histosys.histosys object at 0x119635190>
         >>> mymod.alphas([1.0,2.0,3.0])
         [1.0, 2.0, 3.0]
         >>> mymod.pdf([1.0,2.0,3.0],[1.0,1.0,1.0])
