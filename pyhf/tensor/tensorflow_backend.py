@@ -103,19 +103,41 @@ class tensorflow_backend(object):
         return tf.concat(sequence, axis=0)
 
     def simple_broadcast(self, *args):
-        broadcast = []
-        def generic_len(a):
-          try:
-            return len(a)
-          except TypeError:
-            if len(a.shape) < 1:
-              return 0
-            else:
-              return a.shape[0]
+        """
+        Broadcast a sequence of 1 dimensional arrays.
 
-        maxdim = max(map(generic_len,args))
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
+            >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 2]),
+            ...   pyhf.tensorlib.astensor([3, 3, 3])))
+            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  2.,  2.]), tensor([ 3.,  3.,  3.])]
+
+        Args:
+            args (Array of Tensors): Sequence of arrays
+
+        Returns:
+            list of Tensors: The sequence broadcast together.
+        """
+        broadcast = []
+
+        def generic_len(a):
+            try:
+                return len(a)
+            except TypeError:
+                if len(a.shape) < 1:
+                    return 0
+                else:
+                    return a.shape[0]
+
+        max_dim = max(map(generic_len, args))
         for a in args:
-            broadcast.append(self.astensor(a) if generic_len(a) > 1 else a*self.ones(maxdim))
+            broadcast.append(
+                a[0] * self.ones(max_dim) if generic_len(a) < max_dim else self.astensor(a))
         return broadcast
 
     def poisson(self, n, lam):

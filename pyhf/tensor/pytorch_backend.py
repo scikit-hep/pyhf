@@ -116,7 +116,7 @@ class pytorch_backend(object):
             args (Array of Tensors): Sequence of arrays
 
         Returns:
-            Tensor: The sequence broadcast together.
+            list of Tensors: The sequence broadcast together.
         """
         broadcast = []
         max_dim = max(map(len, args))
