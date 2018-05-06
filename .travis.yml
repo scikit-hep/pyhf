@@ -61,12 +61,12 @@ jobs:
     - pip install sphinx
     script:
     - cd docs && make html && cd -
-    - touch docs/build/html/.nojekyll
+    - touch docs/_build/html/.nojekyll
     deploy:
       provider: pages
       skip_cleanup: true
       github_token: $GITHUB_TOKEN
-      local_dir: docs/build/html
+      local_dir: docs/_build/html
   - stage: deploy
     python: '3.6'
     install: skip
