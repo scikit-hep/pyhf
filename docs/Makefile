@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+GENERATEDDIR  = _generated
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -47,6 +48,7 @@ help:
 .PHONY: clean
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -rf $(GENERATEDDIR)/*
 
 .PHONY: html
 html:
