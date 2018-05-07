@@ -58,7 +58,7 @@ jobs:
   - stage: docs
     python: '3.6'
     install:
-    - pip install sphinx sphinxcontrib-napoleon sphinx_rtd_theme nbsphinx
+      - pip install -U --process-dependency-links -e .[develop]
     script:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
