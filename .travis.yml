@@ -28,7 +28,7 @@ stages:
   - name: benchmark
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
-    if: (branch = master) AND (NOT (type IN (pull_request)))
+    if: (branch = master)
   - name: deploy
     if: (branch = master) AND (NOT (type IN (pull_request)))
 
@@ -58,7 +58,9 @@ jobs:
   - stage: docs
     python: '3.6'
     install:
-    - pip install sphinx
+      - sudo apt-get update -qq
+      - sudo apt-get -qq install pandoc
+      - pip install -U --process-dependency-links -e .[develop]
     script:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
@@ -67,6 +69,8 @@ jobs:
       skip_cleanup: true
       github_token: $GITHUB_TOKEN
       local_dir: docs/_build/html
+      on:
+        branch: master
   - stage: deploy
     python: '3.6'
     install: skip
