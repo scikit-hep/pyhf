@@ -28,7 +28,7 @@ stages:
   - name: benchmark
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
-    if: (branch = master) AND (NOT (type IN (pull_request)))
+    if: (branch = master)
   - name: deploy
     if: (branch = master) AND (NOT (type IN (pull_request)))
 
@@ -67,6 +67,8 @@ jobs:
       skip_cleanup: true
       github_token: $GITHUB_TOKEN
       local_dir: docs/_build/html
+      on:
+        branch: master
   - stage: deploy
     python: '3.6'
     install: skip
