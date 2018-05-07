@@ -40,17 +40,21 @@ class pytorch_backend(object):
         return torch.ger(tensor_in_1,tensor_in_2)
 
     def astensor(self, tensor_in):
-        if isinstance(tensor_in, torch.autograd.Variable):
+        """
+        Convert to a PyTorch Tensor.
+
+        Args:
+            tensor_in (Number or Tensor): Tensor object
+
+        Returns:
+            torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
+        """
+        if isinstance(tensor_in, torch.Tensor):
             v = tensor_in
         else:
-            try:
-                v = torch.autograd.Variable(torch.Tensor(tensor_in))
-            except TypeError:
-                try:
-                    v = torch.autograd.Variable(tensor_in)
-                # Guard against passing in something that is not a list or tensor
-                except (TypeError, RuntimeError):
-                    v = torch.autograd.Variable(torch.Tensor([tensor_in]))
+            if not isinstance(tensor_in, list):
+                tensor_in = [tensor_in]
+            v = torch.Tensor(tensor_in)
         return v.type(torch.FloatTensor)
 
     def sum(self, tensor_in, axis=None):
@@ -118,11 +122,16 @@ class pytorch_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        broadcast = []
+        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
-        for a in args:
-            broadcast.append(
-                a[0].expand(max_dim) if len(a) < max_dim else self.astensor(a))
+        try:
+            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+        except AssertionError as error:
+            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            raise error
+
+        broadcast = [arg if len(arg) > 1 else arg.expand(max_dim)
+                     for arg in args]
         return broadcast
 
     def poisson(self, n, lam):
