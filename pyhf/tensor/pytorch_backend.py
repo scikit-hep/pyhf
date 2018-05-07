@@ -112,9 +112,9 @@ class pytorch_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
-            ...   pyhf.tensorlib.astensor([2, 2]),
-            ...   pyhf.tensorlib.astensor([3, 3, 3]))
-            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  2.,  2.]), tensor([ 3.,  3.,  3.])]
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  3.,  4.]), tensor([ 5.,  6.,  7.])]
 
         Args:
             args (Array of Tensors): Sequence of arrays

@@ -79,7 +79,7 @@ class mxnet_backend(object):
 
     def astensor(self, tensor_in):
         """
-        Convert a tensor to an MXNet NDArray.
+        Convert to a MXNet NDArray.
 
         Args:
             tensor_in (Number or Tensor): Tensor object
@@ -291,12 +291,12 @@ class mxnet_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
-            ...   pyhf.tensorlib.astensor([2, 2]),
-            ...   pyhf.tensorlib.astensor([3, 3, 3]))
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
             <BLANKLINE>
             [[1. 1. 1.]
-             [2. 2. 2.]
-             [3. 3. 3.]]
+             [2. 3. 4.]
+             [5. 6. 7.]]
             <NDArray 3x3 @cpu(0)>
 
         Args:

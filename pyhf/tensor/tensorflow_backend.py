@@ -2,6 +2,7 @@ import tensorflow as tf
 import logging
 log = logging.getLogger(__name__)
 
+
 class tensorflow_backend(object):
     def __init__(self, **kwargs):
         self.session = kwargs.get('session')
@@ -113,9 +114,9 @@ class tensorflow_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
             >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
-            ...   pyhf.tensorlib.astensor([2, 2]),
-            ...   pyhf.tensorlib.astensor([3, 3, 3])))
-            [array([1., 1., 1.], dtype=float32), array([2., 2., 2.], dtype=float32), array([3., 3., 3.], dtype=float32)]
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            [array([1., 1., 1.], dtype=float32), array([2., 3., 4.], dtype=float32), array([5., 6., 7.], dtype=float32)]
 
         Args:
             args (Array of Tensors): Sequence of arrays

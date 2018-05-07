@@ -98,9 +98,9 @@ class numpy_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
-            ...   pyhf.tensorlib.astensor([2, 2]),
-            ...   pyhf.tensorlib.astensor([3, 3, 3]))
-            [array([1, 1, 1]), array([2, 2, 2]), array([3, 3, 3])]
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            [array([1, 1, 1]), array([2, 3, 4]), array([5, 6, 7])]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -108,9 +108,6 @@ class numpy_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        max_dim = np.max([arg.size for arg in args])
-        args = [self.astensor([arg[0]])
-                if arg.shape[0] < max_dim else arg for arg in args]
         return np.broadcast_arrays(*args)
 
     def poisson(self, n, lam):
