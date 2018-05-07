@@ -66,9 +66,9 @@ class pytorch_backend(object):
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
     def ones(self, shape):
-        return torch.autograd.Variable(torch.ones(shape))
+        return torch.Tensor(torch.ones(shape))
 
-    def power(self,tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
