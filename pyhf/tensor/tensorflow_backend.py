@@ -115,7 +115,7 @@ class tensorflow_backend(object):
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 2]),
             ...   pyhf.tensorlib.astensor([3, 3, 3])))
-            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  2.,  2.]), tensor([ 3.,  3.,  3.])]
+            [array([1., 1., 1.], dtype=float32), array([2., 2., 2.], dtype=float32), array([3., 3., 3.], dtype=float32)]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -157,8 +157,9 @@ class tensorflow_backend(object):
 
         Example:
 
-            >>> import pyhf, tensorflow
-            >>> sess = tensorflow.Session()
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
             ...
             >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
             >>> with sess.as_default():
