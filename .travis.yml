@@ -58,6 +58,8 @@ jobs:
   - stage: docs
     python: '3.6'
     install:
+      - sudo apt-get update -qq
+      - sudo apt-get -qq install pandoc
       - pip install -U --process-dependency-links -e .[develop]
     script:
     - cd docs && make html && cd -
