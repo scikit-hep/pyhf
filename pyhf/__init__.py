@@ -1,14 +1,5 @@
 import logging
 
-import pyhf.optimize as optimize
-import pyhf.tensor as tensor
-from . import exceptions
-
-log = logging.getLogger(__name__)
-tensorlib = tensor.numpy_backend()
-default_backend = tensorlib
-optimizer = optimize.scipy_optimizer()
-default_optimizer = optimizer
 
 
 def get_backend():
@@ -28,9 +19,32 @@ def get_backend():
     global optimizer
     return tensorlib, optimizer
 
-# modifiers need access to tensorlib
+
+def tensorize(func):
+    """
+    Decorator to ensure all arguments passed to a function are tensors
+
+    Args:
+        func: pyhf.tensor class method with arguments (self, *args)
+    """
+    def wrapper(*args):
+        return func(args[0], *map(tensorlib.astensor, args[1:]))
+    return wrapper
+
+
+# modifiers and tensor needs access to tensorlib
 # make sure import is below get_backend()
+from . import tensor
+from . import optimize
+from . import exceptions
 from . import modifiers
+
+log = logging.getLogger(__name__)
+
+tensorlib = tensor.numpy_backend()
+default_backend = tensorlib
+optimizer = optimize.scipy_optimizer()
+default_optimizer = optimizer
 
 
 def set_backend(backend):
