@@ -30,7 +30,7 @@ class pytorch_backend(object):
         tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tensor_in.data.numpy().tolist()
 

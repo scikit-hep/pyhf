@@ -51,12 +51,23 @@ class tensorflow_backend(object):
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype=tf.float32):
+        """
+        Convert to a TensorFlow Tensor.
+
+        Args:
+            tensor_in (Number or Tensor): Tensor object
+
+        Returns:
+            `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
+        """
         if isinstance(tensor_in, tf.Tensor):
             v = tensor_in
         else:
+            if isinstance(tensor_in, (int, float)):
+                tensor_in = [tensor_in]
             v = tf.convert_to_tensor(tensor_in)
         if v.dtype is not dtype:
-          v = tf.cast(v, dtype)
+            v = tf.cast(v, dtype)
         return v
 
     def sum(self, tensor_in, axis=None):
@@ -70,30 +81,30 @@ class tensorflow_backend(object):
     def ones(self, shape):
         return tf.ones(shape)
 
-    def power(self,tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return tf.pow(tensor_in_1, tensor_in_2)
 
-    def sqrt(self,tensor_in):
+    def sqrt(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tf.sqrt(tensor_in)
 
-    def divide(self,tensor_in_1, tensor_in_2):
+    def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return tf.divide(tensor_in_1, tensor_in_2)
 
-    def log(self,tensor_in):
+    def log(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tf.log(tensor_in)
 
-    def exp(self,tensor_in):
+    def exp(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tf.exp(tensor_in)
 
-    def stack(self, sequence, axis = 0):
-        return tf.stack(sequence, axis = axis)
+    def stack(self, sequence, axis=0):
+        return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         mask = self.astensor(mask)
@@ -125,8 +136,6 @@ class tensorflow_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        broadcast = []
-
         def generic_len(a):
             try:
                 return len(a)
@@ -136,15 +145,23 @@ class tensorflow_backend(object):
                 else:
                     return a.shape[0]
 
+        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(generic_len, args))
-        for a in args:
-            broadcast.append(
-                a[0] * self.ones(max_dim) if generic_len(a) < max_dim else self.astensor(a))
+        try:
+            assert len([arg for arg in args
+                        if 1 < generic_len(arg) < max_dim]) == 0
+        except AssertionError as error:
+            log.error(
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            raise error
+
+        broadcast = [arg if generic_len(arg) > 1 else
+                     tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
         return broadcast
 
     def poisson(self, n, lam):
         # could be changed to actual Poisson easily
-        return self.normal(n,lam, self.sqrt(lam))
+        return self.normal(n, lam, self.sqrt(lam))
 
     def normal(self, x, mu, sigma):
         x = self.astensor(x)
