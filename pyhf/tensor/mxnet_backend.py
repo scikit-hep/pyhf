@@ -305,14 +305,18 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The sequence broadcast together.
         """
+        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
-        broadcast = []
-        for arg in args:
-            if len(arg) < max_dim:
-                broadcast.append(nd.broadcast_axis(
-                    arg[0], axis=len(arg.shape) - 1, size=max_dim))
-            else:
-                broadcast.append(arg)
+        try:
+            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+        except AssertionError as error:
+            log.error(
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            raise error
+
+        broadcast = [arg if len(arg) > 1
+                     else nd.broadcast_axis(arg[0], axis=len(arg.shape) - 1, size=max_dim)
+                     for arg in args]
         return nd.stack(*broadcast)
 
     def poisson(self, n, lam):
