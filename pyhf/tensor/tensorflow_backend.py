@@ -14,8 +14,9 @@ class tensorflow_backend(object):
 
         Example:
 
-            >>> import pyhf, tensorflow
-            >>> sess = tensorflow.Session()
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
             ...
             >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
@@ -184,7 +185,7 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...   pyhf.tensorlib.normal_cdf(0.8).eval()
             ...
-            0.7881446
+            array([0.7881446], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
