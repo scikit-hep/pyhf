@@ -1,10 +1,7 @@
-import logging
 import torch
-
-from .. import tensorize
-
+import torch.autograd
+import logging
 log = logging.getLogger(__name__)
-
 
 class pytorch_backend(object):
     def __init__(self, **kwargs):
@@ -33,13 +30,14 @@ class pytorch_backend(object):
         tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min, max)
 
-    @tensorize
-    def tolist(self, tensor_in):
+    def tolist(self,tensor_in):
+        tensor_in = self.astensor(tensor_in)
         return tensor_in.data.numpy().tolist()
 
-    @tensorize
     def outer(self, tensor_in_1, tensor_in_2):
-        return torch.ger(tensor_in_1, tensor_in_2)
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return torch.ger(tensor_in_1,tensor_in_2)
 
     def astensor(self, tensor_in):
         """
@@ -70,37 +68,40 @@ class pytorch_backend(object):
     def ones(self, shape):
         return torch.Tensor(torch.ones(shape))
 
-    @tensorize
     def power(self, tensor_in_1, tensor_in_2):
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
 
-    @tensorize
-    def sqrt(self, tensor_in):
+    def sqrt(self,tensor_in):
+        tensor_in = self.astensor(tensor_in)
         return torch.sqrt(tensor_in)
 
-    @tensorize
-    def divide(self, tensor_in_1, tensor_in_2):
+    def divide(self,tensor_in_1, tensor_in_2):
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.div(tensor_in_1, tensor_in_2)
 
-    @tensorize
-    def log(self, tensor_in):
+    def log(self,tensor_in):
+        tensor_in = self.astensor(tensor_in)
         return torch.log(tensor_in)
 
-    @tensorize
-    def exp(self, tensor_in):
+    def exp(self,tensor_in):
+        tensor_in = self.astensor(tensor_in)
         return torch.exp(tensor_in)
 
-    def stack(self, sequence, axis=0):
-        return torch.stack(sequence, dim=axis)
+    def stack(self, sequence, axis = 0):
+        return torch.stack(sequence,dim = axis)
 
-    @tensorize
     def where(self, mask, tensor_in_1, tensor_in_2):
+        mask = self.astensor(mask)
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
         return mask * tensor_in_1 + (1-mask) * tensor_in_2
 
     def concatenate(self, sequence):
         return torch.cat(sequence)
 
-    @tensorize
     def simple_broadcast(self, *args):
         """
         Broadcast a sequence of 1 dimensional arrays.
@@ -121,6 +122,7 @@ class pytorch_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
+        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
         try:
             assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
@@ -133,15 +135,16 @@ class pytorch_backend(object):
         return broadcast
 
     def poisson(self, n, lam):
-        return self.normal(n, lam, self.sqrt(lam))
+        return self.normal(n,lam, self.sqrt(lam))
 
-    @tensorize
     def normal(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
-    @tensorize
-    def normal_cdf(self, x, mu=torch.Tensor([0.]), sigma=torch.Tensor([1.])):
+    def normal_cdf(self, x, mu=[0.], sigma=[1.]):
         """
         The cumulative distribution function for the Normal distribution
 
@@ -160,5 +163,8 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.cdf(x)
