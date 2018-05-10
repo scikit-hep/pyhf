@@ -40,8 +40,17 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.outer(tensor_in_1,tensor_in_2)
 
-    def astensor(self,tensor_in):
-        return np.array(tensor_in)
+    def astensor(self, tensor_in):
+        """
+        Convert to a NumPy array.
+
+        Args:
+            tensor_in (Number or Tensor): Tensor object
+
+        Returns:
+            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+        """
+        return np.asarray(tensor_in)
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
