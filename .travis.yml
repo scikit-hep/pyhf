@@ -6,7 +6,7 @@ python:
 install:
 - sudo apt-get update
 - pip install --upgrade pip
-- pip install -U -q --process-dependency-links -e .[develop]
+- pip install -U -q -e .[develop]
 # numpy upgrade needed for Python 2.7 only
 - pip install --upgrade pytest numpy
 script:
@@ -37,7 +37,7 @@ jobs:
     install:
       - sudo apt-get update
       - pip install --upgrade pip
-      - pip install -U -q --process-dependency-links -e .[develop]
+      - pip install -U -q -e .[develop]
       - pip install --upgrade pytest
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
@@ -45,7 +45,7 @@ jobs:
     install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
-      - pip install -U -q --process-dependency-links -e .[develop]
+      - pip install -U -q -e .[develop]
     script:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
