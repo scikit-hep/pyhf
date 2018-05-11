@@ -9,7 +9,7 @@ setup(
   packages = find_packages(),
   include_package_data = True,
   install_requires = [
-    'numpy',
+    'numpy>=1.14.3',
     'scipy'
   ],
   extras_require = {
@@ -24,7 +24,7 @@ setup(
     ],
     'develop': [
        'pyflakes',
-       'pytest>=3.2.0',
+       'pytest>=3.5.1',
        'pytest-cov>=2.5.1',
        'pytest-benchmark[histogram]',
        'python-coveralls',

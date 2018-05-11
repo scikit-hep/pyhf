@@ -7,8 +7,6 @@ install:
 - sudo apt-get update
 - pip install --upgrade pip
 - pip install -U -q -e .[develop]
-# numpy upgrade needed for Python 2.7 only
-- pip install --upgrade pytest numpy
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
@@ -38,7 +36,6 @@ jobs:
       - sudo apt-get update
       - pip install --upgrade pip
       - pip install -U -q -e .[develop]
-      - pip install --upgrade pytest
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
