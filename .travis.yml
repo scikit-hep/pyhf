@@ -4,7 +4,6 @@ python:
   - '2.7'
   - '3.6'
 install:
-- sudo apt-get update
 - pip install --upgrade pip
 - pip install -U -q -e .[develop]
 script:
@@ -33,7 +32,6 @@ jobs:
   - stage: benchmark
     python: '3.6'
     install:
-      - sudo apt-get update
       - pip install --upgrade pip
       - pip install -U -q -e .[develop]
     script: pytest --benchmark-sort=mean tests/benchmarks/
