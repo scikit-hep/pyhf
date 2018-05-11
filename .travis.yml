@@ -6,7 +6,7 @@ python:
 install:
 - sudo apt-get update -qq
 - pip install --upgrade pip setuptools
-- pip install -U --process-dependency-links -e .[develop]
+- pip install -U -q --process-dependency-links -e .[develop]
 - pip install --upgrade pytest numpy
 script:
   - pyflakes pyhf
@@ -44,7 +44,7 @@ jobs:
       - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy
         -c pytorch
       - source activate test-environment
-      - pip install -U --process-dependency-links -e .[develop]
+      - pip install -U -q --process-dependency-links -e .[develop]
       - pip install --upgrade pytest
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
@@ -52,7 +52,7 @@ jobs:
     install:
       - sudo apt-get update -qq
       - sudo apt-get -qq install pandoc
-      - pip install -U --process-dependency-links -e .[develop]
+      - pip install -U -q --process-dependency-links -e .[develop]
     script:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
