@@ -7,6 +7,7 @@ install:
 - sudo apt-get update
 - pip install --upgrade pip
 - pip install -U -q --process-dependency-links -e .[develop]
+# numpy upgrade needed for Python 2.7 only
 - pip install --upgrade pytest numpy
 script:
   - pyflakes pyhf
@@ -14,7 +15,8 @@ script:
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
-# benchmark, build docs, deploy to PyPI only when merged into master (those mereges are 'push' builds)
+# test docs on 'pr' builds and 'push' builds on master
+# benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - test
   - name: benchmark
@@ -34,16 +36,7 @@ jobs:
     python: '3.6'
     install:
       - sudo apt-get update
-      - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      - bash miniconda.sh -b -p $HOME/miniconda
-      - export PATH="$HOME/miniconda/bin:$PATH"
-      - hash -r
-      - conda config --set always_yes yes --set changeps1 no
-      - conda update -q conda
-      - conda info -a
-      - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytorch scipy
-        -c pytorch
-      - source activate test-environment
+      - pip install --upgrade pip
       - pip install -U -q --process-dependency-links -e .[develop]
       - pip install --upgrade pytest
     script: pytest --benchmark-sort=mean tests/benchmarks/
