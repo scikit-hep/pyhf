@@ -10,6 +10,7 @@ default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
 
+
 def get_backend():
     """
     Get the current backend and the associated optimizer
@@ -61,6 +62,7 @@ def set_backend(backend):
     #     optimizer = mxnet_optimizer()
     else:
         optimizer = optimize.scipy_optimizer()
+
 
 class modelconfig(object):
     @classmethod
@@ -313,7 +315,10 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, q_mu, for establishing an upper
     limit on the strength parameter, mu, as defiend in
-    Equation (14) in arXiv:1007.1727
+    Equation (14) in
+    `arXiv:1007.1727`_ .
+    .. _`arXiv:1007.1727`:
+         https://arxiv.org/abs/1007.1727
 
     .. math::
        :nowrap:
@@ -346,13 +351,39 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
-    # these pvals are from formula
-    # (59) in arxiv:1007.1727 p_mu = 1-F(q_mu|mu') = 1- \Phi(q_mu - (mu-mu')/sigma)
-    # and  (mu-mu')/sigma = sqrt(Lambda)= sqrt(q_mu_A)
+    r"""
+    The :math:`p`-values as defined in
+    `arXiv:1007.1727`_ .
+    .. _`arXiv:1007.1727`:
+         https://arxiv.org/abs/1007.1727
+
+    in Equation (59)
+
+    .. math::
+
+        p_{\mu} = 1-F\left(q_{\mu}\middle|\mu'\right) = 1- \Phi\left(q_{\mu} - \frac{(\mu-\mu')}{\sigma}\right)
+
+    and Equation (29)
+
+    .. math::
+
+        \frac{(\mu-\mu')}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}
+
+    given the observed test statistics :math:`q_{\mu}` and  :math:`q_{\mu,A}`
+
+    Args:
+        sqrtqmu_v (Number or Tensor): The root of the calculated test statistic, q_mu
+        sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, q_muA
+
+    Returns:
+        CLsb (Float): The :math:`p`-value for the signal + background hypothesis
+        CLb (Float): The :math:`p`-value for the background only hypothesis
+        CLs (Float): The :math:`p`-value for the signal only hypothesis
+    """
     CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
     CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
-    oneOverCLs = CLb / CLsb
-    return CLsb, CLb, oneOverCLs
+    CLs = CLsb / CLb
+    return CLsb, CLb, CLs
 
 
 def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
@@ -368,12 +399,12 @@ def runOnePoint(muTest, data, pdf, init_pars, par_bounds):
         qmu(muTest, asimov_data, pdf, init_pars, par_bounds), 0, max=None)
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-    CLsb, CLb, oneOverCLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
+    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
-    oneOverCLs_exp = []
+    CLs_exp = []
     for nsigma in [-2, -1, 0, 1, 2]:
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
-        oneOverCLs_exp.append(
+        CLs_exp.append(
             pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
-    oneOverCLs_exp = tensorlib.astensor(oneOverCLs_exp)
-    return qmu_v, qmuA_v, CLsb, CLb, oneOverCLs, oneOverCLs_exp
+    CLs_exp = tensorlib.astensor(CLs_exp)
+    return qmu_v, qmuA_v, CLsb, CLb, CLs, CLs_exp
