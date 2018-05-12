@@ -661,8 +661,6 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
 
     CLs_obs, CLs_exp = pyhf.runOnePoint(
         mu_test, data, pdf, init_pars, par_bounds)[-2:]
-    CLs_obs = 1. / CLs_obs
-    CLs_exp = [1. / x for x in CLs_exp]
     assert (CLs_obs - expected_result['obs']) / \
         expected_result['obs'] < tolerance
     for result, expected_result in zip(CLs_exp, expected_result['exp']):
