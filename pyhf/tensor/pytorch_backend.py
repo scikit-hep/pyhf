@@ -30,7 +30,7 @@ class pytorch_backend(object):
         tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tensor_in.data.numpy().tolist()
 
@@ -40,17 +40,21 @@ class pytorch_backend(object):
         return torch.ger(tensor_in_1,tensor_in_2)
 
     def astensor(self, tensor_in):
-        if isinstance(tensor_in, torch.autograd.Variable):
+        """
+        Convert to a PyTorch Tensor.
+
+        Args:
+            tensor_in (Number or Tensor): Tensor object
+
+        Returns:
+            torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
+        """
+        if isinstance(tensor_in, torch.Tensor):
             v = tensor_in
         else:
-            try:
-                v = torch.autograd.Variable(torch.Tensor(tensor_in))
-            except TypeError:
-                try:
-                    v = torch.autograd.Variable(tensor_in)
-                # Guard against passing in something that is not a list or tensor
-                except (TypeError, RuntimeError):
-                    v = torch.autograd.Variable(torch.Tensor([tensor_in]))
+            if not isinstance(tensor_in, list):
+                tensor_in = [tensor_in]
+            v = torch.Tensor(tensor_in)
         return v.type(torch.FloatTensor)
 
     def sum(self, tensor_in, axis=None):
@@ -62,9 +66,9 @@ class pytorch_backend(object):
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
     def ones(self, shape):
-        return torch.autograd.Variable(torch.ones(shape))
+        return torch.Tensor(torch.ones(shape))
 
-    def power(self,tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
@@ -99,10 +103,35 @@ class pytorch_backend(object):
         return torch.cat(sequence)
 
     def simple_broadcast(self, *args):
-        broadcast = []
-        maxdim = max(map(len,args))
-        for a in args:
-            broadcast.append(self.astensor(a) if len(a) > 1 else a*self.ones(maxdim))
+        """
+        Broadcast a sequence of 1 dimensional arrays.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  3.,  4.]), tensor([ 5.,  6.,  7.])]
+
+        Args:
+            args (Array of Tensors): Sequence of arrays
+
+        Returns:
+            list of Tensors: The sequence broadcast together.
+        """
+        args = [self.astensor(arg) for arg in args]
+        max_dim = max(map(len, args))
+        try:
+            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+        except AssertionError as error:
+            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            raise error
+
+        broadcast = [arg if len(arg) > 1 else arg.expand(max_dim)
+                     for arg in args]
         return broadcast
 
     def poisson(self, n, lam):

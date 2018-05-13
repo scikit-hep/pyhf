@@ -40,8 +40,17 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.outer(tensor_in_1,tensor_in_2)
 
-    def astensor(self,tensor_in):
-        return np.array(tensor_in)
+    def astensor(self, tensor_in):
+        """
+        Convert to a NumPy array.
+
+        Args:
+            tensor_in (Number or Tensor): Tensor object
+
+        Returns:
+            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+        """
+        return np.asarray(tensor_in)
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -89,6 +98,25 @@ class numpy_backend(object):
         return np.concatenate(sequence)
 
     def simple_broadcast(self, *args):
+        """
+        Broadcast a sequence of 1 dimensional arrays.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.tensorlib.simple_broadcast(
+            ...   pyhf.tensorlib.astensor([1]),
+            ...   pyhf.tensorlib.astensor([2, 3, 4]),
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            [array([1, 1, 1]), array([2, 3, 4]), array([5, 6, 7])]
+
+        Args:
+            args (Array of Tensors): Sequence of arrays
+
+        Returns:
+            list of Tensors: The sequence broadcast together.
+        """
         return np.broadcast_arrays(*args)
 
     def poisson(self, n, lam):

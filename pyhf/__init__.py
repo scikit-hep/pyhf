@@ -63,7 +63,6 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
-
 class modelconfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
