@@ -313,12 +313,11 @@ def loglambdav(pars, data, pdf):
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
-    The test statistic, q_mu, for establishing an upper
-    limit on the strength parameter, mu, as defiend in
-    Equation (14) in
-    `arXiv:1007.1727`_ .
-    .. _`arXiv:1007.1727`:
-         https://arxiv.org/abs/1007.1727
+    The test statistic, :math:`q_{\mu}`, for establishing an upper
+    limit on the strength parameter, :math:`\mu`, as defiend in
+    Equation (14) in `arXiv:1007.1727`_ .
+
+    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
 
     .. math::
        :nowrap:
@@ -339,7 +338,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         par_bounds(Tensor): The bounds on the paramter values
 
     Returns:
-        Float: The calculated test statistic, q_mu
+        Float: The calculated test statistic, :math:`q_{\mu}`
     """
     mubhathat = optimizer.constrained_bestfit(
         loglambdav, mu, data, pdf, init_pars, par_bounds)
@@ -352,33 +351,29 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     r"""
-    The :math:`p`-values as defined in
-    `arXiv:1007.1727`_ .
-    .. _`arXiv:1007.1727`:
-         https://arxiv.org/abs/1007.1727
+    The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'`
+    as defined in Equations (59) and (57) of `arXiv:1007.1727`_
 
-    in Equation (59)
+    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
 
     .. math::
 
-        p_{\mu} = 1-F\left(q_{\mu}\middle|\mu'\right) = 1- \Phi\left(q_{\mu} - \frac{(\mu-\mu')}{\sigma}\right)
+        p_{\mu} = 1-F\left(q_{\mu}\middle|\mu'\right) = 1- \Phi\left(q_{\mu} - \frac{\left(\mu-\mu'\right)}{\sigma}\right)
 
-    and Equation (29)
+    with Equation (29)
 
     .. math::
 
         \frac{(\mu-\mu')}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}
 
-    given the observed test statistics :math:`q_{\mu}` and  :math:`q_{\mu,A}`
+    given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
 
     Args:
-        sqrtqmu_v (Number or Tensor): The root of the calculated test statistic, q_mu
-        sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, q_muA
+        sqrtqmu_v (Number or Tensor): The root of the calculated test statistic, :math:`\sqrt{q_{\mu}}`
+        sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
 
     Returns:
-        CLsb (Float): The :math:`p`-value for the signal + background hypothesis
-        CLb (Float): The :math:`p`-value for the background only hypothesis
-        CLs (Float): The :math:`p`-value for the signal only hypothesis
+        Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
     CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
     CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
