@@ -12,6 +12,7 @@ Notebooks:
    :maxdepth: 2
 
    examples/notebooks/binderexample/StatisticalAnalysis.ipynb
+   examples/notebooks/Recast.ipynb
    examples/notebooks/ShapeFactor.ipynb
    examples/notebooks/StatError.ipynb
    examples/notebooks/example-mxnet.ipynb
