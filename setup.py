@@ -40,6 +40,7 @@ setup(
        'sphinxcontrib-napoleon',
        'sphinx_rtd_theme',
        'nbsphinx',
+       'jsonpatch',
        'jsonschema>=2.6.0'
     ]
   },
