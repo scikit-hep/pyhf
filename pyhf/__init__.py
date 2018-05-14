@@ -394,7 +394,7 @@ def runOnePoint(muTest, data, pdf, init_pars = None, par_bounds = None):
     Returns:
         Tuple of Floats: a tuple containing (qmu, qmu_A, CLsb, CLb, CLs, CLs_exp)
                          where qmu and qmu_A are the test statistics for the
-                         observerd and asimov datasets respectivleyself.
+                         observed and Asimov datasets respectively.
                          CLsb, CLb are the signal + background and background-only p-values
                          CLs is the modified p-value
                          CLs_exp is a 5-tuple of expected CLs values at percentiles
