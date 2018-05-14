@@ -18,8 +18,8 @@ This repo is a pure-python implementation of that statistical model for multi-bi
 ```python
 >>> import pyhf
 >>> import pyhf.simplemodels
->>> p = pyhf.simplemodels.hepdata_like(signal_data = [12.,11.], bkg_data = [50.,52], bkg_uncerts = [3.,7])
->>> *_, CLs_obs,CLs_exp = pyhf.runOnePoint(1.0, [51, 48]+ p.config.auxdata, p)
+>>> p = pyhf.simplemodels.hepdata_like(signal_data=[12.,11.], bkg_data=[50.,52.], bkg_uncerts=[3.,7.])
+>>> *_, CLs_obs,CLs_exp = pyhf.runOnePoint(1.0, [51, 48] + p.config.auxdata, p)
 >>> print('obs: {} exp: {}'.format(CLs_obs, CLs_exp[2]))
 obs: [0.05290116] exp: [0.06445521]
 ```
