@@ -13,6 +13,17 @@ of ROOT, RooFit, RooStats framework.
 
 This repo is a pure-python implementation of that statistical model for multi-bin histogram-based analysis and its interval estimation is based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)]. The aim is also to support modern computational graph libraries such as PyTorch and Tensorflow in order to make use of features such as autodifferentiation and GPU acceleration.
 
+## Hello World
+
+```python
+>>> import pyhf
+>>> import pyhf.simplemodels
+>>> p = pyhf.simplemodels.hepdata_like(signal_data = [7.],bkg_data = [50.], bkg_uncerts = [3.])
+>>> *_, CLs_obs,CLs_exp = pyhf.runOnePoint(1.0, [50]+ p.config.auxdata, p)
+>>> CLs_obs
+array([0.37731111])
+```
+
 ## What does it support
 
 Implemented variations:
