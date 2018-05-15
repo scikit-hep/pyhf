@@ -1,11 +1,18 @@
 Examples
 ========
 
+Try out in Binder! |Binder|
+
+.. |Binder| image:: https://mybinder.org/badge.svg
+    :target: https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+
 Notebooks:
 
 .. toctree::
    :maxdepth: 2
 
+   examples/notebooks/binderexample/StatisticalAnalysis.ipynb
+   examples/notebooks/Recast.ipynb
    examples/notebooks/ShapeFactor.ipynb
    examples/notebooks/StatError.ipynb
    examples/notebooks/example-mxnet.ipynb
