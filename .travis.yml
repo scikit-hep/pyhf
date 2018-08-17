@@ -6,7 +6,7 @@ python:
   - '3.6'
 install:
 - pip install --upgrade pip
-- pip install -U -q -e .[develop]
+- pip install -U -q -e .[develop,tensorflow,mxnet,torch]
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
@@ -34,14 +34,14 @@ jobs:
     python: '3.6'
     install:
       - pip install --upgrade pip
-      - pip install -U -q -e .[develop]
+      - pip install -U -q -e .[develop,tensorflow,mxnet,torch]
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
     install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
-      - pip install -U -q -e .[develop]
+      - pip install -U -q -e .[develop,tensorflow,mxnet,torch]
     script:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
