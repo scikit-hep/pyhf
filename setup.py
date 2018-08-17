@@ -9,7 +9,7 @@ setup(
   packages = find_packages(),
   include_package_data = True,
   install_requires = [
-    'numpy>=1.14.3',
+    'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
     'scipy'
   ],
   extras_require = {
@@ -17,10 +17,18 @@ setup(
        'uproot',
      ],
     'torch': [
-      'torch'
+      'torch>=0.4.0'
     ],
     'mxnet':[
-      'mxnet',
+      'mxnet>=1.0.0',
+      'requests<2.19.0,>=2.18.4',
+      'numpy<1.15.0,>=1.8.2',
+      'requests<2.19.0,>=2.18.4',
+    ],
+    'tensorflow':[
+       'tensorflow==1.10.0',
+       'numpy<=1.14.5,>=1.13.3',
+       'setuptools<=39.1.0',
     ],
     'develop': [
        'pyflakes',
@@ -28,13 +36,11 @@ setup(
        'pytest-cov>=2.5.1',
        'pytest-benchmark[histogram]',
        'python-coveralls',
+       'coverage==4.0.3',  # coveralls
        'matplotlib',
        'jupyter',
        'uproot',
        'papermill',
-       'torch',
-       'tensorflow',
-       'mxnet>=1.0.0',
        'graphviz',
        'sphinx',
        'sphinxcontrib-bibtex',

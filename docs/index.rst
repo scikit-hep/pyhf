@@ -13,6 +13,7 @@ Contents:
 
    examples
    talks
+   development
    api
 
 Indices and tables
