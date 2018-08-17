@@ -3,8 +3,6 @@
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ name }}
-   :members:
-   :inherited-members:
    :show-inheritance:
 
    {% block attributes %}
