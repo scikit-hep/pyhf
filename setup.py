@@ -37,6 +37,7 @@ setup(
        'mxnet>=1.0.0',
        'graphviz',
        'sphinx',
+       'sphinxcontrib-bibtex',
        'sphinxcontrib-napoleon',
        'sphinx_rtd_theme',
        'nbsphinx',

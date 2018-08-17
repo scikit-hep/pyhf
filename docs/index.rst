@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    examples
+   talks
    api
 
 Indices and tables
