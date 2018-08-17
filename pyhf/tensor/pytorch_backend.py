@@ -114,7 +114,7 @@ class pytorch_backend(object):
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            [tensor([ 1.,  1.,  1.]), tensor([ 2.,  3.,  4.]), tensor([ 5.,  6.,  7.])]
+            [tensor([1., 1., 1.]), tensor([2., 3., 4.]), tensor([5., 6., 7.])]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -153,7 +153,7 @@ class pytorch_backend(object):
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
             >>> pyhf.tensorlib.normal_cdf([0.8])
-            tensor([ 0.7881])
+            tensor([0.7881])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
