@@ -4,6 +4,8 @@ API
 Top-Level
 ---------
 
+.. note:: These are generally uncategorized.
+
 .. currentmodule:: pyhf
 
 .. autosummary::
@@ -25,6 +27,8 @@ Top-Level
 
 Backends
 --------
+
+The computational backends that `pyhf` provides interfacing for the vector-based calculations.
 
 .. currentmodule:: pyhf.tensor
 
@@ -71,6 +75,8 @@ Modifiers
 
 Exceptions
 ----------
+
+Various exceptions, apart from standard python exceptions, that are raised from using the `pyhf` API.
 
 .. currentmodule:: pyhf.exceptions
 
