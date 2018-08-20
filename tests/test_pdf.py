@@ -103,27 +103,6 @@ def test_pdf_integration_staterror():
     for c,e in zip(computed,expected):
         assert c==e
 
-def test_add_unknown_modifier():
-    spec = {
-        'channels': [
-            {
-                'name': 'channel',
-                'samples': [
-                    {
-                        'name': 'ttbar',
-                        'data': [1],
-                        'modifiers': [
-                            {'name': 'a_name', 'type': 'this_should_not_exist', 'data': [1]}
-                        ]
-                    },
-                ]
-            }
-        ]
-    }
-    with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.hfpdf(spec)
-
-
 def test_pdf_integration_histosys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
