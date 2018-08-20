@@ -1,7 +1,6 @@
 import pyhf
 
 import json
-import jsonschema
 import pytest
 import pkg_resources
 
@@ -11,11 +10,7 @@ def source_1bin_example1():
 
 
 @pytest.fixture(scope='module')
-def schema():
-    return json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
-
-@pytest.fixture(scope='module')
-def spec_1bin_shapesys(schema, source=source_1bin_example1()):
+def spec_1bin_shapesys(source=source_1bin_example1()):
     spec = {
         'channels': [
             {
@@ -47,7 +42,6 @@ def spec_1bin_shapesys(schema, source=source_1bin_example1()):
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -98,7 +92,7 @@ def source_1bin_normsys():
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_normsys(schema, source=source_1bin_normsys()):
+def spec_1bin_normsys(source=source_1bin_normsys()):
     spec = {
         'channels': [
             {
@@ -130,7 +124,6 @@ def spec_1bin_normsys(schema, source=source_1bin_normsys()):
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -173,7 +166,7 @@ def source_2bin_histosys_example2():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_histosys(schema, source=source_2bin_histosys_example2()):
+def spec_2bin_histosys(source=source_2bin_histosys_example2()):
     spec = {
         'channels': [
             {
@@ -208,7 +201,6 @@ def spec_2bin_histosys(schema, source=source_2bin_histosys_example2()):
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -252,7 +244,7 @@ def source_2bin_2channel_example1():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel(schema, source=source_2bin_2channel_example1()):
+def spec_2bin_2channel(source=source_2bin_2channel_example1()):
     spec = {
         'channels': [
             {
@@ -300,7 +292,6 @@ def spec_2bin_2channel(schema, source=source_2bin_2channel_example1()):
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -345,7 +336,7 @@ def source_2bin_2channel_couplednorm():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_couplednorm(schema, source=source_2bin_2channel_couplednorm()):
+def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
     spec = {
         'channels': [
             {
@@ -404,7 +395,6 @@ def spec_2bin_2channel_couplednorm(schema, source=source_2bin_2channel_coupledno
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -450,7 +440,7 @@ def source_2bin_2channel_coupledhisto():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledhistosys(schema, source=source_2bin_2channel_coupledhisto()):
+def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto()):
     spec = {
         'channels': [
             {
@@ -518,7 +508,6 @@ def spec_2bin_2channel_coupledhistosys(schema, source=source_2bin_2channel_coupl
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
@@ -564,7 +553,7 @@ def source_2bin_2channel_coupledshapefactor():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledshapefactor(schema, source=source_2bin_2channel_coupledshapefactor()):
+def spec_2bin_2channel_coupledshapefactor(source=source_2bin_2channel_coupledshapefactor()):
     spec = {
         'channels': [
             {
@@ -612,7 +601,6 @@ def spec_2bin_2channel_coupledshapefactor(schema, source=source_2bin_2channel_co
             }
         ]
     }
-    jsonschema.validate(spec, schema)
     return spec
 
 
