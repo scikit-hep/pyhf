@@ -1,8 +1,11 @@
 import logging
+logging.basicConfig()
+import pkg_resources
 
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
+from . import utils
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -153,8 +156,10 @@ class modelconfig(object):
 
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
-        self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
+        self.schema = config_kwargs.get('schema', pkg_resources.resource_filename(__name__,'../validation/spec.json'))
+        utils.validate(self.spec, self.schema)
+        self.config = modelconfig.from_spec(spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
