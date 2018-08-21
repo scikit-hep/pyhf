@@ -48,7 +48,7 @@ setup(
        'sphinx_rtd_theme',
        'nbsphinx',
        'jsonpatch',
-       'jsonschema>=2.6.0'
+       'jsonschema==v3.0.0a2'  # alpha-release for draft 6
     ]
   },
   entry_points = {

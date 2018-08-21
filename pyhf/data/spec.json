@@ -30,7 +30,8 @@
                             { "$ref": "#/definitions/modifier/normfactor" },
                             { "$ref": "#/definitions/modifier/normsys" },
                             { "$ref": "#/definitions/modifier/shapefactor" },
-                            { "$ref": "#/definitions/modifier/shapesys" }
+                            { "$ref": "#/definitions/modifier/shapesys" },
+                            { "$ref": "#/definitions/modifier/staterror" }
                         ]
                     }
                 }
@@ -84,6 +85,16 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapesys" },
+                    "data": { "type": "array", "items": {"type": "number"} }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "staterror": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "staterror" },
                     "data": { "type": "array", "items": {"type": "number"} }
                 },
                 "required": ["name", "type", "data"],

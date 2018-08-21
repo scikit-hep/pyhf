@@ -3,6 +3,7 @@ import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
+from . import utils
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -64,6 +65,9 @@ def set_backend(backend):
         optimizer = optimize.scipy_optimizer()
 
 class modelconfig(object):
+    # set up the logging using the name of this class
+    log = logging.getLogger('.'.join([__name__, 'modelconfig']))
+
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
         # hacky, need to keep track in which order we added the constraints
@@ -78,6 +82,7 @@ class modelconfig(object):
         return instance
 
     def __init__(self):
+        # set up all other bookkeeping variables
         self.poi_index = None
         self.par_map = {}
         self.par_order = []
@@ -126,19 +131,19 @@ class modelconfig(object):
         try:
             modifier_cls = modifiers.registry[modifier_def['type']]
         except KeyError:
-            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+            self.log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
             raise exceptions.InvalidModifier()
 
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
-            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
+            self.log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
             return self.par_map[modifier_def['name']]['modifier']
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
         npars = modifier.n_parameters
 
-        log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
+        self.log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
         sl = slice(self.next_index, self.next_index + npars)
         self.next_index = self.next_index + npars
         self.par_order.append(modifier_def['name'])
@@ -152,9 +157,17 @@ class modelconfig(object):
         return modifier
 
 class hfpdf(object):
+    # set up the logging using the name of this class
+    log = logging.getLogger('.'.join([__name__, 'hfpdf']))
+
     def __init__(self, spec, **config_kwargs):
-        self.config = modelconfig.from_spec(spec,**config_kwargs)
         self.spec = spec
+        self.schema = config_kwargs.get('schema', utils.get_default_schema())
+        # run jsonschema validation of input specification against the (provided) schema
+        self.log.info("Validating spec against schema: {0:s}".format(self.schema))
+        utils.validate(self.spec, self.schema)
+        # build up our representation of the specification
+        self.config = modelconfig.from_spec(spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
