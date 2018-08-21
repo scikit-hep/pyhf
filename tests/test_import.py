@@ -2,6 +2,8 @@ import pyhf
 import pyhf.readxml
 import json
 import jsonschema
+import pytest
+import pkg_resources 
 
 @pytest.fixture(scope='module')
 def schema():

@@ -5,6 +5,7 @@ import numpy as np
 import json
 import jsonschema
 import tensorflow as tf
+import pkg_resources
 
 @pytest.fixture(scope='module')
 def schema():
