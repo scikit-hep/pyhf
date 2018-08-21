@@ -12,7 +12,7 @@ def source_1bin_example1():
 
 @pytest.fixture(scope='module')
 def schema():
-    return json.load(open(pkg_resources.resource_filename('pyhf','validation/spec.json')))
+    return json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
 
 @pytest.fixture(scope='module')
 def spec_1bin_shapesys(schema, source=source_1bin_example1()):
@@ -706,5 +706,5 @@ def test_validation(setup):
     validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'])
 
 def test_schema_access():
-    json.load(open(pkg_resources.resource_filename('pyhf','validation/spec.json')))
+    json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
 
