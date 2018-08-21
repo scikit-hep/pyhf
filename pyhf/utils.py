@@ -16,11 +16,8 @@ def load_schema(schema):
     except KeyError:
         pass
 
-    try:
-        SCHEMA_CACHE[schema] = json.load(open(schema))
-        return SCHEMA_CACHE[schema]
-    except:
-        raise
+    SCHEMA_CACHE[schema] = json.load(open(schema))
+    return SCHEMA_CACHE[schema]
 
 def validate(spec, schema):
     schema = load_schema(schema)
