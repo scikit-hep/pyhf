@@ -642,7 +642,7 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    CLs_obs, CLs_exp = pyhf.runOnePoint(
+    CLs_obs, CLs_exp = pyhf.utils.runOnePoint(
         mu_test, data, pdf, init_pars, par_bounds)[-2:]
     assert (CLs_obs - expected_result['obs']) / \
         expected_result['obs'] < tolerance
