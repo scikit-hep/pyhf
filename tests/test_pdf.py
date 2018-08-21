@@ -251,3 +251,23 @@ def test_pdf_integration_shapesys():
 
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.9,1.1]]
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*1.1]
+
+def test_invalid_modifier():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'ttbar',
+                        'data': [1],
+                        'modifiers': [
+                            {'name': 'a_name', 'type': 'this_should_not_exist', 'data': [1]}
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        pyhf.modelconfig.from_spec(spec)
