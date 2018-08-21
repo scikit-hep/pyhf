@@ -3,6 +3,7 @@ import pyhf
 import json
 import jsonschema
 import pytest
+import pkg_resources
 
 
 @pytest.fixture(scope='module')
@@ -707,3 +708,8 @@ def test_validation(setup):
         setup['expected']['config']['par_bounds']
 
     validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'])
+
+def test_schema_access():
+    json.load(open(pkg_resources.resource_filename('pyhf','validation/spec.json')))
+
+
