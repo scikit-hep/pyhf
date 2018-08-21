@@ -10,7 +10,6 @@ default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
 
-
 def get_backend():
     """
     Get the current backend and the associated optimizer
@@ -308,3 +307,6 @@ class hfpdf(object):
 
     def pdf(self, pars, data):
         return tensorlib.exp(self.logpdf(pars, data))
+
+if __name__ == '__main__':
+    import pdb; pdb.set_trace()
