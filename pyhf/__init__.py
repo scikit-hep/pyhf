@@ -3,7 +3,6 @@ import logging
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
 from . import exceptions
-from . import utils
 
 log = logging.getLogger(__name__)
 tensorlib = tensor.numpy_backend()
@@ -29,10 +28,10 @@ def get_backend():
     global optimizer
     return tensorlib, optimizer
 
-# modifiers need access to tensorlib
+# modifiers/utils need access to tensorlib
 # make sure import is below get_backend()
 from . import modifiers
-
+from . import utils
 
 def set_backend(backend):
     """
@@ -309,88 +308,3 @@ class hfpdf(object):
 
     def pdf(self, pars, data):
         return tensorlib.exp(self.logpdf(pars, data))
-
-
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    bestfit_nuisance_asimov = optimizer.constrained_bestfit(
-        loglambdav, asimov_mu, data, pdf, init_pars, par_bounds)
-    return pdf.expected_data(bestfit_nuisance_asimov)
-
-##########################
-
-
-def loglambdav(pars, data, pdf):
-    return -2 * pdf.logpdf(pars, data)
-
-
-def qmu(mu, data, pdf, init_pars, par_bounds):
-    r"""
-    The test statistic, :math:`q_{\mu}`, for establishing an upper
-    limit on the strength parameter, :math:`\mu`, as defiend in
-    Equation (14) in `arXiv:1007.1727`_ .
-
-    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
-
-    .. math::
-       :nowrap:
-
-       \begin{equation}
-          q_{\mu} = \left\{\begin{array}{ll}
-          -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
-          0, & \hat{\mu} > \mu
-          \end{array}\right.
-        \end{equation}
-
-
-    Args:
-        mu (Number or Tensor): The signal strength parameter
-        data (Tensor): The data to be considered
-        pdf (Tensor): The model used in the likelihood ratio calculation
-        init_pars (Tensor): The initial parameters
-        par_bounds(Tensor): The bounds on the paramter values
-
-    Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
-    """
-    mubhathat = optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds)
-    muhatbhat = optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds)
-    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
-    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
-    return qmu
-
-
-def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
-    r"""
-    The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'`
-    as defined in Equations (59) and (57) of `arXiv:1007.1727`_
-
-    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
-
-    .. math::
-
-        p_{\mu} = 1-F\left(q_{\mu}\middle|\mu'\right) = 1- \Phi\left(q_{\mu} - \frac{\left(\mu-\mu'\right)}{\sigma}\right)
-
-    with Equation (29)
-
-    .. math::
-
-        \frac{(\mu-\mu')}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}
-
-    given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
-
-    Args:
-        sqrtqmu_v (Number or Tensor): The root of the calculated test statistic, :math:`\sqrt{q_{\mu}}`
-        sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
-
-    Returns:
-        Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
-    """
-    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
-    CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
-    CLs = CLsb / CLb
-    return CLsb, CLb, CLs
-
-
-
