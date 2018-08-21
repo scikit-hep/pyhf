@@ -5,6 +5,11 @@ import numpy as np
 import json
 import jsonschema
 import tensorflow as tf
+import pkg_resources
+
+@pytest.fixture(scope='module')
+def schema():
+    return json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
 
 def test_numpy_pdf_inputs():
     source = {
@@ -122,8 +127,7 @@ def test_add_unknown_modifier():
         pyhf.hfpdf(spec)
 
 
-def test_pdf_integration_histosys():
-    schema = json.load(open('validation/spec.json'))
+def test_pdf_integration_histosys(schema):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
@@ -186,12 +190,11 @@ def test_pdf_integration_histosys():
                              'tensorflow',
                              'pytorch',
                          ])
-def test_pdf_integration_normsys(backend):
+def test_pdf_integration_normsys(backend,schema):
     pyhf.set_backend(backend)
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
-    schema = json.load(open('validation/spec.json'))
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
@@ -229,8 +232,7 @@ def test_pdf_integration_normsys(backend):
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
     assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
-def test_pdf_integration_shapesys():
-    schema = json.load(open('validation/spec.json'))
+def test_pdf_integration_shapesys(schema):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
