@@ -4,7 +4,7 @@ import pkg_resources
 from .exceptions import InvalidSpecification
 
 def get_default_schema():
-  return pkg_resources.resource_filename(__name__,'data/spec.json')
+    return pkg_resources.resource_filename(__name__,'data/spec.json')
 
 SCHEMA_CACHE = {}
 def load_schema(schema):
