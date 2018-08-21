@@ -1,6 +1,6 @@
 Developing
 ==========
 
-To develop, we strongly suggest using `virtual environments <https://virtualenvwrapper.readthedocs.io/en/latest/>`__ and ``pip``. To get all necessary packages for development::
+To develop, we suggest using `virtual environments <https://virtualenvwrapper.readthedocs.io/en/latest/>`__ together with ``pip`` or using `pipenv <https://pipenv.readthedocs.io/en/latest/>`__. To get all necessary packages for development::
 
     pip install -e .[develop,tensorflow,mxnet,torch]
