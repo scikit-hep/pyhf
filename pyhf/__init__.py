@@ -1,5 +1,4 @@
 import logging
-logging.basicConfig()
 import pkg_resources
 
 import pyhf.optimize as optimize
