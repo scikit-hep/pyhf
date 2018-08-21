@@ -1,5 +1,4 @@
 import logging
-import pkg_resources
 
 import pyhf.optimize as optimize
 import pyhf.tensor as tensor
@@ -156,7 +155,7 @@ class modelconfig(object):
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = spec
-        self.schema = config_kwargs.get('schema', pkg_resources.resource_filename(__name__,'data/spec.json'))
+        self.schema = config_kwargs.get('schema', utils.get_default_schema())
         utils.validate(self.spec, self.schema)
         self.config = modelconfig.from_spec(spec,**config_kwargs)
 
