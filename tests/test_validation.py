@@ -3,7 +3,7 @@ import pyhf
 import json
 import jsonschema
 import pytest
-
+import pkg_resources
 
 @pytest.fixture(scope='module')
 def source_1bin_example1():
@@ -43,7 +43,7 @@ def spec_1bin_shapesys(source=source_1bin_example1()):
             }
         ]
     }
-    schema = json.load(open('validation/spec.json'))
+    schema = json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
     jsonschema.validate(spec, schema)
     return spec
 
