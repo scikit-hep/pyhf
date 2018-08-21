@@ -3,8 +3,11 @@ import pyhf.readxml
 import json
 import jsonschema
 
-def test_import_prepHistFactory():
-    schema = json.load(open('validation/spec.json'))
+@pytest.fixture(scope='module')
+def schema():
+    return json.load(open(pkg_resources.resource_filename('pyhf','data/spec.json')))
+
+def test_import_prepHistFactory(schema):
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                               'validation/xmlimport_input/')
 
@@ -39,8 +42,7 @@ def test_import_prepHistFactory():
     assert pdf.expected_data(
         pars, include_auxdata=False).tolist() == [140, 120]
 
-def test_import_histosys():
-    schema = json.load(open('validation/spec.json'))
+def test_import_histosys(schema):
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input2/config/example.xml',
                               'validation/xmlimport_input2')
 
