@@ -4,7 +4,6 @@ import pyhf.simplemodels
 import numpy as np
 import json
 import tensorflow as tf
-import pkg_resources
 
 def test_numpy_pdf_inputs():
     source = {

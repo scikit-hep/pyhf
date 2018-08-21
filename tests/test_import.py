@@ -2,7 +2,6 @@ import pyhf
 import pyhf.readxml
 import json
 import pytest
-import pkg_resources
 
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',

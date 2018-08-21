@@ -156,7 +156,7 @@ class modelconfig(object):
 class hfpdf(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = spec
-        self.schema = config_kwargs.get('schema', pkg_resources.resource_filename(__name__,'../validation/spec.json'))
+        self.schema = config_kwargs.get('schema', pkg_resources.resource_filename(__name__,'data/spec.json'))
         utils.validate(self.spec, self.schema)
         self.config = modelconfig.from_spec(spec,**config_kwargs)
 
