@@ -137,12 +137,14 @@ class Model(object):
         which is just `[ 2*3*6*7, 2*4*6*8, 2*5*6*9]`.
 
         Notice how some factors (for fixed channel c and sample s) depend on
-        bin b and some don't (eq 6 CERN-OPEN-2012-016). The broadcasting lets
+        bin b and some don't (Eq 6 `CERN-OPEN-2012-016`_). The broadcasting lets
         you scale all bins the same way, such as when you have a ttbar
         normalization factor that scales all bins.
 
         Shape === affects each bin separately
         Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
+
+        .. _`CERN-OPEN-2012-016`: https://cds.cern.ch/record/1456844?ln=en
 
         """
         # for each sample the expected ocunts are
