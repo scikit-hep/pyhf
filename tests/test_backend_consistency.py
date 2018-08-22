@@ -108,9 +108,9 @@ def test_runOnePoint_q_mu(n_bins,
             tf.reset_default_graph()
             pyhf.tensorlib.session = tf.Session()
 
-        q_mu = pyhf.runOnePoint(1.0, data, pdf,
-                                pdf.config.suggested_init(),
-                                pdf.config.suggested_bounds())[0]
+        q_mu = pyhf.utils.runOnePoint(1.0, data, pdf,
+                                      pdf.config.suggested_init(),
+                                      pdf.config.suggested_bounds())[0]
         test_statistic.append(pyhf.tensorlib.tolist(q_mu))
 
     # compare to NumPy/SciPy

@@ -1,4 +1,4 @@
-from . import hfpdf
+from . import Model
 
 def hepdata_like(signal_data, bkg_data, bkg_uncerts):
     spec = {
@@ -24,4 +24,4 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts):
             }
         ]
     }
-    return hfpdf(spec)
+    return Model(spec)

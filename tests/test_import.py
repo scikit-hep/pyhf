@@ -9,7 +9,7 @@ def test_import_prepHistFactory():
 
     # build the spec, strictly checks properties included
     spec = {'channels': parsed_xml['channels']}
-    pdf = pyhf.hfpdf(spec, poiname='SigXsecOverSM')
+    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [binvalue for k in pdf.spec['channels'] for binvalue
             in parsed_xml['data'][k['name']]] + pdf.config.auxdata
@@ -43,7 +43,7 @@ def test_import_histosys():
 
     # build the spec, strictly checks properties included
     spec = {'channels': parsed_xml['channels']}
-    pdf = pyhf.hfpdf(spec, poiname='SigXsecOverSM')
+    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [binvalue for k in pdf.spec['channels'] for binvalue
             in parsed_xml['data'][k['name']]] + pdf.config.auxdata

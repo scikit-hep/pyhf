@@ -16,7 +16,7 @@ def test_missing_sample_name():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.hfpdf(spec)
+        pyhf.Model(spec)
 
 def test_add_unknown_modifier():
     spec = {
@@ -36,4 +36,4 @@ def test_add_unknown_modifier():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.hfpdf(spec)
+        pyhf.Model(spec)

@@ -4,26 +4,30 @@ API
 Top-Level
 ---------
 
-.. note:: These are generally uncategorized.
-
 .. currentmodule:: pyhf
 
 .. autosummary::
    :toctree: _generated/
-   :nosignatures:
 
    default_backend
    default_optimizer
-   generate_asimov_data
-   get_backend
-   hfpdf
-   loglambdav
-   modelconfig
-   pvals_from_teststat
-   qmu
-   runOnePoint
-   set_backend
    tensorlib
+   optimizer
+   get_backend
+   set_backend
+
+Making Probability Distribution Functions (PDFs)
+------------------------------------------------
+
+.. currentmodule:: pyhf.pdf
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+   :template: modifierclass.rst
+
+   Model
+   _ModelConfig
 
 Backends
 --------
@@ -88,3 +92,16 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    InvalidInterpCode
    InvalidModifier
 
+Utilities
+---------
+
+.. currentmodule:: pyhf.utils
+
+.. autosummary::
+   :toctree: _generated/
+
+   generate_asimov_data
+   loglambdav
+   pvals_from_teststat
+   qmu
+   runOnePoint

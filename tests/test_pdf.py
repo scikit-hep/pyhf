@@ -26,6 +26,7 @@ def test_numpy_pdf_inputs():
 
     assert len(data) == np_data.shape[0]
     assert len(pars) == np_parameters.shape[0]
+    assert pdf.pdf(pars,data) == pdf.pdf(np_parameters,np_data)
     assert pdf.logpdf(pars,data) == pdf.logpdf(np_parameters,np_data)
     assert np.array(pdf.logpdf(np_parameters,np_data)).shape == (1,)
 
@@ -91,7 +92,7 @@ def test_pdf_integration_staterror():
             },
         ]
     }
-    pdf = pyhf.hfpdf(spec)
+    pdf = pyhf.Model(spec)
     par = pdf.config.par_slice('stat_firstchannel')
     mod = pdf.config.modifier('stat_firstchannel')
     assert mod.uncertainties == [[12.,12.],[5.,5.]]
@@ -127,7 +128,7 @@ def test_pdf_integration_histosys():
             }
         ]
     }
-    pdf  = pyhf.hfpdf(spec)
+    pdf  = pyhf.Model(spec)
 
 
     pars = [None,None]
@@ -193,7 +194,7 @@ def test_pdf_integration_normsys(backend):
             }
         ]
     }
-    pdf  = pyhf.hfpdf(spec)
+    pdf  = pyhf.Model(spec)
 
     pars = [None,None]
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.0]]
@@ -230,7 +231,7 @@ def test_pdf_integration_shapesys():
             }
         ]
     }
-    pdf  = pyhf.hfpdf(spec)
+    pdf  = pyhf.Model(spec)
 
 
 
@@ -270,4 +271,4 @@ def test_invalid_modifier():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
-        pyhf.modelconfig.from_spec(spec)
+        pyhf.pdf._ModelConfig.from_spec(spec)
