@@ -26,6 +26,7 @@ def test_numpy_pdf_inputs():
 
     assert len(data) == np_data.shape[0]
     assert len(pars) == np_parameters.shape[0]
+    assert pdf.pdf(pars,data) == pdf.pdf(np_parameters,np_data)
     assert pdf.logpdf(pars,data) == pdf.logpdf(np_parameters,np_data)
     assert np.array(pdf.logpdf(np_parameters,np_data)).shape == (1,)
 
