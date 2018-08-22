@@ -307,6 +307,3 @@ class hfpdf(object):
 
     def pdf(self, pars, data):
         return tensorlib.exp(self.logpdf(pars, data))
-
-if __name__ == '__main__':
-    import pdb; pdb.set_trace()
