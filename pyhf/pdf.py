@@ -251,4 +251,4 @@ class hfpdf(object):
 
     def pdf(self, pars, data):
         tensorlib, _ = get_backend()
-        return tensorlib.exp(logpdf(pars, data))
+        return tensorlib.exp(self.logpdf(pars, data))

@@ -1,5 +1,3 @@
-__all__ = ["pdf", "utils", "modifiers"]
-
 from . import tensor, optimize
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
@@ -53,4 +51,6 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
+
 from .pdf import hfpdf, modelconfig
+__all__ = ["hfpdf", "modelconfig", "utils", "modifiers"]
