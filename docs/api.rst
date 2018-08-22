@@ -16,8 +16,8 @@ Top-Level
    get_backend
    set_backend
 
-Model
------
+Making Probability Distribution Functions (PDFs)
+------------------------------------------------
 
 .. currentmodule:: pyhf.pdf
 
