@@ -52,5 +52,5 @@ def set_backend(backend):
         optimizer = optimize.scipy_optimizer()
 
 
-from .pdf import hfpdf, modelconfig
-__all__ = ["hfpdf", "modelconfig", "utils", "modifiers"]
+from .pdf import Model
+__all__ = ["Model", "utils", "modifiers"]

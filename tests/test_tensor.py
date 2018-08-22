@@ -98,7 +98,7 @@ def test_pdf_eval():
                 }
             ]
         }
-        pdf = pyhf.hfpdf(spec)
+        pdf = pyhf.Model(spec)
         data = source['bindata']['data'] + pdf.config.auxdata
 
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)

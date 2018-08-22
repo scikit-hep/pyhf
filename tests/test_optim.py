@@ -78,7 +78,7 @@ def spec(source):
                              # 'mxnet',
                          ])
 def test_optim(source, spec, mu, backend):
-    pdf = pyhf.hfpdf(spec)
+    pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()

@@ -671,7 +671,7 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
 ])
 def test_validation(setup):
     source = setup['source']
-    pdf = pyhf.hfpdf(setup['spec'])
+    pdf = pyhf.Model(setup['spec'])
 
     if 'channels' in source:
         data = []

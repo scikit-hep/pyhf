@@ -6,7 +6,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 
-class modelconfig(object):
+class _ModelConfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu'):
         # hacky, need to keep track in which order we added the constraints
@@ -95,7 +95,7 @@ class modelconfig(object):
             self.auxdata_order.append(modifier_def['name'])
         return modifier
 
-class hfpdf(object):
+class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = spec
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
@@ -103,7 +103,7 @@ class hfpdf(object):
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = modelconfig.from_spec(spec,**config_kwargs)
+        self.config = _ModelConfig.from_spec(spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
@@ -112,7 +112,7 @@ class hfpdf(object):
             b1 = shapesys_1   |      shapef_1   |
             b2 = shapesys_2   |      shapef_2   |
             ...             normfac1    ..     normfac2
-                            (broad)            (broad)
+            ...             (broad)     ..     (broad)
             bn = shapesys_n   |      shapef_1   |
 
         this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
@@ -143,6 +143,7 @@ class hfpdf(object):
 
         Shape === affects each bin separately
         Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
+
         """
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
