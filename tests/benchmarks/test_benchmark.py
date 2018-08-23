@@ -69,9 +69,9 @@ def runOnePoint(pdf, data):
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
 
-    return pyhf.runOnePoint(1.0, data, pdf,
-                            pdf.config.suggested_init(),
-                            pdf.config.suggested_bounds())
+    return pyhf.utils.runOnePoint(1.0, data, pdf,
+                                  pdf.config.suggested_init(),
+                                  pdf.config.suggested_bounds())
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
