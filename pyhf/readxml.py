@@ -118,8 +118,8 @@ def parse(configfile, rootdir, enable_tqdm=False):
     channels = {}
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
-        k, d, v = process_channel(ET.parse(os.path.join(rootdir,inp)), rootdir)
-        channels[k] = {'data': d, 'samples': v}
+        channel, data, samples = process_channel(ET.parse(os.path.join(rootdir,inp)), rootdir)
+        channels[channel] = {'data': data, 'samples': samples}
 
     return {
         'toplvl':{
