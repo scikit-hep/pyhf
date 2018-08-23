@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
   name = 'pyhf',
-  version = '0.0.9',
+  version = '0.0.10',
   description = '(partial) pure python histfactory implementation',
   url = '',
   author = 'Lukas Heinrich',
