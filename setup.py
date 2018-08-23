@@ -10,7 +10,8 @@ setup(
   include_package_data = True,
   install_requires = [
     'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
-    'scipy'
+    'scipy',
+    'click>=6.0',  # for console scripts
   ],
   extras_require = {
     'xmlimport': [
@@ -52,6 +53,7 @@ setup(
     ]
   },
   entry_points = {
+      'console_scripts': ['pyhf_xml2json=pyhf.commandline:xml2json']
   },
   dependency_links = [
   ]
