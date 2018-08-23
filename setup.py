@@ -37,6 +37,7 @@ setup(
        'pytest>=3.5.1',
        'pytest-cov>=2.5.1',
        'pytest-benchmark[histogram]',
+       'pytest-console-scripts',
        'python-coveralls',
        'coverage==4.0.3',  # coveralls
        'matplotlib',
