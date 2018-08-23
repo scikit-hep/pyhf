@@ -1,9 +1,10 @@
+import logging
+log = logging.getLogger(__name__)
+
 import os
 import xml.etree.ElementTree as ET
 import numpy as np
-import logging
-
-log = logging.getLogger(__name__)
+import tqdm
 
 def import_root_histogram(rootdir, filename, path, name):
     import uproot
@@ -51,7 +52,6 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname):
                 'type': 'normfactor',
                 'data': None
             })
-
         elif modtag.tag == 'HistoSys':
             lo,_ = import_root_histogram(rootdir,
                     modtag.attrib.get('HistoFileLow',inputfile),
@@ -111,12 +111,16 @@ def process_channel(channelxml,rootdir):
     channelname = channel.attrib['Name']
     return  channelname, process_data(data, rootdir, inputfile, histopath), [process_sample(x, rootdir, inputfile, histopath, channelname) for x in samples]
 
-def parse(configfile,rootdir):
+def parse(configfile, rootdir, enable_tqdm=False):
     toplvl = ET.parse(configfile)
-    inputs = [ET.parse(os.path.join(rootdir,x.text)) for x in toplvl.findall('Input')]
-    channels = {
-        k:{'data': d, 'samples': v} for k,d,v in [process_channel(inp,rootdir) for inp in inputs]
-    }
+    inputs = tqdm.tqdm([x.text for x in toplvl.findall('Input')], unit='channel', disable=not(enable_tqdm))
+
+    channels = {}
+    for inp in inputs:
+        inputs.set_description('Processing {}'.format(inp))
+        k, d, v = process_channel(ET.parse(os.path.join(rootdir,inp)), rootdir)
+        channels[k] = {'data': d, 'samples': v}
+
     return {
         'toplvl':{
             'resultprefix':toplvl.getroot().attrib['OutputFilePrefix'],

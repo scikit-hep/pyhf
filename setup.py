@@ -11,7 +11,8 @@ setup(
   install_requires = [
     'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
     'scipy',
-    'click>=6.0',  # for console scripts
+    'click>=6.0',  # for console scripts,
+    'tqdm',  # for readxml
   ],
   extras_require = {
     'xmlimport': [
