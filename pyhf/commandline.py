@@ -6,7 +6,11 @@ import click
 import json
 from . import readxml
 
-@click.command()
+@click.group(context_settings=dict(help_option_names=['-h', '--help']))
+def pyhf():
+    pass
+
+@pyhf.command()
 @click.option('--entrypoint-xml', required=True, prompt='Top-level XML', help='The top-level XML file for the workspace definition.', type=click.Path(exists=True))
 @click.option('--workspace', required=True, prompt='Workspace directory', help='The location of workspace.', type=click.Path(exists=True))
 @click.option('--output-file', required=True, prompt='Output file', help='The location of the output json file. If not specified, prints to screen.')

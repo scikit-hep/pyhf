@@ -55,7 +55,7 @@ setup(
     ]
   },
   entry_points = {
-      'console_scripts': ['pyhf_xml2json=pyhf.commandline:xml2json']
+      'console_scripts': ['pyhf=pyhf.commandline:pyhf']
   },
   dependency_links = [
   ]
