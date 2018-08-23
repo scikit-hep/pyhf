@@ -22,7 +22,7 @@ stages:
   - name: docs
     if: (branch = master)
   - name: deploy
-    if: (tag =~ v[0-9\.]*
+    if: (tag =~ v[0-9\.]*)
 
 env:
   global:
