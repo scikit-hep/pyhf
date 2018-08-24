@@ -2,6 +2,7 @@ import pyhf
 import pyhf.readxml
 import json
 import pytest
+import numpy as np
 
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
@@ -33,7 +34,7 @@ def test_import_prepHistFactory():
     assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['data'] == [0,10.]
 
     assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'staterror'
-    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['data'] == [5.000000074505806, 0.0]
+    assert all(np.isclose(pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['data'],[5.0, 0.0]))
 
     assert pdf.expected_actualdata(
         pdf.config.suggested_init()).tolist() == [120.0, 110.0]
