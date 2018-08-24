@@ -10,7 +10,9 @@ setup(
   include_package_data = True,
   install_requires = [
     'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
-    'scipy'
+    'scipy',
+    'click>=6.0',  # for console scripts,
+    'tqdm',  # for readxml
   ],
   extras_require = {
     'xmlimport': [
@@ -35,6 +37,7 @@ setup(
        'pytest>=3.5.1',
        'pytest-cov>=2.5.1',
        'pytest-benchmark[histogram]',
+       'pytest-console-scripts',
        'python-coveralls',
        'coverage==4.0.3',  # coveralls
        'matplotlib',
@@ -52,6 +55,7 @@ setup(
     ]
   },
   entry_points = {
+      'console_scripts': ['pyhf=pyhf.commandline:pyhf']
   },
   dependency_links = [
   ]
