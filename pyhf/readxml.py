@@ -6,19 +6,26 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 
+
 def extract_error(h):
-    if h.fSumw2:
-        return np.sqrt(h.fSumw2[1:-1]).tolist()
-    else:
-        #if fSumw2 is not filled, it must have
-        #been filled with no weights and .Sumw2() never
-        #got called. therefore error is sqrt(entries)
-        return np.sqrt(h.numpy[0]).tolist()
+    """
+    Determine the bin uncertainties for a histogram.
+
+    If `fSumw2` is not filled, then the histogram must have been
+    filled with no weights and `.Sumw2()` was never called. The
+    bin uncertainties are then Poisson, and so the `sqrt(entries)`.
+
+    Args:
+        h: The histogram
+
+    Returns:
+        list: The uncertainty for each bin in the histogram
+    """
+    err = h.fSumw2[1:-1] if h.fSumw2 else h.numpy[0]
+    return np.sqrt(err).tolist()
 
 def import_root_histogram(rootdir, filename, path, name):
     import uproot
-    #import pdb; pdb.set_trace()
-    #assert path == ''
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
