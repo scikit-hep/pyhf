@@ -153,7 +153,7 @@ def parse(configfile, rootdir, track_progress=False):
     return {
         'toplvl':{
             'resultprefix':toplvl.getroot().attrib['OutputFilePrefix'],
-            'measurements': {x.attrib['Name'] : {} for x in toplvl.findall('Measurement')}
+            'measurements': [{'name': x.attrib['Name'], 'config': {'poi': x.findall('POI')[0].text}} for x in toplvl.findall('Measurement')]
         },
         'channels': [{'name': k, 'samples': v['samples']} for k,v in channels.items()],
         'data':     {k:v['data'] for k,v in channels.items()}
