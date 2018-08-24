@@ -2,6 +2,7 @@ import pyhf
 import pyhf.readxml
 import json
 import pytest
+import numpy as np
 
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
@@ -17,7 +18,7 @@ def test_import_prepHistFactory():
     channels = {channel['name'] for channel in pdf.spec['channels']}
     samples = {channel['name']: [sample['name'] for sample in channel['samples']] for channel in pdf.spec['channels']}
 
-    assert data == [122.0, 112.0, 0, 0, 1.0, 1.0, 0.0]
+
     ###
     ### signal overallsys
     ### bkg1 overallsys (stat ignored)
@@ -29,8 +30,18 @@ def test_import_prepHistFactory():
     assert 'background1' in samples['channel1']
     assert 'background2' in samples['channel1']
 
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['type'] == 'staterror'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['data'] == [0,10.]
+
+    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'staterror'
+    assert all(np.isclose(pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['data'],[5.0, 0.0]))
+
     assert pdf.expected_actualdata(
         pdf.config.suggested_init()).tolist() == [120.0, 110.0]
+
+    assert pdf.config.auxdata_order ==  ['syst1', 'staterror_channel1', 'syst2', 'syst3']
+
+    assert data == [122.0, 112.0, 0.0, 1.0, 1.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]

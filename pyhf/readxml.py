@@ -6,27 +6,38 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 
+
+def extract_error(h):
+    """
+    Determine the bin uncertainties for a histogram.
+
+    If `fSumw2` is not filled, then the histogram must have been
+    filled with no weights and `.Sumw2()` was never called. The
+    bin uncertainties are then Poisson, and so the `sqrt(entries)`.
+
+    Args:
+        h: The histogram
+
+    Returns:
+        list: The uncertainty for each bin in the histogram
+    """
+    err = h.fSumw2[1:-1] if h.fSumw2 else h.numpy[0]
+    return np.sqrt(err).tolist()
+
 def import_root_histogram(rootdir, filename, path, name):
     import uproot
-    #import pdb; pdb.set_trace()
-    #assert path == ''
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
     f = uproot.open(os.path.join(rootdir, filename))
     try:
         h = f[name]
-        return h.numpy[0].tolist(), np.sqrt(h.fSumw2[1:-1]).tolist()
     except KeyError:
-        pass
-
-    try:
-        h = f[os.path.join(path, name)]
-        return h.numpy[0].tolist(), np.sqrt(h.fSumw2[1:-1]).tolist()
-    except KeyError:
-        pass
-
-    raise KeyError('Both {0:s} and {1:s} were tried and not found in {2:s}'.format(name, os.path.join(path, name), os.path.join(rootdir, filename)))
+        try:
+            h = f[os.path.join(path, name)]
+        except KeyError:
+            raise KeyError('Both {0:s} and {1:s} were tried and not found in {2:s}'.format(name, os.path.join(path, name), os.path.join(rootdir, filename)))
+    return h.numpy[0].tolist(), extract_error(h)
 
 def process_sample(sample,rootdir,inputfile, histopath, channelname, track_progress=False):
     if 'InputFile' in sample.attrib:
@@ -75,13 +86,21 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname, track_progr
             })
         elif modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
             if modtag.attrib.get('HistoName','') == '':
-                modifiers.append({
-                    'name': 'staterror_{}'.format(channelname),
-                    'type': 'staterror',
-                    'data': err
-                })
+                staterr = err
             else:
-                log.warning('not considering stat error with external uncrt %s', sample.attrib['Name'])
+                extstat,_ = import_root_histogram(rootdir,
+                        modtag.attrib.get('HistoFile',inputfile),
+                        modtag.attrib.get('HistoPath',''),
+                        modtag.attrib['HistoName']
+                )
+                staterr = np.multiply(extstat,data).tolist()
+            if not staterr:
+                raise RuntimeError('cannot determine stat error.')
+            modifiers.append({
+                'name': 'staterror_{}'.format(channelname),
+                'type': 'staterror',
+                'data': staterr
+            })
         else:
             log.warning('not considering modifier tag %s', modtag)
 
