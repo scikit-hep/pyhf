@@ -7,7 +7,7 @@ import pyhf
 # see test_import.py for the same (detailed) test
 def test_import_prepHistFactory(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json --entrypoint-xml validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --no-tqdm'.format(temp.strpath)
+    command = 'pyhf xml2json --entrypoint-xml validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(temp.strpath)
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert ret.stdout == ''
