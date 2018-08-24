@@ -18,7 +18,7 @@ Contents:
 
 .. raw:: html
 
-   <a class="github-fork-ribbon left-bottom fixed" href="https://github.com/diana-hep/pyhf/" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+   <a class="github-fork-ribbon left-bottom fixed" href="https://github.com/diana-hep/pyhf/fork" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
 Indices and tables
 ==================
