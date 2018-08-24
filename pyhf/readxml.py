@@ -11,6 +11,7 @@ def import_root_histogram(rootdir, filename, path, name):
     #import pdb; pdb.set_trace()
     #assert path == ''
     # strip leading slashes as uproot doesn't use "/" for top-level
+    if path is None: path = ''
     path = path.strip('/')
     f = uproot.open(os.path.join(rootdir, filename))
     try:
@@ -27,7 +28,7 @@ def import_root_histogram(rootdir, filename, path, name):
 
     raise KeyError('Both {0:s} and {1:s} were tried and not found in {2:s}'.format(name, os.path.join(path, name), os.path.join(rootdir, filename)))
 
-def process_sample(sample,rootdir,inputfile, histopath, channelname):
+def process_sample(sample,rootdir,inputfile, histopath, channelname, enable_tqdm=False):
     if 'InputFile' in sample.attrib:
        inputfile = sample.attrib.get('InputFile')
     if 'HistoPath' in sample.attrib:
@@ -37,7 +38,11 @@ def process_sample(sample,rootdir,inputfile, histopath, channelname):
     data,err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
     modifiers = []
-    for modtag in sample.iter():
+
+    modtags = tqdm.tqdm(sample.iter(), unit='modifier', disable=not(enable_tqdm), total=len(sample))
+
+    for modtag in modtags:
+        modtags.set_description('  - modifier {0:s}({1:s})'.format(modtag.attrib.get('Name', 'n/a'), modtag.tag))
         if modtag == sample:
             continue
         if modtag.tag == 'OverallSys':
@@ -97,19 +102,24 @@ def process_data(sample,rootdir,inputfile, histopath):
     data,_ = import_root_histogram(rootdir, inputfile, histopath, histoname)
     return data
 
-def process_channel(channelxml,rootdir):
+def process_channel(channelxml, rootdir, enable_tqdm=False):
     channel = channelxml.getroot()
 
     inputfile = channel.attrib.get('InputFile')
     histopath = channel.attrib.get('HistoPath')
 
-    samples = channel.findall('Sample')
-
+    samples = tqdm.tqdm(channel.findall('Sample'), unit='sample', disable=not(enable_tqdm))
 
     data = channel.findall('Data')[0]
-
     channelname = channel.attrib['Name']
-    return  channelname, process_data(data, rootdir, inputfile, histopath), [process_sample(x, rootdir, inputfile, histopath, channelname) for x in samples]
+
+    results = []
+    for sample in samples:
+      samples.set_description('  - sample {}'.format(sample.attrib.get('Name')))
+      result = process_sample(sample, rootdir, inputfile, histopath, channelname, enable_tqdm)
+      results.append(result)
+
+    return channelname, process_data(data, rootdir, inputfile, histopath), results
 
 def parse(configfile, rootdir, enable_tqdm=False):
     toplvl = ET.parse(configfile)
@@ -118,7 +128,7 @@ def parse(configfile, rootdir, enable_tqdm=False):
     channels = {}
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
-        channel, data, samples = process_channel(ET.parse(os.path.join(rootdir,inp)), rootdir)
+        channel, data, samples = process_channel(ET.parse(os.path.join(rootdir,inp)), rootdir, enable_tqdm)
         channels[channel] = {'data': data, 'samples': samples}
 
     return {
