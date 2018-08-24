@@ -1,3 +1,5 @@
+:github_url: https://github.com/diana-hep/pyhf/blob/master/{{module | replace(".", "/") }}
+
 {{ name | escape | underline}}
 
 .. currentmodule:: {{ module }}
