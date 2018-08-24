@@ -28,6 +28,8 @@ def test_import_prepHistFactory():
     assert 'signal' in samples['channel1']
     assert 'background1' in samples['channel1']
     assert 'background2' in samples['channel1']
+    assert samples['channels'][0]['samples'][1]['modifiers'][0]['data']
+
 
     assert pdf.expected_actualdata(
         pdf.config.suggested_init()).tolist() == [120.0, 110.0]
