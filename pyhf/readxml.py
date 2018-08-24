@@ -25,14 +25,11 @@ def import_root_histogram(rootdir, filename, path, name):
     f = uproot.open(os.path.join(rootdir, filename))
     try:
         h = f[name]
-        return h.numpy[0].tolist(), extract_error(h)
     except KeyError:
         try:
             h = f[os.path.join(path, name)]
         except KeyError:
             raise KeyError('Both {0:s} and {1:s} were tried and not found in {2:s}'.format(name, os.path.join(path, name), os.path.join(rootdir, filename)))
-
-    h = f[os.path.join(path, name)]
     return h.numpy[0].tolist(), extract_error(h)
 
 def process_sample(sample,rootdir,inputfile, histopath, channelname, track_progress=False):
