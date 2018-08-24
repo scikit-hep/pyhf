@@ -13,11 +13,12 @@ def pyhf():
     pass
 
 @pyhf.command()
-@click.argument('entrypoint-xml', help='The top-level XML file for the PDF definition.', type=click.Path(exists=True))
+@click.argument('entrypoint-xml', type=click.Path(exists=True))
 @click.option('--basedir', help='The base directory for the XML files to point relative to.', type=click.Path(exists=True), default=os.getcwd())
 @click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
 @click.option('--track-progress/--hide-progress', default=True)
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
+    """ Entrypoint XML: The top-level XML file for the PDF definition. """
     spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
     if output_file is None:
         json.dumps(spec, indent=4, sort_keys=True)
