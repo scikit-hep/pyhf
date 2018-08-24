@@ -11,7 +11,7 @@ def import_root_histogram(rootdir, filename, path, name):
     #import pdb; pdb.set_trace()
     #assert path == ''
     # strip leading slashes as uproot doesn't use "/" for top-level
-    if path is None: path = ''
+    path = path or ''
     path = path.strip('/')
     f = uproot.open(os.path.join(rootdir, filename))
     try:
