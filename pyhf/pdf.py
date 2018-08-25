@@ -9,18 +9,19 @@ from . import utils
 
 class _ModelConfig(object):
     @classmethod
-    def from_spec(cls,spec,poiname = 'mu'):
+    def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
-                    modifier_def = copy.deepcopy(modifier_def)
-                    fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
-                    if modifier_def['name'] == poiname:
-                        poiname = fullname
-                    modifier_def['name'] = fullname
+                    if qualify_names:
+                        modifier_def = copy.deepcopy(modifier_def)
+                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
+                        if modifier_def['name'] == poiname:
+                            poiname = fullname
+                        modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
         instance.set_poi(poiname)
