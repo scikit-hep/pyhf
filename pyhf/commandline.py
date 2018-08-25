@@ -34,7 +34,10 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 def cls(workspace,output_file):
     specstream = click.open_file(workspace)
     d = json.load(specstream)
-    p = Model({'channels':d['channels']}, poiname=d['toplvl']['measurements'][0]['config']['poi'])
+    measurements = d['toplvl']['measurements']
+    if len(measurements) > 1:
+        log.warning('multiple measurements definded. Taking the first %s', measurements[0]['name'])
+    p = Model({'channels':d['channels']}, poiname=measurements[0]['config']['poi'])
     result = runOnePoint(1.0, d['data']['channel1'] + p.config.auxdata, p)
     result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
     if output_file is None:
