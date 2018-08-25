@@ -17,7 +17,6 @@ class _ModelConfig(object):
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
-                        modifier_def = copy.deepcopy(modifier_def)
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                         if modifier_def['name'] == poiname:
                             poiname = fullname
@@ -107,13 +106,13 @@ class _ModelConfig(object):
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
-        self.spec = spec
+        self.spec = copy.deepcopy(spec) #may get modified by config
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(spec,**config_kwargs)
+        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
