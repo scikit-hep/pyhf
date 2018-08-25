@@ -1,3 +1,4 @@
+import copy
 import logging
 log = logging.getLogger(__name__)
 
@@ -15,6 +16,11 @@ class _ModelConfig(object):
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
+                    modifier_def = copy.deepcopy(modifier_def)
+                    fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
+                    if modifier_def['name'] == poiname:
+                        poiname = fullname
+                    modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
         instance.set_poi(poiname)
