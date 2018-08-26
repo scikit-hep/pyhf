@@ -11,6 +11,7 @@ Notebooks:
 .. toctree::
    :maxdepth: 2
 
+   examples/notebooks/hello-world.ipynb
    examples/notebooks/binderexample/StatisticalAnalysis.ipynb
    examples/notebooks/Recast.ipynb
    examples/notebooks/ShapeFactor.ipynb

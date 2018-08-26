@@ -43,6 +43,7 @@ jobs:
       - sudo apt-get -qq install pandoc
       - pip install -U -q -e .[develop,tensorflow,mxnet,torch]
     script:
+    - python -m doctest README.md
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
     deploy:
