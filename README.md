@@ -11,17 +11,19 @@
 The HistFactory p.d.f. template [[CERN-OPEN-2012-016](https://cds.cern.ch/record/1456844)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
 of ROOT, RooFit, RooStats framework.
 
-This repo is a pure-python implementation of that statistical model for multi-bin histogram-based analysis and its interval estimation is based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)]. The aim is also to support modern computational graph libraries such as PyTorch and Tensorflow in order to make use of features such as autodifferentiation and GPU acceleration.
+This repo is a pure-python implementation of that statistical model for multi-bin histogram-based analysis and its interval estimation is based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arxiv:1007.1727](https://arxiv.org/abs/1007.1727)]. The aim is also to support modern computational graph libraries such as PyTorch and TensorFlow in order to make use of features such as autodifferentiation and GPU acceleration.
 
 ## Hello World
 
 ```python
 >>> import pyhf
 >>> import pyhf.simplemodels
->>> p = pyhf.simplemodels.hepdata_like(signal_data=[12.,11.], bkg_data=[50.,52.], bkg_uncerts=[3.,7.])
->>> *_, CLs_obs,CLs_exp = pyhf.runOnePoint(1.0, [51, 48] + p.config.auxdata, p)
->>> print('obs: {} exp: {}'.format(CLs_obs, CLs_exp[2]))
-obs: [0.05290116] exp: [0.06445521]
+>>> import pyhf.utils
+>>> pdf = pyhf.simplemodels.hepdata_like(signal_data=[12.,11.], bkg_data=[50.,52.], bkg_uncerts=[3.,7.])
+>>> *_, CLs_obs,CLs_exp = pyhf.utils.runOnePoint(1.0, [51, 48] + pdf.config.auxdata, pdf)
+>>> print('Observed: {} Expected: {}'.format(CLs_obs, CLs_exp[2]))
+Observed: [0.05290116] Expected: [0.06445521]
+
 ```
 
 ## What does it support
