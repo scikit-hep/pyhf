@@ -1,3 +1,9 @@
+---
+name: Bug Report
+about: Create a report to help us improve
+
+---
+
 # Description
 
 Describe your bug here
@@ -12,7 +18,7 @@ Describe what did happen
 
 # Steps to Reproduce
 
-Detail your environment and the commands that you are executing to generate the bug. If you have a large program please make a [Gist](https://gist.github.com/) and link it here.
+Detail your environment and the commands that you are executing to generate the bug. If you have a large program please make a [Gist](https://gist.github.com/) and link it here. Additionally attach any screen shots as needed.
 
 # Checklist
 
