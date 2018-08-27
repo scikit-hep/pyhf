@@ -1,6 +1,7 @@
 import pyhf
 import pytest
 import pyhf.simplemodels
+import pyhf.exceptions
 import numpy as np
 import json
 import tensorflow as tf
@@ -272,3 +273,33 @@ def test_invalid_modifier():
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         pyhf.pdf._ModelConfig.from_spec(spec)
+
+def test_invalid_modifier_name_resuse():
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': [5.],
+                        'modifiers': [
+                            {'name': 'reused_name', 'type': 'normfactor', 'data': None}
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': [50.],
+                        'modifiers': [
+                            {'name': 'reused_name', 'type': 'normsys','data': {'lo': 0.9, 'hi': 1.1}}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidNameReuse):
+        pdf  = pyhf.Model(spec, poiname = 'reused_name')
+
+    pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
+    

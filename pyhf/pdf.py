@@ -1,3 +1,4 @@
+import copy
 import logging
 log = logging.getLogger(__name__)
 
@@ -6,15 +7,21 @@ from . import exceptions
 from . import modifiers
 from . import utils
 
+
 class _ModelConfig(object):
     @classmethod
-    def from_spec(cls,spec,poiname = 'mu'):
+    def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
             for sample in channel['samples']:
                 for modifier_def in sample['modifiers']:
+                    if qualify_names:
+                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
+                        if modifier_def['name'] == poiname:
+                            poiname = fullname
+                        modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
         instance.set_poi(poiname)
@@ -76,7 +83,10 @@ class _ModelConfig(object):
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
-            return self.par_map[modifier_def['name']]['modifier']
+            modifier = self.par_map[modifier_def['name']]['modifier']
+            if not type(modifier).__name__ == modifier_def['type']:
+                raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(type(modifier).__name__, modifier_def['type']))
+            return modifier
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
@@ -97,13 +107,13 @@ class _ModelConfig(object):
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
-        self.spec = spec
+        self.spec = copy.deepcopy(spec) #may get modified by config
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(spec,**config_kwargs)
+        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
