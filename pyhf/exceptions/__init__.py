@@ -1,5 +1,8 @@
 import sys
 
+class InvalidNameReuse(Exception):
+    pass 
+       
 class InvalidSpecification(Exception):
     """
     InvalidSpecification is raised when a specification does not validate against the given schema.

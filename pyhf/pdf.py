@@ -7,6 +7,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 
+
 class _ModelConfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
@@ -84,7 +85,7 @@ class _ModelConfig(object):
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
             modifier = self.par_map[modifier_def['name']]['modifier']
             if not type(modifier).__name__ == modifier_def['type']:
-                raise RuntimeError('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(type(modifier).__name__, modifier_def['type']))
+                raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(type(modifier).__name__, modifier_def['type']))
             return modifier
 
         # did not return, so create new modifier and return it
