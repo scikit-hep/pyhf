@@ -82,6 +82,16 @@ def test_modifiers_structure():
             def add_sample(self): pass
             def apply(self): pass
 
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        @modifier(name='myConstrainedModifierWithFakePDF', constrained=True, pdf_type='fake_pdf')
+        class myCustomModifier(object):
+            def __init__(self): pass
+            def add_sample(self): pass
+            def apply(self): pass
+            def pdf(self): pass
+            def alphas(self): pass
+            def expected_data(self): pass
+
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
     from pyhf.modifiers import modifier

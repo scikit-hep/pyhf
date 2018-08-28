@@ -3,6 +3,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from .. import exceptions
+from .. import get_backend
 
 registry = {}
 
@@ -34,6 +35,9 @@ def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_typ
     cls.is_constrained = constrained
     cls.is_shared = shared
     if constrained:
+        tensorlib, _ = get_backend()
+        if not hasattr(tensorlib, pdf_type):
+            raise exceptions.InvalidModifier('The specified pdf_type "{0:s}" is not valid for {1:s}({2:s}). See pyhf.tensor documentation for available pdfs.'.format(pdf_type, cls_name, cls.__name__))
         cls.pdf_type = pdf_type
     else:
         cls.pdf_type = None
