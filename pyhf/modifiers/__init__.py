@@ -24,7 +24,7 @@ Consistent add_to_registry() function that handles actually adding thing to the 
 Raises an error if the name to register for the modifier already exists in the registry,
 or if the modifier does not have the right structure.
 '''
-def add_to_registry(cls, cls_name=None, constrained=False, shared=False):
+def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_type='normal'):
   global registry
   cls_name = cls_name if cls_name else cls.__name__
   if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
@@ -33,6 +33,7 @@ def add_to_registry(cls, cls_name=None, constrained=False, shared=False):
   # set is_constrained
   cls.is_constrained = constrained
   cls.is_shared = shared
+  cls.pdf_type = pdf_type
   registry[cls_name] = cls
 
 '''
@@ -43,6 +44,7 @@ Args:
     name: the name of the modifier to use. Use the class name by default. (default: None)
     constrained: whether the modifier is constrained or not. (default: False)
     shared: whether the modifier is shared or not. (default: False)
+    pdf_type: the name of the pdf to use from tensorlib. (default: normal)
 
 Returns:
     modifier
@@ -72,6 +74,12 @@ Examples:
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
+  >>> @modifiers.modifier(pdf_type='normal')
+  >>> ... class myCustomGaussianModifier(object):
+  >>> ...   def __init__(self): pass
+  >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
+
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
@@ -93,6 +101,7 @@ def modifier(*args, **kwargs):
     name = kwargs.pop('name', None)
     constrained = bool(kwargs.pop('constrained', False))
     shared = bool(kwargs.pop('shared', False))
+    pdf_type = str(kwargs.pop('pdf_type', 'normal'))
     # check for unparsed keyword arguments
     if len(kwargs) != 0:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
@@ -100,20 +109,20 @@ def modifier(*args, **kwargs):
     if not isinstance(name, string_types) and name is not None:
         raise TypeError('@modifier must be given a string. You gave it {}'.format(type(name)))
 
-    def _modifier(name, constrained, shared):
+    def _modifier(name, constrained, shared, pdf_type):
         def wrapper(cls):
-            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared)
+            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type)
             return cls
         return wrapper
 
     if len(args) == 0:
-        # called like @modifier(name='foo', constrained=False, shared=False)
-        return _modifier(name, constrained, shared)
+        # called like @modifier(name='foo', constrained=False, shared=False, pdf_type='normal')
+        return _modifier(name, constrained, shared, pdf_type)
     elif len(args) == 1:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
-        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared)
+        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type)
         return args[0]
     else:
         raise ValueError('@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(len(args)))
