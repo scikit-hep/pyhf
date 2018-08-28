@@ -35,6 +35,8 @@ def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_typ
   cls.is_shared = shared
   if constrained:
       cls.pdf_type = pdf_type
+  else:
+      cls.pdf_type = None
   registry[cls_name] = cls
 
 '''
@@ -74,6 +76,15 @@ Examples:
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
+
+  >>> @modifiers.modifier(constrained=False)
+  >>> ... class myUnconstrainedModifier(object):
+  >>> ...   def __init__(self): pass
+  >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
+  >>> ...
+  >>> myUnconstrainedModifier.pdf_type
+  None
 
   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
   >>> ... class myConstrainedCustomPoissonModifier(object):

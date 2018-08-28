@@ -17,8 +17,8 @@ def test_import_default_modifiers(test_modifierPair):
     assert modifier is not None
     assert callable(modifier)
     assert hasattr(modifier, 'is_constrained')
-    assert hasattr(modifier, 'pdf_type') if modifier.is_constrained else True
-    assert modifier.pdf_type == test_mod_type if modifier.is_constrained else True
+    assert hasattr(modifier, 'pdf_type')
+    assert modifier.pdf_type == test_mod_type
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():
