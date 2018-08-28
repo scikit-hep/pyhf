@@ -15,7 +15,7 @@ def validate_modifier_structure(modifier, constrained):
 
     for method in required_methods + required_constrained_methods*constrained:
         if not hasattr(modifier, method):
-          raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
+            raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
     return True
 
 '''
@@ -25,19 +25,19 @@ Raises an error if the name to register for the modifier already exists in the r
 or if the modifier does not have the right structure.
 '''
 def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_type='normal'):
-  global registry
-  cls_name = cls_name if cls_name else cls.__name__
-  if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
-  # validate the structure
-  validate_modifier_structure(cls, constrained)
-  # set is_constrained
-  cls.is_constrained = constrained
-  cls.is_shared = shared
-  if constrained:
-      cls.pdf_type = pdf_type
-  else:
-      cls.pdf_type = None
-  registry[cls_name] = cls
+    global registry
+    cls_name = cls_name if cls_name else cls.__name__
+    if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
+    # validate the structure
+    validate_modifier_structure(cls, constrained)
+    # set is_constrained
+    cls.is_constrained = constrained
+    cls.is_shared = shared
+    if constrained:
+        cls.pdf_type = pdf_type
+    else:
+        cls.pdf_type = None
+    registry[cls_name] = cls
 
 '''
 Decorator for registering modifiers. To flag the modifier as a constrained modifier, add `constrained=True`.
