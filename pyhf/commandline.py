@@ -32,12 +32,14 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @pyhf.command()
 @click.argument('workspace', default = '-')
 @click.argument('xmlfile', default = '-')
-def json2xml(workspace,xmlfile):
+@click.option('--specroot', default = click.Path(exists = True))
+@click.option('--dataroot', default = click.Path(exists = True))
+def json2xml(workspace,xmlfile,specroot,dataroot):
     specstream = click.open_file(workspace)
     outstream = click.open_file(xmlfile,'w')
     d = json.load(specstream)
 
-    outstream.write(writexml.writexml(d,'','','').decode('utf-8'))
+    outstream.write(writexml.writexml(d,specroot,dataroot,'').decode('utf-8'))
 
 @pyhf.command()
 @click.argument('workspace', default = '-')
