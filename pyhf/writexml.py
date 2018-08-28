@@ -16,6 +16,10 @@ def measurement(lumi, lumierr, poi, param_settings = None, name = 'Meas1'):
 
 def write_channel(channelspec, filename, data_rootdir):
     #need to write channelfile here
+    with open(filename,'w') as f:
+        channel = ET.Element('Channel', Name = channelspec['name'])
+        channel = ET.Element('Channel', Name = channelspec['name'])
+        f.write(ET.tostring(channel, encoding = 'utf-8').decode('utf-8'))
     pass
 
 
