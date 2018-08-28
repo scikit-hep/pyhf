@@ -7,6 +7,7 @@ import json
 import os
 
 from . import readxml
+from . import writexml
 from .utils import runOnePoint
 from .pdf import Model
 
@@ -27,6 +28,16 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     else:
         json.dump(spec, open(output_file, 'w+'), indent=4, sort_keys=True)
         log.info("Written to {0:s}".format(output_file))
+
+@pyhf.command()
+@click.argument('workspace', default = '-')
+@click.argument('xmlfile', default = '-')
+def json2xml(workspace,xmlfile):
+    specstream = click.open_file(workspace)
+    outstream = click.open_file(xmlfile,'w')
+    d = json.load(specstream)
+
+    outstream.write(writexml.writexml(d,'','','').decode('utf-8'))
 
 @pyhf.command()
 @click.argument('workspace', default = '-')
