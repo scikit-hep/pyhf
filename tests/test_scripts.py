@@ -49,3 +49,12 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
     assert d
     assert 'CLs_obs' in d
     assert 'CLs_exp' in d
+
+
+def test_import_and_export(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf json2xml {0:s} --specroot {1:s} --dataroot {1:s}'.format(temp.strpath,str(tmpdir))
+    ret = script_runner.run(*shlex.split(command))

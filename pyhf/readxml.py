@@ -129,7 +129,11 @@ def process_channel(channelxml, rootdir, track_progress=False):
 
     samples = tqdm.tqdm(channel.findall('Sample'), unit='sample', disable=not(track_progress))
 
-    data = channel.findall('Data')[0]
+    data = channel.findall('Data')
+    if data:
+        parsed_data = process_data(data[0], rootdir, inputfile, histopath)
+    else:
+        parsed_data = None
     channelname = channel.attrib['Name']
 
     results = []
@@ -138,7 +142,7 @@ def process_channel(channelxml, rootdir, track_progress=False):
       result = process_sample(sample, rootdir, inputfile, histopath, channelname, track_progress)
       results.append(result)
 
-    return channelname, process_data(data, rootdir, inputfile, histopath), results
+    return channelname, parsed_data, results
 
 def parse(configfile, rootdir, track_progress=False):
     toplvl = ET.parse(configfile)
