@@ -27,7 +27,7 @@ class staterror(object):
         inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(self.uncertainties,2), axis=0))
         totals = tensorlib.sum(self.nominal_counts,axis=0)
         uncrts = tensorlib.divide(inquad,totals)
-        return tensorlib.normal(a, alpha, uncrts)
+        return getattr(tensorlib, self.pdf_type)(a, alpha, uncrts)
 
     def expected_data(self, pars):
         return self.alphas(pars)

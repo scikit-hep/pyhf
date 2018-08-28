@@ -5,17 +5,20 @@ from six import with_metaclass
 
 import pyhf
 
-modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys"]
+modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys", "staterror"]
+modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
 
 # we make sure we can import all of our pre-defined modifiers correctly
-@pytest.mark.parametrize("test_modifier", modifiers_to_test)
-def test_import_default_modifiers(test_modifier):
+@pytest.mark.parametrize("test_modifierPair", zip(modifiers_to_test, modifier_pdf_types))
+def test_import_default_modifiers(test_modifierPair):
+    test_modifier, test_mod_type = test_modifierPair
     modifier = pyhf.modifiers.registry.get(test_modifier, None)
     assert test_modifier in pyhf.modifiers.registry
     assert modifier is not None
     assert callable(modifier)
     assert hasattr(modifier, 'is_constrained')
-
+    assert hasattr(modifier, 'pdf_type') if modifier.is_constrained else True
+    assert modifier.pdf_type == test_mod_type if modifier.is_constrained else True
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():

@@ -33,7 +33,8 @@ def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_typ
   # set is_constrained
   cls.is_constrained = constrained
   cls.is_shared = shared
-  cls.pdf_type = pdf_type
+  if constrained:
+      cls.pdf_type = pdf_type
   registry[cls_name] = cls
 
 '''
@@ -44,7 +45,7 @@ Args:
     name: the name of the modifier to use. Use the class name by default. (default: None)
     constrained: whether the modifier is constrained or not. (default: False)
     shared: whether the modifier is shared or not. (default: False)
-    pdf_type: the name of the pdf to use from tensorlib. (default: normal)
+    pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
 
 Returns:
     modifier
@@ -74,11 +75,14 @@ Examples:
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
-  >>> @modifiers.modifier(pdf_type='normal')
-  >>> ... class myCustomGaussianModifier(object):
+  >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
+  >>> ... class myConstrainedCustomPoissonModifier(object):
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
+  >>> ...
+  >>> myConstrainedCustomGaussianModifier.pdf_type
+  'poisson'
 
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):

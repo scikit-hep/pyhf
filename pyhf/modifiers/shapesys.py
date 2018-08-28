@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier(name='shapesys', constrained=True)
+@modifier(name='shapesys', constrained=True, pdf_type='poisson')
 class shapesys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
@@ -26,7 +26,7 @@ class shapesys(object):
 
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
-        return tensorlib.poisson(a, alpha)
+        return getattr(tensorlib, self.pdf_type)(a, alpha)
 
     def expected_data(self, pars):
         return self.alphas(pars)
