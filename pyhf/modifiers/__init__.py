@@ -27,7 +27,7 @@ or if the modifier does not have the right structure.
 '''
 def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_type='normal'):
     global registry
-    cls_name = cls_name if cls_name else cls.__name__
+    cls_name = cls_name or cls.__name__
     if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
     # validate the structure
     validate_modifier_structure(cls, constrained)
