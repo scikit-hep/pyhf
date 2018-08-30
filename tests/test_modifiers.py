@@ -5,17 +5,20 @@ from six import with_metaclass
 
 import pyhf
 
-modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys"]
+modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys", "staterror"]
+modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
 
 # we make sure we can import all of our pre-defined modifiers correctly
-@pytest.mark.parametrize("test_modifier", modifiers_to_test)
-def test_import_default_modifiers(test_modifier):
+@pytest.mark.parametrize("test_modifierPair", zip(modifiers_to_test, modifier_pdf_types))
+def test_import_default_modifiers(test_modifierPair):
+    test_modifier, test_mod_type = test_modifierPair
     modifier = pyhf.modifiers.registry.get(test_modifier, None)
     assert test_modifier in pyhf.modifiers.registry
     assert modifier is not None
     assert callable(modifier)
     assert hasattr(modifier, 'is_constrained')
-
+    assert hasattr(modifier, 'pdf_type')
+    assert modifier.pdf_type == test_mod_type
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():
@@ -78,6 +81,16 @@ def test_modifiers_structure():
             def __init__(self): pass
             def add_sample(self): pass
             def apply(self): pass
+
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        @modifier(name='myConstrainedModifierWithFakePDF', constrained=True, pdf_type='fake_pdf')
+        class myCustomModifier(object):
+            def __init__(self): pass
+            def add_sample(self): pass
+            def apply(self): pass
+            def pdf(self): pass
+            def alphas(self): pass
+            def expected_data(self): pass
 
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():

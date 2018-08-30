@@ -42,7 +42,7 @@ class histosys(object):
 
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
-        return tensorlib.normal(a, alpha, [1])
+        return getattr(tensorlib, self.pdf_type)(a, alpha, [1])
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1

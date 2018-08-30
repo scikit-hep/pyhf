@@ -3,6 +3,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from .. import exceptions
+from .. import get_backend
 
 registry = {}
 
@@ -15,7 +16,7 @@ def validate_modifier_structure(modifier, constrained):
 
     for method in required_methods + required_constrained_methods*constrained:
         if not hasattr(modifier, method):
-          raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
+            raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
     return True
 
 '''
@@ -24,16 +25,23 @@ Consistent add_to_registry() function that handles actually adding thing to the 
 Raises an error if the name to register for the modifier already exists in the registry,
 or if the modifier does not have the right structure.
 '''
-def add_to_registry(cls, cls_name=None, constrained=False, shared=False):
-  global registry
-  cls_name = cls_name if cls_name else cls.__name__
-  if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
-  # validate the structure
-  validate_modifier_structure(cls, constrained)
-  # set is_constrained
-  cls.is_constrained = constrained
-  cls.is_shared = shared
-  registry[cls_name] = cls
+def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_type='normal'):
+    global registry
+    cls_name = cls_name or cls.__name__
+    if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
+    # validate the structure
+    validate_modifier_structure(cls, constrained)
+    # set is_constrained
+    cls.is_constrained = constrained
+    cls.is_shared = shared
+    if constrained:
+        tensorlib, _ = get_backend()
+        if not hasattr(tensorlib, pdf_type):
+            raise exceptions.InvalidModifier('The specified pdf_type "{0:s}" is not valid for {1:s}({2:s}). See pyhf.tensor documentation for available pdfs.'.format(pdf_type, cls_name, cls.__name__))
+        cls.pdf_type = pdf_type
+    else:
+        cls.pdf_type = None
+    registry[cls_name] = cls
 
 '''
 Decorator for registering modifiers. To flag the modifier as a constrained modifier, add `constrained=True`.
@@ -43,6 +51,7 @@ Args:
     name: the name of the modifier to use. Use the class name by default. (default: None)
     constrained: whether the modifier is constrained or not. (default: False)
     shared: whether the modifier is shared or not. (default: False)
+    pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
 
 Returns:
     modifier
@@ -72,6 +81,24 @@ Examples:
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
+  >>> @modifiers.modifier(constrained=False)
+  >>> ... class myUnconstrainedModifier(object):
+  >>> ...   def __init__(self): pass
+  >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
+  >>> ...
+  >>> myUnconstrainedModifier.pdf_type
+  None
+
+  >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
+  >>> ... class myConstrainedCustomPoissonModifier(object):
+  >>> ...   def __init__(self): pass
+  >>> ...   def add_sample(self): pass
+  >>> ...   def apply(self): pass
+  >>> ...
+  >>> myConstrainedCustomGaussianModifier.pdf_type
+  'poisson'
+
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
@@ -93,6 +120,7 @@ def modifier(*args, **kwargs):
     name = kwargs.pop('name', None)
     constrained = bool(kwargs.pop('constrained', False))
     shared = bool(kwargs.pop('shared', False))
+    pdf_type = str(kwargs.pop('pdf_type', 'normal'))
     # check for unparsed keyword arguments
     if len(kwargs) != 0:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
@@ -100,20 +128,20 @@ def modifier(*args, **kwargs):
     if not isinstance(name, string_types) and name is not None:
         raise TypeError('@modifier must be given a string. You gave it {}'.format(type(name)))
 
-    def _modifier(name, constrained, shared):
+    def _modifier(name, constrained, shared, pdf_type):
         def wrapper(cls):
-            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared)
+            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type)
             return cls
         return wrapper
 
     if len(args) == 0:
-        # called like @modifier(name='foo', constrained=False, shared=False)
-        return _modifier(name, constrained, shared)
+        # called like @modifier(name='foo', constrained=False, shared=False, pdf_type='normal')
+        return _modifier(name, constrained, shared, pdf_type)
     elif len(args) == 1:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
-        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared)
+        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type)
         return args[0]
     else:
         raise ValueError('@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(len(args)))
