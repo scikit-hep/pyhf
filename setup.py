@@ -14,7 +14,7 @@ setup(
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
     'six',  # for modifiers
-    'jsonschema',  # for utils
+    'jsonschema>=v3.0.0a2',  # for utils
   ],
   extras_require = {
     'xmlimport': [
@@ -30,7 +30,7 @@ setup(
       'requests<2.19.0,>=2.18.4',
     ],
     'tensorflow':[
-       'tensorflow==1.10.0',
+       'tensorflow>=1.10.0',
        'numpy<=1.14.5,>=1.13.3',
        'setuptools<=39.1.0',
     ],
@@ -41,7 +41,7 @@ setup(
        'pytest-benchmark[histogram]',
        'pytest-console-scripts',
        'python-coveralls',
-       'coverage==4.0.3',  # coveralls
+       'coverage>=4.0',  # coveralls
        'matplotlib',
        'jupyter',
        'uproot',
@@ -53,7 +53,7 @@ setup(
        'sphinx_rtd_theme',
        'nbsphinx',
        'jsonpatch',
-       'jsonschema==v3.0.0a2'  # alpha-release for draft 6
+       'jsonschema>=v3.0.0a2'  # alpha-release for draft 6
     ]
   },
   entry_points = {
