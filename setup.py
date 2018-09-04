@@ -14,7 +14,7 @@ setup(
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
     'six',  # for modifiers
-    'jsonschema>=v3.0.0a2',  # for utils
+    'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
   ],
   extras_require = {
     'xmlimport': [
@@ -52,8 +52,7 @@ setup(
        'sphinxcontrib-napoleon',
        'sphinx_rtd_theme',
        'nbsphinx',
-       'jsonpatch',
-       'jsonschema>=v3.0.0a2'  # alpha-release for draft 6
+       'jsonpatch'
     ]
   },
   entry_points = {
