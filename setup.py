@@ -14,6 +14,7 @@ setup(
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
     'six',  # for modifiers
+    'jsonschema',  # for utils
   ],
   extras_require = {
     'xmlimport': [
