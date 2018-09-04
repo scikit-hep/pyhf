@@ -13,6 +13,7 @@ setup(
     'scipy',
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
+    'six',  # for modifiers
   ],
   extras_require = {
     'xmlimport': [
