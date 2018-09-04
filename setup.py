@@ -39,7 +39,7 @@ setup(
        'pytest-benchmark[histogram]',
        'pytest-console-scripts',
        'python-coveralls',
-       'coverage==4.0.3',  # coveralls
+       'coverage>=4.4',  # coveralls
        'matplotlib',
        'jupyter',
        'uproot',
