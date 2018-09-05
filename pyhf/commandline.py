@@ -44,18 +44,30 @@ def json2xml(workspace,xmlfile,specroot,dataroot):
 @pyhf.command()
 @click.argument('workspace', default = '-')
 @click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
+@click.option('--measurement', default=None)
 @click.option('--qualify-names/--no-qualify-names', default=False)
-def cls(workspace, output_file, qualify_names):
+def cls(workspace, output_file, measurement, qualify_names):
     specstream = click.open_file(workspace)
     d = json.load(specstream)
     measurements = d['toplvl']['measurements']
-    if len(measurements) > 1:
-        log.warning('multiple measurements definded. Taking the first %s', measurements[0]['name'])
-    p = Model({'channels':d['channels']}, poiname=measurements[0]['config']['poi'], qualify_names=qualify_names)
-    result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
-    result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
-    if output_file is None:
-        print(json.dumps(result, indent=4, sort_keys=True))
+    measurement_names = [m['name'] for m in measurements]
+    measurement_index = 0
+    log.info('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
+    if measurement and measurement not in measurement_names:
+        log.error('no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(measurement))
     else:
-        json.dump(result, open(output_file, 'w+'), indent=4, sort_keys=True)
-        log.info("Written to {0:s}".format(output_file))
+        if not measurement and len(measurements) > 1:
+            log.warning('multiple measurements defined. Taking the first measurement.')
+            measurement_index = 0
+        elif measurement:
+            measurement_index = measurement_names.index(measurement)
+
+        log.info('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
+        p = Model({'channels':d['channels']}, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
+        result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
+        result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+        if output_file is None:
+            print(json.dumps(result, indent=4, sort_keys=True))
+        else:
+            json.dump(result, open(output_file, 'w+'), indent=4, sort_keys=True)
+            log.info("Written to {0:s}".format(output_file))
