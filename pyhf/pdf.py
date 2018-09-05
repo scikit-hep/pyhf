@@ -139,7 +139,7 @@ def make_cube(spec):
 
 def expected_actualdata(config,modtypecounts,maxdims,thecube,modindex,pars):
     tensorlib, _ = get_backend()
-    nfactors  = modtypecounts.get('shapesys',0) + modtypecounts.get('normfactor',0)
+    nfactors  = modtypecounts.get('shapesys',0) + modtypecounts.get('normfactor',0) + modtypecounts.get('normsys',0) + modtypecounts.get('shapefactor',0)
     nsummands = modtypecounts.get('histosys',0) # +...
 
     sumfields = tensorlib.zeros((1+nsummands,)+maxdims)
@@ -153,7 +153,7 @@ def expected_actualdata(config,modtypecounts,maxdims,thecube,modindex,pars):
         mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
         thispars = tensorlib.astensor(pars[config.par_slice(parname)])
         is_summand = mo.__class__.__name__ == 'histosys'
-
+        
         for ind in cubeindices:
             ndims = len(thecube[ind['indices']])
             channel_pars = ind['strings']
