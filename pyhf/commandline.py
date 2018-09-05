@@ -27,7 +27,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         print(json.dumps(spec, indent=4, sort_keys=True))
     else:
         json.dump(spec, open(output_file, 'w+'), indent=4, sort_keys=True)
-        log.info("Written to {0:s}".format(output_file))
+        log.debug("Written to {0:s}".format(output_file))
 
 @pyhf.command()
 @click.argument('workspace', default = '-')
@@ -62,7 +62,7 @@ def cls(workspace, output_file, measurement, qualify_names):
         elif measurement:
             measurement_index = measurement_names.index(measurement)
 
-        log.info('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
+        log.debug('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
         p = Model({'channels':d['channels']}, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
         result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
         result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
@@ -70,4 +70,4 @@ def cls(workspace, output_file, measurement, qualify_names):
             print(json.dumps(result, indent=4, sort_keys=True))
         else:
             json.dump(result, open(output_file, 'w+'), indent=4, sort_keys=True)
-            log.info("Written to {0:s}".format(output_file))
+            log.debug("Written to {0:s}".format(output_file))
