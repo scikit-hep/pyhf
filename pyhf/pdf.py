@@ -18,9 +18,9 @@ class _ModelConfig(object):
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
-            channels.append(channel)
+            channels.append(channel['name'])
             for sample in channel['samples']:
-                samples.append(sample)
+                samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
@@ -31,7 +31,7 @@ class _ModelConfig(object):
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
         instance.set_poi(poiname)
-        return instance, (list(set(channels)), list(set(samples)), list(set(modifiers)))
+        return (instance, (list(set(channels)), list(set(samples)), list(set(modifiers))))
 
     def __init__(self):
         # set up all other bookkeeping variables
