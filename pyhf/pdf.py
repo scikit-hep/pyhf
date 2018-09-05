@@ -116,9 +116,51 @@ class _ModelConfig(object):
             self.auxdata_order.append(modifier_def['name'])
         return modifier
 
+def make_cube(spec):
+    tensorlib, _ = get_backend()
+    maxsamples = 0
+    maxbins = 0
+    nchannels = len(spec['channels'])
+    for i,(c) in enumerate(spec['channels']):
+        maxsamples = max(maxsamples,len(c['samples']))
+        for j,s in enumerate(c['samples']):
+            maxbins = max(maxbins,len(s['data']))
+            pass
+    thecube = tensorlib.ones((nchannels,maxsamples,maxbins))
+
+    index = {}
+    modindex = {}
+    for i,(c) in enumerate(spec['channels']):
+        for j,s in enumerate(c['samples']):
+            thecube[i,j] = s['data']
+            thecube[i,j] = s['data']
+            for m in s['modifiers']:
+                modindex.setdefault(m['name'],{}).setdefault('indices',[]).append({'strings': [c['name'],s['name']], 'indices': tuple((i,j))})
+    return thecube,modindex,(nchannels,maxsamples,maxbins)
+
+def expected_actualdata(config,maxdims,thecube,modindex,pars):
+    tensorlib, _ = get_backend()
+    nfactors = len(config.par_map.items())
+    factorfields = tensorlib.ones((1+nfactors,)+maxdims)
+    factorfields[0] = thecube
+    for i,(parname,mod) in enumerate(config.par_map.items()):
+        mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
+        thispars = pars[config.par_slice(parname)]
+        for ind in cubeindices:
+            channel_pars = ind['strings']
+            factorfields[i+1][ind['indices']] = mo.apply(*channel_pars,pars = thispars)
+    applied  = tensorlib.product(factorfields,axis=0) #apply modifiers
+    expected = tensorlib.sum(applied,axis=1)          #stack samples
+    expected = expected.ravel()
+    return expected
+
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
+
+        self.cube, self.modindex, self.maxdims = make_cube(self.spec)
+
+
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
@@ -227,7 +269,9 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
-    def expected_actualdata(self, pars):
+    def expected_actualdata(self, pars, new = False):
+        if new:
+            return expected_actualdata(self.config,self.maxdims,self.cube,self.modindex,pars)
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []
@@ -251,6 +295,7 @@ class Model(object):
         # iterate over all constraints order doesn't matter....
         start_index = 0
         summands = None
+        bytype = {}
         for cname in self.config.auxdata_order:
             modifier, modslice = self.config.modifier(cname), \
                 self.config.par_slice(cname)
@@ -258,8 +303,17 @@ class Model(object):
             end_index = start_index + int(modalphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
+            # print('haha',modifier.pdf_type,thisauxdata,modalphas)
+            # bytype.setdefault(modifier.pdf_type,[]).append([thisauxdata,modalphas])
             constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
             summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
+        # for k,c in bytype.items():
+        #     d = tensorlib.concatenate(tensorlib.astensor(c),axis=-1)
+        #     # print('call',d.shape,k,c)
+        #     constraint_term = tensorlib.log(getattr(tensorlib,k)(*d))
+        #     summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
+        # print(bytype)
+        # print(summands)
         return tensorlib.sum(summands) if summands is not None else 0
 
     def logpdf(self, pars, data):
