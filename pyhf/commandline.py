@@ -52,7 +52,7 @@ def cls(workspace, output_file, measurement, qualify_names):
     measurements = d['toplvl']['measurements']
     measurement_names = [m['name'] for m in measurements]
     measurement_index = 0
-    log.info('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
+    log.debug('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
     if measurement and measurement not in measurement_names:
         log.error('no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(measurement))
     else:
