@@ -50,6 +50,16 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
     assert 'CLs_obs' in d
     assert 'CLs_exp' in d
 
+    for measurement in ['GaussExample','GammaExample','LogNormExample','ConstExample']:
+        command = 'pyhf cls {0:s} --measurement {1:s}'.format(temp.strpath, measurement)
+        ret = script_runner.run(*shlex.split(command))
+
+        assert ret.success
+        d = json.loads(ret.stdout)
+        assert d
+        assert 'CLs_obs' in d
+        assert 'CLs_exp' in d
+
 
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
