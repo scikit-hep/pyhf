@@ -252,7 +252,7 @@ class mxnet_backend(object):
             ...   pyhf.tensorlib.astensor([2, 2, 2]))
             ...
             <BLANKLINE>
-            [1. 2. 1.]
+            [ 1.  2.  1.]
             <NDArray 3 @cpu(0)>
 
         Args:
@@ -294,9 +294,9 @@ class mxnet_backend(object):
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
             <BLANKLINE>
-            [[1. 1. 1.]
-             [2. 3. 4.]
-             [5. 6. 7.]]
+            [[ 1.  1.  1.]
+             [ 2.  3.  4.]
+             [ 5.  6.  7.]]
             <NDArray 3x3 @cpu(0)>
 
         Args:
@@ -372,7 +372,7 @@ class mxnet_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
             >>> pyhf.tensorlib.normal_cdf(0.8)
             <BLANKLINE>
-            [0.7881446]
+            [ 0.78814459]
             <NDArray 1 @cpu(0)>
 
         Args:

@@ -129,7 +129,7 @@ class tensorflow_backend(object):
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7])))
-            [array([1., 1., 1.], dtype=float32), array([2., 3., 4.], dtype=float32), array([5., 6., 7.], dtype=float32)]
+            [array([ 1.,  1.,  1.], dtype=float32), array([ 2.,  3.,  4.], dtype=float32), array([ 5.,  6.,  7.], dtype=float32)]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -185,7 +185,7 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...   pyhf.tensorlib.normal_cdf(0.8).eval()
             ...
-            array([0.7881446], dtype=float32)
+            array([ 0.78814459], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
