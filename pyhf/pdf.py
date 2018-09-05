@@ -128,7 +128,6 @@ def make_cube(spec):
             pass
     thecube = tensorlib.ones((nchannels,maxsamples,maxbins))
 
-    index = {}
     modindex = {}
     for i,(c) in enumerate(spec['channels']):
         for j,s in enumerate(c['samples']):
@@ -138,17 +137,42 @@ def make_cube(spec):
                 modindex.setdefault(m['name'],{}).setdefault('indices',[]).append({'strings': [c['name'],s['name']], 'indices': tuple((i,j))})
     return thecube,modindex,(nchannels,maxsamples,maxbins)
 
-def expected_actualdata(config,maxdims,thecube,modindex,pars):
+def expected_actualdata(config,modtypecounts,maxdims,thecube,modindex,pars):
     tensorlib, _ = get_backend()
-    nfactors = len(config.par_map.items())
+    nfactors  = modtypecounts.get('shapesys',0) + modtypecounts.get('normfactor',0)
+    nsummands = modtypecounts.get('histosys',0) # +...
+
+    sumfields = tensorlib.zeros((1+nsummands,)+maxdims)
+    #computation is (fac1*fac2*fac3*...*(delta1+delta2+delta3+...+nominal))
+    sumfields[0] = thecube #nominal is the base of the sum
+
     factorfields = tensorlib.ones((1+nfactors,)+maxdims)
-    factorfields[0] = thecube
-    for i,(parname,mod) in enumerate(config.par_map.items()):
+
+    ifactor,isum = 1,1
+    for parname,mod in config.par_map.items():
         mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
-        thispars = pars[config.par_slice(parname)]
+        thispars = tensorlib.astensor(pars[config.par_slice(parname)])
+        is_summand = mo.__class__.__name__ == 'histosys'
+
         for ind in cubeindices:
+            ndims = len(thecube[ind['indices']])
             channel_pars = ind['strings']
-            factorfields[i+1][ind['indices']] = mo.apply(*channel_pars,pars = thispars)
+            if not is_summand:
+                x = mo.apply(*channel_pars,pars = thispars) 
+                # print('ok',x,mo,thispars,parname,config.par_slice(parname),pars)
+                if mo.__class__.__name__ == 'normfactor':
+                    x = tensorlib.astensor([x]*ndims).reshape(ndims)
+                factorfields[ifactor][ind['indices']] = x
+            else:
+                x = mo.apply(*channel_pars,pars = thispars) 
+                sumfields[isum][ind['indices']] = x
+                #mo.apply(*channel_pars,pars = thispars)
+        if not is_summand:
+            ifactor += 1
+        else:
+            isum += 1            
+
+    factorfields[0] = tensorlib.sum(sumfields, axis = 0)
     applied  = tensorlib.product(factorfields,axis=0) #apply modifiers
     expected = tensorlib.sum(applied,axis=1)          #stack samples
     expected = expected.ravel()
@@ -167,6 +191,12 @@ class Model(object):
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
+
+        self.modtypecounts = {}
+        for k,v in self.config.par_map.items():
+            modtype = v['modifier'].__class__.__name__
+            self.modtypecounts.setdefault(modtype,0)
+            self.modtypecounts[modtype] += 1
 
     def expected_sample(self, channel, sample, pars):
         """
@@ -271,7 +301,7 @@ class Model(object):
 
     def expected_actualdata(self, pars, new = False):
         if new:
-            return expected_actualdata(self.config,self.maxdims,self.cube,self.modindex,pars)
+            return expected_actualdata(self.config,self.modtypecounts,self.maxdims,self.cube,self.modindex,pars)
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []

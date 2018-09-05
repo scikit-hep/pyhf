@@ -46,7 +46,7 @@ class histosys(object):
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1
-        return interpolator(0)(self.at_minus_one[channel['name']][sample['name']],
-                               self.at_zero[channel['name']][sample['name']],
-                               self.at_plus_one[channel['name']][sample['name']],
+        return interpolator(0)(self.at_minus_one[channel][sample],
+                               self.at_zero[channel][sample],
+                               self.at_plus_one[channel][sample],
                                pars)[0]
