@@ -9,8 +9,7 @@ setup(
   packages = find_packages(),
   include_package_data = True,
   install_requires = [
-    'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
-    'scipy',
+    'scipy',  # requires numpy, which is required by pyhf, tensorflow, and mxnet
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
     'six',  # for modifiers
