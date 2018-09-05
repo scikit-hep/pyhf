@@ -44,13 +44,14 @@ def json2xml(workspace,xmlfile,specroot,dataroot):
 @pyhf.command()
 @click.argument('workspace', default = '-')
 @click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
-def cls(workspace,output_file):
+@click.option('--qualify-names/--no-qualify-names', default=False)
+def cls(workspace, output_file, qualify_names):
     specstream = click.open_file(workspace)
     d = json.load(specstream)
     measurements = d['toplvl']['measurements']
     if len(measurements) > 1:
         log.warning('multiple measurements definded. Taking the first %s', measurements[0]['name'])
-    p = Model({'channels':d['channels']}, poiname=measurements[0]['config']['poi'])
+    p = Model({'channels':d['channels']}, poiname=measurements[0]['config']['poi'], qualify_names=qualify_names)
     result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
     result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
     if output_file is None:
