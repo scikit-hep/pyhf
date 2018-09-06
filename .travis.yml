@@ -6,7 +6,8 @@ python:
   - '3.6'
 install:
 - pip install --upgrade pip
-- pip install -U -q -e .[develop,tensorflow,mxnet,torch]
+- pip install -U -q -e .[tensorflow,torch,mxnet,develop]
+- pip install "numpy<=1.14.5,>=1.14.0"
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
@@ -34,14 +35,14 @@ jobs:
     python: '3.6'
     install:
       - pip install --upgrade pip
-      - pip install -U -q -e .[develop,tensorflow,mxnet,torch]
+      - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
     install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
-      - pip install -U -q -e .[develop,tensorflow,mxnet,torch]
+      - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
