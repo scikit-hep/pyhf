@@ -128,16 +128,18 @@ def make_cube(spec):
             pass
     thecube = tensorlib.ones((nchannels,maxsamples,maxbins))
 
+    sampleindex = {}
     modindex = {}
     for i,(c) in enumerate(spec['channels']):
         for j,s in enumerate(c['samples']):
             thecube[i,j] = s['data']
             thecube[i,j] = s['data']
             for m in s['modifiers']:
-                modindex.setdefault(m['name'],{}).setdefault('indices',[]).append({'strings': [c['name'],s['name']], 'indices': tuple((i,j))})
-    return thecube,modindex,(nchannels,maxsamples,maxbins)
+                modindex.setdefault(m['name'],{}).setdefault('indices',[]).append({'strings': [c['name'],s['name']], 'indices': (i,j)})
+                sampleindex.setdefault(c['name'],{})[s['name']] = (i,j)
+    return thecube,modindex,(nchannels,maxsamples,maxbins), sampleindex
 
-def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars):
+def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars,ravel, stack):
     tensorlib, _ = get_backend()
     nfactors  = op_code_counts['multiplication']
     nsummands = op_code_counts['addition']
@@ -173,16 +175,18 @@ def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars):
             isum += 1            
 
     factorfields[0] = tensorlib.sum(sumfields, axis = 0)
-    applied  = tensorlib.product(factorfields,axis=0) #apply modifiers
-    expected = tensorlib.sum(applied,axis=1)          #stack samples
-    expected = expected.ravel()
+    expected  = tensorlib.product(factorfields,axis=0) #apply modifiers
+    if stack:
+        expected = tensorlib.sum(expected,axis=1) #stack samples
+    if ravel:
+        expected = expected.ravel()
     return expected
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
 
-        self.cube, self.modindex, self.maxdims = make_cube(self.spec)
+        self.cube, self.modindex, self.maxdims, self.sampleindex = make_cube(self.spec)
 
 
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
@@ -199,90 +203,8 @@ class Model(object):
             self.op_code_counts[op_code] += 1
 
     def expected_sample(self, channel, sample, pars):
-        """
-        The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
-
-            b1 = shapesys_1   |      shapef_1   |
-            b2 = shapesys_2   |      shapef_2   |
-            ...             normfac1    ..     normfac2
-            ...             (broad)     ..     (broad)
-            bn = shapesys_n   |      shapef_1   |
-
-        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
-
-            >>> import numpy as np
-            >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
-            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
-            >>> ## also
-            >>> np.broadcast_arrays(2,[3,4,5],6,[7,8,9])
-            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
-            >>> ## also
-            >>> factors = [2,[3,4,5],6,[7,8,9]]
-            >>> np.broadcast_arrays(*factors)
-            [array([2, 2, 2]), array([3, 4, 5]), array([6, 6, 6]), array([7, 8, 9])]
-
-        So that something like
-
-            >>> import numpy as np
-            >>> np.product(np.broadcast_arrays([2],[3,4,5],[6],[7,8,9]),axis=0)
-            array([252, 384, 540])
-
-        which is just `[ 2*3*6*7, 2*4*6*8, 2*5*6*9]`.
-
-        Notice how some factors (for fixed channel c and sample s) depend on
-        bin b and some don't (Eq 6 `CERN-OPEN-2012-016`_). The broadcasting lets
-        you scale all bins the same way, such as when you have a ttbar
-        normalization factor that scales all bins.
-
-        Shape === affects each bin separately
-        Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
-
-        .. _`CERN-OPEN-2012-016`: https://cds.cern.ch/record/1456844?ln=en
-
-        """
-        # for each sample the expected ocunts are
-        # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
-        #        = f1*f2*f3*f4* nomsysfactor(nom_sys_alphas) * hist(hist_addition(histosys_alphas) + nomdata)
-        # nomsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        # hist_addition(histosys_alphas) = sum(interp(nombin, anchors[i][0],
-        # anchors[i][0], val=alpha) for i in range(histosys_alphas))
-        #
-        # Formula:
-        #     \nu_{cb} (\phi_p, \alpha_p, \gamma_p) = \lambda_{cs} \gamma_{cb} \phi_{cs}(\alpha) \eta_{cs}(\alpha) \sigma_{csb}(\alpha)
-        # \gamma == statsys, shapefactor
-        # \phi == normfactor, overallsys
-        # \sigma == histosysdelta + nominal
-
-        tensorlib, _ = get_backend()
-        # first, collect the factors from all modifiers
-        results = {'shapesys': [],
-                   'normfactor': [],
-                   'shapefactor': [],
-                   'staterror': [],
-                   'histosys': [],
-                   'normsys': []}
-        for m in sample['modifiers']:
-            modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
-            results[m['type']].append(modifier.apply(channel, sample, modpars))
-
-
-        # start building the entire set of factors
-        factors = []
-        # scalars that get broadcasted to shape of vectors
-        factors += results['normfactor']
-        factors += results['normsys']
-        # vectors
-        factors += results['shapesys']
-        factors += results['shapefactor']
-        factors += results['staterror']
-
-        nominal = tensorlib.astensor(sample['data'])
-        factors += [tensorlib.sum(tensorlib.stack([
-          nominal,
-          tensorlib.sum(tensorlib.stack(results['histosys']), axis=0)
-        ]), axis=0) if len(results['histosys']) > 0 else nominal]
-
-        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
+        #can be optimized by s
+        return self.expected_actualdata(pars, ravel = False, stack = False)[self.sampleindex[channel][sample]]
 
     def expected_auxdata(self, pars):
         # probably more correctly this should be the expectation value of the constraint_pdf
@@ -299,15 +221,8 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
-    def expected_actualdata(self, pars, new = False):
-        if new:
-            return expected_actualdata(self.config,self.op_code_counts,self.maxdims,self.cube,self.modindex,pars)
-        tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        data = []
-        for channel in self.spec['channels']:
-            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in channel['samples']]),axis=0))
-        return tensorlib.concatenate(data)
+    def expected_actualdata(self, pars, new = False, ravel = True, stack = True):
+        return expected_actualdata(self.config,self.op_code_counts,self.maxdims,self.cube,self.modindex,pars, ravel = ravel, stack = stack)
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
