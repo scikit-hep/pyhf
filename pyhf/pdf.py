@@ -141,8 +141,8 @@ def make_cube(spec):
 
 def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars,ravel, stack):
     tensorlib, _ = get_backend()
-    nfactors  = op_code_counts['multiplication']
-    nsummands = op_code_counts['addition']
+    nfactors  = op_code_counts.get('multiplication',0)
+    nsummands = op_code_counts.get('addition',0)
 
     sumfields = tensorlib.zeros((1+nsummands,)+maxdims)
     #computation is (fac1*fac2*fac3*...*(delta1+delta2+delta3+...+nominal))
