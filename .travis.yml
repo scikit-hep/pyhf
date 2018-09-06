@@ -4,10 +4,10 @@ cache: pip
 python:
   - '2.7'
   - '3.6'
+before_install:
+  - pip install --upgrade pip setuptools
 install:
-- pip install --upgrade pip
-- pip install -U -q -e .[tensorflow,torch,mxnet,develop]
-- pip install "numpy<=1.14.5,>=1.14.0"
+  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,develop]  # Ensure right version of NumPy installed
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
@@ -33,16 +33,19 @@ jobs:
   include:
   - stage: benchmark
     python: '3.6'
+    before_install:
+      - pip install --upgrade pip setuptools
     install:
-      - pip install --upgrade pip
-      - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
+      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,develop]
     script: pytest --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
-    install:
+    before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
-      - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
+      - pip install --upgrade pip setuptools
+    install:
+      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,develop]
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
