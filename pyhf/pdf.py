@@ -116,6 +116,31 @@ class _ModelConfig(object):
             self.auxdata_order.append(modifier_def['name'])
         return modifier
 
+def prep_mod_data(config,modindex):
+    tensorlib, _ = get_backend()
+    prepped = {}
+    for parname,mod in config.par_map.items():
+        mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
+        if mo.__class__.__name__ == 'normsys':
+            prepdata = []
+            for ind in cubeindices:
+                atm = mo.at_minus_one[ind['strings'][0]][ind['strings'][1]]
+                atp = mo.at_plus_one[ind['strings'][0]][ind['strings'][1]]
+                zer = mo.at_zero
+                prepdata.append([atm,zer,atp])
+            prepdata = np.asarray(prepdata)
+            prepped[parname] = prepdata
+        if mo.__class__.__name__ == 'histosys':
+            prepdata = []
+            for ind in cubeindices:
+                atm = mo.at_minus_one[ind['strings'][0]][ind['strings'][1]]
+                atp = mo.at_plus_one[ind['strings'][0]][ind['strings'][1]]
+                zer = mo.at_zero[ind['strings'][0]][ind['strings'][1]]
+                prepdata.append([atm,zer,atp])
+            prepdata = np.asarray(prepdata)
+            prepped[parname] = prepdata
+    return prepped
+
 def make_cube(spec):
     tensorlib, _ = get_backend()
     maxsamples = 0
@@ -139,7 +164,47 @@ def make_cube(spec):
                 sampleindex.setdefault(c['name'],{})[s['name']] = (i,j)
     return thecube,modindex,(nchannels,maxsamples,maxbins), sampleindex
 
-def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars,ravel, stack):
+import numpy as np
+def new_hfinterp1(at_minus_one,at_zero,at_plus_one,alphas):
+    base_negative = np.divide(at_minus_one, at_zero)
+    base_positive = np.divide(at_plus_one, at_zero)
+    neg_alphas = alphas[alphas < 0]
+    pos_alphas = alphas[alphas >= 0]
+    expo_negative = -np.tile(neg_alphas,base_negative.shape+(1,)) #was outer
+    expo_positive = np.tile(pos_alphas,base_positive.shape+(1,)) #was outer
+
+    bases_negative = np.tile(base_negative,neg_alphas.shape+(1,)*len(base_negative.shape))
+    bases_negative = np.einsum('i...->...i',bases_negative)
+
+    bases_positive = np.tile(base_positive,pos_alphas.shape+(1,)*len(base_positive.shape))
+    bases_positive = np.einsum('i...->...i',bases_positive)
+      
+    res_neg = np.power(bases_negative,expo_negative)
+    res_pos = np.power(bases_positive,expo_positive)
+
+    result = np.concatenate([res_neg,res_pos],axis=-1)
+    result.shape
+    return np.einsum('...ij->...ji',result)
+
+def new_hfinterp0(at_minus_one,at_zero,at_plus_one,alphas):
+    iplus_izero  = at_plus_one-at_zero
+    izero_iminus = at_zero-at_minus_one
+
+    posfac = alphas[alphas >= 0]
+    negfac = alphas[alphas < 0]
+
+    w_pos = posfac * np.ones(iplus_izero.shape + posfac.shape)
+    r_pos = iplus_izero.reshape(iplus_izero.shape + (1,)) * w_pos
+
+    w_neg = negfac * np.ones(izero_iminus.shape + negfac.shape)
+    r_neg = izero_iminus.reshape(izero_iminus.shape + (1,)) * w_neg
+
+    result = np.concatenate([r_neg,r_pos],axis=-1)
+    result = np.einsum('...ij->...ji',result)
+    result.shape
+    return result
+
+def expected_actualdata(config,prepped,op_code_counts,maxdims,thecube,modindex,pars,ravel, stack, fast):
     tensorlib, _ = get_backend()
     nfactors  = op_code_counts.get('multiplication',0)
     nsummands = op_code_counts.get('addition',0)
@@ -155,20 +220,29 @@ def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars,rave
         mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
         thispars = tensorlib.astensor(pars[config.par_slice(parname)])
         is_summand = mo.op_code == 'addition'
-        
-        for ind in cubeindices:
-            ndims = len(thecube[ind['indices']])
-            channel_pars = ind['strings']
-            if not is_summand:
-                x = mo.apply(*channel_pars,pars = thispars) 
-                # print('ok',x,mo,thispars,parname,config.par_slice(parname),pars)
-                if mo.__class__.__name__ == 'normfactor':
-                    x = tensorlib.astensor([x]*ndims).reshape(ndims)
-                factorfields[ifactor][ind['indices']] = x
+        if not is_summand:
+            if mo.__class__.__name__ == 'normsys':
+                prepdata = prepped[parname]
+                results = new_hfinterp1(prepdata[:,0],prepdata[:,1],prepdata[:,2],alphas=thispars)
+                for x,ind in zip(results,cubeindices):
+                    factorfields[ifactor][ind['indices']] = x
             else:
-                x = mo.apply(*channel_pars,pars = thispars) 
-                sumfields[isum][ind['indices']] = x
-                #mo.apply(*channel_pars,pars = thispars)
+                for ind in cubeindices:
+                    x = mo.apply(*ind['strings'],pars = thispars) 
+                    if mo.__class__.__name__ == 'normfactor':
+                        ndims = len(thecube[ind['indices']])
+                        x = tensorlib.astensor([x]*ndims).reshape(ndims)
+                    factorfields[ifactor][ind['indices']] = x
+        else:
+            if mo.__class__.__name__ == 'histosys':
+                prepdata = prepped[parname]
+                results = new_hfinterp0(prepdata[:,0],prepdata[:,1],prepdata[:,2],alphas=thispars)
+                for x,ind in zip(results,cubeindices):
+                    sumfields[isum][ind['indices']] = x
+            else:
+                for ind in cubeindices:
+                    x = mo.apply(*ind['strings'],pars = thispars) 
+                    sumfields[isum][ind['indices']] = x
         if not is_summand:
             ifactor += 1
         else:
@@ -188,7 +262,7 @@ class Model(object):
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
         self.cube, self.modindex, self.maxdims, self.sampleindex = make_cube(self.spec)
-
+        self.prepped_mod = prep_mod_data(self.config,self.modindex)
 
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
@@ -221,8 +295,8 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
-    def expected_actualdata(self, pars, new = False, ravel = True, stack = True):
-        return expected_actualdata(self.config,self.op_code_counts,self.maxdims,self.cube,self.modindex,pars, ravel = ravel, stack = stack)
+    def expected_actualdata(self, pars, new = False, ravel = True, stack = True, fast = False):
+        return expected_actualdata(self.config,self.prepped_mod,self.op_code_counts,self.maxdims,self.cube,self.modindex,pars, ravel = ravel, stack = stack, fast = fast)
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
