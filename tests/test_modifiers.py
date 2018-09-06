@@ -18,7 +18,9 @@ def test_import_default_modifiers(test_modifierPair):
     assert callable(modifier)
     assert hasattr(modifier, 'is_constrained')
     assert hasattr(modifier, 'pdf_type')
+    assert hasattr(modifier, 'op_code')
     assert modifier.pdf_type == test_mod_type
+    assert modifier.op_code == 'addition'
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():
@@ -91,6 +93,13 @@ def test_modifiers_structure():
             def pdf(self): pass
             def alphas(self): pass
             def expected_data(self): pass
+
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        @modifier(name='myFakeOperationPDF', op_code='fake_addition')
+        class myCustomModifier(object):
+            def __init__(self): pass
+            def add_sample(self): pass
+            def apply(self): pass
 
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
