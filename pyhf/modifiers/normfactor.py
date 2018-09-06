@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 
-@modifier(name='normfactor', shared=True)
+@modifier(name='normfactor', shared=True, op_code = 'multiplication')
 class normfactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1

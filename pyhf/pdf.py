@@ -137,10 +137,10 @@ def make_cube(spec):
                 modindex.setdefault(m['name'],{}).setdefault('indices',[]).append({'strings': [c['name'],s['name']], 'indices': tuple((i,j))})
     return thecube,modindex,(nchannels,maxsamples,maxbins)
 
-def expected_actualdata(config,modtypecounts,maxdims,thecube,modindex,pars):
+def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars):
     tensorlib, _ = get_backend()
-    nfactors  = modtypecounts.get('shapesys',0) + modtypecounts.get('normfactor',0) + modtypecounts.get('normsys',0) + modtypecounts.get('shapefactor',0)
-    nsummands = modtypecounts.get('histosys',0) # +...
+    nfactors  = op_code_counts['multiplication']
+    nsummands = op_code_counts['addition']
 
     sumfields = tensorlib.zeros((1+nsummands,)+maxdims)
     #computation is (fac1*fac2*fac3*...*(delta1+delta2+delta3+...+nominal))
@@ -152,7 +152,7 @@ def expected_actualdata(config,modtypecounts,maxdims,thecube,modindex,pars):
     for parname,mod in config.par_map.items():
         mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
         thispars = tensorlib.astensor(pars[config.par_slice(parname)])
-        is_summand = mo.__class__.__name__ == 'histosys'
+        is_summand = mo.op_code == 'addition'
         
         for ind in cubeindices:
             ndims = len(thecube[ind['indices']])
@@ -192,11 +192,11 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
-        self.modtypecounts = {}
-        for k,v in self.config.par_map.items():
-            modtype = v['modifier'].__class__.__name__
-            self.modtypecounts.setdefault(modtype,0)
-            self.modtypecounts[modtype] += 1
+        self.op_code_counts = {}
+        for v in self.config.par_map.values():
+            op_code = v['modifier'].op_code
+            self.op_code_counts.setdefault(op_code,0)
+            self.op_code_counts[op_code] += 1
 
     def expected_sample(self, channel, sample, pars):
         """
@@ -301,7 +301,7 @@ class Model(object):
 
     def expected_actualdata(self, pars, new = False):
         if new:
-            return expected_actualdata(self.config,self.modtypecounts,self.maxdims,self.cube,self.modindex,pars)
+            return expected_actualdata(self.config,self.op_code_counts,self.maxdims,self.cube,self.modindex,pars)
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []
