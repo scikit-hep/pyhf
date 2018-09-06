@@ -4,10 +4,11 @@ cache: pip
 python:
   - '2.7'
   - '3.6'
+before_install:
+- pip install --upgrade pip setuptools
+- pip uninstall -y numpy  # As numpy 1.13.3 is install by default in Travis it will be used unless removed
 install:
-- pip install --upgrade pip
 - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
-- pip install "numpy<=1.14.5,>=1.14.0"
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
