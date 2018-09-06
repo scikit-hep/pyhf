@@ -240,7 +240,6 @@ class Model(object):
         # iterate over all constraints order doesn't matter....
         start_index = 0
         summands = None
-        bytype = {}
         for cname in self.config.auxdata_order:
             modifier, modslice = self.config.modifier(cname), \
                 self.config.par_slice(cname)
@@ -248,17 +247,8 @@ class Model(object):
             end_index = start_index + int(modalphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            # print('haha',modifier.pdf_type,thisauxdata,modalphas)
-            # bytype.setdefault(modifier.pdf_type,[]).append([thisauxdata,modalphas])
             constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
             summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
-        # for k,c in bytype.items():
-        #     d = tensorlib.concatenate(tensorlib.astensor(c),axis=-1)
-        #     # print('call',d.shape,k,c)
-        #     constraint_term = tensorlib.log(getattr(tensorlib,k)(*d))
-        #     summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
-        # print(bytype)
-        # print(summands)
         return tensorlib.sum(summands) if summands is not None else 0
 
     def logpdf(self, pars, data):
