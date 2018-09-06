@@ -8,7 +8,6 @@ install:
 - pip install --upgrade pip
 - pip install -U -q -e .[tensorflow,torch,mxnet,develop]
 - pip install "numpy<=1.14.5,>=1.14.0"
-- pip freeze | grep numpy
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
