@@ -185,6 +185,7 @@ def expected_actualdata(config,op_code_counts,maxdims,thecube,modindex,pars,rave
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
+        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
         self.cube, self.modindex, self.maxdims, self.sampleindex = make_cube(self.spec)
 
@@ -194,7 +195,6 @@ class Model(object):
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
         self.op_code_counts = {}
         for v in self.config.par_map.values():

@@ -33,8 +33,9 @@ class staterror(object):
         return self.alphas(pars)
 
     def add_sample(self, channel, sample, modifier_def):
+        tensorlib, _ = get_backend()
         self.nominal_counts.append(sample['data'])
-        self.uncertainties.append(modifier_def['data'])
+        self.uncertainties.append(tensorlib.astensor(modifier_def['data']))
 
     def apply(self, channel, sample, pars):
         return pars
