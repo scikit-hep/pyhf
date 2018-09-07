@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
 
 [![Build Status](https://travis-ci.org/diana-hep/pyhf.svg?branch=master)](https://travis-ci.org/diana-hep/pyhf)
-[![Docker Automated](https://img.shields.io/docker/automated/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/) [![Docker Build](https://img.shields.io/docker/build/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
+[![Docker Automated](https://img.shields.io/docker/automated/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
 [![Coverage Status](https://coveralls.io/repos/github/diana-hep/pyhf/badge.svg?branch=master)](https://coveralls.io/github/diana-hep/pyhf?branch=master) [![Code Health](https://landscape.io/github/diana-hep/pyhf/master/landscape.svg?style=flat)](https://landscape.io/github/diana-hep/pyhf/master)
 
 [![Docs](https://img.shields.io/badge/docs-master-blue.svg)](https://diana-hep.github.io/pyhf)
@@ -39,7 +39,7 @@ Implemented variations:
 - [x] ShapeSys
 - [x] NormFactor
 - [x] Multiple Channels
-- [x] Import from XML + ROOT via [`uproot`](https://github.com/scikit-hep/uproot)
+- [x] Import from XML + ROOT via [uproot](https://github.com/scikit-hep/uproot)
 - [x] ShapeFactor
 - [x] StatError
 
