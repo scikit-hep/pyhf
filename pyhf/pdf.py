@@ -28,8 +28,12 @@ class _ModelConfig(object):
                             poiname = fullname
                         modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
-                    modifier.add_sample(channel, sample, modifier_def)
-                    modifiers.append(modifier_def['name'])
+                    try:
+                        modifier.add_sample(channel, sample, modifier_def)
+                        modifiers.append(modifier_def['name'])
+                    except:
+                        pass
+
         instance.channels = list(set(channels))
         instance.samples = list(set(samples))
         instance.modifiers = list(set(modifiers))
@@ -166,6 +170,7 @@ def make_cube(spec):
 
 import numpy as np
 def new_hfinterp1(at_minus_one,at_zero,at_plus_one,alphas):
+    #warning, alphas must be orderes
     base_negative = np.divide(at_minus_one, at_zero)
     base_positive = np.divide(at_plus_one, at_zero)
     neg_alphas = alphas[alphas < 0]
@@ -178,7 +183,7 @@ def new_hfinterp1(at_minus_one,at_zero,at_plus_one,alphas):
 
     bases_positive = np.tile(base_positive,pos_alphas.shape+(1,)*len(base_positive.shape))
     bases_positive = np.einsum('i...->...i',bases_positive)
-      
+
     res_neg = np.power(bases_negative,expo_negative)
     res_pos = np.power(bases_positive,expo_positive)
 
@@ -187,6 +192,7 @@ def new_hfinterp1(at_minus_one,at_zero,at_plus_one,alphas):
     return np.einsum('...ij->...ji',result)
 
 def new_hfinterp0(at_minus_one,at_zero,at_plus_one,alphas):
+    #warning, alphas must be orderes
     iplus_izero  = at_plus_one-at_zero
     izero_iminus = at_zero-at_minus_one
 
@@ -204,6 +210,17 @@ def new_hfinterp0(at_minus_one,at_zero,at_plus_one,alphas):
     result.shape
     return result
 
+def calculate_constraint(bytype):
+    tensorlib, _ = get_backend()
+    newsummands = None
+    for k,c in bytype.items():
+        c = tensorlib.astensor(c)
+        #warning, call signature depends on pdf_type (2 for pois, 3 for normal)
+        pdfval = getattr(tensorlib,k)(c[:,0],c[:,1],c[:,2])
+        constraint_term = tensorlib.log(pdfval)
+        newsummands = constraint_term if newsummands is None else tensorlib.concatenate([newsummands,constraint_term])
+    return tensorlib.sum(newsummands) if newsummands is not None else 0
+
 def expected_actualdata(config,prepped,op_code_counts,maxdims,thecube,modindex,pars,ravel, stack, fast):
     tensorlib, _ = get_backend()
     nfactors  = op_code_counts.get('multiplication',0)
@@ -218,17 +235,18 @@ def expected_actualdata(config,prepped,op_code_counts,maxdims,thecube,modindex,p
     ifactor,isum = 1,1
     for parname,mod in config.par_map.items():
         mo,sl,cubeindices = mod['modifier'], mod['slice'],modindex[parname]['indices']
-        thispars = tensorlib.astensor(pars[config.par_slice(parname)])
         is_summand = mo.op_code == 'addition'
         if not is_summand:
             if mo.__class__.__name__ == 'normsys':
+                thispars = tensorlib.astensor(pars[config.par_slice(parname)])
                 prepdata = prepped[parname]
                 results = new_hfinterp1(prepdata[:,0],prepdata[:,1],prepdata[:,2],alphas=thispars)
                 for x,ind in zip(results,cubeindices):
                     factorfields[ifactor][ind['indices']] = x
             else:
+                thispars = tensorlib.astensor(pars[config.par_slice(parname)])
                 for ind in cubeindices:
-                    x = mo.apply(*ind['strings'],pars = thispars) 
+                    x = mo.apply(*ind['strings'],pars = thispars)
                     if mo.__class__.__name__ == 'normfactor':
                         ndims = len(thecube[ind['indices']])
                         x = tensorlib.astensor([x]*ndims).reshape(ndims)
@@ -241,12 +259,12 @@ def expected_actualdata(config,prepped,op_code_counts,maxdims,thecube,modindex,p
                     sumfields[isum][ind['indices']] = x
             else:
                 for ind in cubeindices:
-                    x = mo.apply(*ind['strings'],pars = thispars) 
+                    x = mo.apply(*ind['strings'],pars = thispars)
                     sumfields[isum][ind['indices']] = x
         if not is_summand:
             ifactor += 1
         else:
-            isum += 1            
+            isum += 1
 
     factorfields[0] = tensorlib.sum(sumfields, axis = 0)
     expected  = tensorlib.product(factorfields,axis=0) #apply modifiers
@@ -256,6 +274,12 @@ def expected_actualdata(config,prepped,op_code_counts,maxdims,thecube,modindex,p
         expected = expected.ravel()
     return expected
 
+def finalize_stats(modifier):
+    tensorlib, _ = get_backend()
+    inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(tensorlib.astensor(modifier.uncertainties),2), axis=0))
+    totals = tensorlib.sum(modifier.nominal_counts,axis=0)
+    return tensorlib.divide(inquad,totals)
+
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
@@ -263,6 +287,8 @@ class Model(object):
 
         self.cube, self.modindex, self.maxdims, self.sampleindex = make_cube(self.spec)
         self.prepped_mod = prep_mod_data(self.config,self.modindex)
+        log.warning('not sure when we should be finalizing.. this is the fastest though')
+        self.finalized_stats = {k:finalize_stats(self.config.modifier(k)) for k,v in self.config.par_map.items() if 'staterror' in k}
 
         self.schema = config_kwargs.get('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
@@ -311,9 +337,8 @@ class Model(object):
 
     def constraint_logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
-        # iterate over all constraints order doesn't matter....
         start_index = 0
-        summands = None
+        bytype = {}
         for cname in self.config.auxdata_order:
             modifier, modslice = self.config.modifier(cname), \
                 self.config.par_slice(cname)
@@ -321,9 +346,16 @@ class Model(object):
             end_index = start_index + int(modalphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
-            summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
-        return tensorlib.sum(summands) if summands is not None else 0
+            if modifier.pdf_type=='normal':
+                if modifier.__class__.__name__ in ['histosys','normsys']:
+                    kwargs = {'sigma': tensorlib.astensor([1])}
+                elif modifier.__class__.__name__ in ['staterror']:
+                    kwargs = {'sigma': self.finalized_stats[cname]}
+            else:
+                kwargs = {}
+            callargs = [thisauxdata,modalphas] + [kwargs['sigma'] if kwargs else []]
+            bytype.setdefault(modifier.pdf_type,[]).append(callargs)
+        return calculate_constraint(bytype)
 
     def logpdf(self, pars, data):
         tensorlib, _ = get_backend()
