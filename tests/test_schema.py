@@ -48,7 +48,7 @@ def test_sample_missing_name():
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
 
-def test_sample_missing_modifiers():
+def test_sample_missing_all_modifiers():
     spec = {
         'channels': [
             {
@@ -63,7 +63,31 @@ def test_sample_missing_modifiers():
             },
         ]
     }
-    pyhf.Model(spec)
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Model(spec)
+
+def test_one_sample_missing_modifiers():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': []
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.],
+                        'modifiers': [{'name': 'mypoi', 'type': 'normfactor', 'data': None}]
+                    }
+                ]
+            },
+        ]
+    }
+    pyhf.Model(spec, poiname='mypoi')
+
 
 def test_add_unknown_modifier():
     spec = {

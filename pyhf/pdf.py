@@ -30,6 +30,8 @@ class _ModelConfig(object):
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
+        if poiname not in modifiers:
+            raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(poiname))
         instance.set_poi(poiname)
         return (instance, (list(set(channels)), list(set(samples)), list(set(modifiers))))
 
