@@ -11,11 +11,16 @@ from . import utils
 class _ModelConfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
+        channels = []
+        samples = []
+        modifiers = []
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
+            channels.append(channel['name'])
             for sample in channel['samples']:
+                samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
@@ -24,8 +29,9 @@ class _ModelConfig(object):
                         modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
+                    modifiers.append(modifier_def['name'])
         instance.set_poi(poiname)
-        return instance
+        return (instance, (list(set(channels)), list(set(samples)), list(set(modifiers))))
 
     def __init__(self):
         # set up all other bookkeeping variables
@@ -113,7 +119,7 @@ class Model(object):
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
+        self.config, (self.channels, self.samples, self.modifiers) = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
