@@ -30,10 +30,11 @@ class _ModelConfig(object):
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
-        if poiname not in modifiers:
-            raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(poiname))
+        instance.channels = list(set(channels))
+        instance.samples = list(set(samples))
+        instance.modifiers = list(set(modifiers))
         instance.set_poi(poiname)
-        return (instance, (list(set(channels)), list(set(samples)), list(set(modifiers))))
+        return instance
 
     def __init__(self):
         # set up all other bookkeeping variables
@@ -63,6 +64,8 @@ class _ModelConfig(object):
         return self.par_map[name]['modifier']
 
     def set_poi(self,name):
+        if name not in self.modifiers:
+            raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(name))
         s = self.par_slice(name)
         assert s.stop-s.start == 1
         self.poi_index = s.start
@@ -121,7 +124,7 @@ class Model(object):
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config, (self.channels, self.samples, self.modifiers) = _ModelConfig.from_spec(self.spec,**config_kwargs)
+        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
     def expected_sample(self, channel, sample, pars):
         """
