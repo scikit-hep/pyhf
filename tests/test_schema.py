@@ -85,7 +85,6 @@ def test_add_unknown_modifier():
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
 
-
 def test_empty_staterror():
     spec = {
         'channels': [
@@ -125,3 +124,44 @@ def test_empty_shapesys():
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
+
+def test_empty_histosys():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': [
+                            {'name': 'modifier', 'type': 'histosys', 'data': {'lo_data': [], 'hi_data': []}}
+                        ]
+                    }
+                ]
+            },
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+def test_empty_normsys():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': [
+                            {'name': 'modifier', 'type': 'normsys', 'data': {'lo': [], 'hi': []}}
+                        ]
+                    }
+                ]
+            },
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
