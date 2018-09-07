@@ -1,8 +1,8 @@
 import sys
 
 class InvalidNameReuse(Exception):
-    pass 
-       
+    pass
+
 class InvalidSpecification(Exception):
     """
     InvalidSpecification is raised when a specification does not validate against the given schema.
@@ -22,6 +22,13 @@ class InvalidSpecification(Exception):
         # Call the base class constructor with the parameters it needs
         super(InvalidSpecification, self).__init__(message)
 
+class InvalidModel(Exception):
+    """
+    InvalidModel is raised when a given model does not have the right configuration, even though it validates correctly against the schema.
+
+    This can occur, for example, when the provided parameter of interest to fit against does not get declared in the specification provided.
+    """
+    pass
 
 class InvalidModifier(Exception):
     """
