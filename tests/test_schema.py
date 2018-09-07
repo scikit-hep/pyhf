@@ -1,7 +1,37 @@
 import pyhf
 import pytest
 
-def test_missing_sample_name():
+def test_no_samples():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': []
+            },
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+def test_sample_missing_data():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [],
+                        'modifiers': []
+                    }
+                ]
+            },
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+def test_sample_missing_name():
     spec = {
         'channels': [
             {
@@ -18,6 +48,23 @@ def test_missing_sample_name():
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
 
+def test_sample_missing_modifiers():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': []
+                    }
+                ]
+            },
+        ]
+    }
+    pyhf.Model(spec)
+
 def test_add_unknown_modifier():
     spec = {
         'channels': [
@@ -33,6 +80,47 @@ def test_add_unknown_modifier():
                     },
                 ]
             }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+
+def test_empty_staterror():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': [
+                            {'name': 'staterror_channel', 'type': 'staterror', 'data': []}
+                        ]
+                    }
+                ]
+            },
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+def test_empty_shapesys():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.],
+                        'modifiers': [
+                            {'name': 'sample_norm', 'type': 'shapesys','data': []}
+                        ]
+                    }
+                ]
+            },
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):

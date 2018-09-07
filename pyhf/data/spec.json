@@ -12,7 +12,7 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 }
             },
             "required": ["name", "samples"],
             "additionalProperties": false
@@ -21,7 +21,7 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "data": { "type": "array", "items": {"type": "number"} },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                 "modifiers": {
                     "type": "array",
                     "items": {
@@ -85,7 +85,7 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapesys" },
-                    "data": { "type": "array", "items": {"type": "number"} }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -95,7 +95,7 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "staterror" },
-                    "data": { "type": "array", "items": {"type": "number"} }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
