@@ -168,24 +168,3 @@ def test_empty_histosys():
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
-
-def test_empty_normsys():
-    spec = {
-        'channels': [
-            {
-                'name': 'channel',
-                'samples': [
-                    {
-                        'name': 'sample',
-                        'data': [10.],
-                        'modifiers': [
-                            {'name': 'modifier', 'type': 'normsys', 'data': {'lo': [], 'hi': []}}
-                        ]
-                    }
-                ]
-            },
-        ]
-    }
-    with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Model(spec)
-

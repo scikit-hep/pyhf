@@ -75,8 +75,8 @@
                     "data": {
                         "type": "object",
                         "properties": {
-                            "lo": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                            "hi": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                            "lo": { "type": "number" },
+                            "hi": { "type": "number"}
                         },
                         "required": ["lo", "hi"]
                     }
