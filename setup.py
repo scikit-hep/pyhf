@@ -51,6 +51,7 @@ setup(
        'sphinxcontrib-napoleon',
        'sphinx_rtd_theme',
        'nbsphinx',
+       'm2r',
        'jsonpatch'
     ]
   },
