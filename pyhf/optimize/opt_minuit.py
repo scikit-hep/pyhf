@@ -21,9 +21,6 @@ class minuit_optimizer(object):
             initvals['p{}'.format(pdf.config.poi_index)] = constrained_mu
         else:
             constraints = {}
-
-        # raise RuntimeError(constraints)
-        print(kw,constraints,initvals)
         mm = iminuit.Minuit(f, use_array_call=True, forced_parameters = parnames, **kw, **constraints, **initvals)
         return mm
 
@@ -35,8 +32,6 @@ class minuit_optimizer(object):
 
     def constrained_bestfit(self, objective, constrained_mu, data, pdf, init_pars, par_bounds):
         # The Fit Conditions on a specific POI value
-        # The Global Fit
-        # raise RuntimeError(pdf.logpdf(init_pars,data)[0])
         mm = self._make_minuit(objective,data,pdf,init_pars,par_bounds, constrained_mu = constrained_mu)
         mm.migrad()
         return np.asarray([x[1] for x in mm.values.items()])
