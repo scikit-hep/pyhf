@@ -1,7 +1,7 @@
 from . import tensor, optimize
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
-optimizer = optimize.scipy_optimizer()
+optimizer = optimize.minuit_optimizer()
 default_optimizer = optimizer
 
 def get_backend():
