@@ -5,7 +5,8 @@ import numpy as np
 log = logging.getLogger(__name__)
 
 class minuit_optimizer(object):
-    def __init__(self):
+    def __init__(self, verbose = False):
+        self.verbose = 0
         pass
 
     def _make_minuit(self, objective, data, pdf, init_pars, init_bounds, constrained_mu = None):
@@ -21,7 +22,7 @@ class minuit_optimizer(object):
             initvals['p{}'.format(pdf.config.poi_index)] = constrained_mu
         else:
             constraints = {}
-        mm = iminuit.Minuit(f, use_array_call=True, forced_parameters = parnames, **kw, **constraints, **initvals)
+        mm = iminuit.Minuit(f, print_level = 1 if self.verbose else 0, use_array_call=True, forced_parameters = parnames, **kw, **constraints, **initvals)
         return mm
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
