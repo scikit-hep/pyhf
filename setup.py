@@ -23,6 +23,9 @@ setup(
     'torch': [
       'torch>=0.4.0'
     ],
+    'minuit': [
+      'iminuit'
+    ],
     'mxnet':[
       'mxnet>=1.0.0',
       'requests<2.19.0,>=2.18.4',
