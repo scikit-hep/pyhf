@@ -12,3 +12,9 @@ try:
     assert tflow_optimizer
 except ImportError:
     pass
+
+try:
+    from .opt_minuit import minuit_optimizer
+    assert minuit_optimizer
+except ImportError:
+    pass
