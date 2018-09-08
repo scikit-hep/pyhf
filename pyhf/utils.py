@@ -162,3 +162,42 @@ def runOnePoint(muTest, data, pdf, init_pars = None, par_bounds = None):
             pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
     CLs_exp = tensorlib.astensor(CLs_exp)
     return qmu_v, qmuA_v, CLsb, CLb, CLs, CLs_exp
+
+
+def makespec(nchans,nsamps,nbins,nsysts):
+    r"""
+    make an example specification with nchannels, nsamples, nbins, and nsystematics
+
+    nbins is the number of bins in the histograms of data/inputs
+    """
+    channels = []
+    for cc in range(nchans):
+        backgrounds = []
+        for ss in range(nsamps):
+            mods = []
+            for nn in range(nsysts):
+                mods.append(
+                    {'name': 'syst_{}_{}_{}'.format(cc,ss,nn), 'type': 'shapesys', 'data': [7.]*nbins}
+                )
+                mods.append(
+                    {'name': 'h_syst_{}_{}_{}'.format(cc,ss,nn), 'type': 'histosys', 'data': {'hi_data': [51.]*nbins, 'lo_data': [49.]*nbins}}
+                )
+                mods.append(
+                    {'name': 'n_syst_{}_{}_{}'.format(cc,ss,nn), 'type': 'normsys', 'data': {'hi': 0.95, 'lo': 1.05}}
+                )
+                mods.append(
+                    {'name': 'sf_{}_{}_{}'.format(cc,ss,nn), 'type': 'shapefactor', 'data': None}
+                )
+            backgrounds.append(
+                {'name': 'background_{}_{}'.format(cc,ss),'data': [50.0]*nbins,'modifiers': mods}
+            )
+        c = {
+            'name': 'channel_{}'.format(cc),
+            'samples': [
+               {'name': 'signal','data': [5.0]*nbins, 'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}]},
+            ] + backgrounds
+        }
+        channels.append(c)
+    spec = {'channels': channels}
+    return spec
+
