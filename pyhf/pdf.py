@@ -11,11 +11,16 @@ from . import utils
 class _ModelConfig(object):
     @classmethod
     def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
+        channels = []
+        samples = []
+        modifiers = []
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
+            channels.append(channel['name'])
             for sample in channel['samples']:
+                samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
@@ -24,6 +29,10 @@ class _ModelConfig(object):
                         modifier_def['name'] = fullname
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
+                    modifiers.append(modifier_def['name'])
+        instance.channels = list(set(channels))
+        instance.samples = list(set(samples))
+        instance.modifiers = list(set(modifiers))
         instance.set_poi(poiname)
         return instance
 
@@ -55,6 +64,8 @@ class _ModelConfig(object):
         return self.par_map[name]['modifier']
 
     def set_poi(self,name):
+        if name not in self.modifiers:
+            raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(name))
         s = self.par_slice(name)
         assert s.stop-s.start == 1
         self.poi_index = s.start

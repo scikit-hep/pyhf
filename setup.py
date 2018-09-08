@@ -9,8 +9,7 @@ setup(
   packages = find_packages(),
   include_package_data = True,
   install_requires = [
-    'numpy<=1.14.5,>=1.14.3',  # required by tensorflow, mxnet, and us
-    'scipy',
+    'scipy',  # requires numpy, which is required by pyhf, tensorflow, and mxnet
     'click>=6.0',  # for console scripts,
     'tqdm',  # for readxml
     'six',  # for modifiers
@@ -34,7 +33,7 @@ setup(
     ],
     'tensorflow':[
        'tensorflow>=1.10.0',
-       'numpy<=1.14.5,>=1.13.3',
+       'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
        'setuptools<=39.1.0',
     ],
     'develop': [
@@ -55,6 +54,7 @@ setup(
        'sphinxcontrib-napoleon',
        'sphinx_rtd_theme',
        'nbsphinx',
+       'm2r',
        'jsonpatch'
     ]
   },

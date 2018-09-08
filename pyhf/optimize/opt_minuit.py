@@ -7,7 +7,6 @@ log = logging.getLogger(__name__)
 class minuit_optimizer(object):
     def __init__(self, verbose = False):
         self.verbose = 0
-        pass
 
     def _make_minuit(self, objective, data, pdf, init_pars, init_bounds, constrained_mu = None):
         def f(pars):

@@ -28,7 +28,7 @@ If you have found a bug please report it by filling out the [bug report template
 You can install the development environment (which includes a number of extra) libraries via `pip`:
 
 ```
-pip install -e.[develop]
+pip install --ignore-installed -U -e .[tensorflow,torch,mxnet,develop]
 ```
 
 ## Running the tests

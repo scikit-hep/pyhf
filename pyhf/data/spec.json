@@ -12,7 +12,7 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"} }
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 }
             },
             "required": ["name", "samples"],
             "additionalProperties": false
@@ -21,7 +21,7 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "data": { "type": "array", "items": {"type": "number"} },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                 "modifiers": {
                     "type": "array",
                     "items": {
@@ -45,7 +45,14 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "histosys" },
-                    "data": { "type": "object", "required": ["lo_data", "hi_data"] }
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                            "hi_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                        },
+                        "required": ["lo_data", "hi_data"]
+                    }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -65,7 +72,14 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "normsys" },
-                    "data": { "type": "object", "required": ["lo", "hi"] }
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo": { "type": "number" },
+                            "hi": { "type": "number"}
+                        },
+                        "required": ["lo", "hi"]
+                    }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -85,7 +99,7 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapesys" },
-                    "data": { "type": "array", "items": {"type": "number"} }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -95,7 +109,7 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "staterror" },
-                    "data": { "type": "array", "items": {"type": "number"} }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
