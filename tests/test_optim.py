@@ -66,16 +66,18 @@ def spec(source):
                          ])
 @pytest.mark.parametrize('backend',
                          [
-                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
+                             (pyhf.tensor.numpy_backend(poisson_from_normal=True),),
+                             (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
+                             (pyhf.tensor.pytorch_backend(poisson_from_normal=True),),
                              # pyhf.tensor.mxnet_backend(),
+                             (pyhf.tensor.numpy_backend(poisson_from_normal=True), pyhf.optimize.minuit_optimizer()),
                          ],
                          ids=[
                              'numpy',
                              'tensorflow',
                              'pytorch',
                              # 'mxnet',
+                             'numpy-minuit',
                          ])
 def test_optim(source, spec, mu, backend):
     pdf = pyhf.Model(spec)
@@ -84,7 +86,7 @@ def test_optim(source, spec, mu, backend):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    pyhf.set_backend(backend)
+    pyhf.set_backend(*backend)
     optim = pyhf.optimizer
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.reset_default_graph()
