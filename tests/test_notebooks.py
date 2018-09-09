@@ -21,5 +21,8 @@ def test_notebooks(tmpdir):
                         parameters={'validation_datadir': 'validation/data'},
                         **common_kwargs)
 
+    pm.execute_notebook(
+        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
+
     nb = pm.read_notebook(str(outputnb))
     assert nb.data['number_2d_successpoints'] > 200
