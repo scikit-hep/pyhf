@@ -60,8 +60,14 @@ class numpy_backend(object):
         tensor_in = self.astensor(tensor_in)
         return np.product(tensor_in, axis = axis)
 
+    def abs(self, tensor):
+        return np.abs(tensor)
+
     def ones(self,shape):
         return np.ones(shape)
+
+    def zeros(self,shape):
+        return np.zeros(shape)
 
     def power(self,tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -94,8 +100,19 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence):
-        return np.concatenate(sequence)
+    def concatenate(self, sequence, axis=0):
+        """
+        Join a sequence of arrays along an existing axis.
+
+        Args:
+            sequence: sequence of tensors
+            axis: dimension along which to concatenate
+
+        Returns:
+            output: the concatenated tensor
+
+        """
+        return np.concatenate(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -118,6 +135,53 @@ class numpy_backend(object):
             list of Tensors: The sequence broadcast together.
         """
         return np.broadcast_arrays(*args)
+
+    def tile(self, A, reps):
+        """
+        Construct an array by repeating A the number of times given by reps.
+
+        If reps has length d, the result will have dimension of max(d, A.ndim).
+
+        If A.ndim < d, A is promoted to be d-dimensional by prepending new
+        axes. So a shape (3,) array is promoted to (1, 3) for 2-D replication,
+        or shape (1, 1, 3) for 3-D replication. If this is not the desired
+        behavior, promote A to d-dimensions manually before calling this
+        function.
+
+        If A.ndim > d, reps is promoted to A.ndim by pre-pending 1's to it.
+        Thus for an A of shape (2, 3, 4, 5), a reps of (2, 2) is treated as (1,
+        1, 2, 2).
+
+        Note : Although tile may be used for broadcasting, it is strongly
+        recommended to use numpy's broadcasting operations and functions.
+
+        Args:
+            A: tensor
+            reps: The numbr of repetitions along each axis
+
+        Returns:
+            tensor: The tiled output array
+        """
+        return np.tile(A, reps)
+
+    def einsum(self, subscripts, *operands):
+        """
+        Evaluates the Einstein summation convention on the operands.
+
+        Using the Einstein summation convention, many common multi-dimensional
+        array operations can be represented in a simple fashion. This function
+        provides a way to compute such summations. The best way to understand
+        this function is to try the examples below, which show how many common
+        NumPy functions can be implemented as calls to einsum.
+
+        Args:
+            subscripts: str, specifies the subscripts for summation
+            operands: list of array_like, these are the tensors for the operation
+
+        Returns:
+            tensor: the calculation based on the Einstein summation convention
+        """
+        return np.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
         n = np.asarray(n)

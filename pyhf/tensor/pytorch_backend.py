@@ -65,8 +65,14 @@ class pytorch_backend(object):
         tensor_in = self.astensor(tensor_in)
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
+    def abs(self, tensor):
+        return torch.abs(tensor)
+
     def ones(self, shape):
         return torch.Tensor(torch.ones(shape))
+
+    def zeros(self, shape):
+        return torch.Tensor(torch.zeros(shape))
 
     def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -99,8 +105,19 @@ class pytorch_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return mask * tensor_in_1 + (1-mask) * tensor_in_2
 
-    def concatenate(self, sequence):
-        return torch.cat(sequence)
+    def concatenate(self, sequence, axis=0):
+        """
+        Join a sequence of arrays along an existing axis.
+
+        Args:
+            sequence: sequence of tensors
+            axis: dimension along which to concatenate
+
+        Returns:
+            output: the concatenated tensor
+
+        """
+        return torch.cat(sequence, dim=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -133,6 +150,34 @@ class pytorch_backend(object):
         broadcast = [arg if len(arg) > 1 else arg.expand(max_dim)
                      for arg in args]
         return broadcast
+
+    def tile(self, A, reps):
+        """
+        Repeats the whole array multiple times.
+
+        Args:
+            A: tensor
+            reps: The numbr of repetitions along each axis
+
+        Returns:
+            tensor: The tiled output array
+        """
+        return A.repeat(*reps)
+
+    def einsum(self, subscripts, *operands):
+        """
+        This function provides a way of computing multilinear expressions (i.e.
+        sums of products) using the Einstein summation convention.
+
+        Args:
+            subscripts: str, specifies the subscripts for summation
+            operands: list of array_like, these are the tensors for the operation
+
+        Returns:
+            tensor: the calculation based on the Einstein summation convention
+        """
+        return torch.einsum(subscripts, operands)
+
 
     def poisson(self, n, lam):
         return self.normal(n,lam, self.sqrt(lam))

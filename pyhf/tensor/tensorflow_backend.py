@@ -79,8 +79,14 @@ class tensorflow_backend(object):
         tensor_in = self.astensor(tensor_in)
         return tf.reduce_prod(tensor_in) if axis is None else tf.reduce_prod(tensor_in, axis)
 
+    def abs(self, tensor):
+        return tf.abs(tensor)
+
     def ones(self, shape):
         return tf.ones(shape)
+
+    def zeros(self, shape):
+        return tf.zeros(shape)
 
     def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -113,8 +119,19 @@ class tensorflow_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return mask * tensor_in_1 + (1-mask) * tensor_in_2
 
-    def concatenate(self, sequence):
-        return tf.concat(sequence, axis=0)
+    def concatenate(self, sequence, axis=0):
+        """
+        Join a sequence of arrays along an existing axis.
+
+        Args:
+            sequence: sequence of tensors
+            axis: dimension along which to concatenate
+
+        Returns:
+            output: the concatenated tensor
+
+        """
+        return tf.concat(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -157,8 +174,38 @@ class tensorflow_backend(object):
             raise error
 
         broadcast = [arg if generic_len(arg) > 1 else
-                     tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
+                     self.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
         return broadcast
+
+    def tile(self, A, reps):
+        """
+        Repeats the whole array multiple times.
+
+        Args:
+            A: tensor
+            reps: The numbr of repetitions along each axis
+
+        Returns:
+            tensor: The tiled output array
+        """
+        return tf.tile(A, reps)
+
+    def einsum(self, subscripts, *operands):
+        """
+        A generalized contraction between tensors of arbitrary dimension.
+
+        This function returns a tensor whose elements are defined by equation,
+        which is written in a shorthand form inspired by the Einstein summation
+        convention.
+
+        Args:
+            subscripts: str, specifies the subscripts for summation
+            operands: list of array_like, these are the tensors for the operation
+
+        Returns:
+            tensor: the calculation based on the Einstein summation convention
+        """
+        return tf.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
         # could be changed to actual Poisson easily
