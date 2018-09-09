@@ -13,6 +13,9 @@ def test_notebooks(tmpdir):
         'docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
     pm.execute_notebook(
+        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
+
+    pm.execute_notebook(
         'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
     pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',
                         parameters={'validation_datadir': 'validation/data'},
@@ -20,9 +23,6 @@ def test_notebooks(tmpdir):
     pm.execute_notebook('docs/examples/notebooks/multiBinPois.ipynb',
                         parameters={'validation_datadir': 'validation/data'},
                         **common_kwargs)
-
-    pm.execute_notebook(
-        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
 
     nb = pm.read_notebook(str(outputnb))
     assert nb.data['number_2d_successpoints'] > 200
