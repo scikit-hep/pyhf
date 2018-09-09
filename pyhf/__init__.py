@@ -21,7 +21,7 @@ def get_backend():
     global optimizer
     return tensorlib, optimizer
 
-def set_backend(backend):
+def set_backend(backend, custom_optimizer = None):
     """
     Set the backend and the associated optimizer
 
@@ -51,6 +51,8 @@ def set_backend(backend):
     else:
         optimizer = optimize.scipy_optimizer()
 
+    if custom_optimizer:
+        optimizer = custom_optimizer
 
 from .pdf import Model
 __all__ = ["Model", "utils", "modifiers"]
