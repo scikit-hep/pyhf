@@ -49,6 +49,14 @@ Computational Backends:
 - [x] TensorFlow
 - [x] MXNet
 
+Available Optimizers
+
+| NumPy        |Tensorflow           |PyTorch  | MxNet|
+|:------------- |:-------------:|:-----|:-|
+| SLSQP (`scipy.optimize`)    | Newton's Method (autodiff)| Newton's Method (autodiff) | N/A |
+| MINUIT (`iminuit`)      |       |    | |
+
+
 ## Todo
 - [ ] Lumi Uncertainty
 - [ ] StatConfig
