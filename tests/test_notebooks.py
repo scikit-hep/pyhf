@@ -13,6 +13,9 @@ def test_notebooks(tmpdir):
         'docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
     pm.execute_notebook(
+        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
+
+    pm.execute_notebook(
         'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
     pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',
                         parameters={'validation_datadir': 'validation/data'},
