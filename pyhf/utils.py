@@ -162,3 +162,18 @@ def runOnePoint(muTest, data, pdf, init_pars = None, par_bounds = None):
             pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
     CLs_exp = tensorlib.astensor(CLs_exp)
     return qmu_v, qmuA_v, CLsb, CLb, CLs, CLs_exp
+
+def tensorize_args(callable):
+    def _inner(*args, **kwargs):
+        messages = ["no attribute '__getitem__'"]
+        try:
+            return callable(*args, **kwargs)
+        except TypeError as e:
+            if any(message in e.message for message in messages):
+                tensorlib, _ = get_backend()
+                args = map(tensorlib.astensor, args)
+                kwargs = {k: tensorlib.astensor(v) for k,v in kwargs.items()}
+                return callable(*args, **kwargs)
+            else:
+                raise
+    return _inner
