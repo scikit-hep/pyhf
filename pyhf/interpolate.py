@@ -24,24 +24,21 @@ def _kitchensink_looper(histogramssets, alphasets, func):
 @utils.tensorize_args
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    at_plus_one, at_zero, at_minus_one = histogramssets[0][0]
 
-    #warning: alphasets must be ordered
-    up_variation  = at_plus_one - at_zero
-    down_variation = at_zero - at_minus_one
+    allset_all_histo_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
+    allset_all_histo_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
+    allset_all_histo_nom = histogramssets[:,:,1]
 
-    positive_parameters = alphasets[alphasets >= 0]
-    negative_parameters = alphasets[alphasets < 0]
+    #x is dummy index
+    allsets_all_histos_alphas_times_deltas_up = tensorlib.einsum('sa,sxu->sxau',alphasets,allset_all_histo_deltas_up)
+    allsets_all_histos_alphas_times_deltas_dn = tensorlib.einsum('sa,sxu->sxau',alphasets,allset_all_histo_deltas_dn)
+    where_alphasets_positive = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
+    allsets_all_histos_masks = tensorlib.einsum('sa,sxu->sxau', where_alphasets_positive, tensorlib.ones(allset_all_histo_deltas_dn.shape))
 
-    w_pos = positive_parameters * tensorlib.ones(up_variation.shape + positive_parameters.shape)
-    r_pos = up_variation.reshape(up_variation.shape + (1,)) * w_pos
-
-    w_neg = negative_parameters * tensorlib.ones(down_variation.shape + negative_parameters.shape)
-    r_neg = down_variation.reshape(down_variation.shape + (1,)) * w_neg
-
-    result = tensorlib.concatenate([r_neg, r_pos], axis=-1)
-    result = tensorlib.einsum('...ij->...ji', result)
-    return result
+    allsets_all_histos_deltas = tensorlib.where(allsets_all_histos_masks,allsets_all_histos_alphas_times_deltas_up, allsets_all_histos_alphas_times_deltas_dn)
+    allsets_all_histos_noms_repeated = tensorlib.einsum('sa,sxu->sxau',tensorlib.ones(alphasets.shape),allset_all_histo_nom)
+    set_results = allsets_all_histos_deltas + allsets_all_histos_noms_repeated
+    return set_results
 
 def _kitchensink_code0(histogramssets, alphasets):
     def summand(down, nom, up, alpha):
@@ -68,10 +65,10 @@ def _hfinterp_code1(histogramssets, alphasets):
     negative_parameters = alphasets[alphasets < 0]
 
     bases_negative = tensorlib.tile(down_variation, negative_parameters.shape+(1,)*len(down_variation.shape))
-    bases_negative = tensorlib.einsum('i...->...i', bases_negative)
+    bases_negative = tensorlib.einsum('ij->ji', bases_negative)
 
     bases_positive = tensorlib.tile(up_variation, positive_parameters.shape+(1,)*len(up_variation.shape))
-    bases_positive = tensorlib.einsum('i...->...i', bases_positive)
+    bases_positive = tensorlib.einsum('ij->ji', bases_positive)
 
     expo_positive = tensorlib.tile(positive_parameters, up_variation.shape+(1,)) #was outer
     expo_negative = -tensorlib.tile(negative_parameters, down_variation.shape+(1,)) #was outer
@@ -80,7 +77,7 @@ def _hfinterp_code1(histogramssets, alphasets):
     res_pos = tensorlib.power(bases_positive, expo_positive)
 
     result = tensorlib.concatenate([res_neg, res_pos], axis=-1)
-    return tensorlib.einsum('...ij->...ji', result)
+    return tensorlib.einsum('ijk->ikj', result)
 
 def _kitchensink_code1(histogramssets, alphasets):
     def product(down, nom, up, alpha):
