@@ -22,8 +22,10 @@ def _kitchensink_looper(histogramssets, alphasets, func):
     return all_results
 
 @utils.tensorize_args
-def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphasets):
+def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
+    at_plus_one, at_zero, at_minus_one = histogramssets[0][0]
+
     #warning: alphasets must be ordered
     up_variation  = at_plus_one - at_zero
     down_variation = at_zero - at_minus_one
@@ -54,9 +56,11 @@ def _kitchensink_code0(histogramssets, alphasets):
     return _kitchensink_looper(histogramssets, alphasets, summand)
 
 @utils.tensorize_args
-def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphasets):
+def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
     #warning: alphasets must be ordered
+    at_plus_one, at_zero, at_minus_one = histogramssets[0][0]
+
     up_variation = tensorlib.divide(at_plus_one, at_zero)
     down_variation = tensorlib.divide(at_minus_one, at_zero)
 
