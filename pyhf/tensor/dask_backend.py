@@ -1,7 +1,12 @@
 import dask.array as da
 import logging
-from scipy.special import gammaln
+# we can use these scipy methonds because of
+# generalized ufuncs (might not work for delayed 
+# dask.. rechck when we get there)
+# http://dask.pydata.org/en/latest/array-gufunc.html
+from scipy.special import gammaln 
 from scipy.stats import norm
+
 log = logging.getLogger(__name__)
 
 class dask_backend(object):
@@ -126,7 +131,7 @@ class dask_backend(object):
         return da.exp(n*da.log(lam)-lam-gammaln(n+1.))
 
     def normal(self, x, mu, sigma):
-        return norm.pdf(x, loc=mu, scale=sigma)
+        return norm.pdf(x, loc=mu, scale=sigma)  #works because of generalized ufuncs
 
     def normal_cdf(self, x, mu=0, sigma=1):
         """
@@ -147,4 +152,4 @@ class dask_backend(object):
         Returns:
             NumPy float: The CDF
         """
-        return norm.cdf(x, loc=mu, scale=sigma)
+        return norm.cdf(x, loc=mu, scale=sigma) #works because of generalized ufuncs
