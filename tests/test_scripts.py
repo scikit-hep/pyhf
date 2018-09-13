@@ -68,3 +68,37 @@ def test_import_and_export(tmpdir, script_runner):
 
     command = 'pyhf json2xml {0:s} --specroot {1:s} --dataroot {1:s}'.format(temp.strpath,str(tmpdir))
     ret = script_runner.run(*shlex.split(command))
+
+def test_patch(tmpdir, script_runner):
+    patch = tmpdir.join('patch.json')
+
+    patch.write('''
+[{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
+    ''')
+
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = 'pyhf cls {0:s} --patch -'.format(temp.strpath,patch.strpath)
+    ret = script_runner.run(*shlex.split(command), stdin = patch)
+    assert ret.success
+
+
+def test_patch_fail(tmpdir, script_runner):
+    patch = tmpdir.join('patch.json')
+
+    patch.write('''not,json''')
+
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+
