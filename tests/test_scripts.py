@@ -68,6 +68,7 @@ def test_import_and_export(tmpdir, script_runner):
 
     command = 'pyhf json2xml {0:s} --specroot {1:s} --dataroot {1:s}'.format(temp.strpath,str(tmpdir))
     ret = script_runner.run(*shlex.split(command))
+    assert ret.success
 
 def test_patch(tmpdir, script_runner):
     patch = tmpdir.join('patch.json')
