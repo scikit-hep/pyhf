@@ -7,7 +7,7 @@ python:
 before_install:
   - pip install --upgrade pip setuptools
 install:
-  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]  # Ensure right version of NumPy installed
+  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,dask,minuit,develop]  # Ensure right version of NumPy installed
 script:
   - pyflakes pyhf
   - pytest --ignore tests/benchmarks/
