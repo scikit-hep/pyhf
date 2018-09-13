@@ -91,7 +91,7 @@ def test_pdf_eval():
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
                 mxnet_backend(),
-                dask_backend()
+                dask_backend(poisson_from_normal=True)
             ]
 
     values = []
@@ -143,7 +143,7 @@ def test_pdf_expected_data():
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
                 mxnet_backend(),
-                dask_backend()
+                dask_backend(poisson_from_normal=True)
                 ]
 
     values = []
@@ -175,7 +175,7 @@ def test_pdf_eval_2():
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
                 mxnet_backend(),
-                dask_backend()
+                dask_backend(poisson_from_normal=True)
                 ]
 
     values = []
