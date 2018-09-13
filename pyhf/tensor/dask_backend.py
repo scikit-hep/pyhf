@@ -33,7 +33,7 @@ class dask_backend(object):
 
     def tolist(self,tensor_in):
         tensor_in = self.astensor(tensor_in)
-        return tensor_in.tolist()
+        return tensor_in.compute().tolist()
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)

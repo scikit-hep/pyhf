@@ -4,6 +4,7 @@ from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
+from pyhf.tensor.dask_backend import dask_backend
 from pyhf.simplemodels import hepdata_like
 
 import numpy as np
@@ -18,7 +19,8 @@ def test_common_tensor_backends():
         numpy_backend(),
         pytorch_backend(),
         tensorflow_backend(session=tf_sess),
-        mxnet_backend()
+        mxnet_backend(),
+        dask_backend()
     ]:
         assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
         assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
@@ -87,7 +89,9 @@ def test_pdf_eval():
     backends = [numpy_backend(poisson_from_normal=True),
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
-                mxnet_backend()]
+                mxnet_backend(),
+                dask_backend()
+            ]
 
     values = []
     for b in backends:
@@ -138,7 +142,9 @@ def test_pdf_eval_2():
     backends = [numpy_backend(poisson_from_normal=True),
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
-                mxnet_backend()]
+                mxnet_backend(),
+                dask_backend()
+                ]
 
     values = []
     for b in backends:
