@@ -68,3 +68,42 @@ def test_import_and_export(tmpdir, script_runner):
 
     command = 'pyhf json2xml {0:s} --specroot {1:s} --dataroot {1:s}'.format(temp.strpath,str(tmpdir))
     ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+def test_patch(tmpdir, script_runner):
+    patch = tmpdir.join('patch.json')
+
+    patchcontent = u'''
+[{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
+    '''
+    patch.write(patchcontent)
+
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    import io
+    command = 'pyhf cls {0:s} --patch -'.format(temp.strpath,patch.strpath)
+
+    pipefile = io.StringIO(patchcontent) #python 2.7 pytest-files are not file-like enough
+    ret = script_runner.run(*shlex.split(command), stdin = pipefile)
+    print(ret.stderr)
+    assert ret.success
+
+
+def test_patch_fail(tmpdir, script_runner):
+    patch = tmpdir.join('patch.json')
+
+    patch.write('''not,json''')
+
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+

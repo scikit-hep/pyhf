@@ -5,11 +5,13 @@ log = logging.getLogger(__name__)
 import click
 import json
 import os
+import jsonpatch
 
 from . import readxml
 from . import writexml
 from .utils import runOnePoint
 from .pdf import Model
+
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 def pyhf():
@@ -45,8 +47,9 @@ def json2xml(workspace,xmlfile,specroot,dataroot):
 @click.argument('workspace', default = '-')
 @click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
 @click.option('--measurement', default=None)
+@click.option('-p','--patch', multiple = True)
 @click.option('--qualify-names/--no-qualify-names', default=False)
-def cls(workspace, output_file, measurement, qualify_names):
+def cls(workspace, output_file, measurement, qualify_names, patch):
     specstream = click.open_file(workspace)
     d = json.load(specstream)
     measurements = d['toplvl']['measurements']
@@ -63,7 +66,11 @@ def cls(workspace, output_file, measurement, qualify_names):
             measurement_index = measurement_names.index(measurement)
 
         log.debug('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
-        p = Model({'channels':d['channels']}, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
+        spec = {'channels':d['channels']}
+        for p in patch:
+            p = jsonpatch.JsonPatch(json.loads(click.open_file(p).read()))
+            spec = p.apply(spec)
+        p = Model(spec, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
         result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
         result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
         if output_file is None:
