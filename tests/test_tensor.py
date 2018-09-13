@@ -28,6 +28,7 @@ def test_common_tensor_backends():
         assert tb.tolist(
             tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
         assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
+        assert tb.tolist(tb.poisson([100],[100])) == pytest.approx([0.03986099680914883],rel = 1e-3)
         assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
         assert tb.tolist(
             tb.outer([1, 2, 3], [4, 5, 6])) == [[4, 5, 6], [8, 10, 12], [12, 15, 18]]
@@ -136,6 +137,37 @@ def test_pdf_eval():
 
     assert np.std(values) < 1e-6
 
+def test_pdf_expected_data():
+    tf_sess = tf.Session()
+    backends = [numpy_backend(poisson_from_normal=True),
+                pytorch_backend(),
+                tensorflow_backend(session=tf_sess),
+                mxnet_backend(),
+                dask_backend()
+                ]
+
+    values = []
+    for b in backends:
+        pyhf.set_backend(b)
+
+        source = {
+            "binning": [2, -0.5, 1.5],
+            "bindata": {
+                "data":    [120.0, 180.0],
+                "bkg":     [100.0, 150.0],
+                "bkgerr":     [10.0, 10.0],
+                "sig":     [30.0, 95.0]
+            }
+        }
+
+        pdf = hepdata_like(source['bindata']['sig'], source['bindata'][
+                           'bkg'], source['bindata']['bkgerr'])
+        data = source['bindata']['data'] + pdf.config.auxdata
+
+        v1 = pdf.expected_data(pdf.config.suggested_init())
+        values.append(pyhf.tensorlib.tolist(v1)[0])
+
+    assert np.std(values) < 1e-6
 
 def test_pdf_eval_2():
     tf_sess = tf.Session()
@@ -168,3 +200,4 @@ def test_pdf_eval_2():
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
     assert np.std(values) < 1e-6
+
