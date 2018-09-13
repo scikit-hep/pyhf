@@ -15,7 +15,7 @@ class dask_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.dask_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
             array([-1, -1,  0,  1,  1])
@@ -104,7 +104,7 @@ class dask_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.dask_backend())
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -135,7 +135,7 @@ class dask_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.dask_backend())
             >>> pyhf.tensorlib.normal_cdf(0.8)
             0.7881446014166034
 
