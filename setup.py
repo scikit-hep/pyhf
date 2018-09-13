@@ -14,6 +14,7 @@ setup(
     'tqdm',  # for readxml
     'six',  # for modifiers
     'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
+    'jsonpatch'
   ],
   extras_require = {
     'xmlimport': [
