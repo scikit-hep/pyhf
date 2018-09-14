@@ -5,7 +5,7 @@ from . import get_backend
 from . import exceptions
 from . import utils
 
-def _kitchensink_looper(histogramssets, alphasets, func):
+def _slow_hfinterp_looper(histogramssets, alphasets, func):
     all_results = []
     for histoset, alphaset in zip(histogramssets, alphasets):
         all_results.append([])
@@ -45,7 +45,7 @@ def _hfinterp_code0(histogramssets, alphasets):
     set_results = allsets_allhistos_deltas + allsets_allhistos_noms_repeated
     return set_results
 
-def _kitchensink_code0(histogramssets, alphasets):
+def _slow_hfinterp_code0(histogramssets, alphasets):
     def summand(down, nom, up, alpha):
         delta_up = up - nom
         delta_down = nom - down
@@ -55,7 +55,7 @@ def _kitchensink_code0(histogramssets, alphasets):
             delta =  delta_down*alpha
         return nom + delta
 
-    return _kitchensink_looper(histogramssets, alphasets, summand)
+    return _slow_hfinterp_looper(histogramssets, alphasets, summand)
 
 @utils.tensorize_args
 def _hfinterp_code1(histogramssets, alphasets):
@@ -83,7 +83,7 @@ def _hfinterp_code1(histogramssets, alphasets):
     set_results = allsets_allhistos_deltas * allsets_allhistos_noms_repeated
     return set_results
 
-def _kitchensink_code1(histogramssets, alphasets):
+def _slow_hfinterp_code1(histogramssets, alphasets):
     def product(down, nom, up, alpha):
         delta_up = up/nom
         delta_down = down/nom
@@ -93,13 +93,13 @@ def _kitchensink_code1(histogramssets, alphasets):
             delta =  delta_down**(-alpha)
         return nom*delta
 
-    return _kitchensink_looper(histogramssets, alphasets, product)
+    return _slow_hfinterp_looper(histogramssets, alphasets, product)
 
 
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
 def interpolator(interpcode, do_optimal=True):
-    interpcodes = {0: _hfinterp_code0 if do_optimal else _kitchensink_code0,
-                   1: _hfinterp_code1 if do_optimal else _kitchensink_code1}
+    interpcodes = {0: _hfinterp_code0 if do_optimal else _slow_hfinterp_code0,
+                   1: _hfinterp_code1 if do_optimal else _slow_hfinterp_code1}
 
     try:
         return interpcodes[interpcode]
