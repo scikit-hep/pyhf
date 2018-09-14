@@ -127,7 +127,7 @@ def test_interpcode_1(backend, do_optimal):
     expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
 
     results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
-    assert pyhf.tensorlib.tolist(results) == pyhf.tensorlib.tolist(expected)
+    assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
 
 
 def test_invalid_interpcode():
