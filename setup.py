@@ -16,6 +16,9 @@ extras_require = {
         'numpy<1.15.0,>=1.8.2',
         'requests<2.19.0,>=2.18.4',
     ],
+    'dask': [
+        'dask[array]'
+    ],
     'xmlimport': [
         'uproot',
     ],
