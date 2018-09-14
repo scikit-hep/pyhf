@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from setuptools import setup, find_packages
 
 extras_require = {
@@ -57,7 +59,7 @@ setup(
     author='Lukas Heinrich',
     author_email='lukas.heinrich@cern.ch',
     license='Apache',
-    keywords='pyhsics fitting numpy scipy tensorflow pytorch mxnet dask',
+    keywords='physics fitting numpy scipy tensorflow pytorch mxnet dask',
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
