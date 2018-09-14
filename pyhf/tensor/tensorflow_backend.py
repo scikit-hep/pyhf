@@ -80,6 +80,7 @@ class tensorflow_backend(object):
         return tf.reduce_prod(tensor_in) if axis is None else tf.reduce_prod(tensor_in, axis)
 
     def abs(self, tensor):
+        tensor = self.astensor(tensor)
         return tf.abs(tensor)
 
     def ones(self, shape):

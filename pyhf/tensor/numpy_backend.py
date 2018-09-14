@@ -61,6 +61,7 @@ class numpy_backend(object):
         return np.product(tensor_in, axis = axis)
 
     def abs(self, tensor):
+        tensor = self.astensor(tensor)
         return np.abs(tensor)
 
     def ones(self,shape):

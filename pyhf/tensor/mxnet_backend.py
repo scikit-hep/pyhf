@@ -128,6 +128,7 @@ class mxnet_backend(object):
             return nd.prod(tensor_in, axis)
 
     def abs(self, tensor):
+        tensor = self.astensor(tensor)
         return nd.abs(tensor)
 
     def ones(self, shape):

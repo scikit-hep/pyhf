@@ -66,6 +66,7 @@ class pytorch_backend(object):
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
     def abs(self, tensor):
+        tensor = self.astensor(tensor)
         return torch.abs(tensor)
 
     def ones(self, shape):
