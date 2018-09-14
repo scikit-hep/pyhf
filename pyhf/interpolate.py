@@ -25,19 +25,24 @@ def _kitchensink_looper(histogramssets, alphasets, func):
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
 
-    allset_all_histo_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
-    allset_all_histo_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
-    allset_all_histo_nom = histogramssets[:,:,1]
+    # these three variables can be pre-computed at PDF time
+    allset_allhisto_nom = histogramssets[:,:,1]
+    allset_allhisto_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
+    allset_allhisto_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
 
-    #x is dummy index
-    allsets_all_histos_alphas_times_deltas_up = tensorlib.einsum('sa,sxu->sxau',alphasets,allset_all_histo_deltas_up)
-    allsets_all_histos_alphas_times_deltas_dn = tensorlib.einsum('sa,sxu->sxau',alphasets,allset_all_histo_deltas_dn)
     where_alphasets_positive = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
-    allsets_all_histos_masks = tensorlib.einsum('sa,sxu->sxau', where_alphasets_positive, tensorlib.ones(allset_all_histo_deltas_dn.shape))
 
-    allsets_all_histos_deltas = tensorlib.where(allsets_all_histos_masks,allsets_all_histos_alphas_times_deltas_up, allsets_all_histos_alphas_times_deltas_dn)
-    allsets_all_histos_noms_repeated = tensorlib.einsum('sa,sxu->sxau',tensorlib.ones(alphasets.shape),allset_all_histo_nom)
-    set_results = allsets_all_histos_deltas + allsets_all_histos_noms_repeated
+    # s: set under consideration (i.e. the modifier)
+    # a: alpha variation
+    # h: histogram affected by modifier
+    # b: bin of histogram
+    allsets_allhistos_alphas_times_deltas_up = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_up)
+    allsets_allhistos_alphas_times_deltas_dn = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_dn)
+    allsets_allhistos_masks = tensorlib.einsum('sa,shb->shab', where_alphasets_positive, tensorlib.ones(allset_allhisto_deltas_dn.shape))
+
+    allsets_allhistos_deltas = tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
+    allsets_allhistos_noms_repeated = tensorlib.einsum('sa,shb->shab',tensorlib.ones(alphasets.shape),allset_allhisto_nom)
+    set_results = allsets_allhistos_deltas + allsets_allhistos_noms_repeated
     return set_results
 
 def _kitchensink_code0(histogramssets, alphasets):
@@ -55,29 +60,28 @@ def _kitchensink_code0(histogramssets, alphasets):
 @utils.tensorize_args
 def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    #warning: alphasets must be ordered
-    at_plus_one, at_zero, at_minus_one = histogramssets[0][0]
 
-    up_variation = tensorlib.divide(at_plus_one, at_zero)
-    down_variation = tensorlib.divide(at_minus_one, at_zero)
+    # these three variables can be pre-computed at PDF time
+    allset_allhisto_nom = histogramssets[:,:,1]
+    allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], allset_allhisto_nom)
+    allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], allset_allhisto_nom)
 
-    positive_parameters = alphasets[alphasets >= 0]
-    negative_parameters = alphasets[alphasets < 0]
+    allsets_allhistos_masks = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
 
-    bases_negative = tensorlib.tile(down_variation, negative_parameters.shape+(1,)*len(down_variation.shape))
-    bases_negative = tensorlib.einsum('ij->ji', bases_negative)
+    # s: set under consideration (i.e. the modifier)
+    # a: alpha variation
+    # h: histogram affected by modifier
+    # b: bin of histogram
+    bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_up)
+    bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_dn)
+    exponents = tensorlib.einsum('sa,shb->shab', tensorlib.abs(alphasets), tensorlib.ones(allset_allhisto_deltas_up.shape))
+    masks = tensorlib.einsum('sa,shb->shab', allsets_allhistos_masks, tensorlib.ones(allset_allhisto_deltas_up.shape))
+    allsets_allhistos_noms_repeated = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_nom)
 
-    bases_positive = tensorlib.tile(up_variation, positive_parameters.shape+(1,)*len(up_variation.shape))
-    bases_positive = tensorlib.einsum('ij->ji', bases_positive)
-
-    expo_positive = tensorlib.tile(positive_parameters, up_variation.shape+(1,)) #was outer
-    expo_negative = -tensorlib.tile(negative_parameters, down_variation.shape+(1,)) #was outer
-
-    res_neg = tensorlib.power(bases_negative, expo_negative)
-    res_pos = tensorlib.power(bases_positive, expo_positive)
-
-    result = tensorlib.concatenate([res_neg, res_pos], axis=-1)
-    return tensorlib.einsum('ijk->ikj', result)
+    bases = tensorlib.where(masks, bases_up, bases_dn)
+    allsets_allhistos_deltas = tensorlib.power(bases, exponents)
+    set_results = allsets_allhistos_deltas * allsets_allhistos_noms_repeated
+    return set_results
 
 def _kitchensink_code1(histogramssets, alphasets):
     def product(down, nom, up, alpha):
