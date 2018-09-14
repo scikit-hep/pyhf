@@ -3,6 +3,50 @@ import numpy as np
 import pytest
 import tensorflow as tf
 
+@pytest.fixture
+def random_histosets_alphasets_pair():
+    def generate_shapes(histogramssets,alphasets):
+        h_shape = [len(histogramssets),0,0,0]
+        a_shape = (len(alphasets),max(map(len,alphasets)))
+        for hs in histogramssets:
+            h_shape[1] = max(h_shape[1],len(hs))
+            for h in hs:
+                h_shape[2] = max(h_shape[2],len(h))
+                for sh in h:
+                    h_shape[3] = max(h_shape[3],len(sh))
+        return tuple(h_shape),a_shape
+
+    def filled_shapes(histogramssets,alphasets):
+        # pad our shapes with NaNs
+        histos, alphas = generate_shapes(histogramssets,alphasets)
+        histos, alphas = np.ones(histos) * np.nan, np.ones(alphas) * np.nan
+        for i,syst in enumerate(histogramssets):
+            for j,sample in enumerate(syst):
+                for k,variation in enumerate(sample):
+                    histos[i,j,k,:len(variation)] = variation
+        for i,alphaset in enumerate(alphasets):
+            alphas[i,:len(alphaset)] = alphaset
+        return histos,alphas
+
+    nsysts = 150
+    nhistos_per_syst_upto = 300
+    nalphas = 1
+    nbins_upto = 1
+
+    nsyst_histos = np.random.randint(1, 1+nhistos_per_syst_upto, size=nsysts)
+    nhistograms = [np.random.randint(1, nbins_upto+1, size=n) for n in nsyst_histos]
+    random_alphas = [np.random.uniform(-1, 1,size=nalphas) for n in nsyst_histos]
+
+    random_histogramssets = [
+        [# all histos affected by systematic $nh
+            [# sample $i, systematic $nh
+                np.random.uniform(10*i+j,10*i+j+1, size = nbin).tolist() for j in range(3)
+            ] for i,nbin in enumerate(nh)
+        ] for nh in nhistograms
+    ]
+    h,a = filled_shapes(random_histogramssets,random_alphas)
+    return h,a
+
 @pytest.mark.parametrize('backend',
                          [
                              pyhf.tensor.numpy_backend(),
@@ -15,58 +59,14 @@ import tensorflow as tf
                              'tensorflow',
                              'pytorch',
                          ])
-@pytest.mark.parametrize("do_optimal", [False, True], ids=['kitchensink','optimized'])
-def test_interpcode(backend, do_optimal):
+def test_interpcode(backend, random_histosets_alphasets_pair):
     pyhf.set_backend(backend)
-    histogramssets = [
-        [#all histos affected by syst1
-            [#sample 1, syst1
-                [10,11,12],
-                [15,16,19],
-                [19,20,25]
-            ],
-            [#sample 2, syst1
-                [10,11],
-                [15,16],
-                [19,20]
-            ]
-        ],
-        [#all histos affected by syst2
-            [#sample 1, syst2
-                [10,11,12,13],
-                [15,16,19,20],
-                [19,20,25,26]
-            ],
-        ]
-    ]
-    alphasets = [
-        [-1,0,1], #set of alphas for which to interpolate syst1 histos
-        [0,2] #set of alphas for which to interpolate syst2 histos
-    ]
-    expected = [
-        [
-            [
-                [10, 11, 12],
-                [15, 16, 19],
-                [19, 20, 25]
-            ], [
-                [10, 11],
-                [15, 16],
-                [19, 20]
-            ]
-        ], [
-            [
-                [15, 16, 19, 20],
-                [23, 24, 31, 32]
-            ]
-        ]
-    ]
-    # hide test interpcode for now
-    return True
-    result = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets = histogramssets, alphasets = alphasets)
+    histogramssets, alphasets = random_histosets_alphasets_pair
 
-    assert pyhf.tensorlib.tolist(result) == pyhf.tensorlib.tolist(expected)
+    kitchensink_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(0, do_optimal=False)(histogramssets=histogramssets, alphasets=alphasets)))
+    optimized_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(0, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets), alphasets=pyhf.tensorlib.astensor(alphasets))))
 
+    assert pytest.approx(kitchensink_result[~np.isnan(kitchensink_result)].ravel().tolist()) == optimized_result[~np.isnan(optimized_result)].ravel().tolist()
 
 @pytest.mark.parametrize('backend',
                          [
@@ -95,7 +95,10 @@ def test_interpcode_0(backend, do_optimal):
     alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
     expected = pyhf.tensorlib.astensor([[[[0],[0.5],[1.0],[2.0],[3.0]]]])
 
-    results = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets, alphasets)
+    if do_optimal:
+      results = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets, alphasets)
+    else:
+      results = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets))
     assert pyhf.tensorlib.tolist(results) == pyhf.tensorlib.tolist(expected)
 
 
@@ -126,7 +129,11 @@ def test_interpcode_1(backend, do_optimal):
     alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
     expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
 
-    results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
+    if do_optimal:
+      results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
+    else:
+      results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets))
+
     assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
 
 
