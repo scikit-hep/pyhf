@@ -5,7 +5,7 @@ from . import modifier
 from .. import get_backend
 from ..interpolate import interpolator
 
-@modifier(name='normsys', constrained=True, shared=True)
+@modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters     = 1
@@ -36,7 +36,7 @@ class normsys(object):
     def apply(self, channel, sample, pars):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         assert int(pars.shape[0]) == 1
-        return interpolator(1)(self.at_minus_one[channel['name']][sample['name']],
+        return interpolator(1)(self.at_minus_one[channel][sample],
                                self.at_zero,
-                               self.at_plus_one[channel['name']][sample['name']],
+                               self.at_plus_one[channel][sample],
                                pars)[0]

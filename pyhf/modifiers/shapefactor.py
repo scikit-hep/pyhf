@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 
-@modifier(name='shapefactor', shared=True)
+@modifier(name='shapefactor', shared=True, op_code = 'multiplication')
 class shapefactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)

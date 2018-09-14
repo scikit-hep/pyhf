@@ -63,6 +63,9 @@ class numpy_backend(object):
     def ones(self,shape):
         return np.ones(shape)
 
+    def zeros(self,shape):
+        return np.zeros(shape)
+
     def power(self,tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
@@ -94,8 +97,8 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence):
-        return np.concatenate(sequence)
+    def concatenate(self, sequence, axis = 0):
+        return np.concatenate(sequence, axis)
 
     def simple_broadcast(self, *args):
         """

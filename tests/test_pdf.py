@@ -157,14 +157,14 @@ def test_pdf_integration_histosys():
 @pytest.mark.parametrize('backend',
                          [
                              pyhf.tensor.numpy_backend(poisson_from_normal=True),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
+                            #  pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                            #  pyhf.tensor.pytorch_backend(poisson_from_normal=True),
                              # pyhf.tensor.mxnet_backend(),
                          ],
                          ids=[
                              'numpy',
-                             'tensorflow',
-                             'pytorch',
+                            #  'tensorflow',
+                            #  'pytorch',
                          ])
 def test_pdf_integration_normsys(backend):
     pyhf.set_backend(backend)

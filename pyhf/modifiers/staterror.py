@@ -4,16 +4,16 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier(name='staterror', shared=True, constrained=True)
+@modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
     def __init__(self, nom_data, modifier_data):
+        tensorlib, _ = get_backend()
         self.n_parameters     = len(nom_data)
         self.suggested_init   = [1.0] * self.n_parameters
         self.suggested_bounds = [[0, 10]] * self.n_parameters
         self.auxdata          = [1.] * self.n_parameters
         self.nominal_counts   = []
         self.uncertainties    = []
-
 
     def alphas(self, pars):
         return pars  # nuisance parameters are also the means of the
@@ -33,8 +33,11 @@ class staterror(object):
         return self.alphas(pars)
 
     def add_sample(self, channel, sample, modifier_def):
+        tensorlib, _ = get_backend()
         self.nominal_counts.append(sample['data'])
-        self.uncertainties.append(modifier_def['data'])
+        if not modifier_def['data']:
+            raise RuntimeError('need uncertainty data %s', modifier_def)
+        self.uncertainties.append(tensorlib.astensor(modifier_def['data']))
 
     def apply(self, channel, sample, pars):
         return pars
