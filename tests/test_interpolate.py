@@ -65,7 +65,7 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     kitchensink_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=False)(histogramssets=histogramssets, alphasets=alphasets)))
-    optimized_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets), alphasets=pyhf.tensorlib.astensor(alphasets))))
+    optimized_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets.tolist()), alphasets=pyhf.tensorlib.astensor(alphasets.tolist()))))
 
     assert pytest.approx(kitchensink_result[~np.isnan(kitchensink_result)].ravel().tolist()) == optimized_result[~np.isnan(optimized_result)].ravel().tolist()
 
