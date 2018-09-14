@@ -59,12 +59,13 @@ def random_histosets_alphasets_pair():
                              'tensorflow',
                              'pytorch',
                          ])
-def test_interpcode(backend, random_histosets_alphasets_pair):
+@pytest.mark.parametrize("interpcode", [0, 1])
+def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     pyhf.set_backend(backend)
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    kitchensink_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(0, do_optimal=False)(histogramssets=histogramssets, alphasets=alphasets)))
-    optimized_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(0, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets), alphasets=pyhf.tensorlib.astensor(alphasets))))
+    kitchensink_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=False)(histogramssets=histogramssets, alphasets=alphasets)))
+    optimized_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets), alphasets=pyhf.tensorlib.astensor(alphasets))))
 
     assert pytest.approx(kitchensink_result[~np.isnan(kitchensink_result)].ravel().tolist()) == optimized_result[~np.isnan(optimized_result)].ravel().tolist()
 
