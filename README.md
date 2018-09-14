@@ -48,13 +48,14 @@ Computational Backends:
 - [x] PyTorch
 - [x] TensorFlow
 - [x] MXNet
+- [x] Dask
 
 Available Optimizers
 
-| NumPy        |Tensorflow           |PyTorch  | MxNet|
-|:------------- |:-------------:|:-----|:-|
-| SLSQP (`scipy.optimize`)    | Newton's Method (autodiff)| Newton's Method (autodiff) | N/A |
-| MINUIT (`iminuit`)      |       |    | |
+| NumPy                    |         TensorFlow         | PyTorch                    | MXNet | Dask                     |
+| :----------------------- | :------------------------: | :------------------------- | :---- | :----------------------- |
+| SLSQP (`scipy.optimize`) | Newton's Method (autodiff) | Newton's Method (autodiff) | N/A   | SLSQP (`scipy.optimize`) |
+| MINUIT (`iminuit`)       |                            |                            |       |                          |
 
 
 ## Todo
