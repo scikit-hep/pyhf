@@ -61,14 +61,23 @@ def test_einsum():
     backends = [numpy_backend(poisson_from_normal=True),
                 pytorch_backend(),
                 tensorflow_backend(session=tf_sess),
-                # mxnet_backend() #no einsum in mxnet
+                mxnet_backend() #no einsum in mxnet
                 ]
-    for b in backends:
+
+
+
+    for b in backends[:-1]:
         pyhf.set_backend(b)
 
         x = np.arange(20).reshape(5,4).tolist()
         assert np.all(b.tolist(b.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
-        assert b.tolist('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3])).tolist() == [[1,2,3]]*3
+        assert b.tolist(b.einsum('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3]))) == [[1,2,3]]*3
+
+    for b in backends[-1:]:
+        pyhf.set_backend(b)
+        x = np.arange(20).reshape(5,4).tolist()
+        with pytest.raises(NotImplementedError):
+            assert b.einsum('ij->ji',[1,2,3])
 
 def test_pdf_eval():
     tf_sess = tf.Session()
