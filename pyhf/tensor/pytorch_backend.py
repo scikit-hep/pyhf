@@ -151,19 +151,6 @@ class pytorch_backend(object):
                      for arg in args]
         return broadcast
 
-    def tile(self, A, reps):
-        """
-        Repeats the whole array multiple times.
-
-        Args:
-            A: tensor
-            reps: The numbr of repetitions along each axis
-
-        Returns:
-            tensor: The tiled output array
-        """
-        return A.repeat(*reps)
-
     def einsum(self, subscripts, *operands):
         """
         This function provides a way of computing multilinear expressions (i.e.

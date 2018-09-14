@@ -323,25 +323,6 @@ class mxnet_backend(object):
                      for arg in args]
         return nd.stack(*broadcast)
 
-    def tile(self, A, reps):
-        """
-        Repeats the whole array multiple times.
-
-        If reps has length d, and input array has dimension of n. There are three cases:
-
-            - n=d. Repeat i-th dimension of the input by reps[i] times.
-            - n>d. reps is promoted to length n by pre-pending 1's to it. Thus for an input shape (2,3), repos=(2,) is treated as (1,2).
-            - n. The input is promoted to be d-dimensional by prepending new axes. So a shape (2,2) array is promoted to (1,2,2) for 3-D replication:
-
-        Args:
-            A: tensor
-            reps: The numbr of repetitions along each axis
-
-        Returns:
-            MXNet NDArray: The tiled output array
-        """
-        return nd.tile(A, reps)
-
     def einsum(self, subscripts, *operands):
         """
         A generalized contraction between tensors of arbitrary dimension.

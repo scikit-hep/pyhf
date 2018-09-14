@@ -174,21 +174,8 @@ class tensorflow_backend(object):
             raise error
 
         broadcast = [arg if generic_len(arg) > 1 else
-                     self.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
+                     tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
         return broadcast
-
-    def tile(self, A, reps):
-        """
-        Repeats the whole array multiple times.
-
-        Args:
-            A: tensor
-            reps: The numbr of repetitions along each axis
-
-        Returns:
-            tensor: The tiled output array
-        """
-        return tf.tile(A, reps)
 
     def einsum(self, subscripts, *operands):
         """
