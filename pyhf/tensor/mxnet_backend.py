@@ -127,6 +127,10 @@ class mxnet_backend(object):
         else:
             return nd.prod(tensor_in, axis)
 
+    def abs(self, tensor):
+        tensor = self.astensor(tensor)
+        return nd.abs(tensor)
+
     def ones(self, shape):
         """
         A new array filled with all ones, with the given shape.
@@ -269,17 +273,18 @@ class mxnet_backend(object):
         return nd.add(nd.multiply(mask, tensor_in_1),
                       nd.multiply(nd.subtract(1, mask), tensor_in_2))
 
-    def concatenate(self, sequence):
+    def concatenate(self, sequence, axis=0):
         """
         Join the elements of the sequence.
 
         Args:
             sequence (Array of Tensors): The sequence of arrays to join
+            axis: dimension along which to concatenate
 
         Returns:
             MXNet NDArray: The ndarray of the joined elements.
         """
-        return nd.concat(*sequence, dim=0)
+        return nd.concat(*sequence, dim=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -318,6 +323,23 @@ class mxnet_backend(object):
                      else nd.broadcast_axis(arg[0], axis=len(arg.shape) - 1, size=max_dim)
                      for arg in args]
         return nd.stack(*broadcast)
+
+    def einsum(self, subscripts, *operands):
+        """
+        A generalized contraction between tensors of arbitrary dimension.
+
+        Warning: not implemented in MXNet
+
+        Args:
+            subscripts: str, specifies the subscripts for summation
+            operands: list of array_like, these are the tensors for the operation
+
+        Returns:
+            tensor: the calculation based on the Einstein summation convention
+        """
+        raise NotImplementedError("mxnet::einsum is not implemented.")
+        return self.astensor([])
+
 
     def poisson(self, n, lam):
         """

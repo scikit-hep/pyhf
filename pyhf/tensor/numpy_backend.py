@@ -60,8 +60,15 @@ class numpy_backend(object):
         tensor_in = self.astensor(tensor_in)
         return np.product(tensor_in, axis = axis)
 
+    def abs(self, tensor):
+        tensor = self.astensor(tensor)
+        return np.abs(tensor)
+
     def ones(self,shape):
         return np.ones(shape)
+
+    def zeros(self,shape):
+        return np.zeros(shape)
 
     def power(self,tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -94,8 +101,19 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence):
-        return np.concatenate(sequence)
+    def concatenate(self, sequence, axis=0):
+        """
+        Join a sequence of arrays along an existing axis.
+
+        Args:
+            sequence: sequence of tensors
+            axis: dimension along which to concatenate
+
+        Returns:
+            output: the concatenated tensor
+
+        """
+        return np.concatenate(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -118,6 +136,25 @@ class numpy_backend(object):
             list of Tensors: The sequence broadcast together.
         """
         return np.broadcast_arrays(*args)
+
+    def einsum(self, subscripts, *operands):
+        """
+        Evaluates the Einstein summation convention on the operands.
+
+        Using the Einstein summation convention, many common multi-dimensional
+        array operations can be represented in a simple fashion. This function
+        provides a way to compute such summations. The best way to understand
+        this function is to try the examples below, which show how many common
+        NumPy functions can be implemented as calls to einsum.
+
+        Args:
+            subscripts: str, specifies the subscripts for summation
+            operands: list of array_like, these are the tensors for the operation
+
+        Returns:
+            tensor: the calculation based on the Einstein summation convention
+        """
+        return np.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
         n = np.asarray(n)

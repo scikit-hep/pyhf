@@ -52,9 +52,35 @@ def test_common_tensor_backends():
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
         assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+        assert tb.tolist(tb.ones((4,5)))  == [[1.]*5]*4
+        assert tb.tolist(tb.zeros((4,5))) == [[0.]*5]*4
+        assert tb.tolist(tb.abs([-1,-2])) == [1,2]
         with pytest.raises(Exception):
             tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
+
+def test_einsum():
+    tf_sess = tf.Session()
+    backends = [numpy_backend(poisson_from_normal=True),
+                pytorch_backend(),
+                tensorflow_backend(session=tf_sess),
+                mxnet_backend() #no einsum in mxnet
+                ]
+
+
+
+    for b in backends[:-1]:
+        pyhf.set_backend(b)
+
+        x = np.arange(20).reshape(5,4).tolist()
+        assert np.all(b.tolist(b.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
+        assert b.tolist(b.einsum('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3]))) == [[1,2,3]]*3
+
+    for b in backends[-1:]:
+        pyhf.set_backend(b)
+        x = np.arange(20).reshape(5,4).tolist()
+        with pytest.raises(NotImplementedError):
+            assert b.einsum('ij->ji',[1,2,3])
 
 def test_pdf_eval():
     tf_sess = tf.Session()
