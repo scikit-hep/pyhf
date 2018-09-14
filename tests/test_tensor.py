@@ -52,6 +52,10 @@ def test_common_tensor_backends():
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
         assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+        assert list(map(tb.tolist, tb.ones((4,5)))) \
+            == [[0.]*5]*4
+        assert list(map(tb.tolist, tb.zeros((4,5)))) \
+            == [[0.]*5]*4
         with pytest.raises(Exception):
             tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
