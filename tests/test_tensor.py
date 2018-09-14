@@ -56,6 +56,20 @@ def test_common_tensor_backends():
             tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
 
+def test_einsum():
+    tf_sess = tf.Session()
+    backends = [numpy_backend(poisson_from_normal=True),
+                pytorch_backend(),
+                tensorflow_backend(session=tf_sess),
+                # mxnet_backend() #no einsum in mxnet
+                ]
+    for b in backends:
+        pyhf.set_backend(b)
+
+        x = np.arange(20).reshape(5,4).tolist()
+        assert np.all(b.tolist(b.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
+        assert b.tolist('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3])).tolist() == [[1,2,3]]*3
+
 def test_pdf_eval():
     tf_sess = tf.Session()
     backends = [numpy_backend(poisson_from_normal=True),

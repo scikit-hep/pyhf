@@ -163,7 +163,8 @@ class pytorch_backend(object):
         Returns:
             tensor: the calculation based on the Einstein summation convention
         """
-        return torch.einsum(subscripts, operands)
+        ops = tuple(self.astensor(op) for op in operands)
+        return torch.einsum(subscripts, ops)
 
 
     def poisson(self, n, lam):
