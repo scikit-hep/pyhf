@@ -37,6 +37,9 @@ setup(
        'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
        'setuptools<=39.1.0',
     ],
+    'dask': [
+       'dask[array]'
+    ],
     'develop': [
        'pyflakes',
        'pytest>=3.5.1',

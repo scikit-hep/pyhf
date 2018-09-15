@@ -18,3 +18,9 @@ try:
     assert mxnet_backend
 except ImportError:
     pass
+
+try:
+    from .dask_backend import dask_backend
+    assert dask_backend
+except ImportError:
+    pass

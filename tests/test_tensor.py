@@ -1,9 +1,10 @@
 import pyhf
 
-from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
+from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
+from pyhf.tensor.dask_backend import dask_backend
 from pyhf.simplemodels import hepdata_like
 
 import numpy as np
@@ -16,9 +17,10 @@ def test_common_tensor_backends():
     tf_sess = tf.Session()
     for tb in [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
-        mxnet_backend()
+        pytorch_backend(),
+        mxnet_backend(),
+        dask_backend()
     ]:
         assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
         assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
@@ -26,6 +28,7 @@ def test_common_tensor_backends():
         assert tb.tolist(
             tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
         assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
+        assert tb.tolist(tb.poisson([100], [100])) == pytest.approx([0.03986099680914883], rel=1e-3)
         assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
         assert tb.tolist(
             tb.outer([1, 2, 3], [4, 5, 6])) == [[4, 5, 6], [8, 10, 12], [12, 15, 18]]
@@ -52,42 +55,48 @@ def test_common_tensor_backends():
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
         assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
             == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-        assert tb.tolist(tb.ones((4,5)))  == [[1.]*5]*4
-        assert tb.tolist(tb.zeros((4,5))) == [[0.]*5]*4
-        assert tb.tolist(tb.abs([-1,-2])) == [1,2]
+        assert tb.tolist(tb.ones((4, 5))) == [[1.] * 5] * 4
+        assert tb.tolist(tb.zeros((4, 5))) == [[0.] * 5] * 4
+        assert tb.tolist(tb.abs([-1, -2])) == [1, 2]
         with pytest.raises(Exception):
             tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
 
 def test_einsum():
     tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend() #no einsum in mxnet
-                ]
-
-
+    # Order of backends changed until mxnet adds einsum support
+    backends = [
+        numpy_backend(poisson_from_normal=True),
+        tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
+        dask_backend(poisson_from_normal=True),
+        mxnet_backend()  # no einsum in mxnet
+    ]
 
     for b in backends[:-1]:
         pyhf.set_backend(b)
 
-        x = np.arange(20).reshape(5,4).tolist()
-        assert np.all(b.tolist(b.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
-        assert b.tolist(b.einsum('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3]))) == [[1,2,3]]*3
+        x = np.arange(20).reshape(5, 4).tolist()
+        assert np.all(b.tolist(b.einsum('ij->ji', x)) == np.asarray(x).T.tolist())
+        assert b.tolist(b.einsum(
+            'i,j->ij', b.astensor([1, 1, 1]), b.astensor([1, 2, 3]))) == [[1, 2, 3]] * 3
 
     for b in backends[-1:]:
         pyhf.set_backend(b)
-        x = np.arange(20).reshape(5,4).tolist()
+        x = np.arange(20).reshape(5, 4).tolist()
         with pytest.raises(NotImplementedError):
-            assert b.einsum('ij->ji',[1,2,3])
+            assert b.einsum('ij->ji', [1, 2, 3])
+
 
 def test_pdf_eval():
     tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend()]
+    backends = [
+        numpy_backend(poisson_from_normal=True),
+        tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
+        mxnet_backend(),
+        dask_backend(poisson_from_normal=True)
+    ]
 
     values = []
     for b in backends:
@@ -117,7 +126,10 @@ def test_pdf_eval():
                             'name': 'background',
                             'data': source['bindata']['bkg'],
                             'modifiers': [
-                                {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
+                                {'name': 'bkg_norm', 'type': 'histosys', 'data': {
+                                    'lo_data': source['bindata']['bkgsys_dn'],
+                                    'hi_data': source['bindata']['bkgsys_up']}
+                                 }
                             ]
                         }
                     ]
@@ -133,12 +145,15 @@ def test_pdf_eval():
     assert np.std(values) < 1e-6
 
 
-def test_pdf_eval_2():
+def test_pdf_expected_data():
     tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend()]
+    backends = [
+        numpy_backend(poisson_from_normal=True),
+        tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
+        mxnet_backend(),
+        dask_backend(poisson_from_normal=True)
+    ]
 
     values = []
     for b in backends:
@@ -149,13 +164,49 @@ def test_pdf_eval_2():
             "bindata": {
                 "data":    [120.0, 180.0],
                 "bkg":     [100.0, 150.0],
-                "bkgerr":     [10.0, 10.0],
+                "bkgerr":  [10.0, 10.0],
                 "sig":     [30.0, 95.0]
             }
         }
 
-        pdf = hepdata_like(source['bindata']['sig'], source['bindata'][
-                           'bkg'], source['bindata']['bkgerr'])
+        pdf = hepdata_like(source['bindata']['sig'],
+                           source['bindata']['bkg'],
+                           source['bindata']['bkgerr'])
+        data = source['bindata']['data'] + pdf.config.auxdata
+
+        v1 = pdf.expected_data(pdf.config.suggested_init())
+        values.append(pyhf.tensorlib.tolist(v1)[0])
+
+    assert np.std(values) < 1e-6
+
+
+def test_pdf_eval_2():
+    tf_sess = tf.Session()
+    backends = [
+        numpy_backend(poisson_from_normal=True),
+        tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
+        mxnet_backend(),
+        dask_backend(poisson_from_normal=True)
+    ]
+
+    values = []
+    for b in backends:
+        pyhf.set_backend(b)
+
+        source = {
+            "binning": [2, -0.5, 1.5],
+            "bindata": {
+                "data":    [120.0, 180.0],
+                "bkg":     [100.0, 150.0],
+                "bkgerr":  [10.0, 10.0],
+                "sig":     [30.0, 95.0]
+            }
+        }
+
+        pdf = hepdata_like(source['bindata']['sig'],
+                           source['bindata']['bkg'],
+                           source['bindata']['bkgerr'])
         data = source['bindata']['data'] + pdf.config.auxdata
 
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)
