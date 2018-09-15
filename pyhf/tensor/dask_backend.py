@@ -9,9 +9,11 @@ from scipy.stats import norm
 
 log = logging.getLogger(__name__)
 
+
 class dask_backend(object):
+
     def __init__(self, **kwargs):
-        self.pois_from_norm = kwargs.get('poisson_from_normal',False)
+        self.pois_from_norm = kwargs.get('poisson_from_normal', False)
 
     def clip(self, tensor_in, min, max):
         """
@@ -36,14 +38,14 @@ class dask_backend(object):
         tensor_in = self.astensor(tensor_in)
         return da.clip(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tensor_in.compute().tolist()
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return da.outer(tensor_in_1,tensor_in_2)
+        return da.outer(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in):
         """
@@ -63,35 +65,35 @@ class dask_backend(object):
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return da.prod(tensor_in, axis = axis)
+        return da.prod(tensor_in, axis=axis)
 
-    def ones(self,shape):
-        return da.ones(shape, chunks = 100)
+    def ones(self, shape):
+        return da.ones(shape, chunks=100)
 
-    def power(self,tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return da.power(tensor_in_1, tensor_in_2)
 
-    def sqrt(self,tensor_in):
+    def sqrt(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return da.sqrt(tensor_in)
 
-    def divide(self,tensor_in_1, tensor_in_2):
+    def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return da.divide(tensor_in_1, tensor_in_2)
 
-    def log(self,tensor_in):
+    def log(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return da.log(tensor_in)
 
-    def exp(self,tensor_in):
+    def exp(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return da.exp(tensor_in)
 
-    def stack(self, sequence, axis = 0):
-        return da.stack(sequence,axis = axis)
+    def stack(self, sequence, axis=0):
+        return da.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         mask = self.astensor(mask)
@@ -127,11 +129,12 @@ class dask_backend(object):
     def poisson(self, n, lam):
         n = da.asarray(n)
         if self.pois_from_norm:
-            return self.normal(n,lam, self.sqrt(lam))
-        return da.exp(n*da.log(lam)-lam-gammaln(n+1.))
+            return self.normal(n, lam, self.sqrt(lam))
+        return da.exp(n * da.log(lam) - lam - gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
-        return norm.pdf(x, loc=mu, scale=sigma)  # works because of generalized ufuncs
+        # works because of generalized ufuncs
+        return norm.pdf(x, loc=mu, scale=sigma)
 
     def normal_cdf(self, x, mu=0, sigma=1):
         """
@@ -152,4 +155,4 @@ class dask_backend(object):
         Returns:
             NumPy float: The CDF
         """
-        return norm.cdf(x, loc=mu, scale=sigma) #works because of generalized ufuncs
+        return norm.cdf(x, loc=mu, scale=sigma)  # works because of generalized ufuncs
