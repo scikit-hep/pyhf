@@ -67,8 +67,24 @@ class dask_backend(object):
         tensor_in = self.astensor(tensor_in)
         return da.prod(tensor_in, axis=axis)
 
+    def abs(self, tensor):
+        """
+        Calculate the absolute value element-wise.
+
+        Args:
+            tensor (Number or Tensor): Tensor object
+
+        Returns:
+            `dask.array`: A multi-dimensional, fixed-size homogenous array.
+        """
+        tensor = self.astensor(tensor)
+        return da.fabs(tensor)
+
     def ones(self, shape):
         return da.ones(shape, chunks=100)
+
+    def zeros(self, shape):
+        return da.zeros(shape, chunks=100)
 
     def power(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -101,8 +117,18 @@ class dask_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return da.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence):
-        return da.concatenate(sequence)
+    def concatenate(self, sequence, axis=0):
+        """
+        Join a sequence of arrays along an existing axis.
+
+        Args:
+            sequence: sequence of tensors
+            axis: dimension along which to concatenate
+
+        Returns:
+            `dask.array`: the concatenated tensor
+         """
+        return da.concatenate(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -125,6 +151,25 @@ class dask_backend(object):
             list of Tensors: The sequence broadcast together.
         """
         return da.broadcast_arrays(*args)
+
+    def einsum(self, subscripts, *operands):
+        """
+        Evaluates the Einstein summation convention on the operands.
+
+        Using the Einstein summation convention, many common multi-dimensional
+        array operations can be represented in a simple fashion. This function
+        provides a way to compute such summations. The best way to understand
+        this function is to try the examples below, which show how many common
+        NumPy functions can be implemented as calls to einsum.
+
+        Args:
+            subscripts (`str`): Specifies the subscripts for summation
+            operands (list of array_like): The tensors for the operation
+
+        Returns:
+            `dask.array`: the calculation based on the Einstein summation convention
+        """
+        return da.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
         n = da.asarray(n)
