@@ -33,7 +33,7 @@ class dask_backend(object):
             max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
-            NumPy ndarray: A clipped `tensor`
+            `dask.array`: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
         return da.clip(tensor_in, min, max)
@@ -55,7 +55,7 @@ class dask_backend(object):
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+            `dask.array`: A multi-dimensional, fixed-size homogenous array.
         """
         return da.asarray(tensor_in)
 
@@ -75,7 +75,7 @@ class dask_backend(object):
             tensor (Number or Tensor): Tensor object
 
         Returns:
-            `dask.array`: A multi-dimensional, fixed-size homogenous array.
+            `dask.array`: The absolute value of the tensor element-wise.
         """
         tensor = self.astensor(tensor)
         return da.fabs(tensor)
@@ -126,7 +126,7 @@ class dask_backend(object):
             axis: dimension along which to concatenate
 
         Returns:
-            `dask.array`: the concatenated tensor
+            `dask.array`: The concatenated tensor.
          """
         return da.concatenate(sequence, axis=axis)
 
@@ -167,7 +167,7 @@ class dask_backend(object):
             operands (list of array_like): The tensors for the operation
 
         Returns:
-            `dask.array`: the calculation based on the Einstein summation convention
+            `dask.array`: The calculation based on the Einstein summation convention
         """
         return da.einsum(subscripts, *operands)
 
