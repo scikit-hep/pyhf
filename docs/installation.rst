@@ -24,8 +24,8 @@ and activating it
 Install from `PyPI <https://pypi.org/project/pyhf/>`__
 ------------------------------------------------------
 
-with the default NumPy backend
-++++++++++++++++++++++++++++++
+with NumPy backend
+++++++++++++++++++
 
 .. code-block:: console
 
@@ -67,8 +67,8 @@ Install from `GitHub <https://github.com/diana-hep/pyhf>`__
     git clone https://github.com/diana-hep/pyhf.git
     cd pyhf
 
-with the default NumPy backend
-++++++++++++++++++++++++++++++
+with NumPy backend
+++++++++++++++++++
 
 .. code-block:: console
 
