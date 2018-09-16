@@ -39,21 +39,21 @@ with TensorFlow backend
     pip install pyhf[tensorflow]
 
 with PyTorch backend
-+++++++++++++++++++++++
+++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[torch]
 
 with MXNet backend
-+++++++++++++++++++++++
+++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[mxnet]
 
 with all backends
-+++++++++++++++++++++++
++++++++++++++++++
 
 .. code-block:: console
 
@@ -82,21 +82,21 @@ with TensorFlow backend
     pip install --ignore-installed -U .[tensorflow]
 
 with PyTorch backend
-+++++++++++++++++++++++
+++++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .[torch]
 
 with MXNet backend
-+++++++++++++++++++++++
+++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .[mxnet]
 
 with all backends
-+++++++++++++++++++++++
++++++++++++++++++
 
 .. code-block:: console
 
