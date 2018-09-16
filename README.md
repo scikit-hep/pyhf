@@ -86,10 +86,16 @@ bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
 
 ## Installation
 
-To install `pyhf` run
-```bash
-python setup.py install
+To install `pyhf` from PyPI with the NumPy backend run
 ```
+pip install pyhf
+```
+
+and to install `pyhf` with additional backends run
+```
+pip install pyhf[tensorflow,torch,mxnet]
+```
+or a subset of the options.
 
 To uninstall run
 ```bash
