@@ -97,10 +97,16 @@ def test_interpcode_0(backend, do_optimal):
     expected = pyhf.tensorlib.astensor([[[[0],[0.5],[1.0],[2.0],[3.0]]]])
 
     if do_optimal:
-      results = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets, alphasets)
+      result_deltas = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets, alphasets)
     else:
-      results = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets))
-    assert pyhf.tensorlib.tolist(results) == pyhf.tensorlib.tolist(expected)
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+
+
+    # calculate the actual change
+    allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum('sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:,:,1])
+    results = allsets_allhistos_noms_repeated + result_deltas
+
+    assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
 
 
 @pytest.mark.parametrize('backend',
@@ -131,9 +137,13 @@ def test_interpcode_1(backend, do_optimal):
     expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
 
     if do_optimal:
-      results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
+      result_deltas = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
     else:
-      results = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets))
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+
+    # calculate the actual change
+    allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum('sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:,:,1])
+    results = allsets_allhistos_noms_repeated * result_deltas
 
     assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
 
