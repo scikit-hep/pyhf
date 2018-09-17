@@ -128,6 +128,20 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
+    def _mtype_results(self,mtype,pars):
+        mtype_results = {}
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                for mname in sample['modifiers_by_type'].get(mtype,[]):
+                    modifier = self.config.modifier(mname)
+                    modpars  = pars[self.config.par_slice(mname)]
+                    mtype_results.setdefault(channel['name'],
+                            {}).setdefault(sample['name'],
+                            []).append(
+                                modifier.apply(channel, sample, modpars)
+                            )
+        return mtype_results
+
     def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
@@ -191,17 +205,7 @@ class Model(object):
 
         all_results = {}
         for mtype in factor_mods + delta_mods:
-            for channel in self.spec['channels']:
-                for sample in channel['samples']:
-                    for mname in sample['modifiers_by_type'].get(mtype,[]):
-                        modifier = self.config.modifier(mname)
-                        modpars  = pars[self.config.par_slice(mname)]
-                        all_results.setdefault(mtype,
-                                {}).setdefault(channel['name'],
-                                {}).setdefault(sample['name'],
-                                []).append(
-                                    modifier.apply(channel, sample, modpars)
-                                )
+            all_results[mtype] = self._mtype_results(mtype,pars)
 
         for channel in self.spec['channels']:
             for sample in channel['samples']:
