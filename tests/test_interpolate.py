@@ -62,6 +62,10 @@ def random_histosets_alphasets_pair():
 @pytest.mark.parametrize("interpcode", [0, 1])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     slow_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=False)(histogramssets=histogramssets, alphasets=alphasets)))
@@ -84,6 +88,10 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
 def test_interpcode_0(backend, do_tensorized_calc):
     pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
@@ -124,6 +132,10 @@ def test_interpcode_0(backend, do_tensorized_calc):
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
 def test_interpcode_1(backend, do_tensorized_calc):
     pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
