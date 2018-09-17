@@ -64,8 +64,8 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     pyhf.set_backend(backend)
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    slow_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=False)(histogramssets=histogramssets, alphasets=alphasets)))
-    fast_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_optimal=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets.tolist()), alphasets=pyhf.tensorlib.astensor(alphasets.tolist()))))
+    slow_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=False)(histogramssets=histogramssets, alphasets=alphasets)))
+    fast_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets.tolist()), alphasets=pyhf.tensorlib.astensor(alphasets.tolist()))))
 
     assert pytest.approx(slow_result[~np.isnan(slow_result)].ravel().tolist()) == fast_result[~np.isnan(fast_result)].ravel().tolist()
 
@@ -81,8 +81,8 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
                              'tensorflow',
                              'pytorch',
                          ])
-@pytest.mark.parametrize("do_optimal", [False, True], ids=['slow','fast'])
-def test_interpcode_0(backend, do_optimal):
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
+def test_interpcode_0(backend, do_tensorized_calc):
     pyhf.set_backend(backend)
     histogramssets = pyhf.tensorlib.astensor([
         [
@@ -96,10 +96,10 @@ def test_interpcode_0(backend, do_optimal):
     alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
     expected = pyhf.tensorlib.astensor([[[[0],[0.5],[1.0],[2.0],[3.0]]]])
 
-    if do_optimal:
-      result_deltas = pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(histogramssets, alphasets)
+    if do_tensorized_calc:
+      result_deltas = pyhf.interpolate.interpolator(0, do_tensorized_calc=do_tensorized_calc)(histogramssets, alphasets)
     else:
-      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(0, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(0, do_tensorized_calc=do_tensorized_calc)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
 
 
     # calculate the actual change
@@ -121,8 +121,8 @@ def test_interpcode_0(backend, do_optimal):
                              'tensorflow',
                              'pytorch',
                          ])
-@pytest.mark.parametrize("do_optimal", [False, True], ids=['slow','fast'])
-def test_interpcode_1(backend, do_optimal):
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
+def test_interpcode_1(backend, do_tensorized_calc):
     pyhf.set_backend(backend)
     histogramssets = pyhf.tensorlib.astensor([
         [
@@ -136,10 +136,10 @@ def test_interpcode_1(backend, do_optimal):
     alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
     expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
 
-    if do_optimal:
-      result_deltas = pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(histogramssets, alphasets)
+    if do_tensorized_calc:
+      result_deltas = pyhf.interpolate.interpolator(1, do_tensorized_calc=do_tensorized_calc)(histogramssets, alphasets)
     else:
-      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(1, do_optimal=do_optimal)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(1, do_tensorized_calc=do_tensorized_calc)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
 
     # calculate the actual change
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum('sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:,:,1])
