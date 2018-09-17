@@ -66,11 +66,11 @@ def spec(source):
                          ])
 @pytest.mark.parametrize('backend',
                          [
-                             (pyhf.tensor.numpy_backend(poisson_from_normal=True),),
+                             (pyhf.tensor.numpy_backend(),),
                              (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
-                             (pyhf.tensor.pytorch_backend(poisson_from_normal=True),),
+                             (pyhf.tensor.pytorch_backend(),),
                              # pyhf.tensor.mxnet_backend(),
-                             (pyhf.tensor.numpy_backend(poisson_from_normal=True), pyhf.optimize.minuit_optimizer()),
+                             (pyhf.tensor.numpy_backend(), pyhf.optimize.minuit_optimizer()),
                          ],
                          ids=[
                              'numpy',

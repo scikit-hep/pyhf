@@ -82,7 +82,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('backend',
                          [
-                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
+                             pyhf.tensor.numpy_backend(),
                              pyhf.tensor.tensorflow_backend(session=tf.Session()),
                              pyhf.tensor.pytorch_backend(),
                              # pyhf.tensor.mxnet_backend(),

@@ -1,8 +1,8 @@
 import pyhf
 
-from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
+from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
 
@@ -16,8 +16,8 @@ def test_common_tensor_backends():
     tf_sess = tf.Session()
     for tb in [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend()
     ]:
         assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
@@ -63,8 +63,8 @@ def test_einsum():
     tf_sess = tf.Session()
     backends = [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend() # no einsum in mxnet
     ]
 
@@ -81,12 +81,13 @@ def test_einsum():
         with pytest.raises(NotImplementedError):
             assert b.einsum('ij->ji',[1,2,3])
 
+
 def test_pdf_eval():
     tf_sess = tf.Session()
     backends = [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend()
     ]
 
@@ -131,15 +132,15 @@ def test_pdf_eval():
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
-    assert np.std(values) < 1e-6
+    assert np.std(values) < 5e-5
 
 
 def test_pdf_eval_2():
     tf_sess = tf.Session()
     backends = [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend()
     ]
 
@@ -164,4 +165,4 @@ def test_pdf_eval_2():
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
-    assert np.std(values) < 1e-6
+    assert np.std(values) < 5e-5

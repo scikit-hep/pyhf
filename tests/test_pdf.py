@@ -156,9 +156,9 @@ def test_pdf_integration_histosys():
 
 @pytest.mark.parametrize('backend',
                          [
-                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
+                             pyhf.tensor.numpy_backend(),
                              pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
+                             pyhf.tensor.pytorch_backend(),
                              # pyhf.tensor.mxnet_backend(),
                          ],
                          ids=[
@@ -302,4 +302,3 @@ def test_invalid_modifier_name_resuse():
         pdf  = pyhf.Model(spec, poiname = 'reused_name')
 
     pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
-    

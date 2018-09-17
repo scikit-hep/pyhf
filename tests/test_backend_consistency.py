@@ -94,7 +94,7 @@ def test_runOnePoint_q_mu(n_bins,
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
-        pyhf.tensor.numpy_backend(poisson_from_normal=True),
+        pyhf.tensor.numpy_backend(),
         pyhf.tensor.tensorflow_backend(session=tf.Session()),
         pyhf.tensor.pytorch_backend(),
         # mxnet_backend()
