@@ -89,9 +89,9 @@ def _slow_hfinterp_code1(histogramssets, alphasets):
 
 
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
-def interpolator(interpcode, do_optimal=True):
-    interpcodes = {0: _hfinterp_code0 if do_optimal else _slow_hfinterp_code0,
-                   1: _hfinterp_code1 if do_optimal else _slow_hfinterp_code1}
+def interpolator(interpcode, do_tensorized_calc=True):
+    interpcodes = {0: _hfinterp_code0 if do_tensorized_calc else _slow_hfinterp_code0,
+                   1: _hfinterp_code1 if do_tensorized_calc else _slow_hfinterp_code1}
 
     try:
         return interpcodes[interpcode]
