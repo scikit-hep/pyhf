@@ -2,9 +2,11 @@ import pyhf
 import json
 import pytest
 
+
 @pytest.fixture(scope='module')
 def source_1bin_example1():
-    return json.load(open('validation/data/1bin_example1.json'))
+    with open('validation/data/1bin_example1.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -160,7 +162,8 @@ def setup_1bin_normsys(source=source_1bin_normsys(),
 
 @pytest.fixture(scope='module')
 def source_2bin_histosys_example2():
-    return json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -238,7 +241,8 @@ def setup_2bin_histosys(source=source_2bin_histosys_example2(),
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_example1():
-    return json.load(open('validation/data/2bin_2channel_example1.json'))
+    with open('validation/data/2bin_2channel_example1.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -330,7 +334,8 @@ def setup_2bin_2channel(source=source_2bin_2channel_example1(),
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_couplednorm():
-    return json.load(open('validation/data/2bin_2channel_couplednorm.json'))
+    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -434,7 +439,8 @@ def setup_2bin_2channel_couplednorm(
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_coupledhisto():
-    return json.load(open('validation/data/2bin_2channel_coupledhisto.json'))
+    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -547,7 +553,8 @@ def setup_2bin_2channel_coupledhistosys(
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_coupledshapefactor():
-    return json.load(open('validation/data/2bin_2channel_coupledshapefactor.json'))
+    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -690,4 +697,3 @@ def test_validation(setup):
         setup['expected']['config']['par_bounds']
 
     validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'])
-

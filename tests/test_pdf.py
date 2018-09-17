@@ -6,6 +6,7 @@ import numpy as np
 import json
 import tensorflow as tf
 
+
 def test_numpy_pdf_inputs():
     source = {
       "binning": [2,-0.5,1.5],
@@ -16,7 +17,7 @@ def test_numpy_pdf_inputs():
         "sig":     [10.0]
       }
     }
-    pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+    pdf = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
 
     pars = pdf.config.suggested_init()
     data = source['bindata']['data'] + pdf.config.auxdata
@@ -55,6 +56,7 @@ def test_core_pdf_broadcasting():
     assert np.array(data).shape == np.array(sigmas).shape
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
+
 
 def test_pdf_integration_staterror():
     spec = {
@@ -104,8 +106,10 @@ def test_pdf_integration_staterror():
     for c,e in zip(computed,expected):
         assert c==e
 
+
 def test_pdf_integration_histosys():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        source = json.load(read_json)
     spec = {
         'channels': [
             {
@@ -171,7 +175,9 @@ def test_pdf_integration_normsys(backend):
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        source = json.load(read_json)
     spec = {
         'channels': [
             {
@@ -207,8 +213,10 @@ def test_pdf_integration_normsys(backend):
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
     assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
+
 def test_pdf_integration_shapesys():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        source = json.load(read_json)
     spec = {
         'channels': [
             {
@@ -254,6 +262,7 @@ def test_pdf_integration_shapesys():
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.9,1.1]]
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*1.1]
 
+
 def test_invalid_modifier():
     spec = {
         'channels': [
@@ -273,6 +282,7 @@ def test_invalid_modifier():
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         pyhf.pdf._ModelConfig.from_spec(spec)
+
 
 def test_invalid_modifier_name_resuse():
     spec = {
@@ -299,6 +309,6 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pdf  = pyhf.Model(spec, poiname = 'reused_name')
+        pdf = pyhf.Model(spec, poiname = 'reused_name')
 
-    pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
+    pdf = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)

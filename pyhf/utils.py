@@ -1,8 +1,10 @@
-import json, jsonschema
+import json
+import jsonschema
 import pkg_resources
 
 from .exceptions import InvalidSpecification
 from . import get_backend
+
 
 def get_default_schema():
     r"""
@@ -13,10 +15,12 @@ def get_default_schema():
         Schema File Path: a string containing the absolute path to the default
                           schema file.
     """
-    return pkg_resources.resource_filename(__name__,'data/spec.json')
+    return pkg_resources.resource_filename(__name__, 'data/spec.json')
 
 
 SCHEMA_CACHE = {}
+
+
 def load_schema(schema):
     global SCHEMA_CACHE
     try:
@@ -24,7 +28,8 @@ def load_schema(schema):
     except KeyError:
         pass
 
-    SCHEMA_CACHE[schema] = json.load(open(schema))
+    with open(schema) as json_schema:
+        SCHEMA_CACHE[schema] = json.load(json_schema)
     return SCHEMA_CACHE[schema]
 
 
@@ -35,8 +40,10 @@ def validate(spec, schema):
     except jsonschema.ValidationError as err:
         raise InvalidSpecification(err)
 
+
 def loglambdav(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
+
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
@@ -76,11 +83,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
     return qmu
 
+
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     _, optimizer = get_backend()
     bestfit_nuisance_asimov = optimizer.constrained_bestfit(
         loglambdav, asimov_mu, data, pdf, init_pars, par_bounds)
     return pdf.expected_data(bestfit_nuisance_asimov)
+
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     r"""
@@ -114,7 +123,8 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
 
-def runOnePoint(muTest, data, pdf, init_pars = None, par_bounds = None):
+
+def runOnePoint(muTest, data, pdf, init_pars=None, par_bounds=None):
     r"""
     Computes test statistics (and expected statistics) for a single value
     of the parameter of interest
