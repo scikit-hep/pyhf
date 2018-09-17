@@ -8,6 +8,8 @@ before_install:
   - sudo apt-get install libtcmalloc-minimal4
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
   - pip install --upgrade pip setuptools wheel
+  - sudo apt-get update
+  - sudo apt-get install -y jq
 install:
   - pip install --ignore-installed -U -q -e .[complete]
   - pip freeze
