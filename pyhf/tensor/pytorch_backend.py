@@ -3,7 +3,10 @@ import torch.autograd
 import logging
 log = logging.getLogger(__name__)
 
+
 class pytorch_backend(object):
+    """PyTorch backend for pyhf"""
+
     def __init__(self, **kwargs):
         pass
 
@@ -167,11 +170,51 @@ class pytorch_backend(object):
         ops = tuple(self.astensor(op) for op in operands)
         return torch.einsum(subscripts, ops)
 
-
     def poisson(self, n, lam):
-        return self.normal(n,lam, self.sqrt(lam))
+        """
+        The continous approximation to the probability mass function of the Poisson
+        distribution given the parameter `lam` evaluated at `n`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.tensorlib.poisson(5., 6.)
+            tensor([0.1606])
+
+        Args:
+            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+                                  (the observed number of events)
+            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+                                    (the expected number of events)
+
+        Returns:
+            PyTorch FloatTensor: Value of the continous approximation to Poisson(n|lam)
+        """
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+        return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 
     def normal(self, x, mu, sigma):
+        """
+        The probability density function of the Normal distribution given parameters
+        of mean of `mu` and standard deviation of `sigma` evaluated at `x`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            tensor([0.3521])
+
+        Args:
+            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            PyTorch FloatTensor: Value of Normal(x|mu, sigma)
+        """
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
