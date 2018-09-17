@@ -1,0 +1,35 @@
+{
+    "channels": [{
+        "name": "singlechannel",
+        "samples": [{
+                "name": "sig",
+                "data": [12.0, 11.0],
+                "modifiers": [{
+                    "name": "mu",
+                    "data": null,
+                    "type": "normfactor"
+                }]
+            },
+            {
+                "name": "bkg",
+                "data": [50.0, 52.0],
+                "modifiers": [{
+                    "name": "uncorr_bkguncrt",
+                    "data": [3.0, 7.0],
+                    "type": "shapesys"
+                }]
+            }
+        ]
+    }],
+    "data": {
+        "singlechannel": [51.0, 48.0]
+    },
+    "toplvl": {
+        "measurements": [{
+            "config": {
+                "poi": "mu"
+            },
+            "name": "singlechannel"
+        }]
+    }
+}
