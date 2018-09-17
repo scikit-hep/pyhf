@@ -340,32 +340,55 @@ class mxnet_backend(object):
         raise NotImplementedError("mxnet::einsum is not implemented.")
         return self.astensor([])
 
-
     def poisson(self, n, lam):
         """
-        The continous approximation to the probability density function of the Poisson
-        distribution given the parameters evaluated at `n`.
+        The continous approximation to the probability mass function of the Poisson
+        distribution given the parameter `lam` evaluated at `n`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> pyhf.tensorlib.poisson(5., 6.)
+            <BLANKLINE>
+            [0.16062315]
+            <NDArray 1 @cpu(0)>
 
         Args:
-            n (Number or Tensor): The value at which to evaluate the Poisson distribution p.d.f.
+            n (Number or Tensor): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
             lam (Number or Tensor): The mean of the Poisson distribution p.d.f.
                                     (the expected number of events)
 
         Returns:
-            MXNet NDArray: Value of N(n|lam, sqrt(lam)), the continous approximation to Poisson(n|lam).
+            MXNet NDArray: Value of the continous approximation to Poisson(n|lam)
         """
-        return self.normal(n, lam, self.sqrt(lam))
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+
+        # This is currently copied directly from PyTorch's source until a better
+        # way can be found to do this in MXNet
+        # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/poisson.py#L59-L63
+        return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1))
 
     def normal(self, x, mu, sigma):
         """
         The probability density function of the Normal distribution given the parameters
         evaluated at `x`.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            <BLANKLINE>
+            [0.35206532]
+            <NDArray 1 @cpu(0)>
+
         Args:
-            x (Number or Tensor): The point at which to evaluate the Normal distribution p.d.f.
-            mu (Number or Tensor): The mean of the Normal distribution p.d.f.
-            sigma(Number or Tensor): The standard deviation of the Normal distribution p.d.f.
+            x (Number or Tensor): The value at which to evaluate the Normal distribution p.d.f.
+            mu (Number or Tensor): The mean of the Normal distribution
+            sigma (Number or Tensor): The standard deviation of the Normal distribution
 
         Returns:
             MXNet NDArray: Value of N(x|mu, sigma).
@@ -376,7 +399,7 @@ class mxnet_backend(object):
 
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
-        # https://github.com/pytorch/pytorch/blob/master/torch/distributions/normal.py#L61-L66
+        # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/normal.py#L70-L76
         def log_prob(value, loc, scale):
             variance = scale ** 2
             log_scale = math.log(scale) if isinstance(
