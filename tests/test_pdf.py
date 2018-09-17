@@ -291,4 +291,7 @@ def test_invalid_modifier_name_resuse():
         pdf  = pyhf.Model(spec, poiname = 'reused_name')
 
     pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
+<<<<<<< 01c6b81aeb46c5f30df8f698666fae1a2595f5a4
 
+=======
+>>>>>>> Remove use of poisson_from_normal=True from everywhere

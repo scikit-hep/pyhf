@@ -1,8 +1,8 @@
 import pyhf
 
-from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.numpy_backend import numpy_backend
 from pyhf.tensor.tensorflow_backend import tensorflow_backend
+from pyhf.tensor.pytorch_backend import pytorch_backend
 from pyhf.tensor.mxnet_backend import mxnet_backend
 from pyhf.simplemodels import hepdata_like
 
@@ -46,9 +46,9 @@ def test_common_tensor_backends(backend):
         == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
     assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
         == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    assert tb.tolist(tb.ones((4,5)))  == [[1.]*5]*4
-    assert tb.tolist(tb.zeros((4,5))) == [[0.]*5]*4
-    assert tb.tolist(tb.abs([-1,-2])) == [1,2]
+    assert tb.tolist(tb.ones((4, 5))) == [[1.] * 5] * 4
+    assert tb.tolist(tb.zeros((4, 5))) == [[0.] * 5] * 4
+    assert tb.tolist(tb.abs([-1, -2])) == [1, 2]
     with pytest.raises(Exception):
         tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
@@ -64,12 +64,13 @@ def test_einsum(backend):
         assert np.all(tb.tolist(tb.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
         assert tb.tolist(tb.einsum('i,j->ij',tb.astensor([1,1,1]),tb.astensor([1,2,3]))) == [[1,2,3]]*3
 
+
 def test_pdf_eval():
     tf_sess = tf.Session()
     backends = [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend()
     ]
 
@@ -115,15 +116,15 @@ def test_pdf_eval():
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
-    assert np.std(values) < 1e-6
+    assert np.std(values) < 5e-5
 
 
 def test_pdf_eval_2():
     tf_sess = tf.Session()
     backends = [
         numpy_backend(),
-        pytorch_backend(),
         tensorflow_backend(session=tf_sess),
+        pytorch_backend(),
         mxnet_backend()
     ]
 
@@ -148,4 +149,4 @@ def test_pdf_eval_2():
         v1 = pdf.logpdf(pdf.config.suggested_init(), data)
         values.append(pyhf.tensorlib.tolist(v1)[0])
 
-    assert np.std(values) < 1e-6
+    assert np.std(values) < 5e-5

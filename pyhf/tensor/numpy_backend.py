@@ -4,11 +4,12 @@ from scipy.special import gammaln, xlogy
 from scipy.stats import norm
 log = logging.getLogger(__name__)
 
+
 class numpy_backend(object):
     """NumPy backend for pyhf"""
 
     def __init__(self, **kwargs):
-        self.pois_from_norm = kwargs.get('poisson_from_normal',False)
+        pass
 
     def clip(self, tensor_in, min, max):
         """
@@ -180,9 +181,8 @@ class numpy_backend(object):
             NumPy float: Value of the continous approximation to Poisson(n|lam)
         """
         n = np.asarray(n)
-        if self.pois_from_norm:
-            return self.normal(n,lam, self.sqrt(lam))
-        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.))
+        lam = np.asarray(lam)
+        return np.exp((np.log(lam) * n) - lam - gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
         """
