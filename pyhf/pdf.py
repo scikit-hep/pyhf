@@ -189,19 +189,31 @@ class Model(object):
         factor_mods = ['normfactor','normsys','shapesys','shapefactor','staterror']
         delta_mods  = ['histosys']
 
-        for channel in self.spec['channels']:
-            for sample in channel['samples']:
-                results = {}
-                for mtype in factor_mods + delta_mods:
+        all_results = {}
+        for mtype in factor_mods + delta_mods:
+            for channel in self.spec['channels']:
+                for sample in channel['samples']:
                     for mname in sample['modifiers_by_type'].get(mtype,[]):
                         modifier = self.config.modifier(mname)
                         modpars  = pars[self.config.par_slice(mname)]
-                        results.setdefault(mtype,[]).append(
-                            modifier.apply(channel, sample, modpars)
-                        )
+                        all_results.setdefault(mtype,
+                                {}).setdefault(channel['name'],
+                                {}).setdefault(sample['name'],
+                                []).append(
+                                    modifier.apply(channel, sample, modpars)
+                                )
+
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
                 #sum of lists is concat
-                factors = sum([results.get(x,[]) for x in factor_mods],[]) 
-                deltas  = sum([results.get(x,[]) for x in delta_mods],[])
+                factors = sum([
+                    all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
+                    for x in factor_mods
+                ],[]) 
+                deltas  = sum([
+                    all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
+                    for x in delta_mods
+                ],[])
                 
                 all_modifications.setdefault(
                     channel['name'],{})[
