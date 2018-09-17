@@ -126,7 +126,7 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
-    def expected_sample(self, channel, sample, pars):
+    def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
 
@@ -181,34 +181,42 @@ class Model(object):
         # \phi == normfactor, overallsys
         # \sigma == histosysdelta + nominal
 
-        tensorlib, _ = get_backend()
         # first, collect the factors from all modifiers
-        results = {'shapesys': [],
-                   'normfactor': [],
-                   'shapefactor': [],
-                   'staterror': [],
-                   'histosys': [],
-                   'normsys': []}
-        for m in sample['modifiers']:
-            modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
-            results[m['type']].append(modifier.apply(channel, sample, modpars))
 
+        all_modifications = {}
+        factor_mods = ['normfactor','normsys','shapesys','shapefactor','staterror']
+        delta_mods  = ['histosys']
 
-        # start building the entire set of factors
-        factors = []
-        # scalars that get broadcasted to shape of vectors
-        factors += results['normfactor']
-        factors += results['normsys']
-        # vectors
-        factors += results['shapesys']
-        factors += results['shapefactor']
-        factors += results['staterror']
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                results = {}
+                for m in sample['modifiers']:
+                    modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
+                    results.setdefault(m['type'],[]).append(
+                        modifier.apply(channel, sample, modpars)
+                    )
+                #sum of lists is concat
+                factors = sum([results.get(x,[]) for x in factor_mods],[]) 
+                deltas  = sum([results.get(x,[]) for x in delta_mods],[])
+                
+                all_modifications.setdefault(
+                    channel['name'],{})[
+                    sample['name']
+                ] = (factors, deltas)
+        return all_modifications
 
-        nominal = tensorlib.astensor(sample['data'])
-        factors += [tensorlib.sum(tensorlib.stack([
-          nominal,
-          tensorlib.sum(tensorlib.stack(results['histosys']), axis=0)
-        ]), axis=0) if len(results['histosys']) > 0 else nominal]
+    def expected_sample(self, nominal, factors, deltas):
+        tensorlib, _ = get_backend()
+        basefactor = [
+            tensorlib.sum(
+                tensorlib.stack(
+                    [nominal,tensorlib.sum(tensorlib.stack(deltas), axis=0)]),
+                axis=0)
+                if len(deltas) > 0 
+                else nominal
+        ]
+
+        factors += basefactor
 
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
@@ -227,12 +235,22 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
+
     def expected_actualdata(self, pars):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []
+
+        all_modifications = self._all_modifications(pars)
         for channel in self.spec['channels']:
-            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in channel['samples']]),axis=0))
+            sample_stack = [
+                self.expected_sample(
+                    sample['data'], #nominal
+                    *all_modifications[channel['name']][sample['name']] #mods
+                )
+                for sample in channel['samples']
+            ]
+            data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
         return tensorlib.concatenate(data)
 
     def expected_data(self, pars, include_auxdata=True):
