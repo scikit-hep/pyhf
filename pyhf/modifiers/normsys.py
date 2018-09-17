@@ -37,9 +37,6 @@ class normsys(object):
         # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
         assert int(pars.shape[0]) == 1
 
-    def apply(self, channel, sample, pars):
-        assert int(pars.shape[0]) == 1
-
         tensorlib, _ = get_backend()
         results = interpolator(1)(
             tensorlib.astensor([
