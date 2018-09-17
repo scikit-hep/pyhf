@@ -5,6 +5,8 @@ from scipy.stats import norm
 log = logging.getLogger(__name__)
 
 class numpy_backend(object):
+    """NumPy backend for pyhf"""
+
     def __init__(self, **kwargs):
         self.pois_from_norm = kwargs.get('poisson_from_normal',False)
 
@@ -157,12 +159,51 @@ class numpy_backend(object):
         return np.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
+        """
+        The continous approximation to the probability mass function of the Poisson
+        distribution given the parameter `lam` evaluated at `n`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.tensorlib.poisson(5., 6.)
+            0.16062314104797995
+
+        Args:
+            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+                                  (the observed number of events)
+            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+                                    (the expected number of events)
+
+        Returns:
+            NumPy float: Value of the continous approximation to Poisson(n|lam)
+        """
         n = np.asarray(n)
         if self.pois_from_norm:
             return self.normal(n,lam, self.sqrt(lam))
         return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
+        """
+        The probability density function of the Normal distribution given parameters
+        of mean of `mu` and standard deviation of `sigma` evaluated at `x`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            0.3520653267642995
+
+        Args:
+            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            NumPy float: Value of Normal(x|mu, sigma)
+        """
         return norm.pdf(x, loc=mu, scale=sigma)
 
     def normal_cdf(self, x, mu=0, sigma=1):

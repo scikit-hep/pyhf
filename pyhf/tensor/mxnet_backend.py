@@ -369,7 +369,7 @@ class mxnet_backend(object):
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/poisson.py#L59-L63
-        return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1))
+        return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
         """
@@ -391,7 +391,7 @@ class mxnet_backend(object):
             sigma (Number or Tensor): The standard deviation of the Normal distribution
 
         Returns:
-            MXNet NDArray: Value of N(x|mu, sigma).
+            MXNet NDArray: Value of Normal(x|mu, sigma).
         """
         x = self.astensor(x)
         mu = self.astensor(mu)
