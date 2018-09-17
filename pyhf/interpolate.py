@@ -25,8 +25,7 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
 
-    # these three variables can be pre-computed at PDF time
-    allset_allhisto_nom = histogramssets[:,:,1]
+    # these two variables can be pre-computed at PDF time
     allset_allhisto_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
     allset_allhisto_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
 
@@ -40,10 +39,7 @@ def _hfinterp_code0(histogramssets, alphasets):
     allsets_allhistos_alphas_times_deltas_dn = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_dn)
     allsets_allhistos_masks = tensorlib.einsum('sa,shb->shab', where_alphasets_positive, tensorlib.ones(allset_allhisto_deltas_dn.shape))
 
-    allsets_allhistos_deltas = tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
-    allsets_allhistos_noms_repeated = tensorlib.einsum('sa,shb->shab',tensorlib.ones(alphasets.shape),allset_allhisto_nom)
-    set_results = allsets_allhistos_deltas + allsets_allhistos_noms_repeated
-    return set_results
+    return tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
 
 def _slow_hfinterp_code0(histogramssets, alphasets):
     def summand(down, nom, up, alpha):
@@ -53,7 +49,7 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
             delta =  delta_up*alpha
         else:
             delta =  delta_down*alpha
-        return nom + delta
+        return delta
 
     return _slow_hfinterp_looper(histogramssets, alphasets, summand)
 
@@ -61,10 +57,9 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
 def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
 
-    # these three variables can be pre-computed at PDF time
-    allset_allhisto_nom = histogramssets[:,:,1]
-    allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], allset_allhisto_nom)
-    allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], allset_allhisto_nom)
+    # these two variables can be pre-computed at PDF time
+    allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], histogramssets[:,:,1])
+    allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], histogramssets[:,:,1])
 
     allsets_allhistos_masks = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
 
@@ -76,12 +71,9 @@ def _hfinterp_code1(histogramssets, alphasets):
     bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_dn)
     exponents = tensorlib.einsum('sa,shb->shab', tensorlib.abs(alphasets), tensorlib.ones(allset_allhisto_deltas_up.shape))
     masks = tensorlib.einsum('sa,shb->shab', allsets_allhistos_masks, tensorlib.ones(allset_allhisto_deltas_up.shape))
-    allsets_allhistos_noms_repeated = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_nom)
 
     bases = tensorlib.where(masks, bases_up, bases_dn)
-    allsets_allhistos_deltas = tensorlib.power(bases, exponents)
-    set_results = allsets_allhistos_deltas * allsets_allhistos_noms_repeated
-    return set_results
+    return tensorlib.power(bases, exponents)
 
 def _slow_hfinterp_code1(histogramssets, alphasets):
     def product(down, nom, up, alpha):
@@ -91,7 +83,7 @@ def _slow_hfinterp_code1(histogramssets, alphasets):
             delta =  delta_up**alpha
         else:
             delta =  delta_down**(-alpha)
-        return nom*delta
+        return delta
 
     return _slow_hfinterp_looper(histogramssets, alphasets, product)
 
