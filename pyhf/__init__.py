@@ -4,26 +4,32 @@ default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
 default_optimizer = optimizer
 
+
 def get_backend():
     """
     Get the current backend and the associated optimizer
-
-    Returns:
-        backend, optimizer
 
     Example:
         >>> import pyhf
         >>> pyhf.get_backend()
         (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.opt_scipy.scipy_optimizer object at 0x...>)
 
+    Returns:
+        backend, optimizer
     """
     global tensorlib
     global optimizer
     return tensorlib, optimizer
 
-def set_backend(backend, custom_optimizer = None):
+
+def set_backend(backend, custom_optimizer=None):
     """
     Set the backend and the associated optimizer
+
+    Example:
+        >>> import pyhf
+        >>> import tensorflow as tf
+        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
 
     Args:
         backend: One of the supported pyhf backends: NumPy,
@@ -31,11 +37,6 @@ def set_backend(backend, custom_optimizer = None):
 
     Returns:
         None
-
-    Example:
-        >>> import pyhf
-        >>> import tensorflow as tf
-        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
     """
     global tensorlib
     global optimizer
@@ -53,6 +54,7 @@ def set_backend(backend, custom_optimizer = None):
 
     if custom_optimizer:
         optimizer = custom_optimizer
+
 
 from .pdf import Model
 __all__ = ["Model", "utils", "modifiers"]
