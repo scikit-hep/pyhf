@@ -21,6 +21,7 @@ class _ModelConfig(object):
             channels.append(channel['name'])
             for sample in channel['samples']:
                 samples.append(sample['name'])
+                sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
@@ -30,6 +31,7 @@ class _ModelConfig(object):
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
+                    sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         instance.channels = list(set(channels))
         instance.samples = list(set(samples))
         instance.modifiers = list(set(modifiers))
@@ -190,11 +192,13 @@ class Model(object):
         for channel in self.spec['channels']:
             for sample in channel['samples']:
                 results = {}
-                for m in sample['modifiers']:
-                    modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
-                    results.setdefault(m['type'],[]).append(
-                        modifier.apply(channel, sample, modpars)
-                    )
+                for mtype in factor_mods + delta_mods:
+                    for mname in sample['modifiers_by_type'].get(mtype,[]):
+                        modifier = self.config.modifier(mname)
+                        modpars  = pars[self.config.par_slice(mname)]
+                        results.setdefault(mtype,[]).append(
+                            modifier.apply(channel, sample, modpars)
+                        )
                 #sum of lists is concat
                 factors = sum([results.get(x,[]) for x in factor_mods],[]) 
                 deltas  = sum([results.get(x,[]) for x in delta_mods],[])
