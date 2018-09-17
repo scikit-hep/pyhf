@@ -15,6 +15,11 @@ def test_notebooks(tmpdir):
     pm.execute_notebook(
         'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
 
+    if sys.version_info.major > 2:
+        # Contains Python3 only code
+        pm.execute_notebook(
+            'docs/examples/notebooks/talks/AML-and-Stats-Forum-Demo.ipynb', **common_kwargs)
+
     pm.execute_notebook(
         'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
     pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',

@@ -6,6 +6,8 @@ python:
   - '3.6'
 before_install:
   - pip install --upgrade pip setuptools wheel
+  - sudo apt-get update
+  - sudo apt-get install -y jq
 install:
   - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]  # Ensure right version of NumPy installed
   - pip freeze
