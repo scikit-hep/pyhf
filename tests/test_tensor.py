@@ -66,11 +66,12 @@ def test_einsum(backend):
 
 def test_pdf_eval():
     tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend() #no einsum in mxnet
-                ]
+    backends = [
+        numpy_backend(),
+        pytorch_backend(),
+        tensorflow_backend(session=tf_sess),
+        mxnet_backend()
+    ]
 
     values = []
     for b in backends:
@@ -119,10 +120,12 @@ def test_pdf_eval():
 
 def test_pdf_eval_2():
     tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend()]
+    backends = [
+        numpy_backend(),
+        pytorch_backend(),
+        tensorflow_backend(session=tf_sess),
+        mxnet_backend()
+    ]
 
     values = []
     for b in backends:
