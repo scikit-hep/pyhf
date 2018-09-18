@@ -10,7 +10,10 @@ install:
   - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]  # Ensure right version of NumPy installed
 script:
   - pyflakes pyhf
-  - pytest --ignore tests/benchmarks/
+  # pytest takes up too much memory in Travis if run all at once, so split off
+  # test_notebooks.py into its own pytest run
+  - pytest --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
