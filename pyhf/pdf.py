@@ -262,7 +262,7 @@ class Model(object):
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
-        
+
     def expected_actualdata(self, pars):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
