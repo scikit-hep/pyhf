@@ -151,6 +151,20 @@ class Model(object):
             *all_modifications[channel['name']][sample['name']] #mods
         )
 
+    def _expected_sample(self, nominal, factors, deltas):
+        tensorlib, _ = get_backend()
+        basefactor = [
+            tensorlib.sum(
+                tensorlib.stack(
+                    [nominal,tensorlib.sum(tensorlib.stack(deltas), axis=0)]),
+                axis=0)
+                if len(deltas) > 0 
+                else nominal
+        ]
+        factors += basefactor
+
+        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
+        
     def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
@@ -233,22 +247,6 @@ class Model(object):
                     sample['name']
                 ] = (factors, deltas)
         return all_modifications
-
-
-    def _expected_sample(self, nominal, factors, deltas):
-        tensorlib, _ = get_backend()
-        basefactor = [
-            tensorlib.sum(
-                tensorlib.stack(
-                    [nominal,tensorlib.sum(tensorlib.stack(deltas), axis=0)]),
-                axis=0)
-                if len(deltas) > 0 
-                else nominal
-        ]
-
-        factors += basefactor
-
-        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
 
     def expected_auxdata(self, pars):
         # probably more correctly this should be the expectation value of the constraint_pdf
