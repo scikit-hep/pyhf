@@ -143,10 +143,11 @@ class Model(object):
         return mtype_results
 
     def expected_sample(self, channel, sample, pars):
+        tensorlib, _ = get_backend()
         #public API only, not efficient
         all_modifications = self._all_modifications(pars)
         return self._expected_sample(
-            sample['data'], #nominal
+            tensorlib.astensor(sample['data']), #nominal
             *all_modifications[channel['name']][sample['name']] #mods
         )
 
@@ -274,7 +275,7 @@ class Model(object):
         for channel in self.spec['channels']:
             sample_stack = [
                 self._expected_sample(
-                    sample['data'], #nominal
+                    tensorlib.astensor(sample['data']), #nominal
                     *all_modifications[channel['name']][sample['name']] #mods
                 )
                 for sample in channel['samples']
