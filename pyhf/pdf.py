@@ -164,7 +164,7 @@ class Model(object):
         factors += basefactor
 
         return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
-        
+
     def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
@@ -262,8 +262,7 @@ class Model(object):
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
-
-
+        
     def expected_actualdata(self, pars):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
