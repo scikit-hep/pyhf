@@ -3,7 +3,6 @@ log = logging.getLogger(__name__)
 
 from . import get_backend
 from . import exceptions
-from . import utils
 
 def _slow_hfinterp_looper(histogramssets, alphasets, func):
     all_results = []
