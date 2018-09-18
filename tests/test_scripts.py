@@ -88,7 +88,7 @@ def test_patch(tmpdir, script_runner):
     import io
     command = 'pyhf cls {0:s} --patch -'.format(temp.strpath,patch.strpath)
 
-    pipefile = io.StringIO(patchcontent) #python 2.7 pytest-files are not file-like enough
+    pipefile = io.StringIO(patchcontent) # python 2.7 pytest-files are not file-like enough
     ret = script_runner.run(*shlex.split(command), stdin = pipefile)
     print(ret.stderr)
     assert ret.success
@@ -106,4 +106,3 @@ def test_patch_fail(tmpdir, script_runner):
     command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
-
