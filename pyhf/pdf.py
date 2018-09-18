@@ -142,6 +142,14 @@ class Model(object):
                             )
         return mtype_results
 
+    def expected_sample(self, channel, sample, pars):
+        #public API only, not efficient
+        all_modifications = self._all_modifications(pars)
+        return self._expected_sample(
+            sample['data'], #nominal
+            *all_modifications[channel['name']][sample['name']] #mods
+        )
+
     def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
@@ -225,7 +233,8 @@ class Model(object):
                 ] = (factors, deltas)
         return all_modifications
 
-    def expected_sample(self, nominal, factors, deltas):
+
+    def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
         basefactor = [
             tensorlib.sum(
@@ -264,7 +273,7 @@ class Model(object):
         all_modifications = self._all_modifications(pars)
         for channel in self.spec['channels']:
             sample_stack = [
-                self.expected_sample(
+                self._expected_sample(
                     sample['data'], #nominal
                     *all_modifications[channel['name']][sample['name']] #mods
                 )
