@@ -34,8 +34,8 @@ setup(
     ],
     'tensorflow':[
        'tensorflow>=1.10.0',
+       # 'tensorflow-probability>=0.3.0', # Causing troulbe with Travis CI, but *should* be used
        'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
-       'tensorflow-probability>=0.3.0',
        'setuptools<=39.1.0',
     ],
     'develop': [

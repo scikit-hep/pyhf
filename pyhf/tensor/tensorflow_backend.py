@@ -1,6 +1,6 @@
 import logging
 import tensorflow as tf
-import tensorflow_probability as tfp
+# import tensorflow_probability as tfp
 
 log = logging.getLogger(__name__)
 
@@ -226,7 +226,8 @@ class tensorflow_backend(object):
         """
         n = self.astensor(n)
         lam = self.astensor(lam)
-        return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
+        # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
+        return tf.exp(tf.contrib.distributions.Poisson(lam).log_prob(n))
 
     def normal(self, x, mu, sigma):
         """
@@ -256,7 +257,8 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        normal = tfp.distributions.Normal(mu, sigma)
+        # normal = tfp.distributions.Normal(mu, sigma)
+        normal = tf.distributions.Normal(mu, sigma)
         return normal.prob(x)
 
     def normal_cdf(self, x, mu=0, sigma=1):
@@ -286,5 +288,6 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        normal = tfp.distributions.Normal(mu, sigma)
+        # normal = tfp.distributions.Normal(mu, sigma)
+        normal = tf.distributions.Normal(mu, sigma)
         return normal.cdf(x)
