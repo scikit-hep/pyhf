@@ -32,11 +32,11 @@ env:
 
 jobs:
   include:
-  -
+  - name: "Python 2.7 Notebook Tests"
     python: '2.7'
     script:
       - pytest tests/test_notebooks.py
-  -
+  - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
       - pytest tests/test_notebooks.py
