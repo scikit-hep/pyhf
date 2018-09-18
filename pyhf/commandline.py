@@ -28,30 +28,30 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     if output_file is None:
         print(json.dumps(spec, indent=4, sort_keys=True))
     else:
-        json.dump(spec, open(output_file, 'w+'), indent=4, sort_keys=True)
+        with open(output_file, 'w+') as out_file:
+            json.dump(spec, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
 
 @pyhf.command()
-@click.argument('workspace', default = '-')
-@click.argument('xmlfile', default = '-')
-@click.option('--specroot', default = click.Path(exists = True))
-@click.option('--dataroot', default = click.Path(exists = True))
-def json2xml(workspace,xmlfile,specroot,dataroot):
-    specstream = click.open_file(workspace)
-    outstream = click.open_file(xmlfile,'w')
-    d = json.load(specstream)
-
-    outstream.write(writexml.writexml(d,specroot,dataroot,'').decode('utf-8'))
+@click.argument('workspace', default='-')
+@click.argument('xmlfile', default='-')
+@click.option('--specroot', default=click.Path(exists=True))
+@click.option('--dataroot', default=click.Path(exists=True))
+def json2xml(workspace, xmlfile, specroot, dataroot):
+    with click.open_file(workspace, 'r') as specstream:
+        d = json.load(specstream)
+        with click.open_file(xmlfile, 'w') as outstream:
+            outstream.write(writexml.writexml(d, specroot, dataroot,'').decode('utf-8'))
 
 @pyhf.command()
-@click.argument('workspace', default = '-')
+@click.argument('workspace', default='-')
 @click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
 @click.option('--measurement', default=None)
-@click.option('-p','--patch', multiple = True)
+@click.option('-p', '--patch', multiple=True)
 @click.option('--qualify-names/--no-qualify-names', default=False)
 def cls(workspace, output_file, measurement, qualify_names, patch):
-    specstream = click.open_file(workspace)
-    d = json.load(specstream)
+    with click.open_file(workspace, 'r') as specstream:
+        d = json.load(specstream)
     measurements = d['toplvl']['measurements']
     measurement_names = [m['name'] for m in measurements]
     measurement_index = 0
@@ -68,7 +68,8 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
         log.debug('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
         spec = {'channels':d['channels']}
         for p in patch:
-            p = jsonpatch.JsonPatch(json.loads(click.open_file(p).read()))
+            with click.open_file(p, 'r') as read_file:
+                p = jsonpatch.JsonPatch(json.loads(read_file.read()))
             spec = p.apply(spec)
         p = Model(spec, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
         result = runOnePoint(1.0, sum((d['data'][c['name']] for c in d['channels']),[]) + p.config.auxdata, p)
@@ -76,5 +77,6 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
         if output_file is None:
             print(json.dumps(result, indent=4, sort_keys=True))
         else:
-            json.dump(result, open(output_file, 'w+'), indent=4, sort_keys=True)
+            with open(output_file, 'w+') as out_file:
+                json.dump(result, out_file, indent=4, sort_keys=True)
             log.debug("Written to {0:s}".format(output_file))
