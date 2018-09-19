@@ -46,7 +46,18 @@ class histosys(object):
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1
-        return interpolator(0)(self.at_minus_one[channel['name']][sample['name']],
-                               self.at_zero[channel['name']][sample['name']],
-                               self.at_plus_one[channel['name']][sample['name']],
-                               pars)[0]
+
+        tensorlib, _ = get_backend()
+        results = interpolator(0)(
+            tensorlib.astensor([
+                [
+                    [
+                        self.at_minus_one[channel['name']][sample['name']],
+                        self.at_zero[channel['name']][sample['name']],
+                        self.at_plus_one[channel['name']][sample['name']]
+                    ]
+                ]
+            ]), tensorlib.astensor([tensorlib.tolist(pars)])
+        )
+
+        return results[0][0][0]
