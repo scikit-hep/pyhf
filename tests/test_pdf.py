@@ -4,8 +4,8 @@ import pyhf.simplemodels
 import pyhf.exceptions
 import numpy as np
 import json
-import tensorflow as tf
 
+@pytest.mark.only_numpy
 def test_numpy_pdf_inputs():
     source = {
       "binning": [2,-0.5,1.5],
@@ -32,6 +32,7 @@ def test_numpy_pdf_inputs():
     assert np.array(pdf.logpdf(np_parameters,np_data)).shape == (1,)
 
 
+@pytest.mark.only_numpy
 def test_core_pdf_broadcasting():
     data    = [10,11,12,13,14,15]
     lambdas = [15,14,13,12,11,10]
@@ -56,6 +57,7 @@ def test_core_pdf_broadcasting():
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
+@pytest.mark.only_numpy
 def test_pdf_integration_staterror():
     spec = {
         'channels': [
@@ -104,6 +106,7 @@ def test_pdf_integration_staterror():
     for c,e in zip(computed,expected):
         assert c==e
 
+@pytest.mark.only_numpy
 def test_pdf_integration_histosys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -154,23 +157,8 @@ def test_pdf_integration_histosys():
     assert pdf.expected_data(pars, include_auxdata = False).tolist() == [ 98+30,100+95]
 
 
-@pytest.mark.parametrize('backend',
-                         [
-                             pyhf.tensor.numpy_backend(poisson_from_normal=True),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(poisson_from_normal=True),
-                             # pyhf.tensor.mxnet_backend(),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                         ])
-def test_pdf_integration_normsys(backend):
-    pyhf.set_backend(backend)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
+@pytest.mark.skip_mxnet
+def test_pdf_integration_normsys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
@@ -207,6 +195,7 @@ def test_pdf_integration_normsys(backend):
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
     assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
+@pytest.mark.only_numpy
 def test_pdf_integration_shapesys():
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -302,4 +291,4 @@ def test_invalid_modifier_name_resuse():
         pdf  = pyhf.Model(spec, poiname = 'reused_name')
 
     pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
-    
+
