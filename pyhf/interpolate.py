@@ -21,7 +21,6 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
                 histo_result.append(alpha_result)
     return all_results
 
-@utils.tensorize_args
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
 
@@ -53,7 +52,6 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
 
     return _slow_hfinterp_looper(histogramssets, alphasets, summand)
 
-@utils.tensorize_args
 def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
 
