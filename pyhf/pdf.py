@@ -233,11 +233,17 @@ class Model(object):
 
         for channel in self.spec['channels']:
             for sample in channel['samples']:
-                #sum of lists is concat
+                #concatenate list of lists using sum() and an initial value of []
+                #to get a list of all prefactors that should be multiplied to the 
+                #base histogram (the deltas below + the nominal)
                 factors = sum([
                     all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
                     for x in factor_mods
                 ],[]) 
+
+                #concatenate list of lists using sum() and an initial value of []
+                #to get a list of all deltas that should be addded to the 
+                #nominal values
                 deltas  = sum([
                     all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
                     for x in delta_mods
