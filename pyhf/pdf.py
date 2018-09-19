@@ -154,10 +154,14 @@ class Model(object):
     def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
 
+
+        all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
+        nominal_plus_deltas = tensorlib.stack(
+                    [nominal,all_deltas]
+        )
         basefactor = [
             tensorlib.sum(
-                tensorlib.stack(
-                    [nominal,tensorlib.sum(tensorlib.stack(deltas), axis=0)]),
+                nominal_plus_deltas,
                 axis=0)
                 if len(deltas) > 0
                 else nominal
@@ -177,11 +181,6 @@ class Model(object):
         total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
         return total_factors
 
-        # return tensorlib.product(
-        #             tensorlib.stack(
-        #                   tensorlib.simple_broadcast(*factors)
-        #             ),
-        #        axis=0)
 
         #the base value for each bin is either the nominal with deltas applied
         #if there were any otherwise just the nominal
