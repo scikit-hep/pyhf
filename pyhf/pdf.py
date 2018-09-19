@@ -164,7 +164,24 @@ class Model(object):
         ]
         factors += basefactor
 
-        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
+        #multiplicative modifiers are either a single float that should be broadcast
+        #to all bins or a list of floats (one for each bin of the histogram)
+        binwise_factors = tensorlib.simple_broadcast(*factors)
+
+        #now we arrange all factors on top of each other so that for each bin we 
+        #have all multiplicative factors
+        stacked_factors_binwise = tensorlib.stack(binwise_factors)
+
+        #binwise multiply all multiplicative factors such that we arrive
+        #at a single number for each bin
+        total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
+        return total_factors
+
+        # return tensorlib.product(
+        #             tensorlib.stack(
+        #                   tensorlib.simple_broadcast(*factors)
+        #             ),
+        #        axis=0)
 
         #the base value for each bin is either the nominal with deltas applied
         #if there were any otherwise just the nominal
