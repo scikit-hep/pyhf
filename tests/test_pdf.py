@@ -6,7 +6,7 @@ import numpy as np
 import json
 
 @pytest.mark.only_numpy
-def test_numpy_pdf_inputs():
+def test_numpy_pdf_inputs(backend):
     source = {
       "binning": [2,-0.5,1.5],
       "bindata": {
@@ -33,7 +33,7 @@ def test_numpy_pdf_inputs():
 
 
 @pytest.mark.only_numpy
-def test_core_pdf_broadcasting():
+def test_core_pdf_broadcasting(backend):
     data    = [10,11,12,13,14,15]
     lambdas = [15,14,13,12,11,10]
     naive_python = [pyhf.tensorlib.poisson(d, lam) for d,lam in zip(data, lambdas)]
@@ -58,7 +58,7 @@ def test_core_pdf_broadcasting():
     assert np.all(naive_python  == broadcasted)
 
 @pytest.mark.only_numpy
-def test_pdf_integration_staterror():
+def test_pdf_integration_staterror(backend):
     spec = {
         'channels': [
             {
@@ -107,7 +107,7 @@ def test_pdf_integration_staterror():
         assert c==e
 
 @pytest.mark.only_numpy
-def test_pdf_integration_histosys():
+def test_pdf_integration_histosys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
@@ -158,7 +158,7 @@ def test_pdf_integration_histosys():
 
 
 @pytest.mark.skip_mxnet
-def test_pdf_integration_normsys():
+def test_pdf_integration_normsys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [
@@ -196,7 +196,7 @@ def test_pdf_integration_normsys():
     assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
 @pytest.mark.only_numpy
-def test_pdf_integration_shapesys():
+def test_pdf_integration_shapesys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
         'channels': [

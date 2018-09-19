@@ -64,7 +64,7 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
 
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
-def test_interpcode_0(do_tensorized_calc):
+def test_interpcode_0(backend, do_tensorized_calc):
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
@@ -91,7 +91,7 @@ def test_interpcode_0(do_tensorized_calc):
 
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
-def test_interpcode_1(do_tensorized_calc):
+def test_interpcode_1(backend, do_tensorized_calc):
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
