@@ -154,6 +154,18 @@ class Model(object):
     def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
 
+        basefactor = [
+            tensorlib.sum(
+                tensorlib.stack(
+                    [nominal,tensorlib.sum(tensorlib.stack(deltas), axis=0)]),
+                axis=0)
+                if len(deltas) > 0
+                else nominal
+        ]
+        factors += basefactor
+
+        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
+
         #the base value for each bin is either the nominal with deltas applied
         #if there were any otherwise just the nominal
         if len(deltas):
@@ -168,7 +180,7 @@ class Model(object):
             basefactor = tensorlib.sum(nominal_and_deltas,axis=0)
         else:
             basefactor = nominal
-        factors += basefactor
+        factors += [basefactor]
 
         #multiplicative modifiers are either a single float that should be broadcast
         #to all bins or a list of floats (one for each bin of the histogram)
