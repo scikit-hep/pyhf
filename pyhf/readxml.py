@@ -21,7 +21,7 @@ def extract_error(h):
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = h.fSumw2[1:-1] if h.fSumw2 else h.numpy[0]
+    err = h.variances if h.variances else h.numpy[0]
     return np.sqrt(err).tolist()
 
 def import_root_histogram(rootdir, filename, path, name):
