@@ -8,7 +8,7 @@
   </Sample>
 
   <Sample Name="background" HistoPath="" HistoName="nom">
-    <OverallSys Name="typeshare" High="1.05" Low="0.95"/>
-    <HistoSys   Name="typeshape" HistoNameHigh="hup" HistoNameLow="hdn" />
+    <OverallSys Name="firstsyst" High="1.05" Low="0.95"/>
+    <HistoSys   Name="secondsyst" HistoNameHigh="hup" HistoNameLow="hdn" />
   </Sample>
 </Channel>
