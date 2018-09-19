@@ -1,0 +1,14 @@
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>
+
+<Channel Name="channel1" InputFile="./data/data.root" >
+  <Data HistoName="data" HistoPath="" />
+
+  <Sample Name="signal" HistoPath="" HistoName="sig">
+    <NormFactor Name="SigXsecOverSM" Val="1" Low="0." High="3."  />
+  </Sample>
+
+  <Sample Name="background" HistoPath="" HistoName="nom">
+    <OverallSys Name="firstsyst" High="1.05" Low="0.95"/>
+    <HistoSys   Name="secondsyst" HistoNameHigh="hup" HistoNameLow="hdn" />
+  </Sample>
+</Channel>
