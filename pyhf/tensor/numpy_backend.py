@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from scipy.special import gammaln
+from scipy.special import gammaln, xlogy
 from scipy.stats import norm
 log = logging.getLogger(__name__)
 
@@ -160,7 +160,7 @@ class numpy_backend(object):
         n = np.asarray(n)
         if self.pois_from_norm:
             return self.normal(n,lam, self.sqrt(lam))
-        return np.exp(n*np.log(lam)-lam-gammaln(n+1.))
+        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
         return norm.pdf(x, loc=mu, scale=sigma)
