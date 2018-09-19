@@ -1,31 +1,166 @@
 import pyhf
 import numpy as np
 import pytest
+import tensorflow as tf
 
-def test_interpcode_0():
-    f = lambda x: pyhf.interpolate.interpolator(0)(at_minus_one = 0.5, at_zero =1, at_plus_one = 2.0, alphas = x)
-    assert 1+f(-2) == 0.0
-    assert 1+f(-1) == 0.5
-    assert 1+f(0) == 1.0
-    assert 1+f(1) == 2.0
-    assert 1+f(2) == 3.0 #extrapolation
+@pytest.fixture
+def random_histosets_alphasets_pair():
+    def generate_shapes(histogramssets,alphasets):
+        h_shape = [len(histogramssets),0,0,0]
+        a_shape = (len(alphasets),max(map(len,alphasets)))
+        for hs in histogramssets:
+            h_shape[1] = max(h_shape[1],len(hs))
+            for h in hs:
+                h_shape[2] = max(h_shape[2],len(h))
+                for sh in h:
+                    h_shape[3] = max(h_shape[3],len(sh))
+        return tuple(h_shape),a_shape
 
-    #broadcasting
-    assert [1 + x for x in f([-2,-1,0,1,2]).reshape(-1)] == [0,0.5,1.0,2.0,3.0]
+    def filled_shapes(histogramssets,alphasets):
+        # pad our shapes with NaNs
+        histos, alphas = generate_shapes(histogramssets,alphasets)
+        histos, alphas = np.ones(histos) * np.nan, np.ones(alphas) * np.nan
+        for i,syst in enumerate(histogramssets):
+            for j,sample in enumerate(syst):
+                for k,variation in enumerate(sample):
+                    histos[i,j,k,:len(variation)] = variation
+        for i,alphaset in enumerate(alphasets):
+            alphas[i,:len(alphaset)] = alphaset
+        return histos,alphas
 
-def test_interpcode_1():
-    f = lambda x: pyhf.interpolate.interpolator(1)(at_minus_one = 0.9, at_zero =1, at_plus_one = 1.1, alphas = x)
-    assert f(-2) == 0.9**2
-    assert f(-1) == 0.9
-    assert f(0) == 1.0
-    assert f(1) == 1.1
-    assert f(2) == 1.1**2
+    nsysts = 150
+    nhistos_per_syst_upto = 300
+    nalphas = 1
+    nbins_upto = 1
 
-    #broadcasting
-    assert np.all(f([-2,-1,0,1,2]).reshape(-1) == [0.9**2, 0.9, 1.0, 1.1, 1.1**2])
+    nsyst_histos = np.random.randint(1, 1+nhistos_per_syst_upto, size=nsysts)
+    nhistograms = [np.random.randint(1, nbins_upto+1, size=n) for n in nsyst_histos]
+    random_alphas = [np.random.uniform(-1, 1,size=nalphas) for n in nsyst_histos]
+
+    random_histogramssets = [
+        [# all histos affected by systematic $nh
+            [# sample $i, systematic $nh
+                np.random.uniform(10*i+j,10*i+j+1, size = nbin).tolist() for j in range(3)
+            ] for i,nbin in enumerate(nh)
+        ] for nh in nhistograms
+    ]
+    h,a = filled_shapes(random_histogramssets,random_alphas)
+    return h,a
+
+@pytest.mark.parametrize('backend',
+                         [
+                             pyhf.tensor.numpy_backend(),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(),
+                             # pyhf.tensor.mxnet_backend(),
+                         ],
+                         ids=[
+                             'numpy',
+                             'tensorflow',
+                             'pytorch',
+                         ])
+@pytest.mark.parametrize("interpcode", [0, 1])
+def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
+    pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
+    histogramssets, alphasets = random_histosets_alphasets_pair
+
+    slow_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=False)(histogramssets=histogramssets, alphasets=alphasets)))
+    fast_result = np.asarray(pyhf.tensorlib.tolist(pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=True)(histogramssets=pyhf.tensorlib.astensor(histogramssets.tolist()), alphasets=pyhf.tensorlib.astensor(alphasets.tolist()))))
+
+    assert pytest.approx(slow_result[~np.isnan(slow_result)].ravel().tolist()) == fast_result[~np.isnan(fast_result)].ravel().tolist()
+
+@pytest.mark.parametrize('backend',
+                         [
+                             pyhf.tensor.numpy_backend(),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(),
+                             # pyhf.tensor.mxnet_backend(),
+                         ],
+                         ids=[
+                             'numpy',
+                             'tensorflow',
+                             'pytorch',
+                         ])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
+def test_interpcode_0(backend, do_tensorized_calc):
+    pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
+    histogramssets = pyhf.tensorlib.astensor([
+        [
+            [
+                [0.5],
+                [1.0],
+                [2.0]
+            ]
+        ]
+    ])
+    alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
+    expected = pyhf.tensorlib.astensor([[[[0],[0.5],[1.0],[2.0],[3.0]]]])
+
+    if do_tensorized_calc:
+      result_deltas = pyhf.interpolate.interpolator(0, do_tensorized_calc=do_tensorized_calc)(histogramssets, alphasets)
+    else:
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(0, do_tensorized_calc=do_tensorized_calc)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+
+
+    # calculate the actual change
+    allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum('sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:,:,1])
+    results = allsets_allhistos_noms_repeated + result_deltas
+
+    assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
+
+
+@pytest.mark.parametrize('backend',
+                         [
+                             pyhf.tensor.numpy_backend(),
+                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
+                             pyhf.tensor.pytorch_backend(),
+                             # pyhf.tensor.mxnet_backend(),
+                         ],
+                         ids=[
+                             'numpy',
+                             'tensorflow',
+                             'pytorch',
+                         ])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
+def test_interpcode_1(backend, do_tensorized_calc):
+    pyhf.set_backend(backend)
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        tf.reset_default_graph()
+        pyhf.tensorlib.session = tf.Session()
+
+    histogramssets = pyhf.tensorlib.astensor([
+        [
+            [
+                [0.9],
+                [1.0],
+                [1.1]
+            ]
+        ]
+    ])
+    alphasets = pyhf.tensorlib.astensor([[-2,-1,0,1,2]])
+    expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
+
+    if do_tensorized_calc:
+      result_deltas = pyhf.interpolate.interpolator(1, do_tensorized_calc=do_tensorized_calc)(histogramssets, alphasets)
+    else:
+      result_deltas = pyhf.tensorlib.astensor(pyhf.interpolate.interpolator(1, do_tensorized_calc=do_tensorized_calc)(pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)))
+
+    # calculate the actual change
+    allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum('sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:,:,1])
+    results = allsets_allhistos_noms_repeated * result_deltas
+
+    assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
+
 
 def test_invalid_interpcode():
-
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
         pyhf.interpolate.interpolator('fake')
 

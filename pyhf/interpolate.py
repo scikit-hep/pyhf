@@ -3,38 +3,96 @@ log = logging.getLogger(__name__)
 
 from . import get_backend
 from . import exceptions
+from . import utils
 
-def _hfinterp_code0(at_minus_one, at_zero, at_plus_one, alphas):
+def _slow_hfinterp_looper(histogramssets, alphasets, func):
+    all_results = []
+    for histoset, alphaset in zip(histogramssets, alphasets):
+        all_results.append([])
+        set_result = all_results[-1]
+        for histo in histoset:
+            set_result.append([])
+            histo_result = set_result[-1]
+            for alpha in alphaset:
+                alpha_result = []
+                for down,nom,up in zip(histo[0],histo[1],histo[2]):
+                    v = func(down, nom, up, alpha)
+                    alpha_result.append(v)
+                histo_result.append(alpha_result)
+    return all_results
+
+@utils.tensorize_args
+def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-    alphas = tensorlib.astensor(alphas)
 
-    iplus_izero  = at_plus_one - at_zero
-    izero_iminus = at_zero - at_minus_one
-    mask = tensorlib.outer(alphas < 0, tensorlib.ones(iplus_izero.shape))
-    return tensorlib.where(mask, tensorlib.outer(alphas, izero_iminus), tensorlib.outer(alphas, iplus_izero))
+    # these two variables can be pre-computed at PDF time
+    allset_allhisto_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
+    allset_allhisto_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
 
-def _hfinterp_code1(at_minus_one, at_zero, at_plus_one, alphas):
+    where_alphasets_positive = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
+
+    # s: set under consideration (i.e. the modifier)
+    # a: alpha variation
+    # h: histogram affected by modifier
+    # b: bin of histogram
+    allsets_allhistos_alphas_times_deltas_up = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_up)
+    allsets_allhistos_alphas_times_deltas_dn = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_dn)
+    allsets_allhistos_masks = tensorlib.einsum('sa,shb->shab', where_alphasets_positive, tensorlib.ones(allset_allhisto_deltas_dn.shape))
+
+    return tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
+
+def _slow_hfinterp_code0(histogramssets, alphasets):
+    def summand(down, nom, up, alpha):
+        delta_up = up - nom
+        delta_down = nom - down
+        if alpha > 0:
+            delta =  delta_up*alpha
+        else:
+            delta =  delta_down*alpha
+        return delta
+
+    return _slow_hfinterp_looper(histogramssets, alphasets, summand)
+
+@utils.tensorize_args
+def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    at_minus_one = tensorlib.astensor(at_minus_one)
-    at_zero = tensorlib.astensor(at_zero)
-    at_plus_one = tensorlib.astensor(at_plus_one)
-    alphas = tensorlib.astensor(alphas)
 
-    base_positive = tensorlib.divide(at_plus_one,  at_zero)
-    base_negative = tensorlib.divide(at_minus_one, at_zero)
-    expo_positive = tensorlib.outer(alphas, tensorlib.ones(base_positive.shape))
-    mask = tensorlib.outer(alphas > 0, tensorlib.ones(base_positive.shape))
-    bases = tensorlib.where(mask,base_positive,base_negative)
-    exponents = tensorlib.where(mask, expo_positive,-expo_positive)
+    # these two variables can be pre-computed at PDF time
+    allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], histogramssets[:,:,1])
+    allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], histogramssets[:,:,1])
+
+    allsets_allhistos_masks = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
+
+    # s: set under consideration (i.e. the modifier)
+    # a: alpha variation
+    # h: histogram affected by modifier
+    # b: bin of histogram
+    bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_up)
+    bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_dn)
+    exponents = tensorlib.einsum('sa,shb->shab', tensorlib.abs(alphasets), tensorlib.ones(allset_allhisto_deltas_up.shape))
+    masks = tensorlib.einsum('sa,shb->shab', allsets_allhistos_masks, tensorlib.ones(allset_allhisto_deltas_up.shape))
+
+    bases = tensorlib.where(masks, bases_up, bases_dn)
     return tensorlib.power(bases, exponents)
 
+def _slow_hfinterp_code1(histogramssets, alphasets):
+    def product(down, nom, up, alpha):
+        delta_up = up/nom
+        delta_down = down/nom
+        if alpha > 0:
+            delta =  delta_up**alpha
+        else:
+            delta =  delta_down**(-alpha)
+        return delta
+
+    return _slow_hfinterp_looper(histogramssets, alphasets, product)
+
+
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
-def interpolator(interpcode):
-    interpcodes = {0: _hfinterp_code0,
-                   1: _hfinterp_code1}
+def interpolator(interpcode, do_tensorized_calc=True):
+    interpcodes = {0: _hfinterp_code0 if do_tensorized_calc else _slow_hfinterp_code0,
+                   1: _hfinterp_code1 if do_tensorized_calc else _slow_hfinterp_code1}
+
     try:
         return interpcodes[interpcode]
     except KeyError:
