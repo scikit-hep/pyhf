@@ -157,15 +157,13 @@ class Model(object):
         nominal_plus_deltas = None
         if len(deltas):
             all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
-            nominal_plus_deltas = tensorlib.stack(
-                        [nominal,all_deltas]
-            )
+            nominal_and_deltas  = tensorlib.stack([nominal,all_deltas])
+            nominal_plus_deltas = tensorlib.sum(nominal_and_deltas,axis=0)
+
         basefactor = [
-            tensorlib.sum(
-                nominal_plus_deltas,
-                axis=0)
-                if len(deltas) > 0
-                else nominal
+            nominal_plus_deltas
+            if len(deltas) > 0
+            else nominal
         ]
         factors += basefactor
 
