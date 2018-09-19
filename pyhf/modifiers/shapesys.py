@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 
-@modifier(name='shapesys', constrained=True, pdf_type='poisson')
+@modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)

@@ -223,8 +223,9 @@ class Model(object):
         # first, collect the factors from all modifiers
 
         all_modifications = {}
-        factor_mods = ['normfactor','normsys','shapesys','shapefactor','staterror']
-        delta_mods  = ['histosys']
+        mods_and_ops = [(x,getattr(modifiers,x).op_code) for x in modifiers.__all__]
+        factor_mods = [x[0] for x in mods_and_ops if x[1]=='multiplication']
+        delta_mods  = [x[0] for x in mods_and_ops if x[1]=='addition']
 
         all_results = {}
         for mtype in factor_mods + delta_mods:

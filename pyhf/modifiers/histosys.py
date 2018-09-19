@@ -5,7 +5,7 @@ from . import modifier
 from .. import get_backend
 from ..interpolate import interpolator
 
-@modifier(name='histosys', constrained=True, shared=True)
+@modifier(name='histosys', constrained=True, shared=True, op_code = 'addition')
 class histosys(object):
     """HistoSys modifier
 
