@@ -47,25 +47,9 @@ def random_histosets_alphasets_pair():
     h,a = filled_shapes(random_histogramssets,random_alphas)
     return h,a
 
-@pytest.mark.parametrize('backend',
-                         [
-                             pyhf.tensor.numpy_backend(),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(),
-                             # pyhf.tensor.mxnet_backend(),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                         ])
+@pytest.mark.skip_mxnet
 @pytest.mark.parametrize("interpcode", [0, 1])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
-    pyhf.set_backend(backend)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
-
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     # single-float precision backends, calculate using single-floats
@@ -78,25 +62,9 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
 
     assert pytest.approx(slow_result[~np.isnan(slow_result)].ravel().tolist()) == fast_result[~np.isnan(fast_result)].ravel().tolist()
 
-@pytest.mark.parametrize('backend',
-                         [
-                             pyhf.tensor.numpy_backend(),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(),
-                             # pyhf.tensor.mxnet_backend(),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                         ])
+@pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
-def test_interpcode_0(backend, do_tensorized_calc):
-    pyhf.set_backend(backend)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
-
+def test_interpcode_0(do_tensorized_calc):
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
@@ -121,26 +89,9 @@ def test_interpcode_0(backend, do_tensorized_calc):
 
     assert pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist()) == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
 
-
-@pytest.mark.parametrize('backend',
-                         [
-                             pyhf.tensor.numpy_backend(),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(),
-                             # pyhf.tensor.mxnet_backend(),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                         ])
+@pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow','fast'])
-def test_interpcode_1(backend, do_tensorized_calc):
-    pyhf.set_backend(backend)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
-
+def test_interpcode_1(do_tensorized_calc):
     histogramssets = pyhf.tensorlib.astensor([
         [
             [
