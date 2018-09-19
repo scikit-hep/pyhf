@@ -1,0 +1,11 @@
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+
+<Combination OutputFilePrefix="./results/example" >
+  <Input>./config/example_channel.xml</Input>
+
+  <Measurement Name="GaussExample" Lumi="1." LumiRelErr="0.1" >
+    <POI>SigXsecOverSM</POI>
+    <ParamSetting Const="True">Lumi</ParamSetting>
+  </Measurement>
+
+</Combination>
