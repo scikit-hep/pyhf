@@ -153,18 +153,23 @@ class Model(object):
 
     def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
-
-        nominal_plus_deltas = None
+        
+        #the base value for each bin is either the nominal with deltas applied
+        #if there were any otherwise just the nominal
         if len(deltas):
+            #stack all bin-wise shifts in the yield value (delta) from the modifiers
+            #on top of each other and sum through the first axis
+            #will give us a overall shift to apply to the nominal histo
             all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
+
+            #stack nominal and deltas and sum through first axis again
+            #to arrive at yield value after deltas (but before factor mods)
             nominal_and_deltas  = tensorlib.stack([nominal,all_deltas])
             nominal_plus_deltas = tensorlib.sum(nominal_and_deltas,axis=0)
+            basefactor = [nominal_plus_deltas]
+        else:
+            basefactor = [nominal]
 
-        basefactor = [
-            nominal_plus_deltas
-            if len(deltas) > 0
-            else nominal
-        ]
         factors += basefactor
 
         #multiplicative modifiers are either a single float that should be broadcast
