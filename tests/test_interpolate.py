@@ -53,7 +53,7 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     # single-float precision backends, calculate using single-floats
-    if isinstance(backend, pyhf.tensor.tensorflow_backend) or isinstance(backend, pyhf.tensor.pytorch_backend):
+    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend) or isinstance(pyhf.tensorlib, pyhf.tensor.pytorch_backend):
         histogramssets = np.asarray(histogramssets, dtype=np.float32)
         alphasets = np.asarray(alphasets, dtype=np.float32)
 
