@@ -3,16 +3,18 @@ import pyhf
 import tensorflow as tf
 
 @pytest.fixture(scope='function', params=[
-                             pyhf.tensor.numpy_backend(),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(),
-                             pyhf.tensor.mxnet_backend(),
+                             (pyhf.tensor.numpy_backend(),),
+                             (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
+                             (pyhf.tensor.pytorch_backend(),),
+                             (pyhf.tensor.mxnet_backend(),),
+                             (pyhf.tensor.numpy_backend(poisson_from_normal=True), pyhf.optimize.minuit_optimizer()),
                          ],
                          ids=[
                              'numpy',
                              'tensorflow',
                              'pytorch',
                              'mxnet',
+                             'numpy_minuit',
                          ])
 def backend(request):
     param = request.param
@@ -42,7 +44,7 @@ def backend(request):
         pytest.xfail("expect {func} to fail as specified".format(func=func_name))
 
     # actual execution here, after all checks is done
-    pyhf.set_backend(request.param)
+    pyhf.set_backend(*request.param)
     if isinstance(request.param, pyhf.tensor.tensorflow_backend):
         tf.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
