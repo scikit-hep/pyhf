@@ -2,7 +2,7 @@ import pytest
 import pyhf
 import tensorflow as tf
 
-@pytest.fixture(scope='function', autouse=True, params=[
+@pytest.fixture(scope='function', params=[
                              pyhf.tensor.numpy_backend(),
                              pyhf.tensor.tensorflow_backend(session=tf.Session()),
                              pyhf.tensor.pytorch_backend(),
