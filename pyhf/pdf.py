@@ -154,11 +154,12 @@ class Model(object):
     def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
 
-
-        all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
-        nominal_plus_deltas = tensorlib.stack(
-                    [nominal,all_deltas]
-        )
+        nominal_plus_deltas = None
+        if len(deltas):
+            all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
+            nominal_plus_deltas = tensorlib.stack(
+                        [nominal,all_deltas]
+            )
         basefactor = [
             tensorlib.sum(
                 nominal_plus_deltas,
