@@ -2,6 +2,11 @@ import pytest
 import pyhf
 import tensorflow as tf
 
+@pytest.fixture(scope='function', autouse=True)
+def reset_backend():
+    yield reset_backend
+    pyhf.set_backend(pyhf.default_backend)
+
 @pytest.fixture(scope='function', params=[
                              (pyhf.tensor.numpy_backend(),),
                              (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
@@ -50,5 +55,3 @@ def backend(request):
         pyhf.tensorlib.session = tf.Session()
 
     yield request.param
-
-    pyhf.set_backend(pyhf.default_backend)
