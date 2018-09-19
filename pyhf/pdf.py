@@ -185,36 +185,6 @@ class Model(object):
         total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
         return total_factors
 
-
-        #the base value for each bin is either the nominal with deltas applied
-        #if there were any otherwise just the nominal
-        if len(deltas):
-            #stack all bin-wise shifts in the yield value (delta) from the modifiers
-            #on top of each other and sum through the first axis
-            #will give us a overall shift to apply to the nominal histo
-            overall_delta_from_modifiers = tensorlib.sum(tensorlib.stack(deltas), axis=0)
-
-            #stack nominal and deltas and sum through first axis again
-            #to arrive at yield value after deltas (but before factor mods)
-            nominal_and_deltas  = tensorlib.stack([nominal,overall_delta_from_modifiers])
-            basefactor = tensorlib.sum(nominal_and_deltas,axis=0)
-        else:
-            basefactor = nominal
-        factors += [basefactor]
-
-        #multiplicative modifiers are either a single float that should be broadcast
-        #to all bins or a list of floats (one for each bin of the histogram)
-        binwise_factors = tensorlib.simple_broadcast(*factors)
-
-        #now we arrange all factors on top of each other so that for each bin we 
-        #have all multiplicative factors
-        stacked_factors_binwise = tensorlib.stack(binwise_factors)
-
-        #binwise multiply all multiplicative factors such that we arrive
-        #at a single number for each bin
-        total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
-        return total_factors
-
     def _all_modifications(self, pars):
         """
         The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
