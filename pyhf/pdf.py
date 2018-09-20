@@ -153,7 +153,7 @@ class Model(object):
 
     def _expected_sample(self, nominal, factors, deltas):
         tensorlib, _ = get_backend()
-        
+
         #the base value for each bin is either the nominal with deltas applied
         #if there were any otherwise just the nominal
         if len(deltas):
@@ -176,7 +176,7 @@ class Model(object):
         #to all bins or a list of floats (one for each bin of the histogram)
         binwise_factors = tensorlib.simple_broadcast(*factors)
 
-        #now we arrange all factors on top of each other so that for each bin we 
+        #now we arrange all factors on top of each other so that for each bin we
         #have all multiplicative factors
         stacked_factors_binwise = tensorlib.stack(binwise_factors)
 
@@ -254,21 +254,21 @@ class Model(object):
         for channel in self.spec['channels']:
             for sample in channel['samples']:
                 #concatenate list of lists using sum() and an initial value of []
-                #to get a list of all prefactors that should be multiplied to the 
+                #to get a list of all prefactors that should be multiplied to the
                 #base histogram (the deltas below + the nominal)
                 factors = sum([
                     all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
                     for x in factor_mods
-                ],[]) 
+                ],[])
 
                 #concatenate list of lists using sum() and an initial value of []
-                #to get a list of all deltas that should be addded to the 
+                #to get a list of all deltas that should be addded to the
                 #nominal values
                 deltas  = sum([
                     all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
                     for x in delta_mods
                 ],[])
-                
+
                 all_modifications.setdefault(
                     channel['name'],{})[
                     sample['name']
