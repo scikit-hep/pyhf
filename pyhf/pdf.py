@@ -131,7 +131,18 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
         self.cube, self.hm = self._make_cube()
-    
+        self.mod_index = self._make_mod_index()
+        
+    def _make_mod_index(self):
+        allmods = {}
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                for m in sample['modifiers']:
+                    mname, mtype = m['name'], m['type']
+                    allmods.setdefault(mname, [mtype])
+        for mod_id,mname in enumerate(allmods.keys()):
+            allmods[mname].append(mod_id)
+        return allmods
 
     def _make_cube(self):
         import  numpy as np
@@ -197,11 +208,12 @@ class Model(object):
                 for mname in sample['modifiers_by_type'].get(mtype,[]):
                     modifier = self.config.modifier(mname)
                     modpars  = pars[self.config.par_slice(mname)]
+                    mod_id   = self.mod_index[mname][-1]
+                    result   = modifier.apply(channel, sample, modpars)
+
                     mtype_results.setdefault(channel['name'],
                             {}).setdefault(sample['name'],
-                            []).append(
-                                modifier.apply(channel, sample, modpars)
-                            )
+                            []).append([mod_id,result])
         return mtype_results
 
     def _all_modifications(self, pars):
@@ -325,15 +337,21 @@ class Model(object):
         data = []
 
         all_modifications = self._all_modifications(pars)
-        delta_field  = np.zeros(self.cube.shape)
-        factor_field = np.ones(self.cube.shape)
+
+        ntotalmods = len(self.mod_index)
+        delta_fields  = np.zeros((ntotalmods,) + self.cube.shape)
+        factor_fields = np.ones((ntotalmods,) + self.cube.shape)
+
         for cname,smods in all_modifications.items():
             for sname,(factors,deltas) in smods.items():
                 ind = self.hm[cname][sname]['index']
-                for f in factors:
-                    factor_field[ind] = factor_field[ind] * f
-                for d in deltas:
-                    delta_field[ind]  = delta_field[ind] + d
+                for mod_id,f in factors:
+                    factor_fields[mod_id][ind] = f
+                for mod_id,d in deltas:
+                    delta_fields[mod_id][ind]  = d
+        delta_field  = np.sum(delta_fields,axis=0)
+        factor_field = np.product(factor_fields,axis=0)
+
         combined = factor_field * (delta_field + self.cube)
         expected = [np.sum(combined[i][~np.isnan(combined[i])]) for i,c in enumerate(self.spec['channels'])]
         return expected
