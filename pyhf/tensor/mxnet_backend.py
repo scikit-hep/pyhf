@@ -341,9 +341,10 @@ class mxnet_backend(object):
         return self.astensor([])
 
     def poisson(self, n, lam):
-        """
-        The continous approximation to the probability mass function of the Poisson
-        distribution given the parameter `lam` evaluated at `n`.
+        r"""
+        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        to the probability mass function of the Poisson distribution evaluated
+        at :code:`n` given the parameter :code:`lam`.
 
         Example:
 
@@ -372,9 +373,10 @@ class mxnet_backend(object):
         return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1.))
 
     def normal(self, x, mu, sigma):
-        """
-        The probability density function of the Normal distribution given the parameters
-        evaluated at `x`.
+        r"""
+        The probability density function of the Normal distribution evaluated
+        at :code:`x` given parameters of mean of :code:`mu` and standard deviation
+        of :code:`sigma`.
 
         Example:
 
