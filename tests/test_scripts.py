@@ -114,3 +114,13 @@ def test_patch_fail(tmpdir, script_runner):
     command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath,patch.strpath)
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
+
+def test_bad_measurement_name(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --measurement "a-fake-measurement-name"'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    #assert 'no measurement by name' in ret.stderr  # numpy swallows the log.error() here, dunno why

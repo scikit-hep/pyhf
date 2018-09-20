@@ -1,5 +1,10 @@
 import sys
 
+class InvalidMeasurement(Exception):
+    """
+    InvalidMeasurement is raised when a specified measurement is invalid given the specification.
+    """
+
 class InvalidNameReuse(Exception):
     pass
 

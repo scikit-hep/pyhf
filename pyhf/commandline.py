@@ -6,6 +6,7 @@ import click
 import json
 import os
 import jsonpatch
+import sys
 
 from . import readxml
 from . import writexml
@@ -31,6 +32,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         with open(output_file, 'w+') as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
+    sys.exit(0)
 
 @pyhf.command()
 @click.argument('workspace', default='-')
@@ -42,6 +44,7 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
         d = json.load(specstream)
         with click.open_file(xmlfile, 'w') as outstream:
             outstream.write(writexml.writexml(d, specroot, dataroot,'').decode('utf-8'))
+    sys.exit(0)
 
 @pyhf.command()
 @click.argument('workspace', default='-')
@@ -58,6 +61,7 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
     log.debug('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
     if measurement and measurement not in measurement_names:
         log.error('no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(measurement))
+        sys.exit(1)
     else:
         if not measurement and len(measurements) > 1:
             log.warning('multiple measurements defined. Taking the first measurement.')
@@ -80,3 +84,4 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
             with open(output_file, 'w+') as out_file:
                 json.dump(result, out_file, indent=4, sort_keys=True)
             log.debug("Written to {0:s}".format(output_file))
+        sys.exit(0)
