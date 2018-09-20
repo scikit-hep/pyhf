@@ -11,6 +11,13 @@ class tensorflow_backend(object):
     def __init__(self, **kwargs):
         self.session = kwargs.get('session')
 
+    @property
+    def nan(self):
+        """
+        Returns python's NaN object
+        """
+        return float("NaN")
+
     def clip(self, tensor_in, min, max):
         """
         Clips (limits) the tensor values to be within a specified min and max.
@@ -74,8 +81,10 @@ class tensorflow_backend(object):
             v = tf.cast(v, dtype)
         return v
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in, axis=None, nansum=False):
         tensor_in = self.astensor(tensor_in)
+        if nansum:
+            tensor_in = tf.where(tf.is_nan(tensor_in), self.zeros(tensor_in.shape), tensor_in)
         return tf.reduce_sum(tensor_in) if (axis is None or tensor_in.shape == tf.TensorShape([])) else tf.reduce_sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):

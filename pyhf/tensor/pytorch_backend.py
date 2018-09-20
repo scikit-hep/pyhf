@@ -10,6 +10,13 @@ class pytorch_backend(object):
     def __init__(self, **kwargs):
         pass
 
+    @property
+    def nan(self):
+        """
+        Returns python's NaN object
+        """
+        return float("NaN")
+
     def clip(self, tensor_in, min, max):
         """
         Clips (limits) the tensor values to be within a specified min and max.
@@ -60,9 +67,14 @@ class pytorch_backend(object):
             v = torch.Tensor(tensor_in)
         return v.type(torch.FloatTensor)
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in, axis=None, nansum=False):
         tensor_in = self.astensor(tensor_in)
-        return torch.sum(tensor_in) if (axis is None or tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
+        if nansum:
+            tensor_in[tensor_in != tensor_in] = 0.
+        if (axis is None or tensor_in.shape == torch.Size([])):
+            return torch.sum(tensor_in)
+        else:
+            return torch.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
