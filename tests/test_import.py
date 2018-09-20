@@ -7,7 +7,6 @@ import numpy as np
 
 
 def test_import_prepHistFactory():
-    pyhf.set_backend(numpy_backend())
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input/config/example.xml',
                                     'validation/xmlimport_input/')
 
@@ -54,7 +53,6 @@ def test_import_prepHistFactory():
 
 
 def test_import_histosys():
-    pyhf.set_backend(numpy_backend())
     parsed_xml = pyhf.readxml.parse('validation/xmlimport_input2/config/example.xml',
                                     'validation/xmlimport_input2')
 
