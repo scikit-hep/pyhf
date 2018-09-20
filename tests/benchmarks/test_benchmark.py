@@ -88,8 +88,6 @@ def test_runOnePoint(benchmark, backend, n_bins):
     Returns:
         None
     """
-    pyhf.set_backend(backend)
-
     source = generate_source_static(n_bins)
     pdf = hepdata_like(source['bindata']['sig'],
                        source['bindata']['bkg'],
