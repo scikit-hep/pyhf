@@ -11,7 +11,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest -vv --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -47,7 +47,7 @@ jobs:
     install:
       - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
       - pip freeze
-    script: pytest --benchmark-sort=mean tests/benchmarks/
+    script: pytest -vv --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
     before_install:
