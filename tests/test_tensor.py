@@ -52,6 +52,8 @@ def test_common_tensor_backends(backend):
     with pytest.raises(Exception):
         tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
+    # poisson(lambda=0) is not defined, should return NaN
+    assert tb.tolist(pyhf.tensorlib.poisson([0, 0, 1, 1], [0, 1, 0, 1])) == pytest.approx([np.nan, 0.36787944, 0.0, 0.36787944], nan_ok=True)
 
 def test_einsum(backend):
     tb = pyhf.tensorlib
