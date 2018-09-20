@@ -60,6 +60,14 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_obs' in d
         assert 'CLs_exp' in d
 
+        tmp_out = tmpdir.join('{0:s}_output.json'.format(measurement))
+        # make sure output file works too
+        command += ' --output-file {0:s}'.format(tmp_out.strpath)
+        ret = script_runner.run(*shlex.split(command))
+        assert ret.success
+        d = json.load(tmp_out)
+        assert 'CLs_obs' in d
+        assert 'CLs_exp' in d
 
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
