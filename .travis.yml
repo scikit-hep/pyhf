@@ -40,6 +40,7 @@ jobs:
     python: '3.6'
     script:
       - pytest tests/test_notebooks.py
+      - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
   - stage: benchmark
     python: '3.6'
     before_install:
@@ -61,6 +62,8 @@ jobs:
     - python -m doctest README.md
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
+    # Open Binder example to trigger repo2docker to build image
+    - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
     deploy:
       provider: pages
       skip_cleanup: true
