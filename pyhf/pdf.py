@@ -163,7 +163,14 @@ class Model(object):
 
     def expected_sample(self, channel, sample, pars):
         tensorlib, _ = get_backend()
-        #public API only, not efficient
+        """
+        Public API only, not efficient or fast. We compute all modification for
+        all samples in this method even though we are only interested in the
+        modifications in a single sample.
+
+        Alternatively the _all_modifications() could take a list of
+        channel/samples for which it should compute modificiations.
+        """
         all_modifications = self._all_modifications(pars)
         return self._expected_sample(
             tensorlib.astensor(sample['data']), #nominal
