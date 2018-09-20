@@ -12,6 +12,13 @@ class mxnet_backend(object):
     def __init__(self, **kwargs):
         pass
 
+    @property
+    def nan(self):
+        """
+        Returns python's NaN object
+        """
+        return float("NaN")
+
     def clip(self, tensor_in, min, max):
         """
         Clips (limits) the tensor values to be within a specified min and max.
@@ -93,7 +100,7 @@ class mxnet_backend(object):
             tensor = nd.array([tensor_in])
         return tensor
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in, axis=None, nansum=False):
         """
         Compute the sum of array elements over given axes.
 
@@ -106,9 +113,15 @@ class mxnet_backend(object):
         """
         tensor_in = self.astensor(tensor_in)
         if axis is None or tensor_in.shape == nd.array([]).size:
-            return nd.sum(tensor_in)
+            if nansum:
+                return nd.nansum(tensor_in)
+            else:
+                return nd.sum(tensor_in)
         else:
-            return nd.sum(tensor_in, axis)
+            if nansum:
+                return nd.sum(tensor_in, axis)
+            else:
+                return nd.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         """

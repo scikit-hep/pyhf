@@ -11,6 +11,13 @@ class numpy_backend(object):
     def __init__(self, **kwargs):
         pass
 
+    @property
+    def nan(self):
+        """
+        Returns numpy's NaN object
+        """
+        return np.nan
+
     def clip(self, tensor_in, min, max):
         """
         Clips (limits) the tensor values to be within a specified min and max.
@@ -55,9 +62,12 @@ class numpy_backend(object):
         """
         return np.asarray(tensor_in)
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in, axis=None, nansum=False):
         tensor_in = self.astensor(tensor_in)
-        return np.sum(tensor_in, axis=axis)
+        if nansum:
+            return np.nansum(tensor_in, axis=axis)
+        else:
+            return np.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
