@@ -146,7 +146,32 @@ class Model(object):
             if mtype in self.combined_mods.keys():
                 return self.combined_mods[mtype].apply(pars)
 
-        before the loops.
+        before the loops. This returns a bookkeeping dictionary of the following structure
+
+            _mtype_results_dict == {
+                channel1: {
+                    sample1: [
+                        mod1.apply(),
+                        mod2.apply(),
+                        ...
+                    ],
+                    sample2: [
+                        mod1.apply(),
+                        mod3.apply(),
+                        mod5.apply(),
+                        ...
+                    ]
+                },
+                channel2: {
+                    sample2: [
+                        mod2.apply(),
+                        mod3.apply(),
+                        mod4.apply()
+                    ],
+                    ...
+                },
+                ...
+            }
         """
         mtype_results = {}
         for channel in self.spec['channels']:
