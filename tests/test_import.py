@@ -1,5 +1,4 @@
 import pyhf
-from pyhf.tensor.numpy_backend import numpy_backend
 import pyhf.readxml
 import json
 import pytest
