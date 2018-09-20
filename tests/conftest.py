@@ -4,6 +4,7 @@ import tensorflow as tf
 
 @pytest.fixture(scope='function', autouse=True)
 def reset_backend():
+    pyhf.set_backend(pyhf.default_backend)
     yield reset_backend
     pyhf.set_backend(pyhf.default_backend)
 
