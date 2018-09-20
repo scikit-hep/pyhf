@@ -12,8 +12,8 @@ def test_missing_backends(isolate_modules, param):
     backend_name, module_name, expectation = param
 
     # delete all of pyhf to force a reload
-    for k in sys.modules.keys():
-        if 'pyhf' in k: del sys.modules[k]
+    for k in [k for k in sys.modules.keys() if 'pyhf' in k]:
+        del sys.modules[k]
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
