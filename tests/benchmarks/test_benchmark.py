@@ -1,6 +1,5 @@
 import pyhf
 from pyhf.simplemodels import hepdata_like
-import tensorflow as tf
 import numpy as np
 import pytest
 
@@ -64,11 +63,6 @@ def generate_source_poisson(n_bins):
 
 
 def runOnePoint(pdf, data):
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        # Reset the TensorFlow graph and session for each run
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
-
     return pyhf.utils.runOnePoint(1.0, data, pdf,
                                   pdf.config.suggested_init(),
                                   pdf.config.suggested_bounds())
@@ -80,19 +74,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
-@pytest.mark.parametrize('backend',
-                         [
-                             pyhf.tensor.numpy_backend(),
-                             pyhf.tensor.tensorflow_backend(session=tf.Session()),
-                             pyhf.tensor.pytorch_backend(),
-                             # pyhf.tensor.mxnet_backend(),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                             # 'mxnet',
-                         ])
+@pytest.mark.skip_mxnet
 def test_runOnePoint(benchmark, backend, n_bins):
     """
     Benchmark the performance of pyhf.runOnePoint()
