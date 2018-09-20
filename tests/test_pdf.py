@@ -16,7 +16,7 @@ def test_numpy_pdf_inputs(backend):
         "sig":     [10.0]
       }
     }
-    pdf  = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
+    pdf = pyhf.simplemodels.hepdata_like(source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'])
 
     pars = pdf.config.suggested_init()
     data = source['bindata']['data'] + pdf.config.auxdata
@@ -243,6 +243,7 @@ def test_pdf_integration_shapesys(backend):
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [0.9,1.1]]
     assert pdf.expected_data(pars, include_auxdata = False).tolist()   == [100*0.9,150*1.1]
 
+
 def test_invalid_modifier():
     spec = {
         'channels': [
@@ -262,6 +263,7 @@ def test_invalid_modifier():
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         pyhf.pdf._ModelConfig.from_spec(spec)
+
 
 def test_invalid_modifier_name_resuse():
     spec = {
@@ -288,7 +290,6 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pdf  = pyhf.Model(spec, poiname = 'reused_name')
+        pdf = pyhf.Model(spec, poiname = 'reused_name')
 
-    pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
-
+    pdf = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)

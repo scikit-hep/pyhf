@@ -1,10 +1,13 @@
 import logging
 import tensorflow as tf
+# import tensorflow_probability as tfp
 
 log = logging.getLogger(__name__)
 
 
 class tensorflow_backend(object):
+    """TensorFlow backend for pyhf"""
+
     def __init__(self, **kwargs):
         self.session = kwargs.get('session')
 
@@ -18,10 +21,10 @@ class tensorflow_backend(object):
             >>> import tensorflow as tf
             >>> sess = tf.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> with sess.as_default():
-            ...   pyhf.tensorlib.clip(a, -1, 1).eval()
+            ...   sess.run(pyhf.tensorlib.clip(a, -1, 1))
             ...
             array([-1., -1.,  0.,  1.,  1.], dtype=float32)
 
@@ -191,18 +194,72 @@ class tensorflow_backend(object):
             operands: list of array_like, these are the tensors for the operation
 
         Returns:
-            tensor: the calculation based on the Einstein summation convention
+            TensorFlow Tensor: the calculation based on the Einstein summation convention
         """
         return tf.einsum(subscripts, *operands)
 
     def poisson(self, n, lam):
-        # could be changed to actual Poisson easily
-        return self.normal(n, lam, self.sqrt(lam))
+        r"""
+        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        to the probability mass function of the Poisson distribution evaluated
+        at :code:`n` given the parameter :code:`lam`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson(5., 6.))
+            ...
+            array([0.16062315], dtype=float32)
+
+        Args:
+            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+                                  (the observed number of events)
+            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+                                    (the expected number of events)
+
+        Returns:
+            TensorFlow Tensor: Value of the continous approximation to Poisson(n|lam)
+        """
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+        # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
+        return tf.exp(tf.contrib.distributions.Poisson(lam).log_prob(n))
 
     def normal(self, x, mu, sigma):
+        r"""
+        The probability density function of the Normal distribution evaluated
+        at :code:`x` given parameters of mean of :code:`mu` and standard deviation
+        of :code:`sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
+            ...
+            array([0.35206532], dtype=float32)
+
+        Args:
+            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            TensorFlow Tensor: Value of Normal(x|mu, sigma)
+        """
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
+        # normal = tfp.distributions.Normal(mu, sigma)
         normal = tf.distributions.Normal(mu, sigma)
         return normal.prob(x)
 
@@ -218,7 +275,7 @@ class tensorflow_backend(object):
             ...
             >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
             >>> with sess.as_default():
-            ...   pyhf.tensorlib.normal_cdf(0.8).eval()
+            ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
             ...
             array([0.7881446], dtype=float32)
 
@@ -233,5 +290,6 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
+        # normal = tfp.distributions.Normal(mu, sigma)
         normal = tf.distributions.Normal(mu, sigma)
         return normal.cdf(x)

@@ -60,6 +60,14 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_obs' in d
         assert 'CLs_exp' in d
 
+        tmp_out = tmpdir.join('{0:s}_output.json'.format(measurement))
+        # make sure output file works too
+        command += ' --output-file {0:s}'.format(tmp_out.strpath)
+        ret = script_runner.run(*shlex.split(command))
+        assert ret.success
+        d = json.load(tmp_out)
+        assert 'CLs_obs' in d
+        assert 'CLs_exp' in d
 
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
@@ -88,7 +96,7 @@ def test_patch(tmpdir, script_runner):
     import io
     command = 'pyhf cls {0:s} --patch -'.format(temp.strpath,patch.strpath)
 
-    pipefile = io.StringIO(patchcontent) #python 2.7 pytest-files are not file-like enough
+    pipefile = io.StringIO(patchcontent) # python 2.7 pytest-files are not file-like enough
     ret = script_runner.run(*shlex.split(command), stdin = pipefile)
     print(ret.stderr)
     assert ret.success
@@ -107,3 +115,12 @@ def test_patch_fail(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
 
+def test_bad_measurement_name(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --measurement "a-fake-measurement-name"'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    #assert 'no measurement by name' in ret.stderr  # numpy swallows the log.error() here, dunno why

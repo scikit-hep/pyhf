@@ -5,12 +5,13 @@ python:
   - '2.7'
   - '3.6'
 before_install:
-  - pip install --upgrade pip setuptools
+  - pip install --upgrade pip setuptools wheel
 install:
-  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]  # Ensure right version of NumPy installed
+  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+  - pip freeze
 script:
   - pyflakes pyhf
-  - pytest --ignore tests/benchmarks/
+  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -31,21 +32,31 @@ env:
 
 jobs:
   include:
+  - name: "Python 2.7 Notebook Tests"
+    python: '2.7'
+    script:
+      - pytest tests/test_notebooks.py
+  - name: "Python 3.6 Notebook Tests"
+    python: '3.6'
+    script:
+      - pytest tests/test_notebooks.py
   - stage: benchmark
     python: '3.6'
     before_install:
-      - pip install --upgrade pip setuptools
+      - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,develop]
-    script: pytest --benchmark-sort=mean tests/benchmarks/
+      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+      - pip freeze
+    script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
-      - pip install --upgrade pip setuptools
+      - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,develop]
+      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+      - pip freeze
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
