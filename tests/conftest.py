@@ -1,7 +1,22 @@
 import pytest
 import pyhf
 import tensorflow as tf
+import sys
 
+'''
+This fixture isolates the sys.modules imported in case you need to mess around with them and do not want to break other tests.
+
+This is not done automatically.
+'''
+@pytest.fixture(scope='function')
+def isolate_modules():
+    CACHE_MODULES = sys.modules.copy()
+    yield isolate_modules
+    sys.modules.update(CACHE_MODULES)
+
+'''
+This fixture is automatically run to reset the backend before and after a test function runs.
+'''
 @pytest.fixture(scope='function', autouse=True)
 def reset_backend():
     pyhf.set_backend(pyhf.default_backend)

@@ -1,6 +1,5 @@
 import pytest
 import sys
-import copy
 
 @pytest.mark.parametrize("param", [
         ["numpy", "numpy_backend", pytest.raises(ImportError)],
@@ -9,12 +8,12 @@ import copy
         ["mxnet", "mxnet_backend", pytest.raises(AttributeError)],
     ],
     ids=["numpy", "pytorch", "tensorflow", "mxnet"])
-def test_missing_backends(param):
+def test_missing_backends(isolate_modules, param):
     backend_name, module_name, expectation = param
 
     # delete all of pyhf to force a reload
     for k in sys.modules.keys():
-        if k.startswith('pyhf'): del sys.modules[k]
+        if 'pyhf' in k: del sys.modules[k]
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
