@@ -21,6 +21,9 @@ class _ModelConfig(object):
             channels.append(channel['name'])
             for sample in channel['samples']:
                 samples.append(sample['name'])
+                # we need to bookkeep a list of modifiers by type so that we
+                # can loop over them on a type-by-type basis
+                # types like histosys, normsys, etc...
                 sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
@@ -129,6 +132,22 @@ class Model(object):
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
     def _mtype_results(self,mtype,pars):
+        """
+        This method implements the computation of the modifier's application
+        for a given modifier type, for each channel and sample within that
+        type.
+
+        In a follow up PR it will be further refactored to reverse the order of
+        the three loops, such that the outer-most loop is over modifiers (which
+        is the structure we are aiming for in #251)
+
+        This will include additional code like
+
+            if mtype in self.combined_mods.keys():
+                return self.combined_mods[mtype].apply(pars)
+
+        before the loops.
+        """
         mtype_results = {}
         for channel in self.spec['channels']:
             for sample in channel['samples']:
@@ -187,7 +206,15 @@ class Model(object):
 
     def _all_modifications(self, pars):
         """
-        The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
+        This function implements the calculation of all modifications by
+        looping over all possible modifications and calling _mtype_results()
+        for each one. The results are accumulated in a nested dict-like
+        structure to keep track of factors/deltas that is then used by
+        expected_actualdata()/expected_sample().
+
+        The idea is that we compute all bin-values at once.. each bin is a
+        product of various factors, but sum are per-channel the other
+        per-channel
 
             b1 = shapesys_1   |      shapef_1   |
             b2 = shapesys_2   |      shapef_2   |
@@ -195,7 +222,9 @@ class Model(object):
             ...             (broad)     ..     (broad)
             bn = shapesys_n   |      shapef_1   |
 
-        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
+        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`.
+        The broadcast expands the scalars or one-length arrays to an array
+        which we can then uniformly multiply
 
             >>> import numpy as np
             >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
@@ -225,7 +254,6 @@ class Model(object):
         Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
 
         .. _`CERN-OPEN-2012-016`: https://cds.cern.ch/record/1456844?ln=en
-
         """
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
