@@ -130,23 +130,23 @@ class Model(object):
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
-        self.cube, self.hm = self._make_cube()
-    
+        self.cube = self._make_cube()
+
 
     def _make_cube(self):
-        import  numpy as np
-        nchan   = len(self.spec['channels'])
-        maxsamp = max(len(c['samples']) for c in self.spec['channels'])
+        tensorlib, _ = get_backend()
+        nchan   = len(self.config.channels)
+        maxsamp = len(self.config.samples)
         maxbins = max(len(s['data']) for c in self.spec['channels'] for s in c['samples'])
-        cube = np.ones((nchan,maxsamp,maxbins))*np.nan
-        histoid = 0
-        histomap = {}
-        for i,c in enumerate(self.spec['channels']):
-            for j,s in enumerate(c['samples']):
-                cube[i,j,:] = s['data']
-                histomap.setdefault(c['name'],{})[s['name']] = {'id': histoid, 'index': tuple([i,j])}
-                histoid += 1
-        return cube,histomap
+        cube = [[]]*nchan
+        for c in self.spec['channels']:
+            i = self.config.channels.index(c['name'])
+            cube[i] = [[tensorlib.nan]*maxbins]*maxsamp
+            for s in c['samples']:
+                j = self.config.samples.index(s['name'])
+                cube[i][j] = s['data'] + ([tensorlib.nan]*(maxbins - len(s['data'])))
+
+        return tensorlib.astensor(cube)
 
 
     def _mtype_results(self,mtype,pars):
@@ -325,17 +325,28 @@ class Model(object):
         data = []
 
         all_modifications = self._all_modifications(pars)
-        delta_field  = np.zeros(self.cube.shape)
-        factor_field = np.ones(self.cube.shape)
+        delta_field  = tensorlib.zeros(self.cube.shape)
+        factor_field = tensorlib.ones(self.cube.shape)
+
+        nchan, maxsamp, maxbins = self.cube.shape
+        delta_cube = [[]]*nchan
+        factor_cube = [[]]*nchan
+
         for cname,smods in all_modifications.items():
+            cindex = self.config.channels.index(cname)
+            delta_cube[cindex] = [[tensorlib.nan]*maxbins]*maxsamp
+            factor_cube[cindex] = [[tensorlib.nan]*maxbins]*maxsamp
             for sname,(factors,deltas) in smods.items():
-                ind = self.hm[cname][sname]['index']
-                for f in factors:
-                    factor_field[ind] = factor_field[ind] * f
-                for d in deltas:
-                    delta_field[ind]  = delta_field[ind] + d
+                sindex = self.config.samples.index(sname)
+                delta_cube[cindex][sindex] = [tensorlib.sum(deltas)]*maxbins
+                factor_cube[cindex][sindex] = [tensorlib.product(factors)]*maxbins
+
+        delta_field = tensorlib.astensor(delta_cube)
+        factor_field = tensorlib.astensor(factor_cube)
+
         combined = factor_field * (delta_field + self.cube)
-        expected = [np.sum(combined[i][~np.isnan(combined[i])]) for i,c in enumerate(self.spec['channels'])]
+        expected = tensorlib.sum(combined, nansum=True, axis=1)
+
         return expected
 
 
