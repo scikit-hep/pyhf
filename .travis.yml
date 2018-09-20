@@ -7,7 +7,7 @@ python:
 before_install:
   - pip install --upgrade pip setuptools wheel
 install:
-  - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+  - pip install --ignore-installed -U -q -e .[complete]
   - pip freeze
 script:
   - pyflakes pyhf
@@ -45,7 +45,7 @@ jobs:
     before_install:
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+      - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
     script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
   - stage: docs
@@ -55,7 +55,7 @@ jobs:
       - sudo apt-get -qq install pandoc
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[tensorflow,torch,mxnet,minuit,develop]
+      - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
     script:
     - python -m doctest README.md
