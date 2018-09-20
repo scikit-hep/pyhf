@@ -134,6 +134,22 @@ class Model(object):
 
 
     def _make_cube(self):
+        """
+        Dear Lukas, maybe we don't need NaNs.
+
+        self.cube only directly gets added to deltas first, before we do any
+        multiplication with factors. If this is true, then setting any
+        situation where we have NaNs to zero will work because we'll add before
+        doing anything else.
+
+        Similarly, if this is not always true, we can put NaNs back in
+        (uncomment the lines here) and use tensorlib.sum(...,nansum=True) to
+        get the equivalent sum over nans which should provide the same result.
+
+        Sincrely,
+
+        Giordon
+        """
         tensorlib, _ = get_backend()
         nchan   = len(self.config.channels)
         maxsamp = len(self.config.samples)
@@ -141,10 +157,12 @@ class Model(object):
         cube = [[]]*nchan
         for c in self.spec['channels']:
             i = self.config.channels.index(c['name'])
-            cube[i] = [[tensorlib.nan]*maxbins]*maxsamp
+            cube[i] = [[0.0]*maxbins]*maxsamp
+            #cube[i] = [[tensorlib.nan]*maxbins]*maxsamp
             for s in c['samples']:
                 j = self.config.samples.index(s['name'])
-                cube[i][j] = s['data'] + ([tensorlib.nan]*(maxbins - len(s['data'])))
+                cube[i][j] = s['data'] + ([0.0]*(maxbins - len(s['data'])))
+                #cube[i][j] = s['data'] + ([tensorlib.nan]*(maxbins - len(s['data'])))
 
         return tensorlib.astensor(cube)
 
@@ -334,8 +352,8 @@ class Model(object):
 
         for cname,smods in all_modifications.items():
             cindex = self.config.channels.index(cname)
-            delta_cube[cindex] = [[tensorlib.nan]*maxbins]*maxsamp
-            factor_cube[cindex] = [[tensorlib.nan]*maxbins]*maxsamp
+            delta_cube[cindex] = [[0.0]*maxbins]*maxsamp
+            factor_cube[cindex] = [[1.0]*maxbins]*maxsamp
             for sname,(factors,deltas) in smods.items():
                 sindex = self.config.samples.index(sname)
                 delta_cube[cindex][sindex] = [tensorlib.sum(deltas)]*maxbins
@@ -344,11 +362,23 @@ class Model(object):
         delta_field = tensorlib.astensor(delta_cube)
         factor_field = tensorlib.astensor(factor_cube)
 
-        combined = factor_field * (delta_field + self.cube)
-        expected = tensorlib.sum(combined, nansum=True, axis=1)
+        # compute: $factors * (deltas + cube)$
+        # and then sum by channel
+        return tensorlib.einsum('csb,csb->c', factor_field, delta_field + self.cube)
 
-        return expected
+        """
+        Dear Lukas,
 
+        If you read my note in _make_cube, this makes more sense. In the case where we have NaNs in self.cube, we can do something like this to get the equivalent of delta_field + self.cube:
+
+            res = tensorlib.sum(tensorlib.stack([delta_field, self.cube], axis=3), axis=3, nansum=True)
+
+        to get the same result.
+
+        Sincerely,
+
+        Giordon
+        """
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
