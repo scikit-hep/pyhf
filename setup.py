@@ -47,7 +47,7 @@ setup(
        'coverage>=4.0',  # coveralls
        'matplotlib',
        'jupyter',
-       'uproot',
+       'uproot>=3.0.0',
        'papermill',
        'graphviz',
        'sphinx',
