@@ -57,13 +57,8 @@ def test_core_pdf_broadcasting(backend):
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
-<<<<<<< dd198c062e2415192815c27d224d2897b7b9c2bd
 @pytest.mark.only_numpy
 def test_pdf_integration_staterror(backend):
-=======
-
-def test_pdf_integration_staterror():
->>>>>>> Wrap json.load in with clause to safely load and close
     spec = {
         'channels': [
             {
@@ -111,16 +106,9 @@ def test_pdf_integration_staterror():
     for c,e in zip(computed,expected):
         assert c==e
 
-<<<<<<< dd198c062e2415192815c27d224d2897b7b9c2bd
 @pytest.mark.only_numpy
 def test_pdf_integration_histosys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
-=======
-
-def test_pdf_integration_histosys():
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
-        source = json.load(read_json)
->>>>>>> Wrap json.load in with clause to safely load and close
     spec = {
         'channels': [
             {
@@ -171,17 +159,7 @@ def test_pdf_integration_histosys():
 
 @pytest.mark.skip_mxnet
 def test_pdf_integration_normsys(backend):
-<<<<<<< dd198c062e2415192815c27d224d2897b7b9c2bd
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
-=======
-    pyhf.set_backend(backend)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
-
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
-        source = json.load(read_json)
->>>>>>> Wrap json.load in with clause to safely load and close
     spec = {
         'channels': [
             {
@@ -217,16 +195,9 @@ def test_pdf_integration_normsys(backend):
     pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [[0.0], [-1.0]]
     assert np.allclose(pyhf.tensorlib.tolist(pdf.expected_data(pars, include_auxdata = False)),[100*0.9,150*0.9])
 
-<<<<<<< dd198c062e2415192815c27d224d2897b7b9c2bd
 @pytest.mark.only_numpy
 def test_pdf_integration_shapesys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
-=======
-
-def test_pdf_integration_shapesys():
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
-        source = json.load(read_json)
->>>>>>> Wrap json.load in with clause to safely load and close
     spec = {
         'channels': [
             {
@@ -321,12 +292,4 @@ def test_invalid_modifier_name_resuse():
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
         pdf = pyhf.Model(spec, poiname = 'reused_name')
 
-<<<<<<< dd198c062e2415192815c27d224d2897b7b9c2bd
-    pdf  = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
-<<<<<<< 01c6b81aeb46c5f30df8f698666fae1a2595f5a4
-
-=======
->>>>>>> Remove use of poisson_from_normal=True from everywhere
-=======
     pdf = pyhf.Model(spec, poiname = 'reused_name', qualify_names = True)
->>>>>>> Wrap json.load in with clause to safely load and close
