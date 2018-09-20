@@ -5,7 +5,7 @@ from . import modifier
 from .. import get_backend
 from ..interpolate import interpolator
 
-@modifier(name='normsys', constrained=True, shared=True)
+@modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters     = 1

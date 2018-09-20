@@ -21,6 +21,10 @@ class _ModelConfig(object):
             channels.append(channel['name'])
             for sample in channel['samples']:
                 samples.append(sample['name'])
+                # we need to bookkeep a list of modifiers by type so that we
+                # can loop over them on a type-by-type basis
+                # types like histosys, normsys, etc...
+                sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
                     if qualify_names:
                         fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
@@ -30,6 +34,7 @@ class _ModelConfig(object):
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
+                    sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         instance.channels = list(set(channels))
         instance.samples = list(set(samples))
         instance.modifiers = list(set(modifiers))
@@ -126,9 +131,122 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
-    def expected_sample(self, channel, sample, pars):
+    def _mtype_results(self,mtype,pars):
         """
-        The idea is that we compute all bin-values at once.. each bin is a product of various factors, but sum are per-channel the other per-channel
+        This method implements the computation of the modifier's application
+        for a given modifier type, for each channel and sample within that
+        type.
+
+        In a follow up PR it will be further refactored to reverse the order of
+        the three loops, such that the outer-most loop is over modifiers (which
+        is the structure we are aiming for in #251)
+
+        This will include additional code like
+
+            if mtype in self.combined_mods.keys():
+                return self.combined_mods[mtype].apply(pars)
+
+        before the loops. This returns a bookkeeping dictionary of the following structure
+
+            _mtype_results_dict == {
+                channel1: {
+                    sample1: [
+                        mod1.apply(),
+                        mod2.apply(),
+                        ...
+                    ],
+                    sample2: [
+                        mod1.apply(),
+                        mod3.apply(),
+                        mod5.apply(),
+                        ...
+                    ]
+                },
+                channel2: {
+                    sample2: [
+                        mod2.apply(),
+                        mod3.apply(),
+                        mod4.apply()
+                    ],
+                    ...
+                },
+                ...
+            }
+        """
+        mtype_results = {}
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                for mname in sample['modifiers_by_type'].get(mtype,[]):
+                    modifier = self.config.modifier(mname)
+                    modpars  = pars[self.config.par_slice(mname)]
+                    mtype_results.setdefault(channel['name'],
+                            {}).setdefault(sample['name'],
+                            []).append(
+                                modifier.apply(channel, sample, modpars)
+                            )
+        return mtype_results
+
+    def expected_sample(self, channel, sample, pars):
+        tensorlib, _ = get_backend()
+        """
+        Public API only, not efficient or fast. We compute all modification for
+        all samples in this method even though we are only interested in the
+        modifications in a single sample.
+
+        Alternatively the _all_modifications() could take a list of
+        channel/samples for which it should compute modificiations.
+        """
+        all_modifications = self._all_modifications(pars)
+        return self._expected_sample(
+            tensorlib.astensor(sample['data']), #nominal
+            *all_modifications[channel['name']][sample['name']] #mods
+        )
+
+    def _expected_sample(self, nominal, factors, deltas):
+        tensorlib, _ = get_backend()
+
+        #the base value for each bin is either the nominal with deltas applied
+        #if there were any otherwise just the nominal
+        if len(deltas):
+            #stack all bin-wise shifts in the yield value (delta) from the modifiers
+            #on top of each other and sum through the first axis
+            #will give us a overall shift to apply to the nominal histo
+            all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
+
+            #stack nominal and deltas and sum through first axis again
+            #to arrive at yield value after deltas (but before factor mods)
+            nominal_and_deltas  = tensorlib.stack([nominal,all_deltas])
+            nominal_plus_deltas = tensorlib.sum(nominal_and_deltas,axis=0)
+            basefactor = [nominal_plus_deltas]
+        else:
+            basefactor = [nominal]
+
+        factors += basefactor
+
+        #multiplicative modifiers are either a single float that should be broadcast
+        #to all bins or a list of floats (one for each bin of the histogram)
+        binwise_factors = tensorlib.simple_broadcast(*factors)
+
+        #now we arrange all factors on top of each other so that for each bin we
+        #have all multiplicative factors
+        stacked_factors_binwise = tensorlib.stack(binwise_factors)
+
+        #binwise multiply all multiplicative factors such that we arrive
+        #at a single number for each bin
+        total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
+        return total_factors
+
+    def _all_modifications(self, pars):
+        """
+        This function implements the calculation of all modifications by
+        looping over all possible modifications and calling _mtype_results()
+        for each one. The results are accumulated in a nested dict-like
+        structure to keep track of factors/deltas that is then used by
+        expected_actualdata()/expected_sample().
+
+        The idea is that we compute all bin-values at once.. each bin is a
+        product of various factors, but sum are per-channel the other
+        per-channel
 
             b1 = shapesys_1   |      shapef_1   |
             b2 = shapesys_2   |      shapef_2   |
@@ -136,7 +254,9 @@ class Model(object):
             ...             (broad)     ..     (broad)
             bn = shapesys_n   |      shapef_1   |
 
-        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`. The broadcast expands the scalars or one-length arrays to an array which we can then uniformly multiply
+        this can be achieved by `numpy`'s `broadcast_arrays` and `np.product`.
+        The broadcast expands the scalars or one-length arrays to an array
+        which we can then uniformly multiply
 
             >>> import numpy as np
             >>> np.broadcast_arrays([2],[3,4,5],[6],[7,8,9])
@@ -166,7 +286,6 @@ class Model(object):
         Non-shape === affects all bins the same way (just changes normalization, keeps shape the same)
 
         .. _`CERN-OPEN-2012-016`: https://cds.cern.ch/record/1456844?ln=en
-
         """
         # for each sample the expected ocunts are
         # counts = (multiplicative factors) * (normsys multiplier) * (histsys delta + nominal hist)
@@ -181,36 +300,40 @@ class Model(object):
         # \phi == normfactor, overallsys
         # \sigma == histosysdelta + nominal
 
-        tensorlib, _ = get_backend()
         # first, collect the factors from all modifiers
-        results = {'shapesys': [],
-                   'normfactor': [],
-                   'shapefactor': [],
-                   'staterror': [],
-                   'histosys': [],
-                   'normsys': []}
-        for m in sample['modifiers']:
-            modifier, modpars = self.config.modifier(m['name']), pars[self.config.par_slice(m['name'])]
-            results[m['type']].append(modifier.apply(channel, sample, modpars))
 
+        all_modifications = {}
+        mods_and_ops = [(x,getattr(modifiers,x).op_code) for x in modifiers.__all__]
+        factor_mods = [x[0] for x in mods_and_ops if x[1]=='multiplication']
+        delta_mods  = [x[0] for x in mods_and_ops if x[1]=='addition']
 
-        # start building the entire set of factors
-        factors = []
-        # scalars that get broadcasted to shape of vectors
-        factors += results['normfactor']
-        factors += results['normsys']
-        # vectors
-        factors += results['shapesys']
-        factors += results['shapefactor']
-        factors += results['staterror']
+        all_results = {}
+        for mtype in factor_mods + delta_mods:
+            all_results[mtype] = self._mtype_results(mtype,pars)
 
-        nominal = tensorlib.astensor(sample['data'])
-        factors += [tensorlib.sum(tensorlib.stack([
-          nominal,
-          tensorlib.sum(tensorlib.stack(results['histosys']), axis=0)
-        ]), axis=0) if len(results['histosys']) > 0 else nominal]
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                #concatenate list of lists using sum() and an initial value of []
+                #to get a list of all prefactors that should be multiplied to the
+                #base histogram (the deltas below + the nominal)
+                factors = sum([
+                    all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
+                    for x in factor_mods
+                ],[])
 
-        return tensorlib.product(tensorlib.stack(tensorlib.simple_broadcast(*factors)), axis=0)
+                #concatenate list of lists using sum() and an initial value of []
+                #to get a list of all deltas that should be addded to the
+                #nominal values
+                deltas  = sum([
+                    all_results.get(x,{}).get(channel['name'],{}).get(sample['name'],[])
+                    for x in delta_mods
+                ],[])
+
+                all_modifications.setdefault(
+                    channel['name'],{})[
+                    sample['name']
+                ] = (factors, deltas)
+        return all_modifications
 
     def expected_auxdata(self, pars):
         # probably more correctly this should be the expectation value of the constraint_pdf
@@ -231,8 +354,17 @@ class Model(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []
+
+        all_modifications = self._all_modifications(pars)
         for channel in self.spec['channels']:
-            data.append(tensorlib.sum(tensorlib.stack([self.expected_sample(channel, sample, pars) for sample in channel['samples']]),axis=0))
+            sample_stack = [
+                self._expected_sample(
+                    tensorlib.astensor(sample['data']), #nominal
+                    *all_modifications[channel['name']][sample['name']] #mods
+                )
+                for sample in channel['samples']
+            ]
+            data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
         return tensorlib.concatenate(data)
 
     def expected_data(self, pars, include_auxdata=True):
