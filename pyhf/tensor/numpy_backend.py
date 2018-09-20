@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from scipy.special import gammaln, xlogy
+from scipy.special import gammaln
 from scipy.stats import norm
 log = logging.getLogger(__name__)
 
