@@ -64,33 +64,15 @@ def spec(source):
                          ids=[
                              'mu=1',
                          ])
-@pytest.mark.parametrize('backend',
-                         [
-                             (pyhf.tensor.numpy_backend(poisson_from_normal=True),),
-                             (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
-                             (pyhf.tensor.pytorch_backend(poisson_from_normal=True),),
-                             # pyhf.tensor.mxnet_backend(),
-                             (pyhf.tensor.numpy_backend(poisson_from_normal=True), pyhf.optimize.minuit_optimizer()),
-                         ],
-                         ids=[
-                             'numpy',
-                             'tensorflow',
-                             'pytorch',
-                             # 'mxnet',
-                             'numpy-minuit',
-                         ])
-def test_optim(source, spec, mu, backend):
+@pytest.mark.skip_mxnet
+def test_optim(backend, source, spec, mu):
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    pyhf.set_backend(*backend)
     optim = pyhf.optimizer
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
 
     result = optim.unconstrained_bestfit(
         pyhf.utils.loglambdav, data, pdf, init_pars, par_bounds)

@@ -12,75 +12,57 @@ import tensorflow as tf
 import pytest
 
 
-def test_common_tensor_backends():
-    tf_sess = tf.Session()
-    for tb in [
-        numpy_backend(),
-        pytorch_backend(),
-        tensorflow_backend(session=tf_sess),
-        mxnet_backend()
-    ]:
-        assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
-        assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
-        assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
-        assert tb.tolist(
-            tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
-        assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
-        assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
-        assert tb.tolist(
-            tb.outer([1, 2, 3], [4, 5, 6])) == [[4, 5, 6], [8, 10, 12], [12, 15, 18]]
-        assert tb.tolist(tb.sqrt([4, 9, 16])) == [2, 3, 4]
-        assert tb.tolist(tb.stack(
-            [tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])) == [[1, 2, 3], [4, 5, 6]]
-        assert tb.tolist(tb.concatenate(
-            [tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])) == [1, 2, 3, 4, 5, 6]
-        assert tb.tolist(tb.log(tb.exp([2, 3, 4]))) == [2, 3, 4]
-        assert tb.tolist(tb.where(
-            tb.astensor([1, 0, 1]),
-            tb.astensor([1, 1, 1]),
-            tb.astensor([2, 2, 2]))) == [1, 2, 1]
-        assert tb.tolist(
-            tb.clip(tb.astensor([-2, -1, 0, 1, 2]), -1, 1)) == [-1, -1,  0,  1,  1]
-        assert tb.tolist(
-            tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx([0.7881446014166034], 1e-07)
+def test_common_tensor_backends(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
+    assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
+    assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
+    assert tb.tolist(
+        tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
+    assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
+    assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
+    assert tb.tolist(
+        tb.outer([1, 2, 3], [4, 5, 6])) == [[4, 5, 6], [8, 10, 12], [12, 15, 18]]
+    assert tb.tolist(tb.sqrt([4, 9, 16])) == [2, 3, 4]
+    assert tb.tolist(tb.stack(
+        [tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])) == [[1, 2, 3], [4, 5, 6]]
+    assert tb.tolist(tb.concatenate(
+        [tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])) == [1, 2, 3, 4, 5, 6]
+    assert tb.tolist(tb.log(tb.exp([2, 3, 4]))) == [2, 3, 4]
+    assert tb.tolist(tb.where(
+        tb.astensor([1, 0, 1]),
+        tb.astensor([1, 1, 1]),
+        tb.astensor([2, 2, 2]))) == [1, 2, 1]
+    assert tb.tolist(
+        tb.clip(tb.astensor([-2, -1, 0, 1, 2]), -1, 1)) == [-1, -1,  0,  1,  1]
+    assert tb.tolist(
+        tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx([0.7881446014166034], 1e-07)
 
-        assert list(map(tb.tolist, tb.simple_broadcast(
-            tb.astensor([1, 1, 1]),
-            tb.astensor([2]),
-            tb.astensor([3, 3, 3])))) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
-        assert list(map(tb.tolist, tb.simple_broadcast(1, [2, 3, 4], [5, 6, 7]))) \
-            == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-        assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
-            == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-        assert tb.tolist(tb.ones((4,5)))  == [[1.]*5]*4
-        assert tb.tolist(tb.zeros((4,5))) == [[0.]*5]*4
-        assert tb.tolist(tb.abs([-1,-2])) == [1,2]
-        with pytest.raises(Exception):
-            tb.simple_broadcast([1], [2, 3], [5, 6, 7])
+    assert list(map(tb.tolist, tb.simple_broadcast(
+        tb.astensor([1, 1, 1]),
+        tb.astensor([2]),
+        tb.astensor([3, 3, 3])))) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    assert list(map(tb.tolist, tb.simple_broadcast(1, [2, 3, 4], [5, 6, 7]))) \
+        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) \
+        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    assert tb.tolist(tb.ones((4,5)))  == [[1.]*5]*4
+    assert tb.tolist(tb.zeros((4,5))) == [[0.]*5]*4
+    assert tb.tolist(tb.abs([-1,-2])) == [1,2]
+    with pytest.raises(Exception):
+        tb.simple_broadcast([1], [2, 3], [5, 6, 7])
 
 
-def test_einsum():
-    tf_sess = tf.Session()
-    backends = [numpy_backend(poisson_from_normal=True),
-                pytorch_backend(),
-                tensorflow_backend(session=tf_sess),
-                mxnet_backend() #no einsum in mxnet
-                ]
+def test_einsum(backend):
+    tb = pyhf.tensorlib
+    x = np.arange(20).reshape(5,4).tolist()
 
-
-
-    for b in backends[:-1]:
-        pyhf.set_backend(b)
-
-        x = np.arange(20).reshape(5,4).tolist()
-        assert np.all(b.tolist(b.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
-        assert b.tolist(b.einsum('i,j->ij',b.astensor([1,1,1]),b.astensor([1,2,3]))) == [[1,2,3]]*3
-
-    for b in backends[-1:]:
-        pyhf.set_backend(b)
-        x = np.arange(20).reshape(5,4).tolist()
+    if isinstance(pyhf.tensorlib, pyhf.tensor.mxnet_backend):
         with pytest.raises(NotImplementedError):
-            assert b.einsum('ij->ji',[1,2,3])
+            assert tb.einsum('ij->ji',[1,2,3])
+    else:
+        assert np.all(tb.tolist(tb.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
+        assert tb.tolist(tb.einsum('i,j->ij',tb.astensor([1,1,1]),tb.astensor([1,2,3]))) == [[1,2,3]]*3
 
 def test_pdf_eval():
     tf_sess = tf.Session()
