@@ -119,7 +119,7 @@ class mxnet_backend(object):
                 return nd.sum(tensor_in)
         else:
             if nansum:
-                return nd.sum(tensor_in, axis)
+                return nd.nansum(tensor_in, axis)
             else:
                 return nd.sum(tensor_in, axis)
 
