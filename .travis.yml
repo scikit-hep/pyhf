@@ -70,7 +70,7 @@ jobs:
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
     # Open Binder example in browser to trigger repo2docker to build image
-    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
     deploy:
       provider: pages
       skip_cleanup: true
