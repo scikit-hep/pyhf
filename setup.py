@@ -37,6 +37,7 @@ extras_require = {
         'coverage>=4.0',  # coveralls
         'matplotlib',
         'jupyter',
+        'nbdime',
         'uproot>=3.0.0',
         'papermill',
         'graphviz',
