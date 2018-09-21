@@ -39,7 +39,13 @@ jobs:
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
+      - pip install selenium
+      - wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
+      - mkdir geckodriver
+      - tar -xzf geckodriver*.tar.gz -C geckodriver
+      - export PATH=$PATH:$PWD/geckodriver
       - pytest tests/test_notebooks.py
+      - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
       - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
   - stage: benchmark
     python: '3.6'
