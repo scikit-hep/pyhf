@@ -2,7 +2,7 @@
 language: python
 cache: pip
 python:
-  # - '2.7'
+  - '2.7'
   - '3.6'
 before_install:
   - pip install --upgrade pip setuptools wheel
@@ -11,7 +11,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  # - pytest -r sx --ignore binder/ --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest -r sx --ignore binder/ --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -33,14 +33,14 @@ env:
 
 jobs:
   include:
-  # - name: "Python 2.7 Notebook Tests"
-  #   python: '2.7'
-  #   script:
-  #     - pytest tests/test_notebooks.py
-  # - name: "Python 3.6 Notebook Tests"
-  #   python: '3.6'
-  #   script:
-  #     - pytest tests/test_notebooks.py
+  - name: "Python 2.7 Notebook Tests"
+    python: '2.7'
+    script:
+      - pytest tests/test_notebooks.py
+  - name: "Python 3.6 Notebook Tests"
+    python: '3.6'
+    script:
+      - pytest tests/test_notebooks.py
   - stage: benchmark
     python: '3.6'
     before_install:
@@ -51,15 +51,11 @@ jobs:
     script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
   - stage: "Trigger Binder"
     python: '3.6'
-    sudo: required
     addons:
       chrome: stable
       apt:
-        # sources:
-        #   - google-chrome
         packages:
           - chromium-chromedriver
-          # - google-chrome-stable
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
@@ -70,17 +66,11 @@ jobs:
       - pip freeze
     before_script:
       - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
-      # - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
-      # - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.6.3/bin/
-      # - export CHROME_BIN=chromium-browser
-      # - export DISPLAY=:99.0
-      # - sh -e /etc/init.d/xvfb start
-      # - sleep 3
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
-    # Open Binder example to trigger repo2docker to build image
+    # Open Binder example in browser to trigger repo2docker to build image
     - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
     - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
   - stage: docs
@@ -100,13 +90,12 @@ jobs:
       - pip freeze
     before_script:
       - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
-      - google-chrome-stable --no-sandbox --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
     # Open Binder example to trigger repo2docker to build image
-    - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
+    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
     deploy:
       provider: pages
       skip_cleanup: true
