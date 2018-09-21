@@ -4,6 +4,12 @@ cache: pip
 python:
   - '2.7'
   - '3.6'
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 before_install:
   - pip install --upgrade pip setuptools wheel
 install:
@@ -11,7 +17,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest -r sx --ignore binder/ --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -39,12 +45,18 @@ jobs:
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
-      - pip install selenium
-      - wget https://github.com/mozilla/geckodriver/releases/download/v0.22.0/geckodriver-v0.22.0-linux64.tar.gz
-      - mkdir geckodriver
-      - tar -xzf geckodriver*.tar.gz -C geckodriver
-      - export PATH=$PATH:$PWD/geckodriver
       - pytest tests/test_notebooks.py
+  - name: "Trigger Binder"
+    python: '3.6'
+    before_script:
+      - pip install selenium
+      - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
+      - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.6.3/bin/
+      - export CHROME_BIN=chromium-browser
+      - export DISPLAY=:99.0
+      - sh -e /etc/init.d/xvfb start
+      - sleep 3
+    script:
       - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
       - python -m webbrowser 'https://mybinder.org/v2/gh/diana-hep/pyhf/fix/add-test-for-Binder-example-notebook?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb'
   - stage: benchmark
@@ -57,13 +69,22 @@ jobs:
     script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
+    addons:
+      chrome: stable
+      apt:
+        packages:
+          - chromium-chromedriver
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
       - pip install --upgrade pip setuptools wheel
+      - pip install selenium
     install:
       - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
+    before_script:
+      - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+      - google-chrome-stable --no-sandbox --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
