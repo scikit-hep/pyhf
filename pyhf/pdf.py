@@ -151,6 +151,167 @@ class Model(object):
                 pass
         self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
         self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
+        _allmods = []
+        _allsamples = []
+        _allchannels = []
+        _allmods = []
+        channel_nbins = {}
+
+        for c in self.spec['channels']:
+            _allchannels.append(c['name'])
+            for s in c['samples']:
+                channel_nbins[c['name']] = len(s['data'])
+                _allsamples.append(s['name'])
+                for mod in s['modifiers']:
+                    _allmods.append((mod['name'],mod['type']))
+        _allmods = list(set(_allmods))
+        _allsamples = list(set(_allsamples))
+        _allchannels = list(set(_allchannels))
+        self.do_samples  = _allsamples[:]
+        self.do_channels = _allchannels[:]
+        self.do_mods = _allmods[:]
+        self.channel_nbins = channel_nbins
+
+    def _make_mega(self):
+        helper = {}
+        for c in self.spec['channels']:
+            for s in c['samples']:
+                helper.setdefault(c['name'],{})[s['name']] = (c,s)
+
+        mega_mods = {}
+        import copy
+        for m,mtype in self.do_mods:
+            for s in self.do_samples:
+                modspec = {'type': mtype, 'name': m}
+                if mtype == 'histosys':
+                    modspec.setdefault('data',{})['hi_data'] = []
+                    modspec.setdefault('data',{})['lo_data'] = []
+                    modspec.setdefault('data',{})['mask'] = []
+                elif mtype == 'normsys':
+                    modspec.setdefault('data',{})['hi'] = []
+                    modspec.setdefault('data',{})['lo'] = []
+                    modspec.setdefault('data',{})['mask'] = []
+                elif mtype == 'normfactor':
+                    modspec.setdefault('data',{})['mask'] = []
+                elif mtype == 'shapefactor':
+                    modspec.setdefault('data',{})['mask'] = []
+                elif mtype == 'shapesys':
+                    modspec.setdefault('data',{})['mask'] = []
+                elif mtype == 'staterror':
+                    modspec.setdefault('data',{})['uncrt'] = []
+                    modspec.setdefault('data',{})['mask']  = []
+                mega_mods.setdefault(s,{})[m] = copy.deepcopy(modspec)
+                
+        mega_samples = {}
+        for s in self.do_samples:
+            mega_nom = []
+            for c in self.do_channels:
+                defined_samp = helper.get(c,{}).get(s)
+                defined_samp = None if not defined_samp else defined_samp[1]
+                nom = defined_samp['data'] if defined_samp else [0.0]*self.channel_nbins[c]
+                mega_nom += nom
+                defined_mods = {x['name']:x for x in defined_samp['modifiers']} if defined_samp else {}
+                for m,mtype in self.do_mods:
+                    thismod = defined_mods.get(m)
+                    if mtype == 'histosys':
+                        lo_data = thismod['data']['lo_data'] if thismod else nom
+                        hi_data = thismod['data']['lo_data'] if thismod else nom
+                        maskval = True if thismod else False
+                        mega_mods[s][m]['data']['lo_data'] += lo_data
+                        mega_mods[s][m]['data']['hi_data'] += hi_data
+                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                        pass
+                    elif mtype == 'normsys':
+                        maskval = True if thismod else False
+                        lo_factor = thismod['data']['lo'] if thismod else 1.0
+                        hi_factor = thismod['data']['hi'] if thismod else 1.0
+                        mega_mods[s][m]['data']['lo'] += [lo_factor]*len(nom) #broadcasting
+                        mega_mods[s][m]['data']['hi'] += [hi_factor]*len(nom)
+                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                    elif mtype == 'normfactor':
+                        maskval = True if thismod else False
+                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                    elif mtype == 'staterror':
+                        uncrt = thismod['data'] if thismod else [0.0]*len(nom)
+                        maskval = [True if thismod else False]*len(nom)
+                        mega_mods[s][m]['data']['mask']  += maskval
+                        mega_mods[s][m]['data']['uncrt'] += uncrt
+                    elif mtype == 'shapefactor':
+                        maskval = True if thismod else False
+                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                    else:
+                        raise RuntimeError
+            sample_dict = {
+                'name': 'mega_{}'.format(s),
+                'nom': mega_nom,
+                'modifiers': list(mega_mods[s].values())
+            }
+            mega_samples[s] = sample_dict
+        self.mega_samples = mega_samples
+        self.mega_mods    = mega_mods
+
+    def prep(self):
+        import numpy as np
+        self.normsys_histoset = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['lo'],
+                    [1.]*len(self.mega_samples[s]['nom']),
+                    self.mega_mods[s][m]['data']['hi'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'normsys' 
+        ])
+        self.normsys_mask = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['mask'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'normsys' 
+        ])
+        self.normsys_default = np.ones(self.normsys_mask.shape)
+
+
+        self.histosys_histoset = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['lo_data'],
+                    self.mega_samples[s]['nom'],
+                    self.mega_mods[s][m]['data']['hi_data'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'histosys' 
+        ])
+        self.histosys_mask = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['mask'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'histosys' 
+        ])
+        self.histosys_default = np.zeros(self.histosys_mask.shape)
+
+
+        self.normfactor_mask = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['mask'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'normfactor' 
+        ])
+        self.normfactor_default = np.ones(self.normfactor_mask.shape)
+        self.staterror_mask = np.asarray([
+            [
+                [
+                    self.mega_mods[s][m]['data']['mask'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'staterror' 
+        ])
+        self.staterror_default = np.ones(self.staterror_mask.shape)
 
 
     def _mtype_results(self,mtype,pars):
@@ -372,22 +533,66 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
-    def expected_actualdata(self, pars):
-        tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        data = []
+    def expected_actualdata(self,pars):
+        import numpy as np
+        results_staterr = np.asarray([
+            [
+                [
+                    np.ones_like(self.mega_mods[s][m]['data']['mask'])*pars[self.config.par_slice(m)],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'staterror' 
+        ])
 
-        all_modifications = self._all_modifications(pars)
-        for channel in self.spec['channels']:
-            sample_stack = [
-                self._expected_sample(
-                    tensorlib.astensor(sample['data']), #nominal
-                    *all_modifications[channel['name']][sample['name']] #mods
-                )
-                for sample in channel['samples']
-            ]
-            data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
-        return tensorlib.concatenate(data)
+
+        results_normfac = np.asarray([
+            [
+                [
+                    np.ones_like(self.mega_mods[s][m]['data']['mask'])*pars[self.config.par_slice(m)],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'normfactor' 
+        ])
+
+        histosys_alphaset = np.asarray([
+            pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
+        ])
+        normsys_alphaset = np.asarray([
+            pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
+        ])
+        from .interpolate import _hfinterp_code1,_hfinterp_code0
+        results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
+        results_norm   = np.where(self.normsys_mask,results_norm,self.normsys_default)
+
+        results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
+        results_histo   = np.where(self.histosys_mask,results_histo,self.histosys_default)
+
+        results_staterr = np.where(self.staterror_mask,results_staterr,self.staterror_default)
+        results_normfac = np.where(self.normfactor_mask,results_normfac,self.normfactor_default)
+
+
+        thenom = np.asarray([self.mega_samples[s]['nom'] for s in self.do_samples])
+        thenom = np.asarray(thenom).reshape((1,)+results_histo.shape[1:])
+
+        allsum = np.concatenate([
+            results_histo,
+            thenom
+        ])
+
+        nom_plus_delta = np.sum(allsum,axis=0)
+        nom_plus_delta = nom_plus_delta.reshape((1,)+nom_plus_delta.shape)
+
+        # print(nom_plus_delta.shape,results_histo.shape)
+        allfac = np.concatenate([
+            results_norm,
+            results_staterr,
+            results_normfac,
+            nom_plus_delta
+        ])
+        allfac.shape
+        newbysample = np.product(allfac,axis=0)
+        newresults = np.sum(newbysample,axis=0)
+        return newresults[0] #only one alphas
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
