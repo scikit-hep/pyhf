@@ -133,6 +133,12 @@ class _ModelConfig(object):
 
         return modifier
 
+def finalize_stats(modifier):
+    tensorlib, _ = get_backend()
+    inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(tensorlib.astensor(modifier.uncertainties),2), axis=0))
+    totals = tensorlib.sum(modifier.nominal_counts,axis=0)
+    return tensorlib.divide(inquad,totals)
+
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
@@ -171,6 +177,9 @@ class Model(object):
         self.do_channels = _allchannels[:]
         self.do_mods = _allmods[:]
         self.channel_nbins = channel_nbins
+
+        self.finalized_stats = {k:finalize_stats(self.config.modifier(k)) for k,v in self.config.par_map.items() if 'staterror' in k}
+
 
     def _make_mega(self):
         helper = {}
