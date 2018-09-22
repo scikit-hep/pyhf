@@ -7,6 +7,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
+from .interpolate import _hfinterp_code1,_hfinterp_code0
 
 
 class _ModelConfig(object):
@@ -347,7 +348,6 @@ class Model(object):
         normsys_alphaset = tensorlib.astensor([
             pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
         ])
-        from .interpolate import _hfinterp_code1,_hfinterp_code0
         results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
         results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
@@ -356,16 +356,16 @@ class Model(object):
 
 
         statfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
-        results_staterr = self.staterror_mask * statfactors.reshape(statfactors.shape + (1,1))
+        results_staterr = self.staterror_mask * tensorlib.reshape(statfactors,tensorlib.shape(statfactors) + (1,1))
         results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
 
         normfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
-        results_normfac = self.normfactor_mask * normfactors.reshape(normfactors.shape + (1,1))
+        results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
         results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
 
 
         thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
-        thenom = tensorlib.astensor(thenom).reshape((1,)+results_histo.shape[1:])
+        thenom = tensorlib.reshape(thenom,(1,)+tensorlib.shape(results_histo)[1:])
 
         allsum = tensorlib.concatenate([
             results_histo,
@@ -373,7 +373,7 @@ class Model(object):
         ])
 
         nom_plus_delta = tensorlib.sum(allsum,axis=0)
-        nom_plus_delta = nom_plus_delta.reshape((1,)+nom_plus_delta.shape)
+        nom_plus_delta = tensorlib.reshape(nom_plus_delta,(1,)+tensorlib.shape(nom_plus_delta))
 
         # print(nom_plus_delta.shape,results_histo.shape)
         allfac = tensorlib.concatenate([
@@ -382,7 +382,6 @@ class Model(object):
             results_normfac,
             nom_plus_delta
         ])
-        allfac.shape
         newbysample = tensorlib.product(allfac,axis=0)
         newresults = tensorlib.sum(newbysample,axis=0)
         return newresults[0] #only one alphas
