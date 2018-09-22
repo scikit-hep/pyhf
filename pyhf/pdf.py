@@ -158,6 +158,7 @@ class Model(object):
                 pass
         self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
         self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
+        
         _allmods = []
         _allsamples = []
         _allchannels = []
@@ -174,14 +175,14 @@ class Model(object):
         _allmods = list(set(_allmods))
         _allsamples = list(set(_allsamples))
         _allchannels = list(set(_allchannels))
-        self.do_samples  = _allsamples[:]
-        self.do_channels = _allchannels[:]
-        self.do_mods = _allmods[:]
+        self.do_samples  = list(sorted(_allsamples[:]))
+        self.do_channels = list(sorted(_allchannels[:]))
+        self.do_mods = list(sorted(_allmods[:]))
         self.channel_nbins = channel_nbins
-
+        
         self.finalized_stats = {k:finalize_stats(self.config.modifier(k)) for k,v in self.config.par_map.items() if 'staterror' in k}
         self._make_mega()
-        self.prep()
+        self._prep_mega()
 
     def _make_mega(self):
         helper = {}
@@ -261,7 +262,7 @@ class Model(object):
         self.mega_samples = mega_samples
         self.mega_mods    = mega_mods
 
-    def prep(self):
+    def _prep_mega(self):
         tensorlib,_ = get_backend()
         self.normsys_histoset = tensorlib.astensor([
             [
@@ -324,6 +325,36 @@ class Model(object):
         ])
         self.staterror_default = tensorlib.ones(self.staterror_mask.shape)
 
+        parindices = list(range(len(self.config.suggested_init())))
+        self.histo_indices = tensorlib.astensor([
+            parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
+        ])
+        self.normsys_indices = tensorlib.astensor([
+            parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
+        ])
+
+        self.normfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
+
+        self.statfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
+
+        thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
+        self.thenom = tensorlib.reshape(thenom,(1,)+tensorlib.shape(self.histosys_default)[1:])
+
+
+        start_index = 0
+        channel_slices = []
+        for c in self.do_channels:
+            end_index = start_index + self.channel_nbins[c]
+            channel_slices.append(slice(start_index,end_index))
+            start_index = end_index
+
+        binindices = list(range(sum(list(self.channel_nbins.values()))))
+        channel_slice_map = {c:binindices[sl] for c,sl in zip(self.do_channels,channel_slices)}
+
+        self.stat_parslices  = [self.config.par_slice(m) for m,mtype in self.do_mods if mtype=='staterror']
+        self.stat_targetind  = [channel_slice_map[m.replace('staterror/staterror_','')] for m,mtype in self.do_mods if mtype=='staterror']
+
+
     def expected_auxdata(self, pars):
         # probably more correctly this should be the expectation value of the constraint_pdf
         # or for the constraints we are using (single par constraings with mean == mode), we can
@@ -339,53 +370,56 @@ class Model(object):
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
-    def expected_actualdata(self,pars):
+    def _modifications(self,pars):
         tensorlib, _ = get_backend()
 
-        histosys_alphaset = tensorlib.astensor([
-            pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
-        ])
-        normsys_alphaset = tensorlib.astensor([
-            pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
-        ])
+        normsys_alphaset = pars[self.normsys_indices]
         results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
         results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
+        histosys_alphaset = pars[self.histo_indices]
         results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
         results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
-
-
-        statfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
-        results_staterr = self.staterror_mask * tensorlib.reshape(statfactors,tensorlib.shape(statfactors) + (1,1))
+        
+        #could probably all cols at once 
+        #factor columns for each modifier
+        columns = tensorlib.einsum('s,a,mb->msab',tensorlib.ones(len(self.do_samples)),[1],[pars[par_sl] for par_sl in self.stat_parslices])
+        #figure out how to stitch
+        results_staterr = tensorlib.astensor([
+            tensorlib.concatenate([
+                self.staterror_default[i,:,:,:target[0]],
+                cols,
+                self.staterror_default[i,:,:,target[-1] + 1:]
+                ],axis=-1) 
+            for i,(target,cols) in enumerate(zip(self.stat_targetind,columns))
+        ])
         results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
 
-        normfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
+        normfactors = pars[self.normfac_indices]
         results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
         results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
+        deltas = [results_histo]
+        factors = [
+                results_norm,
+                results_staterr,
+                results_normfac
+        ]
+        return deltas, factors
 
-
-        thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
-        thenom = tensorlib.reshape(thenom,(1,)+tensorlib.shape(results_histo)[1:])
-
-        allsum = tensorlib.concatenate([
-            results_histo,
-            thenom
-        ])
-
+    def expected_actualdata(self,pars):
+        deltas, factors = self._modifications(pars)
+        
+        tensorlib, _ = get_backend()
+        allsum = tensorlib.concatenate(deltas + [self.thenom])
+        
         nom_plus_delta = tensorlib.sum(allsum,axis=0)
         nom_plus_delta = tensorlib.reshape(nom_plus_delta,(1,)+tensorlib.shape(nom_plus_delta))
 
-        # print(nom_plus_delta.shape,results_histo.shape)
-        allfac = tensorlib.concatenate([
-            results_norm,
-            results_staterr,
-            results_normfac,
-            nom_plus_delta
-        ])
+        allfac = tensorlib.concatenate(factors + [nom_plus_delta])
+
         newbysample = tensorlib.product(allfac,axis=0)
         newresults = tensorlib.sum(newbysample,axis=0)
         return newresults[0] #only one alphas
-
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
@@ -409,19 +443,11 @@ class Model(object):
         cut = int(data.shape[0]) - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
-        summands = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
-
-        tosum = summands
-        mainpdf = tensorlib.sum(tosum)
-
-
-
-
+        summands   = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
+        
+        mainpdf    = tensorlib.sum(summands)
         constraint = self.constraint_logpdf(aux_data, pars)
-        # print('main',mainpdf)
-        # print('cons',constraint)
-
-
+        
         result = mainpdf + constraint
         return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
 
