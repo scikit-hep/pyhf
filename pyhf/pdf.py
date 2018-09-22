@@ -225,19 +225,19 @@ class Model(object):
                     thismod = defined_mods.get(m)
                     if mtype == 'histosys':
                         lo_data = thismod['data']['lo_data'] if thismod else nom
-                        hi_data = thismod['data']['lo_data'] if thismod else nom
+                        hi_data = thismod['data']['hi_data'] if thismod else nom
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['lo_data'] += lo_data
                         mega_mods[s][m]['data']['hi_data'] += hi_data
-                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                        mega_mods[s][m]['data']['mask']    += [maskval]*len(nom) #broadcasting
                         pass
                     elif mtype == 'normsys':
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[s][m]['data']['lo'] += [lo_factor]*len(nom) #broadcasting
-                        mega_mods[s][m]['data']['hi'] += [hi_factor]*len(nom)
-                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                        mega_mods[s][m]['data']['lo']   += [lo_factor]*len(nom) #broadcasting
+                        mega_mods[s][m]['data']['hi']   += [hi_factor]*len(nom)
+                        mega_mods[s][m]['data']['mask'] += [maskval]  *len(nom) #broadcasting
                     elif mtype == 'normfactor':
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
@@ -604,6 +604,7 @@ class Model(object):
         newresults = np.sum(newbysample,axis=0)
         return newresults[0] #only one alphas
 
+
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
@@ -614,6 +615,25 @@ class Model(object):
         expected_constraints = self.expected_auxdata(pars)
         tocat = [expected_actual] if expected_constraints is None else [expected_actual,expected_constraints]
         return tensorlib.concatenate(tocat)
+
+    def old_expected_actualdata(self, pars):
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+        data = []
+        all_modifications = self._all_modifications(pars)
+        cmap = {c['name'] : c for c in self.spec['channels']}
+        for cname in self.do_channels:
+            channel = cmap[cname]
+            sample_stack = [
+                self._expected_sample(
+                    tensorlib.astensor(sample['data']), #nominal
+                    *all_modifications[channel['name']][sample['name']] #mods
+                )
+                for sample in channel['samples']
+            ]
+            data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
+        return tensorlib.concatenate(data)
+
 
     def constraint_logpdf(self, auxdata, pars):
         normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
