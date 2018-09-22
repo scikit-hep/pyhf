@@ -1,4 +1,5 @@
 import sys
+import os
 import papermill as pm
 
 
@@ -11,6 +12,13 @@ def test_notebooks(tmpdir):
 
     pm.execute_notebook(
         'docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
+
+    if sys.version_info.major > 2:
+        # The Binder example uses specific relative paths
+        cwd = os.getcwd()
+        os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
+        pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
+        os.chdir(cwd)
 
     pm.execute_notebook(
         'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)

@@ -11,7 +11,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest -r sx --ignore binder/ --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -50,17 +50,27 @@ jobs:
     script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
   - stage: docs
     python: '3.6'
+    addons:
+      chrome: stable
+      apt:
+        packages:
+          - chromium-chromedriver
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
       - pip install --upgrade pip setuptools wheel
+      - pip install selenium
     install:
       - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
+    before_script:
+      - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
     script:
     - python -m doctest README.md
     - cd docs && make html && cd -
     - touch docs/_build/html/.nojekyll
+    # Open Binder example in browser to trigger repo2docker to build image
+    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
     deploy:
       provider: pages
       skip_cleanup: true
