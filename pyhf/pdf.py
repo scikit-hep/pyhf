@@ -261,8 +261,8 @@ class Model(object):
         self.mega_mods    = mega_mods
 
     def prep(self):
-        import numpy as np
-        self.normsys_histoset = np.asarray([
+        tensorlib,_ = get_backend()
+        self.normsys_histoset = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['lo'],
@@ -272,7 +272,7 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'normsys' 
         ])
-        self.normsys_mask = np.asarray([
+        self.normsys_mask = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['mask'],
@@ -280,10 +280,10 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'normsys' 
         ])
-        self.normsys_default = np.ones(self.normsys_mask.shape)
+        self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
 
-        self.histosys_histoset = np.asarray([
+        self.histosys_histoset = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['lo_data'],
@@ -293,7 +293,7 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'histosys' 
         ])
-        self.histosys_mask = np.asarray([
+        self.histosys_mask = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['mask'],
@@ -301,10 +301,10 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'histosys' 
         ])
-        self.histosys_default = np.zeros(self.histosys_mask.shape)
+        self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
 
-        self.normfactor_mask = np.asarray([
+        self.normfactor_mask = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['mask'],
@@ -312,8 +312,8 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'normfactor' 
         ])
-        self.normfactor_default = np.ones(self.normfactor_mask.shape)
-        self.staterror_mask = np.asarray([
+        self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
+        self.staterror_mask = tensorlib.astensor([
             [
                 [
                     self.mega_mods[s][m]['data']['mask'],
@@ -321,7 +321,7 @@ class Model(object):
                 for s in self.do_samples
             ] for m,mtype in self.do_mods if mtype == 'staterror' 
         ])
-        self.staterror_default = np.ones(self.staterror_mask.shape)
+        self.staterror_default = tensorlib.ones(self.staterror_mask.shape)
 
 
     def _mtype_results(self,mtype,pars):
@@ -544,52 +544,52 @@ class Model(object):
         return auxdata
 
     def expected_actualdata(self,pars):
-        import numpy as np
+        tensorlib, _ = get_backend()
 
-        histosys_alphaset = np.asarray([
+        histosys_alphaset = tensorlib.astensor([
             pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
         ])
-        normsys_alphaset = np.asarray([
+        normsys_alphaset = tensorlib.astensor([
             pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
         ])
         from .interpolate import _hfinterp_code1,_hfinterp_code0
         results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
-        results_norm   = np.where(self.normsys_mask,results_norm,self.normsys_default)
+        results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
         results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
-        results_histo   = np.where(self.histosys_mask,results_histo,self.histosys_default)
+        results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
 
 
-        statfactors = np.asarray([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
+        statfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
         results_staterr = self.staterror_mask * statfactors.reshape(statfactors.shape + (1,1))
-        results_staterr = np.where(self.staterror_mask,results_staterr,self.staterror_default)
+        results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
 
-        normfactors = np.asarray([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
+        normfactors = tensorlib.astensor([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
         results_normfac = self.normfactor_mask * normfactors.reshape(normfactors.shape + (1,1))
-        results_normfac = np.where(self.normfactor_mask,results_normfac,self.normfactor_default)
+        results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
 
 
-        thenom = np.asarray([self.mega_samples[s]['nom'] for s in self.do_samples])
-        thenom = np.asarray(thenom).reshape((1,)+results_histo.shape[1:])
+        thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
+        thenom = tensorlib.astensor(thenom).reshape((1,)+results_histo.shape[1:])
 
-        allsum = np.concatenate([
+        allsum = tensorlib.concatenate([
             results_histo,
             thenom
         ])
 
-        nom_plus_delta = np.sum(allsum,axis=0)
+        nom_plus_delta = tensorlib.sum(allsum,axis=0)
         nom_plus_delta = nom_plus_delta.reshape((1,)+nom_plus_delta.shape)
 
         # print(nom_plus_delta.shape,results_histo.shape)
-        allfac = np.concatenate([
+        allfac = tensorlib.concatenate([
             results_norm,
             results_staterr,
             results_normfac,
             nom_plus_delta
         ])
         allfac.shape
-        newbysample = np.product(allfac,axis=0)
-        newresults = np.sum(newbysample,axis=0)
+        newbysample = tensorlib.product(allfac,axis=0)
+        newresults = tensorlib.sum(newbysample,axis=0)
         return newresults[0] #only one alphas
 
 
