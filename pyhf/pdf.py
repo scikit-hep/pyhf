@@ -179,7 +179,8 @@ class Model(object):
         self.channel_nbins = channel_nbins
 
         self.finalized_stats = {k:finalize_stats(self.config.modifier(k)) for k,v in self.config.par_map.items() if 'staterror' in k}
-
+        self._make_mega()
+        self.prep()
 
     def _make_mega(self):
         helper = {}
