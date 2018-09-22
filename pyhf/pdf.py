@@ -545,24 +545,6 @@ class Model(object):
 
     def expected_actualdata(self,pars):
         import numpy as np
-        results_staterr = np.asarray([
-            [
-                [
-                    np.ones_like(self.mega_mods[s][m]['data']['mask'])*pars[self.config.par_slice(m)],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'staterror' 
-        ])
-
-
-        results_normfac = np.asarray([
-            [
-                [
-                    np.ones_like(self.mega_mods[s][m]['data']['mask'])*pars[self.config.par_slice(m)],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'normfactor' 
-        ])
 
         histosys_alphaset = np.asarray([
             pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
@@ -577,7 +559,13 @@ class Model(object):
         results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
         results_histo   = np.where(self.histosys_mask,results_histo,self.histosys_default)
 
+
+        statfactors = np.asarray([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
+        results_staterr = self.staterror_mask * statfactors.reshape(statfactors.shape + (1,1))
         results_staterr = np.where(self.staterror_mask,results_staterr,self.staterror_default)
+
+        normfactors = np.asarray([pars[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
+        results_normfac = self.normfactor_mask * normfactors.reshape(normfactors.shape + (1,1))
         results_normfac = np.where(self.normfactor_mask,results_normfac,self.normfactor_default)
 
 
@@ -634,6 +622,22 @@ class Model(object):
             data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
         return tensorlib.concatenate(data)
 
+    def old_constraint_logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        # iterate over all constraints order doesn't matter....
+        start_index = 0
+        summands = None
+        for cname in self.config.auxdata_order:
+            modifier, modslice = self.config.modifier(cname), \
+                self.config.par_slice(cname)
+            modalphas = modifier.alphas(pars[modslice])
+            end_index = start_index + int(modalphas.shape[0])
+            thisauxdata = auxdata[start_index:end_index]
+            start_index = end_index
+            constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
+            summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
+        return tensorlib.sum(summands) if summands is not None else 0
+
 
     def constraint_logpdf(self, auxdata, pars):
         normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
@@ -648,7 +652,20 @@ class Model(object):
         lambdas_data = self.expected_actualdata(pars)
         summands = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
 
-        result = tensorlib.sum(summands) + self.constraint_logpdf(aux_data, pars)
+        import numpy as np
+        tosum = summands[~np.isinf(summands)]
+        # print(tosum)
+        mainpdf = tensorlib.sum(tosum)
+
+
+
+
+        constraint = self.constraint_logpdf(aux_data, pars)
+        # print('main',mainpdf)
+        # print('cons',constraint)
+
+
+        result = mainpdf + constraint
         return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
 
     def pdf(self, pars, data):
