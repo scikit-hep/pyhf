@@ -413,38 +413,34 @@ class Model(object):
         
         results_staterr = None
         if len(self.stat_parslices):
-            #could probably all cols at once 
-            #factor columns for each modifier
-            columns = tensorlib.einsum('s,a,mb->msab',tensorlib.ones(len(self.do_samples)),[1],[pars[par_sl] for par_sl in self.stat_parslices])
-            #figure out how to stitch
-            results_staterr = tensorlib.astensor([
-                tensorlib.concatenate([
-                    self.staterror_default[i,:,:,:target[0]],
-                    cols,
-                    self.staterror_default[i,:,:,target[-1] + 1:]
-                    ],axis=-1) 
-                for i,(target,cols) in enumerate(zip(self.stat_targetind,columns))
+            default = [1.]*self.staterror_default.shape[-1]
+
+            factor_row = tensorlib.astensor([
+                tensorlib.concatenate((default[:t[0]],pars[sl],default[t[-1]+1:]))
+                for sl,t in zip(self.stat_parslices,self.stat_targetind)
             ])
+
+            results_staterr = tensorlib.einsum('s,a,mb->msab',
+                    tensorlib.ones(len(self.do_samples)),
+                    tensorlib.astensor([1]),
+                    factor_row)
+
+
             results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
 
         results_shapesys = None
         if len(self.shapesys_parslices):
             #could probably all cols at once 
             #factor columns for each modifier
-            columns = tensorlib.einsum('s,a,mb->msab',tensorlib.ones(len(self.do_samples)),[1],[pars[par_sl] for par_sl in self.shapesys_parslices])
-            #figure out how to stitch
-            results_shapesys = tensorlib.astensor([
-                tensorlib.concatenate([
-                    self.shapesys_default[i,:,:,:target[0]],
-                    cols,
-                    self.shapesys_default[i,:,:,target[-1] + 1:]
-                    ],axis=-1) 
-                for i,(target,cols) in enumerate(zip(self.shapesys_targetind,columns))
+            default = [1.]*self.shapesys_default.shape[-1]
+
+            factor_row = tensorlib.astensor([
+                tensorlib.concatenate((default[:t[0]],pars[sl],default[t[-1]+1:]))
+                for sl,t in zip(self.shapesys_parslices,self.shapesys_targetind)
             ])
+
             results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
-
-
-
+            
         results_normfac = None
         if self.normfac_indices.shape[0]:
             normfactors = pars[self.normfac_indices]
