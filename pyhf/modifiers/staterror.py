@@ -12,6 +12,7 @@ class staterror(object):
         self.n_parameters = len(nom_data)
         self.nominal_counts   = []
         self.uncertainties    = []
+        self.channel = None
 
         self.parset = constrained_by_normal(
             n_parameters = self.n_parameters,
@@ -35,6 +36,9 @@ class staterror(object):
     def add_sample(self, channel, sample, modifier_def):
         self.nominal_counts.append(sample['data'])
         self.uncertainties.append(modifier_def['data'])
+        if self.channel and self.channel != channel['name']:
+            raise RuntimeError('not sure yet how to deal with this case')
+        self.channel = channel['name']
 
     def apply(self, channel, sample, pars):
         return pars

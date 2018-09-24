@@ -208,6 +208,7 @@ class Model(object):
                 elif mtype == 'shapefactor':
                     modspec.setdefault('data',{})['mask'] = []
                 elif mtype == 'shapesys':
+                    modspec.setdefault('data',{})['uncrt'] = []
                     modspec.setdefault('data',{})['mask'] = []
                 elif mtype == 'staterror':
                     modspec.setdefault('data',{})['uncrt'] = []
@@ -243,6 +244,11 @@ class Model(object):
                     elif mtype == 'normfactor':
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
+                    elif mtype == 'shapesys':
+                        uncrt = thismod['data'] if thismod else [0.0]*len(nom)
+                        maskval = [True if thismod else False]*len(nom)
+                        mega_mods[s][m]['data']['mask']  += maskval
+                        mega_mods[s][m]['data']['uncrt'] += uncrt
                     elif mtype == 'staterror':
                         uncrt = thismod['data'] if thismod else [0.0]*len(nom)
                         maskval = [True if thismod else False]*len(nom)
@@ -316,6 +322,7 @@ class Model(object):
             ] for m,mtype in self.do_mods if mtype == 'normfactor' 
         ])
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
+
         self.staterror_mask = tensorlib.astensor([
             [
                 [
@@ -325,7 +332,19 @@ class Model(object):
             ] for m,mtype in self.do_mods if mtype == 'staterror' 
         ])
         self.staterror_default = tensorlib.ones(self.staterror_mask.shape)
-        
+
+
+        self.shapesys_mask = tensorlib.astensor([
+            [
+                [
+                    self.mega_mods[s][m]['data']['mask'],
+                ]
+                for s in self.do_samples
+            ] for m,mtype in self.do_mods if mtype == 'shapesys' 
+        ])
+        self.shapesys_default = tensorlib.ones(self.shapesys_mask.shape)
+
+
         parindices = list(range(len(self.config.suggested_init())))
         self.histo_indices = tensorlib.astensor([
             parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
@@ -350,7 +369,10 @@ class Model(object):
         channel_slice_map = {c:binindices[sl] for c,sl in zip(self.do_channels,channel_slices)}
 
         self.stat_parslices  = [self.config.par_slice(m) for m,mtype in self.do_mods if mtype=='staterror']
-        self.stat_targetind  = [channel_slice_map[m.replace('staterror/staterror_','')] for m,mtype in self.do_mods if mtype=='staterror']
+        self.stat_targetind  = [channel_slice_map[self.config.modifier(m).channel] for m,mtype in self.do_mods if mtype=='staterror']
+
+        self.shapesys_parslices  = [self.config.par_slice(m) for m,mtype in self.do_mods if mtype=='shapesys']
+        self.shapesys_targetind  = [channel_slice_map[self.config.modifier(m).channel] for m,mtype in self.do_mods if mtype=='shapesys']
 
 
         thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
@@ -378,13 +400,13 @@ class Model(object):
         pars = tensorlib.astensor(pars)
 
         results_norm = None
-        if len(self.normsys_indices):
+        if self.normsys_indices.shape[0]:
             normsys_alphaset = pars[self.normsys_indices]
             results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
             results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
         results_histo = None
-        if len(self.histo_indices):
+        if self.histo_indices.shape[0]:
             histosys_alphaset = pars[self.histo_indices]
             results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
             results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
@@ -405,8 +427,26 @@ class Model(object):
             ])
             results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
 
+        results_shapesys = None
+        if len(self.shapesys_parslices):
+            #could probably all cols at once 
+            #factor columns for each modifier
+            columns = tensorlib.einsum('s,a,mb->msab',tensorlib.ones(len(self.do_samples)),[1],[pars[par_sl] for par_sl in self.shapesys_parslices])
+            #figure out how to stitch
+            results_shapesys = tensorlib.astensor([
+                tensorlib.concatenate([
+                    self.shapesys_default[i,:,:,:target[0]],
+                    cols,
+                    self.shapesys_default[i,:,:,target[-1] + 1:]
+                    ],axis=-1) 
+                for i,(target,cols) in enumerate(zip(self.shapesys_targetind,columns))
+            ])
+            results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
+
+
+
         results_normfac = None
-        if len(self.normfac_indices):
+        if self.normfac_indices.shape[0]:
             normfactors = pars[self.normfac_indices]
             results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
             results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
@@ -415,6 +455,7 @@ class Model(object):
         factors = list(filter(lambda x: x is not None,[
                 results_norm,
                 results_staterr,
+                results_shapesys,
                 results_normfac
         ]))
         return deltas, factors
@@ -449,6 +490,11 @@ class Model(object):
         normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
         poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
         return normal + poisson
+
+        if newsummands is None:
+            return 0
+        tosum = newsummands
+        return tensorlib.sum(tosum)
 
     def logpdf(self, pars, data):
         tensorlib, _ = get_backend()
