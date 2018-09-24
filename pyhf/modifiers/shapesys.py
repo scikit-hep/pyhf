@@ -8,6 +8,7 @@ from ..paramsets import constrained_by_poisson
 class shapesys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
+        self.channel = None
 
         bkg_over_db_squared = []
         for b, deltab in zip(nom_data, modifier_data):
@@ -28,7 +29,9 @@ class shapesys(object):
         assert self.pdf_type == self.parset.pdf_type
 
     def add_sample(self, channel, sample, modifier_def):
-        pass
+        if self.channel and self.channel != channel['name']:
+            raise RuntimeError('not sure yet how to deal with this case')
+        self.channel = channel['name']
 
     def apply(self, channel, sample, pars):
         return pars
