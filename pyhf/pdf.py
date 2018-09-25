@@ -348,14 +348,13 @@ class Model(object):
         parindices = list(range(len(self.config.suggested_init())))
         self.histo_indices = tensorlib.astensor([
             parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
-        ])
+        ], dtype='int')
+
         self.normsys_indices = tensorlib.astensor([
             parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
-        ])
+        ], dtype='int')
 
-        self.normfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ])
-
-        self.statfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'staterror' ])
+        self.normfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ], dtype='int')
 
 
         start_index = 0
@@ -400,14 +399,14 @@ class Model(object):
         pars = tensorlib.astensor(pars)
 
         results_norm = None
-        if self.normsys_indices.shape[0]:
-            normsys_alphaset = pars[self.normsys_indices]
+        if int(self.normsys_indices.shape[0]):
+            normsys_alphaset = tensorlib.gather(pars,self.normsys_indices)
             results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
             results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
         results_histo = None
-        if self.histo_indices.shape[0]:
-            histosys_alphaset = pars[self.histo_indices]
+        if int(self.histo_indices.shape[0]):
+            histosys_alphaset = tensorlib.gather(pars,self.histo_indices)
             results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
             results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
         
@@ -439,11 +438,16 @@ class Model(object):
                 for sl,t in zip(self.shapesys_parslices,self.shapesys_targetind)
             ])
 
+            results_shapesys = tensorlib.einsum('s,a,mb->msab',
+                    tensorlib.ones(len(self.do_samples)),
+                    tensorlib.astensor([1]),
+                    factor_row)
+
             results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
             
         results_normfac = None
-        if self.normfac_indices.shape[0]:
-            normfactors = pars[self.normfac_indices]
+        if int(self.normfac_indices.shape[0]):
+            normfactors = tensorlib.gather(pars,self.normfac_indices)
             results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
             results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
 
