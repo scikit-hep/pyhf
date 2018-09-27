@@ -75,6 +75,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.skip_mxnet
+@pytest.mark.skip_pytorch
 def test_runOnePoint(benchmark, backend, n_bins):
     """
     Benchmark the performance of pyhf.runOnePoint()
