@@ -264,7 +264,7 @@ class Model(object):
         tensorlib,_ = get_backend()
 
 
-        from modifiers.new_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
+        from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
 
         normsys_mods = [m for m,mtype in self.do_mods if mtype == 'normsys' ]
         self.normsys_combined = normsys_combinedmod(normsys_mods,self)
