@@ -153,7 +153,6 @@ def test_pdf_integration_histosys(backend):
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.skip_pytorch
 def test_pdf_integration_normsys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
