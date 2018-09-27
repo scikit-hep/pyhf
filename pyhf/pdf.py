@@ -175,7 +175,10 @@ class Model(object):
         self.channel_nbins = channel_nbins
         self._make_mega()
         self._prep_mega()
-        self.prepped_constraints = self.prep_constraints()
+
+        from .constraints import gaussian_constraint_combined, poisson_constraint_combined
+        self.prepped_constraints_gaussian = gaussian_constraint_combined(self)
+        self.prepped_constraints_poisson = poisson_constraint_combined(self)
 
 
     def _make_mega(self):
@@ -362,6 +365,14 @@ class Model(object):
         normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
         poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
         return normal + poisson
+
+    def mainlogpdf(self, maindata, pars):
+        tensorlib, _ = get_backend()
+        lambdas_data = self.expected_actualdata(pars)
+        summands   = tensorlib.poisson_logpdf(maindata, lambdas_data)
+        tosum      = tensorlib.boolean_mask(summands,tensorlib.isfinite(summands))
+        mainpdf    = tensorlib.sum(tosum)
+        return mainpdf
 
     def logpdf(self, pars, data):
         try:
