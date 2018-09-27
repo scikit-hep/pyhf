@@ -175,6 +175,8 @@ class Model(object):
         self.channel_nbins = channel_nbins
         self._make_mega()
         self._prep_mega()
+        self.prepped_constraints = self.prep_constraints()
+
 
     def _make_mega(self):
         helper = {}
@@ -276,6 +278,8 @@ class Model(object):
         self.normfac_combined = normfac_combinedmod(normfac_mods,self)
 
         staterr_mods = [m for m,mtype in self.do_mods if mtype == 'staterror']
+        for m in staterr_mods:
+            self.config.modifier(m).finalize()
         self.staterr_combined = staterror_combined(staterr_mods,self)
 
         shapesys_mods = [m for m,mtype in self.do_mods if mtype == 'shapesys']
