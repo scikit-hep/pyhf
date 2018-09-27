@@ -399,13 +399,13 @@ class Model(object):
         pars = tensorlib.astensor(pars)
 
         results_norm = None
-        if int(self.normsys_indices.shape[0]):
+        if tensorlib.shape(self.normsys_indices)[0]:
             normsys_alphaset = tensorlib.gather(pars,self.normsys_indices)
             results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
             results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
 
         results_histo = None
-        if int(self.histo_indices.shape[0]):
+        if tensorlib.shape(self.histo_indices)[0]:
             histosys_alphaset = tensorlib.gather(pars,self.histo_indices)
             results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
             results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
@@ -448,7 +448,7 @@ class Model(object):
             results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
             
         results_normfac = None
-        if int(self.normfac_indices.shape[0]):
+        if tensorlib.shape(self.normfac_indices)[0]:
             normfactors = tensorlib.gather(pars,self.normfac_indices)
             results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
             results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
@@ -493,15 +493,10 @@ class Model(object):
         poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
         return normal + poisson
 
-        if newsummands is None:
-            return 0
-        tosum = newsummands
-        return tensorlib.sum(tosum)
-
     def logpdf(self, pars, data):
         tensorlib, _ = get_backend()
         pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-        cut = int(data.shape[0]) - len(self.config.auxdata)
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
         lambdas_data = self.expected_actualdata(pars)
         summands   = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
