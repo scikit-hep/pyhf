@@ -498,10 +498,9 @@ class Model(object):
         pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
         cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
         actual_data, aux_data = data[:cut], data[cut:]
-        lambdas_data = self.expected_actualdata(pars)
-        summands   = tensorlib.log(tensorlib.poisson(actual_data, lambdas_data))
-        
-        mainpdf    = tensorlib.sum(summands)
+
+
+        mainpdf    = self.mainlogpdf(actual_data,pars)
         constraint = self.constraint_logpdf(aux_data, pars)
         
         result = mainpdf + constraint
