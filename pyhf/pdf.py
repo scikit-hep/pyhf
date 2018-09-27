@@ -429,12 +429,7 @@ class Model(object):
 
         results_shapesys = None
         if len(self.shapesys_parslices):
-            #could probably all cols at once 
-            #factor columns for each modifier
             default = [1.]*self.shapesys_default.shape[-1]
-
-            # print('what',default)
-
             factor_row = tensorlib.astensor([
                 tensorlib.concatenate((default[:t[0]],pars[sl],default[t[-1]+1:]))
                 for sl,t in zip(self.shapesys_parslices,self.shapesys_targetind)
