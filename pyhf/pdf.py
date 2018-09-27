@@ -494,17 +494,25 @@ class Model(object):
         return normal + poisson
 
     def logpdf(self, pars, data):
-        tensorlib, _ = get_backend()
-        pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-        actual_data, aux_data = data[:cut], data[cut:]
+        try:
+            # print('eval',pars)
+            tensorlib, _ = get_backend()
+            pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
+            cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+            actual_data, aux_data = data[:cut], data[cut:]
 
 
-        mainpdf    = self.mainlogpdf(actual_data,pars)
-        constraint = self.constraint_logpdf(aux_data, pars)
-        
-        result = mainpdf + constraint
-        return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
+            mainpdf    = self.mainlogpdf(actual_data,pars)
+            constraint = self.constraint_logpdf(aux_data, pars)
+            
+            result = mainpdf + constraint
+            return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
+        except:
+            log.error('eval failed for data {} pars: {}'.format(
+                tensorlib.tolist(data),
+                tensorlib.tolist(pars)
+            ))
+            raise
 
     def pdf(self, pars, data):
         tensorlib, _ = get_backend()
