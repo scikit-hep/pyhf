@@ -262,112 +262,35 @@ class Model(object):
 
     def _prep_mega(self):
         tensorlib,_ = get_backend()
-        self.normsys_histoset = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['lo'],
-                    [1.]*len(self.mega_samples[s]['nom']),
-                    self.mega_mods[s][m]['data']['hi'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'normsys' 
-        ])
-        self.normsys_mask = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['mask'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'normsys' 
-        ])
-        self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
 
-        self.histosys_histoset = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['lo_data'],
-                    self.mega_samples[s]['nom'],
-                    self.mega_mods[s][m]['data']['hi_data'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'histosys' 
-        ])
+        from modifiers.new_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
 
-        self.histosys_mask = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['mask'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'histosys' 
-        ])
-        self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
+        normsys_mods = [m for m,mtype in self.do_mods if mtype == 'normsys' ]
+        self.normsys_combined = normsys_combinedmod(normsys_mods,self)
 
+        histosys_mods = [m for m,mtype in self.do_mods if mtype == 'histosys' ]
+        self.histosys_combined = histosys_combinedmod(histosys_mods,self)
 
-        self.normfactor_mask = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['mask'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'normfactor' 
-        ])
-        self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
+        normfac_mods = [m for m,mtype in self.do_mods if mtype == 'normfactor']
+        self.normfac_combined = normfac_combinedmod(normfac_mods,self)
 
-        self.staterror_mask = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['mask'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'staterror' 
-        ])
-        self.staterror_default = tensorlib.ones(self.staterror_mask.shape)
+        staterr_mods = [m for m,mtype in self.do_mods if mtype == 'staterror']
+        self.staterr_combined = staterror_combined(staterr_mods,self)
 
+        shapesys_mods = [m for m,mtype in self.do_mods if mtype == 'shapesys']
+        self.shapesys_combined = shapesys_combined(shapesys_mods,self)
 
-        self.shapesys_mask = tensorlib.astensor([
-            [
-                [
-                    self.mega_mods[s][m]['data']['mask'],
-                ]
-                for s in self.do_samples
-            ] for m,mtype in self.do_mods if mtype == 'shapesys' 
-        ])
-        self.shapesys_default = tensorlib.ones(self.shapesys_mask.shape)
-
-
-        parindices = list(range(len(self.config.suggested_init())))
-        self.histo_indices = tensorlib.astensor([
-            parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'histosys'
-        ], dtype='int')
-
-        self.normsys_indices = tensorlib.astensor([
-            parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normsys'
-        ], dtype='int')
-
-        self.normfac_indices = tensorlib.astensor([parindices[self.config.par_slice(m)] for m,mtype in self.do_mods if mtype == 'normfactor' ], dtype='int')
-
-
-        start_index = 0
-        channel_slices = []
-        for c in self.do_channels:
-            end_index = start_index + self.channel_nbins[c]
-            channel_slices.append(slice(start_index,end_index))
-            start_index = end_index
-
-        binindices = list(range(sum(list(self.channel_nbins.values()))))
-        channel_slice_map = {c:binindices[sl] for c,sl in zip(self.do_channels,channel_slices)}
-
-        self.stat_parslices  = [self.config.par_slice(m) for m,mtype in self.do_mods if mtype=='staterror']
-        self.stat_targetind  = [channel_slice_map[self.config.modifier(m).channel] for m,mtype in self.do_mods if mtype=='staterror']
-
-        self.shapesys_parslices  = [self.config.par_slice(m) for m,mtype in self.do_mods if mtype=='shapesys']
-        self.shapesys_targetind  = [channel_slice_map[self.config.modifier(m).channel] for m,mtype in self.do_mods if mtype=='shapesys']
-
-
-        thenom = tensorlib.astensor([self.mega_samples[s]['nom'] for s in self.do_samples])
-        self.thenom = tensorlib.reshape(thenom,(1,len(self.do_samples),1,sum(list(self.channel_nbins.values()))))
+        thenom = tensorlib.astensor(
+            [self.mega_samples[s]['nom'] for s in self.do_samples]
+        )
+        self.thenom = tensorlib.reshape(thenom,(
+            1,
+            len(self.do_samples),
+            1,
+            sum(list(self.channel_nbins.values()))
+            )
+         )
 
 
     def expected_auxdata(self, pars):
@@ -390,63 +313,11 @@ class Model(object):
 
         pars = tensorlib.astensor(pars)
 
-        results_norm = None
-        if tensorlib.shape(self.normsys_indices)[0]:
-            normsys_alphaset = tensorlib.gather(pars,self.normsys_indices)
-            results_norm   = _hfinterp_code1(self.normsys_histoset,normsys_alphaset)
-            results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
-
-        results_histo = None
-        if tensorlib.shape(self.histo_indices)[0]:
-            histosys_alphaset = tensorlib.gather(pars,self.histo_indices)
-            results_histo   = _hfinterp_code0(self.histosys_histoset,histosys_alphaset)
-            results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
-        
-        results_staterr = None
-        if len(self.stat_parslices):
-            default = [1.]*self.staterror_default.shape[-1]
-
-            totensor = []
-            for sl,t in zip(self.stat_parslices,self.stat_targetind):
-                before = tensorlib.astensor(default[:t[0]])
-                after  = tensorlib.astensor(default[t[-1]+1:])
-                v = tensorlib.concatenate([before,pars[sl],after])
-                totensor.append(v)
-
-            factor_row = tensorlib.stack(totensor)
-
-            results_staterr = tensorlib.einsum('s,a,mb->msab',
-                    tensorlib.ones(len(self.do_samples)),
-                    tensorlib.astensor([1]),
-                    factor_row)
-
-
-            results_staterr = tensorlib.where(self.staterror_mask,results_staterr,self.staterror_default)
-
-        results_shapesys = None
-        if len(self.shapesys_parslices):
-            default = [1.]*self.shapesys_default.shape[-1]
-
-            totensor = []
-            for sl,t in zip(self.stat_parslices,self.stat_targetind):
-                before = tensorlib.astensor(default[:t[0]])
-                after  = tensorlib.astensor(default[t[-1]+1:])
-                v = tensorlib.concatenate([before,pars[sl],after])
-                totensor.append(v)
-            factor_row = tensorlib.stack(totensor)
-
-            results_shapesys = tensorlib.einsum('s,a,mb->msab',
-                    tensorlib.ones(len(self.do_samples)),
-                    tensorlib.astensor([1]),
-                    factor_row)
-
-            results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
-            
-        results_normfac = None
-        if tensorlib.shape(self.normfac_indices)[0]:
-            normfactors = tensorlib.gather(pars,self.normfac_indices)
-            results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
-            results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
+        results_norm     = self.normsys_combined.apply(pars)
+        results_histo    = self.histosys_combined.apply(pars)
+        results_staterr  = self.staterr_combined.apply(pars)
+        results_shapesys = self.shapesys_combined.apply(pars)
+        results_normfac  = self.normfac_combined.apply(pars)
 
         deltas  = list(filter(lambda x: x is not None,[results_histo]))
         factors = list(filter(lambda x: x is not None,[
