@@ -48,7 +48,7 @@ extras_require = {
         'nbsphinx',
         'm2r',
         'jsonpatch',
-        'prompt-toolkit>=2.0', # needed to fix up python 3 dependency issues
+        'prompt-toolkit<=2.0', # needed to fix up python 3 dependency issues
     ]
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
