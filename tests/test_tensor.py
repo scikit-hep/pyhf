@@ -55,6 +55,12 @@ def test_common_tensor_backends(backend):
     # poisson(lambda=0) is not defined, should return NaN
     assert tb.tolist(pyhf.tensorlib.poisson([0, 0, 1, 1], [0, 1, 0, 1])) == pytest.approx([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True)
 
+    assert tb.shape(tb.ones((1,2,3,4,5))) == (1,2,3,4,5)
+    assert tb.tolist(tb.reshape(tb.ones((1,2,3)), (-1,))) == [1, 1, 1, 1, 1, 1]
+    assert tb.tolist(tb.gather(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([1,0], dtype='int'))) == [[3, 4], [1, 2]]
+    assert tb.tolist(tb.boolean_mask(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([[False, True],[True, False], [False, False]], dtype='bool'))) == [2, 3]
+    assert tb.tolist(tb.isfinite(tb.astensor([1.0, float("nan"), float("inf")]))) == [True, False, False]
+
 def test_einsum(backend):
     tb = pyhf.tensorlib
     x = np.arange(20).reshape(5,4).tolist()
