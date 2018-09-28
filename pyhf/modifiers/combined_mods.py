@@ -40,7 +40,9 @@ class normsys_combinedmod(object):
             return
         normsys_alphaset = tensorlib.gather(pars,self.normsys_indices)
         results_norm   = self.interpolator.interpolate(normsys_alphaset)
-        results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
+
+        #either rely on numerical no-op or force with line below
+        # results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
         return results_norm
 
 
@@ -81,7 +83,8 @@ class histosys_combinedmod(object):
             return
         histosys_alphaset = tensorlib.gather(pars,self.histo_indices)
         results_histo   = self.interpolator.interpolate(histosys_alphaset)
-        results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
+        #either rely on numerical no-op or force with line below
+        # results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
         return results_histo
 
 

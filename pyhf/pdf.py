@@ -385,7 +385,7 @@ class Model(object):
             constraint = self.constraint_logpdf(aux_data, pars)
             
             result = mainpdf + constraint
-            return tensorlib.astensor(result) * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
+            return result * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
         except:
             log.error('eval failed for data {} pars: {}'.format(
                 tensorlib.tolist(data),

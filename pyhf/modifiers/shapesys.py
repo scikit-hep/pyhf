@@ -34,4 +34,4 @@ class shapesys(object):
         self.channel = channel['name']
 
     def apply(self, channel, sample, pars):
-        return pars
+        raise RuntimeError
