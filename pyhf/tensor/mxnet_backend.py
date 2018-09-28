@@ -81,9 +81,6 @@ class mxnet_backend(object):
     def gather(self,tensor,indices):
         return tensor[indices]
 
-    def boolean_mask(self, tensor, mask):
-        return nd.array(tensor.asnumpy()[mask.asnumpy()])
-
     def astensor(self, tensor_in, dtype = 'float'):
         """
         Convert to a MXNet NDArray.
@@ -94,7 +91,7 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: A multi-dimensional, fixed-size homogenous array.
         """
-        dtypemap = {'float': 'float64', 'int': 'int64', 'bool': 'uint8'}
+        dtypemap = {'float': 'float32', 'int': 'int32', 'bool': 'uint8'}
         dtype = dtypemap[dtype]
         try:
             tensor = nd.array(tensor_in, dtype = dtype)

@@ -134,9 +134,6 @@ class pytorch_backend(object):
         """
         return torch.cat(sequence, dim=axis)
 
-    def boolean_mask(self, tensor, mask):
-        return torch.masked_select(tensor,mask)
-
     def isfinite(self, tensor):
         return torch.isfinite(tensor)
 
