@@ -138,7 +138,7 @@ def test_pdf_eval(backend):
     }
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
-    assert pytest.approx([-17.648827643136507], abs=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
+    assert pytest.approx([-17.648827643136507], rel=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
 
 
 def test_pdf_eval_2(backend):
@@ -156,4 +156,4 @@ def test_pdf_eval_2(backend):
                        'bkg'], source['bindata']['bkgerr'])
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    assert pytest.approx([-23.579605171119738], abs=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
+    assert pytest.approx([-23.579605171119738], rel=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
