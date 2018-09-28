@@ -48,7 +48,7 @@ extras_require = {
         'nbsphinx',
         'm2r',
         'jsonpatch',
-        'prompt-toolkit<=2.0', # needed to fix up python 3 dependency issues
+        'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
     ]
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
