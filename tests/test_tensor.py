@@ -57,8 +57,14 @@ def test_common_tensor_backends(backend):
 
     assert tb.shape(tb.ones((1,2,3,4,5))) == (1,2,3,4,5)
     assert tb.tolist(tb.reshape(tb.ones((1,2,3)), (-1,))) == [1, 1, 1, 1, 1, 1]
+
+def test_gather(backend):
+    tb = pyhf.tensorlib
     assert tb.tolist(tb.gather(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([1,0], dtype='int'))) == [[3, 4], [1, 2]]
-    assert tb.tolist(tb.boolean_mask(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([[False, True],[True, False], [False, False]], dtype='bool'))) == [2, 3]
+
+@pytest.mark.fail_mxnet
+def test_isfinite(backend):
+    tb = pyhf.tensorlib
     assert tb.tolist(tb.isfinite(tb.astensor([1.0, float("nan"), float("inf")]))) == [True, False, False]
 
 def test_einsum(backend):
@@ -127,34 +133,19 @@ def test_pdf_eval():
     assert np.std(values) < 5e-5
 
 
-def test_pdf_eval_2():
-    tf_sess = tf.Session()
-    backends = [
-        numpy_backend(),
-        tensorflow_backend(session=tf_sess),
-        pytorch_backend(),
-        mxnet_backend()
-    ]
-
-    values = []
-    for b in backends:
-        pyhf.set_backend(b)
-
-        source = {
-            "binning": [2, -0.5, 1.5],
-            "bindata": {
-                "data":    [120.0, 180.0],
-                "bkg":     [100.0, 150.0],
-                "bkgerr":     [10.0, 10.0],
-                "sig":     [30.0, 95.0]
-            }
+def test_pdf_eval_2(backend):
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {
+            "data":    [120.0, 180.0],
+            "bkg":     [100.0, 150.0],
+            "bkgerr":     [10.0, 10.0],
+            "sig":     [30.0, 95.0]
         }
+    }
 
-        pdf = hepdata_like(source['bindata']['sig'], source['bindata'][
-                           'bkg'], source['bindata']['bkgerr'])
-        data = source['bindata']['data'] + pdf.config.auxdata
+    pdf = hepdata_like(source['bindata']['sig'], source['bindata'][
+                       'bkg'], source['bindata']['bkgerr'])
+    data = source['bindata']['data'] + pdf.config.auxdata
 
-        v1 = pdf.logpdf(pdf.config.suggested_init(), data)
-        values.append(pyhf.tensorlib.tolist(v1)[0])
-
-    assert np.std(values) < 5e-5
+    assert pytest.approx([-23.579605171119738]) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
