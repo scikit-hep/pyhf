@@ -157,17 +157,18 @@ class staterror_combined(object):
 
         if self.stat_parslices:
             self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-                tensorlib.concatenate([before,self.parindices[sl],after])
+                tensorlib.concatenate([before,tensorlib.astensor(self.parindices[sl]),after])
                 for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
             ]),dtype='int')
         else:
             self.factor_row_indices = None
+        self.default_value = tensorlib.astensor([1.])
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
         if self.factor_row_indices is None:
             return
-        factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
+        factor_row = tensorlib.gather(tensorlib.concatenate([pars,self.default_value]),self.factor_row_indices)
         results_staterr = tensorlib.einsum('s,a,mb->msab',
                 self.sample_ones,
                 self.alpha_ones,
@@ -223,19 +224,19 @@ class shapesys_combined(object):
 
         if self.shapesys_parslices:
             self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-                tensorlib.concatenate([before,self.parindices[sl],after])
+                tensorlib.concatenate([before,tensorlib.astensor(self.parindices[sl]),after])
                 for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
             ]),dtype='int')
         else:
             self.factor_row_indices = None
-
+        self.default_value = tensorlib.astensor([1.])
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
         if self.factor_row_indices is None:
             return
         tensorlib, _ = get_backend()
-        factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
+        factor_row = tensorlib.gather(tensorlib.concatenate([pars,self.default_value]),self.factor_row_indices)
 
         results_shapesys = tensorlib.einsum('s,a,mb->msab',
                 self.sample_ones,
