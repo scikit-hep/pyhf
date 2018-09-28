@@ -155,14 +155,17 @@ class staterror_combined(object):
             self.befores.append(before)
             self.afters.append(after)
 
-        self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-            tensorlib.concatenate([before,self.parindices[sl],after])
-            for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
-        ]),dtype='int')
+        if self.stat_parslices:
+            self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
+                tensorlib.concatenate([before,self.parindices[sl],after])
+                for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
+            ]),dtype='int')
+        else:
+            self.factor_row_indices = None
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
-        if not self.stat_parslices:
+        if self.factor_row_indices is None:
             return
         factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
         results_staterr = tensorlib.einsum('s,a,mb->msab',
@@ -218,15 +221,18 @@ class shapesys_combined(object):
             self.befores.append(before)
             self.afters.append(after)
 
-        self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-            tensorlib.concatenate([before,self.parindices[sl],after])
-            for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
-        ]),dtype='int')
+        if self.shapesys_parslices:
+            self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
+                tensorlib.concatenate([before,self.parindices[sl],after])
+                for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
+            ]),dtype='int')
+        else:
+            self.factor_row_indices = None
 
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
-        if not self.shapesys_parslices:
+        if self.factor_row_indices is None:
             return
         tensorlib, _ = get_backend()
         factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
