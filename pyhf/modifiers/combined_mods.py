@@ -128,7 +128,7 @@ class staterror_combined(object):
             c:binindices[sl] for c,sl in zip(pdf.do_channels,channel_slices)
         }
 
-        self.parindices = list(range(len(pdf.config.suggested_init())))
+        parindices = list(range(len(pdf.config.suggested_init())))
 
         self.staterror_mask = tensorlib.astensor([
             [
@@ -140,29 +140,29 @@ class staterror_combined(object):
         ])
         self.staterror_default = tensorlib.ones(self.staterror_mask.shape)
 
-        self.stat_parslices  = [pdf.config.par_slice(m) for m in staterr_mods]
-        self.stat_targetind  = [channel_slice_map[pdf.config.modifier(m).channel] for m in staterr_mods]
+        stat_parslices  = [pdf.config.par_slice(m) for m in staterr_mods]
+        stat_targetind  = [channel_slice_map[pdf.config.modifier(m).channel] for m in staterr_mods]
 
-        self.sample_ones = tensorlib.ones(len(pdf.do_samples))
-        self.alpha_ones = tensorlib.astensor([1])
-        self.default_row =  [1.]*self.staterror_default.shape[-1]
+        default_row =  [1.]*self.staterror_default.shape[-1]
+        befores     = []
+        afters      = []
+        for sl,t in zip(stat_parslices,stat_targetind):
+            before = tensorlib.astensor(default_row[:t[0]])
+            after  = tensorlib.astensor(default_row[t[-1]+1:])
+            befores.append(before)
+            afters.append(after)
 
-        self.befores = []
-        self.afters = []
-        for sl,t in zip(self.stat_parslices,self.stat_targetind):
-            before = tensorlib.astensor(self.default_row[:t[0]])
-            after  = tensorlib.astensor(self.default_row[t[-1]+1:])
-            self.befores.append(before)
-            self.afters.append(after)
-
-        if self.stat_parslices:
+        if stat_parslices:
             self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-                tensorlib.concatenate([before,tensorlib.astensor(self.parindices[sl]),after])
-                for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
+                tensorlib.concatenate([before,tensorlib.astensor(parindices[sl]),after])
+                for before,sl,after in zip(befores,stat_parslices,afters)
             ]),dtype='int')
         else:
             self.factor_row_indices = None
+
         self.default_value = tensorlib.astensor([1.])
+        self.sample_ones = tensorlib.ones(len(pdf.do_samples))
+        self.alpha_ones  = tensorlib.astensor([1])
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -191,6 +191,7 @@ class shapesys_combined(object):
             channel_slices.append(slice(start_index,end_index))
             start_index = end_index
 
+        parindices = list(range(len(pdf.config.suggested_init())))
         binindices = list(range(sum(list(pdf.channel_nbins.values()))))
         channel_slice_map = {
             c:binindices[sl] for c,sl in zip(pdf.do_channels,channel_slices)
@@ -206,26 +207,26 @@ class shapesys_combined(object):
         ])
         self.shapesys_default = tensorlib.ones(self.shapesys_mask.shape)
 
-        self.shapesys_parslices  = [pdf.config.par_slice(m) for m in shapesys_mods]
-        self.shapesys_targetind  = [
+        shapesys_parslices  = [pdf.config.par_slice(m) for m in shapesys_mods]
+        shapesys_targetind  = [
             channel_slice_map[pdf.config.modifier(m).channel] for m in shapesys_mods
         ]
         self.sample_ones = tensorlib.ones(len(pdf.do_samples))
         self.alpha_ones = tensorlib.astensor([1])
-        self.default_row =  [1.]*self.shapesys_default.shape[-1]
+        default_row =  [1.]*self.shapesys_default.shape[-1]
 
-        self.befores = []
-        self.afters = []
-        for sl,t in zip(self.shapesys_parslices,self.shapesys_targetind):
-            before = tensorlib.astensor(self.default_row[:t[0]])
-            after  = tensorlib.astensor(self.default_row[t[-1]+1:])
-            self.befores.append(before)
-            self.afters.append(after)
+        befores = []
+        afters = []
+        for sl,t in zip(shapesys_parslices,shapesys_targetind):
+            before = tensorlib.astensor(default_row[:t[0]])
+            after  = tensorlib.astensor(default_row[t[-1]+1:])
+            befores.append(before)
+            afters.append(after)
 
-        if self.shapesys_parslices:
+        if shapesys_parslices:
             self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
-                tensorlib.concatenate([before,tensorlib.astensor(self.parindices[sl]),after])
-                for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
+                tensorlib.concatenate([before,tensorlib.astensor(parindices[sl]),after])
+                for before,sl,after in zip(befores,shapesys_parslices,afters)
             ]),dtype='int')
         else:
             self.factor_row_indices = None
