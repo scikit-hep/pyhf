@@ -103,59 +103,42 @@ def test_einsum(backend):
         assert np.all(tb.tolist(tb.einsum('ij->ji',x)) == np.asarray(x).T.tolist())
         assert tb.tolist(tb.einsum('i,j->ij',tb.astensor([1,1,1]),tb.astensor([1,2,3]))) == [[1,2,3]]*3
 
-
-def test_pdf_eval():
-    tf_sess = tf.Session()
-    backends = [
-        numpy_backend(),
-        tensorflow_backend(session=tf_sess),
-        pytorch_backend(),
-        mxnet_backend()
-    ]
-
-    values = []
-    for b in backends:
-        if isinstance(b, mxnet_backend): continue
-        pyhf.set_backend(b)
-
-        source = {
-            "binning": [2, -0.5, 1.5],
-            "bindata": {
-                "data":    [120.0, 180.0],
-                "bkg":     [100.0, 150.0],
-                "bkgsys_up":  [102, 190],
-                "bkgsys_dn":  [98, 100],
-                "sig":     [30.0, 95.0]
+@pytest.mark.skip_mxnet
+def test_pdf_eval(backend):
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {
+            "data":    [120.0, 180.0],
+            "bkg":     [100.0, 150.0],
+            "bkgsys_up":  [102, 190],
+            "bkgsys_dn":  [98, 100],
+            "sig":     [30.0, 95.0]
+        }
+    }
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
+                        ]
+                    }
+                ]
             }
-        }
-        spec = {
-            'channels': [
-                {
-                    'name': 'singlechannel',
-                    'samples': [
-                        {
-                            'name': 'signal',
-                            'data': source['bindata']['sig'],
-                            'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}]
-                        },
-                        {
-                            'name': 'background',
-                            'data': source['bindata']['bkg'],
-                            'modifiers': [
-                                {'name': 'bkg_norm', 'type': 'histosys', 'data': {'lo_data': source['bindata']['bkgsys_dn'], 'hi_data': source['bindata']['bkgsys_up']}}
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-        pdf = pyhf.Model(spec)
-        data = source['bindata']['data'] + pdf.config.auxdata
-
-        v1 = pdf.logpdf(pdf.config.suggested_init(), data)
-        values.append(pyhf.tensorlib.tolist(v1)[0])
-
-    assert np.std(values) < 5e-5
+        ]
+    }
+    pdf = pyhf.Model(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+    assert pytest.approx([-17.648827643136507], abs=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
 
 
 def test_pdf_eval_2(backend):
@@ -173,4 +156,4 @@ def test_pdf_eval_2(backend):
                        'bkg'], source['bindata']['bkgerr'])
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    assert pytest.approx([-23.579605171119738]) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
+    assert pytest.approx([-23.579605171119738], abs=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
