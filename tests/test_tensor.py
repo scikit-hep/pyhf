@@ -58,7 +58,12 @@ def test_common_tensor_backends(backend):
     assert tb.shape(tb.ones((1,2,3,4,5))) == (1,2,3,4,5)
     assert tb.tolist(tb.reshape(tb.ones((1,2,3)), (-1,))) == [1, 1, 1, 1, 1, 1]
 
-def test_gather(backend):
+def test_1D_gather(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.gather(tb.astensor([1,2,3,4,5,6]), tb.astensor([4,0,3,2], dtype='int'))) == [5, 1, 4, 3]
+
+@pytest.mark.fail_pytorch
+def test_ND_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.gather(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([1,0], dtype='int'))) == [[3, 4], [1, 2]]
 
