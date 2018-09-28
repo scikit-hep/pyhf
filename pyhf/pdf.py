@@ -130,6 +130,35 @@ class Model(object):
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
+        self.cube, self.hm = self._make_cube()
+        self.mod_index = self._make_mod_index()
+        
+    def _make_mod_index(self):
+        allmods = {}
+        for channel in self.spec['channels']:
+            for sample in channel['samples']:
+                for m in sample['modifiers']:
+                    mname, mtype = m['name'], m['type']
+                    allmods.setdefault(mname, [mtype])
+        for mod_id,mname in enumerate(allmods.keys()):
+            allmods[mname].append(mod_id)
+        return allmods
+
+    def _make_cube(self):
+        import  numpy as np
+        nchan   = len(self.spec['channels'])
+        maxsamp = max(len(c['samples']) for c in self.spec['channels'])
+        maxbins = max(len(s['data']) for c in self.spec['channels'] for s in c['samples'])
+        cube = np.ones((nchan,maxsamp,maxbins))*np.nan
+        histoid = 0
+        histomap = {}
+        for i,c in enumerate(self.spec['channels']):
+            for j,s in enumerate(c['samples']):
+                cube[i,j,:] = s['data']
+                histomap.setdefault(c['name'],{})[s['name']] = {'id': histoid, 'index': tuple([i,j])}
+                histoid += 1
+        return cube,histomap
+
 
     def _mtype_results(self,mtype,pars):
         """
@@ -179,62 +208,13 @@ class Model(object):
                 for mname in sample['modifiers_by_type'].get(mtype,[]):
                     modifier = self.config.modifier(mname)
                     modpars  = pars[self.config.par_slice(mname)]
+                    mod_id   = self.mod_index[mname][-1]
+                    result   = modifier.apply(channel, sample, modpars)
+
                     mtype_results.setdefault(channel['name'],
                             {}).setdefault(sample['name'],
-                            []).append(
-                                modifier.apply(channel, sample, modpars)
-                            )
+                            []).append([mod_id,result])
         return mtype_results
-
-    def expected_sample(self, channel, sample, pars):
-        tensorlib, _ = get_backend()
-        """
-        Public API only, not efficient or fast. We compute all modification for
-        all samples in this method even though we are only interested in the
-        modifications in a single sample.
-
-        Alternatively the _all_modifications() could take a list of
-        channel/samples for which it should compute modificiations.
-        """
-        all_modifications = self._all_modifications(pars)
-        return self._expected_sample(
-            tensorlib.astensor(sample['data']), #nominal
-            *all_modifications[channel['name']][sample['name']] #mods
-        )
-
-    def _expected_sample(self, nominal, factors, deltas):
-        tensorlib, _ = get_backend()
-
-        #the base value for each bin is either the nominal with deltas applied
-        #if there were any otherwise just the nominal
-        if len(deltas):
-            #stack all bin-wise shifts in the yield value (delta) from the modifiers
-            #on top of each other and sum through the first axis
-            #will give us a overall shift to apply to the nominal histo
-            all_deltas = tensorlib.sum(tensorlib.stack(deltas), axis=0)
-
-            #stack nominal and deltas and sum through first axis again
-            #to arrive at yield value after deltas (but before factor mods)
-            nominal_and_deltas  = tensorlib.stack([nominal,all_deltas])
-            nominal_plus_deltas = tensorlib.sum(nominal_and_deltas,axis=0)
-            basefactor = [nominal_plus_deltas]
-        else:
-            basefactor = [nominal]
-
-        factors += basefactor
-
-        #multiplicative modifiers are either a single float that should be broadcast
-        #to all bins or a list of floats (one for each bin of the histogram)
-        binwise_factors = tensorlib.simple_broadcast(*factors)
-
-        #now we arrange all factors on top of each other so that for each bin we
-        #have all multiplicative factors
-        stacked_factors_binwise = tensorlib.stack(binwise_factors)
-
-        #binwise multiply all multiplicative factors such that we arrive
-        #at a single number for each bin
-        total_factors = tensorlib.product(stacked_factors_binwise, axis=0)
-        return total_factors
 
     def _all_modifications(self, pars):
         """
@@ -351,21 +331,31 @@ class Model(object):
         return auxdata
 
     def expected_actualdata(self, pars):
+        import numpy as np
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         data = []
 
         all_modifications = self._all_modifications(pars)
-        for channel in self.spec['channels']:
-            sample_stack = [
-                self._expected_sample(
-                    tensorlib.astensor(sample['data']), #nominal
-                    *all_modifications[channel['name']][sample['name']] #mods
-                )
-                for sample in channel['samples']
-            ]
-            data.append(tensorlib.sum(tensorlib.stack(sample_stack),axis=0))
-        return tensorlib.concatenate(data)
+
+        ntotalmods = len(self.mod_index)
+        delta_fields  = np.zeros((ntotalmods,) + self.cube.shape)
+        factor_fields = np.ones((ntotalmods,) + self.cube.shape)
+
+        for cname,smods in all_modifications.items():
+            for sname,(factors,deltas) in smods.items():
+                ind = self.hm[cname][sname]['index']
+                for mod_id,f in factors:
+                    factor_fields[mod_id][ind] = f
+                for mod_id,d in deltas:
+                    delta_fields[mod_id][ind]  = d
+        delta_field  = np.sum(delta_fields,axis=0)
+        factor_field = np.product(factor_fields,axis=0)
+
+        combined = factor_field * (delta_field + self.cube)
+        expected = [np.sum(combined[i][~np.isnan(combined[i])]) for i,c in enumerate(self.spec['channels'])]
+        return expected
+
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
