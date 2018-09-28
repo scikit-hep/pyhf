@@ -155,7 +155,22 @@ class staterror_combined(object):
             self.befores.append(before)
             self.afters.append(after)
 
+
     def apply(self,pars):
+        # Better... 
+        # nbins = 23
+        # nmods = 10
+
+        # rest = np.ones((nmods,nbins-1))
+        # ind = np.arange(nmods*nbins).reshape((nmods,nbins))
+
+        # premade = np.stack([np.concatenate((row[1:idx+1],[row[0]],row[1+idx:])) for row,idx in zip(ind,indices)])
+        # pars = np.asarray(list(reversed(np.arange(nmods))))
+        # ---------------
+         #wha = np.concatenate([pars.reshape(nmods,1),rest],axis=1)
+        # np.take(wha,premade)
+        #
+
         tensorlib, _ = get_backend()
         if not self.stat_parslices:
             return
