@@ -47,7 +47,7 @@ extras_require = {
         'sphinx_rtd_theme',
         'nbsphinx',
         'm2r',
-        'jsonpatch'
+        'jsonpatch',
         'prompt-toolkit>=2.0', # needed to fix up python 3 dependency issues
     ]
 }
