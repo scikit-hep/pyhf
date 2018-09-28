@@ -1,4 +1,5 @@
 from mxnet import nd
+
 import logging
 import math  # Required for normal()
 from numbers import Number  # Required for normal()
@@ -77,7 +78,13 @@ class mxnet_backend(object):
                                            tensor_in_2.reshape((1, rows2, 1, cols2))),
                           (rows1 * cols1, rows2 * cols2))
 
-    def astensor(self, tensor_in):
+    def gather(self,tensor,indices):
+        return tensor[indices]
+
+    def boolean_mask(self, tensor, mask):
+        return nd.array(tensor.asnumpy()[mask.asnumpy()])
+
+    def astensor(self, tensor_in, dtype = 'float'):
         """
         Convert to a MXNet NDArray.
 
@@ -87,10 +94,12 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: A multi-dimensional, fixed-size homogenous array.
         """
+        dtypemap = {'float': 'float64', 'int': 'int64', 'bool': 'uint8'}
+        dtype = dtypemap[dtype]
         try:
-            tensor = nd.array(tensor_in)
+            tensor = nd.array(tensor_in, dtype = dtype)
         except ValueError:
-            tensor = nd.array([tensor_in])
+            tensor = nd.array([tensor_in], dtype = dtype)
         return tensor
 
     def sum(self, tensor_in, axis=None):
@@ -323,6 +332,12 @@ class mxnet_backend(object):
                      else nd.broadcast_axis(arg[0], axis=len(arg.shape) - 1, size=max_dim)
                      for arg in args]
         return nd.stack(*broadcast)
+
+    def shape(self, tensor):
+        return tensor.shape
+
+    def reshape(self, tensor, newshape):
+        return nd.reshape(tensor,newshape)
 
     def einsum(self, subscripts, *operands):
         """

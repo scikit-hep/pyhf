@@ -73,7 +73,7 @@ class tensorflow_backend(object):
         Returns:
             `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
         """
-        dtypemap = {'float': tf.float32, 'int': tf.int32}
+        dtypemap = {'float': tf.float32, 'int': tf.int32, 'bool': tf.bool}
         dtype = dtypemap[dtype]
 
         if isinstance(tensor_in, tf.Tensor):

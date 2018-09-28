@@ -52,7 +52,7 @@ class pytorch_backend(object):
         Returns:
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
-        dtypemap = {'float': torch.float, 'int': torch.int}
+        dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         dtype = dtypemap[dtype]
         if isinstance(tensor_in, torch.Tensor):
             v = tensor_in
