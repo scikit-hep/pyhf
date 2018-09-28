@@ -11,7 +11,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest -r sx --ignore binder/ --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
