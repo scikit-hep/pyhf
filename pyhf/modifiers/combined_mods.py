@@ -155,37 +155,21 @@ class staterror_combined(object):
             self.befores.append(before)
             self.afters.append(after)
 
+        self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
+            tensorlib.concatenate([before,self.parindices[sl],after])
+            for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
+        ]),dtype='int')
 
     def apply(self,pars):
-        # Better... 
-        # nbins = 23
-        # nmods = 10
-
-        # rest = np.ones((nmods,nbins-1))
-        # ind = np.arange(nmods*nbins).reshape((nmods,nbins))
-
-        # premade = np.stack([np.concatenate((row[1:idx+1],[row[0]],row[1+idx:])) for row,idx in zip(ind,indices)])
-        # pars = np.asarray(list(reversed(np.arange(nmods))))
-        # ---------------
-         #wha = np.concatenate([pars.reshape(nmods,1),rest],axis=1)
-        # np.take(wha,premade)
-        #
-
         tensorlib, _ = get_backend()
         if not self.stat_parslices:
             return
-
-        factor_row = tensorlib.stack([
-            tensorlib.concatenate([before,pars[sl],after])
-            for before,sl,after in zip(self.befores,self.stat_parslices,self.afters)
-        ])
-
+        factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
         results_staterr = tensorlib.einsum('s,a,mb->msab',
                 self.sample_ones,
                 self.alpha_ones,
                 factor_row
         )
-        
         results_staterr = tensorlib.where(
             self.staterror_mask,
             results_staterr,
@@ -234,17 +218,18 @@ class shapesys_combined(object):
             self.befores.append(before)
             self.afters.append(after)
 
+        self.factor_row_indices = tensorlib.astensor(tensorlib.stack([
+            tensorlib.concatenate([before,self.parindices[sl],after])
+            for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
+        ]),dtype='int')
+
+
     def apply(self,pars):
         tensorlib, _ = get_backend()
         if not self.shapesys_parslices:
             return
-
-        default = [1.]*self.shapesys_default.shape[-1]
-
-        factor_row = tensorlib.stack([
-            tensorlib.concatenate([before,pars[sl],after])
-            for before,sl,after in zip(self.befores,self.shapesys_parslices,self.afters)
-        ])
+        tensorlib, _ = get_backend()
+        factor_row = tensorlib.gather(tensorlib.concatenate([pars,[1.]]),self.factor_row_indices)
 
         results_shapesys = tensorlib.einsum('s,a,mb->msab',
                 self.sample_ones,
