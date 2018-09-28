@@ -54,7 +54,16 @@ class tensorflow_backend(object):
         tensor_in_1 = tensor_in_1 if tensor_in_2.dtype is not tf.bool else tf.cast(tensor_in_2, tf.float32)
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
-    def astensor(self, tensor_in, dtype=tf.float32):
+    def gather(self,tensor,indices):
+        return tf.gather(tensor,indices)
+
+    def boolean_mask(self, tensor, mask):
+        return tf.boolean_mask(tensor,mask)
+
+    def isfinite(self, tensor):
+        return tf.is_finite(tensor)
+
+    def astensor(self, tensor_in, dtype='float'):
         """
         Convert to a TensorFlow Tensor.
 
@@ -64,6 +73,9 @@ class tensorflow_backend(object):
         Returns:
             `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
         """
+        dtypemap = {'float': tf.float32, 'int': tf.int32}
+        dtype = dtypemap[dtype]
+
         if isinstance(tensor_in, tf.Tensor):
             v = tensor_in
         else:
@@ -100,6 +112,12 @@ class tensorflow_backend(object):
     def sqrt(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return tf.sqrt(tensor_in)
+
+    def shape(self, tensor):
+        return tuple(map(int,tensor.shape))
+
+    def reshape(self, tensor, newshape):
+        return tf.reshape(tensor,newshape)
 
     def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -198,6 +216,12 @@ class tensorflow_backend(object):
         """
         return tf.einsum(subscripts, *operands)
 
+    def poisson_logpdf(self, n, lam):
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+        # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
+        return tf.contrib.distributions.Poisson(lam).log_prob(n)
+
     def poisson(self, n, lam):
         r"""
         The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
@@ -229,6 +253,14 @@ class tensorflow_backend(object):
         lam = self.astensor(lam)
         # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
         return tf.exp(tf.contrib.distributions.Poisson(lam).log_prob(n))
+
+    def normal_logpdf(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        # normal = tfp.distributions.Normal(mu, sigma)
+        normal = tf.distributions.Normal(mu, sigma)
+        return normal.log_prob(x)
 
     def normal(self, x, mu, sigma):
         r"""

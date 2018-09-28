@@ -42,7 +42,7 @@ class pytorch_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return torch.ger(tensor_in_1,tensor_in_2)
 
-    def astensor(self, tensor_in):
+    def astensor(self, tensor_in, dtype = 'float'):
         """
         Convert to a PyTorch Tensor.
 
@@ -52,13 +52,24 @@ class pytorch_backend(object):
         Returns:
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
+        dtypemap = {'float': torch.float, 'int': torch.int}
+        dtype = dtypemap[dtype]
         if isinstance(tensor_in, torch.Tensor):
             v = tensor_in
         else:
             if not isinstance(tensor_in, list):
                 tensor_in = [tensor_in]
-            v = torch.Tensor(tensor_in)
-        return v.type(torch.FloatTensor)
+            v = torch.tensor(tensor_in, dtype = dtype)
+        return v
+
+    def gather(self,tensor,indices):
+        return torch.take(tensor,indices.type(torch.LongTensor))
+
+    def reshape(self, tensor, newshape):
+        return torch.reshape(tensor,newshape)
+
+    def shape(self, tensor):
+        return tuple(map(int,tensor.shape))
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -104,7 +115,7 @@ class pytorch_backend(object):
         return torch.stack(sequence,dim = axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask)
+        mask = self.astensor(mask).type(torch.FloatTensor)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return mask * tensor_in_1 + (1-mask) * tensor_in_2
@@ -122,6 +133,12 @@ class pytorch_backend(object):
 
         """
         return torch.cat(sequence, dim=axis)
+
+    def boolean_mask(self, tensor, mask):
+        return torch.masked_select(tensor,mask)
+
+    def isfinite(self, tensor):
+        return torch.isfinite(tensor)
 
     def simple_broadcast(self, *args):
         """
@@ -170,6 +187,11 @@ class pytorch_backend(object):
         ops = tuple(self.astensor(op) for op in operands)
         return torch.einsum(subscripts, ops)
 
+    def poisson_logpdf(self, n, lam):
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+        return torch.distributions.Poisson(lam).log_prob(n)
+
     def poisson(self, n, lam):
         r"""
         The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
@@ -195,6 +217,13 @@ class pytorch_backend(object):
         n = self.astensor(n)
         lam = self.astensor(lam)
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
+
+    def normal_logpdf(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        normal = torch.distributions.Normal(mu, sigma)
+        return normal.log_prob(x)
 
     def normal(self, x, mu, sigma):
         r"""
