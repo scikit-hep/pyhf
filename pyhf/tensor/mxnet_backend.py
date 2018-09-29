@@ -389,6 +389,14 @@ class mxnet_backend(object):
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/poisson.py#L59-L63
         return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1.))
 
+    def normal_logpdf(self, x, mu, sigma):
+        # This is currently copied directly from PyTorch's source until a better
+        # way can be found to do this in MXNet
+        # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/normal.py#L70-L76
+        variance = sigma ** 2
+        log_scale = math.log(sigma) if isinstance(sigma, Number) else sigma.log()
+        return -((x - mu) ** 2) / (2 * variance) - log_scale - math.log(math.sqrt(2 * math.pi))
+
     def normal(self, x, mu, sigma):
         r"""
         The probability density function of the Normal distribution evaluated
@@ -419,12 +427,7 @@ class mxnet_backend(object):
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/normal.py#L70-L76
-        def log_prob(value, loc, scale):
-            variance = scale ** 2
-            log_scale = math.log(scale) if isinstance(
-                scale, Number) else scale.log()
-            return -((value - loc) ** 2) / (2 * variance) - log_scale - math.log(math.sqrt(2 * math.pi))
-        return self.exp(log_prob(x, mu, sigma))
+        return self.exp(self.normal_logpdf(x, mu, sigma))
 
     def normal_cdf(self, x, mu=0, sigma=1):
         """

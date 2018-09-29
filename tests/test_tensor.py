@@ -75,11 +75,11 @@ def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx([0.7881446014166034], 1e-07)
+    assert tb.tolist(
+        tb.normal_logpdf(tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]), tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]), tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]))) == pytest.approx([np.nan, np.nan, np.nan, np.nan, -0.91893853, -1.41893853, -1.41893853, -0.91893853], nan_ok=True)
     # poisson(lambda=0) is not defined, should return NaN
     assert tb.tolist(
         tb.poisson([0, 0, 1, 1], [0, 1, 0, 1])) == pytest.approx([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True)
-    assert tb.tolist(
-        tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx([0.7881446014166034], 1e-07)
     assert tb.tolist(
         tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))) == pytest.approx(np.log([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(), nan_ok=True)
 
