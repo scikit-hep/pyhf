@@ -352,6 +352,11 @@ class mxnet_backend(object):
         raise NotImplementedError("mxnet::einsum is not implemented.")
         return self.astensor([])
 
+    def poisson_logpdf(self, n, lam):
+        n = self.astensor(n)
+        lam = self.astensor(lam)
+        return n * nd.log(lam) - lam - nd.gammaln(n + 1.)
+
     def poisson(self, n, lam):
         r"""
         The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
