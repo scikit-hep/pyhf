@@ -86,6 +86,7 @@ def test_pdf_calculations(backend):
 def test_1D_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.gather(tb.astensor([1,2,3,4,5,6]), tb.astensor([4,0,3,2], dtype='int'))) == [5, 1, 4, 3]
+    assert tb.tolist(tb.gather(tb.astensor([1,2,3,4,5,6]), tb.astensor([[4,0],[3,2]], dtype='int'))) == [[5, 1], [4, 3]]
 
 @pytest.mark.fail_pytorch
 def test_ND_gather(backend):
