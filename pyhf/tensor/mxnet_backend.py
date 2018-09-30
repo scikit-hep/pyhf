@@ -331,6 +331,9 @@ class mxnet_backend(object):
         return nd.stack(*broadcast)
 
     def shape(self, tensor):
+        """
+        NB: Returns a tuple of longs
+        """
         return tensor.shape
 
     def reshape(self, tensor, newshape):
