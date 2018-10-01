@@ -47,7 +47,8 @@ extras_require = {
         'sphinx_rtd_theme',
         'nbsphinx',
         'm2r',
-        'jsonpatch'
+        'jsonpatch',
+        'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
     ]
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))

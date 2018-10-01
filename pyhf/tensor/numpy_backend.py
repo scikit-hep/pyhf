@@ -21,7 +21,7 @@ class numpy_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
-            array([-1, -1,  0,  1,  1])
+            array([-1., -1.,  0.,  1.,  1.])
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -31,11 +31,9 @@ class numpy_backend(object):
         Returns:
             NumPy ndarray: A clipped `tensor`
         """
-        tensor_in = self.astensor(tensor_in)
         return np.clip(tensor_in, min, max)
 
     def tolist(self,tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return tensor_in.tolist()
 
     def outer(self, tensor_in_1, tensor_in_2):
@@ -43,7 +41,13 @@ class numpy_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return np.outer(tensor_in_1,tensor_in_2)
 
-    def astensor(self, tensor_in):
+    def gather(self,tensor,indices):
+        return tensor[indices]
+
+    def isfinite(self, tensor):
+        return np.isfinite(tensor)
+
+    def astensor(self, tensor_in, dtype = 'float'):
         """
         Convert to a NumPy array.
 
@@ -53,18 +57,17 @@ class numpy_backend(object):
         Returns:
             `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
         """
-        return np.asarray(tensor_in)
+        dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
+        dtype = dtypemap[dtype]
+        return np.asarray(tensor_in, dtype = dtype)
 
     def sum(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return np.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return np.product(tensor_in, axis = axis)
 
     def abs(self, tensor):
-        tensor = self.astensor(tensor)
         return np.abs(tensor)
 
     def ones(self,shape):
@@ -74,34 +77,24 @@ class numpy_backend(object):
         return np.zeros(shape)
 
     def power(self,tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return np.power(tensor_in_1, tensor_in_2)
 
     def sqrt(self,tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return np.sqrt(tensor_in)
 
     def divide(self,tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return np.divide(tensor_in_1, tensor_in_2)
 
     def log(self,tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return np.log(tensor_in)
 
     def exp(self,tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return np.exp(tensor_in)
 
     def stack(self, sequence, axis = 0):
         return np.stack(sequence,axis = axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask)
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return np.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
@@ -130,7 +123,7 @@ class numpy_backend(object):
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            [array([1, 1, 1]), array([2, 3, 4]), array([5, 6, 7])]
+            [array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.])]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -139,6 +132,12 @@ class numpy_backend(object):
             list of Tensors: The sequence broadcast together.
         """
         return np.broadcast_arrays(*args)
+
+    def shape(self, tensor):
+        return tensor.shape
+
+    def reshape(self, tensor, newshape):
+        return np.reshape(tensor,newshape)
 
     def einsum(self, subscripts, *operands):
         """
@@ -158,6 +157,11 @@ class numpy_backend(object):
             tensor: the calculation based on the Einstein summation convention
         """
         return np.einsum(subscripts, *operands)
+
+    def poisson_logpdf(self, n, lam):
+        n = np.asarray(n)
+        lam = np.asarray(lam)
+        return n * np.log(lam) - lam - gammaln(n + 1.)
 
     def poisson(self, n, lam):
         r"""
@@ -184,6 +188,19 @@ class numpy_backend(object):
         n = np.asarray(n)
         lam = np.asarray(lam)
         return np.exp(n * np.log(lam) - lam - gammaln(n + 1.))
+
+    def normal_logpdf(self, x, mu, sigma):
+        # this is much faster than
+        # norm.logpdf(x, loc=mu, scale=sigma)
+        # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
+        root2 = np.sqrt(2)
+        root2pi = np.sqrt(2*np.pi)
+        prefactor = -np.log(sigma * root2pi)
+        summand = -np.square(np.divide((x - mu),(root2 * sigma)))
+        return  prefactor + summand
+
+    # def normal_logpdf(self, x, mu, sigma):
+    #     return norm.logpdf(x, loc=mu, scale=sigma)
 
     def normal(self, x, mu, sigma):
         r"""
