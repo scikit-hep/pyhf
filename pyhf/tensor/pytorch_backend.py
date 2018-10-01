@@ -3,8 +3,9 @@ import torch.autograd
 import logging
 log = logging.getLogger(__name__)
 
+from .backend import Backend
 
-class pytorch_backend(object):
+class pytorch_backend(Backend):
     """PyTorch backend for pyhf"""
 
     def __init__(self, **kwargs):

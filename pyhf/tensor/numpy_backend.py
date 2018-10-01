@@ -4,8 +4,9 @@ from scipy.special import gammaln
 from scipy.stats import norm
 log = logging.getLogger(__name__)
 
+from .backend import Backend
 
-class numpy_backend(object):
+class numpy_backend(Backend):
     """NumPy backend for pyhf"""
 
     def __init__(self, **kwargs):
