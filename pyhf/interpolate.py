@@ -20,24 +20,38 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
                 histo_result.append(alpha_result)
     return all_results
 
+class _hfinterpolator_code0(object):
+    def __init__(self,histogramssets,alphasets_shape):
+        tensorlib, _ = get_backend()
+
+        # these two variables can be pre-computed at PDF time
+        self.allset_allhisto_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
+        self.allset_allhisto_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
+
+        self.mask_on = tensorlib.ones(alphasets_shape)
+        self.mask_off = tensorlib.zeros(alphasets_shape)
+
+        self.broadcast_helper = tensorlib.ones(self.allset_allhisto_deltas_dn.shape)
+
+    def interpolate(self,alphasets):
+        tensorlib, _ = get_backend()
+        where_alphasets_positive = tensorlib.where(alphasets > 0, self.mask_on, self.mask_off)
+        
+        # s: set under consideration (i.e. the modifier)
+        # a: alpha variation
+        # h: histogram affected by modifier
+        # b: bin of histogram
+        allsets_allhistos_alphas_times_deltas_up = tensorlib.einsum('sa,shb->shab',alphasets,self.allset_allhisto_deltas_up)
+        allsets_allhistos_alphas_times_deltas_dn = tensorlib.einsum('sa,shb->shab',alphasets,self.allset_allhisto_deltas_dn)
+
+        allsets_allhistos_masks = tensorlib.einsum('sa,shb->shab', where_alphasets_positive, self.broadcast_helper)
+
+        return tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
+
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-
-    # these two variables can be pre-computed at PDF time
-    allset_allhisto_deltas_up = histogramssets[:,:,2] - histogramssets[:,:,1]
-    allset_allhisto_deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
-
-    where_alphasets_positive = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
-
-    # s: set under consideration (i.e. the modifier)
-    # a: alpha variation
-    # h: histogram affected by modifier
-    # b: bin of histogram
-    allsets_allhistos_alphas_times_deltas_up = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_up)
-    allsets_allhistos_alphas_times_deltas_dn = tensorlib.einsum('sa,shb->shab',alphasets,allset_allhisto_deltas_dn)
-    allsets_allhistos_masks = tensorlib.einsum('sa,shb->shab', where_alphasets_positive, tensorlib.ones(allset_allhisto_deltas_dn.shape))
-
-    return tensorlib.where(allsets_allhistos_masks,allsets_allhistos_alphas_times_deltas_up, allsets_allhistos_alphas_times_deltas_dn)
+    i = _hfinterpolator_code0(histogramssets,alphasets.shape)
+    return i.interpolate(alphasets)
 
 def _slow_hfinterp_code0(histogramssets, alphasets):
     def summand(down, nom, up, alpha):
@@ -53,24 +67,37 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
 
 def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
+    i = _hfinterpolator_code1(histogramssets,alphasets.shape)
+    return i.interpolate(alphasets)
 
-    # these two variables can be pre-computed at PDF time
-    allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], histogramssets[:,:,1])
-    allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], histogramssets[:,:,1])
+class _hfinterpolator_code1(object):
+    def __init__(self,histogramssets,alphasets_shape):
+        tensorlib, _ = get_backend()
+        # these two variables can be pre-computed at PDF time
+        self.allset_allhisto_deltas_up = tensorlib.divide(histogramssets[:,:,2], histogramssets[:,:,1])
+        self.allset_allhisto_deltas_dn = tensorlib.divide(histogramssets[:,:,0], histogramssets[:,:,1])
 
-    allsets_allhistos_masks = tensorlib.where(alphasets > 0, tensorlib.ones(alphasets.shape), tensorlib.zeros(alphasets.shape))
+        self.bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets_shape), self.allset_allhisto_deltas_up)
+        self.bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets_shape), self.allset_allhisto_deltas_dn)
 
-    # s: set under consideration (i.e. the modifier)
-    # a: alpha variation
-    # h: histogram affected by modifier
-    # b: bin of histogram
-    bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_up)
-    bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets.shape), allset_allhisto_deltas_dn)
-    exponents = tensorlib.einsum('sa,shb->shab', tensorlib.abs(alphasets), tensorlib.ones(allset_allhisto_deltas_up.shape))
-    masks = tensorlib.einsum('sa,shb->shab', allsets_allhistos_masks, tensorlib.ones(allset_allhisto_deltas_up.shape))
+        self.mask_off = tensorlib.zeros(alphasets_shape)
+        self.mask_on = tensorlib.ones(alphasets_shape)
 
-    bases = tensorlib.where(masks, bases_up, bases_dn)
-    return tensorlib.power(bases, exponents)
+        self.broadcast_helper = tensorlib.ones(self.allset_allhisto_deltas_up.shape)
+
+    def interpolate(self,alphasets):
+        tensorlib, _ = get_backend()
+        allsets_allhistos_masks = tensorlib.where(alphasets > 0, self.mask_on,self.mask_off)
+
+        # s: set under consideration (i.e. the modifier)
+        # a: alpha variation
+        # h: histogram affected by modifier
+        # b: bin of histogram
+        exponents = tensorlib.einsum('sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper)
+        masks = tensorlib.einsum('sa,shb->shab', allsets_allhistos_masks, self.broadcast_helper)
+
+        bases = tensorlib.where(masks, self.bases_up, self.bases_dn)
+        return tensorlib.power(bases, exponents)
 
 def _slow_hfinterp_code1(histogramssets, alphasets):
     def product(down, nom, up, alpha):
