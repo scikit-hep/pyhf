@@ -69,7 +69,6 @@ class _hfinterpolator_code0(object):
         return tensorlib.where(masks, alphas_times_deltas_up, alphas_times_deltas_dn)
 
 def _hfinterp_code0(histogramssets, alphasets):
-    tensorlib, _ = get_backend()
     interpolator = _hfinterpolator_code0(histogramssets)
     return interpolator(alphasets)
 
@@ -86,7 +85,6 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
     return _slow_hfinterp_looper(histogramssets, alphasets, summand)
 
 def _hfinterp_code1(histogramssets, alphasets):
-    tensorlib, _ = get_backend()
     interpolator = _hfinterpolator_code1(histogramssets)
     return interpolator(alphasets)
 
