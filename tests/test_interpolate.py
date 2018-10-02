@@ -47,6 +47,33 @@ def random_histosets_alphasets_pair():
     h,a = filled_shapes(random_histogramssets,random_alphas)
     return h,a
 
+def test_badly_defined_interplator(random_histosets_alphasets_pair):
+    histogramssets, alphasets = random_histosets_alphasets_pair
+
+    class BadInterpolator(pyhf.interpolate.Interpolator):
+        pass
+
+    with pytest.raises(NotImplementedError):
+        foo = BadInterpolator(histogramssets)
+
+    class BadInterpolatorToo(pyhf.interpolate.Interpolator):
+        def _precompute(self, shape):
+            pass
+
+    with pytest.raises(NotImplementedError):
+        bar = BadInterpolatorToo(histogramssets)
+        bar(alphasets)
+
+@pytest.mark.skip_mxnet
+def test_interpolator(backend, random_histosets_alphasets_pair):
+    histogramssets, alphasets = random_histosets_alphasets_pair
+
+    interpolator = pyhf.interpolate._hfinterpolator_code0(pyhf.tensorlib.astensor(histogramssets.tolist()))
+    assert interpolator.tensorlib == pyhf.tensorlib
+    assert interpolator.shape == (histogramssets.shape[0], 1)
+    interpolator(pyhf.tensorlib.astensor(alphasets.tolist()))
+    assert interpolator.shape == alphasets.shape
+
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("interpcode", [0, 1])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
