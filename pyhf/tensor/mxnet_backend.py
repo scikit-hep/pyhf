@@ -6,9 +6,7 @@ from numbers import Number  # Required for normal()
 from scipy.stats import norm  # Required for normal_cdf()
 log = logging.getLogger(__name__)
 
-from .backend import Backend
-
-class mxnet_backend(Backend):
+class mxnet_backend(object):
     """MXNet backend for pyhf"""
 
     def __init__(self, **kwargs):

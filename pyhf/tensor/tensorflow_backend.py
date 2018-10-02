@@ -4,9 +4,7 @@ import tensorflow as tf
 
 log = logging.getLogger(__name__)
 
-from .backend import Backend
-
-class tensorflow_backend(Backend):
+class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
 
     def __init__(self, **kwargs):

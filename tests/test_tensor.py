@@ -11,14 +11,6 @@ import tensorflow as tf
 
 import pytest
 
-def test_backend_equality(backend):
-    tb = pyhf.tensorlib
-    assert isinstance(tb, pyhf.tensor.backend.Backend)
-    assert tb == tb.__class__()
-    assert tb == tb.__class__
-    assert tb == tb.name
-    assert tb != 'fakebackend'
-
 def test_tensor_list_conversion(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
