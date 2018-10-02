@@ -35,6 +35,7 @@ class numpy_backend(Backend):
         return np.clip(tensor_in, min, max)
 
     def tolist(self,tensor_in):
+        if isinstance(tensor_in, list): return tensor_in
         return tensor_in.tolist()
 
     def outer(self, tensor_in_1, tensor_in_2):

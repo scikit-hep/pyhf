@@ -46,6 +46,7 @@ class tensorflow_backend(Backend):
         return tf.clip_by_value(tensor_in, min, max)
 
     def tolist(self,tensor_in):
+        if isinstance(tensor_in, list): return tensor_in
         tensor_in = self.astensor(tensor_in)
         return self.session.run(tensor_in).tolist()
 

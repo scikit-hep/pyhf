@@ -22,6 +22,7 @@ def test_backend_equality(backend):
 def test_tensor_list_conversion(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
+    assert tb.tolist([1,2,3]) == [1,2,3]
 
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib

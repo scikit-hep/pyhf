@@ -49,6 +49,7 @@ class mxnet_backend(Backend):
         Returns:
             list: The possibly nested list of tensor elements.
         """
+        if isinstance(tensor_in, list): return tensor_in
         tensor_in = self.astensor(tensor_in)
         return tensor_in.asnumpy().tolist()
 

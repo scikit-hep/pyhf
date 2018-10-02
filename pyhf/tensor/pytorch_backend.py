@@ -35,6 +35,7 @@ class pytorch_backend(Backend):
         return torch.clamp(tensor_in, min, max)
 
     def tolist(self, tensor_in):
+        if isinstance(tensor_in, list): return tensor_in
         tensor_in = self.astensor(tensor_in)
         return tensor_in.data.numpy().tolist()
 
@@ -55,13 +56,7 @@ class pytorch_backend(Backend):
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         dtype = dtypemap[dtype]
-        if isinstance(tensor_in, torch.Tensor):
-            v = tensor_in
-        else:
-            if not isinstance(tensor_in, list):
-                tensor_in = [tensor_in]
-            v = torch.tensor(tensor_in, dtype = dtype)
-        return v
+        return torch.as_tensor(tensor_in, dtype = dtype)
 
     def gather(self,tensor,indices):
         return torch.take(tensor,indices.type(torch.LongTensor))
