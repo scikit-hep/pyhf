@@ -11,6 +11,7 @@ class tensorflow_backend(Backend):
 
     def __init__(self, **kwargs):
         self.session = kwargs.get('session')
+        self.name = 'tensorflow'
 
     def clip(self, tensor_in, min, max):
         """

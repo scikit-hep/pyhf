@@ -9,7 +9,7 @@ class pytorch_backend(Backend):
     """PyTorch backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'pytorch'
 
     def clip(self, tensor_in, min, max):
         """

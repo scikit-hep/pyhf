@@ -12,7 +12,7 @@ class mxnet_backend(Backend):
     """MXNet backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'mxnet'
 
     def clip(self, tensor_in, min, max):
         """

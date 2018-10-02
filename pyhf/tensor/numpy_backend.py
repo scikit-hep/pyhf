@@ -10,7 +10,7 @@ class numpy_backend(Backend):
     """NumPy backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'numpy'
 
     def clip(self, tensor_in, min, max):
         """
