@@ -4,26 +4,6 @@ log = logging.getLogger(__name__)
 from . import get_backend
 from . import exceptions
 
-class Interpolator(object):
-    def __init__(self, histogramssets):
-        self.tensorlib = None
-        self.shape = None
-        self.histogramssets = histogramssets
-        # initial shape will be (nsysts, 1)
-        self._precompute(shape=(histogramssets.shape[0], 1))
-
-    def __call__(self, alphasets):
-        tensorlib, _ = get_backend()
-        self._precompute(alphasets.shape)
-        return self._call(tensorlib, alphasets)
-
-    def _precompute(self, shape):
-        raise NotImplementedError("Must define custom _precompute(self, shape) for Interpolator type")
-
-    def _call(self, tensorlib, alphasets):
-        raise NotImplementedError("Must define custom _call(self, tensorlib, alphasets) for Interpolator type")
-
-
 def _slow_hfinterp_looper(histogramssets, alphasets, func):
     all_results = []
     for histoset, alphaset in zip(histogramssets, alphasets):
@@ -40,13 +20,20 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
                 histo_result.append(alpha_result)
     return all_results
 
-class _hfinterpolator_code0(Interpolator):
-    def _precompute(self, shape):
+class _hfinterpolator_code0(object):
+    def __init__(self, histogramssets):
+        self.tensorlib = None
+        self.alphasets_shape = None
+        self.histogramssets = histogramssets
+        # initial shape will be (nsysts, 1)
+        self._precompute(alphasets_shape=(histogramssets.shape[0], 1))
+
+    def _precompute(self, alphasets_shape):
         tensorlib, _ = get_backend()
 
         # did things change that we need to recompute?
         tensor_type_change = tensorlib != self.tensorlib
-        shape_change = shape != self.shape
+        alphasets_shape_change = alphasets_shape != self.alphasets_shape
 
         if tensor_type_change:
             # nb: self.histogramssets will never change
@@ -55,17 +42,19 @@ class _hfinterpolator_code0(Interpolator):
             self.deltas_dn = histogramssets[:,:,1] - histogramssets[:,:,0]
             self.broadcast_helper = tensorlib.ones(self.deltas_up.shape)
 
-        if shape_change or tensor_type_change:
-            self.mask_on  = tensorlib.ones(shape)
-            self.mask_off = tensorlib.zeros(shape)
+        if alphasets_shape_change or tensor_type_change:
+            self.mask_on  = tensorlib.ones(alphasets_shape)
+            self.mask_off = tensorlib.zeros(alphasets_shape)
 
         # update after recomputation if needed
         self.tensorlib = tensorlib
-        self.shape = shape
+        self.alphasets_shape = alphasets_shape
 
         return True
 
-    def _call(self, tensorlib, alphasets):
+    def __call__(self, alphasets):
+        tensorlib, _ = get_backend()
+        self._precompute(alphasets.shape)
         where_alphasets_positive = tensorlib.where(alphasets > 0, self.mask_on, self.mask_off)
 
         # s: set under consideration (i.e. the modifier)
@@ -101,13 +90,20 @@ def _hfinterp_code1(histogramssets, alphasets):
     interpolator = _hfinterpolator_code1(histogramssets)
     return interpolator(alphasets)
 
-class _hfinterpolator_code1(Interpolator):
-    def _precompute(self, shape):
+class _hfinterpolator_code1(object):
+    def __init__(self, histogramssets):
+        self.tensorlib = None
+        self.alphasets_shape = None
+        self.histogramssets = histogramssets
+        # initial shape will be (nsysts, 1)
+        self._precompute(alphasets_shape=(histogramssets.shape[0], 1))
+
+    def _precompute(self, alphasets_shape):
         tensorlib, _ = get_backend()
 
         # did things change that we need to recompute?
         tensor_type_change = tensorlib != self.tensorlib
-        shape_change = shape != self.shape
+        alphasets_shape_change = alphasets_shape != self.alphasets_shape
 
         if tensor_type_change:
             # nb: self.histogramssets will never change
@@ -116,19 +112,21 @@ class _hfinterpolator_code1(Interpolator):
             self.deltas_dn = tensorlib.divide(histogramssets[:,:,0], histogramssets[:,:,1])
             self.broadcast_helper = tensorlib.ones(self.deltas_up.shape)
 
-        if shape_change or tensor_type_change:
-            self.bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(shape), self.deltas_up)
-            self.bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(shape), self.deltas_dn)
-            self.mask_on  = tensorlib.ones(shape)
-            self.mask_off = tensorlib.zeros(shape)
+        if alphasets_shape_change or tensor_type_change:
+            self.bases_up = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets_shape), self.deltas_up)
+            self.bases_dn = tensorlib.einsum('sa,shb->shab', tensorlib.ones(alphasets_shape), self.deltas_dn)
+            self.mask_on  = tensorlib.ones(alphasets_shape)
+            self.mask_off = tensorlib.zeros(alphasets_shape)
 
         # update after recomputation if needed
         self.tensorlib = tensorlib
-        self.shape = shape
+        self.alphasets_shape = alphasets_shape
 
         return True
 
-    def _call(self, tensorlib, alphasets):
+    def __call__(self, alphasets):
+        tensorlib, _ = get_backend()
+        self._precompute(alphasets.shape)
         where_alphasets_positive = tensorlib.where(alphasets > 0, self.mask_on, self.mask_off)
 
         # s: set under consideration (i.e. the modifier)
