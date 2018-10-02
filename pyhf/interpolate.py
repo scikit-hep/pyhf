@@ -52,7 +52,7 @@ class _hfinterpolator_code0(Interpolator):
 
         return True
 
-    def interpolate(self, alphasets):
+    def __call__(self, alphasets):
         tensorlib, _ = get_backend()
         self._precompute(alphasets.shape)
         where_alphasets_positive = tensorlib.where(alphasets > 0, self.mask_on, self.mask_off)
@@ -70,8 +70,8 @@ class _hfinterpolator_code0(Interpolator):
 
 def _hfinterp_code0(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    i = _hfinterpolator_code0(histogramssets)
-    return i.interpolate(alphasets)
+    interpolator = _hfinterpolator_code0(histogramssets)
+    return interpolator(alphasets)
 
 def _slow_hfinterp_code0(histogramssets, alphasets):
     def summand(down, nom, up, alpha):
@@ -87,8 +87,8 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
 
 def _hfinterp_code1(histogramssets, alphasets):
     tensorlib, _ = get_backend()
-    i = _hfinterpolator_code1(histogramssets)
-    return i.interpolate(alphasets)
+    interpolator = _hfinterpolator_code1(histogramssets)
+    return interpolator(alphasets)
 
 class _hfinterpolator_code1(Interpolator):
     def _precompute(self, shape):
@@ -117,7 +117,7 @@ class _hfinterpolator_code1(Interpolator):
 
         return True
 
-    def interpolate(self, alphasets):
+    def __call__(self, alphasets):
         tensorlib, _ = get_backend()
         self._precompute(alphasets.shape)
         allsets_allhistos_masks = tensorlib.where(alphasets > 0, self.mask_on,self.mask_off)
