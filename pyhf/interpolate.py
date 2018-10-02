@@ -9,7 +9,19 @@ class Interpolator(object):
         self.tensorlib = None
         self.shape = None
         self.histogramssets = histogramssets
+        # initial shape will be (nsysts, 1)
         self._precompute(shape=(histogramssets.shape[0], 1))
+
+    def __call__(self, alphasets):
+        self._precompute(alphasets.shape)
+        return self._call(get_backend(), alphasets)
+
+    def _precompute(self, shape):
+        raise NotImplementedError("Must define custom _precompute(self, shape) for Interpolator type")
+
+    def _call(self, backend, alphasets):
+        raise NotImplementedError("Must define custom _call(self, backend, alphasets) for Interpolator type")
+
 
 def _slow_hfinterp_looper(histogramssets, alphasets, func):
     all_results = []
@@ -52,9 +64,8 @@ class _hfinterpolator_code0(Interpolator):
 
         return True
 
-    def __call__(self, alphasets):
-        tensorlib, _ = get_backend()
-        self._precompute(alphasets.shape)
+    def _call(self, backend, alphasets):
+        tensorlib, _ = backend
         where_alphasets_positive = tensorlib.where(alphasets > 0, self.mask_on, self.mask_off)
 
         # s: set under consideration (i.e. the modifier)
@@ -117,9 +128,8 @@ class _hfinterpolator_code1(Interpolator):
 
         return True
 
-    def __call__(self, alphasets):
-        tensorlib, _ = get_backend()
-        self._precompute(alphasets.shape)
+    def _call(self, backend, alphasets):
+        tensorlib, _ = backend
         allsets_allhistos_masks = tensorlib.where(alphasets > 0, self.mask_on,self.mask_off)
 
         # s: set under consideration (i.e. the modifier)
