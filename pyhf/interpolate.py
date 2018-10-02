@@ -7,9 +7,9 @@ from . import exceptions
 class Interpolator(object):
     def __init__(self, histogramssets):
         self.tensorlib = None
-        self.shape = (0,)
+        self.shape = None
         self.histogramssets = histogramssets
-        self._precompute()
+        self._precompute(shape=(histogramssets.shape[0], 1))
 
 def _slow_hfinterp_looper(histogramssets, alphasets, func):
     all_results = []
@@ -28,7 +28,7 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
     return all_results
 
 class _hfinterpolator_code0(Interpolator):
-    def _precompute(self, shape=(1,1)):
+    def _precompute(self, shape):
         tensorlib, _ = get_backend()
 
         # did things change that we need to recompute?
@@ -91,7 +91,7 @@ def _hfinterp_code1(histogramssets, alphasets):
     return i.interpolate(alphasets)
 
 class _hfinterpolator_code1(Interpolator):
-    def _precompute(self, shape=(1,1)):
+    def _precompute(self, shape):
         tensorlib, _ = get_backend()
 
         # did things change that we need to recompute?
