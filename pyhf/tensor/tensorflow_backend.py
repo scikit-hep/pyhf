@@ -186,11 +186,9 @@ class tensorflow_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args
-                        if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
-            log.error(
-                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
             raise error
 
         broadcast = [arg if generic_len(arg) > 1 else

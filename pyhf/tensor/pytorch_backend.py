@@ -151,15 +151,24 @@ class pytorch_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
+        def generic_len(a):
+            try:
+                return len(a)
+            except TypeError:
+                if len(a.shape) < 1:
+                    return 0
+                else:
+                    return a.shape[0]
+
         args = [self.astensor(arg) for arg in args]
-        max_dim = max(map(len, args))
+        max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
             log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
             raise error
 
-        broadcast = [arg if len(arg) > 1 else arg.expand(max_dim)
+        broadcast = [arg if generic_len(arg) > 1 else arg.expand(max_dim)
                      for arg in args]
         return broadcast
 
