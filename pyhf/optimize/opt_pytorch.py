@@ -2,14 +2,15 @@ import torch.optim
 class pytorch_optimizer(object):
     def __init__(self, **kwargs):
         self.tensorlib = kwargs['tensorlib']
-        self.maxdelta = kwargs.get('maxdela',1e-4)
+        self.maxdelta = kwargs.get('maxdelta',1e-5)
+        self.maxiter = kwargs.get('maxiter',100000)
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         init_pars = self.tensorlib.astensor(init_pars)
         init_pars.requires_grad = True
         optimizer = torch.optim.Adam([init_pars])
         maxdelta = None
-        for i in range(10000):
+        for i in range(self.maxiter):
             loss = objective(init_pars, data, pdf)
             optimizer.zero_grad()
             loss.backward(retain_graph=True)
@@ -33,7 +34,7 @@ class pytorch_optimizer(object):
             return pars
 
         optimizer = torch.optim.Adam(nuis_pars)
-        for i in range(10000):
+        for i in range(self.maxiter):
             pars = assemble(poi_par, nuis_pars)
             loss = objective(pars, data, pdf)
             optimizer.zero_grad()
