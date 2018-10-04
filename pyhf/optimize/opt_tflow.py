@@ -27,19 +27,10 @@ class tflow_optimizer(object):
         #run newton's method
         best_fit = init_pars
         for i in range(self.maxit):
-            try:
-                up = self.tb.session.run(update, feed_dict={pars: best_fit})
-                best_fit = best_fit-self.relax*up
-                if np.abs(np.max(up)) < self.eps:
-                    break
-            except InvalidArgumentError:
-                o,p,g,h = self.tb.session.run([
-                    objective,
-                    pars,
-                    gradient,
-                    hessian,
-                ], feed_dict={best_fit: best_fit})
-                raise
+            up = self.tb.session.run(update, feed_dict={pars: best_fit})
+            best_fit = best_fit-self.relax*up
+            if np.abs(np.max(up)) < self.eps:
+                break
 
         return best_fit.tolist()
 
@@ -61,26 +52,10 @@ class tflow_optimizer(object):
         #run newton's method
         best_fit_nuis = [x for i,x in enumerate(init_pars) if i!= pdf.config.poi_index]
         for i in range(self.maxit):
-            try:
-                up = self.tb.session.run(update, feed_dict={nuis_cat: best_fit_nuis})
-                best_fit_nuis = best_fit_nuis-self.relax*up
-                if np.abs(np.max(up)) < self.eps:
-                    break
-            except InvalidArgumentError:
-                o,p,g,up,h = self.tb.session.run([
-                    objective,
-                    pars,
-                    gradient,
-                    hessian,
-                ], feed_dict={nuis_cat: best_fit_nuis})
-                log.error('----- Constrained Fit -----\nIteration: {}\nObjective: {}\nPars: {}\nGradient: {}\nHessias was: {}'.format(
-                    i,
-                    self.tb.tolist(o),
-                    self.tb.tolist(p),
-                    self.tb.tolist(g),
-                    self.tb.tolist(h),
-                ))
-                raise
+            up = self.tb.session.run(update, feed_dict={nuis_cat: best_fit_nuis})
+            best_fit_nuis = best_fit_nuis-self.relax*up
+            if np.abs(np.max(up)) < self.eps:
+                break
 
         best_fit = best_fit_nuis.tolist()
         best_fit.insert(pdf.config.poi_index,constrained_mu)
