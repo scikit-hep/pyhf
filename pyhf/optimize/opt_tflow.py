@@ -1,7 +1,6 @@
 import logging
 import numpy as np
 import tensorflow as tf
-from tensorflow.errors import InvalidArgumentError
 
 log = logging.getLogger(__name__)
 
