@@ -22,11 +22,10 @@ def _slow_hfinterp_looper(histogramssets, alphasets, func):
 
 class _hfinterpolator_code0(object):
     def __init__(self, histogramssets):
-        tensorlib, _ = get_backend()
         self.tensorlib_name = None
         self.alphasets_shape = None
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
-        self._histogramssets = default_backend.astensor(tensorlib.tolist(histogramssets))
+        self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self._precompute(alphasets_shape=(self._histogramssets.shape[0], 1))
 
@@ -69,7 +68,8 @@ class _hfinterpolator_code0(object):
         return tensorlib.where(masks, alphas_times_deltas_up, alphas_times_deltas_dn)
 
 def _hfinterp_code0(histogramssets, alphasets):
-    interpolator = _hfinterpolator_code0(histogramssets)
+    tensorlib, _ = get_backend()
+    interpolator = _hfinterpolator_code0(tensorlib.tolist(histogramssets))
     return interpolator(alphasets)
 
 def _slow_hfinterp_code0(histogramssets, alphasets):
@@ -85,16 +85,16 @@ def _slow_hfinterp_code0(histogramssets, alphasets):
     return _slow_hfinterp_looper(histogramssets, alphasets, summand)
 
 def _hfinterp_code1(histogramssets, alphasets):
-    interpolator = _hfinterpolator_code1(histogramssets)
+    tensorlib, _ = get_backend()
+    interpolator = _hfinterpolator_code1(tensorlib.tolist(histogramssets))
     return interpolator(alphasets)
 
 class _hfinterpolator_code1(object):
     def __init__(self, histogramssets):
-        tensorlib, _ = get_backend()
         self.tensorlib_name = None
         self.alphasets_shape = None
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
-        self._histogramssets = default_backend.astensor(tensorlib.tolist(histogramssets))
+        self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self._precompute(alphasets_shape=(self._histogramssets.shape[0], 1))
 
