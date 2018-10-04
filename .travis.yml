@@ -34,10 +34,12 @@ jobs:
   include:
   - name: "Python 2.7 Notebook Tests"
     python: '2.7'
+    sudo: required  # Needed for memory footprint
     script:
       - pytest tests/test_notebooks.py
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
+    sudo: required  # Needed for memory footprint
     script:
       - pytest tests/test_notebooks.py
   - stage: benchmark
