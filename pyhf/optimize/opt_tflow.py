@@ -53,7 +53,7 @@ class tflow_optimizer(object):
         nuis_cat = self.tb.concatenate(nuis_pars)
         pars = self.tb.concatenate([nuis_cat[:0],poi_par,nuis_cat[0:]])
         objective = objective(pars,data,pdf)
-        hessian   = tf.hessians(objective, nuis_cat)[0]+1e-10
+        hessian   = tf.hessians(objective, nuis_cat)[0]
         gradient  = tf.gradients(objective, nuis_cat)[0]
         invhess   = tf.linalg.inv(hessian)
         update    = tf.transpose(tf.matmul(invhess, tf.transpose(tf.stack([gradient]))))[0]
