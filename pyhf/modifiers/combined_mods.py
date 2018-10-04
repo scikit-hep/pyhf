@@ -25,14 +25,14 @@ class normsys_combinedmod(object):
             ] for m in normsys_mods
         ])
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
-        
+
 
         self.normsys_indices = tensorlib.astensor([
             self.parindices[pdf.config.par_slice(m)] for m in normsys_mods
         ], dtype='int')
 
-        self.interpolator = _hfinterpolator_code1(self.normsys_histoset,tensorlib.shape(self.normsys_indices))
-        
+        self.interpolator = _hfinterpolator_code1(self.normsys_histoset)
+
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -70,12 +70,12 @@ class histosys_combinedmod(object):
             ] for m in histosys_mods
         ])
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
-        
+
         self.histo_indices = tensorlib.astensor([
             self.parindices[pdf.config.par_slice(m)] for m in histosys_mods
         ], dtype='int')
 
-        self.interpolator = _hfinterpolator_code0(self.histosys_histoset,tensorlib.shape(self.histo_indices))
+        self.interpolator = _hfinterpolator_code0(self.histosys_histoset)
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
