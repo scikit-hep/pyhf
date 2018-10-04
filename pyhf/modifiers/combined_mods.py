@@ -5,7 +5,7 @@ class normsys_combinedmod(object):
     def __init__(self,normsys_mods,pdf):
         tensorlib, _ = get_backend()
         self.parindices = list(range(len(pdf.config.suggested_init())))
-        self.normsys_histoset = tensorlib.astensor([
+        self.normsys_histoset = [
             [
                 [
                     pdf.mega_mods[s][m]['data']['lo'],
@@ -14,7 +14,7 @@ class normsys_combinedmod(object):
                 ]
                 for s in pdf.do_samples
             ] for m in normsys_mods
-        ])
+        ]
 
         self.normsys_mask = tensorlib.astensor([
             [
@@ -50,7 +50,7 @@ class histosys_combinedmod(object):
     def __init__(self,histosys_mods,pdf):
         tensorlib, _ = get_backend()
         self.parindices = list(range(len(pdf.config.suggested_init())))
-        self.histosys_histoset = tensorlib.astensor([
+        self.histosys_histoset = [
             [
                 [
                     pdf.mega_mods[s][m]['data']['lo_data'],
@@ -59,7 +59,7 @@ class histosys_combinedmod(object):
                 ]
                 for s in pdf.do_samples
             ] for m in histosys_mods
-        ])
+        ]
 
         self.histosys_mask = tensorlib.astensor([
             [
