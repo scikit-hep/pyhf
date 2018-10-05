@@ -33,9 +33,11 @@ class pytorch_backend(object):
         return torch.clamp(tensor_in, min, max)
 
     def tolist(self, tensor_in):
-        if isinstance(tensor_in, list): return tensor_in
-        tensor_in = self.astensor(tensor_in)
-        return tensor_in.data.numpy().tolist()
+        try:
+            return tensor_in.data.numpy().tolist()
+        except AttributeError:
+            if isinstance(tensor_in, list): return tensor_in
+            raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
