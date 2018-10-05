@@ -57,6 +57,9 @@ class tensorflow_backend(object):
     def gather(self,tensor,indices):
         return tf.gather(tensor,indices)
 
+    def boolean_mask(self, tensor, mask):
+        return tf.boolean_mask(tensor,mask)
+
     def isfinite(self, tensor):
         return tf.is_finite(tensor)
 

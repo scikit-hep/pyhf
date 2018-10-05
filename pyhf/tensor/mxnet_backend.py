@@ -81,6 +81,10 @@ class mxnet_backend(object):
     def gather(self,tensor,indices):
         return tensor[indices]
 
+    def boolean_mask(self, tensor, mask):
+        raise NotImplementedError("mxnet::boolean_mask is not implemented.")
+        return
+
     def astensor(self, tensor_in, dtype = 'float'):
         """
         Convert to a MXNet NDArray.

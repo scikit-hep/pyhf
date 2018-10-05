@@ -65,6 +65,10 @@ class pytorch_backend(object):
     def gather(self,tensor,indices):
         return torch.take(tensor,indices.type(torch.LongTensor))
 
+    def boolean_mask(self, tensor, mask):
+        mask = self.astensor(mask).type(torch.ByteTensor)
+        return torch.masked_select(tensor,mask)
+
     def reshape(self, tensor, newshape):
         return torch.reshape(tensor,newshape)
 
