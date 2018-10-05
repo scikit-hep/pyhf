@@ -48,7 +48,7 @@ class tensorflow_backend(object):
             return self.session.run(tensor_in).tolist()
         except AttributeError as err:
             if isinstance(tensor_in, list): return tensor_in
-            if "no attribute 'run'" in err.message:
+            if "no attribute 'run'" in str(err):
                 raise RuntimeError('evaluation of tensor requested via .tolist() but no session defined')
             raise
         except RuntimeError as err:
@@ -56,7 +56,7 @@ class tensorflow_backend(object):
             # to pass-through a list, then we need to catch the runtime error
             # First, see if the input tensor is just a vanilla python list and
             # return it instead
-            if "graph is empty" in err.message and isinstance(tensor_in, list): return tensor_in
+            if "graph is empty" in str(err) and isinstance(tensor_in, list): return tensor_in
             raise
         except TypeError:
             # if a tensor operation has been added to the graph, but we want to
