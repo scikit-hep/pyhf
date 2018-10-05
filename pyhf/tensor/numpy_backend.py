@@ -44,6 +44,9 @@ class numpy_backend(object):
     def gather(self,tensor,indices):
         return tensor[indices]
 
+    def boolean_mask(self, tensor, mask):
+        return tensor[mask]
+
     def isfinite(self, tensor):
         return np.isfinite(tensor)
 
