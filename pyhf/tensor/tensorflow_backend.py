@@ -47,10 +47,10 @@ class tensorflow_backend(object):
         try:
             return self.session.run(tensor_in).tolist()
         except AttributeError as err:
+            if isinstance(tensor_in, list): return tensor_in
+
             if "no attribute 'run'" in err.message:
                 raise RuntimeError('evaluation of tensor requested via .tolist() but no session defined')
-
-            if isinstance(tensor_in, list): return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
