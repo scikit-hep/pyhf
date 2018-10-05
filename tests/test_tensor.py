@@ -83,6 +83,12 @@ def test_pdf_calculations(backend):
     assert tb.tolist(
         tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))) == pytest.approx(np.log([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(), nan_ok=True)
 
+@pytest.mark.skip_mxnet
+def test_boolean_mask(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.boolean_mask(tb.astensor([1,2,3,4,5,6]), tb.astensor([True, True, False, True, False, False], dtype='bool'))) == [1, 2, 4]
+    assert tb.tolist(tb.boolean_mask(tb.astensor([[1,2],[3,4],[5,6]]), tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'))) == [1, 2, 4]
+
 def test_1D_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.gather(tb.astensor([1,2,3,4,5,6]), tb.astensor([4,0,3,2], dtype='int'))) == [5, 1, 4, 3]
