@@ -13,24 +13,24 @@ def test_notebooks(tmpdir):
     pm.execute_notebook(
         'docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
-    if sys.version_info.major > 2:
-        # The Binder example uses specific relative paths
-        cwd = os.getcwd()
-        os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
-        pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
-        os.chdir(cwd)
-
-    pm.execute_notebook(
-        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
-
-    pm.execute_notebook(
-        'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
-    pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',
-                        parameters={'validation_datadir': 'validation/data'},
-                        **common_kwargs)
-    pm.execute_notebook('docs/examples/notebooks/multiBinPois.ipynb',
-                        parameters={'validation_datadir': 'validation/data'},
-                        **common_kwargs)
-
-    nb = pm.read_notebook(str(outputnb))
-    assert nb.data['number_2d_successpoints'] > 200
+    # if sys.version_info.major > 2:
+    #     # The Binder example uses specific relative paths
+    #     cwd = os.getcwd()
+    #     os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
+    #     pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
+    #     os.chdir(cwd)
+    #
+    # pm.execute_notebook(
+    #     'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs)
+    #
+    # pm.execute_notebook(
+    #     'docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
+    # pm.execute_notebook('docs/examples/notebooks/multichannel-coupled-histo.ipynb',
+    #                     parameters={'validation_datadir': 'validation/data'},
+    #                     **common_kwargs)
+    # pm.execute_notebook('docs/examples/notebooks/multiBinPois.ipynb',
+    #                     parameters={'validation_datadir': 'validation/data'},
+    #                     **common_kwargs)
+    #
+    # nb = pm.read_notebook(str(outputnb))
+    # assert nb.data['number_2d_successpoints'] > 200
