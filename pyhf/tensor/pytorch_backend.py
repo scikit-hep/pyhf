@@ -3,12 +3,11 @@ import torch.autograd
 import logging
 log = logging.getLogger(__name__)
 
-
 class pytorch_backend(object):
     """PyTorch backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'pytorch'
 
     def clip(self, tensor_in, min, max):
         """
@@ -34,8 +33,11 @@ class pytorch_backend(object):
         return torch.clamp(tensor_in, min, max)
 
     def tolist(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
-        return tensor_in.data.numpy().tolist()
+        try:
+            return tensor_in.data.numpy().tolist()
+        except AttributeError:
+            if isinstance(tensor_in, list): return tensor_in
+            raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -54,13 +56,7 @@ class pytorch_backend(object):
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         dtype = dtypemap[dtype]
-        if isinstance(tensor_in, torch.Tensor):
-            v = tensor_in
-        else:
-            if not isinstance(tensor_in, list):
-                tensor_in = [tensor_in]
-            v = torch.tensor(tensor_in, dtype = dtype)
-        return v
+        return torch.as_tensor(tensor_in, dtype = dtype)
 
     def gather(self,tensor,indices):
         return torch.take(tensor,indices.type(torch.LongTensor))
@@ -161,15 +157,24 @@ class pytorch_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
+        def generic_len(a):
+            try:
+                return len(a)
+            except TypeError:
+                if len(a.shape) < 1:
+                    return 0
+                else:
+                    return a.shape[0]
+
         args = [self.astensor(arg) for arg in args]
-        max_dim = max(map(len, args))
+        max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
             log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
             raise error
 
-        broadcast = [arg if len(arg) > 1 else arg.expand(max_dim)
+        broadcast = [arg if generic_len(arg) > 1 else arg.expand(max_dim)
                      for arg in args]
         return broadcast
 
@@ -203,8 +208,10 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.poisson(5., 6.)
+            >>> pyhf.tensorlib.poisson([5.], [6.])
             tensor([0.1606])
+            >>> pyhf.tensorlib.poisson(5., 6.)
+            tensor(0.1606)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -236,8 +243,10 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
             tensor([0.3521])
+            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            tensor(0.3521)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.

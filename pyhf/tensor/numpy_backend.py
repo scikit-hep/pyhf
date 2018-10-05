@@ -4,12 +4,11 @@ from scipy.special import gammaln
 from scipy.stats import norm
 log = logging.getLogger(__name__)
 
-
 class numpy_backend(object):
     """NumPy backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'numpy'
 
     def clip(self, tensor_in, min, max):
         """
@@ -34,7 +33,11 @@ class numpy_backend(object):
         return np.clip(tensor_in, min, max)
 
     def tolist(self,tensor_in):
-        return tensor_in.tolist()
+        try:
+            return tensor_in.tolist()
+        except AttributeError:
+            if isinstance(tensor_in, list): return tensor_in
+            raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)

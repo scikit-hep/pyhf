@@ -6,12 +6,11 @@ from numbers import Number  # Required for normal()
 from scipy.stats import norm  # Required for normal_cdf()
 log = logging.getLogger(__name__)
 
-
 class mxnet_backend(object):
     """MXNet backend for pyhf"""
 
     def __init__(self, **kwargs):
-        pass
+        self.name = 'mxnet'
 
     def clip(self, tensor_in, min, max):
         """
@@ -48,8 +47,11 @@ class mxnet_backend(object):
         Returns:
             list: The possibly nested list of tensor elements.
         """
-        tensor_in = self.astensor(tensor_in)
-        return tensor_in.asnumpy().tolist()
+        try:
+            return tensor_in.asnumpy().tolist()
+        except AttributeError:
+            if isinstance(tensor_in, list): return tensor_in
+            raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         """
