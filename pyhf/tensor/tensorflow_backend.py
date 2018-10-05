@@ -58,6 +58,11 @@ class tensorflow_backend(object):
             # return it instead
             if "graph is empty" in err.message and isinstance(tensor_in, list): return tensor_in
             raise
+        except TypeError:
+            # if a tensor operation has been added to the graph, but we want to
+            # pass-through a list, we need to catch the type error
+            if isinstance(tensor_in, list): return tensor_in
+            raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)

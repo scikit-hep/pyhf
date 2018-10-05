@@ -11,11 +11,6 @@ import tensorflow as tf
 
 import pytest
 
-def test_tensor_list_conversion(backend):
-    tb = pyhf.tensorlib
-    assert tb.tolist(tb.astensor([1, 2, 3])) == [1, 2, 3]
-    assert tb.tolist([1,2,3]) == [1,2,3]
-
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
@@ -111,6 +106,7 @@ def test_einsum(backend):
 
 def test_list_to_list(backend):
     tb = pyhf.tensorlib
+    # test when no other tensor operations are done
     assert tb.tolist([1,2,3,4]) == [1,2,3,4]
     assert tb.tolist([[1],[2],[3],[4]]) == [[1],[2],[3],[4]]
     assert tb.tolist([[1,2], 3, [4]]) == [[1,2], 3, [4]]
@@ -119,6 +115,15 @@ def test_tensor_to_list(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1,2,3,4])) == [1,2,3,4]
     assert tb.tolist(tb.astensor([[1],[2],[3],[4]])) == [[1],[2],[3],[4]]
+
+@pytest.mark.only_tensorflow
+def test_tensor_list_conversion(backend):
+    tb = pyhf.tensorlib
+    # test when a tensor operation is done, but then need to check if this
+    # doesn't break in session.run
+    assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
+    assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
+
 
 def test_tensorflow_tolist_nosession():
     pyhf.set_backend(pyhf.tensor.tensorflow_backend())
