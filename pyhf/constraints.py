@@ -42,15 +42,16 @@ class gaussian_constraint_combined(object):
             normal_constraint_mean_indices.append(self.par_indices[modslice])
         
         if normal_constraint_mean_indices:
-            normal_mean_idc  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
-            normal_sigmas    = tensorlib.concatenate(list(map(tensorlib.astensor,normal_constraint_sigmas)))
-            normal_data      = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_data)))
-        else:
-            normal_data, normal_sigmas, normal_mean_idc = None, None, None
+            normal_mean_idc  = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
+            normal_sigmas    = default_backend.concatenate(list(map(default_backend.astensor,normal_constraint_sigmas)))
+            normal_data      = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'),normal_constraint_data)))
 
-        self.normal_data = normal_data
-        self.normal_sigmas = normal_sigmas
-        self.normal_mean_idc = normal_mean_idc
+            self.normal_data = tensorlib.astensor(default_backend.tolist(normal_data),dtype = 'int')
+            self.normal_sigmas = tensorlib.astensor(default_backend.tolist(normal_sigmas))
+            self.normal_mean_idc = tensorlib.astensor(default_backend.tolist(normal_mean_idc),dtype = 'int')
+        else:
+            self.normal_data, self.normal_sigmas, self.normal_mean_idc = None, None, None
+
         self.prepped = True
 
     def logpdf(self,auxdata,pars):
@@ -100,18 +101,19 @@ class poisson_constraint_combined(object):
             try:
                 poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
             except AttributeError:
-                poisson_constraint_rate_factors.append(tensorlib.shape(self.par_indices[modslice]))
+                poisson_constraint_rate_factors.append(defa.shape(self.par_indices[modslice]))
 
 
         if poisson_constraint_rate_indices:
-            poisson_rate_idc  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_rate_indices)))
-            poisson_rate_fac  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'float'), poisson_constraint_rate_factors)))
-            poisson_data      = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_data)))
+            poisson_rate_idc  = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'), poisson_constraint_rate_indices)))
+            poisson_rate_fac  = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'float'), poisson_constraint_rate_factors)))
+            poisson_data      = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'), poisson_constraint_data)))
+
+            self.poisson_data = tensorlib.astensor(default_backend.tolist(poisson_data),dtype = 'int')
+            self.poisson_rate_idc = tensorlib.astensor(default_backend.tolist(poisson_rate_idc),dtype = 'int')
+            self.poisson_rate_fac = tensorlib.astensor(default_backend.tolist(poisson_rate_fac),dtype = 'float')
         else:
-            poisson_rate_idc, poisson_data, poisson_rate_fac = None, None, None
-        self.poisson_data = poisson_data
-        self.poisson_rate_idc = poisson_rate_idc
-        self.poisson_rate_fac = poisson_rate_fac
+            self.poisson_rate_idc, self.poisson_data, self.poisson_rate_fac = None, None, None
         self.prepped = True
 
     def logpdf(self,auxdata,pars):
