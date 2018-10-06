@@ -132,8 +132,16 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
 
+
+        for m in self.config.modifiers:
+            mod = self.config.modifier(m)
+            try:
+                mod.finalize()
+            except AttributeError:
+                pass
         self.prepped_constraints_gaussian = gaussian_constraint_combined(self)
         self.prepped_constraints_poisson = poisson_constraint_combined(self)
+
 
     def _mtype_results(self,mtype,pars):
         """
