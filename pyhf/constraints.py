@@ -1,10 +1,10 @@
-from . import get_backend
+from . import get_backend, default_backend
 
 class gaussian_constraint_combined(object):
     def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
-        self.prepped = None
+        self.prepped = False
         # iterate over all constraints order doesn't matter....
         
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -48,26 +48,26 @@ class gaussian_constraint_combined(object):
         else:
             normal_data, normal_sigmas, normal_mean_idc = None, None, None
 
-        self.prepped =  (normal_data,normal_sigmas,normal_mean_idc)
+        self.normal_data = normal_data
+        self.normal_sigmas = normal_sigmas
+        self.normal_mean_idc = normal_mean_idc
+        self.prepped = True
 
     def logpdf(self,auxdata,pars):
         self._precompute()
-        if self.prepped[0] is None:
+        if self.normal_data is None:
             return 0
         tensorlib, _ = get_backend()
-        normal_data   = tensorlib.gather(auxdata,self.prepped[0])
-        normal_means  = tensorlib.gather(pars,self.prepped[2])
-        normal_sigmas = self.prepped[1]
-        # for d,m,s in zip(normal_data,normal_means,normal_sigmas):
-        #     print('fast data: {} mean: {} sigma: {}'.format(d,m,s))
-        normal = tensorlib.normal_logpdf(normal_data,normal_means,normal_sigmas)
+        normal_data   = tensorlib.gather(auxdata,self.normal_data)
+        normal_means  = tensorlib.gather(pars,self.normal_mean_idc)
+        normal = tensorlib.normal_logpdf(normal_data,normal_means,self.normal_sigmas)
         return tensorlib.sum(normal)
 
 class poisson_constraint_combined(object):
     def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
-        self.prepped = None
+        self.prepped = False
         # iterate over all constraints order doesn't matter....
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -109,20 +109,21 @@ class poisson_constraint_combined(object):
             poisson_data      = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_data)))
         else:
             poisson_rate_idc, poisson_data, poisson_rate_fac = None, None, None
-        self.prepped = (poisson_data,poisson_rate_idc,poisson_rate_fac)
+        self.poisson_data = poisson_data
+        self.poisson_rate_idc = poisson_rate_idc
+        self.poisson_rate_fac = poisson_rate_fac
+        self.prepped = True
 
     def logpdf(self,auxdata,pars):
         self._precompute()
-        if self.prepped[0] is None:
+        if self.poisson_data is None:
             return 0
         tensorlib, _ = get_backend()
-        poisson_data  = tensorlib.gather(auxdata,self.prepped[0])
-        poisson_rate_base  = tensorlib.gather(pars,self.prepped[1])
-        poisson_factors  = self.prepped[2]
+        poisson_data  = tensorlib.gather(auxdata,self.poisson_data)
+        poisson_rate_base  = tensorlib.gather(pars,self.poisson_rate_idc)
+        poisson_factors  = self.poisson_rate_fac
 
         poisson_rate = tensorlib.product(
             tensorlib.stack([poisson_rate_base, poisson_factors]), axis=0)
-        # for d,r in zip(poisson_data,poisson_rate):
-        #     print('fast data: {} rate: {}'.format(d,r))
         poisson = tensorlib.poisson_logpdf(poisson_data,poisson_rate)
         return tensorlib.sum(poisson)
