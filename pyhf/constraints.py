@@ -82,7 +82,7 @@ class poisson_constraint_combined(object):
             poisson_rate_fac  = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'float'), poisson_constraint_rate_factors))
             poisson_data      = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_data))
         else:
-            poisson_rate_idc, poisson_data = None, None
+            poisson_rate_idc, poisson_data, poisson_rate_fac = None, None, None
         self.prepped = (poisson_data,poisson_rate_idc,poisson_rate_fac)
 
     def logpdf(self,auxdata,pars):
