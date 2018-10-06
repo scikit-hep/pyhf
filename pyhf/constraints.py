@@ -4,9 +4,7 @@ class gaussian_constraint_combined(object):
     def __init__(self,pdf):
         tensorlib, _ = get_backend()
         # iterate over all constraints order doesn't matter....
-        start_index = 0
-        summands = None
-        
+        start_index = 0        
         normal_constraint_data = []
         normal_constraint_mean_indices = []
         normal_constraint_sigmas = []
@@ -50,9 +48,7 @@ class poisson_constraint_combined(object):
         tensorlib, _ = get_backend()
         # iterate over all constraints order doesn't matter....
         start_index = 0
-                
-        poisson_constraint_rates = []
-        
+                        
         poisson_constraint_data = []
         poisson_constraint_rate_indices = []
 
