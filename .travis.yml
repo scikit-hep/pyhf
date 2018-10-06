@@ -52,6 +52,8 @@ jobs:
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
+      - sudo apt-get -qq install libtcmalloc-minimal4
+      - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
       - pip install selenium
     install:
