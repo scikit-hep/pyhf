@@ -13,7 +13,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest -r sx --ignore tests/benchmarks/
+  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
@@ -34,6 +34,14 @@ env:
 
 jobs:
   include:
+  - name: "Python 2.7 Notebook Tests"
+    python: '2.7'
+    script:
+      - pytest tests/test_notebooks.py
+  - name: "Python 3.6 Notebook Tests"
+    python: '3.6'
+    script:
+      - pytest tests/test_notebooks.py
   - stage: benchmark
     python: '3.6'
     before_install:
