@@ -139,8 +139,8 @@ class Model(object):
                 mod.finalize()
             except AttributeError:
                 pass
-        self.prepped_constraints_gaussian = gaussian_constraint_combined(self)
-        self.prepped_constraints_poisson = poisson_constraint_combined(self)
+        self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
+        self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
 
 
     def _mtype_results(self,mtype,pars):

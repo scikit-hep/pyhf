@@ -1,17 +1,17 @@
 from . import get_backend
 
 class gaussian_constraint_combined(object):
-    def __init__(self,pdf):
+    def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
         self.prepped = None
         # iterate over all constraints order doesn't matter....
         
-        self.par_indices = list(range(len(pdf.config.suggested_init())))
-        self.data_indices = list(range(len(pdf.config.auxdata)))
+        self.par_indices = list(range(len(pdfconfig.suggested_init())))
+        self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.mod_and_slice = [
-            (pdf.config.modifier(cname),pdf.config.par_slice(cname))
-            for cname in pdf.config.auxdata_order
+            (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
+            for cname in pdfconfig.auxdata_order
         ]
 
     def _precompute(self):
@@ -64,17 +64,17 @@ class gaussian_constraint_combined(object):
         return tensorlib.sum(normal)
 
 class poisson_constraint_combined(object):
-    def __init__(self,pdf):
+    def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
         self.prepped = None
         # iterate over all constraints order doesn't matter....
 
-        self.par_indices = list(range(len(pdf.config.suggested_init())))
-        self.data_indices = list(range(len(pdf.config.auxdata)))
+        self.par_indices = list(range(len(pdfconfig.suggested_init())))
+        self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.mod_and_slice = [
-            (pdf.config.modifier(cname),pdf.config.par_slice(cname))
-            for cname in pdf.config.auxdata_order
+            (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
+            for cname in pdfconfig.auxdata_order
         ]
 
     def _precompute(self):
