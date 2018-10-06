@@ -4,6 +4,7 @@ import tensorflow_probability as tfp
 
 log = logging.getLogger(__name__)
 
+
 class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
 
@@ -43,25 +44,29 @@ class tensorflow_backend(object):
             max = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()
         except AttributeError as err:
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             if "no attribute 'run'" in str(err):
-                raise RuntimeError('evaluation of tensor requested via .tolist() but no session defined')
+                raise RuntimeError(
+                    'evaluation of tensor requested via .tolist() but no session defined')
             raise
         except RuntimeError as err:
             # if no tensor operations have been added to the graph, but we want
             # to pass-through a list, then we need to catch the runtime error
             # First, see if the input tensor is just a vanilla python list and
             # return it instead
-            if "graph is empty" in str(err) and isinstance(tensor_in, list): return tensor_in
+            if "graph is empty" in str(err) and isinstance(tensor_in, list):
+                return tensor_in
             raise
         except TypeError:
             # if a tensor operation has been added to the graph, but we want to
             # pass-through a list, we need to catch the type error
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
@@ -71,11 +76,11 @@ class tensorflow_backend(object):
         tensor_in_1 = tensor_in_1 if tensor_in_2.dtype is not tf.bool else tf.cast(tensor_in_2, tf.float32)
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
-    def gather(self,tensor,indices):
-        return tf.gather(tensor,indices)
+    def gather(self, tensor, indices):
+        return tf.gather(tensor, indices)
 
     def boolean_mask(self, tensor, mask):
-        return tf.boolean_mask(tensor,mask)
+        return tf.boolean_mask(tensor, mask)
 
     def isfinite(self, tensor):
         return tf.is_finite(tensor)
@@ -131,10 +136,10 @@ class tensorflow_backend(object):
         return tf.sqrt(tensor_in)
 
     def shape(self, tensor):
-        return tuple(map(int,tensor.shape))
+        return tuple(map(int, tensor.shape))
 
     def reshape(self, tensor, newshape):
-        return tf.reshape(tensor,newshape)
+        return tf.reshape(tensor, newshape)
 
     def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -156,7 +161,7 @@ class tensorflow_backend(object):
         mask = self.astensor(mask)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1-mask) * tensor_in_2
+        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
 
     def concatenate(self, sequence, axis=0):
         """
@@ -205,9 +210,11 @@ class tensorflow_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args
+                        if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
-            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            log.error(
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
             raise error
 
         broadcast = [arg if generic_len(arg) > 1 else
