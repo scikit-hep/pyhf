@@ -101,7 +101,7 @@ class poisson_constraint_combined(object):
             try:
                 poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
             except AttributeError:
-                poisson_constraint_rate_factors.append(defa.shape(self.par_indices[modslice]))
+                poisson_constraint_rate_factors.append(default_backend.shape(self.par_indices[modslice]))
 
 
         if poisson_constraint_rate_indices:
