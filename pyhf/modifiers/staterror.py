@@ -37,6 +37,8 @@ class staterror(object):
         totals = tensorlib.sum(self.nominal_counts,axis=0)
         uncrts = tensorlib.divide(inquad,totals)
         assert self.sigmas.tolist() == uncrts.tolist()
+        # for d,m,s in zip(a,alpha,uncrts):
+        #     print('slow stat data: {} mean: {} sigma: {}'.format(d,m,s))
         return getattr(tensorlib, self.pdf_type)(a, alpha, uncrts)
 
     def expected_data(self, pars):

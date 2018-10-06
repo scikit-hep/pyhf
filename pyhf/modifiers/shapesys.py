@@ -26,6 +26,8 @@ class shapesys(object):
 
     def pdf(self, a, alpha):
         tensorlib, _ = get_backend()
+        # for d,r in zip(a,alpha):
+        #     print('slow shp data: {} rate: {}'.format(d,r))
         return getattr(tensorlib, self.pdf_type)(a, alpha)
 
     def expected_data(self, pars):
