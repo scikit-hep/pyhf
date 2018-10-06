@@ -7,7 +7,6 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .interpolate import _hfinterp_code1,_hfinterp_code0
 
 
 class _ModelConfig(object):
@@ -152,7 +151,7 @@ class Model(object):
                 pass
         self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
         self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
-        
+
         _allmods = []
         _allsamples = []
         _allchannels = []
@@ -176,9 +175,14 @@ class Model(object):
         self._make_mega()
         self._prep_mega()
 
-        from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-        self.prepped_constraints_gaussian = gaussian_constraint_combined(self)
-        self.prepped_constraints_poisson = poisson_constraint_combined(self)
+        for m in self.config.modifiers:
+            mod = self.config.modifier(m)
+            try:
+                mod.finalize()
+            except AttributeError:
+                pass
+        self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
+        self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
 
 
     def _make_mega(self):
@@ -211,7 +215,7 @@ class Model(object):
                     modspec.setdefault('data',{})['uncrt'] = []
                     modspec.setdefault('data',{})['mask']  = []
                 mega_mods.setdefault(s,{})[m] = copy.deepcopy(modspec)
-                
+
         mega_samples = {}
         for s in self.do_samples:
             mega_nom = []
@@ -281,8 +285,6 @@ class Model(object):
         self.normfac_combined = normfac_combinedmod(normfac_mods,self)
 
         staterr_mods = [m for m,mtype in self.do_mods if mtype == 'staterror']
-        for m in staterr_mods:
-            self.config.modifier(m).finalize()
         self.staterr_combined = staterror_combined(staterr_mods,self)
 
         shapesys_mods = [m for m,mtype in self.do_mods if mtype == 'shapesys']
@@ -337,10 +339,10 @@ class Model(object):
 
     def expected_actualdata(self,pars):
         deltas, factors = self._modifications(pars)
-        
+
         tensorlib, _ = get_backend()
         allsum = tensorlib.concatenate(deltas + [self.thenom])
-        
+
         nom_plus_delta = tensorlib.sum(allsum,axis=0)
         nom_plus_delta = tensorlib.reshape(nom_plus_delta,(1,)+tensorlib.shape(nom_plus_delta))
 
@@ -360,7 +362,7 @@ class Model(object):
         expected_constraints = self.expected_auxdata(pars)
         tocat = [expected_actual] if expected_constraints is None else [expected_actual,expected_constraints]
         return tensorlib.concatenate(tocat)
-        
+
     def constraint_logpdf(self, auxdata, pars):
         normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
         poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
@@ -383,7 +385,7 @@ class Model(object):
 
             mainpdf    = self.mainlogpdf(actual_data,pars)
             constraint = self.constraint_logpdf(aux_data, pars)
-            
+
             result = mainpdf + constraint
             return result * tensorlib.ones((1)) #ensure (1,) array shape also for numpy
         except:
