@@ -4,19 +4,23 @@ class gaussian_constraint_combined(object):
     def __init__(self,pdf):
         tensorlib, _ = get_backend()
         # iterate over all constraints order doesn't matter....
+        
+        self.par_indices = list(range(len(pdf.config.suggested_init())))
+        self.data_indices = list(range(len(pdf.config.auxdata)))
+        self.mod_and_slice = [
+            (pdf.config.modifier(cname),pdf.config.par_slice(cname))
+            for cname in pdf.config.auxdata_order
+        ]
+        self._precompute()
+    def _precompute(self):
+        tensorlib, _ = get_backend()
         start_index = 0        
         normal_constraint_data = []
         normal_constraint_mean_indices = []
         normal_constraint_sigmas = []
-        
-        par_indices = list(range(len(pdf.config.suggested_init())))
-        data_indices = list(range(len(pdf.config.auxdata)))
-        for cname in pdf.config.auxdata_order:
-            modifier = pdf.config.modifier(cname)
-            modslice  = pdf.config.par_slice(cname)
-
+        for modifier,modslice in self.mod_and_slice:
             end_index = start_index + modifier.n_parameters
-            thisauxdata = data_indices[start_index:end_index]
+            thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
             if not modifier.pdf_type == 'normal': continue
 
@@ -29,7 +33,7 @@ class gaussian_constraint_combined(object):
                 normal_constraint_sigmas.append([1.]*len(thisauxdata))
 
             normal_constraint_data.append(thisauxdata)
-            normal_constraint_mean_indices.append(par_indices[modslice])
+            normal_constraint_mean_indices.append(self.par_indices[modslice])
         
         if normal_constraint_mean_indices:
             normal_mean_idc  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
@@ -56,29 +60,35 @@ class poisson_constraint_combined(object):
     def __init__(self,pdf):
         tensorlib, _ = get_backend()
         # iterate over all constraints order doesn't matter....
+
+        self.par_indices = list(range(len(pdf.config.suggested_init())))
+        self.data_indices = list(range(len(pdf.config.auxdata)))
+        self.mod_and_slice = [
+            (pdf.config.modifier(cname),pdf.config.par_slice(cname))
+            for cname in pdf.config.auxdata_order
+        ]
+        self._precompute()
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
         start_index = 0
                         
         poisson_constraint_data = []
         poisson_constraint_rate_indices = []
         poisson_constraint_rate_factors = []
-
-        par_indices = list(range(len(pdf.config.suggested_init())))
-        data_indices = list(range(len(pdf.config.auxdata)))
-        for cname in pdf.config.auxdata_order:
-            modifier = pdf.config.modifier(cname)
+        for modifier,modslice in self.mod_and_slice:
             end_index = start_index + modifier.n_parameters
-            thisauxdata = data_indices[start_index:end_index]
+            thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
             if not modifier.pdf_type == 'poisson': continue
-            modslice  = pdf.config.par_slice(cname)
 
             poisson_constraint_data.append(thisauxdata)
-            poisson_constraint_rate_indices.append(par_indices[modslice])
+            poisson_constraint_rate_indices.append(self.par_indices[modslice])
 
             try:
                 poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
             except AttributeError:
-                poisson_constraint_rate_factors.append(tensorlib.shape(par_indices[modslice]))
+                poisson_constraint_rate_factors.append(tensorlib.shape(self.par_indices[modslice]))
 
 
         if poisson_constraint_rate_indices:
