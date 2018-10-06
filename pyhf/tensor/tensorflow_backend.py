@@ -1,8 +1,9 @@
 import logging
 import tensorflow as tf
-# import tensorflow_probability as tfp
+import tensorflow_probability as tfp
 
 log = logging.getLogger(__name__)
+
 
 class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
@@ -43,25 +44,29 @@ class tensorflow_backend(object):
             max = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()
         except AttributeError as err:
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             if "no attribute 'run'" in str(err):
-                raise RuntimeError('evaluation of tensor requested via .tolist() but no session defined')
+                raise RuntimeError(
+                    'evaluation of tensor requested via .tolist() but no session defined')
             raise
         except RuntimeError as err:
             # if no tensor operations have been added to the graph, but we want
             # to pass-through a list, then we need to catch the runtime error
             # First, see if the input tensor is just a vanilla python list and
             # return it instead
-            if "graph is empty" in str(err) and isinstance(tensor_in, list): return tensor_in
+            if "graph is empty" in str(err) and isinstance(tensor_in, list):
+                return tensor_in
             raise
         except TypeError:
             # if a tensor operation has been added to the graph, but we want to
             # pass-through a list, we need to catch the type error
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
@@ -71,11 +76,11 @@ class tensorflow_backend(object):
         tensor_in_1 = tensor_in_1 if tensor_in_2.dtype is not tf.bool else tf.cast(tensor_in_2, tf.float32)
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
-    def gather(self,tensor,indices):
-        return tf.gather(tensor,indices)
+    def gather(self, tensor, indices):
+        return tf.gather(tensor, indices)
 
     def boolean_mask(self, tensor, mask):
-        return tf.boolean_mask(tensor,mask)
+        return tf.boolean_mask(tensor, mask)
 
     def isfinite(self, tensor):
         return tf.is_finite(tensor)
@@ -131,10 +136,10 @@ class tensorflow_backend(object):
         return tf.sqrt(tensor_in)
 
     def shape(self, tensor):
-        return tuple(map(int,tensor.shape))
+        return tuple(map(int, tensor.shape))
 
     def reshape(self, tensor, newshape):
-        return tf.reshape(tensor,newshape)
+        return tf.reshape(tensor, newshape)
 
     def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
@@ -156,7 +161,7 @@ class tensorflow_backend(object):
         mask = self.astensor(mask)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1-mask) * tensor_in_2
+        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
 
     def concatenate(self, sequence, axis=0):
         """
@@ -205,9 +210,11 @@ class tensorflow_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args
+                        if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
-            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            log.error(
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
             raise error
 
         broadcast = [arg if generic_len(arg) > 1 else
@@ -232,10 +239,35 @@ class tensorflow_backend(object):
         return tf.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
+        r"""
+        The log of the continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        to the probability mass function of the Poisson distribution evaluated
+        at :code:`n` given the parameter :code:`lam`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
+            ...
+            array([-1.8286943], dtype=float32)
+
+        Args:
+            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+                                  (the observed number of events)
+            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+                                    (the expected number of events)
+
+        Returns:
+            TensorFlow Tensor: Value of the continous approximation to log(Poisson(n|lam))
+        """
         n = self.astensor(n)
         lam = self.astensor(lam)
-        # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
-        return tf.contrib.distributions.Poisson(lam).log_prob(n)
+        return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
@@ -266,15 +298,38 @@ class tensorflow_backend(object):
         """
         n = self.astensor(n)
         lam = self.astensor(lam)
-        # return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
-        return tf.exp(tf.contrib.distributions.Poisson(lam).log_prob(n))
+        return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
+        r"""
+        The log of the probability density function of the Normal distribution evaluated
+        at :code:`x` given parameters of mean of :code:`mu` and standard deviation
+        of :code:`sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
+            ...
+            array([-1.0439385], dtype=float32)
+
+        Args:
+            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            TensorFlow Tensor: Value of log(Normal(x|mu, sigma))
+        """
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        # normal = tfp.distributions.Normal(mu, sigma)
-        normal = tf.distributions.Normal(mu, sigma)
+        normal = tfp.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
     def normal(self, x, mu, sigma):
@@ -306,8 +361,7 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        # normal = tfp.distributions.Normal(mu, sigma)
-        normal = tf.distributions.Normal(mu, sigma)
+        normal = tfp.distributions.Normal(mu, sigma)
         return normal.prob(x)
 
     def normal_cdf(self, x, mu=0, sigma=1):
@@ -337,6 +391,5 @@ class tensorflow_backend(object):
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
-        # normal = tfp.distributions.Normal(mu, sigma)
-        normal = tf.distributions.Normal(mu, sigma)
+        normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
