@@ -19,7 +19,7 @@ class gaussian_constraint_combined(object):
         # did things change that we need to recompute?
         tensor_type_change = tensorlib.name != self.tensorlib_name
         if (not tensor_type_change) and self.prepped:
-            continue
+            return
         start_index = 0        
         normal_constraint_data = []
         normal_constraint_mean_indices = []
@@ -82,7 +82,7 @@ class poisson_constraint_combined(object):
         # did things change that we need to recompute?
         tensor_type_change = tensorlib.name != self.tensorlib_name
         if (not tensor_type_change) and self.prepped:
-            continue
+            return
         
         start_index = 0
         poisson_constraint_data = []
