@@ -32,9 +32,9 @@ class gaussian_constraint_combined(object):
             normal_constraint_mean_indices.append(par_indices[modslice])
         
         if normal_constraint_mean_indices:
-            normal_mean_idc  = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_mean_indices))
-            normal_sigmas    = tensorlib.concatenate(map(tensorlib.astensor,normal_constraint_sigmas))
-            normal_data      = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_data))
+            normal_mean_idc  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
+            normal_sigmas    = tensorlib.concatenate(list(map(tensorlib.astensor,normal_constraint_sigmas)))
+            normal_data      = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'),normal_constraint_data)))
         else:
             normal_data, normal_sigmas, normal_mean_idc = None, None, None
 
@@ -82,9 +82,9 @@ class poisson_constraint_combined(object):
 
 
         if poisson_constraint_rate_indices:
-            poisson_rate_idc  = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_rate_indices))
-            poisson_rate_fac  = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'float'), poisson_constraint_rate_factors))
-            poisson_data      = tensorlib.concatenate(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_data))
+            poisson_rate_idc  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_rate_indices)))
+            poisson_rate_fac  = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'float'), poisson_constraint_rate_factors)))
+            poisson_data      = tensorlib.concatenate(list(map(lambda x: tensorlib.astensor(x,dtype = 'int'), poisson_constraint_data)))
         else:
             poisson_rate_idc, poisson_data, poisson_rate_fac = None, None, None
         self.prepped = (poisson_data,poisson_rate_idc,poisson_rate_fac)
