@@ -23,7 +23,11 @@ class gaussian_constraint_combined(object):
             # print('combined gauss: {}/{}/{}'.format(
             #     thisauxdata,par_indices[modslice],modifier.sigmas)
             # )
-            normal_constraint_sigmas.append(modifier.sigmas)
+            try:
+                normal_constraint_sigmas.append(modifier.sigmas)
+            except AttributeError:
+                normal_constraint_sigmas.append([1.]*len(thisauxdata))
+
             normal_constraint_data.append(thisauxdata)
             normal_constraint_mean_indices.append(par_indices[modslice])
         
