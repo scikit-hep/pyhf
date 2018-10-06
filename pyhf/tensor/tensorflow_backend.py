@@ -239,6 +239,32 @@ class tensorflow_backend(object):
         return tf.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
+        r"""
+        The log of the continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        to the probability mass function of the Poisson distribution evaluated
+        at :code:`n` given the parameter :code:`lam`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
+            ...
+            array([-1.8286943], dtype=float32)
+
+        Args:
+            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+                                  (the observed number of events)
+            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+                                    (the expected number of events)
+
+        Returns:
+            TensorFlow Tensor: Value of the continous approximation to log(Poisson(n|lam))
+        """
         n = self.astensor(n)
         lam = self.astensor(lam)
         return tfp.distributions.Poisson(lam).log_prob(n)
@@ -275,6 +301,31 @@ class tensorflow_backend(object):
         return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
+        r"""
+        The log of the probability density function of the Normal distribution evaluated
+        at :code:`x` given parameters of mean of :code:`mu` and standard deviation
+        of :code:`sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            ...
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
+            ...
+            array([-1.0439385], dtype=float32)
+
+        Args:
+            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            TensorFlow Tensor: Value of log(Normal(x|mu, sigma))
+        """
         x = self.astensor(x)
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
