@@ -14,9 +14,6 @@ class histosys(object):
         >>> mymod = pyhf.modifiers.histosys([1.0],[0.0])
         >>> mymod.alphas([1.0,2.0,3.0])
         [1.0, 2.0, 3.0]
-        >>> mymod.pdf([1.0,2.0,3.0],[1.0,1.0,1.0])
-        array([0.39894228, 0.24197072, 0.05399097])
-
     """
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
@@ -39,10 +36,6 @@ class histosys(object):
 
     def expected_data(self, pars):
         return self.alphas(pars)
-
-    def pdf(self, a, alpha):
-        tensorlib, _ = get_backend()
-        return getattr(tensorlib, self.pdf_type)(a, alpha, [1])
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1

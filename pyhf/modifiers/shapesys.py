@@ -24,10 +24,6 @@ class shapesys(object):
         tensorlib, _ = get_backend()
         return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
 
-    def pdf(self, a, alpha):
-        tensorlib, _ = get_backend()
-        return getattr(tensorlib, self.pdf_type)(a, alpha)
-
     def expected_data(self, pars):
         return self.alphas(pars)
 

@@ -6,6 +6,7 @@ from . import get_backend
 from . import exceptions
 from . import modifiers
 from . import utils
+from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 
 
 class _ModelConfig(object):
@@ -130,6 +131,17 @@ class Model(object):
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
         self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
+
+
+        for m in self.config.modifiers:
+            mod = self.config.modifier(m)
+            try:
+                mod.finalize()
+            except AttributeError:
+                pass
+        self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
+        self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
+
 
     def _mtype_results(self,mtype,pars):
         """
@@ -379,20 +391,9 @@ class Model(object):
         return tensorlib.concatenate(tocat)
 
     def constraint_logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
-        # iterate over all constraints order doesn't matter....
-        start_index = 0
-        summands = None
-        for cname in self.config.auxdata_order:
-            modifier, modslice = self.config.modifier(cname), \
-                self.config.par_slice(cname)
-            modalphas = modifier.alphas(pars[modslice])
-            end_index = start_index + int(modalphas.shape[0])
-            thisauxdata = auxdata[start_index:end_index]
-            start_index = end_index
-            constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
-            summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
-        return tensorlib.sum(summands) if summands is not None else 0
+        normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
+        poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
+        return normal + poisson
 
     def logpdf(self, pars, data):
         tensorlib, _ = get_backend()
