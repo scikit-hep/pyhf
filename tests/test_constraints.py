@@ -1,6 +1,8 @@
 import pytest
 import pyhf
-@pytest.mark.only_numpy
+
+@pytest.mark.skip_mxnet
+@pytest.mark.skip_tensorflow
 def test_numpy_pdf_inputs(backend):
     spec = {
         'channels': [
@@ -53,7 +55,11 @@ def test_numpy_pdf_inputs(backend):
             end_index = start_index + int(modalphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            constraint_term = tensorlib.log(modifier.pdf(thisauxdata, modalphas))
+            if modifier.pdf_type == 'normal':
+                sigmas = modifier.sigmas if hasattr(modifier,'sigmas') else tensorlib.ones(modalphas.shape)
+                constraint_term = tensorlib.normal_logpdf(thisauxdata, modalphas, sigmas)
+            elif modifier.pdf_type == 'poisson':
+                constraint_term = tensorlib.poisson_logpdf(thisauxdata,modalphas)
             summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
         return tensorlib.sum(summands) if summands is not None else 0
     def fast(self, auxdata, pars):
@@ -61,6 +67,6 @@ def test_numpy_pdf_inputs(backend):
     
     auxd = pyhf.tensorlib.astensor(m.config.auxdata)
     pars = pyhf.tensorlib.astensor(m.config.suggested_init())
-    slow_result = slow(m,auxd,pars).tolist()
-    fast_result = fast(m,auxd,pars).tolist()
+    slow_result = pyhf.tensorlib.tolist(slow(m,auxd,pars))
+    fast_result = pyhf.tensorlib.tolist(fast(m,auxd,pars))
     assert slow_result == fast_result

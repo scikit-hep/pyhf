@@ -26,21 +26,7 @@ class staterror(object):
 
     def alphas(self, pars):
         return pars  # nuisance parameters are also the means of the
-
-    def pdf(self, a, alpha):
-        tensorlib, _ = get_backend()
-        # this computes sum_i uncertainty_i for all samples
-        # (broadcastted for all bins in the channel)
-        # for each bin, the relative uncert is the width of a gaussian
-        # which is the constraint pdf; Prod_i Gaus(x = a_i, mu = alpha_i, sigma = relunc_i)
-        inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(self.uncertainties,2), axis=0))
-        totals = tensorlib.sum(self.nominal_counts,axis=0)
-        uncrts = tensorlib.divide(inquad,totals)
-        assert self.sigmas.tolist() == uncrts.tolist()
-        # for d,m,s in zip(a,alpha,uncrts):
-        #     print('slow stat data: {} mean: {} sigma: {}'.format(d,m,s))
-        return getattr(tensorlib, self.pdf_type)(a, alpha, uncrts)
-
+        
     def expected_data(self, pars):
         return self.alphas(pars)
 

@@ -40,12 +40,6 @@ class histosys(object):
     def expected_data(self, pars):
         return self.alphas(pars)
 
-    def pdf(self, a, alpha):
-        tensorlib, _ = get_backend()
-        # for d,m in zip(a,alpha):
-        #     print('slow hst data: {} mean: {} sigma: {}'.format(d,m,1))
-        return getattr(tensorlib, self.pdf_type)(a, alpha, [1])
-
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1
 
