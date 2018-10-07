@@ -5,6 +5,7 @@ class normsys_combinedmod(object):
     def __init__(self,normsys_mods,pdf):
         pdfconfig = pdf.config
         do_samples = pdf.do_samples
+
         mega_mods = pdf.mega_mods
         mega_samples = pdf.mega_samples
 
@@ -57,9 +58,10 @@ class histosys_combinedmod(object):
     def __init__(self,histosys_mods,pdf):
         tensorlib, _ = get_backend()
         pdfconfig = pdf.config
+        do_samples = pdf.do_samples
+
         mega_mods = pdf.mega_mods
         mega_samples = pdf.mega_samples
-        do_samples = pdf.do_samples
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
         self.histosys_histoset = [
@@ -103,8 +105,9 @@ class histosys_combinedmod(object):
 class normfac_combinedmod(object):
     def __init__(self,normfac_mods,pdf):
         pdfconfig = pdf.config
-        mega_mods = pdf.mega_mods
         do_samples = pdf.do_samples
+
+        mega_mods = pdf.mega_mods
 
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
@@ -136,6 +139,7 @@ class staterror_combined(object):
         do_channels = pdf.do_channels
         do_samples = pdf.do_samples
         channel_nbins = pdf.channel_nbins
+
         mega_mods = pdf.mega_mods
 
         start_index = 0
@@ -209,10 +213,11 @@ class staterror_combined(object):
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdf):
         pdfconfig = pdf.config
-        mega_mods = pdf.mega_mods
         do_channels = pdf.do_channels
         do_samples = pdf.do_samples
         channel_nbins = pdf.channel_nbins
+
+        mega_mods = pdf.mega_mods
 
         start_index = 0
         channel_slices = []
