@@ -19,15 +19,14 @@ class SeleniumSession():
         else:
             self.browser = webdriver.Chrome(chrome_options=self.options)
 
-    # Taken from http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
     @contextmanager
-    def wait_for_page_load(self, timeout=30):
+    def wait_for_page_load(self, timeout=20):
         old_page = self.browser.find_element_by_tag_name('html')
         yield
         WebDriverWait(self.browser, timeout).until(staleness_of(old_page))
 
     def trigger_binder(self, url):
-        with self.wait_for_page_load(timeout=10):
+        with self.wait_for_page_load():
             self.browser.get(url)
 
 
