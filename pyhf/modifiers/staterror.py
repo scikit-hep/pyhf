@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from .. import get_backend
+from .. import get_backend, default_backend
 
 @modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
@@ -20,9 +20,9 @@ class staterror(object):
         # (broadcastted for all bins in the channel)
         # for each bin, the relative uncert is the width of a gaussian
         # which is the constraint pdf; Prod_i Gaus(x = a_i, mu = alpha_i, sigma = relunc_i)
-        inquad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(self.uncertainties,2), axis=0))
-        totals = tensorlib.sum(self.nominal_counts,axis=0)
-        self.sigmas = tensorlib.divide(inquad,totals)
+        inquad = default_backend.sqrt(default_backend.sum(default_backend.power(self.uncertainties,2), axis=0))
+        totals = default_backend.sum(self.nominal_counts,axis=0)
+        self.sigmas = default_backend.tolist(default_backend.divide(inquad,totals))
 
     def alphas(self, pars):
         return pars  # nuisance parameters are also the means of the

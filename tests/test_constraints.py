@@ -1,8 +1,7 @@
 import pytest
 import pyhf
 
-@pytest.mark.skip_mxnet
-@pytest.mark.skip_tensorflow
+# @pytest.mark.skip_mxnet
 def test_numpy_pdf_inputs(backend):
     spec = {
         'channels': [
@@ -57,6 +56,7 @@ def test_numpy_pdf_inputs(backend):
             start_index = end_index
             if modifier.pdf_type == 'normal':
                 sigmas = modifier.sigmas if hasattr(modifier,'sigmas') else tensorlib.ones(modalphas.shape)
+                sigmas = tensorlib.astensor(sigmas)
                 constraint_term = tensorlib.normal_logpdf(thisauxdata, modalphas, sigmas)
             elif modifier.pdf_type == 'poisson':
                 constraint_term = tensorlib.poisson_logpdf(thisauxdata,modalphas)
