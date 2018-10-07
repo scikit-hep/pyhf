@@ -3,32 +3,39 @@ from ..interpolate import _hfinterpolator_code0 ,_hfinterpolator_code1
 
 class normsys_combinedmod(object):
     def __init__(self,normsys_mods,pdf):
+        pdfconfig = pdf.config
+        do_samples = pdf.do_samples
+        mega_mods = pdf.mega_mods
+        mega_samples = pdf.mega_samples
+
+
+
         tensorlib, _ = get_backend()
-        self.parindices = list(range(len(pdf.config.suggested_init())))
+        self.parindices = list(range(len(pdfconfig.suggested_init())))
         self.normsys_histoset = [
             [
                 [
-                    pdf.mega_mods[s][m]['data']['lo'],
-                    [1.]*len(pdf.mega_samples[s]['nom']),
-                    pdf.mega_mods[s][m]['data']['hi'],
+                    mega_mods[s][m]['data']['lo'],
+                    [1.]*len(mega_samples[s]['nom']),
+                    mega_mods[s][m]['data']['hi'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in normsys_mods
         ]
 
         self.normsys_mask = tensorlib.astensor([
             [
                 [
-                    pdf.mega_mods[s][m]['data']['mask'],
+                    mega_mods[s][m]['data']['mask'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in normsys_mods
         ])
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
 
         self.normsys_indices = tensorlib.astensor([
-            self.parindices[pdf.config.par_slice(m)] for m in normsys_mods
+            self.parindices[pdfconfig.par_slice(m)] for m in normsys_mods
         ], dtype='int')
 
         self.interpolator = _hfinterpolator_code1(self.normsys_histoset)
@@ -49,30 +56,35 @@ class normsys_combinedmod(object):
 class histosys_combinedmod(object):
     def __init__(self,histosys_mods,pdf):
         tensorlib, _ = get_backend()
-        self.parindices = list(range(len(pdf.config.suggested_init())))
+        pdfconfig = pdf.config
+        mega_mods = pdf.mega_mods
+        mega_samples = pdf.mega_samples
+        do_samples = pdf.do_samples
+
+        self.parindices = list(range(len(pdfconfig.suggested_init())))
         self.histosys_histoset = [
             [
                 [
-                    pdf.mega_mods[s][m]['data']['lo_data'],
-                    pdf.mega_samples[s]['nom'],
-                    pdf.mega_mods[s][m]['data']['hi_data'],
+                    mega_mods[s][m]['data']['lo_data'],
+                    mega_samples[s]['nom'],
+                    mega_mods[s][m]['data']['hi_data'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in histosys_mods
         ]
 
         self.histosys_mask = tensorlib.astensor([
             [
                 [
-                    pdf.mega_mods[s][m]['data']['mask'],
+                    mega_mods[s][m]['data']['mask'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in histosys_mods
         ])
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
         self.histo_indices = tensorlib.astensor([
-            self.parindices[pdf.config.par_slice(m)] for m in histosys_mods
+            self.parindices[pdfconfig.par_slice(m)] for m in histosys_mods
         ], dtype='int')
 
         self.interpolator = _hfinterpolator_code0(self.histosys_histoset)
@@ -90,19 +102,24 @@ class histosys_combinedmod(object):
 
 class normfac_combinedmod(object):
     def __init__(self,normfac_mods,pdf):
-        self.parindices = list(range(len(pdf.config.suggested_init())))
+        pdfconfig = pdf.config
+        mega_mods = pdf.mega_mods
+        do_samples = pdf.do_samples
+
+
+        self.parindices = list(range(len(pdfconfig.suggested_init())))
         tensorlib, _ = get_backend()
         self.normfactor_mask = tensorlib.astensor([
             [
                 [
-                    pdf.mega_mods[s][m]['data']['mask'],
+                    mega_mods[s][m]['data']['mask'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in normfac_mods
         ])
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
 
-        self.normfac_indices = tensorlib.astensor([self.parindices[pdf.config.par_slice(m)] for m in normfac_mods ], dtype='int')
+        self.normfac_indices = tensorlib.astensor([self.parindices[pdfconfig.par_slice(m)] for m in normfac_mods ], dtype='int')
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -115,32 +132,38 @@ class normfac_combinedmod(object):
 
 class staterror_combined(object):
     def __init__(self,staterr_mods,pdf):
+        pdfconfig = pdf.config
+        do_channels = pdf.do_channels
+        do_samples = pdf.do_samples
+        channel_nbins = pdf.channel_nbins
+        mega_mods = pdf.mega_mods
+
         start_index = 0
         channel_slices = []
-        for c in pdf.do_channels:
-            end_index = start_index + pdf.channel_nbins[c]
+        for c in do_channels:
+            end_index = start_index + channel_nbins[c]
             channel_slices.append(slice(start_index,end_index))
             start_index = end_index
 
-        binindices = list(range(sum(list(pdf.channel_nbins.values()))))
+        binindices = list(range(sum(list(channel_nbins.values()))))
         channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(pdf.do_channels,channel_slices)
+            c:binindices[sl] for c,sl in zip(do_channels,channel_slices)
         }
 
-        parindices = list(range(len(pdf.config.suggested_init())))
+        parindices = list(range(len(pdfconfig.suggested_init())))
 
         self._staterror_mask = default_backend.astensor([
             [
                 [
-                    pdf.mega_mods[s][m]['data']['mask'],
+                    mega_mods[s][m]['data']['mask'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in staterr_mods
         ])
         self._staterror_default = default_backend.ones(default_backend.shape(self._staterror_mask))
 
-        stat_parslices  = [pdf.config.par_slice(m) for m in staterr_mods]
-        stat_targetind  = [channel_slice_map[pdf.config.modifier(m).channel] for m in staterr_mods]
+        stat_parslices  = [pdfconfig.par_slice(m) for m in staterr_mods]
+        stat_targetind  = [channel_slice_map[pdfconfig.modifier(m).channel] for m in staterr_mods]
 
         default_row =  [1.]*default_backend.shape(self._staterror_default)[-1]
         befores     = []
@@ -158,7 +181,7 @@ class staterror_combined(object):
             ]))
             self.factor_row_indices = tensorlib.astensor(factor_row_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.])
-            self.sample_ones   = tensorlib.ones(len(pdf.do_samples))
+            self.sample_ones   = tensorlib.ones(len(do_samples))
             self.alpha_ones    = tensorlib.astensor([1])
             self.staterror_mask = default_backend.astensor(default_backend.tolist(self._staterror_mask))
             self.staterror_default = default_backend.astensor(default_backend.tolist(self._staterror_default))
@@ -185,32 +208,38 @@ class staterror_combined(object):
 
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdf):
+        pdfconfig = pdf.config
+        mega_mods = pdf.mega_mods
+        do_channels = pdf.do_channels
+        do_samples = pdf.do_samples
+        channel_nbins = pdf.channel_nbins
+
         start_index = 0
         channel_slices = []
-        for c in pdf.do_channels:
-            end_index = start_index + pdf.channel_nbins[c]
+        for c in do_channels:
+            end_index = start_index + channel_nbins[c]
             channel_slices.append(slice(start_index,end_index))
             start_index = end_index
 
-        parindices = list(range(len(pdf.config.suggested_init())))
-        binindices = list(range(sum(list(pdf.channel_nbins.values()))))
+        parindices = list(range(len(pdfconfig.suggested_init())))
+        binindices = list(range(sum(list(channel_nbins.values()))))
         channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(pdf.do_channels,channel_slices)
+            c:binindices[sl] for c,sl in zip(do_channels,channel_slices)
         }
 
         self._shapesys_mask = default_backend.astensor([
             [
                 [
-                    pdf.mega_mods[s][m]['data']['mask'],
+                    mega_mods[s][m]['data']['mask'],
                 ]
-                for s in pdf.do_samples
+                for s in do_samples
             ] for m in shapesys_mods
         ])
         self._shapesys_default = default_backend.ones(self._shapesys_mask.shape)
 
-        shapesys_parslices  = [pdf.config.par_slice(m) for m in shapesys_mods]
+        shapesys_parslices  = [pdfconfig.par_slice(m) for m in shapesys_mods]
         shapesys_targetind  = [
-            channel_slice_map[pdf.config.modifier(m).channel] for m in shapesys_mods
+            channel_slice_map[pdfconfig.modifier(m).channel] for m in shapesys_mods
         ]
         default_row =  [1.]*self._shapesys_default.shape[-1]
 
@@ -228,7 +257,7 @@ class shapesys_combined(object):
                 default_backend.concatenate([before,default_backend.astensor(parindices[sl]),after])
                 for before,sl,after in zip(befores,shapesys_parslices,afters)
             ]))
-            self.sample_ones = tensorlib.ones(len(pdf.do_samples))
+            self.sample_ones = tensorlib.ones(len(do_samples))
             self.alpha_ones = tensorlib.astensor([1])
             self.factor_row_indices = tensorlib.astensor(factor_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.])
