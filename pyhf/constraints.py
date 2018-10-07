@@ -4,7 +4,6 @@ class gaussian_constraint_combined(object):
     def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
-        self.prepped = False
         # iterate over all constraints order doesn't matter....
         
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -13,12 +12,13 @@ class gaussian_constraint_combined(object):
             (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
+        self._precompute()
 
     def _precompute(self):
         tensorlib, _ = get_backend()
         # did things change that we need to recompute?
         tensor_type_change = tensorlib.name != self.tensorlib_name
-        if (not tensor_type_change) and self.prepped:
+        if not tensor_type_change:
             return
         start_index = 0        
         normal_constraint_data = []
@@ -54,8 +54,6 @@ class gaussian_constraint_combined(object):
         else:
             self.normal_data, self.normal_sigmas, self.normal_mean_idc = None, None, None
 
-        self.prepped = True
-
     def logpdf(self,auxdata,pars):
         self._precompute()
         if self.normal_data is None:
@@ -70,7 +68,6 @@ class poisson_constraint_combined(object):
     def __init__(self,pdfconfig):
         tensorlib, _ = get_backend()
         self.tensorlib_name = tensorlib.name
-        self.prepped = False
         # iterate over all constraints order doesn't matter....
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -79,12 +76,13 @@ class poisson_constraint_combined(object):
             (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
+        self._precompute()
 
     def _precompute(self):
         tensorlib, _ = get_backend()
         # did things change that we need to recompute?
         tensor_type_change = tensorlib.name != self.tensorlib_name
-        if (not tensor_type_change) and self.prepped:
+        if not tensor_type_change:
             return
         
         start_index = 0
@@ -120,7 +118,6 @@ class poisson_constraint_combined(object):
             self.poisson_rate_fac = tensorlib.astensor(default_backend.tolist(poisson_rate_fac),dtype = 'float')
         else:
             self.poisson_rate_idc, self.poisson_data, self.poisson_rate_fac = None, None, None
-        self.prepped = True
 
     def logpdf(self,auxdata,pars):
         self._precompute()
