@@ -101,11 +101,6 @@ def test_pdf_integration_staterror(backend):
     assert mod.uncertainties == [[12.,12.],[5.,5.]]
     assert mod.nominal_counts == [[50.,70.],[30.,20.]]
 
-    computed = pyhf.tensorlib.tolist(mod.pdf([1.0,1.0],[1.0,1.0]))
-    expected = pyhf.tensorlib.tolist(pyhf.tensorlib.normal([1.0,1.0], mu = [1.0,1.0], sigma = [13./80.,13./90.]))
-    for c,e in zip(computed,expected):
-        assert c==e
-
 @pytest.mark.only_numpy
 def test_pdf_integration_histosys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
