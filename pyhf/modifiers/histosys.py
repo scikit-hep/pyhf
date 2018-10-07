@@ -14,8 +14,6 @@ class histosys(object):
         >>> mymod = pyhf.modifiers.histosys([1.0],[0.0])
         >>> mymod.alphas([1.0,2.0,3.0])
         [1.0, 2.0, 3.0]
-        >>> mymod.pdf([1.0,2.0,3.0],[1.0,1.0,1.0])
-        array([0.39894228, 0.24197072, 0.05399097])
 
     """
     def __init__(self, nom_data, modifier_data):
