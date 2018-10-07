@@ -29,6 +29,12 @@ class gaussian_constraint_combined(object):
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
             if not modifier.pdf_type == 'normal': continue
+
+            # many constraints are defined on a unit gaussian
+            # but we reserved the possibility that a modifier
+            # can define its own uncertainties. This is used
+            # by the staterror modifier. Such modifiers
+            # are required to define a 'sigmas' attribute
             try:
                 normal_constraint_sigmas.append(modifier.sigmas)
             except AttributeError:
@@ -94,6 +100,10 @@ class poisson_constraint_combined(object):
             poisson_constraint_data.append(thisauxdata)
             poisson_constraint_rate_indices.append(self.par_indices[modslice])
 
+            # poisson constraints can specify a scaling factor for the 
+            # backgrounds rates (see: on-off problem with a aux measurement
+            # with tau*b). If such a scale factor is not defined we just
+            # take a factor of one
             try:
                 poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
             except AttributeError:
