@@ -13,7 +13,6 @@ class gaussian_constraint_combined(object):
         self.tensorlib_name = None
         self._precompute()
         tensorlib, _ = get_backend()
-        self.tensorlib_name = tensorlib.name
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -21,6 +20,7 @@ class gaussian_constraint_combined(object):
         tensor_type_change = tensorlib.name != self.tensorlib_name
         if not tensor_type_change:
             return
+        self.tensorlib_name = tensorlib.name
         start_index = 0        
         normal_constraint_data = []
         normal_constraint_mean_indices = []
@@ -78,7 +78,6 @@ class poisson_constraint_combined(object):
         self.tensorlib_name = None
         self._precompute()
         tensorlib, _ = get_backend()
-        self.tensorlib_name = tensorlib.name
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -86,6 +85,7 @@ class poisson_constraint_combined(object):
         tensor_type_change = tensorlib.name != self.tensorlib_name
         if not tensor_type_change:
             return
+        self.tensorlib_name = tensorlib.name
         
         start_index = 0
         poisson_constraint_data = []
