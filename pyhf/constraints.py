@@ -29,10 +29,6 @@ class gaussian_constraint_combined(object):
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
             if not modifier.pdf_type == 'normal': continue
-
-            # print('combined gauss: {}/{}/{}'.format(
-            #     thisauxdata,par_indices[modslice],modifier.sigmas)
-            # )
             try:
                 normal_constraint_sigmas.append(modifier.sigmas)
             except AttributeError:
