@@ -2,8 +2,6 @@ from . import get_backend, default_backend
 
 class gaussian_constraint_combined(object):
     def __init__(self,pdfconfig):
-        tensorlib, _ = get_backend()
-        self.tensorlib_name = tensorlib.name
         # iterate over all constraints order doesn't matter....
         
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -12,7 +10,10 @@ class gaussian_constraint_combined(object):
             (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
+        self.tensorlib_name = None
         self._precompute()
+        tensorlib, _ = get_backend()
+        self.tensorlib_name = tensorlib.name
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -66,8 +67,6 @@ class gaussian_constraint_combined(object):
 
 class poisson_constraint_combined(object):
     def __init__(self,pdfconfig):
-        tensorlib, _ = get_backend()
-        self.tensorlib_name = tensorlib.name
         # iterate over all constraints order doesn't matter....
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -76,7 +75,10 @@ class poisson_constraint_combined(object):
             (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
+        self.tensorlib_name = None
         self._precompute()
+        tensorlib, _ = get_backend()
+        self.tensorlib_name = tensorlib.name
 
     def _precompute(self):
         tensorlib, _ = get_backend()
