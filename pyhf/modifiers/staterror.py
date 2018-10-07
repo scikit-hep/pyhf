@@ -24,7 +24,6 @@ class staterror(object):
         assert self.pdf_type == self.parset.pdf_type
 
     def finalize(self):
-        tensorlib, _ = get_backend()
         # this computes sum_i uncertainty_i for all samples
         # (broadcastted for all bins in the channel)
         # for each bin, the relative uncert is the width of a gaussian
@@ -41,4 +40,4 @@ class staterror(object):
         self.channel = channel['name']
 
     def apply(self, channel, sample, pars):
-        return pars
+        raise RuntimeError()

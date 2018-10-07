@@ -321,7 +321,6 @@ class Model(object):
         tensorlib, _ = get_backend()
 
         pars = tensorlib.astensor(pars)
-
         results_norm     = self.normsys_combined.apply(pars)
         results_histo    = self.histosys_combined.apply(pars)
         results_staterr  = self.staterr_combined.apply(pars)
