@@ -50,7 +50,7 @@ def test_numpy_pdf_inputs(backend):
         for cname in self.config.auxdata_order:
             modifier, modslice = self.config.modifier(cname), \
                 self.config.par_slice(cname)
-            modalphas = modifier.alphas(pars[modslice])
+            modalphas = modifier.constraint.alphas(pars[modslice])
             end_index = start_index + int(modalphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index

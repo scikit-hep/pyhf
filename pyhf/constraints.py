@@ -1,5 +1,23 @@
 from . import get_backend, default_backend
 
+
+class standard_constraint(object):
+    def alphas(self, pars):
+        return pars  # the nuisance parameters correspond directly to the alpha
+
+    def expected_data(self, pars):
+        return self.alphas(pars)
+
+class factor_constraint(object):
+    def __init__(self, factors):
+        self.factors = factors
+    def alphas(self, pars):
+        tensorlib, _ = get_backend()
+        return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.factors)]), axis=0)
+    def expected_data(self, pars):
+        return self.alphas(pars)
+
+
 class gaussian_constraint_combined(object):
     def __init__(self,pdfconfig):
         # iterate over all constraints order doesn't matter....

@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from .. import get_backend
+from ..constraints import factor_constraint
 
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
@@ -19,13 +20,7 @@ class shapesys(object):
                      b, deltab, bkg_over_bsq)
             self.bkg_over_db_squared.append(bkg_over_bsq)
             self.auxdata.append(bkg_over_bsq)
-
-    def alphas(self, pars):
-        tensorlib, _ = get_backend()
-        return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.bkg_over_db_squared)]), axis=0)
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
+        self.constraint = factor_constraint(self.bkg_over_db_squared)
 
     def add_sample(self, channel, sample, modifier_def):
         pass

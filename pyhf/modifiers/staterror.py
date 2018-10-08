@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from .. import get_backend, default_backend
+from ..constraints import standard_constraint
 
 @modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
@@ -13,6 +14,7 @@ class staterror(object):
         self.auxdata          = [1.] * self.n_parameters
         self.nominal_counts   = []
         self.uncertainties    = []
+        self.constraint = standard_constraint()
 
     def finalize(self):
         tensorlib, _ = get_backend()
@@ -23,12 +25,6 @@ class staterror(object):
         inquad = default_backend.sqrt(default_backend.sum(default_backend.power(self.uncertainties,2), axis=0))
         totals = default_backend.sum(self.nominal_counts,axis=0)
         self.sigmas = default_backend.tolist(default_backend.divide(inquad,totals))
-
-    def alphas(self, pars):
-        return pars  # nuisance parameters are also the means of the
-        
-    def expected_data(self, pars):
-        return self.alphas(pars)
 
     def add_sample(self, channel, sample, modifier_def):
         self.nominal_counts.append(sample['data'])
