@@ -9,20 +9,21 @@ from ..constraints import standard_gaussian_constraint
 @modifier(name='histosys', constrained=True, shared=True, op_code = 'addition')
 class histosys(object):
     def __init__(self, nom_data, modifier_data):
+        self.n_parameters = 1
+        self.suggested_init = [0.0]
+        self.suggested_bounds = [[-5, 5]]
 
         self.at_zero = {}
         self.at_minus_one = {}
         self.at_plus_one = {}
+        self.auxdata = [0]
 
-        self.n_parameters = 1
-        self.constraint = standard_gaussian_constraint(n_parameters = self.n_parameters, inits = [0.0], bounds = [[-5.,5.]], auxdata = [0.])
-
-        assert self.n_parameters == self.constraint.n_parameters
-        assert self.pdf_type == self.constraint.pdf_type
-
-        self.suggested_init   = self.constraint.suggested_init
-        self.suggested_bounds = self.constraint.suggested_bounds
-        self.auxdata = self.constraint.auxdata
+        self.constraint = standard_gaussian_constraint(
+            n_parameters = self.n_parameters,
+            inits = self.suggested_init,
+            bounds = self.suggested_bounds,
+            auxdata = self.auxdata,
+        )
 
 
     def add_sample(self, channel, sample, modifier_def):
