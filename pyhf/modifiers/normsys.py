@@ -16,7 +16,7 @@ class normsys(object):
         self.at_plus_one = {}
         self.n_parameters     = 1
 
-        self.constraint = standard_gaussian_constraint(n_parameters = self.n_parameters, inits = [0.0], bounds = [-5.,5.], auxdata = [0.])
+        self.constraint = standard_gaussian_constraint(n_parameters = self.n_parameters, inits = [0.0], bounds = [[-5.,5.]], auxdata = [0.])
 
         assert self.n_parameters == self.constraint.n_parameters
         assert self.pdf_type == self.constraint.pdf_type
