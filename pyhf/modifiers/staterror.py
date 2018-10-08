@@ -8,13 +8,20 @@ from ..constraints import standard_gaussian_constraint
 @modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
     def __init__(self, nom_data, modifier_data):
-        self.n_parameters     = len(nom_data)
-        self.suggested_init   = [1.0] * self.n_parameters
-        self.suggested_bounds = [[0, 10]] * self.n_parameters
-        self.auxdata          = [1.] * self.n_parameters
         self.nominal_counts   = []
         self.uncertainties    = []
-        self.constraint = standard_gaussian_constraint()
+
+        self.n_parameters = len(nom_data)
+        self.constraint = standard_gaussian_constraint(
+            n_parameters = self.n_parameters,
+            inits = [1.] * self.n_parameters,
+            bounds = [[0., 10.]] * self.n_parameters,
+            auxdata = [1.] * self.n_parameters
+        )
+        assert self.n_parameters == self.constraint.n_parameters
+        self.suggested_init   = self.constraint.suggested_init
+        self.suggested_bounds = self.constraint.suggested_bounds
+        self.auxdata = self.constraint.auxdata
 
     def finalize(self):
         tensorlib, _ = get_backend()

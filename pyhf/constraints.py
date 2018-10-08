@@ -2,8 +2,12 @@ from . import get_backend, default_backend
 
 
 class standard_gaussian_constraint(object):
-    def __init__(self):
+    def __init__(self, n_parameters, inits, bounds, auxdata):
         self.pdf_type = 'normal'
+        self.n_parameters = n_parameters
+        self.suggested_init = inits
+        self.suggested_bounds = bounds
+        self.auxdata = auxdata
 
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
@@ -12,9 +16,14 @@ class standard_gaussian_constraint(object):
         return self.alphas(pars)
 
 class factor_poisson_constraint(object):
-    def __init__(self, factors):
+    def __init__(self, n_parameters, inits, bounds, auxdata, factors):
         self.factors = factors
         self.pdf_type = 'poisson'
+        self.n_parameters = n_parameters
+        self.suggested_init = inits
+        self.suggested_bounds = bounds
+        self.auxdata = auxdata
+
     def alphas(self, pars):
         tensorlib, _ = get_backend()
         return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.factors)]), axis=0)
@@ -127,7 +136,7 @@ class poisson_constraint_combined(object):
             # with tau*b). If such a scale factor is not defined we just
             # take a factor of one
             try:
-                poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
+                poisson_constraint_rate_factors.append(modifier.constraint.factors)
             except AttributeError:
                 poisson_constraint_rate_factors.append(default_backend.shape(self.par_indices[modslice]))
 
