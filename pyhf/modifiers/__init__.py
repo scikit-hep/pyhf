@@ -12,7 +12,7 @@ Check if given object contains the right structure for constrained and unconstra
 '''
 def validate_modifier_structure(modifier, constrained):
     required_methods = ['__init__', 'add_sample', 'apply']
-    required_constrained_methods = ['alphas', 'expected_data']
+    required_constrained_methods = []
 
     for method in required_methods + required_constrained_methods*constrained:
         if not hasattr(modifier, method):
@@ -110,16 +110,6 @@ Examples:
   >>> ...   def __init__(self): pass
   >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
-  >>> ...   def alphas(self): pass
-  >>> ...   def expected_data(self): pass
-
-  >>> @modifiers.modifier(name='myCustomNamer')
-  >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
-  >>> ...
-  pyhf.exceptions.InvalidModifier: Expected alphas method on constrained modifier myCustomModifier
 
   >>> @modifiers.modifier(op_code='multiplication')
   >>> ... class myMultiplierModifier(object):

@@ -1,16 +1,20 @@
 from . import get_backend, default_backend
 
 
-class standard_constraint(object):
+class standard_gaussian_constraint(object):
+    def __init__(self):
+        self.pdf_type = 'normal'
+
     def alphas(self, pars):
         return pars  # the nuisance parameters correspond directly to the alpha
 
     def expected_data(self, pars):
         return self.alphas(pars)
 
-class factor_constraint(object):
+class factor_poisson_constraint(object):
     def __init__(self, factors):
         self.factors = factors
+        self.pdf_type = 'poisson'
     def alphas(self, pars):
         tensorlib, _ = get_backend()
         return tensorlib.product(tensorlib.stack([pars, tensorlib.astensor(self.factors)]), axis=0)
@@ -47,7 +51,7 @@ class gaussian_constraint_combined(object):
             end_index = start_index + modifier.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.pdf_type == 'normal': continue
+            if not modifier.constraint.pdf_type == 'normal': continue
 
             # many constraints are defined on a unit gaussian
             # but we reserved the possibility that a modifier
@@ -113,7 +117,7 @@ class poisson_constraint_combined(object):
             end_index = start_index + modifier.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.pdf_type == 'poisson': continue
+            if not modifier.constraint.pdf_type == 'poisson': continue
 
             poisson_constraint_data.append(thisauxdata)
             poisson_constraint_rate_indices.append(self.par_indices[modslice])

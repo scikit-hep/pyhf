@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from .. import get_backend
 from ..interpolate import interpolator
-from ..constraints import standard_constraint
+from ..constraints import standard_gaussian_constraint
 
 @modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
@@ -18,7 +18,7 @@ class normsys(object):
         self.at_minus_one = {}
         self.at_plus_one = {}
         self.auxdata = [0]  # observed data is always at a = 1
-        self.constraint = standard_constraint()
+        self.constraint = standard_gaussian_constraint()
 
     def add_sample(self, channel, sample, modifier_def):
         log.info('Adding sample {0:s} to channel {1:s}'.format(sample['name'], channel['name']))
