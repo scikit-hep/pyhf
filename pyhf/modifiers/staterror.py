@@ -18,7 +18,10 @@ class staterror(object):
             bounds = [[0., 10.]] * self.n_parameters,
             auxdata = [1.] * self.n_parameters
         )
+
         assert self.n_parameters == self.constraint.n_parameters
+        assert self.pdf_type == self.constraint.pdf_type
+
         self.suggested_init   = self.constraint.suggested_init
         self.suggested_bounds = self.constraint.suggested_bounds
         self.auxdata = self.constraint.auxdata

@@ -2,7 +2,6 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from .. import get_backend
 from ..constraints import factor_poisson_constraint
 
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
@@ -23,6 +22,10 @@ class shapesys(object):
             auxdata = self.bkg_over_db_squared,
             factors = self.bkg_over_db_squared
         )
+
+        assert self.n_parameters == self.constraint.n_parameters
+        assert self.pdf_type == self.constraint.pdf_type
+
         self.suggested_init   = self.constraint.suggested_init
         self.suggested_bounds = self.constraint.suggested_bounds
         self.auxdata = self.constraint.auxdata
