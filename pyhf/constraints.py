@@ -60,7 +60,7 @@ class gaussian_constraint_combined(object):
             end_index = start_index + modifier.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.constraint.pdf_type == 'normal': continue
+            if not modifier.pdf_type == 'normal': continue
 
             # many constraints are defined on a unit gaussian
             # but we reserved the possibility that a modifier
@@ -126,7 +126,7 @@ class poisson_constraint_combined(object):
             end_index = start_index + modifier.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.constraint.pdf_type == 'poisson': continue
+            if not modifier.pdf_type == 'poisson': continue
 
             poisson_constraint_data.append(thisauxdata)
             poisson_constraint_rate_indices.append(self.par_indices[modslice])
@@ -136,7 +136,7 @@ class poisson_constraint_combined(object):
             # with tau*b). If such a scale factor is not defined we just
             # take a factor of one
             try:
-                poisson_constraint_rate_factors.append(modifier.constraint.factors)
+                poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
             except AttributeError:
                 poisson_constraint_rate_factors.append(default_backend.shape(self.par_indices[modslice]))
 

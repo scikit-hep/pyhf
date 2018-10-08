@@ -16,7 +16,7 @@ class histosys(object):
         self.at_zero = {}
         self.at_minus_one = {}
         self.at_plus_one = {}
-        self.auxdata = [0]
+        self.auxdata = [0] # observed data is always at a = 1
 
         self.constraint = standard_gaussian_constraint(
             n_parameters = self.n_parameters,
@@ -31,6 +31,12 @@ class histosys(object):
         self.at_zero.setdefault(channel['name'], {})[sample['name']] = sample['data']
         self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = modifier_def['data']['lo_data']
         self.at_plus_one.setdefault(channel['name'], {})[sample['name']] = modifier_def['data']['hi_data']
+
+    def alphas(self, pars):
+        return pars  # the nuisance parameters correspond directly to the alpha
+
+    def expected_data(self, pars):
+        return self.alphas(pars)
 
     def apply(self, channel, sample, pars):
         assert int(pars.shape[0]) == 1
