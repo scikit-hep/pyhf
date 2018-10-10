@@ -1,4 +1,5 @@
 from . import tensor, optimize
+from .version import __version__
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
@@ -57,4 +58,4 @@ def set_backend(backend, custom_optimizer=None):
 
 
 from .pdf import Model
-__all__ = ["Model", "utils", "modifiers"]
+__all__ = ['Model', 'utils', 'modifiers', '__version__']
