@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
-import os
-import sys
 from setuptools import setup, find_packages
-
-# Import directly from version.py by adding to sys.path
-version_path = os.path.join(os.path.dirname(__file__), 'pyhf')
-sys.path.append(version_path)
-from version import __version__
+from pyhf.version import __version__
 
 extras_require = {
     'tensorflow': [
