@@ -1,6 +1,6 @@
 from . import tensor, optimize
 from .version import __version__
-assert __version__  # Used to satisfy pyflakes
+__all__ = ['__version__']  # Used to satisfy pyflakes
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
