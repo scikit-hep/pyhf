@@ -17,12 +17,12 @@ class standard_gaussian_constraint(object):
 
 class factor_poisson_constraint(object):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
-        self.factors = factors
         self.pdf_type = 'poisson'
         self.n_parameters = n_parameters
         self.suggested_init = inits
         self.suggested_bounds = bounds
         self.auxdata = auxdata
+        self.factors = factors
 
     def alphas(self, pars):
         tensorlib, _ = get_backend()
