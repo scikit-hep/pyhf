@@ -15,6 +15,7 @@ class shapesys(object):
             log.info('shapesys for b,delta b (%s, %s) -> tau*b = %s',
                      b, deltab, bkg_over_bsq)
             self.bkg_over_db_squared.append(bkg_over_bsq)
+
         self.constraint = factor_poisson_constraint(
             n_parameters = self.n_parameters,
             inits = [1.0] * self.n_parameters,

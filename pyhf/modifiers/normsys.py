@@ -9,12 +9,12 @@ from ..constraints import standard_gaussian_constraint
 @modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
     def __init__(self, nom_data, modifier_data):
+        self.n_parameters     = 1
 
         self.at_zero = [1]
-
         self.at_minus_one = {}
         self.at_plus_one = {}
-        self.n_parameters     = 1
+
 
         self.constraint = standard_gaussian_constraint(
             n_parameters = self.n_parameters,

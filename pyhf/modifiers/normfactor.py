@@ -9,6 +9,7 @@ from ..constraints import param_set
 class normfactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
+
         self.parset = param_set(
             self.n_parameters,
             [1.0],

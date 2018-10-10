@@ -7,6 +7,7 @@ from . import modifier
 class shapefactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
+
         self.parset = param_set(
             self.n_parameters,
             [1.0] * self.n_parameters,
