@@ -54,13 +54,13 @@ class _ModelConfig(object):
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['modifier'].constraint.suggested_init
+            init = init + self.par_map[name]['modifier'].parset.suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['modifier'].constraint.suggested_bounds
+            bounds = bounds + self.par_map[name]['modifier'].parset.suggested_bounds
         return bounds
 
     def par_slice(self, name):

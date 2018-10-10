@@ -22,6 +22,7 @@ class shapesys(object):
             auxdata = self.bkg_over_db_squared,
             factors = self.bkg_over_db_squared
         )
+        self.parset = self.constraint
 
         assert self.n_parameters == self.constraint.n_parameters
         assert self.pdf_type == self.constraint.pdf_type

@@ -1,12 +1,16 @@
 from . import get_backend, default_backend
 
 
-class standard_gaussian_constraint(object):
-    def __init__(self, n_parameters, inits, bounds, auxdata):
-        self.pdf_type = 'normal'
+class param_set(object):
+    def __init__(self, n_parameters, inits, bounds):
         self.n_parameters = n_parameters
         self.suggested_init = inits
         self.suggested_bounds = bounds
+
+class standard_gaussian_constraint(param_set):
+    def __init__(self, n_parameters, inits, bounds, auxdata):
+        super(standard_gaussian_constraint,self).__init__(n_parameters, inits, bounds)
+        self.pdf_type = 'normal'
         self.auxdata = auxdata
 
     def alphas(self, pars):
@@ -15,12 +19,10 @@ class standard_gaussian_constraint(object):
     def expected_data(self, pars):
         return self.alphas(pars)
 
-class factor_poisson_constraint(object):
+class factor_poisson_constraint(param_set):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
+        super(factor_poisson_constraint,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'poisson'
-        self.n_parameters = n_parameters
-        self.suggested_init = inits
-        self.suggested_bounds = bounds
         self.auxdata = auxdata
         self.factors = factors
 

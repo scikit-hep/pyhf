@@ -1,14 +1,18 @@
 import logging
 log = logging.getLogger(__name__)
-
+from ..constraints import param_set
 from . import modifier
 
 @modifier(name='shapefactor', shared=True, op_code = 'multiplication')
 class shapefactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
-        self.suggested_init = [1.0] * self.n_parameters
-        self.suggested_bounds = [[0, 10]] * self.n_parameters
+        self.parset = param_set(
+            self.n_parameters,
+            [1.0] * self.n_parameters,
+            [[0, 10]] * self.n_parameters
+        )
+        assert self.n_parameters == self.parset.n_parameters
 
     def add_sample(self, channel, sample, modifier_def):
         pass
