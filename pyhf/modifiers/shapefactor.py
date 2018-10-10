@@ -1,7 +1,8 @@
 import logging
 log = logging.getLogger(__name__)
-from ..constraints import param_set
+
 from . import modifier
+from ..constraints import param_set
 
 @modifier(name='shapefactor', shared=True, op_code = 'multiplication')
 class shapefactor(object):

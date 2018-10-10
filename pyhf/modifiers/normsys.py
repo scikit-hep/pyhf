@@ -2,9 +2,10 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
+from ..constraints import standard_gaussian_constraint
+
 from .. import get_backend
 from ..interpolate import interpolator
-from ..constraints import standard_gaussian_constraint
 
 @modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):

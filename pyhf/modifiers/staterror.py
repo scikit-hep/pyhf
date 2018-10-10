@@ -2,8 +2,9 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from .. import get_backend, default_backend
 from ..constraints import standard_gaussian_constraint
+
+from .. import get_backend, default_backend
 
 @modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
