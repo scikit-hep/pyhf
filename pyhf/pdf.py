@@ -15,11 +15,14 @@ class _ModelConfig(object):
         channels = []
         samples = []
         modifiers = []
+        modifiers_type = {}
+        channel_nbins = {}
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         instance = cls()
         for channel in spec['channels']:
             channels.append(channel['name'])
+            channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
             for sample in channel['samples']:
                 samples.append(sample['name'])
                 # we need to bookkeep a list of modifiers by type so that we
@@ -35,10 +38,13 @@ class _ModelConfig(object):
                     modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
+                    modifiers_type[modifier_def['name']] = modifier_def['type']
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         instance.channels = list(set(channels))
         instance.samples = list(set(samples))
         instance.modifiers = list(set(modifiers))
+        instance.modifiers_type = modifiers_type
+        instance.channel_nbins = channel_nbins
         instance.set_poi(poiname)
         return instance
 
