@@ -21,10 +21,6 @@ class normsys(object):
         assert self.n_parameters == self.constraint.n_parameters
         assert self.pdf_type == self.constraint.pdf_type
 
-        self.suggested_init   = self.constraint.suggested_init
-        self.suggested_bounds = self.constraint.suggested_bounds
-        self.auxdata = self.constraint.auxdata
-
 
     def add_sample(self, channel, sample, modifier_def):
         log.info('Adding sample {0:s} to channel {1:s}'.format(sample['name'], channel['name']))
