@@ -1,4 +1,5 @@
 from . import tensor, optimize
+from .version import __version__
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()

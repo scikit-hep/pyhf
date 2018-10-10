@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
+import os
+import sys
 from setuptools import setup, find_packages
+
+# Import directly from version.py by adding to sys.path
+version_path = os.path.join(os.path.dirname(__file__), 'pyhf')
+sys.path.append(version_path)
+from version import __version__
 
 extras_require = {
     'tensorflow': [
@@ -55,7 +62,7 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 setup(
     name='pyhf',
-    version='0.0.15',
+    version=__version__,
     description='(partial) pure python histfactory implementation',
     url='https://github.com/diana-hep/pyhf',
     author='Lukas Heinrich',
