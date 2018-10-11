@@ -66,6 +66,9 @@ class _ModelConfig(object):
     def par_slice(self, name):
         return self.par_map[name]['slice']
 
+    def param_set(self, name):
+        return self.par_map[name]['parset']
+
     def modifier(self, name):
         return self.par_map[name]['modifier']
 
@@ -363,7 +366,7 @@ class Model(object):
         # order matters! because we generated auxdata in a certain order
         auxdata = None
         for modname in self.config.auxdata_order:
-            thisaux = self.config.modifier(modname).constraint.expected_data(
+            thisaux = self.config.param_set(modname).expected_data(
                 pars[self.config.par_slice(modname)])
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
             auxdata = tensorlib.concatenate(tocat)

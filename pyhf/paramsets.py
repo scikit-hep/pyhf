@@ -5,6 +5,9 @@ class param_set(object):
         self.suggested_init = inits
         self.suggested_bounds = bounds
 
+class unconstrained_set(param_set):
+    pass
+
 class normal_constrained_set(param_set):
     def __init__(self, n_parameters, inits, bounds, auxdata):
         super(normal_constrained_set,self).__init__(n_parameters, inits, bounds)

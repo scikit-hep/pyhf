@@ -2,14 +2,14 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..paramsets import param_set
+from ..paramsets import unconstrained_set
 
 @modifier(name='normfactor', shared=True, op_code = 'multiplication')
 class normfactor(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = 1
 
-        self.parset = param_set(
+        self.parset = unconstrained_set(
             self.n_parameters,
             [1.0] * self.n_parameters,
             [[0, 10]] * self.n_parameters
