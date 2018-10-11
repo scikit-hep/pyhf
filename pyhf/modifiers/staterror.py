@@ -32,12 +32,6 @@ class staterror(object):
         totals = default_backend.sum(self.nominal_counts,axis=0)
         self.parset.sigmas = default_backend.tolist(default_backend.divide(inquad,totals))
 
-    def alphas(self, pars):
-        return pars  # nuisance parameters are also the means of the
-        
-    def expected_data(self, pars):
-        return self.alphas(pars)
-
     def add_sample(self, channel, sample, modifier_def):
         self.nominal_counts.append(sample['data'])
         self.uncertainties.append(modifier_def['data'])

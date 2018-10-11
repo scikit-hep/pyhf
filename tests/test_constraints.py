@@ -50,15 +50,21 @@ def test_numpy_pdf_inputs(backend):
         for cname in self.config.auxdata_order:
             parset, parslice = self.config.param_set(cname), \
                 self.config.par_slice(cname)
-            paralphas = parset.alphas(pars[parslice])
-            end_index = start_index + int(paralphas.shape[0])
+            end_index = start_index + parset.n_parameters
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
             if parset.pdf_type == 'normal':
+                paralphas = pars[parslice]
                 sigmas = parset.sigmas if hasattr(parset,'sigmas') else tensorlib.ones(paralphas.shape)
                 sigmas = tensorlib.astensor(sigmas)
                 constraint_term = tensorlib.normal_logpdf(thisauxdata, paralphas, sigmas)
             elif parset.pdf_type == 'poisson':
+                paralphas = tensorlib.product(
+                tensorlib.stack([pars[parslice], tensorlib.astensor(parset.factors)]
+            ),
+            axis=0
+        )
+
                 constraint_term = tensorlib.poisson_logpdf(thisauxdata,paralphas)
             summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
         return tensorlib.sum(summands) if summands is not None else 0
