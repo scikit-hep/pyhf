@@ -1,11 +1,11 @@
 from . import get_backend
-class param_set(object):
+class paramset(object):
     def __init__(self, n_parameters, inits, bounds):
         self.n_parameters = n_parameters
         self.suggested_init = inits
         self.suggested_bounds = bounds
 
-class unconstrained_set(param_set):
+class unconstrained_set(paramset):
     pass
 
 class normal_constrained_set(param_set):
@@ -21,7 +21,7 @@ class normal_constrained_set(param_set):
     def expected_data(self, pars):
         return self.alphas(pars)
 
-class poisson_constrained_set(param_set):
+class poisson_constrained_set(paramset):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
         super(poisson_constrained_set,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'poisson'
