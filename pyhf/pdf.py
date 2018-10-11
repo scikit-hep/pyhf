@@ -79,14 +79,20 @@ class _ModelConfig(object):
     def allocate_nuisance_pars(self, name, n_parameters, modifier):
         '''allocates n nuisance parameters and stores paramset > modifier map'''
         log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
+
+        parset = modifier.parset
+
         sl = slice(self.next_index, self.next_index + n_parameters)
         self.next_index = self.next_index + n_parameters
         self.par_order.append(name)
         self.par_map[name] = {
             'slice': sl,
-            'parset': modifier.parset,
+            'parset': parset,
             'modifier': modifier,
         }
+        if modifier.is_constrained:
+            self.auxdata += parset.auxdata
+            self.auxdata_order.append(name)
 
     def add_or_get_modifier(self, channel, sample, modifier_def):
         """
@@ -121,9 +127,6 @@ class _ModelConfig(object):
         modifier = modifier_cls(sample['data'], modifier_def['data'])
         self.allocate_nuisance_pars(modifier_def['name'], modifier.n_parameters, modifier)
 
-        if modifier.is_constrained:
-            self.auxdata += modifier.parset.auxdata
-            self.auxdata_order.append(modifier_def['name'])
         return modifier
 
 class Model(object):
