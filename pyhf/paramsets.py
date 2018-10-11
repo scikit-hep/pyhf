@@ -8,22 +8,22 @@ class paramset(object):
 class unconstrained(paramset):
     pass
 
-class constrained_by_normal(param_set):
+class constrained_by_normal(paramset):
     def __init__(self, n_parameters, inits, bounds, auxdata):
-        super(normal_constrained_set,self).__init__(n_parameters, inits, bounds)
+        super(constrained_by_normal,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'normal'
         self.auxdata = auxdata
 
     def alphas(self, pars):
         '''the nuisance parameters correspond directly to the alpha'''
-        return pars  
+        return pars
 
     def expected_data(self, pars):
         return self.alphas(pars)
 
 class constrained_by_poisson(paramset):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
-        super(poisson_constrained_set,self).__init__(n_parameters, inits, bounds)
+        super(constrained_by_poisson,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'poisson'
         self.auxdata = auxdata
         self.factors = factors
