@@ -134,7 +134,8 @@ class Model(object):
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
         for m in self.config.modifiers:
-            mod = self.config.modifier(m)
+            mtype,mname = m.split('/')
+            mod = self.config.modifier(mname)
             try:
                 mod.finalize()
             except AttributeError:
