@@ -9,19 +9,19 @@ class shapesys(object):
     def __init__(self, nom_data, modifier_data):
         self.n_parameters = len(nom_data)
 
-        self.bkg_over_db_squared = []
+        bkg_over_db_squared = []
         for b, deltab in zip(nom_data, modifier_data):
             bkg_over_bsq = b * b / deltab / deltab  # tau*b
             log.info('shapesys for b,delta b (%s, %s) -> tau*b = %s',
                      b, deltab, bkg_over_bsq)
-            self.bkg_over_db_squared.append(bkg_over_bsq)
+            bkg_over_db_squared.append(bkg_over_bsq)
 
         self.parset = constrained_by_poisson(
             n_parameters = self.n_parameters,
             inits = [1.0] * self.n_parameters,
             bounds = [[0., 10.]] * self.n_parameters,
-            auxdata = self.bkg_over_db_squared,
-            factors = self.bkg_over_db_squared
+            auxdata = bkg_over_db_squared,
+            factors = bkg_over_db_squared
         )
 
         assert self.n_parameters == self.parset.n_parameters
