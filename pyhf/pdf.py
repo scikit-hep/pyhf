@@ -10,7 +10,6 @@ from .constraints import gaussian_constraint_combined, poisson_constraint_combin
 
 
 class _ModelConfig(object):
-    @classmethod
     def __init__(self, spec, poiname = 'mu', qualify_names = False):
         self.poi_index = None
         self.par_map = {}
@@ -52,8 +51,6 @@ class _ModelConfig(object):
         self.modifiers_type = modifiers_type
         self.channel_nbins = channel_nbins
         self.set_poi(poiname)
-
-    def __init__(self):
 
     def suggested_init(self):
         init = []
@@ -129,13 +126,12 @@ class _ModelConfig(object):
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
-        self.schema = config_kwargs.get('schema', utils.get_default_schema())
+        self.schema = config_kwargs.pop('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
-
+        self.config = _ModelConfig(self.spec, **config_kwargs)
 
         for m in self.config.modifiers:
             mod = self.config.modifier(m)
