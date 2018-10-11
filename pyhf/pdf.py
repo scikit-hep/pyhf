@@ -54,13 +54,13 @@ class _ModelConfig(object):
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['modifier'].parset.suggested_init
+            init = init + self.par_map[name]['parset'].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['modifier'].parset.suggested_bounds
+            bounds = bounds + self.par_map[name]['parset'].parset.suggested_bounds
         return bounds
 
     def par_slice(self, name):
@@ -84,7 +84,8 @@ class _ModelConfig(object):
         self.par_order.append(name)
         self.par_map[name] = {
             'slice': sl,
-            'modifier': modifier
+            'parset': modifier.parset
+            'modifier': modifier,
         }
         return sl
 
@@ -120,8 +121,8 @@ class _ModelConfig(object):
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
-
         self.allocate_nuisance_pars(modifier_def['name'], modifier.n_parameters, modifier)
+
         if modifier.is_constrained:
             self.auxdata += self.modifier(modifier_def['name']).constraint.auxdata
             self.auxdata_order.append(modifier_def['name'])
