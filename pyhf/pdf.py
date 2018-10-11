@@ -71,7 +71,7 @@ class _ModelConfig(object):
         return self.par_map[name]['modifier']
 
     def set_poi(self,name):
-        if name not in self.modifiers:
+        if name not in self.parameters:
             raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(name))
         s = self.par_slice(name)
         assert s.stop-s.start == 1
