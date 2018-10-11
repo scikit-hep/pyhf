@@ -21,35 +21,32 @@ class _ModelConfig(object):
         self.channels = []
         self.samples = []
         self.modifiers = []
-        self.modifiers_type = {}
         self.channel_nbins = {}
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in spec['channels']:
-            channels.append(channel['name'])
-            channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
+            self.channels.append(channel['name'])
+            self.channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
             for sample in channel['samples']:
-                samples.append(sample['name'])
+                self.samples.append(sample['name'])
                 # we need to bookkeep a list of modifiers by type so that we
                 # can loop over them on a type-by-type basis
                 # types like histosys, normsys, etc...
                 sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
+                    fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                     if qualify_names:
-                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
                     modifier = self.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
-                    modifiers.append(modifier_def['name'])
-                    modifiers_type[modifier_def['name']] = modifier_def['type']
+                    self.modifiers.append(fullname)
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
-        self.channels = list(set(channels))
-        self.samples = list(set(samples))
-        self.modifiers = list(set(modifiers))
-        self.modifiers_type = modifiers_type
-        self.channel_nbins = channel_nbins
+        self.channels = list(set(self.channels))
+        self.samples = list(set(self.samples))
+        self.modifiers = list(set(self.modifiers))
+        self.channel_nbins = self.channel_nbins
         self.set_poi(poiname)
 
     def suggested_init(self):
