@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..paramsets import standard_gaussian_constraint
+from ..paramsets import normal_constrained_set
 
 from .. import get_backend
 from ..interpolate import interpolator
@@ -17,7 +17,7 @@ class histosys(object):
         self.at_plus_one = {}
 
 
-        self.constraint = standard_gaussian_constraint(
+        self.constraint = normal_constrained_set(
             n_parameters = self.n_parameters, 
             inits = [0.0],
             bounds = [[-5.,5.]],

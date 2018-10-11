@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..paramsets import factor_poisson_constraint
+from ..paramsets import poisson_constrained_set
 
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
@@ -16,7 +16,7 @@ class shapesys(object):
                      b, deltab, bkg_over_bsq)
             self.bkg_over_db_squared.append(bkg_over_bsq)
 
-        self.constraint = factor_poisson_constraint(
+        self.constraint = poisson_constrained_set(
             n_parameters = self.n_parameters,
             inits = [1.0] * self.n_parameters,
             bounds = [[0., 10.]] * self.n_parameters,

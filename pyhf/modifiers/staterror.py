@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..paramsets import standard_gaussian_constraint
+from ..paramsets import normal_constrained_set
 
 from .. import get_backend, default_backend
 
@@ -13,7 +13,7 @@ class staterror(object):
         self.nominal_counts   = []
         self.uncertainties    = []
 
-        self.constraint = standard_gaussian_constraint(
+        self.constraint = normal_constrained_set(
             n_parameters = self.n_parameters,
             inits = [1.] * self.n_parameters,
             bounds = [[0., 10.]] * self.n_parameters,

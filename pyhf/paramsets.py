@@ -1,3 +1,4 @@
+from . import get_backend
 class param_set(object):
     def __init__(self, n_parameters, inits, bounds):
         self.n_parameters = n_parameters
@@ -6,7 +7,7 @@ class param_set(object):
 
 class normal_constrained_set(param_set):
     def __init__(self, n_parameters, inits, bounds, auxdata):
-        super(standard_gaussian_constraint,self).__init__(n_parameters, inits, bounds)
+        super(normal_constrained_set,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'normal'
         self.auxdata = auxdata
 
@@ -19,7 +20,7 @@ class normal_constrained_set(param_set):
 
 class poisson_constrained_set(param_set):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
-        super(factor_poisson_constraint,self).__init__(n_parameters, inits, bounds)
+        super(poisson_constrained_set,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'poisson'
         self.auxdata = auxdata
         self.factors = factors
