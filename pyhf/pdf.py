@@ -60,7 +60,7 @@ class _ModelConfig(object):
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['parset'].parset.suggested_bounds
+            bounds = bounds + self.par_map[name]['parset'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
