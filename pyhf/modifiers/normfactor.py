@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..constraints import param_set
+from ..paramsets import param_set
 
 @modifier(name='normfactor', shared=True, op_code = 'multiplication')
 class normfactor(object):

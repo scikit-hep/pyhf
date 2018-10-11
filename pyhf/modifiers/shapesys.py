@@ -2,7 +2,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
-from ..constraints import factor_poisson_constraint
+from ..paramsets import factor_poisson_constraint
 
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
