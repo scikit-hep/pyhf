@@ -55,7 +55,6 @@ def test_modifiers_structure():
         def __init__(self): pass
         def add_sample(self): pass
         def apply(self): pass
-        def alphas(self): pass
         def expected_data(self): pass
 
     assert inspect.isclass(myCustomModifier)
