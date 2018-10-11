@@ -36,14 +36,14 @@ class _ModelConfig(object):
                 sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
                     self.parameters.append(modifier_def['name'])
-                    fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                     if qualify_names:
+                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
                     modifier = self.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
-                    self.modifiers.append(fullname)
+                    self.modifiers.append(modifier_def['name'])
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
