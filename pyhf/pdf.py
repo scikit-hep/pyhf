@@ -20,6 +20,7 @@ class _ModelConfig(object):
 
         self.channels = []
         self.samples = []
+        self.parameters = []
         self.modifiers = []
         self.channel_nbins = {}
         # hacky, need to keep track in which order we added the constraints
@@ -34,6 +35,7 @@ class _ModelConfig(object):
                 # types like histosys, normsys, etc...
                 sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
+                    self.parameters.append(modifier_def['name'])
                     fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
                     if qualify_names:
                         if modifier_def['name'] == poiname:
@@ -45,6 +47,7 @@ class _ModelConfig(object):
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
+        self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
         self.set_poi(poiname)
