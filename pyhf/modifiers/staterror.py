@@ -2,17 +2,26 @@ import logging
 log = logging.getLogger(__name__)
 
 from . import modifier
+from ..paramsets import constrained_by_normal
+
 from .. import get_backend, default_backend
 
 @modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
 class staterror(object):
     def __init__(self, nom_data, modifier_data):
-        self.n_parameters     = len(nom_data)
-        self.suggested_init   = [1.0] * self.n_parameters
-        self.suggested_bounds = [[0, 10]] * self.n_parameters
-        self.auxdata          = [1.] * self.n_parameters
+        self.n_parameters = len(nom_data)
         self.nominal_counts   = []
         self.uncertainties    = []
+
+        self.constraint = constrained_by_normal(
+            n_parameters = self.n_parameters,
+            inits = [1.] * self.n_parameters,
+            bounds = [[0., 10.]] * self.n_parameters,
+            auxdata = [1.] * self.n_parameters
+        )
+        self.parset = self.constraint
+        assert self.n_parameters == self.constraint.n_parameters
+        assert self.pdf_type == self.constraint.pdf_type
 
     def finalize(self):
         tensorlib, _ = get_backend()

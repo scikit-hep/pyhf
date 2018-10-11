@@ -19,7 +19,6 @@ def test_import_default_modifiers(test_modifierPair):
     assert hasattr(modifier, 'is_constrained')
     assert hasattr(modifier, 'pdf_type')
     assert hasattr(modifier, 'op_code')
-    assert modifier.pdf_type == test_mod_type
     assert modifier.op_code in ['addition','multiplication']
 
 # we make sure modifiers have right structure
@@ -77,20 +76,11 @@ def test_modifiers_structure():
             pass
 
     with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(name='myConstrainedModifier', constrained=True)
-        class myCustomModifier(object):
-            def __init__(self): pass
-            def add_sample(self): pass
-            def apply(self): pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier(name='myConstrainedModifierWithFakePDF', constrained=True, pdf_type='fake_pdf')
         class myCustomModifier(object):
             def __init__(self): pass
             def add_sample(self): pass
             def apply(self): pass
-            def alphas(self): pass
-            def expected_data(self): pass
 
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier(name='myFakeOperationPDF', op_code='fake_addition')

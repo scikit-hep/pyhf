@@ -54,17 +54,20 @@ class _ModelConfig(object):
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['modifier'].suggested_init
+            init = init + self.par_map[name]['parset'].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['modifier'].suggested_bounds
+            bounds = bounds + self.par_map[name]['parset'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
         return self.par_map[name]['slice']
+
+    def param_set(self, name):
+        return self.par_map[name]['parset']
 
     def modifier(self, name):
         return self.par_map[name]['modifier']
@@ -75,6 +78,24 @@ class _ModelConfig(object):
         s = self.par_slice(name)
         assert s.stop-s.start == 1
         self.poi_index = s.start
+
+    def register_paramset(self, name, n_parameters, modifier):
+        '''allocates n nuisance parameters and stores paramset > modifier map'''
+        log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
+
+        parset = modifier.parset
+
+        sl = slice(self.next_index, self.next_index + n_parameters)
+        self.next_index = self.next_index + n_parameters
+        self.par_order.append(name)
+        self.par_map[name] = {
+            'slice': sl,
+            'parset': parset,
+            'modifier': modifier,
+        }
+        if modifier.is_constrained:
+            self.auxdata += parset.auxdata
+            self.auxdata_order.append(name)
 
     def add_or_get_modifier(self, channel, sample, modifier_def):
         """
@@ -107,19 +128,8 @@ class _ModelConfig(object):
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
-        npars = modifier.n_parameters
+        self.register_paramset(modifier_def['name'], modifier.n_parameters, modifier)
 
-        log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
-        sl = slice(self.next_index, self.next_index + npars)
-        self.next_index = self.next_index + npars
-        self.par_order.append(modifier_def['name'])
-        self.par_map[modifier_def['name']] = {
-            'slice': sl,
-            'modifier': modifier
-        }
-        if modifier.is_constrained:
-            self.auxdata += self.modifier(modifier_def['name']).auxdata
-            self.auxdata_order.append(modifier_def['name'])
         return modifier
 
 class Model(object):
@@ -356,7 +366,7 @@ class Model(object):
         # order matters! because we generated auxdata in a certain order
         auxdata = None
         for modname in self.config.auxdata_order:
-            thisaux = self.config.modifier(modname).expected_data(
+            thisaux = self.config.param_set(modname).expected_data(
                 pars[self.config.par_slice(modname)])
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
             auxdata = tensorlib.concatenate(tocat)
