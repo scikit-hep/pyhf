@@ -84,7 +84,7 @@ class _ModelConfig(object):
         self.par_order.append(name)
         self.par_map[name] = {
             'slice': sl,
-            'parset': modifier.parset
+            'parset': modifier.parset,
             'modifier': modifier,
         }
 
@@ -122,7 +122,7 @@ class _ModelConfig(object):
         self.allocate_nuisance_pars(modifier_def['name'], modifier.n_parameters, modifier)
 
         if modifier.is_constrained:
-            self.auxdata += self.modifier(modifier_def['name']).constraint.auxdata
+            self.auxdata += modifier.parset.auxdata
             self.auxdata_order.append(modifier_def['name'])
         return modifier
 
