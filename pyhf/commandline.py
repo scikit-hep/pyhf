@@ -12,9 +12,11 @@ from . import readxml
 from . import writexml
 from .utils import runOnePoint
 from .pdf import Model
+from .version import __version__
 
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
+@click.version_option(version=__version__)
 def pyhf():
     pass
 
