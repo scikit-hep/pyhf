@@ -1,0 +1,2 @@
+--ignore-directory=docs/_generated
+--ignore-directory=htmlcov
