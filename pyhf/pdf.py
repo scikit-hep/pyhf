@@ -87,8 +87,6 @@ class _ModelConfig(object):
             'parset': modifier.parset
             'modifier': modifier,
         }
-        return sl
-
 
     def add_or_get_modifier(self, channel, sample, modifier_def):
         """
