@@ -17,16 +17,15 @@ class normsys(object):
         self.at_plus_one = {}
 
 
-        self.constraint = constrained_by_normal(
+        self.parset = constrained_by_normal(
             n_parameters = self.n_parameters,
             inits = [0.0],
             bounds = [[-5.,5.]],
             auxdata = [0.]
         )
-        self.parset = self.constraint
 
-        assert self.n_parameters == self.constraint.n_parameters
-        assert self.pdf_type == self.constraint.pdf_type
+        assert self.n_parameters == self.parset.n_parameters
+        assert self.pdf_type == self.parset.pdf_type
 
 
     def add_sample(self, channel, sample, modifier_def):

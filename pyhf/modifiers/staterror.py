@@ -13,15 +13,14 @@ class staterror(object):
         self.nominal_counts   = []
         self.uncertainties    = []
 
-        self.constraint = constrained_by_normal(
+        self.parset = constrained_by_normal(
             n_parameters = self.n_parameters,
             inits = [1.] * self.n_parameters,
             bounds = [[0., 10.]] * self.n_parameters,
             auxdata = [1.] * self.n_parameters
         )
-        self.parset = self.constraint
-        assert self.n_parameters == self.constraint.n_parameters
-        assert self.pdf_type == self.constraint.pdf_type
+        assert self.n_parameters == self.parset.n_parameters
+        assert self.pdf_type == self.parset.pdf_type
 
     def finalize(self):
         tensorlib, _ = get_backend()
@@ -31,7 +30,7 @@ class staterror(object):
         # which is the constraint pdf; Prod_i Gaus(x = a_i, mu = alpha_i, sigma = relunc_i)
         inquad = default_backend.sqrt(default_backend.sum(default_backend.power(self.uncertainties,2), axis=0))
         totals = default_backend.sum(self.nominal_counts,axis=0)
-        self.sigmas = default_backend.tolist(default_backend.divide(inquad,totals))
+        self.parset.sigmas = default_backend.tolist(default_backend.divide(inquad,totals))
 
     def alphas(self, pars):
         return pars  # nuisance parameters are also the means of the

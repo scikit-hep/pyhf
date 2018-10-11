@@ -6,8 +6,8 @@ class gaussian_constraint_combined(object):
         
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.mod_and_slice = [
-            (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
+        self.parset_and_slice = [
+            (pdfconfig.param_set(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
         self.tensorlib_name = None
@@ -25,24 +25,24 @@ class gaussian_constraint_combined(object):
         normal_constraint_data = []
         normal_constraint_mean_indices = []
         normal_constraint_sigmas = []
-        for modifier,modslice in self.mod_and_slice:
-            end_index = start_index + modifier.n_parameters
+        for parset,parslice in self.parset_and_slice:
+            end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.pdf_type == 'normal': continue
+            if not parset.pdf_type == 'normal': continue
 
             # many constraints are defined on a unit gaussian
-            # but we reserved the possibility that a modifier
-            # can define its own uncertainties. This is used
-            # by the staterror modifier. Such modifiers
-            # are required to define a 'sigmas' attribute
+            # but we reserved the possibility that a paramset
+            # can define non-standard uncertainties. This is used
+            # by the paramset associated to staterror modifiers.
+            # Such parsets define a 'sigmas' attribute
             try:
-                normal_constraint_sigmas.append(modifier.sigmas)
+                normal_constraint_sigmas.append(parset.sigmas)
             except AttributeError:
                 normal_constraint_sigmas.append([1.]*len(thisauxdata))
 
             normal_constraint_data.append(thisauxdata)
-            normal_constraint_mean_indices.append(self.par_indices[modslice])
+            normal_constraint_mean_indices.append(self.par_indices[parslice])
         
         if normal_constraint_mean_indices:
             normal_mean_idc  = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
@@ -72,7 +72,7 @@ class poisson_constraint_combined(object):
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.mod_and_slice = [
-            (pdfconfig.modifier(cname),pdfconfig.par_slice(cname))
+            (pdfconfig.param_set(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
         self.tensorlib_name = None
@@ -91,23 +91,23 @@ class poisson_constraint_combined(object):
         poisson_constraint_data = []
         poisson_constraint_rate_indices = []
         poisson_constraint_rate_factors = []
-        for modifier,modslice in self.mod_and_slice:
-            end_index = start_index + modifier.n_parameters
+        for parset,parslice in self.mod_and_slice:
+            end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not modifier.pdf_type == 'poisson': continue
+            if not parset.pdf_type == 'poisson': continue
 
             poisson_constraint_data.append(thisauxdata)
-            poisson_constraint_rate_indices.append(self.par_indices[modslice])
+            poisson_constraint_rate_indices.append(self.par_indices[parslice])
 
             # poisson constraints can specify a scaling factor for the 
             # backgrounds rates (see: on-off problem with a aux measurement
             # with tau*b). If such a scale factor is not defined we just
             # take a factor of one
             try:
-                poisson_constraint_rate_factors.append(modifier.bkg_over_db_squared)
+                poisson_constraint_rate_factors.append(parset.factors)
             except AttributeError:
-                poisson_constraint_rate_factors.append(default_backend.shape(self.par_indices[modslice]))
+                poisson_constraint_rate_factors.append(default_backend.shape(self.par_indices[parslice]))
 
 
         if poisson_constraint_rate_indices:
