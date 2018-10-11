@@ -14,12 +14,8 @@ class constrained_by_normal(paramset):
         self.pdf_type = 'normal'
         self.auxdata = auxdata
 
-    def alphas(self, pars):
-        '''the nuisance parameters correspond directly to the alpha'''
-        return pars
-
     def expected_data(self, pars):
-        return self.alphas(pars)
+        return pars
 
 class constrained_by_poisson(paramset):
     def __init__(self, n_parameters, inits, bounds, auxdata, factors):
@@ -28,14 +24,11 @@ class constrained_by_poisson(paramset):
         self.auxdata = auxdata
         self.factors = factors
 
-    def alphas(self, pars):
+    def expected_data(self, pars):
         tensorlib, _ = get_backend()
         return tensorlib.product(
                 tensorlib.stack([pars, tensorlib.astensor(self.factors)]
             ),
             axis=0
         )
-
-    def expected_data(self, pars):
-        return self.alphas(pars)
 
