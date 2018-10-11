@@ -48,18 +48,18 @@ def test_numpy_pdf_inputs(backend):
         start_index = 0
         summands = None
         for cname in self.config.auxdata_order:
-            modifier, modslice = self.config.modifier(cname), \
+            parset, parslice = self.config.param_set(cname), \
                 self.config.par_slice(cname)
-            modalphas = modifier.parset.alphas(pars[modslice])
-            end_index = start_index + int(modalphas.shape[0])
+            paralphas = parset.alphas(pars[parslice])
+            end_index = start_index + int(paralphas.shape[0])
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            if modifier.parset.pdf_type == 'normal':
-                sigmas = modifier.sigmas if hasattr(modifier,'sigmas') else tensorlib.ones(modalphas.shape)
+            if parset.pdf_type == 'normal':
+                sigmas = parset.sigmas if hasattr(parset,'sigmas') else tensorlib.ones(paralphas.shape)
                 sigmas = tensorlib.astensor(sigmas)
-                constraint_term = tensorlib.normal_logpdf(thisauxdata, modalphas, sigmas)
-            elif modifier.parset.pdf_type == 'poisson':
-                constraint_term = tensorlib.poisson_logpdf(thisauxdata,modalphas)
+                constraint_term = tensorlib.normal_logpdf(thisauxdata, paralphas, sigmas)
+            elif parset.pdf_type == 'poisson':
+                constraint_term = tensorlib.poisson_logpdf(thisauxdata,paralphas)
             summands = constraint_term if summands is None else tensorlib.concatenate([summands,constraint_term])
         return tensorlib.sum(summands) if summands is not None else 0
     def fast(self, auxdata, pars):
