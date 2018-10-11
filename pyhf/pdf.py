@@ -76,7 +76,7 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def allocate_nuisance_pars(self, name, n_parameters, modifier):
+    def register_paramset(self, name, n_parameters, modifier):
         '''allocates n nuisance parameters and stores paramset > modifier map'''
         log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
 
@@ -125,7 +125,7 @@ class _ModelConfig(object):
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
-        self.allocate_nuisance_pars(modifier_def['name'], modifier.n_parameters, modifier)
+        self.register_paramset(modifier_def['name'], modifier.n_parameters, modifier)
 
         return modifier
 
