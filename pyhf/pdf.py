@@ -11,15 +11,21 @@ from .constraints import gaussian_constraint_combined, poisson_constraint_combin
 
 class _ModelConfig(object):
     @classmethod
-    def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
-        channels = []
-        samples = []
-        modifiers = []
-        modifiers_type = {}
-        channel_nbins = {}
+    def __init__(self, spec, poiname = 'mu', qualify_names = False):
+        self.poi_index = None
+        self.par_map = {}
+        self.par_order = []
+        self.auxdata = []
+        self.auxdata_order = []
+        self.next_index = 0
+
+        self.channels = []
+        self.samples = []
+        self.modifiers = []
+        self.modifiers_type = {}
+        self.channel_nbins = {}
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
-        instance = cls()
         for channel in spec['channels']:
             channels.append(channel['name'])
             channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
@@ -35,27 +41,19 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
+                    modifier = self.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
                     modifiers.append(modifier_def['name'])
                     modifiers_type[modifier_def['name']] = modifier_def['type']
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
-        instance.channels = list(set(channels))
-        instance.samples = list(set(samples))
-        instance.modifiers = list(set(modifiers))
-        instance.modifiers_type = modifiers_type
-        instance.channel_nbins = channel_nbins
-        instance.set_poi(poiname)
-        return instance
+        self.channels = list(set(channels))
+        self.samples = list(set(samples))
+        self.modifiers = list(set(modifiers))
+        self.modifiers_type = modifiers_type
+        self.channel_nbins = channel_nbins
+        self.set_poi(poiname)
 
     def __init__(self):
-        # set up all other bookkeeping variables
-        self.poi_index = None
-        self.par_map = {}
-        self.par_order = []
-        self.auxdata = []
-        self.auxdata_order = []
-        self.next_index = 0
 
     def suggested_init(self):
         init = []
