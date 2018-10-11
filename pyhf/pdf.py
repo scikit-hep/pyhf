@@ -76,6 +76,19 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
+    def allocate_nuisance_pars(self, name, n_parameters, modifier):
+        '''allocates n nuisance parameters and stores paramset > modifier map'''
+        log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
+        sl = slice(self.next_index, self.next_index + n_parameters)
+        self.next_index = self.next_index + n_parameters
+        self.par_order.append(name)
+        self.par_map[name] = {
+            'slice': sl,
+            'modifier': modifier
+        }
+        return sl
+
+
     def add_or_get_modifier(self, channel, sample, modifier_def):
         """
         Add a new modifier if it does not exist and return it
@@ -107,16 +120,8 @@ class _ModelConfig(object):
 
         # did not return, so create new modifier and return it
         modifier = modifier_cls(sample['data'], modifier_def['data'])
-        npars = modifier.n_parameters
 
-        log.info('adding modifier %s (%s new nuisance parameters)', modifier_def['name'], npars)
-        sl = slice(self.next_index, self.next_index + npars)
-        self.next_index = self.next_index + npars
-        self.par_order.append(modifier_def['name'])
-        self.par_map[modifier_def['name']] = {
-            'slice': sl,
-            'modifier': modifier
-        }
+        self.allocate_nuisance_pars(modifier_def['name'], modifier.n_parameters, modifier)
         if modifier.is_constrained:
             self.auxdata += self.modifier(modifier_def['name']).constraint.auxdata
             self.auxdata_order.append(modifier_def['name'])
