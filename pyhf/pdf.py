@@ -10,46 +10,47 @@ from .constraints import gaussian_constraint_combined, poisson_constraint_combin
 
 
 class _ModelConfig(object):
-    @classmethod
-    def from_spec(cls,spec,poiname = 'mu', qualify_names = False):
-        channels = []
-        samples = []
-        modifiers = []
-        # hacky, need to keep track in which order we added the constraints
-        # so that we can generate correctly-ordered data
-        instance = cls()
-        for channel in spec['channels']:
-            channels.append(channel['name'])
-            for sample in channel['samples']:
-                samples.append(sample['name'])
-                # we need to bookkeep a list of modifiers by type so that we
-                # can loop over them on a type-by-type basis
-                # types like histosys, normsys, etc...
-                sample['modifiers_by_type'] = {}
-                for modifier_def in sample['modifiers']:
-                    if qualify_names:
-                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
-                        if modifier_def['name'] == poiname:
-                            poiname = fullname
-                        modifier_def['name'] = fullname
-                    modifier = instance.add_or_get_modifier(channel, sample, modifier_def)
-                    modifier.add_sample(channel, sample, modifier_def)
-                    modifiers.append(modifier_def['name'])
-                    sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
-        instance.channels = list(set(channels))
-        instance.samples = list(set(samples))
-        instance.modifiers = list(set(modifiers))
-        instance.set_poi(poiname)
-        return instance
-
-    def __init__(self):
-        # set up all other bookkeeping variables
+    def __init__(self, spec, poiname = 'mu', qualify_names = False):
         self.poi_index = None
         self.par_map = {}
         self.par_order = []
         self.auxdata = []
         self.auxdata_order = []
         self.next_index = 0
+
+        self.channels = []
+        self.samples = []
+        self.parameters = []
+        self.modifiers = []
+        self.channel_nbins = {}
+        # hacky, need to keep track in which order we added the constraints
+        # so that we can generate correctly-ordered data
+        for channel in spec['channels']:
+            self.channels.append(channel['name'])
+            self.channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
+            for sample in channel['samples']:
+                self.samples.append(sample['name'])
+                # we need to bookkeep a list of modifiers by type so that we
+                # can loop over them on a type-by-type basis
+                # types like histosys, normsys, etc...
+                sample['modifiers_by_type'] = {}
+                for modifier_def in sample['modifiers']:
+                    self.parameters.append(modifier_def['name'])
+                    if qualify_names:
+                        fullname = '{}/{}'.format(modifier_def['type'],modifier_def['name'])
+                        if modifier_def['name'] == poiname:
+                            poiname = fullname
+                        modifier_def['name'] = fullname
+                    modifier = self.add_or_get_modifier(channel, sample, modifier_def)
+                    modifier.add_sample(channel, sample, modifier_def)
+                    self.modifiers.append(modifier_def['name'])
+                    sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
+        self.channels = list(set(self.channels))
+        self.samples = list(set(self.samples))
+        self.parameters = list(set(self.parameters))
+        self.modifiers = list(set(self.modifiers))
+        self.channel_nbins = self.channel_nbins
+        self.set_poi(poiname)
 
     def suggested_init(self):
         init = []
@@ -135,13 +136,12 @@ class _ModelConfig(object):
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec) #may get modified by config
-        self.schema = config_kwargs.get('schema', utils.get_default_schema())
+        self.schema = config_kwargs.pop('schema', utils.get_default_schema())
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
         # build up our representation of the specification
-        self.config = _ModelConfig.from_spec(self.spec,**config_kwargs)
-
+        self.config = _ModelConfig(self.spec, **config_kwargs)
 
         for m in self.config.modifiers:
             mod = self.config.modifier(m)

@@ -257,7 +257,7 @@ def test_invalid_modifier():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
-        pyhf.pdf._ModelConfig.from_spec(spec)
+        pyhf.pdf._ModelConfig(spec)
 
 
 def test_invalid_modifier_name_resuse():
