@@ -38,6 +38,3 @@ class staterror(object):
         if self.channel and self.channel != channel['name']:
             raise RuntimeError('not sure yet how to deal with this case')
         self.channel = channel['name']
-
-    def apply(self, channel, sample, pars):
-        raise RuntimeError()
