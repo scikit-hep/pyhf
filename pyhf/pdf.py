@@ -2,7 +2,7 @@ import copy
 import logging
 log = logging.getLogger(__name__)
 
-from . import get_backend
+from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
@@ -258,9 +258,6 @@ class Model(object):
         self.mega_mods    = mega_mods
 
     def _prep_mega(self):
-        tensorlib,_ = get_backend()
-
-
         from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
 
         mod_classes = {
@@ -275,6 +272,7 @@ class Model(object):
             for k,c in mod_classes.items()
         }
 
+        tensorlib,_ = get_backend()
         thenom = tensorlib.astensor(
             [self.mega_samples[s]['nom'] for s in self.config.samples]
         )
