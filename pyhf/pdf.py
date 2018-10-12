@@ -158,9 +158,6 @@ class Model(object):
                 for mod in s['modifiers']:
                     _allmods.append((mod['name'],mod['type']))
         _allmods = list(set(_allmods))
-        self.do_samples  = self.config.samples
-        self.do_channels = self.config.channels
-        self.channel_nbins = self.config.channel_nbins
 
         self.do_mods = list(sorted(_allmods[:]))
         self._make_mega()
@@ -185,7 +182,7 @@ class Model(object):
         mega_mods = {}
         import copy
         for m,mtype in self.do_mods:
-            for s in self.do_samples:
+            for s in self.config.samples:
                 modspec = {'type': mtype, 'name': m}
                 if mtype == 'histosys':
                     modspec.setdefault('data',{})['hi_data'] = []
@@ -208,12 +205,12 @@ class Model(object):
                 mega_mods.setdefault(s,{})[m] = copy.deepcopy(modspec)
 
         mega_samples = {}
-        for s in self.do_samples:
+        for s in self.config.samples:
             mega_nom = []
             for c in self.config.channels:
                 defined_samp = helper.get(c,{}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
-                nom = defined_samp['data'] if defined_samp else [0.0]*self.channel_nbins[c]
+                nom = defined_samp['data'] if defined_samp else [0.0]*self.config.channel_nbins[c]
                 mega_nom += nom
                 defined_mods = {x['name']:x for x in defined_samp['modifiers']} if defined_samp else {}
                 for m,mtype in self.do_mods:
@@ -282,13 +279,13 @@ class Model(object):
         self.shapesys_combined = shapesys_combined(shapesys_mods,self)
 
         thenom = tensorlib.astensor(
-            [self.mega_samples[s]['nom'] for s in self.do_samples]
+            [self.mega_samples[s]['nom'] for s in self.config.samples]
         )
         self.thenom = tensorlib.reshape(thenom,(
             1,
-            len(self.do_samples),
+            len(self.config.samples),
             1,
-            sum(list(self.channel_nbins.values()))
+            sum(list(self.config.channel_nbins.values()))
             )
          )
 

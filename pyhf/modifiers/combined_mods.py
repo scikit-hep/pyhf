@@ -138,7 +138,7 @@ class staterror_combined(object):
         pdfconfig = pdf.config
         channels = pdf.config.channels
         samples = pdf.config.samples
-        channel_nbins = pdf.channel_nbins
+        channel_nbins = pdf.config.channel_nbins
 
         mega_mods = pdf.mega_mods
 
@@ -215,7 +215,7 @@ class shapesys_combined(object):
         pdfconfig = pdf.config
         channels = pdf.config.channels
         samples = pdf.config.samples
-        channel_nbins = pdf.channel_nbins
+        channel_nbins = pdf.config.channel_nbins
 
         mega_mods = pdf.mega_mods
 
