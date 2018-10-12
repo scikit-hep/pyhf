@@ -263,20 +263,17 @@ class Model(object):
 
         from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
 
-        normsys_mods = [m for m,mtype in self.do_mods if mtype == 'normsys' ]
-        self.normsys_combined = normsys_combinedmod(normsys_mods,self)
-
-        histosys_mods = [m for m,mtype in self.do_mods if mtype == 'histosys' ]
-        self.histosys_combined = histosys_combinedmod(histosys_mods,self)
-
-        normfac_mods = [m for m,mtype in self.do_mods if mtype == 'normfactor']
-        self.normfac_combined = normfac_combinedmod(normfac_mods,self)
-
-        staterr_mods = [m for m,mtype in self.do_mods if mtype == 'staterror']
-        self.staterr_combined = staterror_combined(staterr_mods,self)
-
-        shapesys_mods = [m for m,mtype in self.do_mods if mtype == 'shapesys']
-        self.shapesys_combined = shapesys_combined(shapesys_mods,self)
+        mod_classes = {
+            'normsys': normsys_combinedmod,
+            'histosys': histosys_combinedmod,
+            'normfactor': normfac_combinedmod,
+            'staterror': staterror_combined,
+            'shapesys': shapesys_combined
+        }
+        self.modifiers_appliers = {
+            k:c([m for m,mtype in self.do_mods if mtype == k ],self)
+            for k,c in mod_classes.items()
+        }
 
         thenom = tensorlib.astensor(
             [self.mega_samples[s]['nom'] for s in self.config.samples]
@@ -309,11 +306,11 @@ class Model(object):
         tensorlib, _ = get_backend()
 
         pars = tensorlib.astensor(pars)
-        results_norm     = self.normsys_combined.apply(pars)
-        results_histo    = self.histosys_combined.apply(pars)
-        results_staterr  = self.staterr_combined.apply(pars)
-        results_shapesys = self.shapesys_combined.apply(pars)
-        results_normfac  = self.normfac_combined.apply(pars)
+        results_norm     = self.modifiers_appliers['normsys'].apply(pars)
+        results_histo    = self.modifiers_appliers['histosys'].apply(pars)
+        results_staterr  = self.modifiers_appliers['staterror'].apply(pars)
+        results_shapesys = self.modifiers_appliers['shapesys'].apply(pars)
+        results_normfac  = self.modifiers_appliers['normfactor'].apply(pars)
 
         deltas  = list(filter(lambda x: x is not None,[results_histo]))
         factors = list(filter(lambda x: x is not None,[
