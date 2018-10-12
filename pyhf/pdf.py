@@ -153,25 +153,16 @@ class Model(object):
         self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
 
         _allmods = []
-        _allsamples = []
-        _allchannels = []
-        _allmods = []
-        channel_nbins = {}
-
         for c in self.spec['channels']:
-            _allchannels.append(c['name'])
             for s in c['samples']:
-                channel_nbins[c['name']] = len(s['data'])
-                _allsamples.append(s['name'])
                 for mod in s['modifiers']:
                     _allmods.append((mod['name'],mod['type']))
         _allmods = list(set(_allmods))
-        _allsamples = list(set(_allsamples))
-        _allchannels = list(set(_allchannels))
-        self.do_samples  = list(sorted(_allsamples[:]))
-        self.do_channels = list(sorted(_allchannels[:]))
+        self.do_samples  = self.config.samples
+        self.do_channels = self.config.channels
+        self.channel_nbins = self.config.channel_nbins
+
         self.do_mods = list(sorted(_allmods[:]))
-        self.channel_nbins = channel_nbins
         self._make_mega()
         self._prep_mega()
 
@@ -219,7 +210,7 @@ class Model(object):
         mega_samples = {}
         for s in self.do_samples:
             mega_nom = []
-            for c in self.do_channels:
+            for c in self.config.channels:
                 defined_samp = helper.get(c,{}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
                 nom = defined_samp['data'] if defined_samp else [0.0]*self.channel_nbins[c]

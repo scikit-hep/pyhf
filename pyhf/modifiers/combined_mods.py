@@ -4,7 +4,7 @@ from ..interpolate import _hfinterpolator_code0 ,_hfinterpolator_code1
 class normsys_combinedmod(object):
     def __init__(self,normsys_mods,pdf):
         pdfconfig = pdf.config
-        do_samples = pdf.do_samples
+        samples = pdf.config.samples
 
         mega_mods = pdf.mega_mods
         mega_samples = pdf.mega_samples
@@ -20,7 +20,7 @@ class normsys_combinedmod(object):
                     [1.]*len(mega_samples[s]['nom']),
                     mega_mods[s][m]['data']['hi'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in normsys_mods
         ]
 
@@ -29,7 +29,7 @@ class normsys_combinedmod(object):
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in normsys_mods
         ])
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
@@ -58,7 +58,7 @@ class histosys_combinedmod(object):
     def __init__(self,histosys_mods,pdf):
         tensorlib, _ = get_backend()
         pdfconfig = pdf.config
-        do_samples = pdf.do_samples
+        samples = pdf.config.samples
 
         mega_mods = pdf.mega_mods
         mega_samples = pdf.mega_samples
@@ -71,7 +71,7 @@ class histosys_combinedmod(object):
                     mega_samples[s]['nom'],
                     mega_mods[s][m]['data']['hi_data'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in histosys_mods
         ]
 
@@ -80,7 +80,7 @@ class histosys_combinedmod(object):
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in histosys_mods
         ])
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
@@ -105,7 +105,7 @@ class histosys_combinedmod(object):
 class normfac_combinedmod(object):
     def __init__(self,normfac_mods,pdf):
         pdfconfig = pdf.config
-        do_samples = pdf.do_samples
+        samples = pdf.config.samples
 
         mega_mods = pdf.mega_mods
 
@@ -117,7 +117,7 @@ class normfac_combinedmod(object):
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in normfac_mods
         ])
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
@@ -136,22 +136,22 @@ class normfac_combinedmod(object):
 class staterror_combined(object):
     def __init__(self,staterr_mods,pdf):
         pdfconfig = pdf.config
-        do_channels = pdf.do_channels
-        do_samples = pdf.do_samples
+        channels = pdf.config.channels
+        samples = pdf.config.samples
         channel_nbins = pdf.channel_nbins
 
         mega_mods = pdf.mega_mods
 
         start_index = 0
         channel_slices = []
-        for c in do_channels:
+        for c in channels:
             end_index = start_index + channel_nbins[c]
             channel_slices.append(slice(start_index,end_index))
             start_index = end_index
 
         binindices = list(range(sum(list(channel_nbins.values()))))
         channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(do_channels,channel_slices)
+            c:binindices[sl] for c,sl in zip(channels,channel_slices)
         }
 
         parindices = list(range(len(pdfconfig.suggested_init())))
@@ -161,7 +161,7 @@ class staterror_combined(object):
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in staterr_mods
         ])
         self._staterror_default = default_backend.ones(default_backend.shape(self._staterror_mask))
@@ -185,7 +185,7 @@ class staterror_combined(object):
             ]))
             self.factor_row_indices = tensorlib.astensor(factor_row_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.])
-            self.sample_ones   = tensorlib.ones(len(do_samples))
+            self.sample_ones   = tensorlib.ones(len(samples))
             self.alpha_ones    = tensorlib.astensor([1])
             self.staterror_mask = default_backend.astensor(default_backend.tolist(self._staterror_mask))
             self.staterror_default = default_backend.astensor(default_backend.tolist(self._staterror_default))
@@ -213,15 +213,15 @@ class staterror_combined(object):
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdf):
         pdfconfig = pdf.config
-        do_channels = pdf.do_channels
-        do_samples = pdf.do_samples
+        channels = pdf.config.channels
+        samples = pdf.config.samples
         channel_nbins = pdf.channel_nbins
 
         mega_mods = pdf.mega_mods
 
         start_index = 0
         channel_slices = []
-        for c in do_channels:
+        for c in channels:
             end_index = start_index + channel_nbins[c]
             channel_slices.append(slice(start_index,end_index))
             start_index = end_index
@@ -229,7 +229,7 @@ class shapesys_combined(object):
         parindices = list(range(len(pdfconfig.suggested_init())))
         binindices = list(range(sum(list(channel_nbins.values()))))
         channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(do_channels,channel_slices)
+            c:binindices[sl] for c,sl in zip(channels,channel_slices)
         }
 
         self._shapesys_mask = default_backend.astensor([
@@ -237,7 +237,7 @@ class shapesys_combined(object):
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in do_samples
+                for s in samples
             ] for m in shapesys_mods
         ])
         self._shapesys_default = default_backend.ones(self._shapesys_mask.shape)
@@ -262,7 +262,7 @@ class shapesys_combined(object):
                 default_backend.concatenate([before,default_backend.astensor(parindices[sl]),after])
                 for before,sl,after in zip(befores,shapesys_parslices,afters)
             ]))
-            self.sample_ones = tensorlib.ones(len(do_samples))
+            self.sample_ones = tensorlib.ones(len(samples))
             self.alpha_ones = tensorlib.astensor([1])
             self.factor_row_indices = tensorlib.astensor(factor_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.])
