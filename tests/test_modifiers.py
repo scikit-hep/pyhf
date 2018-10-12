@@ -29,7 +29,6 @@ def test_modifiers_structure():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
@@ -42,7 +41,6 @@ def test_modifiers_structure():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'mySharedModifier' in pyhf.modifiers.registry
@@ -54,8 +52,6 @@ def test_modifiers_structure():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
-        def expected_data(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
@@ -79,14 +75,12 @@ def test_modifiers_structure():
         class myCustomModifier(object):
             def __init__(self): pass
             def add_sample(self): pass
-            def apply(self): pass
 
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         @modifier(name='myFakeOperationPDF', op_code='fake_addition')
         class myCustomModifier(object):
             def __init__(self): pass
             def add_sample(self): pass
-            def apply(self): pass
 
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
@@ -96,7 +90,6 @@ def test_modifier_name_auto():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -112,7 +105,6 @@ def test_modifier_name_auto_withkwargs():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -128,7 +120,6 @@ def test_modifier_name_custom():
     class myCustomModifier(object):
         def __init__(self): pass
         def add_sample(self): pass
-        def apply(self): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' not in pyhf.modifiers.registry

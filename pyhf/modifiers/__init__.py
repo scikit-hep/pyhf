@@ -11,7 +11,7 @@ registry = {}
 Check if given object contains the right structure for constrained and unconstrained modifiers
 '''
 def validate_modifier_structure(modifier, constrained):
-    required_methods = ['__init__', 'add_sample', 'apply']
+    required_methods = ['__init__', 'add_sample']
     required_constrained_methods = []
 
     for method in required_methods + required_constrained_methods*constrained:
