@@ -43,7 +43,7 @@ class _ModelConfig(object):
                         modifier_def['name'] = fullname
                     modifier = self.add_or_get_modifier(channel, sample, modifier_def)
                     modifier.add_sample(channel, sample, modifier_def)
-                    self.modifiers.append(modifier_def['name'])
+                    self.modifiers.append((modifier_def['name'],modifier_def['type']))
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
@@ -74,7 +74,7 @@ class _ModelConfig(object):
         return self.par_map[name]['modifier']
 
     def set_poi(self,name):
-        if name not in self.modifiers:
+        if name not in [x for x,_ in self.modifiers]:
             raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(name))
         s = self.par_slice(name)
         assert s.stop-s.start == 1
@@ -122,7 +122,7 @@ class _ModelConfig(object):
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
-            modifier = self.par_map[modifier_def['name']]['modifier']
+            modifier = self.modifier(modifier_def['name'])
             if not type(modifier).__name__ == modifier_def['type']:
                 raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(type(modifier).__name__, modifier_def['type']))
             return modifier
@@ -143,34 +143,17 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        for m in self.config.modifiers:
-            mod = self.config.modifier(m)
-            try:
-                mod.finalize()
-            except AttributeError:
-                pass
-        self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
-        self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
-
-        _allmods = []
-        for c in self.spec['channels']:
-            for s in c['samples']:
-                for mod in s['modifiers']:
-                    _allmods.append((mod['name'],mod['type']))
-        _allmods = list(set(_allmods))
-
-        self.do_mods = list(sorted(_allmods[:]))
         self._make_mega()
         self._prep_mega()
 
-        for m in self.config.modifiers:
+        for m,_ in self.config.modifiers:
             mod = self.config.modifier(m)
             try:
                 mod.finalize()
             except AttributeError:
                 pass
-        self.prepped_constraints_gaussian = gaussian_constraint_combined(self.config)
-        self.prepped_constraints_poisson = poisson_constraint_combined(self.config)
+        self.constraints_gaussian = gaussian_constraint_combined(self.config)
+        self.constraints_poisson = poisson_constraint_combined(self.config)
 
 
     def _make_mega(self):
@@ -181,7 +164,7 @@ class Model(object):
 
         mega_mods = {}
         import copy
-        for m,mtype in self.do_mods:
+        for m,mtype in self.config.modifiers:
             for s in self.config.samples:
                 modspec = {'type': mtype, 'name': m}
                 if mtype == 'histosys':
@@ -213,7 +196,7 @@ class Model(object):
                 nom = defined_samp['data'] if defined_samp else [0.0]*self.config.channel_nbins[c]
                 mega_nom += nom
                 defined_mods = {x['name']:x for x in defined_samp['modifiers']} if defined_samp else {}
-                for m,mtype in self.do_mods:
+                for m,mtype in self.config.modifiers:
                     thismod = defined_mods.get(m)
                     if mtype == 'histosys':
                         lo_data = thismod['data']['lo_data'] if thismod else nom
@@ -268,7 +251,7 @@ class Model(object):
             'shapesys': shapesys_combined
         }
         self.modifiers_appliers = {
-            k:c([m for m,mtype in self.do_mods if mtype == k ],self)
+            k:c([m for m,mtype in self.config.modifiers if mtype == k ],self)
             for k,c in mod_classes.items()
         }
 
@@ -293,17 +276,14 @@ class Model(object):
         tensorlib, _ = get_backend()
         # order matters! because we generated auxdata in a certain order
         auxdata = None
-        for modname in self.config.auxdata_order:
-            thisaux = self.config.param_set(modname).expected_data(
-                pars[self.config.par_slice(modname)])
+        for parname in self.config.auxdata_order:
+            thisaux = self.config.param_set(parname).expected_data(
+                pars[self.config.par_slice(parname)])
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
             auxdata = tensorlib.concatenate(tocat)
         return auxdata
 
     def _modifications(self,pars):
-        tensorlib, _ = get_backend()
-
-        pars = tensorlib.astensor(pars)
         results_norm     = self.modifiers_appliers['normsys'].apply(pars)
         results_histo    = self.modifiers_appliers['histosys'].apply(pars)
         results_staterr  = self.modifiers_appliers['staterror'].apply(pars)
@@ -320,9 +300,11 @@ class Model(object):
         return deltas, factors
 
     def expected_actualdata(self,pars):
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+
         deltas, factors = self._modifications(pars)
 
-        tensorlib, _ = get_backend()
         allsum = tensorlib.concatenate(deltas + [self.thenom])
 
         nom_plus_delta = tensorlib.sum(allsum,axis=0)
@@ -346,8 +328,8 @@ class Model(object):
         return tensorlib.concatenate(tocat)
 
     def constraint_logpdf(self, auxdata, pars):
-        normal  = self.prepped_constraints_gaussian.logpdf(auxdata,pars)
-        poisson = self.prepped_constraints_poisson.logpdf(auxdata,pars)
+        normal  = self.constraints_gaussian.logpdf(auxdata,pars)
+        poisson = self.constraints_poisson.logpdf(auxdata,pars)
         return normal + poisson
 
     def mainlogpdf(self, maindata, pars):
