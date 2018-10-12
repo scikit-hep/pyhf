@@ -677,7 +677,7 @@ def test_validation(setup):
 
     if 'channels' in source:
         data = []
-        for c in pdf.do_channels:
+        for c in pdf.config.channels:
             data += source['channels'][c]['bindata']['data']
         data = data + pdf.config.auxdata
     else:
