@@ -2,7 +2,7 @@ import copy
 import logging
 log = logging.getLogger(__name__)
 
-from . import get_backend, default_backend
+from . import get_backend
 from . import exceptions
 from . import modifiers
 from . import utils
@@ -157,35 +157,30 @@ class Model(object):
 
 
     def _make_mega(self):
+        default_data = {
+            'histosys': {'hi_data': [], 'lo_data': [], 'nom_data': [],'mask': []},
+            'normsys': {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
+            'shapefactor': {'mask': []},
+            'normfactor': {'mask': []},
+            'shapesys': {'mask': [], 'uncrt': []},
+            'staterror': {'mask': [], 'uncrt': []},
+        }
+
+        import copy
+        mega_mods = {}
+        for m,mtype in self.config.modifiers:
+            for s in self.config.samples:
+                mega_mods.setdefault(s,{})[m] = {
+                    'type': mtype,
+                    'name': m,
+                    'data': copy.deepcopy(default_data[mtype])
+                }
+
         helper = {}
         for c in self.spec['channels']:
             for s in c['samples']:
                 helper.setdefault(c['name'],{})[s['name']] = (c,s)
 
-        mega_mods = {}
-        import copy
-        for m,mtype in self.config.modifiers:
-            for s in self.config.samples:
-                modspec = {'type': mtype, 'name': m}
-                if mtype == 'histosys':
-                    modspec.setdefault('data',{})['hi_data'] = []
-                    modspec.setdefault('data',{})['lo_data'] = []
-                    modspec.setdefault('data',{})['mask'] = []
-                elif mtype == 'normsys':
-                    modspec.setdefault('data',{})['hi'] = []
-                    modspec.setdefault('data',{})['lo'] = []
-                    modspec.setdefault('data',{})['mask'] = []
-                elif mtype == 'normfactor':
-                    modspec.setdefault('data',{})['mask'] = []
-                elif mtype == 'shapefactor':
-                    modspec.setdefault('data',{})['mask'] = []
-                elif mtype == 'shapesys':
-                    modspec.setdefault('data',{})['uncrt'] = []
-                    modspec.setdefault('data',{})['mask'] = []
-                elif mtype == 'staterror':
-                    modspec.setdefault('data',{})['uncrt'] = []
-                    modspec.setdefault('data',{})['mask']  = []
-                mega_mods.setdefault(s,{})[m] = copy.deepcopy(modspec)
 
         mega_samples = {}
         for s in self.config.samples:
@@ -204,12 +199,14 @@ class Model(object):
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['lo_data'] += lo_data
                         mega_mods[s][m]['data']['hi_data'] += hi_data
+                        mega_mods[s][m]['data']['nom_data'] += nom
                         mega_mods[s][m]['data']['mask']    += [maskval]*len(nom) #broadcasting
                         pass
                     elif mtype == 'normsys':
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
+                        mega_mods[s][m]['data']['nom_data'] += [1.0]*len(nom) 
                         mega_mods[s][m]['data']['lo']   += [lo_factor]*len(nom) #broadcasting
                         mega_mods[s][m]['data']['hi']   += [hi_factor]*len(nom)
                         mega_mods[s][m]['data']['mask'] += [maskval]  *len(nom) #broadcasting

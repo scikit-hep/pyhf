@@ -7,7 +7,6 @@ class normsys_combinedmod(object):
         samples = pdf.config.samples
 
         mega_mods = pdf.mega_mods
-        mega_samples = pdf.mega_samples
 
 
 
@@ -17,7 +16,7 @@ class normsys_combinedmod(object):
             [
                 [
                     mega_mods[s][m]['data']['lo'],
-                    [1.]*len(mega_samples[s]['nom']),
+                    mega_mods[s][m]['data']['nom_data'],
                     mega_mods[s][m]['data']['hi'],
                 ]
                 for s in samples
@@ -59,16 +58,14 @@ class histosys_combinedmod(object):
         tensorlib, _ = get_backend()
         pdfconfig = pdf.config
         samples = pdf.config.samples
-
         mega_mods = pdf.mega_mods
-        mega_samples = pdf.mega_samples
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
         self.histosys_histoset = [
             [
                 [
                     mega_mods[s][m]['data']['lo_data'],
-                    mega_samples[s]['nom'],
+                    mega_mods[s][m]['data']['nom_data'],
                     mega_mods[s][m]['data']['hi_data'],
                 ]
                 for s in samples
@@ -180,8 +177,8 @@ class staterror_combined(object):
         if stat_parslices:
             tensorlib, _ = get_backend()
             factor_row_indices = default_backend.tolist(default_backend.stack([
-                    default_backend.concatenate([before,default_backend.astensor(parindices[sl]),after])
-                    for before,sl,after in zip(befores,stat_parslices,afters)
+                default_backend.concatenate([b,default_backend.astensor(parindices[sl]),a])
+                for b,sl,a in zip(befores,stat_parslices,afters)
             ]))
             self.factor_row_indices = tensorlib.astensor(factor_row_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.])
@@ -259,8 +256,8 @@ class shapesys_combined(object):
         if shapesys_parslices:
             tensorlib, _ = get_backend()
             factor_indices = default_backend.tolist(default_backend.stack([
-                default_backend.concatenate([before,default_backend.astensor(parindices[sl]),after])
-                for before,sl,after in zip(befores,shapesys_parslices,afters)
+                default_backend.concatenate([b,default_backend.astensor(parindices[sl]),a])
+                for b,sl,a in zip(befores,shapesys_parslices,afters)
             ]))
             self.sample_ones = tensorlib.ones(len(samples))
             self.alpha_ones = tensorlib.astensor([1])
