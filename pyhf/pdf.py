@@ -58,8 +58,7 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    modifier = self.add_or_get_modifier(channel, sample, modifier_def)
-                    modifier.add_sample(channel, sample, modifier_def)
+                    self.add_or_get_modifier(channel, sample, modifier_def)
                     self.modifiers.append((modifier_def['name'],modifier_def['type']))
                     sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         self.channels = list(set(self.channels))
@@ -161,13 +160,6 @@ class Model(object):
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
         self._create_nominal_and_modifiers()
-
-        for m,_ in self.config.modifiers:
-            mod = self.config.modifier(m)
-            try:
-                mod.finalize()
-            except AttributeError:
-                pass
         self.constraints_gaussian = gaussian_constraint_combined(self.config)
         self.constraints_poisson = poisson_constraint_combined(self.config)
 
@@ -179,7 +171,7 @@ class Model(object):
             'shapefactor': lambda: {'mask': []},
             'normfactor': lambda: {'mask': []},
             'shapesys': lambda: {'mask': [], 'uncrt': []},
-            'staterror': lambda: {'mask': [], 'uncrt': []},
+            'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
         }
 
         mega_mods = {}
@@ -238,6 +230,7 @@ class Model(object):
                         maskval = [True if thismod else False]*len(nom)
                         mega_mods[s][m]['data']['mask']  += maskval
                         mega_mods[s][m]['data']['uncrt'] += uncrt
+                        mega_mods[s][m]['data']['nom_data'] += nom
                     elif mtype == 'shapefactor':
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
@@ -249,6 +242,9 @@ class Model(object):
                 'modifiers': list(mega_mods[s].values())
             }
             mega_samples[s] = sample_dict
+
+        self.mega_mods = mega_mods
+
 
         tensorlib,_ = get_backend()
         thenom = tensorlib.astensor(

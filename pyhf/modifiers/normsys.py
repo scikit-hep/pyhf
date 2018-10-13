@@ -17,6 +17,3 @@ class normsys(object):
 
         assert self.n_parameters == self.parset.n_parameters
         assert self.pdf_type == self.parset.pdf_type
-
-    def add_sample(self, channel, sample, modifier_def):
-        pass #not used anymore in megachannel..
