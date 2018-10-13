@@ -6,14 +6,16 @@ from ..paramsets import constrained_by_normal
 
 @modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
-    def __init__(self, nom_data, modifier_data):
-        self.n_parameters     = 1
-        self.parset = constrained_by_normal(
-            n_parameters = self.n_parameters,
+    @classmethod
+    def create_parset(cls, nom_data):
+        n_parameters     = 1
+        parset = constrained_by_normal(
+            n_parameters = n_parameters,
             inits = [0.0],
             bounds = [[-5.,5.]],
             auxdata = [0.]
         )
 
-        assert self.n_parameters == self.parset.n_parameters
-        assert self.pdf_type == self.parset.pdf_type
+        assert n_parameters == parset.n_parameters
+        assert cls.pdf_type == parset.pdf_type
+        return parset
