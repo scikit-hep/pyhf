@@ -130,8 +130,8 @@ class _ModelConfig(object):
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and name in self.par_map:
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', name, modifier_type))
-            modifier_type = self.modifier_type(name)
-            if not modifier_type == modifier_type:
+            stored_modifier_type = self.modifier_type(name)
+            if not modifier_type == stored_modifier_type:
                 raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(modifier_type, modifier_type))
             return
 
