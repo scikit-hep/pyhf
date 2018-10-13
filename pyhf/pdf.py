@@ -9,6 +9,17 @@ from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 
 
+from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
+
+MOD_REGISTRY = {
+    'normsys': normsys_combinedmod,
+    'histosys': histosys_combinedmod,
+    'normfactor': normfac_combinedmod,
+    'staterror': staterror_combined,
+    'shapesys': shapesys_combined
+}
+
+
 class _ModelConfig(object):
     def __init__(self, spec, poiname = 'mu', qualify_names = False):
         self.poi_index = None
@@ -144,7 +155,6 @@ class Model(object):
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
         self._make_mega()
-        self._prep_mega()
 
         for m,_ in self.config.modifiers:
             mod = self.config.modifier(m)
@@ -234,27 +244,10 @@ class Model(object):
                 'modifiers': list(mega_mods[s].values())
             }
             mega_samples[s] = sample_dict
-        self.mega_samples = mega_samples
-        self.mega_mods    = mega_mods
-
-    def _prep_mega(self):
-        from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
-
-        mod_classes = {
-            'normsys': normsys_combinedmod,
-            'histosys': histosys_combinedmod,
-            'normfactor': normfac_combinedmod,
-            'staterror': staterror_combined,
-            'shapesys': shapesys_combined
-        }
-        self.modifiers_appliers = {
-            k:c([m for m,mtype in self.config.modifiers if mtype == k ],self)
-            for k,c in mod_classes.items()
-        }
 
         tensorlib,_ = get_backend()
         thenom = tensorlib.astensor(
-            [self.mega_samples[s]['nom'] for s in self.config.samples]
+            [mega_samples[s]['nom'] for s in self.config.samples]
         )
         self.thenom = tensorlib.reshape(thenom,(
             1,
@@ -262,8 +255,15 @@ class Model(object):
             1,
             sum(list(self.config.channel_nbins.values()))
             )
-         )
-
+        )
+        self.modifiers_appliers = {
+            k:c(
+                [m for m,mtype in self.config.modifiers if mtype == k],
+                self.config,
+                mega_mods
+            )
+            for k,c in MOD_REGISTRY.items()
+        }
 
     def expected_auxdata(self, pars):
         # probably more correctly this should be the expectation value of the constraint_pdf
