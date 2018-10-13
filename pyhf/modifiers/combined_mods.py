@@ -177,8 +177,13 @@ class staterror_combined(object):
             self.factor_access_indices = None
 
     def finalize(self,pdfconfig):
-        for uncert_this_mod,mod in zip(self._staterror_uncrt,self._staterr_mods):
-            summed_nominals = default_backend.sum(uncert_this_mod[:,1,:], axis = 0)
+        for this_mask, uncert_this_mod,mod in zip(self._staterror_mask,
+            self._staterror_uncrt,self._staterr_mods):
+            active_nominals = default_backend.where(
+                this_mask[:,0,:], uncert_this_mod[:,1,:],
+                default_backend.zeros(uncert_this_mod[:,1,:].shape)
+            )
+            summed_nominals = default_backend.sum(active_nominals, axis = 0)
 
             #the below tries to filter cases in which
             #this modifier is not used by checking non
