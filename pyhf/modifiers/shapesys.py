@@ -6,24 +6,18 @@ from ..paramsets import constrained_by_poisson
 
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
-    def __init__(self, nom_data, modifier_data):
-        self.n_parameters = len(nom_data)
+    @classmethod
+    def create_parset(cls, nom_data):
+        n_parameters = len(nom_data)
+        parset = constrained_by_poisson(
+            n_parameters = n_parameters,
+            inits = [1.0] * n_parameters,
+            bounds = [[1e-10, 10.]] * n_parameters,
+            auxdata = [-1.]*n_parameters, 
+            factors = [-1.]*n_parameters
+        )#auxdata and factors *must* be set be the combiend modifier at some point
 
-        bkg_over_db_squared = []
-        for b, deltab in zip(nom_data, modifier_data):
-            bkg_over_bsq = b * b / deltab / deltab  # tau*b
-            log.info('shapesys for b,delta b (%s, %s) -> tau*b = %s',
-                     b, deltab, bkg_over_bsq)
-            bkg_over_db_squared.append(bkg_over_bsq)
-
-        self.parset = constrained_by_poisson(
-            n_parameters = self.n_parameters,
-            inits = [1.0] * self.n_parameters,
-            bounds = [[0., 10.]] * self.n_parameters,
-            auxdata = bkg_over_db_squared,
-            factors = bkg_over_db_squared
-        )
-
-        assert self.n_parameters == self.parset.n_parameters
-        assert self.pdf_type == self.parset.pdf_type
+        assert n_parameters == parset.n_parameters
+        assert cls.pdf_type == parset.pdf_type
+        return parset
 

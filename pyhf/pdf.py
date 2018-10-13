@@ -47,10 +47,6 @@ class _ModelConfig(object):
             self.channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
             for sample in channel['samples']:
                 self.samples.append(sample['name'])
-                # we need to bookkeep a list of modifiers by type so that we
-                # can loop over them on a type-by-type basis
-                # types like histosys, normsys, etc...
-                sample['modifiers_by_type'] = {}
                 for modifier_def in sample['modifiers']:
                     self.parameters.append(modifier_def['name'])
                     if qualify_names:
@@ -58,9 +54,10 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    self.add_or_get_modifier(channel, sample, modifier_def)
+                    self.add_or_create_parset_for_modifier(
+                        channel, sample, modifier_def['name'],modifier_def['type']
+                    )
                     self.modifiers.append((modifier_def['name'],modifier_def['type']))
-                    sample['modifiers_by_type'].setdefault(modifier_def['type'],[]).append(modifier_def['name'])
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
         self.parameters = list(set(self.parameters))
@@ -86,8 +83,8 @@ class _ModelConfig(object):
     def param_set(self, name):
         return self.par_map[name]['parset']
 
-    def modifier(self, name):
-        return self.par_map[name]['modifier']
+    def modifier_type(self, name):
+        return self.par_map[name]['modifier_type']
 
     def set_poi(self,name):
         if name not in [x for x,_ in self.modifiers]:
@@ -96,11 +93,9 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def register_paramset(self, name, n_parameters, modifier):
+    def register_paramset(self, modifier_type, name, n_parameters, parset):
         '''allocates n nuisance parameters and stores paramset > modifier map'''
         log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
-
-        parset = modifier.parset
 
         sl = slice(self.next_index, self.next_index + n_parameters)
         self.next_index = self.next_index + n_parameters
@@ -108,13 +103,10 @@ class _ModelConfig(object):
         self.par_map[name] = {
             'slice': sl,
             'parset': parset,
-            'modifier': modifier,
+            'modifier_type': modifier_type,
         }
-        if modifier.is_constrained:
-            self.auxdata += parset.auxdata
-            self.auxdata_order.append(name)
 
-    def add_or_get_modifier(self, channel, sample, modifier_def):
+    def add_or_create_parset_for_modifier(self, channel, sample, name, modifier_type):
         """
         Add a new modifier if it does not exist and return it
         or get the existing modifier and return it
@@ -130,24 +122,27 @@ class _ModelConfig(object):
         """
         # get modifier class associated with modifier type
         try:
-            modifier_cls = modifiers.registry[modifier_def['type']]
+            modifier_cls = modifiers.registry[modifier_type]
         except KeyError:
-            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
             raise exceptions.InvalidModifier()
-
+        
         # if modifier is shared, check if it already exists and use it
-        if modifier_cls.is_shared and modifier_def['name'] in self.par_map:
-            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', modifier_def['name'], modifier_cls.__name__))
-            modifier = self.modifier(modifier_def['name'])
-            if not type(modifier).__name__ == modifier_def['type']:
-                raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(type(modifier).__name__, modifier_def['type']))
-            return modifier
+        if modifier_cls.is_shared and name in self.par_map:
+            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', name, modifier_type))
+            modifier_type = self.modifier_type(name)
+            if not modifier_type == modifier_type:
+                raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(modifier_type, modifier_type))
+            return
 
-        # did not return, so create new modifier and return it
-        modifier = modifier_cls(sample['data'], modifier_def['data'])
-        self.register_paramset(modifier_def['name'], modifier.n_parameters, modifier)
-
-        return modifier
+        # did not return, so create new param set and return it
+        parset = modifier_cls.create_parset(sample['data'])
+        self.register_paramset(
+            modifier_type,
+            name,
+            parset.n_parameters,
+            parset
+        )
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
@@ -160,6 +155,18 @@ class Model(object):
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
         self._create_nominal_and_modifiers()
+
+        #this is tricky, must happen before constraint
+        #terms try to access auxdata but after
+        #combined mods have been created that
+        #set the aux data
+        for k in self.config.par_map.keys():
+            parset = self.config.param_set(k)
+            if hasattr(parset,'pdf_type'): #is constrained
+                self.config.auxdata += parset.auxdata
+                self.config.auxdata_order.append(k)
+
+
         self.constraints_gaussian = gaussian_constraint_combined(self.config)
         self.constraints_poisson = poisson_constraint_combined(self.config)
 
@@ -170,7 +177,7 @@ class Model(object):
             'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
             'shapefactor': lambda: {'mask': []},
             'normfactor': lambda: {'mask': []},
-            'shapesys': lambda: {'mask': [], 'uncrt': []},
+            'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data' :[]},
             'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
         }
 
@@ -225,6 +232,7 @@ class Model(object):
                         maskval = [True if thismod else False]*len(nom)
                         mega_mods[s][m]['data']['mask']  += maskval
                         mega_mods[s][m]['data']['uncrt'] += uncrt
+                        mega_mods[s][m]['data']['nom_data'] += nom
                     elif mtype == 'staterror':
                         uncrt = thismod['data'] if thismod else [0.0]*len(nom)
                         maskval = [True if thismod else False]*len(nom)
@@ -290,6 +298,7 @@ class Model(object):
             self.modifiers_appliers[k].apply(pars)
             for k in factor_mods
         ]))
+
         return deltas, factors
 
     def expected_actualdata(self,pars):
