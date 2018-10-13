@@ -123,29 +123,26 @@ class normfac_combinedmod(object):
 
 class staterror_combined(object):
     def __init__(self,staterr_mods,pdfconfig,mega_mods):
-        channels = pdfconfig.channels
         samples = pdfconfig.samples
-        channel_nbins = pdfconfig.channel_nbins
-
-        start_index = 0
-        channel_slices = []
-        for c in channels:
-            end_index = start_index + channel_nbins[c]
-            channel_slices.append(slice(start_index,end_index))
-            start_index = end_index
-
-        binindices = list(range(sum(list(channel_nbins.values()))))
-        channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(channels,channel_slices)
-        }
 
         parindices = list(range(len(pdfconfig.suggested_init())))
         self.parindices = parindices
 
+        self._staterr_mods = staterr_mods
         self._staterror_mask = default_backend.astensor([
             [
                 [
                     mega_mods[s][m]['data']['mask'],
+                ]
+                for s in samples
+            ] for m in staterr_mods
+        ])
+
+        self._staterror_uncrt = default_backend.astensor([
+            [
+                [
+                    mega_mods[s][m]['data']['uncrt'],
+                    mega_mods[s][m]['data']['nom_data'],
                 ]
                 for s in samples
             ] for m in staterr_mods
@@ -168,6 +165,8 @@ class staterror_combined(object):
                 for msk,sl in zip(self._staterror_mask,stat_parslices)
             ])
 
+            self.finalize(pdfconfig)
+
             self.factor_access_indices = tensorlib.astensor(factor_access_indices,dtype='int')
             self.default_value = tensorlib.astensor([1.0])
             self.sample_ones   = tensorlib.ones(len(samples))
@@ -176,6 +175,28 @@ class staterror_combined(object):
             self.staterror_default = default_backend.astensor(default_backend.tolist(self._staterror_default))
         else:
             self.factor_access_indices = None
+
+    def finalize(self,pdfconfig):
+        for uncert_this_mod,mod in zip(self._staterror_uncrt,self._staterr_mods):
+            summed_nominals = default_backend.sum(uncert_this_mod[:,1,:], axis = 0)
+            numerator   = default_backend.where(
+                uncert_this_mod[:,1,:] > 0,
+                uncert_this_mod[:,0,:],
+                default_backend.zeros(uncert_this_mod[:,1,:].shape)
+            )
+            denominator = default_backend.where(
+                summed_nominals > 0,
+                summed_nominals,
+                default_backend.ones(uncert_this_mod[:,1,:].shape)
+            )
+            relerrs = numerator/denominator
+            sigmas = default_backend.sqrt(
+                default_backend.sum(
+                    default_backend.power(relerrs,2),axis=0
+                )
+            )
+            assert len(sigmas[sigmas>0]) == pdfconfig.param_set(mod).n_parameters
+            pdfconfig.param_set(mod).sigmas = default_backend.tolist(sigmas[sigmas>0])
 
 
     def apply(self,pars):
@@ -202,22 +223,7 @@ class staterror_combined(object):
 
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdfconfig,mega_mods):
-        channels = pdfconfig.channels
         samples = pdfconfig.samples
-        channel_nbins = pdfconfig.channel_nbins
-
-        start_index = 0
-        channel_slices = []
-        for c in channels:
-            end_index = start_index + channel_nbins[c]
-            channel_slices.append(slice(start_index,end_index))
-            start_index = end_index
-
-        parindices = list(range(len(pdfconfig.suggested_init())))
-        binindices = list(range(sum(list(channel_nbins.values()))))
-        channel_slice_map = {
-            c:binindices[sl] for c,sl in zip(channels,channel_slices)
-        }
 
         self._shapesys_mask = default_backend.astensor([
             [

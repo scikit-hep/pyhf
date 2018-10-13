@@ -16,5 +16,3 @@ class normfactor(object):
         )
         assert self.n_parameters == self.parset.n_parameters
     
-    def add_sample(self, channel, sample, modifier_def):
-        pass #not used anymore in megachannel..
