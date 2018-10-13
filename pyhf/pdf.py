@@ -9,7 +9,13 @@ from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 
 
-from modifiers.combined_mods import normsys_combinedmod,histosys_combinedmod,normfac_combinedmod,staterror_combined, shapesys_combined
+from .modifiers.combined_mods import (
+    normsys_combinedmod,
+    histosys_combinedmod,
+    normfac_combinedmod,
+    staterror_combined,
+    shapesys_combined
+)
 
 MOD_REGISTRY = {
     'normsys': normsys_combinedmod,
@@ -167,23 +173,22 @@ class Model(object):
 
 
     def _create_nominal_and_modifiers(self):
-        default_data = {
-            'histosys': {'hi_data': [], 'lo_data': [], 'nom_data': [],'mask': []},
-            'normsys': {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
-            'shapefactor': {'mask': []},
-            'normfactor': {'mask': []},
-            'shapesys': {'mask': [], 'uncrt': []},
-            'staterror': {'mask': [], 'uncrt': []},
+        default_data_makers = {
+            'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [],'mask': []},
+            'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
+            'shapefactor': lambda: {'mask': []},
+            'normfactor': lambda: {'mask': []},
+            'shapesys': lambda: {'mask': [], 'uncrt': []},
+            'staterror': lambda: {'mask': [], 'uncrt': []},
         }
 
-        import copy
         mega_mods = {}
         for m,mtype in self.config.modifiers:
             for s in self.config.samples:
                 mega_mods.setdefault(s,{})[m] = {
                     'type': mtype,
                     'name': m,
-                    'data': copy.deepcopy(default_data[mtype])
+                    'data': default_data_makers[mtype]()
                 }
 
         helper = {}
@@ -266,14 +271,10 @@ class Model(object):
         }
 
     def expected_auxdata(self, pars):
-        # probably more correctly this should be the expectation value of the constraint_pdf
-        # or for the constraints we are using (single par constraings with mean == mode), we can
-        # just return the alphas
-
         tensorlib, _ = get_backend()
-        # order matters! because we generated auxdata in a certain order
         auxdata = None
         for parname in self.config.auxdata_order:
+            # order matters! because we generated auxdata in a certain order
             thisaux = self.config.param_set(parname).expected_data(
                 pars[self.config.par_slice(parname)])
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
@@ -281,18 +282,17 @@ class Model(object):
         return auxdata
 
     def _modifications(self,pars):
-        results_norm     = self.modifiers_appliers['normsys'].apply(pars)
-        results_histo    = self.modifiers_appliers['histosys'].apply(pars)
-        results_staterr  = self.modifiers_appliers['staterror'].apply(pars)
-        results_shapesys = self.modifiers_appliers['shapesys'].apply(pars)
-        results_normfac  = self.modifiers_appliers['normfactor'].apply(pars)
+        #shapefactor must be added
+        factor_mods = ['normsys','staterror','shapesys','normfactor']
+        delta_mods  = ['histosys']
 
-        deltas  = list(filter(lambda x: x is not None,[results_histo]))
+        deltas  = list(filter(lambda x: x is not None,[
+            self.modifiers_appliers[k].apply(pars)
+            for k in delta_mods
+        ]))
         factors = list(filter(lambda x: x is not None,[
-                results_norm,
-                results_staterr,
-                results_shapesys,
-                results_normfac
+            self.modifiers_appliers[k].apply(pars)
+            for k in factor_mods
         ]))
         return deltas, factors
 
