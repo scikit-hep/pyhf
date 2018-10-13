@@ -154,7 +154,7 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        self._make_mega()
+        self._create_nominal_and_modifiers()
 
         for m,_ in self.config.modifiers:
             mod = self.config.modifier(m)
@@ -166,7 +166,7 @@ class Model(object):
         self.constraints_poisson = poisson_constraint_combined(self.config)
 
 
-    def _make_mega(self):
+    def _create_nominal_and_modifiers(self):
         default_data = {
             'histosys': {'hi_data': [], 'lo_data': [], 'nom_data': [],'mask': []},
             'normsys': {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
