@@ -190,12 +190,12 @@ class staterror_combined(object):
             #zeroness.. shoudl probably use mask
 
             numerator   = default_backend.where(
-                uncert_this_mod[:,1,:] > 0,
+                this_mask[:,0,:],
                 uncert_this_mod[:,0,:],
                 default_backend.zeros(uncert_this_mod[:,1,:].shape)
             )
             denominator = default_backend.where(
-                summed_nominals > 0,
+                this_mask[:,0,:],
                 summed_nominals,
                 default_backend.ones(uncert_this_mod[:,1,:].shape)
             )
