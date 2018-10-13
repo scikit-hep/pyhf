@@ -126,7 +126,7 @@ class _ModelConfig(object):
         except KeyError:
             log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
             raise exceptions.InvalidModifier()
-        
+
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and name in self.par_map:
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', name, modifier_type))
@@ -220,7 +220,7 @@ class Model(object):
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[s][m]['data']['nom_data'] += [1.0]*len(nom) 
+                        mega_mods[s][m]['data']['nom_data'] += [1.0]*len(nom)
                         mega_mods[s][m]['data']['lo']   += [lo_factor]*len(nom) #broadcasting
                         mega_mods[s][m]['data']['hi']   += [hi_factor]*len(nom)
                         mega_mods[s][m]['data']['mask'] += [maskval]  *len(nom) #broadcasting
