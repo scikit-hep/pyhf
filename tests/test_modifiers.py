@@ -60,28 +60,6 @@ def test_modifiers_structure():
     assert pyhf.modifiers.registry['myConstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myConstrainedModifier']
 
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier
-        class myCustomModifier(object):
-            pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(constrained=True)
-        class myCustomModifier(object):
-            pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(name='myConstrainedModifierWithFakePDF', constrained=True, pdf_type='fake_pdf')
-        class myCustomModifier(object):
-            def __init__(self): pass
-            def add_sample(self): pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(name='myFakeOperationPDF', op_code='fake_addition')
-        class myCustomModifier(object):
-            def __init__(self): pass
-            def add_sample(self): pass
-
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
     from pyhf.modifiers import modifier
