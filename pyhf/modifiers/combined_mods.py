@@ -2,13 +2,8 @@ from .. import get_backend, default_backend
 from ..interpolate import _hfinterpolator_code0 ,_hfinterpolator_code1
 
 class normsys_combinedmod(object):
-    def __init__(self,normsys_mods,pdf):
-        pdfconfig = pdf.config
-        samples = pdf.config.samples
-
-        mega_mods = pdf.mega_mods
-
-
+    def __init__(self,normsys_mods,pdfconfig,mega_mods):
+        samples = pdfconfig.samples
 
         tensorlib, _ = get_backend()
         self.parindices = list(range(len(pdfconfig.suggested_init())))
@@ -54,11 +49,9 @@ class normsys_combinedmod(object):
 
 
 class histosys_combinedmod(object):
-    def __init__(self,histosys_mods,pdf):
+    def __init__(self,histosys_mods,pdfconfig,mega_mods):
         tensorlib, _ = get_backend()
-        pdfconfig = pdf.config
-        samples = pdf.config.samples
-        mega_mods = pdf.mega_mods
+        samples = pdfconfig.samples
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
         self.histosys_histoset = [
@@ -100,12 +93,8 @@ class histosys_combinedmod(object):
 
 
 class normfac_combinedmod(object):
-    def __init__(self,normfac_mods,pdf):
-        pdfconfig = pdf.config
-        samples = pdf.config.samples
-
-        mega_mods = pdf.mega_mods
-
+    def __init__(self,normfac_mods,pdfconfig,mega_mods):
+        samples = pdfconfig.samples
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
         tensorlib, _ = get_backend()
@@ -131,13 +120,10 @@ class normfac_combinedmod(object):
         return results_normfac
 
 class staterror_combined(object):
-    def __init__(self,staterr_mods,pdf):
-        pdfconfig = pdf.config
-        channels = pdf.config.channels
-        samples = pdf.config.samples
-        channel_nbins = pdf.config.channel_nbins
-
-        mega_mods = pdf.mega_mods
+    def __init__(self,staterr_mods,pdfconfig,mega_mods):
+        channels = pdfconfig.channels
+        samples = pdfconfig.samples
+        channel_nbins = pdfconfig.channel_nbins
 
         start_index = 0
         channel_slices = []
@@ -208,13 +194,10 @@ class staterror_combined(object):
         return results_staterr
 
 class shapesys_combined(object):
-    def __init__(self,shapesys_mods,pdf):
-        pdfconfig = pdf.config
-        channels = pdf.config.channels
-        samples = pdf.config.samples
-        channel_nbins = pdf.config.channel_nbins
-
-        mega_mods = pdf.mega_mods
+    def __init__(self,shapesys_mods,pdfconfig,mega_mods):
+        channels = pdfconfig.channels
+        samples = pdfconfig.samples
+        channel_nbins = pdfconfig.channel_nbins
 
         start_index = 0
         channel_slices = []
