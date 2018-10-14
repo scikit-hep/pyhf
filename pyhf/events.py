@@ -1,5 +1,8 @@
 __events = {}
 __disabled_events = set([])
+
+def noop(*args, **kwargs): pass
+
 class Callables(list):
     def __call__(self, *args, **kwargs):
         for f in self:
@@ -30,11 +33,9 @@ def subscribe(event):
 Trigger an event if not disabled.
 """
 def trigger(event):
-    global __events, __disabled_events
-    def noop(*args, **kwargs): pass
-    def _trigger(*args, **kwargs):
-        return __events.get(event, noop)(*args, **kwargs)
-    return noop if event in __disabled_events else _trigger
+    global __events, __disabled_events, noop
+    is_noop = bool(event in __disabled_events or event not in __events)
+    return noop if is_noop else __events.get(event)
 
 """
 Disable an event from firing.
