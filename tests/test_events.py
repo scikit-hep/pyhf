@@ -26,6 +26,8 @@ def test_disable_event():
     ename = 'test'
 
     m = mock.Mock()
+    noop, noop_m = events.noop, mock.Mock()
+    events.noop = noop_m
     events.subscribe(ename)(m)
 
     events.disable(ename)
@@ -34,11 +36,18 @@ def test_disable_event():
     assert events.trigger(ename) == events.noop
     assert events.trigger(ename)() == events.noop()
     assert m.called == False
+    assert noop_m.is_called_once()
     events.enable(ename)
     assert ename not in events.__disabled_events
     del events.__events[ename]
+    events.noop = noop
 
 def test_trigger_noevent():
+    noop, noop_m = events.noop, mock.Mock()
+
     assert 'fake' not in events.__events
     assert events.trigger('fake') == events.noop
     assert events.trigger('fake')() == events.noop()
+    assert noop_m.is_called_once()
+
+    events.noop = noop
