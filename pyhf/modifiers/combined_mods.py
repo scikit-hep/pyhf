@@ -99,8 +99,7 @@ class normfac_combinedmod(object):
         samples = pdfconfig.samples
 
         self.parindices = list(range(len(pdfconfig.suggested_init())))
-        tensorlib, _ = get_backend()
-        self.normfactor_mask = tensorlib.astensor([
+        self.normfactor_mask = default_backend.astensor([
             [
                 [
                     mega_mods[s][m]['data']['mask'],
@@ -108,17 +107,19 @@ class normfac_combinedmod(object):
                 for s in samples
             ] for m in normfac_mods
         ])
-        self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
+        self.normfactor_default = default_backend.ones(self.normfactor_mask.shape)
 
-        self.normfac_indices = tensorlib.astensor([self.parindices[pdfconfig.par_slice(m)] for m in normfac_mods ], dtype='int')
+        self.normfac_indices = default_backend.astensor([self.parindices[pdfconfig.par_slice(m)] for m in normfac_mods ], dtype='int')
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.normfac_indices)[0]:
+        normfac_indices = tensorlib.astensor(self.normfac_indices, dtype='int')
+        normfac_mask = tensorlib.astensor(self.normfactor_mask)
+        if not tensorlib.shape(normfac_indices)[0]:
             return
-        normfactors = tensorlib.gather(pars,self.normfac_indices)
-        results_normfac = self.normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
-        results_normfac = tensorlib.where(self.normfactor_mask,results_normfac,self.normfactor_default)
+        normfactors = tensorlib.gather(pars,normfac_indices)
+        results_normfac = normfac_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
+        results_normfac = tensorlib.where(normfac_mask,results_normfac,tensorlib.astensor(self.normfactor_default))
         return results_normfac
 
 class staterror_combined(object):
@@ -219,8 +220,8 @@ class staterror_combined(object):
         )
 
         results_staterr = tensorlib.einsum('s,a,mb->msab',
-                self.sample_ones,
-                self.alpha_ones,
+                tensorlib.astensor(self.sample_ones),
+                tensorlib.astensor(self.alpha_ones),
                 factor_row
         )
 
@@ -278,12 +279,10 @@ class shapesys_combined(object):
             self.shapesys_mask = default_backend.astensor(default_backend.tolist(self._shapesys_mask))
             self.shapesys_default = default_backend.astensor(default_backend.tolist(self._shapesys_default))
 
-
-        
-            self.sample_ones = tensorlib.ones(len(samples))
-            self.alpha_ones = tensorlib.astensor([1])
-            self.factor_access_indices = tensorlib.astensor(factor_access_indices,dtype='int')
-            self.default_value = tensorlib.astensor([1.])
+            self.sample_ones = default_backend.ones(len(samples))
+            self.alpha_ones = default_backend.astensor([1])
+            self.factor_access_indices = default_backend.astensor(factor_access_indices,dtype='int')
+            self.default_value = default_backend.astensor([1.])
         else:
             self.factor_access_indices = None
 
@@ -308,7 +307,7 @@ class shapesys_combined(object):
                 unc_sq,
                 default_backend.ones(unc_sq.shape)
             )
-            
+
             factors = numerator/denominator
             factors = factors[factors>0]
             assert len(factors) == pdfconfig.param_set(mod).n_parameters
@@ -321,11 +320,11 @@ class shapesys_combined(object):
             return
         tensorlib, _ = get_backend()
 
-        factor_row = tensorlib.gather(tensorlib.concatenate([pars,self.default_value]),self.factor_access_indices)
+        factor_row = tensorlib.gather(tensorlib.concatenate([tensorlib.astensor(pars),tensorlib.astensor(self.default_value)]),tensorlib.astensor(self.factor_access_indices, dtype='int'))
 
         results_shapesys = tensorlib.einsum('s,a,mb->msab',
-                self.sample_ones,
-                self.alpha_ones,
+                tensorlib.astensor(self.sample_ones),
+                tensorlib.astensor(self.alpha_ones),
                 factor_row)
 
         results_shapesys = tensorlib.where(self.shapesys_mask,results_shapesys,self.shapesys_default)
