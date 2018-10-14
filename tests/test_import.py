@@ -43,7 +43,7 @@ def test_import_prepHistFactory():
 
     assert pdf.config.auxdata_order == ['staterror_channel1', 'syst1', 'syst2', 'syst3']
 
-    assert data == [122.0, 112.0, 0.0, 0.0, 0.0, 1.0, 1.0]
+    assert data == [122.0, 112.0,  1.0, 1.0, 0.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
