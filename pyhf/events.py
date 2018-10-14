@@ -1,12 +1,12 @@
 __events = {}
 __disabled_events = set([])
-class Events(list):
+class Callables(list):
     def __call__(self, *args, **kwargs):
         for f in self:
             f(*args, **kwargs)
 
     def __repr__(self):
-        return "Events(%s)" % list.__repr__(self)
+        return "Callables(%s)" % list.__repr__(self)
 
 """
 
@@ -22,7 +22,7 @@ class Events(list):
 def subscribe(event):
     global __events
     def __decorator(func):
-        __events.setdefault(event, Events()).append(func)
+        __events.setdefault(event, Callables()).append(func)
         return func
     return __decorator
 
