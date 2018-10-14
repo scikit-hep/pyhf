@@ -1,6 +1,3 @@
-import logging
-log = logging.getLogger(__name__)
-
 __events = {}
 __disabled_events = set([])
 class Events(list):
