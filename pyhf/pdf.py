@@ -160,7 +160,7 @@ class Model(object):
         #terms try to access auxdata but after
         #combined mods have been created that
         #set the aux data
-        for k in self.config.par_map.keys():
+        for k in sorted(self.config.par_map.keys()):
             parset = self.config.param_set(k)
             if hasattr(parset,'pdf_type'): #is constrained
                 self.config.auxdata += parset.auxdata
