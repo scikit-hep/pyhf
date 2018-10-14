@@ -41,7 +41,7 @@ def test_import_prepHistFactory():
     assert pdf.expected_actualdata(
         pdf.config.suggested_init()).tolist() == [120.0, 110.0]
 
-    assert pdf.config.auxdata_order == ['syst2', 'syst3', 'syst1', 'staterror_channel1']
+    assert pdf.config.auxdata_order == ['staterror_channel1', 'syst1', 'syst2', 'syst3']
 
     assert data == [122.0, 112.0, 0.0, 0.0, 0.0, 1.0, 1.0]
 
