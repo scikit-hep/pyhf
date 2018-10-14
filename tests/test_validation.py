@@ -654,21 +654,21 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
 
 
 @pytest.mark.parametrize('setup', [
-    # setup_1bin_shapesys(),
-    # setup_1bin_normsys(),
-    # setup_2bin_histosys(),
-    # setup_2bin_2channel(),
-    # setup_2bin_2channel_couplednorm(),
-    # setup_2bin_2channel_coupledhistosys(),
+    setup_1bin_shapesys(),
+    setup_1bin_normsys(),
+    setup_2bin_histosys(),
+    setup_2bin_2channel(),
+    setup_2bin_2channel_couplednorm(),
+    setup_2bin_2channel_coupledhistosys(),
     setup_2bin_2channel_coupledshapefactor()
 ],
     ids=[
-    # '1bin_shapesys_mu1',
-    # '1bin_normsys_mu1',
-    # '2bin_histosys_mu1',
-    # '2bin_2channel_mu1',
-    # '2bin_2channel_couplednorm_mu1',
-    # '2bin_2channel_coupledhistosys_mu1',
+    '1bin_shapesys_mu1',
+    '1bin_normsys_mu1',
+    '2bin_histosys_mu1',
+    '2bin_2channel_mu1',
+    '2bin_2channel_couplednorm_mu1',
+    '2bin_2channel_coupledhistosys_mu1',
     '2bin_2channel_coupledshapefactor_mu1'
 ])
 def test_validation(setup):
