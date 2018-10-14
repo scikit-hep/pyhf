@@ -16,14 +16,15 @@ class Wrapper(object):
         self.log = logging.getLogger(name)
         self.__name__ = name
         self.__file__ = filepath
+        self.prefix = 'trigger_'
 
     """
     If we reach this, we already know the attribute is missing...
     """
     def __getattr__(self, name):
         def noop(*args, **kwargs): pass
-        if name.startswith('trigger_'):
-            self.log.error('Triggering "{0:s}" but nobody is listening!'.format(name.split('_')[-1]))
+        if name.startswith(self.prefix):
+          self.log.error('Triggering "{0:s}" but nobody is listening!'.format(name[len(self.prefix):]))
             return noop
         raise AttributeError
 
@@ -41,7 +42,7 @@ class Wrapper(object):
     def subscribe(self, event):
         def __decorator(func):
             self.__events.setdefault(event, self.Events()).append(func)
-            setattr(self, 'trigger_{0:s}'.format(event), self.__events.get(event))
+            setattr(self, '{0:s}{1:s}'.format(self.prefix, event), self.__events.get(event))
             return func
         return __decorator
 
@@ -49,7 +50,7 @@ class Wrapper(object):
         if event in self.__events:
             events = self.__events.pop(event)
             del events[:]
-            delattr(self, 'trigger_{0:s}'.format(event))
+            delattr(self, '{0:s}{1:s}'.format(self.prefix, event))
         return
 
 sys.modules[__name__] = Wrapper(__name__, __file__)
