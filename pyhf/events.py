@@ -25,7 +25,7 @@ class Wrapper(object):
         def noop(*args, **kwargs): pass
         if name.startswith(self.prefix):
           self.log.error('Triggering "{0:s}" but nobody is listening!'.format(name[len(self.prefix):]))
-            return noop
+          return noop
         raise AttributeError
 
     """
