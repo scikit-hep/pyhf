@@ -2,7 +2,7 @@ import copy
 import logging
 log = logging.getLogger(__name__)
 
-from . import get_backend
+from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
@@ -255,10 +255,10 @@ class Model(object):
 
 
         tensorlib,_ = get_backend()
-        thenom = tensorlib.astensor(
+        thenom = default_backend.astensor(
             [mega_samples[s]['nom'] for s in self.config.samples]
         )
-        self.thenom = tensorlib.reshape(thenom,(
+        self.thenom = default_backend.reshape(thenom,(
             1,
             len(self.config.samples),
             1,
@@ -307,7 +307,7 @@ class Model(object):
 
         deltas, factors = self._modifications(pars)
 
-        allsum = tensorlib.concatenate(deltas + [self.thenom])
+        allsum = tensorlib.concatenate(deltas + [tensorlib.astensor(self.thenom)])
 
         nom_plus_delta = tensorlib.sum(allsum,axis=0)
         nom_plus_delta = tensorlib.reshape(nom_plus_delta,(1,)+tensorlib.shape(nom_plus_delta))
