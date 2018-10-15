@@ -1,41 +1,40 @@
-from .. import get_backend, default_backend
+from .. import get_backend, default_backend, events
 from ..interpolate import _hfinterpolator_code0 ,_hfinterpolator_code1
 
 class normsys_combinedmod(object):
-    def __init__(self,normsys_mods,pdfconfig,mega_mods):
-        samples = pdfconfig.samples
-
-        tensorlib, _ = get_backend()
-        self.parindices = list(range(len(pdfconfig.suggested_init())))
-        self.normsys_histoset = [
+    def __init__(self, normsys_mods, pdfconfig, mega_mods):
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._normsys_indices = [self._parindices[pdfconfig.par_slice(m)] for m in normsys_mods]
+        self._normsys_histoset = [
             [
                 [
                     mega_mods[s][m]['data']['lo'],
                     mega_mods[s][m]['data']['nom_data'],
                     mega_mods[s][m]['data']['hi'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in normsys_mods
         ]
-
-        self.normsys_mask = tensorlib.astensor([
+        self._normsys_mask = [
             [
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in normsys_mods
-        ])
-        self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
-
-
-        self.normsys_indices = tensorlib.astensor([
-            self.parindices[pdfconfig.par_slice(m)] for m in normsys_mods
-        ], dtype='int')
+        ]
 
         if len(normsys_mods):
-            self.interpolator = _hfinterpolator_code1(self.normsys_histoset)
+            self.interpolator = _hfinterpolator_code1(self._normsys_histoset)
 
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.normsys_mask = tensorlib.astensor(self._normsys_mask)
+        self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
+        self.normsys_indices = tensorlib.astensor(self._normsys_indices, dtype='int')
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -51,37 +50,38 @@ class normsys_combinedmod(object):
 
 class histosys_combinedmod(object):
     def __init__(self,histosys_mods,pdfconfig,mega_mods):
-        tensorlib, _ = get_backend()
-        samples = pdfconfig.samples
-
-        self.parindices = list(range(len(pdfconfig.suggested_init())))
-        self.histosys_histoset = [
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._histo_indices = [self._parindices[pdfconfig.par_slice(m)] for m in histosys_mods]
+        self._histosys_histoset = [
             [
                 [
                     mega_mods[s][m]['data']['lo_data'],
                     mega_mods[s][m]['data']['nom_data'],
                     mega_mods[s][m]['data']['hi_data'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in histosys_mods
         ]
-
-        self.histosys_mask = tensorlib.astensor([
+        self._histosys_mask = [
             [
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in histosys_mods
-        ])
-        self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
-
-        self.histo_indices = tensorlib.astensor([
-            self.parindices[pdfconfig.par_slice(m)] for m in histosys_mods
-        ], dtype='int')
+        ]
 
         if len(histosys_mods):
-            self.interpolator = _hfinterpolator_code0(self.histosys_histoset)
+            self.interpolator = _hfinterpolator_code0(self._histosys_histoset)
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
+        self.histo_indices = tensorlib.astensor(self._histo_indices, dtype='int')
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -96,20 +96,25 @@ class histosys_combinedmod(object):
 
 class normfac_combinedmod(object):
     def __init__(self,normfac_mods,pdfconfig,mega_mods):
-        samples = pdfconfig.samples
-
-        self.parindices = list(range(len(pdfconfig.suggested_init())))
-        self.normfactor_mask = default_backend.astensor([
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._normfac_indices = [self._parindices[pdfconfig.par_slice(m)] for m in normfac_mods]
+        self._normfactor_mask = [
             [
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in normfac_mods
-        ])
-        self.normfactor_default = default_backend.ones(self.normfactor_mask.shape)
+        ]
 
-        self.normfac_indices = default_backend.astensor([self.parindices[pdfconfig.par_slice(m)] for m in normfac_mods ], dtype='int')
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.normfactor_mask = default_backend.astensor(self._normfactor_mask)
+        self.normfactor_default = default_backend.ones(self.normfactor_mask.shape)
+        self.normfac_indices = default_backend.astensor(self._normfac_indices, dtype='int')
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
@@ -124,72 +129,68 @@ class normfac_combinedmod(object):
 
 class staterror_combined(object):
     def __init__(self,staterr_mods,pdfconfig,mega_mods):
-        samples = pdfconfig.samples
-
-        parindices = list(range(len(pdfconfig.suggested_init())))
-        self.parindices = parindices
-
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._staterror_indices = [self._parindices[pdfconfig.par_slice(m)] for m in staterr_mods]
         self._staterr_mods = staterr_mods
-        self._staterror_mask = default_backend.astensor([
+        self._staterror_mask = [
             [
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in staterr_mods
-        ])
-
-        self._staterror_uncrt = default_backend.astensor([
+        ]
+        self.__staterror_uncrt = default_backend.astensor([
             [
                 [
                     mega_mods[s][m]['data']['uncrt'],
                     mega_mods[s][m]['data']['nom_data'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in staterr_mods
         ])
-        self._staterror_default = default_backend.ones(
-            default_backend.shape(self._staterror_mask)
-        )
 
-        stat_parslices  = [pdfconfig.par_slice(m) for m in staterr_mods]
-        self.stat_parslices = stat_parslices
-        if stat_parslices:
-            tensorlib, _ = get_backend()
-
+        if self._staterror_indices:
             access_rows = []
-            for msk,sl in zip(self._staterror_mask,self.stat_parslices):
-                summed_mask = default_backend.sum(msk[:,0,:],axis=0)
-                assert summed_mask[summed_mask >  0].shape == default_backend.astensor(self.parindices[sl]).shape
-                summed_mask[summed_mask >  0] = self.parindices[sl]
+            staterror_mask = default_backend.astensor(self._staterror_mask)
+            for mask,inds in zip(staterror_mask, self._staterror_indices):
+                summed_mask = default_backend.sum(mask[:,0,:],axis=0)
+                assert default_backend.shape(summed_mask[summed_mask >  0]) == default_backend.shape(default_backend.astensor(inds))
+                summed_mask[summed_mask >  0] = inds
                 summed_mask[summed_mask == 0] = -1
                 access_rows.append(summed_mask.tolist())
-            factor_access_indices = default_backend.stack(access_rows)
-
+            self._factor_access_indices = default_backend.tolist(default_backend.stack(access_rows))
             self.finalize(pdfconfig)
+        else:
+            self._factor_access_indices = None
 
-            self.factor_access_indices = tensorlib.astensor(factor_access_indices,dtype='int')
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.staterror_mask = tensorlib.astensor(self._staterror_mask)
+        self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
+
+        if self._staterror_indices:
+            self.factor_access_indices = tensorlib.astensor(self._factor_access_indices, dtype='int')
             self.default_value = tensorlib.astensor([1.0])
-            self.sample_ones   = tensorlib.ones(len(samples))
+            self.sample_ones   = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
             self.alpha_ones    = tensorlib.astensor([1])
-            self.staterror_mask = default_backend.astensor(default_backend.tolist(self._staterror_mask))
-            self.staterror_default = default_backend.astensor(default_backend.tolist(self._staterror_default))
         else:
             self.factor_access_indices = None
 
     def finalize(self,pdfconfig):
-        for this_mask, uncert_this_mod,mod in zip(self._staterror_mask,
-            self._staterror_uncrt,self._staterr_mods):
+        staterror_mask = default_backend.astensor(self._staterror_mask)
+        for this_mask, uncert_this_mod,mod in zip(staterror_mask, self._staterror_uncrt, self._staterr_mods):
             active_nominals = default_backend.where(
                 this_mask[:,0,:], uncert_this_mod[:,1,:],
                 default_backend.zeros(uncert_this_mod[:,1,:].shape)
             )
             summed_nominals = default_backend.sum(active_nominals, axis = 0)
 
-            #the below tries to filter cases in which
-            #this modifier is not used by checking non
-            #zeroness.. shoudl probably use mask
-
+            # the below tries to filter cases in which this modifier is not
+            # used by checking non zeroness.. should probably use mask
             numerator   = default_backend.where(
                 uncert_this_mod[:,1,:] > 0,
                 uncert_this_mod[:,0,:],
@@ -209,15 +210,12 @@ class staterror_combined(object):
             assert len(sigmas[sigmas>0]) == pdfconfig.param_set(mod).n_parameters
             pdfconfig.param_set(mod).sigmas = default_backend.tolist(sigmas[sigmas>0])
 
-
     def apply(self,pars):
         tensorlib, _ = get_backend()
         if self.factor_access_indices is None:
             return
         select_from = tensorlib.concatenate([pars,self.default_value])
-        factor_row = tensorlib.gather(
-            select_from,self.factor_access_indices
-        )
+        factor_row = tensorlib.gather(select_from, self.factor_access_indices)
 
         results_staterr = tensorlib.einsum('s,a,mb->msab',
                 tensorlib.astensor(self.sample_ones),
@@ -234,60 +232,59 @@ class staterror_combined(object):
 
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdfconfig,mega_mods):
-        samples = pdfconfig.samples
-
-        self._shapesys_mask = default_backend.astensor([
+        self._shapesys_mods = shapesys_mods
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._shapesys_indices = [self._parindices[pdfconfig.par_slice(m)] for m in shapesys_mods]
+        self._shapesys_mask = [
             [
                 [
                     mega_mods[s][m]['data']['mask'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in shapesys_mods
-        ])
-
-        self._shapesys_uncrt = default_backend.astensor([
+        ]
+        self.__shapesys_uncrt = default_backend.astensor([
             [
                 [
                     mega_mods[s][m]['data']['uncrt'],
                     mega_mods[s][m]['data']['nom_data'],
                 ]
-                for s in samples
+                for s in pdfconfig.samples
             ] for m in shapesys_mods
         ])
-        self._shapesys_mods = shapesys_mods
 
-        self._shapesys_default = default_backend.ones(self._shapesys_mask.shape)
-
-        self.parindices = list(range(len(pdfconfig.suggested_init())))
-
-        shapesys_parslices  = [pdfconfig.par_slice(m) for m in shapesys_mods]
-        self.shapesys_parslices = shapesys_parslices
-        if shapesys_parslices:
-            tensorlib, _ = get_backend()
-
-            # self.finalize(pdfconfig)
+        if self._shapesys_indices:
             access_rows = []
-            for msk,sl in zip(self._shapesys_mask,self.shapesys_parslices):
-                summed_mask = default_backend.sum(msk[:,0,:],axis=0)
-                assert summed_mask[summed_mask >  0].shape == default_backend.astensor(self.parindices[sl]).shape
-                summed_mask[summed_mask >  0] = self.parindices[sl]
+            shapesys_mask = default_backend.astensor(self._shapesys_mask)
+            for mask,inds in zip(shapesys_mask, self._shapesys_indices):
+                summed_mask = default_backend.sum(mask[:,0,:],axis=0)
+                assert default_backend.shape(summed_mask[summed_mask >  0]) == default_backend.shape(default_backend.astensor(inds))
+                summed_mask[summed_mask >  0] = inds
                 summed_mask[summed_mask == 0] = -1
                 access_rows.append(summed_mask.tolist())
-            factor_access_indices = default_backend.stack(access_rows)
+            self._factor_access_indices = default_backend.tolist(default_backend.stack(access_rows))
             self.finalize(pdfconfig)
+        else:
+            self._factor_access_indices = None
 
-            self.shapesys_mask = default_backend.astensor(default_backend.tolist(self._shapesys_mask))
-            self.shapesys_default = default_backend.astensor(default_backend.tolist(self._shapesys_default))
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
 
-            self.sample_ones = default_backend.ones(len(samples))
-            self.alpha_ones = default_backend.astensor([1])
-            self.factor_access_indices = default_backend.astensor(factor_access_indices,dtype='int')
-            self.default_value = default_backend.astensor([1.])
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
+        self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
+
+        if self._shapesys_indices:
+            self.factor_access_indices = tensorlib.astensor(self._factor_access_indices, dtype='int')
+            self.default_value = tensorlib.astensor([1.0])
+            self.sample_ones   = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
+            self.alpha_ones    = tensorlib.astensor([1])
         else:
             self.factor_access_indices = None
 
     def finalize(self,pdfconfig):
-        for uncert_this_mod,mod in zip(self._shapesys_uncrt,self._shapesys_mods):
+        for uncert_this_mod,mod in zip(self.__shapesys_uncrt,self._shapesys_mods):
             unc_nom = default_backend.astensor([x for x in uncert_this_mod[:,:,:] if any(x[0][x[0]>0])])
             unc = unc_nom[0,0]
             nom = unc_nom[0,1]
@@ -320,7 +317,7 @@ class shapesys_combined(object):
             return
         tensorlib, _ = get_backend()
 
-        factor_row = tensorlib.gather(tensorlib.concatenate([tensorlib.astensor(pars),tensorlib.astensor(self.default_value)]),tensorlib.astensor(self.factor_access_indices, dtype='int'))
+        factor_row = tensorlib.gather(tensorlib.concatenate([tensorlib.astensor(pars), self.default_value]), self.factor_access_indices)
 
         results_shapesys = tensorlib.einsum('s,a,mb->msab',
                 tensorlib.astensor(self.sample_ones),
