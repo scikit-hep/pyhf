@@ -1,1 +1,1 @@
-pip install -e .[develop]
+pip install --ignore-installed -U -e .[complete]
