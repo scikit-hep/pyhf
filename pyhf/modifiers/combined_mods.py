@@ -182,7 +182,7 @@ class staterror_combined(object):
 
     def finalize(self,pdfconfig):
         staterror_mask = default_backend.astensor(self._staterror_mask)
-        for this_mask, uncert_this_mod,mod in zip(staterror_mask, self._staterror_uncrt, self._staterr_mods):
+        for this_mask, uncert_this_mod,mod in zip(staterror_mask, self.__staterror_uncrt, self._staterr_mods):
             active_nominals = default_backend.where(
                 this_mask[:,0,:], uncert_this_mod[:,1,:],
                 default_backend.zeros(uncert_this_mod[:,1,:].shape)
