@@ -49,12 +49,12 @@ def spec_1bin_shapesys(source=source_1bin_example1()):
 def expected_result_1bin_shapesys(mu=1.):
     if mu == 1:
         expected_result = {
-            'obs': 0.4541865416107029,
-            'exp': [
-                0.06371799398864626,
-                0.15096503398048894,
-                0.3279606950533305,
-                0.6046087303039118,
+            "obs": 0.4541865416107029,
+            "exp": [
+                0.06371799398864626, 
+                0.15096503398048894, 
+                0.3279606950533305, 
+                0.6046087303039118, 
                 0.8662627605298466
             ]
         }
@@ -131,13 +131,13 @@ def spec_1bin_normsys(source=source_1bin_normsys()):
 def expected_result_1bin_normsys(mu=1.):
     if mu == 1:
         expected_result = {
-            'obs': 0.0007930094233140433,
-            'exp': [
-                1.2529050370718884e-09,
-                8.932001833559302e-08,
-                5.3294967286010575e-06,
-                0.00022773982308763686,
-                0.0054897420571466075
+            "obs": 0.0006735317023683173,
+            "exp": [
+                7.471684419037565e-10, 
+                5.7411551509088054e-08, 
+                3.6898088058290313e-06, 
+                0.000169657315363677, 
+                0.004392708998183163
             ]
         }
     return expected_result
@@ -209,13 +209,13 @@ def spec_2bin_histosys(source=source_2bin_histosys_example2()):
 def expected_result_2bin_histosys(mu=1):
     if mu == 1:
         expected_result = {
-            'obs': 0.10014623469489856,
-            'exp': [
-                8.131143652258812e-06,
-                0.0001396307700293439,
-                0.0020437905684851376,
-                0.022094931468776054,
-                0.14246926685789288,
+            "obs": 0.10014623469489856,
+            "exp": [
+                7.133994076142134e-06, 
+                0.00012546353549600653, 
+                0.001879923161800079, 
+                0.020788942899065032, 
+                0.13692190803201712
             ]
         }
     return expected_result
@@ -301,13 +301,13 @@ def spec_2bin_2channel(source=source_2bin_2channel_example1()):
 def expected_result_2bin_2channel(mu=1.):
     if mu == 1:
         expected_result = {
-            'obs': 0.05691881515460979,
-            'exp': [
-                0.0004448774256747925,
-                0.0034839534635069816,
-                0.023684793938725246,
-                0.12294326553585197,
-                0.4058143629613449
+            "obs": 0.056332621064982304,
+            "exp": [
+                0.00043491354821983556, 
+                0.0034223000502860606, 
+                0.02337423265831151, 
+                0.1218654225510158, 
+                0.40382074249477845
             ]
         }
     return expected_result
@@ -405,13 +405,13 @@ def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
 def expected_result_2bin_2channel_couplednorm(mu=1.):
     if mu == 1:
         expected_result = {
-            'obs': 0.5999662863185762,
-            'exp': [
-                0.06596134134354742,
-                0.15477912571478988,
-                0.33323967895587736,
-                0.6096429330789306,
-                0.8688213053042003
+            "obs": 0.5906228034705155,
+            "exp": [
+                0.055223914655538435, 
+                0.13613239925395315, 
+                0.3068720101493323, 
+                0.5839470093910164, 
+                0.8554725461337025
             ]
         }
     return expected_result
@@ -519,14 +519,14 @@ def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto(
 def expected_result_2bin_2channel_coupledhistosys(mu=1.):
     if mu == 1:
         expected_result = {
-            'obs': 0.0796739833305826,
-            'exp': [
-                1.765372502072074e-05,
-                0.00026265618793683054,
-                0.003340033567379219,
-                0.03152233566143051,
+            "exp": [
+                1.765372502072074e-05, 
+                0.00026265618793683054, 
+                0.003340033567379219, 
+                0.03152233566143051, 
                 0.17907736639946248
-            ]
+            ], 
+            "obs": 0.0796739833305826
         }
     return expected_result
 
@@ -651,7 +651,7 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
 
     CLs_obs, CLs_exp = pyhf.utils.runOnePoint(
         mu_test, data, pdf, init_pars, par_bounds)[-2:]
-    assert (CLs_obs - expected_result['obs']) / \
+    assert abs(CLs_obs - expected_result['obs']) / \
         expected_result['obs'] < tolerance
     for result, expected_result in zip(CLs_exp, expected_result['exp']):
         assert (result - expected_result) / \
