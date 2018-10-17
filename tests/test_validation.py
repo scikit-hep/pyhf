@@ -639,7 +639,7 @@ def setup_2bin_2channel_coupledshapefactor(
     }
 
 
-def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-5):
+def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
