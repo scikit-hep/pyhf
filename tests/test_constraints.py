@@ -70,9 +70,9 @@ def test_numpy_pdf_inputs(backend):
         return tensorlib.sum(summands) if summands is not None else 0
     def fast(self, auxdata, pars):
         return self.constraint_logpdf(auxdata,pars)
-    
+
     auxd = pyhf.tensorlib.astensor(m.config.auxdata)
     pars = pyhf.tensorlib.astensor(m.config.suggested_init())
     slow_result = pyhf.tensorlib.tolist(slow(m,auxd,pars))
     fast_result = pyhf.tensorlib.tolist(fast(m,auxd,pars))
-    assert slow_result == fast_result
+    assert pytest.approx(slow_result) == fast_result

@@ -15,6 +15,17 @@ def isolate_modules():
     sys.modules.update(CACHE_MODULES)
 
 '''
+This fixture is automatically run to clear out the events registered before and after a test function runs.
+'''
+@pytest.fixture(scope='function', autouse=True)
+def reset_events():
+    pyhf.events.__events.clear()
+    pyhf.events.__disabled_events.clear()
+    yield reset_events
+    pyhf.events.__events.clear()
+    pyhf.events.__disabled_events.clear()
+
+'''
 This fixture is automatically run to reset the backend before and after a test function runs.
 '''
 @pytest.fixture(scope='function', autouse=True)
@@ -24,10 +35,10 @@ def reset_backend():
     pyhf.set_backend(pyhf.default_backend)
 
 @pytest.fixture(scope='function', params=[
-                             (pyhf.tensor.numpy_backend(),),
-                             (pyhf.tensor.tensorflow_backend(session=tf.Session()),),
-                             (pyhf.tensor.pytorch_backend(),),
-                             (pyhf.tensor.mxnet_backend(),),
+                             (pyhf.tensor.numpy_backend(), None),
+                             (pyhf.tensor.tensorflow_backend(session=tf.Session()), None),
+                             (pyhf.tensor.pytorch_backend(), None),
+                             (pyhf.tensor.mxnet_backend(), None),
                              (pyhf.tensor.numpy_backend(poisson_from_normal=True), pyhf.optimize.minuit_optimizer()),
                          ],
                          ids=[
