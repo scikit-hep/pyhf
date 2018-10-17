@@ -48,15 +48,14 @@ def spec_1bin_shapesys(source=source_1bin_example1()):
 @pytest.fixture(scope='module')
 def expected_result_1bin_shapesys(mu=1.):
     if mu == 1:
-        expected_result = {
-            "obs": 0.4541865416107029,
-            "exp": [
-                0.06371799398864626, 
-                0.15096503398048894, 
-                0.3279606950533305, 
-                0.6046087303039118, 
-                0.8662627605298466
-            ]
+        expected_result = {"exp": [
+            0.06371799398864626,
+            0.15096503398048894,
+            0.3279606950533305,
+            0.6046087303039118,
+            0.8662627605298466
+            ],
+            "obs": 0.4541865416107029
         }
     return expected_result
 
@@ -130,15 +129,14 @@ def spec_1bin_normsys(source=source_1bin_normsys()):
 @pytest.fixture(scope='module')
 def expected_result_1bin_normsys(mu=1.):
     if mu == 1:
-        expected_result = {
-            "obs": 0.0006735317023683173,
-            "exp": [
-                7.471684419037565e-10, 
-                5.7411551509088054e-08, 
-                3.6898088058290313e-06, 
-                0.000169657315363677, 
-                0.004392708998183163
-            ]
+        expected_result = {"exp": [
+            7.471684419037565e-10,
+            5.7411551509088054e-08,
+            3.6898088058290313e-06,
+            0.000169657315363677,
+            0.004392708998183163
+            ],
+            "obs": 0.0006735317023683173
         }
     return expected_result
 
@@ -208,15 +206,14 @@ def spec_2bin_histosys(source=source_2bin_histosys_example2()):
 @pytest.fixture(scope='module')
 def expected_result_2bin_histosys(mu=1):
     if mu == 1:
-        expected_result = {
-            "obs": 0.10014623469489856,
-            "exp": [
-                7.133994076142134e-06, 
-                0.00012546353549600653, 
-                0.001879923161800079, 
-                0.020788942899065032, 
-                0.13692190803201712
-            ]
+        expected_result = {"exp": [
+            7.134513306138892e-06,
+            0.00012547100627138575,
+            0.001880010666437615,
+            0.02078964907605385,
+            0.13692494523572218
+            ],
+            "obs": 0.1001463460725534
         }
     return expected_result
 
@@ -300,15 +297,14 @@ def spec_2bin_2channel(source=source_2bin_2channel_example1()):
 @pytest.fixture(scope='module')
 def expected_result_2bin_2channel(mu=1.):
     if mu == 1:
-        expected_result = {
-            "obs": 0.056332621064982304,
-            "exp": [
-                0.00043491354821983556, 
-                0.0034223000502860606, 
-                0.02337423265831151, 
-                0.1218654225510158, 
-                0.40382074249477845
-            ]
+        expected_result = {"exp": [
+            0.00043491354821983556,
+            0.0034223000502860606,
+            0.02337423265831151,
+            0.1218654225510158,
+            0.40382074249477845
+            ],
+            "obs": 0.056332621064982304
         }
     return expected_result
 
@@ -404,15 +400,14 @@ def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
 @pytest.fixture(scope='module')
 def expected_result_2bin_2channel_couplednorm(mu=1.):
     if mu == 1:
-        expected_result = {
-            "obs": 0.5906228034705155,
-            "exp": [
-                0.055223914655538435, 
-                0.13613239925395315, 
-                0.3068720101493323, 
-                0.5839470093910164, 
-                0.8554725461337025
-            ]
+        expected_result =  {"exp": [
+            0.055223914655538435,
+            0.13613239925395315,
+            0.3068720101493323,
+            0.5839470093910164,
+            0.8554725461337025
+            ],
+            "obs": 0.5906228034705155
         }
     return expected_result
 
@@ -518,15 +513,14 @@ def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto(
 @pytest.fixture(scope='module')
 def expected_result_2bin_2channel_coupledhistosys(mu=1.):
     if mu == 1:
-        expected_result = {
-            "exp": [
-                1.765372502072074e-05, 
-                0.00026265618793683054, 
-                0.003340033567379219, 
-                0.03152233566143051, 
-                0.17907736639946248
-            ], 
-            "obs": 0.0796739833305826
+        expected_result = {"exp": [
+            1.7653746536962154e-05,
+            0.00026265644807799805,
+            0.00334003612780065,
+            0.031522353024659715,
+            0.17907742915143962
+            ],
+            "obs": 0.07967400132261188
         }
     return expected_result
 
