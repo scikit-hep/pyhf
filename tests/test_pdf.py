@@ -5,8 +5,8 @@ import pyhf.exceptions
 import numpy as np
 import json
 
-@pytest.mark.only_numpy
-def test_numpy_pdf_inputs(backend):
+@pytest.mark.fail_mxnet
+def test_pdf_inputs(backend):
     source = {
       "binning": [2,-0.5,1.5],
       "bindata": {
@@ -22,14 +22,11 @@ def test_numpy_pdf_inputs(backend):
     data = source['bindata']['data'] + pdf.config.auxdata
 
 
-    np_data       = np.array(data)
-    np_parameters = np.array(pars)
-
-    assert len(data) == np_data.shape[0]
-    assert len(pars) == np_parameters.shape[0]
-    assert pdf.pdf(pars,data) == pdf.pdf(np_parameters,np_data)
-    assert pdf.logpdf(pars,data) == pdf.logpdf(np_parameters,np_data)
-    assert np.array(pdf.logpdf(np_parameters,np_data)).shape == (1,)
+    tensorlib, _ = backend
+    assert tensorlib.shape(tensorlib.astensor(data)) == (2,)
+    assert tensorlib.shape(tensorlib.astensor(pars)) == (2,)
+    assert tensorlib.tolist(pdf.pdf(pars,data)) == pytest.approx([0.002417160663753748], abs=1e-4)
+    assert tensorlib.tolist(pdf.logpdf(pars,data)) == pytest.approx([-6.025179228209936], abs=1e-4)
 
 
 @pytest.mark.only_numpy
@@ -57,7 +54,6 @@ def test_core_pdf_broadcasting(backend):
     assert broadcasted.shape    == np.array(data).shape
     assert np.all(naive_python  == broadcasted)
 
-@pytest.mark.only_numpy
 def test_pdf_integration_staterror(backend):
     spec = {
         'channels': [
@@ -97,9 +93,13 @@ def test_pdf_integration_staterror(backend):
     }
     pdf = pyhf.Model(spec)
     par = pdf.config.par_slice('stat_firstchannel')
-    mod = pdf.config.modifier('stat_firstchannel')
-    assert mod.uncertainties == [[12.,12.],[5.,5.]]
-    assert mod.nominal_counts == [[50.,70.],[30.,20.]]
+    par_set = pdf.config.param_set('stat_firstchannel')
+    tensorlib, _ = backend
+    uncerts = tensorlib.astensor([[12.,12.],[5.,5.]])
+    nominal = tensorlib.astensor([[50.,70.],[30.,20.]])
+    quad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(uncerts, 2), axis=0))
+    totals = tensorlib.sum(nominal, axis=0)
+    assert pytest.approx(tensorlib.tolist(par_set.sigmas)) == tensorlib.tolist(tensorlib.divide(quad, totals))
 
 @pytest.mark.only_numpy
 def test_pdf_integration_histosys(backend):

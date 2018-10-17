@@ -102,11 +102,10 @@ def test_runOnePoint_q_mu(n_bins,
 
     test_statistic = []
     for backend in backends:
-        pyhf.set_backend(backend)
-
-        if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        if backend.name == 'tensorflow':
             tf.reset_default_graph()
-            pyhf.tensorlib.session = tf.Session()
+            backend.session = tf.Session()
+        pyhf.set_backend(backend)
 
         q_mu = pyhf.utils.runOnePoint(1.0, data, pdf,
                                       pdf.config.suggested_init(),

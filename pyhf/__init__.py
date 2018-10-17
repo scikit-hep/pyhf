@@ -1,5 +1,6 @@
 from . import tensor, optimize
 from .version import __version__
+from . import events
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
 optimizer = optimize.scipy_optimizer()
@@ -23,6 +24,7 @@ def get_backend():
     return tensorlib, optimizer
 
 
+@events.register('change_backend')
 def set_backend(backend, custom_optimizer=None):
     """
     Set the backend and the associated optimizer
@@ -42,20 +44,29 @@ def set_backend(backend, custom_optimizer=None):
     global tensorlib
     global optimizer
 
-    tensorlib = backend
-    if isinstance(tensorlib, tensor.tensorflow_backend):
-        optimizer = optimize.tflow_optimizer(tensorlib)
-    elif isinstance(tensorlib, tensor.pytorch_backend):
-        optimizer = optimize.pytorch_optimizer(tensorlib=tensorlib)
+    # need to determine if the tensorlib changed or the optimizer changed for events
+    tensorlib_changed = bool(backend.name != tensorlib.name)
+    optimizer_changed = False
+
+    if backend.name == 'tensorflow':
+        new_optimizer = custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
+        if tensorlib.name == 'tensorflow':
+            tensorlib_changed |= bool(backend.session != tensorlib.session)
+    elif backend.name == 'pytorch':
+        new_optimizer = custom_optimizer if custom_optimizer else optimize.pytorch_optimizer(tensorlib=backend)
     # TODO: Add support for mxnet_optimizer()
-    # elif isinstance(tensorlib, tensor.mxnet_backend):
-    #     optimizer = mxnet_optimizer()
+    # elif tensorlib.name == 'mxnet':
+    #     new_optimizer = custom_optimizer if custom_optimizer else mxnet_optimizer()
     else:
-        optimizer = optimize.scipy_optimizer()
+        new_optimizer = custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
 
-    if custom_optimizer:
-        optimizer = custom_optimizer
-
+    optimizer_changed = bool(optimizer != new_optimizer)
+    # set new backend
+    tensorlib = backend
+    optimizer = new_optimizer
+    # trigger events
+    if tensorlib_changed: events.trigger("tensorlib_changed")()
+    if optimizer_changed: events.trigger("optimizer_changed")()
 
 from .pdf import Model
 __all__ = ['Model', 'utils', 'modifiers', '__version__']

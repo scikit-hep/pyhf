@@ -1,27 +1,22 @@
 from . import get_backend, default_backend
+from . import events
 
 class gaussian_constraint_combined(object):
     def __init__(self,pdfconfig):
         # iterate over all constraints order doesn't matter....
-        
+
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
             (pdfconfig.param_set(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
-        self.tensorlib_name = None
         self._precompute()
-        tensorlib, _ = get_backend()
+        events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        # did things change that we need to recompute?
-        tensor_type_change = tensorlib.name != self.tensorlib_name
-        if not tensor_type_change:
-            return
-        self.tensorlib_name = tensorlib.name
-        start_index = 0        
+        start_index = 0
         normal_constraint_data = []
         normal_constraint_mean_indices = []
         normal_constraint_sigmas = []
@@ -43,7 +38,7 @@ class gaussian_constraint_combined(object):
 
             normal_constraint_data.append(thisauxdata)
             normal_constraint_mean_indices.append(self.par_indices[parslice])
-        
+
         if normal_constraint_mean_indices:
             normal_mean_idc  = default_backend.concatenate(list(map(lambda x: default_backend.astensor(x,dtype = 'int'),normal_constraint_mean_indices)))
             normal_sigmas    = default_backend.concatenate(list(map(default_backend.astensor,normal_constraint_sigmas)))
@@ -56,7 +51,6 @@ class gaussian_constraint_combined(object):
             self.normal_data, self.normal_sigmas, self.normal_mean_idc = None, None, None
 
     def logpdf(self,auxdata,pars):
-        self._precompute()
         if self.normal_data is None:
             return 0
         tensorlib, _ = get_backend()
@@ -75,18 +69,12 @@ class poisson_constraint_combined(object):
             (pdfconfig.param_set(cname),pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
-        self.tensorlib_name = None
         self._precompute()
-        tensorlib, _ = get_backend()
+        events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        # did things change that we need to recompute?
-        tensor_type_change = tensorlib.name != self.tensorlib_name
-        if not tensor_type_change:
-            return
-        self.tensorlib_name = tensorlib.name
-        
+
         start_index = 0
         poisson_constraint_data = []
         poisson_constraint_rate_indices = []
@@ -100,7 +88,7 @@ class poisson_constraint_combined(object):
             poisson_constraint_data.append(thisauxdata)
             poisson_constraint_rate_indices.append(self.par_indices[parslice])
 
-            # poisson constraints can specify a scaling factor for the 
+            # poisson constraints can specify a scaling factor for the
             # backgrounds rates (see: on-off problem with a aux measurement
             # with tau*b). If such a scale factor is not defined we just
             # take a factor of one
@@ -122,7 +110,6 @@ class poisson_constraint_combined(object):
             self.poisson_rate_idc, self.poisson_data, self.poisson_rate_fac = None, None, None
 
     def logpdf(self,auxdata,pars):
-        self._precompute()
         if self.poisson_data is None:
             return 0
         tensorlib, _ = get_backend()

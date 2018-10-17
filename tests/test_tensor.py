@@ -180,6 +180,7 @@ def test_pdf_eval(backend):
     assert pytest.approx([-17.648827643136507], rel=5e-5) == pyhf.tensorlib.tolist(pdf.logpdf(pdf.config.suggested_init(), data))
 
 
+@pytest.mark.fail_mxnet
 def test_pdf_eval_2(backend):
     source = {
         "binning": [2, -0.5, 1.5],

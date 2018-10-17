@@ -53,7 +53,6 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     interpolator = getattr(pyhf.interpolate, '_hfinterpolator_code{}'.format(interpcode))(histogramssets.tolist())
-    assert interpolator.tensorlib_name == pyhf.tensorlib.name
     assert interpolator.alphasets_shape == (histogramssets.shape[0], 1)
     interpolator(pyhf.tensorlib.astensor(alphasets.tolist()))
     assert interpolator.alphasets_shape == alphasets.shape
