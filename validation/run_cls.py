@@ -8,8 +8,6 @@ workspace = infile.Get("combined")
 data = workspace.data("obsData")
 
 
-
-
 sbModel = workspace.obj("ModelConfig")
 poi = sbModel.GetParametersOfInterest().first()
 
@@ -26,14 +24,14 @@ ac.SetOneSided(True)
 ac.SetQTilde(True)
 
 calc = ROOT.RooStats.HypoTestInverter(ac)
-calc.RunFixedScan(51,0,5)
+calc.RunFixedScan(51, 0, 5)
 calc.SetConfidenceLevel(0.95)
 calc.UseCLs(True)
 
 
 result = calc.GetInterval()
 
-plot = ROOT.RooStats.HypoTestInverterPlot("plot","plot",result)
+plot = ROOT.RooStats.HypoTestInverterPlot("plot", "plot", result)
 c = ROOT.TCanvas()
 c.SetLogy(False)
 plot.Draw("OBS EXP CLb 2CL")
@@ -41,7 +39,7 @@ c.Draw()
 c.SaveAs('scan.pdf')
 
 
-print 'observed: ', result.UpperLimit()
+print('observed: {}'.format(result.UpperLimit()))
 
-for i in [-2,-1,0,1,2]:
-    print 'expected {}: '.format(i), result.GetExpectedUpperLimit(i)
+for i in [-2, -1, 0, 1, 2]:
+    print('expected {}: {}'.format(i, result.GetExpectedUpperLimit(i)))
