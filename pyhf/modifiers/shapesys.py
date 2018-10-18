@@ -1,11 +1,15 @@
 import logging
-log = logging.getLogger(__name__)
 
 from . import modifier
 from ..paramsets import constrained_by_poisson
 from .. import get_backend, default_backend, events
 
-@modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
+log = logging.getLogger(__name__)
+
+
+@modifier(
+    name='shapesys', constrained=True, pdf_type='poisson', op_code='multiplication'
+)
 class shapesys(object):
     @classmethod
     def required_parset(cls, n_parameters):

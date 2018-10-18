@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from . import modifier
 from ..paramsets import constrained_by_normal
