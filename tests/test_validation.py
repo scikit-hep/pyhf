@@ -6,8 +6,7 @@ import _jsonnet
 def render_template(template, source):
     template_path = 'validation/templates.libsonnet'
     to_render = '''
-local templates = std.extVar("templates");
-templates.{template} {{
+std.extVar("templates").{template} {{
     source:: {source}
 }}
 '''.format(
