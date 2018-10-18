@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 88
+py36 = true
+skip-string-normalization = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+)/
+'''
