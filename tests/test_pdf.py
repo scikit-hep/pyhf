@@ -5,6 +5,7 @@ import pyhf.exceptions
 import numpy as np
 import json
 
+
 @pytest.mark.fail_mxnet
 def test_pdf_inputs(backend):
     source = {
@@ -18,12 +19,15 @@ def test_pdf_inputs(backend):
     pars = pdf.config.suggested_init()
     data = source['bindata']['data'] + pdf.config.auxdata
 
-
     tensorlib, _ = backend
     assert tensorlib.shape(tensorlib.astensor(data)) == (2,)
     assert tensorlib.shape(tensorlib.astensor(pars)) == (2,)
-    assert tensorlib.tolist(pdf.pdf(pars,data)) == pytest.approx([0.002417160663753748], abs=1e-4)
-    assert tensorlib.tolist(pdf.logpdf(pars,data)) == pytest.approx([-6.025179228209936], abs=1e-4)
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417160663753748], abs=1e-4
+    )
+    assert tensorlib.tolist(pdf.logpdf(pars, data)) == pytest.approx(
+        [-6.025179228209936], abs=1e-4
+    )
 
 
 @pytest.mark.only_numpy
@@ -51,6 +55,7 @@ def test_core_pdf_broadcasting(backend):
     assert np.array(data).shape == np.array(sigmas).shape
     assert broadcasted.shape == np.array(data).shape
     assert np.all(naive_python == broadcasted)
+
 
 def test_pdf_integration_staterror(backend):
     spec = {
@@ -96,11 +101,13 @@ def test_pdf_integration_staterror(backend):
     par = pdf.config.par_slice('stat_firstchannel')
     par_set = pdf.config.param_set('stat_firstchannel')
     tensorlib, _ = backend
-    uncerts = tensorlib.astensor([[12.,12.],[5.,5.]])
-    nominal = tensorlib.astensor([[50.,70.],[30.,20.]])
+    uncerts = tensorlib.astensor([[12.0, 12.0], [5.0, 5.0]])
+    nominal = tensorlib.astensor([[50.0, 70.0], [30.0, 20.0]])
     quad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(uncerts, 2), axis=0))
     totals = tensorlib.sum(nominal, axis=0)
-    assert pytest.approx(tensorlib.tolist(par_set.sigmas)) == tensorlib.tolist(tensorlib.divide(quad, totals))
+    assert pytest.approx(tensorlib.tolist(par_set.sigmas)) == tensorlib.tolist(
+        tensorlib.divide(quad, totals)
+    )
 
 
 @pytest.mark.only_numpy
