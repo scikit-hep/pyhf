@@ -14,6 +14,7 @@ from .modifiers.combined_mods import (
     histosys_combinedmod,
     normfac_combinedmod,
     staterror_combined,
+    shapefactor_combined,
     shapesys_combined
 )
 
@@ -22,6 +23,7 @@ MOD_REGISTRY = {
     'histosys': histosys_combinedmod,
     'normfactor': normfac_combinedmod,
     'staterror': staterror_combined,
+    'shapefactor': shapefactor_combined,
     'shapesys': shapesys_combined
 }
 
@@ -175,8 +177,8 @@ class Model(object):
         default_data_makers = {
             'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [],'mask': []},
             'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
-            'shapefactor': lambda: {'mask': []},
             'normfactor': lambda: {'mask': []},
+            'shapefactor': lambda: {'mask': []},
             'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data' :[]},
             'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
         }
@@ -224,24 +226,15 @@ class Model(object):
                         mega_mods[s][m]['data']['lo']   += [lo_factor]*len(nom) #broadcasting
                         mega_mods[s][m]['data']['hi']   += [hi_factor]*len(nom)
                         mega_mods[s][m]['data']['mask'] += [maskval]  *len(nom) #broadcasting
-                    elif mtype == 'normfactor':
+                    elif mtype in ['normfactor', 'shapefactor']:
                         maskval = True if thismod else False
                         mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
-                    elif mtype == 'shapesys':
+                    elif mtype in ['shapesys', 'staterror']:
                         uncrt = thismod['data'] if thismod else [0.0]*len(nom)
                         maskval = [True if thismod else False]*len(nom)
                         mega_mods[s][m]['data']['mask']  += maskval
                         mega_mods[s][m]['data']['uncrt'] += uncrt
                         mega_mods[s][m]['data']['nom_data'] += nom
-                    elif mtype == 'staterror':
-                        uncrt = thismod['data'] if thismod else [0.0]*len(nom)
-                        maskval = [True if thismod else False]*len(nom)
-                        mega_mods[s][m]['data']['mask']  += maskval
-                        mega_mods[s][m]['data']['uncrt'] += uncrt
-                        mega_mods[s][m]['data']['nom_data'] += nom
-                    elif mtype == 'shapefactor':
-                        maskval = True if thismod else False
-                        mega_mods[s][m]['data']['mask'] += [maskval]*len(nom) #broadcasting
                     else:
                         raise RuntimeError('not sure how to combine {mtype} into the mega-channel'.format(mtype = mtype))
             sample_dict = {
@@ -286,8 +279,7 @@ class Model(object):
         return auxdata
 
     def _modifications(self,pars):
-        #shapefactor must be added
-        factor_mods = ['normsys','staterror','shapesys','normfactor']
+        factor_mods = ['normsys','staterror','shapesys','normfactor', 'shapefactor']
         delta_mods  = ['histosys']
 
         deltas  = list(filter(lambda x: x is not None,[
