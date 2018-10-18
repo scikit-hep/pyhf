@@ -7,13 +7,12 @@ from ..paramsets import constrained_by_normal
 @modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
 class normsys(object):
     @classmethod
-    def required_parset(cls, nom_data):
-        n_parameters     = 1
+    def required_parset(cls, n_parameters):
         return {
             'parset': constrained_by_normal,
-            'n_parameters': n_parameters,
-            'inits': [0.0] * n_parameters,
-            'bounds': [[-5., 5.]] * n_parameters,
+            'n_parameters': 1,
+            'inits': [0.0],
+            'bounds': [[-5., 5.]],
             'auxdata': [0.],
             'factors': None,
             'modifier': cls.__name__,

@@ -7,8 +7,7 @@ from ..paramsets import unconstrained
 @modifier(name='shapefactor', shared=True, op_code = 'multiplication')
 class shapefactor(object):
     @classmethod
-    def required_parset(cls, nom_data):
-        n_parameters = len(nom_data)
+    def required_parset(cls, n_parameters):
         return {
             'parset': unconstrained,
             'n_parameters': n_parameters,

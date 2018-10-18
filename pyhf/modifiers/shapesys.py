@@ -7,8 +7,7 @@ from ..paramsets import constrained_by_poisson
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
     @classmethod
-    def required_parset(cls, nom_data):
-        n_parameters = len(nom_data)
+    def required_parset(cls, n_parameters):
         return {
             'parset': constrained_by_poisson,
             'n_parameters': n_parameters,
