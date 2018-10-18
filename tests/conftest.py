@@ -3,13 +3,14 @@ import pyhf
 import tensorflow as tf
 import sys
 
-'''
-This fixture isolates the sys.modules imported in case you need to mess around with them and do not want to break other tests.
 
-This is not done automatically.
-'''
 @pytest.fixture(scope='function')
 def isolate_modules():
+    """
+    This fixture isolates the sys.modules imported in case you need to mess around with them and do not want to break other tests.
+
+    This is not done automatically.
+    """
     CACHE_MODULES = sys.modules.copy()
     yield isolate_modules
     sys.modules.update(CACHE_MODULES)
@@ -30,6 +31,9 @@ This fixture is automatically run to reset the backend before and after a test f
 '''
 @pytest.fixture(scope='function', autouse=True)
 def reset_backend():
+    """
+    This fixture is automatically run to reset the backend before and after a test function runs.
+    """
     pyhf.set_backend(pyhf.default_backend)
     yield reset_backend
     pyhf.set_backend(pyhf.default_backend)
@@ -62,15 +66,25 @@ def backend(request):
     # allow the specific backend to fail if specified
     fail_backend = request.node.get_marker('fail_{param}'.format(param=param_id))
     # only look at the specific backends
-    only_backends = [pid for pid in param_ids if request.node.get_marker('only_{param}'.format(param=pid))]
+    only_backends = [
+        pid
+        for pid in param_ids
+        if request.node.get_marker('only_{param}'.format(param=pid))
+    ]
 
-    if(skip_backend and (param_id in only_backends)):
-        raise ValueError("Must specify skip_{param} or only_{param} but not both!".format(param=pid))
+    if skip_backend and (param_id in only_backends):
+        raise ValueError(
+            "Must specify skip_{param} or only_{param} but not both!".format(param=pid)
+        )
 
     if skip_backend:
         pytest.skip("skipping {func} as specified".format(func=func_name))
     elif only_backends and param_id not in only_backends:
-        pytest.skip("skipping {func} as specified to only look at: {backends}".format(func=func_name, backends=', '.join(only_backends)))
+        pytest.skip(
+            "skipping {func} as specified to only look at: {backends}".format(
+                func=func_name, backends=', '.join(only_backends)
+            )
+        )
 
     if fail_backend:
         pytest.xfail("expect {func} to fail as specified".format(func=func_name))

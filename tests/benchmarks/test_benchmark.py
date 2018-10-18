@@ -22,12 +22,7 @@ def generate_source_static(n_bins):
 
     source = {
         'binning': binning,
-        'bindata': {
-            'data': data,
-            'bkg': bkg,
-            'bkgerr': bkgerr,
-            'sig': sig
-        }
+        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
     }
     return source
 
@@ -52,20 +47,15 @@ def generate_source_poisson(n_bins):
 
     source = {
         'binning': binning,
-        'bindata': {
-            'data': data,
-            'bkg': bkg,
-            'bkgerr': bkgerr,
-            'sig': sig
-        }
+        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
     }
     return source
 
 
 def runOnePoint(pdf, data):
-    return pyhf.utils.runOnePoint(1.0, data, pdf,
-                                  pdf.config.suggested_init(),
-                                  pdf.config.suggested_bounds())
+    return pyhf.utils.runOnePoint(
+        1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds()
+    )
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
@@ -89,8 +79,8 @@ def test_runOnePoint(benchmark, backend, n_bins):
         None
     """
     source = generate_source_static(n_bins)
-    pdf = hepdata_like(source['bindata']['sig'],
-                       source['bindata']['bkg'],
-                       source['bindata']['bkgerr'])
+    pdf = hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
     data = source['bindata']['data'] + pdf.config.auxdata
     assert benchmark(runOnePoint, pdf, data)

@@ -23,12 +23,7 @@ def generate_source_static(n_bins):
 
     source = {
         'binning': binning,
-        'bindata': {
-            'data': data,
-            'bkg': bkg,
-            'bkgerr': bkgerr,
-            'sig': sig
-        }
+        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
     }
     return source
 
@@ -53,12 +48,7 @@ def generate_source_poisson(n_bins):
 
     source = {
         'binning': binning,
-        'bindata': {
-            'data': data,
-            'bkg': bkg,
-            'bkgerr': bkgerr,
-            'sig': sig
-        }
+        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
     }
     return source
 
@@ -135,9 +125,9 @@ def test_runOnePoint_q_mu(n_bins,invert_order,
             backend.session = tf.Session()
         pyhf.set_backend(backend)
 
-        q_mu = pyhf.utils.runOnePoint(1.0, data, pdf,
-                                      pdf.config.suggested_init(),
-                                      pdf.config.suggested_bounds())[0]
+        q_mu = pyhf.utils.runOnePoint(
+            1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds()
+        )[0]
         test_statistic.append(pyhf.tensorlib.tolist(q_mu))
 
     # compare to NumPy/SciPy
@@ -152,12 +142,18 @@ def test_runOnePoint_q_mu(n_bins,invert_order,
     try:
         assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
     except AssertionError:
-        print('Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
-            tolerance['numpy'], numpy_ratio_delta_unity.tolist()))
+        print(
+            'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
+                tolerance['numpy'], numpy_ratio_delta_unity.tolist()
+            )
+        )
         assert False
     try:
         assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
     except AssertionError:
-        print('Ratio between tensor backends exceeded tolerance of {}: {}'.format(
-            tolerance['tensors'], tensors_ratio_delta_unity.tolist()))
+        print(
+            'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
+                tolerance['tensors'], tensors_ratio_delta_unity.tolist()
+            )
+        )
         assert False

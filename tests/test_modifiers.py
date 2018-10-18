@@ -1,15 +1,23 @@
 import pytest
-import sys
 import inspect
 from six import with_metaclass
 
 import pyhf
 
-modifiers_to_test = ["histosys", "normfactor", "normsys", "shapefactor", "shapesys", "staterror"]
+modifiers_to_test = [
+    "histosys",
+    "normfactor",
+    "normsys",
+    "shapefactor",
+    "shapesys",
+    "staterror",
+]
 modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
 
 # we make sure we can import all of our pre-defined modifiers correctly
-@pytest.mark.parametrize("test_modifierPair", zip(modifiers_to_test, modifier_pdf_types))
+@pytest.mark.parametrize(
+    "test_modifierPair", zip(modifiers_to_test, modifier_pdf_types)
+)
 def test_import_default_modifiers(test_modifierPair):
     test_modifier, test_mod_type = test_modifierPair
     modifier = pyhf.modifiers.registry.get(test_modifier, None)
@@ -19,7 +27,8 @@ def test_import_default_modifiers(test_modifierPair):
     assert hasattr(modifier, 'is_constrained')
     assert hasattr(modifier, 'pdf_type')
     assert hasattr(modifier, 'op_code')
-    assert modifier.op_code in ['addition','multiplication']
+    assert modifier.op_code in ['addition', 'multiplication']
+
 
 # we make sure modifiers have right structure
 def test_modifiers_structure():
@@ -29,6 +38,12 @@ def test_modifiers_structure():
     class myCustomModifier(object):
         @classmethod
         def required_parset(cls, n_parameters): pass
+
+        def add_sample(self):
+            pass
+
+        def apply(self):
+            pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
@@ -40,6 +55,15 @@ def test_modifiers_structure():
     class myCustomModifier(object):
         @classmethod
         def required_parset(cls, n_parameters): pass
+
+        def add_sample(self):
+            pass
+
+        def apply(self):
+            pass
+
+        def expected_data(self):
+            pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
@@ -56,6 +80,12 @@ def test_modifier_name_auto():
         @classmethod
         def required_parset(cls, n_parameters): pass
 
+        def add_sample(self):
+            pass
+
+        def apply(self):
+            pass
+
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
@@ -70,6 +100,12 @@ def test_modifier_name_auto_withkwargs():
     class myCustomModifier(object):
         @classmethod
         def required_parset(cls, n_parameters): pass
+
+        def add_sample(self):
+            pass
+
+        def apply(self):
+            pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -86,6 +122,12 @@ def test_modifier_name_custom():
         @classmethod
         def required_parset(cls, n_parameters): pass
 
+        def add_sample(self):
+            pass
+
+        def apply(self):
+            pass
+
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' not in pyhf.modifiers.registry
     assert 'myCustomName' in pyhf.modifiers.registry
@@ -98,16 +140,19 @@ def test_decorate_with_wrong_values():
     from pyhf.modifiers import modifier
 
     with pytest.raises(ValueError):
-        @modifier('too','many','args')
+
+        @modifier('too', 'many', 'args')
         class myCustomModifier(object):
             pass
 
     with pytest.raises(TypeError):
+
         @modifier(name=1.5)
         class myCustomModifier(object):
             pass
 
     with pytest.raises(ValueError):
+
         @modifier(unused='arg')
         class myCustomModifier(object):
             pass
@@ -118,11 +163,13 @@ def test_registry_name_clash():
     from pyhf.modifiers import modifier
 
     with pytest.raises(KeyError):
+
         @modifier(name='histosys')
         class myCustomModifier(object):
             pass
 
     with pytest.raises(KeyError):
+
         class myCustomModifier(object):
             @classmethod
             def required_parset(cls, n_parameters): pass
