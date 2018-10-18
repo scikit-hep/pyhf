@@ -9,9 +9,7 @@ extras_require = {
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
         'setuptools<=39.1.0',
     ],
-    'torch': [
-        'torch>=0.4.0'
-    ],
+    'torch': ['torch>=0.4.0'],
     'mxnet': [
         'mxnet>=1.0.0',
         'requests<2.19.0,>=2.18.4',
@@ -21,12 +19,8 @@ extras_require = {
     # 'dask': [
     #     'dask[array]'
     # ],
-    'xmlimport': [
-        'uproot',
-    ],
-    'minuit': [
-        'iminuit'
-    ],
+    'xmlimport': ['uproot'],
+    'minuit': ['iminuit'],
     'develop': [
         'pyflakes',
         'pytest>=3.5.1',
@@ -49,8 +43,8 @@ extras_require = {
         'm2r',
         'jsonpatch',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
-        'black'
-    ]
+        'black',
+    ],
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
@@ -78,11 +72,9 @@ setup(
         'tqdm',  # for readxml
         'six',  # for modifiers
         'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
-        'jsonpatch'
+        'jsonpatch',
     ],
     extras_require=extras_require,
-    entry_points={
-        'console_scripts': ['pyhf=pyhf.commandline:pyhf']
-    },
-    dependency_links=[]
+    entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},
+    dependency_links=[],
 )
