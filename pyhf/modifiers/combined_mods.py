@@ -93,7 +93,6 @@ class histosys_combinedmod(object):
         results_histo   = tensorlib.where(self.histosys_mask,results_histo,self.histosys_default)
         return results_histo
 
-
 class normfac_combinedmod(object):
     def __init__(self,normfac_mods,pdfconfig,mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
@@ -229,6 +228,39 @@ class staterror_combined(object):
             self.staterror_default
         )
         return results_staterr
+
+class shapefactor_combined(object):
+    def __init__(self,shapefactor_mods,pdfconfig,mega_mods):
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._shapefactor_indices = [self._parindices[pdfconfig.par_slice(m)] for m in shapefactor_mods]
+        self._shapefactor_mask = [
+            [
+                [
+                    mega_mods[s][m]['data']['mask'],
+                ]
+                for s in pdfconfig.samples
+            ] for m in shapefactor_mods
+        ]
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
+        self.shapefactor_default = tensorlib.ones(tensorlib.shape(self.shapefactor_mask))
+        self.shapefactor_indices = tensorlib.astensor(self._shapefactor_indices, dtype='int')
+
+    def apply(self,pars):
+        tensorlib, _ = get_backend()
+        shapefactor_indices = tensorlib.astensor(self.shapefactor_indices, dtype='int')
+        shapefactor_mask = tensorlib.astensor(self.shapefactortor_mask)
+        if not tensorlib.shape(shapefactor_indices)[0]:
+            return
+        shapefactors = tensorlib.gather(pars,shapefactor_indices)
+        results_shapefactor = shapefactor_mask * tensorlib.reshape(shapefactors,tensorlib.shape(shapefactors) + (1,1))
+        results_shapefactor = tensorlib.where(shapefactor_mask,results_shapefactor,tensorlib.astensor(self.shapefactor_default))
+        return results_shapefactor
 
 class shapesys_combined(object):
     def __init__(self,shapesys_mods,pdfconfig,mega_mods):
