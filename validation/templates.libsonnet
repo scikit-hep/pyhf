@@ -42,5 +42,41 @@
             {"config": {"poi": "mu"}, "name": "HelloWorld"}
             ]
         },
+    },
+    histosys_test: {
+        local model = self.source,
+        local channel = "singlechannel",
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': model.bindata.sig,
+                        'modifiers': [
+                            {
+                                'name': 'mu',
+                                'type': 'normfactor',
+                                'data': null
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'background',
+                        'data': model.bindata.bkg,
+                        'modifiers': [
+                            {
+                                'name': 'bkg_norm',
+                                'type': 'histosys',
+                                'data': {
+                                    'lo_data': model.bindata.bkgsys_dn,
+                                    'hi_data': model.bindata.bkgsys_up
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     }
 }

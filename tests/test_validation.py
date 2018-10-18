@@ -78,39 +78,7 @@ def source_1bin_normsys():
 
 @pytest.fixture(scope='module')
 def spec_1bin_normsys(source=source_1bin_normsys()):
-    spec = {
-        'channels': [
-            {
-                'name': 'singlechannel',
-                'samples': [
-                    {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {
-                                'name': 'mu',
-                                'type': 'normfactor',
-                                'data': None
-                            }
-                        ]
-                    },
-                    {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {
-                                'name': 'bkg_norm',
-                                'type': 'normsys',
-                                'data': {'lo': 0.90, 'hi': 1.10}
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    return spec
-
+    return render_template('simple',source)
 
 @pytest.fixture(scope='module')
 def expected_result_1bin_normsys(mu=1.):
@@ -153,42 +121,7 @@ def source_2bin_histosys_example2():
 
 @pytest.fixture(scope='module')
 def spec_2bin_histosys(source=source_2bin_histosys_example2()):
-    spec = {
-        'channels': [
-            {
-                'name': 'singlechannel',
-                'samples': [
-                    {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {
-                                'name': 'mu',
-                                'type': 'normfactor',
-                                'data': None
-                            }
-                        ]
-                    },
-                    {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {
-                                'name': 'bkg_norm',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['bindata']['bkgsys_dn'],
-                                    'hi_data': source['bindata']['bkgsys_up']
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    return spec
-
+    return render_template('histosys_test',source)
 
 @pytest.fixture(scope='module')
 def expected_result_2bin_histosys(mu=1):
