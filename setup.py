@@ -49,6 +49,7 @@ extras_require = {
         'm2r',
         'jsonpatch',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
+        'black'
     ]
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
