@@ -1,7 +1,25 @@
 import pyhf
 import json
 import pytest
+import _jsonnet
 
+def render_template(template, source):
+    template_path = 'validation/templates.libsonnet'
+    to_render = '''
+local templates = std.extVar("templates");
+templates.{template} {{
+    source:: {source}
+}}
+'''.format(
+    template = template, source = json.dumps(source)
+    )
+    return {'channels': json.loads(_jsonnet.evaluate_snippet('snip',to_render, ext_codes = {'templates': open(template_path).read()}))['channels']}
+
+
+
+@pytest.fixture
+def ok():
+    pass
 
 @pytest.fixture(scope='module')
 def source_1bin_example1():
@@ -11,39 +29,7 @@ def source_1bin_example1():
 
 @pytest.fixture(scope='module')
 def spec_1bin_shapesys(source=source_1bin_example1()):
-    spec = {
-        'channels': [
-            {
-                'name': 'singlechannel',
-                'samples': [
-                    {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {
-                                'name': 'mu',
-                                'type': 'normfactor',
-                                'data': None
-                            }
-                        ]
-                    },
-                    {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': source['bindata']['bkgerr']
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    return spec
-
+    return render_template('simple',source)
 
 @pytest.fixture(scope='module')
 def expected_result_1bin_shapesys(mu=1.):

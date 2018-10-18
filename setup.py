@@ -48,6 +48,7 @@ extras_require = {
         'nbsphinx',
         'm2r',
         'jsonpatch',
+        'jsonnet',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
     ]
 }
