@@ -52,7 +52,8 @@ class tensorflow_backend(object):
                 return tensor_in
             if "no attribute 'run'" in str(err):
                 raise RuntimeError(
-                    'evaluation of tensor requested via .tolist() but no session defined')
+                    'evaluation of tensor requested via .tolist() but no session defined'
+                )
             raise
         except RuntimeError as err:
             # if no tensor operations have been added to the graph, but we want
@@ -72,8 +73,16 @@ class tensorflow_backend(object):
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        tensor_in_1 = tensor_in_1 if tensor_in_1.dtype is not tf.bool else tf.cast(tensor_in_1, tf.float32)
-        tensor_in_1 = tensor_in_1 if tensor_in_2.dtype is not tf.bool else tf.cast(tensor_in_2, tf.float32)
+        tensor_in_1 = (
+            tensor_in_1
+            if tensor_in_1.dtype is not tf.bool
+            else tf.cast(tensor_in_1, tf.float32)
+        )
+        tensor_in_1 = (
+            tensor_in_1
+            if tensor_in_2.dtype is not tf.bool
+            else tf.cast(tensor_in_2, tf.float32)
+        )
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
@@ -110,11 +119,19 @@ class tensorflow_backend(object):
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return tf.reduce_sum(tensor_in) if (axis is None or tensor_in.shape == tf.TensorShape([])) else tf.reduce_sum(tensor_in, axis)
+        return (
+            tf.reduce_sum(tensor_in)
+            if (axis is None or tensor_in.shape == tf.TensorShape([]))
+            else tf.reduce_sum(tensor_in, axis)
+        )
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return tf.reduce_prod(tensor_in) if axis is None else tf.reduce_prod(tensor_in, axis)
+        return (
+            tf.reduce_prod(tensor_in)
+            if axis is None
+            else tf.reduce_prod(tensor_in, axis)
+        )
 
     def abs(self, tensor):
         tensor = self.astensor(tensor)
@@ -198,6 +215,7 @@ class tensorflow_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
+
         def generic_len(a):
             try:
                 return len(a)
@@ -210,15 +228,19 @@ class tensorflow_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(generic_len, args))
         try:
-            assert len([arg for arg in args
-                        if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
             log.error(
-                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
+            )
             raise error
 
-        broadcast = [arg if generic_len(arg) > 1 else
-                     tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim])) for arg in args]
+        broadcast = [
+            arg
+            if generic_len(arg) > 1
+            else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
+            for arg in args
+        ]
         return broadcast
 
     def einsum(self, subscripts, *operands):

@@ -4,7 +4,9 @@ import logging
 import math  # Required for normal()
 from numbers import Number  # Required for normal()
 from scipy.stats import norm  # Required for normal_cdf()
+
 log = logging.getLogger(__name__)
+
 
 class mxnet_backend(object):
     """MXNet backend for pyhf"""
@@ -50,7 +52,8 @@ class mxnet_backend(object):
         try:
             return tensor_in.asnumpy().tolist()
         except AttributeError:
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
@@ -76,18 +79,22 @@ class mxnet_backend(object):
 
         rows1, cols1 = tensor_1_shape
         rows2, cols2 = tensor_2_shape
-        return nd.reshape(nd.broadcast_mul(tensor_in_1.reshape((rows1, 1, cols1, 1)),
-                                           tensor_in_2.reshape((1, rows2, 1, cols2))),
-                          (rows1 * cols1, rows2 * cols2))
+        return nd.reshape(
+            nd.broadcast_mul(
+                tensor_in_1.reshape((rows1, 1, cols1, 1)),
+                tensor_in_2.reshape((1, rows2, 1, cols2)),
+            ),
+            (rows1 * cols1, rows2 * cols2),
+        )
 
-    def gather(self,tensor,indices):
+    def gather(self, tensor, indices):
         return tensor[indices]
 
     def boolean_mask(self, tensor, mask):
         raise NotImplementedError("mxnet::boolean_mask is not implemented.")
         return
 
-    def astensor(self, tensor_in, dtype = 'float'):
+    def astensor(self, tensor_in, dtype='float'):
         """
         Convert to a MXNet NDArray.
 
@@ -100,9 +107,9 @@ class mxnet_backend(object):
         dtypemap = {'float': 'float32', 'int': 'int32', 'bool': 'uint8'}
         dtype = dtypemap[dtype]
         try:
-            tensor = nd.array(tensor_in, dtype = dtype)
+            tensor = nd.array(tensor_in, dtype=dtype)
         except ValueError:
-            tensor = nd.array([tensor_in], dtype = dtype)
+            tensor = nd.array([tensor_in], dtype=dtype)
         return tensor
 
     def sum(self, tensor_in, axis=None):
@@ -282,8 +289,10 @@ class mxnet_backend(object):
         mask = self.astensor(mask)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return nd.add(nd.multiply(mask, tensor_in_1),
-                      nd.multiply(nd.subtract(1, mask), tensor_in_2))
+        return nd.add(
+            nd.multiply(mask, tensor_in_1),
+            nd.multiply(nd.subtract(1, mask), tensor_in_2),
+        )
 
     def concatenate(self, sequence, axis=0):
         """
@@ -328,12 +337,16 @@ class mxnet_backend(object):
             assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
         except AssertionError as error:
             log.error(
-                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
+            )
             raise error
 
-        broadcast = [arg if len(arg) > 1
-                     else nd.broadcast_axis(arg[0], axis=len(arg.shape) - 1, size=max_dim)
-                     for arg in args]
+        broadcast = [
+            arg
+            if len(arg) > 1
+            else nd.broadcast_axis(arg[0], axis=len(arg.shape) - 1, size=max_dim)
+            for arg in args
+        ]
         return nd.stack(*broadcast)
 
     def shape(self, tensor):
@@ -343,7 +356,7 @@ class mxnet_backend(object):
         return tensor.shape
 
     def reshape(self, tensor, newshape):
-        return nd.reshape(tensor,newshape)
+        return nd.reshape(tensor, newshape)
 
     def einsum(self, subscripts, *operands):
         """
@@ -364,7 +377,7 @@ class mxnet_backend(object):
     def poisson_logpdf(self, n, lam):
         n = self.astensor(n)
         lam = self.astensor(lam)
-        return n * nd.log(lam) - lam - nd.gammaln(n + 1.)
+        return n * nd.log(lam) - lam - nd.gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -396,7 +409,7 @@ class mxnet_backend(object):
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/poisson.py#L59-L63
-        return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1.))
+        return nd.exp((nd.log(lam) * n) - lam - nd.gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # This is currently copied directly from PyTorch's source until a better
@@ -404,7 +417,11 @@ class mxnet_backend(object):
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/normal.py#L70-L76
         variance = sigma ** 2
         log_scale = math.log(sigma) if isinstance(sigma, Number) else sigma.log()
-        return -((x - mu) ** 2) / (2 * variance) - log_scale - math.log(math.sqrt(2 * math.pi))
+        return (
+            -((x - mu) ** 2) / (2 * variance)
+            - log_scale
+            - math.log(math.sqrt(2 * math.pi))
+        )
 
     def normal(self, x, mu, sigma):
         r"""
@@ -460,7 +477,8 @@ class mxnet_backend(object):
             MXNet NDArray: The CDF
         """
         log.warning(
-            'normal_cdf currently uses SciPy stats until pure MXNet distribuiton support is available.')
+            'normal_cdf currently uses SciPy stats until pure MXNet distribuiton support is available.'
+        )
         x = self.astensor(x).asnumpy()
         mu = self.astensor(mu).asnumpy()
         sigma = self.astensor(sigma).asnumpy()
