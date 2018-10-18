@@ -27,12 +27,12 @@ def test_notebooks(tmpdir):
     pm.execute_notebook(
         'docs/examples/notebooks/multichannel-coupled-histo.ipynb',
         parameters={'validation_datadir': 'validation/data'},
-        **common_kwargs,
+        **common_kwargs
     )
     pm.execute_notebook(
         'docs/examples/notebooks/multiBinPois.ipynb',
         parameters={'validation_datadir': 'validation/data'},
-        **common_kwargs,
+        **common_kwargs
     )
 
     nb = pm.read_notebook(str(outputnb))
