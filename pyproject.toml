@@ -6,6 +6,6 @@ include = '\.pyi?$'
 exclude = '''
 /(
     \.git
-  | \.hg
+  | build
 )/
 '''
