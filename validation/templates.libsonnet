@@ -78,5 +78,74 @@
                 ]
             }
         ]
+    },
+    two_bin_two_channel_coupledhistosys_test: {
+        local model = self.source,
+        local channel = "singlechannel",
+        'channels': [
+            {
+                'name': 'signal',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': model.channels.signal.bindata.sig,
+                        'modifiers': [
+                            {
+                                'name': 'mu',
+                                'type': 'normfactor',
+                                'data': null
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'bkg1',
+                        'data': model.channels.signal.bindata.bkg1,
+                        'modifiers': [
+                            {
+                                'name': 'coupled_histosys',
+                                'type': 'histosys',
+                                'data': {
+                                    'lo_data': model.channels.signal.bindata.bkg1_dn,
+                                    'hi_data': model.channels.signal.bindata.bkg1_up
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'bkg2',
+                        'data': model.channels.signal.bindata.bkg2,
+                        'modifiers': [
+                            {
+                                'name': 'coupled_histosys',
+                                'type': 'histosys',
+                                'data': {
+                                    'lo_data': model.channels.signal.bindata.bkg2_dn,
+                                    'hi_data': model.channels.signal.bindata.bkg2_up
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                'name': 'control',
+                'samples': [
+                    {
+                        'name': 'background',
+                        'data': model.channels.control.bindata.bkg1,
+                        'modifiers': [
+                            {
+                                'name': 'coupled_histosys',
+                                'type': 'histosys',
+                                'data': {
+                                    'lo_data': model.channels.control.bindata.bkg1_dn,
+                                    'hi_data': model.channels.control.bindata.bkg1_up
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     }
 }

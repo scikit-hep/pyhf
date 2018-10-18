@@ -363,75 +363,7 @@ def source_2bin_2channel_coupledhisto():
 
 @pytest.fixture(scope='module')
 def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto()):
-    spec = {
-        'channels': [
-            {
-                'name': 'signal',
-                'samples': [
-                    {
-                        'name': 'signal',
-                        'data': source['channels']['signal']['bindata']['sig'],
-                        'modifiers': [
-                            {
-                                'name': 'mu',
-                                'type': 'normfactor',
-                                'data': None
-                            }
-                        ]
-                    },
-                    {
-                        'name': 'bkg1',
-                        'data': source['channels']['signal']['bindata']['bkg1'],
-                        'modifiers': [
-                            {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['signal']['bindata']['bkg1_dn'],
-                                    'hi_data': source['channels']['signal']['bindata']['bkg1_up']
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        'name': 'bkg2',
-                        'data': source['channels']['signal']['bindata']['bkg2'],
-                        'modifiers': [
-                            {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['signal']['bindata']['bkg2_dn'],
-                                    'hi_data': source['channels']['signal']['bindata']['bkg2_up']
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                'name': 'control',
-                'samples': [
-                    {
-                        'name': 'background',
-                        'data': source['channels']['control']['bindata']['bkg1'],
-                        'modifiers': [
-                            {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['control']['bindata']['bkg1_dn'],
-                                    'hi_data': source['channels']['control']['bindata']['bkg1_up']
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    return spec
-
+    return render_template('two_bin_two_channel_coupledhistosys_test',source)
 
 @pytest.fixture(scope='module')
 def expected_result_2bin_2channel_coupledhistosys(mu=1.):
