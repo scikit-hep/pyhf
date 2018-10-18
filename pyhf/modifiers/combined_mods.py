@@ -254,7 +254,7 @@ class shapefactor_combined(object):
     def apply(self,pars):
         tensorlib, _ = get_backend()
         shapefactor_indices = tensorlib.astensor(self.shapefactor_indices, dtype='int')
-        shapefactor_mask = tensorlib.astensor(self.shapefactortor_mask)
+        shapefactor_mask = tensorlib.astensor(self.shapefactor_mask)
         if not tensorlib.shape(shapefactor_indices)[0]:
             return
         shapefactors = tensorlib.gather(pars,shapefactor_indices)
