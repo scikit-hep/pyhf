@@ -278,7 +278,18 @@ class shapefactor_combined(object):
             ] for m in shapefactor_mods
         ]
         global_concatenated_bin_indices = [j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]
-        self._shapefactor_indices = [default_backend.tolist(default_backend.gather(default_backend.astensor(shapefactor_mod_parindices, dtype='int'), global_concatenated_bin_indices)) for shapefactor_mod_parindices in self._shapefactor_indices]
+        # compute the max so that we can pad with 0s for the right shape
+        # for gather. The 0s will get masked by self._shapefactor_mask anyway
+        # For example: [[1,2,3],[4,5],[6,7,8]] -> [[1,2,3],[4,5,0],[6,7,8]]
+        max_nbins = max(global_concatenated_bin_indices)+1
+        self._shapefactor_indices = [
+            default_backend.tolist(
+                default_backend.gather(
+                    default_backend.astensor(indices + [0]*(max_nbins - len(indices)), dtype='int'),
+                    global_concatenated_bin_indices
+                )
+            ) for indices in self._shapefactor_indices
+        ]
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -288,20 +299,19 @@ class shapefactor_combined(object):
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
         self.shapefactor_default = tensorlib.ones(tensorlib.shape(self.shapefactor_mask))
         self.shapefactor_indices = tensorlib.astensor(self._shapefactor_indices, dtype='int')
+        self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapefactor_mask)[1])
+        self.alpha_ones = tensorlib.ones([1])
 
     def apply(self,pars):
         tensorlib, _ = get_backend()
-        shapefactor_indices = tensorlib.astensor(self.shapefactor_indices, dtype='int')
-        shapefactor_mask = tensorlib.astensor(self.shapefactor_mask)
-        if not tensorlib.shape(shapefactor_indices)[0]:
-            return
-        shapefactors = tensorlib.gather(pars,shapefactor_indices)
-
-        # needs to multiply across samples/mask value so (a,b) -> (a, 1, 1, b)
-        new_shape = list(tensorlib.shape(shapefactors))
-        new_shape[1:1] = [1,1]
-        results_shapefactor = shapefactor_mask * tensorlib.reshape(shapefactors, new_shape)
-        results_shapefactor = tensorlib.where(shapefactor_mask,results_shapefactor,tensorlib.astensor(self.shapefactor_default))
+        if not tensorlib.shape(self.shapefactor_indices)[0]: return
+        shapefactors = tensorlib.gather(pars, self.shapefactor_indices)
+        results_shapefactor = tensorlib.einsum('s,a,mb->msab',
+            self.sample_ones,
+            self.alpha_ones,
+            shapefactors
+        )
+        results_shapefactor = tensorlib.where(self.shapefactor_mask, results_shapefactor, self.shapefactor_default)
         return results_shapefactor
 
 class shapesys_combined(object):
