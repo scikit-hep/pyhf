@@ -21,82 +21,82 @@ and activating it
     source pyhf/bin/activate
 
 
-Install from `PyPI <https://pypi.org/project/pyhf/>`__
-------------------------------------------------------
+Install from `PyPI <https://pypi.org/project/pyhf/>`__...
+---------------------------------------------------------
 
-with NumPy backend
-++++++++++++++++++
+... with NumPy backend
+++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf
 
-with TensorFlow backend
-+++++++++++++++++++++++
+... with TensorFlow backend
++++++++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[tensorflow]
 
-with PyTorch backend
-++++++++++++++++++++
+... with PyTorch backend
+++++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[torch]
 
-with MXNet backend
-++++++++++++++++++
+... with MXNet backend
+++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[mxnet]
 
-with all backends
-+++++++++++++++++
+... with all backends
++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install pyhf[tensorflow,torch,mxnet]
 
-Install from `GitHub <https://github.com/diana-hep/pyhf>`__
------------------------------------------------------------
+Install from `GitHub <https://github.com/diana-hep/pyhf>`__...
+--------------------------------------------------------------
 
 .. code-block:: console
 
     git clone https://github.com/diana-hep/pyhf.git
     cd pyhf
 
-with NumPy backend
-++++++++++++++++++
+... with NumPy backend
+++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .
 
-with TensorFlow backend
-+++++++++++++++++++++++
+... with TensorFlow backend
++++++++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .[tensorflow]
 
-with PyTorch backend
-++++++++++++++++++++
+... with PyTorch backend
+++++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .[torch]
 
-with MXNet backend
-++++++++++++++++++
+... with MXNet backend
+++++++++++++++++++++++
 
 .. code-block:: console
 
     pip install --ignore-installed -U .[mxnet]
 
-with all backends
-+++++++++++++++++
+... with all backends
++++++++++++++++++++++
 
 .. code-block:: console
 
