@@ -6,6 +6,7 @@ from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
+from .paramsets import unconstrained, constrained_by_normal, constrained_by_poisson
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 
 
@@ -42,6 +43,8 @@ class _ModelConfig(object):
         self.parameters = []
         self.modifiers = []
         self.channel_nbins = {}
+        # bookkeep all modifiers we need to build
+        self.paramsets = {}
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in spec['channels']:
@@ -56,15 +59,17 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    self.add_or_create_parset_for_modifier(
-                        channel, sample, modifier_def['name'],modifier_def['type']
-                    )
-                    self.modifiers.append((modifier_def['name'],modifier_def['type']))
+                    self.bookkeep_paramsets(channel, sample, modifier_def['name'], modifier_def['type'])
+                    #self.add_or_create_parset_for_modifier(
+                    #    channel, sample, modifier_def['name'],modifier_def['type']
+                    #)
+                    #self.modifiers.append((modifier_def['name'],modifier_def['type']))
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
+        self.combine_paramsets()
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -108,11 +113,108 @@ class _ModelConfig(object):
             'modifier_type': modifier_type,
         }
 
-    def add_or_create_parset_for_modifier(self, channel, sample, name, modifier_type):
-        """
-        Add a new modifier if it does not exist and return it
-        or get the existing modifier and return it
+    def bookkeep_paramsets(self, channel, sample, name, modifier_type):
+        # get modifier class associated with modifier type
+        try:
+            modifier_cls = modifiers.registry[modifier_type]
+        except KeyError:
+            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
+            raise exceptions.InvalidModifier()
 
+        self.paramsets.setdefault(name, [])
+
+        parset = modifier_cls.required_parset(len(sample['data']))
+        parset.update({'channel,sample': (channel['name'], sample['name'])})
+
+        if not(parset['is_shared']) and self.paramsets.get(name):
+            raise ValueError("Trying to add unshared-paramset but other paramsets exist with the same name.")
+
+        if parset['is_shared'] and self.paramsets.get(name) and not(self.paramsets.get(name)[0]['is_shared']):
+            raise ValueError("Trying to add shared-paramset but other paramset of same name is indicated to be unshared.")
+
+        self.paramsets.get(name).append(parset)
+
+    def combine_paramsets(self):
+        for param_name in self.parameters:
+            params = self.paramsets[param_name]
+
+            def get_inits(parset, npars, param_matching):
+                if parset == unconstrained:
+                    if param_matching == 'exact':
+                        # normfactor
+                        inits = [1.0]
+                        bounds = [[0, 10]]
+                        auxdata = []
+                        factors = []
+                    else:
+                        # shapefactor
+                        inits = [1.0]
+                        bounds = [[0, 10]]
+                        auxdata = []
+                        factors = []
+                elif parset == constrained_by_normal:
+                    if param_matching == 'exact':
+                        # normsys, histosys
+                        inits = [0.0]
+                        bounds = [[-5., 5.]]
+                        auxdata = [0.]
+                        factors = []
+                    else:
+                        # staterror
+                        inits = [1.]
+                        bounds = [[1e-10, 10.]]
+                        auxdata = [1.]
+                        factors = []
+                elif parset == constrained_by_poisson:
+                    if param_matching == 'exact':
+                        raise ValueError("No idea how to handle Poisson constraint with exact n_parameters = 1")
+                    else:
+                        # shapesys
+                        inits = [1.0],
+                        bounds = [[1e-10, 10.]]
+                        auxdata = [-1.]
+                        factors = [-1.]
+                return {'inits': inits * npars,
+                        'bounds': bounds * npars,
+                        'auxdata': auxdata * npars,
+                        'factors': factors * npars}
+
+            if len(params) == 1:
+                self.paramsets[param_name] = self.paramsets[param_name][0]
+            else:
+                channel_sample = set([])
+                param_types = set([])
+                n_parameters = set([])
+                param_matching = set([])
+                for param in params:
+                    param_types.add(param['parset'])
+                    n_parameters.add(param['n_parameters'])
+                    param_matching.add(param['param_matching'])
+                    channel_sample.add(param['channel,sample'])
+
+                if len(param_types) != 1:
+                    raise ValueError("Multiple constraint types exist for {}".format(param_name))
+
+                if len(param_matching) != 1:
+                    raise ValueError("Incompatible shared systematics were defined for {}".format(param_name))
+
+                param_match = list(param_matching)[0]
+                param_type = list(param_types)[0]
+
+                if param_match == 'exact' and len(n_parameters) != 1:
+                    raise ValueError("Incompatible n parameters were defined for {}".format(param_name))
+
+                self.paramsets[param_name] = {'parset': param_type, 'n_parameters': max(n_parameters), 'modifier': None, 'is_constrained': None, 'is_shared': None, 'op_code': None, 'param_matching': 'exact'}
+                self.paramsets[param_name].update({'channel,sample': list(channel_sample)})
+
+        parset = self.paramsets[param_name]
+        self.paramsets[param_name].update(get_inits(parset['parset'], parset['n_parameters'], parset['param_matching']))
+        import pdb; pdb.set_trace()
+
+
+    def add_or_create_parset_for_modifier(self, channel, sample, name, modifier_type):
+
+        """
         Args:
             channel: current channel object (e.g. from spec)
             sample: current sample object (e.g. from spec)
@@ -122,13 +224,6 @@ class _ModelConfig(object):
             modifier object
 
         """
-        # get modifier class associated with modifier type
-        try:
-            modifier_cls = modifiers.registry[modifier_type]
-        except KeyError:
-            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
-            raise exceptions.InvalidModifier()
-
         # if modifier is shared, check if it already exists and use it
         if modifier_cls.is_shared and name in self.par_map:
             log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', name, modifier_type))
@@ -139,6 +234,7 @@ class _ModelConfig(object):
 
         # did not return, so create new param set and return it
         parset = modifier_cls.create_parset(sample['data'])
+        import pdb; pdb.set_trace()
         self.register_paramset(
             modifier_type,
             name,
@@ -196,7 +292,6 @@ class Model(object):
         for c in self.spec['channels']:
             for s in c['samples']:
                 helper.setdefault(c['name'],{})[s['name']] = (c,s)
-
 
         mega_samples = {}
         for s in self.config.samples:
