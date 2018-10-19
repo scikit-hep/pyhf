@@ -133,7 +133,7 @@ class _ModelConfig(object):
         self.paramsets.get(name).append(parset)
 
     def combine_paramsets(self):
-        for param_name in self.parameters:
+        for param_name in list(self.paramsets.keys()):
             params = self.paramsets[param_name]
 
             def get_inits(parset, npars, param_matching):
