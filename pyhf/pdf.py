@@ -215,7 +215,7 @@ class _ModelConfig(object):
             self.paramsets[param_name].update(get_inits(parset['parset'], parset['n_parameters'], parset['param_matching']))
 
     def add_paramsets(self):
-        for name,param in self.paramsets.iteritems():
+        for name,param in self.paramsets.items():
             parset = param['parset'](param['n_parameters'],
                                      param['inits'],
                                      param['bounds'],
