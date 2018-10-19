@@ -60,16 +60,14 @@ class _ModelConfig(object):
                             poiname = fullname
                         modifier_def['name'] = fullname
                     self.bookkeep_paramsets(channel, sample, modifier_def['name'], modifier_def['type'])
-                    #self.add_or_create_parset_for_modifier(
-                    #    channel, sample, modifier_def['name'],modifier_def['type']
-                    #)
-                    #self.modifiers.append((modifier_def['name'],modifier_def['type']))
+                    self.modifiers.append((modifier_def['name'],modifier_def['type']))
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
         self.combine_paramsets()
+        self.add_paramsets()
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -183,64 +181,53 @@ class _ModelConfig(object):
                 self.paramsets[param_name] = self.paramsets[param_name][0]
             else:
                 channel_sample = set([])
-                param_types = set([])
+                constraint_types = set([])
                 n_parameters = set([])
                 param_matching = set([])
+                mod_types = set([])
                 for param in params:
-                    param_types.add(param['parset'])
+                    channel_sample.add(param['channel,sample'])
+                    constraint_types.add(param['parset'])
                     n_parameters.add(param['n_parameters'])
                     param_matching.add(param['param_matching'])
-                    channel_sample.add(param['channel,sample'])
+                    mod_types.add(param['modifier'])
 
-                if len(param_types) != 1:
+                if len(constraint_types) != 1:
                     raise ValueError("Multiple constraint types exist for {}".format(param_name))
 
                 if len(param_matching) != 1:
                     raise ValueError("Incompatible shared systematics were defined for {}".format(param_name))
 
+                if len(mod_types) != 1:
+                    raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(modifier_type, modifier_type))
+
                 param_match = list(param_matching)[0]
-                param_type = list(param_types)[0]
+                constraint_type = list(constraint_types)[0]
+                mod_type = list(mod_types)[0]
 
                 if param_match == 'exact' and len(n_parameters) != 1:
                     raise ValueError("Incompatible n parameters were defined for {}".format(param_name))
 
-                self.paramsets[param_name] = {'parset': param_type, 'n_parameters': max(n_parameters), 'modifier': None, 'is_constrained': None, 'is_shared': None, 'op_code': None, 'param_matching': 'exact'}
+                self.paramsets[param_name] = modifiers.registry[mod_type].required_parset(max(n_parameters))
                 self.paramsets[param_name].update({'channel,sample': list(channel_sample)})
 
-        parset = self.paramsets[param_name]
-        self.paramsets[param_name].update(get_inits(parset['parset'], parset['n_parameters'], parset['param_matching']))
-        import pdb; pdb.set_trace()
+            parset = self.paramsets[param_name]
+            self.paramsets[param_name].update(get_inits(parset['parset'], parset['n_parameters'], parset['param_matching']))
 
-
-    def add_or_create_parset_for_modifier(self, channel, sample, name, modifier_type):
-
-        """
-        Args:
-            channel: current channel object (e.g. from spec)
-            sample: current sample object (e.g. from spec)
-            modifier_def: current modifier definitions (e.g. from spec)
-
-        Returns:
-            modifier object
-
-        """
-        # if modifier is shared, check if it already exists and use it
-        if modifier_cls.is_shared and name in self.par_map:
-            log.info('using existing shared, {0:s}constrained modifier (name={1:s}, type={2:s})'.format('' if modifier_cls.is_constrained else 'un', name, modifier_type))
-            stored_modifier_type = self.modifier_type(name)
-            if not modifier_type == stored_modifier_type:
-                raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(modifier_type, modifier_type))
-            return
-
-        # did not return, so create new param set and return it
-        parset = modifier_cls.create_parset(sample['data'])
-        import pdb; pdb.set_trace()
-        self.register_paramset(
-            modifier_type,
-            name,
-            parset.n_parameters,
-            parset
-        )
+    def add_paramsets(self):
+        for name,param in self.paramsets.iteritems():
+            parset = param['parset'](param['n_parameters'],
+                                     param['inits'],
+                                     param['bounds'],
+                                     param['auxdata'],
+                                     param['factors']
+                                    )
+            self.register_paramset(
+                param['modifier'],
+                name,
+                parset.n_parameters,
+                parset
+            )
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
