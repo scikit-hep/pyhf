@@ -168,7 +168,7 @@ class _ModelConfig(object):
                         raise ValueError("No idea how to handle Poisson constraint with exact n_parameters = 1")
                     else:
                         # shapesys
-                        inits = [1.0],
+                        inits = [1.0]
                         bounds = [[1e-10, 10.]]
                         auxdata = [-1.]
                         factors = [-1.]
