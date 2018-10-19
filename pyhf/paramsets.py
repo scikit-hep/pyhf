@@ -6,10 +6,11 @@ class paramset(object):
         self.suggested_bounds = bounds
 
 class unconstrained(paramset):
-    pass
+    def __init__(self, n_parameters, inits, bounds, auxdata=None, factors=None):
+        super(unconstrained,self).__init__(n_parameters, inits, bounds)
 
 class constrained_by_normal(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata):
+    def __init__(self, n_parameters, inits, bounds, auxdata, factors=None):
         super(constrained_by_normal,self).__init__(n_parameters, inits, bounds)
         self.pdf_type = 'normal'
         self.auxdata = auxdata
