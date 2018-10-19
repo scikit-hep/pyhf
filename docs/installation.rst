@@ -101,3 +101,22 @@ Install from `GitHub <https://github.com/diana-hep/pyhf>`__...
 .. code-block:: console
 
     pip install --ignore-installed -U .[tensorflow,torch,mxnet]
+
+Updating :code:`pyhf`...
+------------------------
+
+... if installed from PyPI
+++++++++++++++++++++++++++
+
+Rerun the installation command. As the upgrade flag, :code:`-U`, is used then the libraries will be updated.
+
+... if installed from GitHub
+++++++++++++++++++++++++++++
+
+Pull the latest commits from GitHub
+
+.. code-block:: console
+
+    git pull
+
+and then rerun the installation command. As the upgrade flag, :code:`-U`, is used then the libraries will be updated.
