@@ -193,13 +193,14 @@ class _ModelConfig(object):
                     mod_types.add(param['modifier'])
 
                 if len(constraint_types) != 1:
+                    raise pyhf.exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraint_types)))
                     raise ValueError("Multiple constraint types exist for {}".format(param_name))
 
                 if len(param_matching) != 1:
                     raise ValueError("Incompatible shared systematics were defined for {}".format(param_name))
 
                 if len(mod_types) != 1:
-                    raise exceptions.InvalidNameReuse('Shared paramsets of multiple modifier types are found ({}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(list(mod_types)))
+                    raise exceptions.InvalidNameReuse('Shared paramsets of multiple modifier types were found for {} ({}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(param_name, list(mod_types)))
 
                 param_match = list(param_matching)[0]
                 mod_type = list(mod_types)[0]
