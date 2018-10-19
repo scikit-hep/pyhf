@@ -105,7 +105,6 @@ class normfac_combinedmod(object):
                 for s in pdfconfig.samples
             ] for m in normfac_mods
         ]
-
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
@@ -241,6 +240,8 @@ class shapefactor_combined(object):
                 for s in pdfconfig.samples
             ] for m in shapefactor_mods
         ]
+        channel_bin_index_map = [j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]
+        self._shapefactor_indices = [default_backend.tolist(default_backend.gather(default_backend.astensor(shapefactor_mod_parindices, dtype='int'), channel_bin_index_map)) for shapefactor_mod_parindices in self._shapefactor_indices]
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -258,7 +259,11 @@ class shapefactor_combined(object):
         if not tensorlib.shape(shapefactor_indices)[0]:
             return
         shapefactors = tensorlib.gather(pars,shapefactor_indices)
-        results_shapefactor = shapefactor_mask * tensorlib.reshape(shapefactors,tensorlib.shape(shapefactors) + (1,1))
+
+        # needs to multiply across samples/mask value so (a,b) -> (a, 1, 1, b)
+        new_shape = list(tensorlib.shape(shapefactors))
+        new_shape[1:1] = [1,1]
+        results_shapefactor = shapefactor_mask * tensorlib.reshape(shapefactors, new_shape)
         results_shapefactor = tensorlib.where(shapefactor_mask,results_shapefactor,tensorlib.astensor(self.shapefactor_default))
         return results_shapefactor
 
