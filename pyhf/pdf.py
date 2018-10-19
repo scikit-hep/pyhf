@@ -199,10 +199,9 @@ class _ModelConfig(object):
                     raise ValueError("Incompatible shared systematics were defined for {}".format(param_name))
 
                 if len(mod_types) != 1:
-                    raise exceptions.InvalidNameReuse('existing modifier is found, but it is of wrong type {} (instead of {}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(modifier_type, modifier_type))
+                    raise exceptions.InvalidNameReuse('Shared paramsets of multiple modifier types are found ({}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(list(mod_types)))
 
                 param_match = list(param_matching)[0]
-                constraint_type = list(constraint_types)[0]
                 mod_type = list(mod_types)[0]
 
                 if param_match == 'exact' and len(n_parameters) != 1:
