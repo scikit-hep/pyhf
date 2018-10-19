@@ -11,12 +11,9 @@ class normfactor(object):
         return {
             'parset': unconstrained,
             'n_parameters': 1,
-            'inits': [1.0],
-            'bounds': [[0, 10]],
-            'auxdata': None,
-            'factors': None,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
-            'op_code': cls.op_code
+            'op_code': cls.op_code,
+            'param_matching': 'exact'
         }

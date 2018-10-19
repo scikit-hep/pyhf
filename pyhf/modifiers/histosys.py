@@ -11,12 +11,9 @@ class histosys(object):
         return {
             'parset': constrained_by_normal,
             'n_parameters': 1,
-            'inits': [0.0],
-            'bounds': [[-5.,5.]],
-            'auxdata': [0.],
-            'factors': None,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
-            'op_code': cls.op_code
+            'op_code': cls.op_code,
+            'param_matching': 'exact'
         }
