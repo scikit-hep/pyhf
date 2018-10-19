@@ -295,6 +295,7 @@ class shapefactor_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self._shapefactor_indices: return
         tensorlib, _ = get_backend()
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
         self.shapefactor_default = tensorlib.ones(tensorlib.shape(self.shapefactor_mask))
@@ -303,8 +304,8 @@ class shapefactor_combined(object):
         self.alpha_ones = tensorlib.ones([1])
 
     def apply(self,pars):
+        if not self._shapefactor_indices: return
         tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.shapefactor_indices)[0]: return
         shapefactors = tensorlib.gather(pars, self.shapefactor_indices)
         results_shapefactor = tensorlib.einsum('s,a,mb->msab',
             self.sample_ones,
