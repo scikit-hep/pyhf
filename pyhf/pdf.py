@@ -193,7 +193,7 @@ class _ModelConfig(object):
                     mod_types.add(param['modifier'])
 
                 if len(constraint_types) != 1:
-                    raise pyhf.exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraint_types)))
+                    raise exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraint_types)))
                     raise ValueError("Multiple constraint types exist for {}".format(param_name))
 
                 if len(param_matching) != 1:
