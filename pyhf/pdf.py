@@ -6,7 +6,6 @@ from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
-from .paramsets import unconstrained, constrained_by_normal, constrained_by_poisson
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 
 
@@ -156,8 +155,6 @@ class _ModelConfig(object):
 
                 self.paramsets[param_name] = modifiers.registry[mod_type].required_parset(max(n_parameters))
                 self.paramsets[param_name].update({'channel,sample': list(channel_sample)})
-
-            parset = self.paramsets[param_name]
 
     def add_paramsets(self):
         for name,param in self.paramsets.items():
