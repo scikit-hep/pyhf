@@ -17,6 +17,6 @@ class shapefactor(object):
             'op_code': cls.op_code,
             'inits': [1.0] * n_parameters,
             'bounds': [[0., 10.]] * n_parameters,
-            'auxdata': [0.] * n_parameters,
+            'auxdata': [] * n_parameters,
             'factors': [] * n_parameters
         }
