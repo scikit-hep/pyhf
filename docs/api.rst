@@ -32,7 +32,7 @@ Making Probability Distribution Functions (PDFs)
 Backends
 --------
 
-The computational backends that `pyhf` provides interfacing for the vector-based calculations.
+The computational backends that :code:`pyhf` provides interfacing for the vector-based calculations.
 
 .. currentmodule:: pyhf.tensor
 
@@ -80,7 +80,7 @@ Modifiers
 Exceptions
 ----------
 
-Various exceptions, apart from standard python exceptions, that are raised from using the `pyhf` API.
+Various exceptions, apart from standard python exceptions, that are raised from using the :code:`pyhf` API.
 
 .. currentmodule:: pyhf.exceptions
 
