@@ -7,14 +7,13 @@ from ..paramsets import constrained_by_normal
 @modifier(name='histosys', constrained=True, shared=True, op_code = 'addition')
 class histosys(object):
     @classmethod
-    def create_parset(cls, nom_data):
-        n_parameters = 1
-        parset = constrained_by_normal(
-            n_parameters = n_parameters, 
-            inits = [0.0],
-            bounds = [[-5.,5.]],
-            auxdata = [0.]
-        )
-        assert n_parameters == parset.n_parameters
-        assert cls.pdf_type == parset.pdf_type
-        return parset
+    def required_parset(cls, n_parameters):
+        return {
+            'parset': constrained_by_normal,
+            'n_parameters': 1,
+            'modifier': cls.__name__,
+            'is_constrained': cls.is_constrained,
+            'is_shared': cls.is_shared,
+            'op_code': cls.op_code,
+            'param_matching': 'exact'
+        }

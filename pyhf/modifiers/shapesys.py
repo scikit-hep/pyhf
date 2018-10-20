@@ -7,17 +7,13 @@ from ..paramsets import constrained_by_poisson
 @modifier(name='shapesys', constrained=True, pdf_type='poisson', op_code = 'multiplication')
 class shapesys(object):
     @classmethod
-    def create_parset(cls, nom_data):
-        n_parameters = len(nom_data)
-        parset = constrained_by_poisson(
-            n_parameters = n_parameters,
-            inits = [1.0] * n_parameters,
-            bounds = [[1e-10, 10.]] * n_parameters,
-            auxdata = [-1.]*n_parameters, 
-            factors = [-1.]*n_parameters
-        )#auxdata and factors *must* be set be the combiend modifier at some point
-
-        assert n_parameters == parset.n_parameters
-        assert cls.pdf_type == parset.pdf_type
-        return parset
-
+    def required_parset(cls, n_parameters):
+        return {
+            'parset': constrained_by_poisson,
+            'n_parameters': n_parameters,
+            'modifier': cls.__name__,
+            'is_constrained': cls.is_constrained,
+            'is_shared': cls.is_shared,
+            'op_code': cls.op_code,
+            'param_matching': 'max'
+        }

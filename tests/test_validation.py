@@ -653,14 +653,14 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
             expected_result < tolerance
 
 
-@pytest.mark.parametrize('setup', [
-    setup_1bin_shapesys(),
-    setup_1bin_normsys(),
-    setup_2bin_histosys(),
-    setup_2bin_2channel(),
-    setup_2bin_2channel_couplednorm(),
-    setup_2bin_2channel_coupledhistosys(),
-    setup_2bin_2channel_coupledshapefactor()
+@pytest.mark.parametrize('setup_and_tolerance', [
+    (setup_1bin_shapesys(), 1e-6),
+    (setup_1bin_normsys(), 1e-6),
+    (setup_2bin_histosys(), 8e-5),
+    (setup_2bin_2channel(), 1e-6),
+    (setup_2bin_2channel_couplednorm(), 1e-6),
+    (setup_2bin_2channel_coupledhistosys(), 1e-6),
+    (setup_2bin_2channel_coupledshapefactor(), 2.5e-6)
 ],
     ids=[
     '1bin_shapesys_mu1',
@@ -671,7 +671,8 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
     '2bin_2channel_coupledhistosys_mu1',
     '2bin_2channel_coupledshapefactor_mu1'
 ])
-def test_validation(setup):
+def test_validation(setup_and_tolerance):
+    setup, tolerance = setup_and_tolerance
     source = setup['source']
     pdf = pyhf.Model(setup['spec'])
 
@@ -691,4 +692,4 @@ def test_validation(setup):
     assert len(pdf.config.suggested_bounds()) == \
         setup['expected']['config']['par_bounds']
 
-    validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'])
+    validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'], tolerance=tolerance)

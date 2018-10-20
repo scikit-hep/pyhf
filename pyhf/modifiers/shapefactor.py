@@ -7,12 +7,13 @@ from ..paramsets import unconstrained
 @modifier(name='shapefactor', shared=True, op_code = 'multiplication')
 class shapefactor(object):
     @classmethod
-    def create_parset(cls, nom_data):
-        n_parameters = len(nom_data)
-        parset = unconstrained(
-            n_parameters,
-            [1.0] * n_parameters,
-            [[0, 10]] * n_parameters
-        )
-        assert n_parameters == parset.n_parameters
-        return parset
+    def required_parset(cls, n_parameters):
+        return {
+            'parset': unconstrained,
+            'n_parameters': n_parameters,
+            'modifier': cls.__name__,
+            'is_constrained': cls.is_constrained,
+            'is_shared': cls.is_shared,
+            'op_code': cls.op_code,
+            'param_matching': 'max'
+        }
