@@ -15,5 +15,8 @@ class shapefactor(object):
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
             'op_code': cls.op_code,
-            'param_matching': 'max'
+            'inits': [1.0] * n_parameters,
+            'bounds': [[0., 10.]] * n_parameters,
+            'auxdata': [0.] * n_parameters,
+            'factors': [] * n_parameters
         }

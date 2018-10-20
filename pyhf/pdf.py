@@ -132,83 +132,32 @@ class _ModelConfig(object):
         for param_name in list(self.paramsets.keys()):
             params = self.paramsets[param_name]
 
-            def get_inits(parset, npars, param_matching):
-                if parset == unconstrained:
-                    if param_matching == 'exact':
-                        # normfactor
-                        inits = [1.0]
-                        bounds = [[0, 10]]
-                        auxdata = []
-                        factors = []
-                    else:
-                        # shapefactor
-                        inits = [1.0]
-                        bounds = [[0, 10]]
-                        auxdata = []
-                        factors = []
-                elif parset == constrained_by_normal:
-                    if param_matching == 'exact':
-                        # normsys, histosys
-                        inits = [0.0]
-                        bounds = [[-5., 5.]]
-                        auxdata = [0.]
-                        factors = []
-                    else:
-                        # staterror
-                        inits = [1.]
-                        bounds = [[1e-10, 10.]]
-                        auxdata = [1.]
-                        factors = []
-                elif parset == constrained_by_poisson:
-                    if param_matching == 'exact':
-                        raise ValueError("No idea how to handle Poisson constraint with exact n_parameters = 1")
-                    else:
-                        # shapesys
-                        inits = [1.0]
-                        bounds = [[1e-10, 10.]]
-                        auxdata = [-1.]
-                        factors = [-1.]
-                return {'inits': inits * npars,
-                        'bounds': bounds * npars,
-                        'auxdata': auxdata * npars,
-                        'factors': factors * npars}
-
             if len(params) == 1:
                 self.paramsets[param_name] = self.paramsets[param_name][0]
             else:
                 channel_sample = set([])
                 constraint_types = set([])
                 n_parameters = set([])
-                param_matching = set([])
                 mod_types = set([])
                 for param in params:
                     channel_sample.add(param['channel,sample'])
                     constraint_types.add(param['parset'])
                     n_parameters.add(param['n_parameters'])
-                    param_matching.add(param['param_matching'])
                     mod_types.add(param['modifier'])
 
                 if len(constraint_types) != 1:
                     raise exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraint_types)))
                     raise ValueError("Multiple constraint types exist for {}".format(param_name))
 
-                if len(param_matching) != 1:
-                    raise ValueError("Incompatible shared systematics were defined for {}".format(param_name))
-
                 if len(mod_types) != 1:
                     raise exceptions.InvalidNameReuse('Shared paramsets of multiple modifier types were found for {} ({}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(param_name, list(mod_types)))
 
-                param_match = list(param_matching)[0]
                 mod_type = list(mod_types)[0]
-
-                if param_match == 'exact' and len(n_parameters) != 1:
-                    raise ValueError("Incompatible n parameters were defined for {}".format(param_name))
 
                 self.paramsets[param_name] = modifiers.registry[mod_type].required_parset(max(n_parameters))
                 self.paramsets[param_name].update({'channel,sample': list(channel_sample)})
 
             parset = self.paramsets[param_name]
-            self.paramsets[param_name].update(get_inits(parset['parset'], parset['n_parameters'], parset['param_matching']))
 
     def add_paramsets(self):
         for name,param in self.paramsets.items():

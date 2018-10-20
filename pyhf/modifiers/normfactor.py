@@ -8,12 +8,16 @@ from ..paramsets import unconstrained
 class normfactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
+        n_parameters = 1
         return {
             'parset': unconstrained,
-            'n_parameters': 1,
+            'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
             'op_code': cls.op_code,
-            'param_matching': 'exact'
+            'inits': [1.0] * n_parameters,
+            'bounds': [[0, 10]] * n_parameters,
+            'auxdata': [] * n_parameters,
+            'factors': [] * n_parameters
         }
