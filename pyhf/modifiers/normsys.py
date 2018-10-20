@@ -10,7 +10,7 @@ class normsys(object):
     def required_parset(cls, n_parameters):
         n_parameters = 1
         return {
-            'parset': constrained_by_normal,
+            'constraint': constrained_by_normal,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,

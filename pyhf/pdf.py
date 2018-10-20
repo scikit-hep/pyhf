@@ -135,17 +135,17 @@ class _ModelConfig(object):
                 self.paramsets[param_name] = self.paramsets[param_name][0]
             else:
                 channel_sample = set([])
-                constraint_types = set([])
+                constraints = set([])
                 n_parameters = set([])
                 mod_types = set([])
                 for param in params:
                     channel_sample.add(param['channel,sample'])
-                    constraint_types.add(param['parset'])
+                    constraints.add(param['constraint'])
                     n_parameters.add(param['n_parameters'])
                     mod_types.add(param['modifier'])
 
-                if len(constraint_types) != 1:
-                    raise exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraint_types)))
+                if len(constraints) != 1:
+                    raise exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraints)))
                     raise ValueError("Multiple constraint types exist for {}".format(param_name))
 
                 if len(mod_types) != 1:
@@ -158,7 +158,7 @@ class _ModelConfig(object):
 
     def add_paramsets(self):
         for name,param in self.paramsets.items():
-            parset = param['parset'](param['n_parameters'],
+            parset = param['constraint'](param['n_parameters'],
                                      param['inits'],
                                      param['bounds'],
                                      param['auxdata'],

@@ -9,7 +9,7 @@ class shapesys(object):
     @classmethod
     def required_parset(cls, n_parameters):
         return {
-            'parset': constrained_by_poisson,
+            'constraint': constrained_by_poisson,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,

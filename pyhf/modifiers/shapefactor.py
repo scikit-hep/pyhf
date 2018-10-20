@@ -9,7 +9,7 @@ class shapefactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
         return {
-            'parset': unconstrained,
+            'constraint': unconstrained,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,

@@ -9,7 +9,7 @@ class staterror(object):
     @classmethod
     def required_parset(cls, n_parameters):
         return {
-            'parset': constrained_by_normal,
+            'constraint': constrained_by_normal,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
