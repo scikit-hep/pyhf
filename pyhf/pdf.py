@@ -88,9 +88,6 @@ class _ModelConfig(object):
     def param_set(self, name):
         return self.par_map[name]['parset']
 
-    def modifier_type(self, name):
-        return self.par_map[name]['modifier_type']
-
     def set_poi(self,name):
         if name not in [x for x,_ in self.modifiers]:
             raise exceptions.InvalidModel("The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(name))
@@ -98,7 +95,7 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def register_paramset(self, modifier_type, name, n_parameters, parset):
+    def register_paramset(self, name, n_parameters, parset):
         '''allocates n nuisance parameters and stores paramset > modifier map'''
         log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
 
@@ -108,7 +105,6 @@ class _ModelConfig(object):
         self.par_map[name] = {
             'slice': sl,
             'parset': parset,
-            'modifier_type': modifier_type,
         }
 
     def bookkeep_paramsets(self, channel, sample, name, modifier_type):
@@ -223,7 +219,6 @@ class _ModelConfig(object):
                                      param['factors']
                                     )
             self.register_paramset(
-                param['modifier'],
                 name,
                 parset.n_parameters,
                 parset
