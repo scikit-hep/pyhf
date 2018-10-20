@@ -69,7 +69,8 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
-def test_runOnePoint_q_mu(n_bins,
+@pytest.mark.parametrize('invert_order', [False,True], ids=['normal','inverted'])
+def test_runOnePoint_q_mu(n_bins,invert_order,
                           tolerance={
                               'numpy': 1e-02,
                               'tensors': 5e-03
@@ -88,9 +89,36 @@ def test_runOnePoint_q_mu(n_bins,
     """
 
     source = generate_source_static(n_bins)
-    pdf = hepdata_like(source['bindata']['sig'],
-                       source['bindata']['bkg'],
-                       source['bindata']['bkgerr'])
+
+    signal_sample =  {
+        'name': 'signal',
+        'data': source['bindata']['sig'],
+        'modifiers': [
+            {'name': 'mu', 'type': 'normfactor', 'data': None}
+        ]
+    }
+
+    background_sample = {
+        'name': 'background',
+        'data': source['bindata']['bkg'],
+        'modifiers': [
+            {'name': 'uncorr_bkguncrt',
+            'type': 'shapesys',
+            'data': source['bindata']['bkgerr']
+            }
+        ]
+    }
+    samples = [background_sample,signal_sample] if invert_order else [signal_sample, background_sample]
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': samples
+            }
+        ]
+    }
+    pdf = pyhf.Model(spec)
+
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
