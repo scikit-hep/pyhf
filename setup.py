@@ -43,6 +43,7 @@ extras_require = {
         'm2r',
         'jsonpatch',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
+        'pre-commit',
         'black;python_version>"3.6.0"',  # Black is Python3 only
     ],
 }
