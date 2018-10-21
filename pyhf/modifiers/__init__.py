@@ -70,19 +70,16 @@ Examples:
   >>> @modifiers.modifier
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(constrained=False)
   >>> ... class myUnconstrainedModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
   >>> ...
   >>> myUnconstrainedModifier.pdf_type
@@ -91,7 +88,6 @@ Examples:
   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
   >>> ... class myConstrainedCustomPoissonModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
   >>> ...
   >>> myConstrainedCustomGaussianModifier.pdf_type
@@ -100,13 +96,11 @@ Examples:
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
 
   >>> @modifiers.modifier(op_code='multiplication')
   >>> ... class myMultiplierModifier(object):
   >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
   >>> ...   def apply(self): pass
   >>> ...
   >>> myMultiplierModifier.op_code
