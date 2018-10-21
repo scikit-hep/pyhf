@@ -44,7 +44,7 @@ extras_require = {
         'jsonpatch',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
         'pre-commit',
-        'black;python_version>"3.6.0"',  # Black is Python3 only
+        'black;python_version>="3.6"',  # Black is Python3 only
     ],
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
