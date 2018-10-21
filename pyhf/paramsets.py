@@ -2,30 +2,29 @@ from . import get_backend
 from . import exceptions
 
 class paramset(object):
-    def __init__(self, n_parameters, inits, bounds):
-        self.n_parameters = n_parameters
-        self.suggested_init = inits
-        self.suggested_bounds = bounds
+    def __init__(self, **kwargs):
+        self.n_parameters = kwargs.pop('n_parameters')
+        self.suggested_init = kwargs.pop('inits')
+        self.suggested_bounds = kwargs.pop('bounds')
 
 class unconstrained(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata=None, factors=None):
-        super(unconstrained,self).__init__(n_parameters, inits, bounds)
+    pass
 
 class constrained_by_normal(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata, factors=None):
-        super(constrained_by_normal,self).__init__(n_parameters, inits, bounds)
+    def __init__(self, **kwargs):
+        super(constrained_by_normal,self).__init__(**kwargs)
         self.pdf_type = 'normal'
-        self.auxdata = auxdata
+        self.auxdata = kwargs.pop('auxdata')
 
     def expected_data(self, pars):
         return pars
 
 class constrained_by_poisson(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata, factors):
-        super(constrained_by_poisson,self).__init__(n_parameters, inits, bounds)
+    def __init__(self, **kwargs):
+        super(constrained_by_poisson,self).__init__(**kwargs)
         self.pdf_type = 'poisson'
-        self.auxdata = auxdata
-        self.factors = factors
+        self.auxdata = kwargs.pop('auxdata')
+        self.factors = kwargs.pop('factors')
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()

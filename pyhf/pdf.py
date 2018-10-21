@@ -60,14 +60,14 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    self.bookkeep_paramsets(channel, sample, modifier_def['name'], modifier_def['type'])
+                    self._bookkeep_paramset(channel, sample, modifier_def['name'], modifier_def['type'])
                     self.modifiers.append((modifier_def['name'],modifier_def['type']))
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self.add_paramsets()
+        self._register_paramsets()
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -95,19 +95,7 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def register_paramset(self, name, n_parameters, parset):
-        '''allocates n nuisance parameters and stores paramset > modifier map'''
-        log.info('adding modifier %s (%s new nuisance parameters)', name, n_parameters)
-
-        sl = slice(self.next_index, self.next_index + n_parameters)
-        self.next_index = self.next_index + n_parameters
-        self.par_order.append(name)
-        self.par_map[name] = {
-            'slice': sl,
-            'parset': parset,
-        }
-
-    def bookkeep_paramsets(self, channel, sample, name, modifier_type):
+    def _bookkeep_paramset(self, channel, sample, name, modifier_type):
         # get modifier class associated with modifier type
         try:
             modifier_cls = modifiers.registry[modifier_type]
@@ -126,15 +114,23 @@ class _ModelConfig(object):
 
         self.paramset_requirements.setdefault(name,[]).append(parset)
 
-    def add_paramsets(self):
+    def _register_paramset(self, name, parset):
+        '''allocates n nuisance parameters and stores paramset > modifier map'''
+        log.info('adding modifier %s (%s new nuisance parameters)', name, parset.n_parameters)
+
+        sl = slice(self.next_index, self.next_index + parset.n_parameters)
+        self.next_index = self.next_index + parset.n_parameters
+        self.par_order.append(name)
+        self.par_map[name] = {
+            'slice': sl,
+            'parset': parset,
+        }
+
+    def _register_paramsets(self):
         for param_name, combined_param in reduce_paramset_requirements(self.paramset_requirements).items():
-            parset = combined_param['constraint'](combined_param['n_parameters'],
-                                     combined_param['inits'],
-                                     combined_param['bounds'],
-                                     combined_param['auxdata'],
-                                     combined_param['factors']
-                                    )
-            self.register_paramset(param_name, parset.n_parameters, parset)
+            constraint = combined_param.pop('constraint')
+            parset = constraint(**combined_param)
+            self._register_paramset(param_name, parset)
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
