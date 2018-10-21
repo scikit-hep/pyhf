@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 from . import modifier
 from ..paramsets import constrained_by_normal
 
-@modifier(name='staterror', shared=True, constrained=True, op_code = 'multiplication')
+@modifier(name='staterror', constrained=True, op_code = 'multiplication')
 class staterror(object):
     @classmethod
     def required_parset(cls, n_parameters):
@@ -13,7 +13,7 @@ class staterror(object):
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
-            'is_shared': cls.is_shared,
+            'is_shared': True,
             'op_code': cls.op_code,
             'inits': (1.,) * n_parameters,
             'bounds': ((1e-10, 10.),) * n_parameters,

@@ -34,19 +34,7 @@ def test_modifiers_structure():
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myUnconstrainedModifier'] == myCustomModifier
     assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_constrained == False
-    assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myUnconstrainedModifier']
-
-    @modifier(name='mySharedModifier', shared=True)
-    class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'mySharedModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['mySharedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['mySharedModifier'].is_shared == True
-    del pyhf.modifiers.registry['mySharedModifier']
 
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
@@ -57,7 +45,6 @@ def test_modifiers_structure():
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myConstrainedModifier'] == myCustomModifier
     assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained == True
-    assert pyhf.modifiers.registry['myConstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myConstrainedModifier']
 
 # we make sure decorate can use auto-naming

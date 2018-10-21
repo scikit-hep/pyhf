@@ -113,18 +113,16 @@ class _ModelConfig(object):
             log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
             raise exceptions.InvalidModifier()
 
-        self.paramset_requirements.setdefault(name, [])
-
         parset = modifier_cls.required_parset(len(sample['data']))
         parset.update({'channel,sample': (channel['name'], sample['name'])})
 
-        if not(parset['is_shared']) and self.paramset_requirements.get(name):
+        if not(parset['is_shared']) and name in self.paramset_requirements:
             raise ValueError("Trying to add unshared-paramset but other paramsets exist with the same name.")
 
-        if parset['is_shared'] and self.paramset_requirements.get(name) and not(self.paramset_requirements.get(name)[0]['is_shared']):
+        if parset['is_shared'] and not(self.paramset_requirements.get(name, [{'is_shared': True}])[0]['is_shared']):
             raise ValueError("Trying to add shared-paramset but other paramset of same name is indicated to be unshared.")
 
-        self.paramset_requirements.get(name).append(parset)
+        self.paramset_requirements.setdefault(name,[]).append(parset)
 
     def combine_and_add_paramsets(self):
         # nb: normsys and histosys have different op_codes so can't currently be shared
