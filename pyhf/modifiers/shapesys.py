@@ -51,8 +51,16 @@ class shapesys_combined(object):
             for mask,inds in zip(shapesys_mask, self._shapesys_indices):
                 summed_mask = default_backend.sum(mask[:,0,:],axis=0)
                 assert default_backend.shape(summed_mask[summed_mask >  0]) == default_backend.shape(default_backend.astensor(inds))
-                summed_mask[summed_mask >  0] = inds
-                summed_mask[summed_mask == 0] = -1
+                # make masks of > 0 and == 0
+                positive_mask = summed_mask > 0
+                zero_mask = summed_mask == 0
+                # then apply the mask
+                summed_mask[positive_mask] = inds
+                summed_mask[zero_mask] = -1
+                # nb: old code above was
+                #     summed_mask[summed_mask > 0] = inds
+                #     summed_mask[summed_mask == 0] = -1
+                # This code broke when the `inds` included a '0' because it would replace that value with -1.
                 access_rows.append(summed_mask.tolist())
             self._factor_access_indices = default_backend.tolist(default_backend.stack(access_rows))
             self.finalize(pdfconfig)
