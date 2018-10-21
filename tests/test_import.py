@@ -50,9 +50,11 @@ def test_import_prepHistFactory():
         110.0,
     ]
 
-    assert pdf.config.auxdata_order == sorted(['syst1', 'staterror_channel1', 'syst2', 'syst3'])
+    assert pdf.config.auxdata_order == sorted(
+        ['syst1', 'staterror_channel1', 'syst2', 'syst3']
+    )
 
-    assert data == [122.0, 112.0,  1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 1.0, 1.0, 0.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]

@@ -631,24 +631,27 @@ def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
         assert abs(result - expected_result) / expected_result < tolerance
 
 
-@pytest.mark.parametrize('setup_and_tolerance', [
-    (setup_1bin_shapesys(), 1e-6),
-    (setup_1bin_normsys(), 1e-6),
-    (setup_2bin_histosys(), 8e-5),
-    (setup_2bin_2channel(), 1e-6),
-    (setup_2bin_2channel_couplednorm(), 1e-6),
-    (setup_2bin_2channel_coupledhistosys(), 1e-6),
-    (setup_2bin_2channel_coupledshapefactor(), 2.5e-6)
-],
+@pytest.mark.parametrize(
+    'setup_and_tolerance',
+    [
+        (setup_1bin_shapesys(), 1e-6),
+        (setup_1bin_normsys(), 1e-6),
+        (setup_2bin_histosys(), 8e-5),
+        (setup_2bin_2channel(), 1e-6),
+        (setup_2bin_2channel_couplednorm(), 1e-6),
+        (setup_2bin_2channel_coupledhistosys(), 1e-6),
+        (setup_2bin_2channel_coupledshapefactor(), 2.5e-6),
+    ],
     ids=[
-    '1bin_shapesys_mu1',
-    '1bin_normsys_mu1',
-    '2bin_histosys_mu1',
-    '2bin_2channel_mu1',
-    '2bin_2channel_couplednorm_mu1',
-    '2bin_2channel_coupledhistosys_mu1',
-    '2bin_2channel_coupledshapefactor_mu1'
-])
+        '1bin_shapesys_mu1',
+        '1bin_normsys_mu1',
+        '2bin_histosys_mu1',
+        '2bin_2channel_mu1',
+        '2bin_2channel_couplednorm_mu1',
+        '2bin_2channel_coupledhistosys_mu1',
+        '2bin_2channel_coupledshapefactor_mu1',
+    ],
+)
 def test_validation(setup_and_tolerance):
     setup, tolerance = setup_and_tolerance
     source = setup['source']
@@ -669,4 +672,6 @@ def test_validation(setup_and_tolerance):
         len(pdf.config.suggested_bounds()) == setup['expected']['config']['par_bounds']
     )
 
-    validate_runOnePoint(pdf, data, setup['mu'], setup['expected']['result'], tolerance=tolerance)
+    validate_runOnePoint(
+        pdf, data, setup['mu'], setup['expected']['result'], tolerance=tolerance
+    )

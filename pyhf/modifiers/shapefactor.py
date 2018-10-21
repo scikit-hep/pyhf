@@ -1,10 +1,13 @@
 import logging
 
+log = logging.getLogger(__name__)
+
 from . import modifier
 from ..paramsets import unconstrained
 from .. import get_backend, default_backend, events
 
-@modifier(name='shapefactor', op_code = 'multiplication')
+
+@modifier(name='shapefactor', op_code='multiplication')
 class shapefactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
@@ -16,11 +19,12 @@ class shapefactor(object):
             'is_shared': True,
             'op_code': cls.op_code,
             'inits': (1.0,) * n_parameters,
-            'bounds': ((0., 10.),) * n_parameters
+            'bounds': ((0.0, 10.0),) * n_parameters,
         }
 
+
 class shapefactor_combined(object):
-    def __init__(self,shapefactor_mods,pdfconfig,mega_mods):
+    def __init__(self, shapefactor_mods, pdfconfig, mega_mods):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
         bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
@@ -59,49 +63,58 @@ class shapefactor_combined(object):
         and at that point can be used to compute the effect of shapefactor.
         """
         self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._shapefactor_indices = [self._parindices[pdfconfig.par_slice(m)] for m in shapefactor_mods]
-        self._shapefactor_mask = [
-            [
-                [
-                    mega_mods[s][m]['data']['mask'],
-                ]
-                for s in pdfconfig.samples
-            ] for m in shapefactor_mods
+        self._shapefactor_indices = [
+            self._parindices[pdfconfig.par_slice(m)] for m in shapefactor_mods
         ]
-        global_concatenated_bin_indices = [j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]
+        self._shapefactor_mask = [
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
+            for m in shapefactor_mods
+        ]
+        global_concatenated_bin_indices = [
+            j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
+        ]
         # compute the max so that we can pad with 0s for the right shape
         # for gather. The 0s will get masked by self._shapefactor_mask anyway
         # For example: [[1,2,3],[4,5],[6,7,8]] -> [[1,2,3],[4,5,0],[6,7,8]]
-        max_nbins = max(global_concatenated_bin_indices)+1
+        max_nbins = max(global_concatenated_bin_indices) + 1
         self._shapefactor_indices = [
             default_backend.tolist(
                 default_backend.gather(
-                    default_backend.astensor(indices + [0]*(max_nbins - len(indices)), dtype='int'),
-                    global_concatenated_bin_indices
+                    default_backend.astensor(
+                        indices + [0] * (max_nbins - len(indices)), dtype='int'
+                    ),
+                    global_concatenated_bin_indices,
                 )
-            ) for indices in self._shapefactor_indices
+            )
+            for indices in self._shapefactor_indices
         ]
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self._shapefactor_indices: return
+        if not self._shapefactor_indices:
+            return
         tensorlib, _ = get_backend()
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
-        self.shapefactor_default = tensorlib.ones(tensorlib.shape(self.shapefactor_mask))
-        self.shapefactor_indices = tensorlib.astensor(self._shapefactor_indices, dtype='int')
+        self.shapefactor_default = tensorlib.ones(
+            tensorlib.shape(self.shapefactor_mask)
+        )
+        self.shapefactor_indices = tensorlib.astensor(
+            self._shapefactor_indices, dtype='int'
+        )
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapefactor_mask)[1])
         self.alpha_ones = tensorlib.ones([1])
 
-    def apply(self,pars):
-        if not self._shapefactor_indices: return
+    def apply(self, pars):
+        if not self._shapefactor_indices:
+            return
         tensorlib, _ = get_backend()
         shapefactors = tensorlib.gather(pars, self.shapefactor_indices)
-        results_shapefactor = tensorlib.einsum('s,a,mb->msab',
-            self.sample_ones,
-            self.alpha_ones,
-            shapefactors
+        results_shapefactor = tensorlib.einsum(
+            's,a,mb->msab', self.sample_ones, self.alpha_ones, shapefactors
         )
-        results_shapefactor = tensorlib.where(self.shapefactor_mask, results_shapefactor, self.shapefactor_default)
+        results_shapefactor = tensorlib.where(
+            self.shapefactor_mask, results_shapefactor, self.shapefactor_default
+        )
         return results_shapefactor

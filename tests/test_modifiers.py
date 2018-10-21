@@ -37,12 +37,7 @@ def test_modifiers_structure():
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters): pass
-
-        def add_sample(self):
-            pass
-
-        def apply(self):
+        def required_parset(cls, n_parameters):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -54,15 +49,7 @@ def test_modifiers_structure():
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters): pass
-
-        def add_sample(self):
-            pass
-
-        def apply(self):
-            pass
-
-        def expected_data(self):
+        def required_parset(cls, n_parameters):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -71,6 +58,7 @@ def test_modifiers_structure():
     assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained == True
     del pyhf.modifiers.registry['myConstrainedModifier']
 
+
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
     from pyhf.modifiers import modifier
@@ -78,12 +66,7 @@ def test_modifier_name_auto():
     @modifier
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters): pass
-
-        def add_sample(self):
-            pass
-
-        def apply(self):
+        def required_parset(cls, n_parameters):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -99,12 +82,7 @@ def test_modifier_name_auto_withkwargs():
     @modifier(name=None, constrained=False)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters): pass
-
-        def add_sample(self):
-            pass
-
-        def apply(self):
+        def required_parset(cls, n_parameters):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -120,12 +98,7 @@ def test_modifier_name_custom():
     @modifier(name='myCustomName')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters): pass
-
-        def add_sample(self):
-            pass
-
-        def apply(self):
+        def required_parset(cls, n_parameters):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -172,6 +145,7 @@ def test_registry_name_clash():
 
         class myCustomModifier(object):
             @classmethod
-            def required_parset(cls, n_parameters): pass
+            def required_parset(cls, n_parameters):
+                pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')
