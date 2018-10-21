@@ -1,28 +1,30 @@
 from . import get_backend
+from . import exceptions
+
 class paramset(object):
-    def __init__(self, n_parameters, inits, bounds):
-        self.n_parameters = n_parameters
-        self.suggested_init = inits
-        self.suggested_bounds = bounds
+    def __init__(self, **kwargs):
+        self.n_parameters = kwargs.pop('n_parameters')
+        self.suggested_init = kwargs.pop('inits')
+        self.suggested_bounds = kwargs.pop('bounds')
 
 class unconstrained(paramset):
     pass
 
 class constrained_by_normal(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata):
-        super(constrained_by_normal,self).__init__(n_parameters, inits, bounds)
+    def __init__(self, **kwargs):
+        super(constrained_by_normal,self).__init__(**kwargs)
         self.pdf_type = 'normal'
-        self.auxdata = auxdata
+        self.auxdata = kwargs.pop('auxdata')
 
     def expected_data(self, pars):
         return pars
 
 class constrained_by_poisson(paramset):
-    def __init__(self, n_parameters, inits, bounds, auxdata, factors):
-        super(constrained_by_poisson,self).__init__(n_parameters, inits, bounds)
+    def __init__(self, **kwargs):
+        super(constrained_by_poisson,self).__init__(**kwargs)
         self.pdf_type = 'poisson'
-        self.auxdata = auxdata
-        self.factors = factors
+        self.auxdata = kwargs.pop('auxdata')
+        self.factors = kwargs.pop('factors')
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
@@ -32,3 +34,34 @@ class constrained_by_poisson(paramset):
             axis=0
         )
 
+def reduce_paramset_requirements(paramset_requirements):
+    reduced_paramset_requirements = {}
+
+    # nb: normsys and histosys have different op_codes so can't currently be shared
+    param_keys = ['paramset_type',
+                  'n_parameters',
+                  'op_code',
+                  'inits',
+                  'bounds',
+                  'auxdata',
+                  'factors']
+
+    for param_name in list(paramset_requirements.keys()):
+        params = paramset_requirements[param_name]
+
+        combined_param = {}
+        for param in params:
+            for k in param_keys:
+                combined_param.setdefault(k, set([])).add(param.get(k))
+
+        for k in param_keys:
+            if len(combined_param[k]) != 1:
+                raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(combined_param[k]), param_name))
+            else:
+                v = combined_param[k].pop()
+                if isinstance(v, tuple): v = list(v)
+                combined_param[k] = v
+
+        reduced_paramset_requirements[param_name] = combined_param
+
+    return reduced_paramset_requirements

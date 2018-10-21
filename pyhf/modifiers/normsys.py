@@ -3,51 +3,67 @@ log = logging.getLogger(__name__)
 
 from . import modifier
 from ..paramsets import constrained_by_normal
+from .. import get_backend, events
+from ..interpolate import _hfinterpolator_code1
 
-from .. import get_backend
-from ..interpolate import interpolator
-
-@modifier(name='normsys', constrained=True, shared=True, op_code = 'multiplication')
+@modifier(name='normsys', constrained=True, op_code = 'multiplication')
 class normsys(object):
-    def __init__(self, nom_data, modifier_data):
-        self.n_parameters     = 1
+    @classmethod
+    def required_parset(cls, n_parameters):
+        return {
+            'paramset_type': constrained_by_normal,
+            'n_parameters': 1,
+            'modifier': cls.__name__,
+            'is_constrained': cls.is_constrained,
+            'is_shared': True,
+            'op_code': cls.op_code,
+            'inits': (0.0,),
+            'bounds': ((-5., 5.),),
+            'auxdata': (0.,)
+        }
 
-        self.at_zero = [1]
-        self.at_minus_one = {}
-        self.at_plus_one = {}
-
-
-        self.parset = constrained_by_normal(
-            n_parameters = self.n_parameters,
-            inits = [0.0],
-            bounds = [[-5.,5.]],
-            auxdata = [0.]
-        )
-
-        assert self.n_parameters == self.parset.n_parameters
-        assert self.pdf_type == self.parset.pdf_type
-
-
-    def add_sample(self, channel, sample, modifier_def):
-        log.info('Adding sample {0:s} to channel {1:s}'.format(sample['name'], channel['name']))
-        self.at_minus_one.setdefault(channel['name'], {})[sample['name']] = [modifier_def['data']['lo']]
-        self.at_plus_one.setdefault(channel['name'], {})[sample['name']]  = [modifier_def['data']['hi']]
-
-    def apply(self, channel, sample, pars):
-        # normsysfactor(nom_sys_alphas)   = 1 + sum(interp(1, anchors[i][0], anchors[i][0], val=alpha)  for i in range(nom_sys_alphas))
-        assert int(pars.shape[0]) == 1
-
-        tensorlib, _ = get_backend()
-        results = interpolator(1)(
-            tensorlib.astensor([
+class normsys_combined(object):
+    def __init__(self, normsys_mods, pdfconfig, mega_mods):
+        self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self._normsys_indices = [self._parindices[pdfconfig.par_slice(m)] for m in normsys_mods]
+        self._normsys_histoset = [
+            [
                 [
-                    [
-                        self.at_minus_one[channel['name']][sample['name']],
-                        self.at_zero,
-                        self.at_plus_one[channel['name']][sample['name']]
-                    ]
+                    mega_mods[s][m]['data']['lo'],
+                    mega_mods[s][m]['data']['nom_data'],
+                    mega_mods[s][m]['data']['hi'],
                 ]
-            ]), tensorlib.astensor([tensorlib.tolist(pars)])
-        )
+                for s in pdfconfig.samples
+            ] for m in normsys_mods
+        ]
+        self._normsys_mask = [
+            [
+                [
+                    mega_mods[s][m]['data']['mask'],
+                ]
+                for s in pdfconfig.samples
+            ] for m in normsys_mods
+        ]
 
-        return results[0][0][0]
+        if len(normsys_mods):
+            self.interpolator = _hfinterpolator_code1(self._normsys_histoset)
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.normsys_mask = tensorlib.astensor(self._normsys_mask)
+        self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
+        self.normsys_indices = tensorlib.astensor(self._normsys_indices, dtype='int')
+
+    def apply(self,pars):
+        tensorlib, _ = get_backend()
+        if not tensorlib.shape(self.normsys_indices)[0]:
+            return
+        normsys_alphaset = tensorlib.gather(pars,self.normsys_indices)
+        results_norm   = self.interpolator(normsys_alphaset)
+
+        #either rely on numerical no-op or force with line below
+        results_norm   = tensorlib.where(self.normsys_mask,results_norm,self.normsys_default)
+        return results_norm

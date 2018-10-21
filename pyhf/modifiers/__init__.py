@@ -8,15 +8,14 @@ from .. import get_backend
 registry = {}
 
 '''
-Check if given object contains the right structure for constrained and unconstrained modifiers
+Check if given object contains the right structure for modifiers
 '''
-def validate_modifier_structure(modifier, constrained):
-    required_methods = ['__init__', 'add_sample', 'apply']
-    required_constrained_methods = []
+def validate_modifier_structure(modifier):
+    required_methods = ['required_parset']
 
-    for method in required_methods + required_constrained_methods*constrained:
+    for method in required_methods:
         if not hasattr(modifier, method):
-            raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
+            raise exceptions.InvalidModifier('Expected {0:s} method on modifier {1:s}'.format(method, modifier.__name__))
     return True
 
 '''
@@ -25,15 +24,14 @@ Consistent add_to_registry() function that handles actually adding thing to the 
 Raises an error if the name to register for the modifier already exists in the registry,
 or if the modifier does not have the right structure.
 '''
-def add_to_registry(cls, cls_name=None, constrained=False, shared=False, pdf_type='normal', op_code='addition'):
+def add_to_registry(cls, cls_name=None, constrained=False, pdf_type='normal', op_code='addition'):
     global registry
     cls_name = cls_name or cls.__name__
     if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
     # validate the structure
-    validate_modifier_structure(cls, constrained)
+    validate_modifier_structure(cls)
     # set is_constrained
     cls.is_constrained = constrained
-    cls.is_shared = shared
     if constrained:
         tensorlib, _ = get_backend()
         if not hasattr(tensorlib, pdf_type):
@@ -55,7 +53,6 @@ Decorator for registering modifiers. To flag the modifier as a constrained modif
 Args:
     name: the name of the modifier to use. Use the class name by default. (default: None)
     constrained: whether the modifier is constrained or not. (default: False)
-    shared: whether the modifier is shared or not. (default: False)
     pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
     op_code: the name of the operation the modifier performs on the data (e.g. addition, multiplication)
 
@@ -71,51 +68,39 @@ Examples:
 
   >>> @modifiers.modifier
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
-
-  >>> @modifiers.modifier(shared=True)
-  >>> ... class myCustomSharedModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(constrained=False)
   >>> ... class myUnconstrainedModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myUnconstrainedModifier.pdf_type
   None
 
   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
   >>> ... class myConstrainedCustomPoissonModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myConstrainedCustomGaussianModifier.pdf_type
   'poisson'
 
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(op_code='multiplication')
   >>> ... class myMultiplierModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def add_sample(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myMultiplierModifier.op_code
   'multiplication'
@@ -124,7 +109,6 @@ Examples:
 def modifier(*args, **kwargs):
     name = kwargs.pop('name', None)
     constrained = bool(kwargs.pop('constrained', False))
-    shared = bool(kwargs.pop('shared', False))
     pdf_type = str(kwargs.pop('pdf_type', 'normal'))
     op_code = str(kwargs.pop('op_code', 'addition'))
     # check for unparsed keyword arguments
@@ -134,28 +118,44 @@ def modifier(*args, **kwargs):
     if not isinstance(name, string_types) and name is not None:
         raise TypeError('@modifier must be given a string. You gave it {}'.format(type(name)))
 
-    def _modifier(name, constrained, shared, pdf_type, op_code):
+    def _modifier(name, constrained, pdf_type, op_code):
         def wrapper(cls):
-            add_to_registry(cls, cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type, op_code=op_code)
+            add_to_registry(cls, cls_name=name, constrained=constrained, pdf_type=pdf_type, op_code=op_code)
             return cls
         return wrapper
 
     if len(args) == 0:
-        # called like @modifier(name='foo', constrained=False, shared=False, pdf_type='normal', op_code='addition')
-        return _modifier(name, constrained, shared, pdf_type, op_code)
+        # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
+        return _modifier(name, constrained, pdf_type, op_code)
     elif len(args) == 1:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
-        add_to_registry(args[0], cls_name=name, constrained=constrained, shared=shared, pdf_type=pdf_type, op_code=op_code)
+        add_to_registry(args[0], cls_name=name, constrained=constrained, pdf_type=pdf_type, op_code=op_code)
         return args[0]
     else:
         raise ValueError('@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(len(args)))
 
-from .histosys import histosys
-from .normfactor import normfactor
-from .normsys import normsys
-from .shapefactor import shapefactor
-from .shapesys import shapesys
-from .staterror import staterror
-__all__ = ['histosys','normfactor','normsys','shapefactor','shapesys','staterror']
+from .histosys import histosys, histosys_combined
+from .normfactor import normfactor, normfactor_combined
+from .normsys import normsys, normsys_combined
+from .shapefactor import shapefactor, shapefactor_combined
+from .shapesys import shapesys, shapesys_combined
+from .staterror import staterror, staterror_combined
+combined = {
+    'normsys': normsys_combined,
+    'histosys': histosys_combined,
+    'normfactor': normfactor_combined,
+    'staterror': staterror_combined,
+    'shapefactor': shapefactor_combined,
+    'shapesys': shapesys_combined
+}
+__all__ = [
+    'histosys','histosys_combined',
+    'normfactor','normfactor_combined',
+    'normsys','normsys_combined',
+    'shapefactor','shapefactor_combined',
+    'shapesys','shapesys_combined',
+    'staterror','staterror_combined',
+    'combined'
+]

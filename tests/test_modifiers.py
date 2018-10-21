@@ -27,66 +27,25 @@ def test_modifiers_structure():
 
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myUnconstrainedModifier'] == myCustomModifier
     assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_constrained == False
-    assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myUnconstrainedModifier']
-
-    @modifier(name='mySharedModifier', shared=True)
-    class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'mySharedModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['mySharedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['mySharedModifier'].is_shared == True
-    del pyhf.modifiers.registry['mySharedModifier']
 
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
-        def expected_data(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myConstrainedModifier'] == myCustomModifier
     assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained == True
-    assert pyhf.modifiers.registry['myConstrainedModifier'].is_shared == False
     del pyhf.modifiers.registry['myConstrainedModifier']
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier
-        class myCustomModifier(object):
-            pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(constrained=True)
-        class myCustomModifier(object):
-            pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(name='myConstrainedModifierWithFakePDF', constrained=True, pdf_type='fake_pdf')
-        class myCustomModifier(object):
-            def __init__(self): pass
-            def add_sample(self): pass
-            def apply(self): pass
-
-    with pytest.raises(pyhf.exceptions.InvalidModifier):
-        @modifier(name='myFakeOperationPDF', op_code='fake_addition')
-        class myCustomModifier(object):
-            def __init__(self): pass
-            def add_sample(self): pass
-            def apply(self): pass
 
 # we make sure decorate can use auto-naming
 def test_modifier_name_auto():
@@ -94,9 +53,8 @@ def test_modifier_name_auto():
 
     @modifier
     class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -110,9 +68,8 @@ def test_modifier_name_auto_withkwargs():
 
     @modifier(name=None, constrained=False)
     class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -126,9 +83,8 @@ def test_modifier_name_custom():
 
     @modifier(name='myCustomName')
     class myCustomModifier(object):
-        def __init__(self): pass
-        def add_sample(self): pass
-        def apply(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' not in pyhf.modifiers.registry
@@ -168,6 +124,7 @@ def test_registry_name_clash():
 
     with pytest.raises(KeyError):
         class myCustomModifier(object):
-            pass
+            @classmethod
+            def required_parset(cls, n_parameters): pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')
