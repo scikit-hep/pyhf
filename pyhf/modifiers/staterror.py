@@ -10,7 +10,7 @@ class staterror(object):
     @classmethod
     def required_parset(cls, n_parameters):
         return {
-            'constraint': constrained_by_normal,
+            'paramset_type': constrained_by_normal,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
@@ -18,8 +18,7 @@ class staterror(object):
             'op_code': cls.op_code,
             'inits': (1.,) * n_parameters,
             'bounds': ((1e-10, 10.),) * n_parameters,
-            'auxdata': (1.,) * n_parameters,
-            'factors': () * n_parameters
+            'auxdata': (1.,) * n_parameters
         }
 
 class staterror_combined(object):

@@ -38,7 +38,7 @@ def reduce_paramset_requirements(paramset_requirements):
     reduced_paramset_requirements = {}
 
     # nb: normsys and histosys have different op_codes so can't currently be shared
-    param_keys = ['constraint',
+    param_keys = ['paramset_type',
                   'n_parameters',
                   'op_code',
                   'inits',
@@ -52,14 +52,13 @@ def reduce_paramset_requirements(paramset_requirements):
         combined_param = {}
         for param in params:
             for k in param_keys:
-                combined_param.setdefault(k, set([])).add(param[k])
+                combined_param.setdefault(k, set([])).add(param.get(k))
 
         for k in param_keys:
-            v = combined_param[k]
-            if len(v) != 1:
-                raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(v), param_name))
+            if len(combined_param[k]) != 1:
+                raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(combined_param[k]), param_name))
             else:
-                v = list(v)[0]
+                v = combined_param[k].pop()
                 if isinstance(v, tuple): v = list(v)
                 combined_param[k] = v
 

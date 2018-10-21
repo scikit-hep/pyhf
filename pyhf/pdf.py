@@ -27,8 +27,8 @@ class _ModelConfig(object):
         # keep track of the width of each channel (how many bins)
         self.channel_nbins = {}
         # bookkeep all requirements for paramsets we need to build
-        self.paramset_requirements = {}
-        # hacky, need to keep track in which order we added the constraints
+        _paramsets_requirements = {}
+        # need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in spec['channels']:
             self.channels.append(channel['name'])
@@ -42,33 +42,50 @@ class _ModelConfig(object):
                         if modifier_def['name'] == poiname:
                             poiname = fullname
                         modifier_def['name'] = fullname
-                    self._bookkeep_paramset(channel, sample, modifier_def['name'], modifier_def['type'])
+
+                    # get modifier class associated with modifier type
+                    try:
+                        modifier_cls = modifiers.registry[modifier_def['type']]
+                    except KeyError:
+                        log.exception('Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
+                        raise exceptions.InvalidModifier()
                     self.modifiers.append((modifier_def['name'],modifier_def['type']))
+
+                    # get the paramset requirements for the given modifier
+                    paramset_requirements = modifier_cls.required_parset(len(sample['data']))
+                    # check the shareability (e.g. for shapesys for example)
+                    is_shared = paramset_requirements['is_shared']
+                    if not(is_shared) and modifier_def['name'] in _paramsets_requirements:
+                        raise ValueError("Trying to add unshared-paramset but other paramsets exist with the same name.")
+                    if is_shared and not(_paramsets_requirements.get(modifier_def['name'], [{'is_shared': True}])[0]['is_shared']):
+                        raise ValueError("Trying to add shared-paramset but other paramset of same name is indicated to be unshared.")
+                    _paramsets_requirements.setdefault(modifier_def['name'],[]).append(paramset_requirements)
+
         self.channels = list(set(self.channels))
         self.samples = list(set(self.samples))
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self._register_paramsets()
+        self._create_and_register_paramsets(_paramsets_requirements)
         self.set_poi(poiname)
 
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['parset'].suggested_init
+            init = init + self.par_map[name]['paramset'].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['parset'].suggested_bounds
+            bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
         return self.par_map[name]['slice']
 
     def param_set(self, name):
-        return self.par_map[name]['parset']
+        return self.par_map[name]['paramset']
 
     def set_poi(self,name):
         if name not in [x for x,_ in self.modifiers]:
@@ -77,42 +94,23 @@ class _ModelConfig(object):
         assert s.stop-s.start == 1
         self.poi_index = s.start
 
-    def _bookkeep_paramset(self, channel, sample, name, modifier_type):
-        # get modifier class associated with modifier type
-        try:
-            modifier_cls = modifiers.registry[modifier_type]
-        except KeyError:
-            log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
-            raise exceptions.InvalidModifier()
-
-        parset = modifier_cls.required_parset(len(sample['data']))
-        parset.update({'channel,sample': (channel['name'], sample['name'])})
-
-        if not(parset['is_shared']) and name in self.paramset_requirements:
-            raise ValueError("Trying to add unshared-paramset but other paramsets exist with the same name.")
-
-        if parset['is_shared'] and not(self.paramset_requirements.get(name, [{'is_shared': True}])[0]['is_shared']):
-            raise ValueError("Trying to add shared-paramset but other paramset of same name is indicated to be unshared.")
-
-        self.paramset_requirements.setdefault(name,[]).append(parset)
-
-    def _register_paramset(self, name, parset):
+    def _register_paramset(self, param_name, paramset):
         '''allocates n nuisance parameters and stores paramset > modifier map'''
-        log.info('adding modifier %s (%s new nuisance parameters)', name, parset.n_parameters)
+        log.info('adding modifier %s (%s new nuisance parameters)', param_name, paramset.n_parameters)
 
-        sl = slice(self.next_index, self.next_index + parset.n_parameters)
-        self.next_index = self.next_index + parset.n_parameters
-        self.par_order.append(name)
-        self.par_map[name] = {
+        sl = slice(self.next_index, self.next_index + paramset.n_parameters)
+        self.next_index = self.next_index + paramset.n_parameters
+        self.par_order.append(param_name)
+        self.par_map[param_name] = {
             'slice': sl,
-            'parset': parset,
+            'paramset': paramset,
         }
 
-    def _register_paramsets(self):
-        for param_name, combined_param in reduce_paramset_requirements(self.paramset_requirements).items():
-            constraint = combined_param.pop('constraint')
-            parset = constraint(**combined_param)
-            self._register_paramset(param_name, parset)
+    def _create_and_register_paramsets(self, paramsets_requirements):
+        for param_name, paramset_requirements in reduce_paramset_requirements(paramsets_requirements).items():
+            paramset_type = paramset_requirements.get('paramset_type')
+            paramset = paramset_type(**paramset_requirements)
+            self._register_paramset(param_name, paramset)
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):

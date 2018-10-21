@@ -10,16 +10,14 @@ class shapefactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
         return {
-            'constraint': unconstrained,
+            'paramset_type': unconstrained,
             'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
             'inits': (1.0,) * n_parameters,
-            'bounds': ((0., 10.),) * n_parameters,
-            'auxdata': () * n_parameters,
-            'factors': () * n_parameters
+            'bounds': ((0., 10.),) * n_parameters
         }
 
 class shapefactor_combined(object):

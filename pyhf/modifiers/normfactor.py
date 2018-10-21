@@ -9,18 +9,15 @@ from .. import get_backend, default_backend, events
 class normfactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
-        n_parameters = 1
         return {
-            'constraint': unconstrained,
-            'n_parameters': n_parameters,
+            'paramset_type': unconstrained,
+            'n_parameters': 1,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((0, 10),) * n_parameters,
-            'auxdata': () * n_parameters,
-            'factors': () * n_parameters
+            'inits': (1.0,),
+            'bounds': ((0, 10),)
         }
 
 class normfactor_combined(object):

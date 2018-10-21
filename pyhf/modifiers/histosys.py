@@ -10,18 +10,16 @@ from ..interpolate import _hfinterpolator_code0
 class histosys(object):
     @classmethod
     def required_parset(cls, n_parameters):
-        n_parameters = 1
         return {
-            'constraint': constrained_by_normal,
-            'n_parameters': n_parameters,
+            'paramset_type': constrained_by_normal,
+            'n_parameters': 1,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': (0.0,) * n_parameters,
-            'bounds': ((-5., 5.),) * n_parameters,
-            'auxdata': (0.,) * n_parameters,
-            'factors': () * n_parameters
+            'inits': (0.0,),
+            'bounds': ((-5., 5.),),
+            'auxdata': (0.,)
         }
 
 class histosys_combined(object):
