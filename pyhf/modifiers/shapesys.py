@@ -58,7 +58,7 @@ class shapesys_combined(object):
                 zero_mask = summed_mask == 0
                 # then apply the mask
                 summed_mask[positive_mask] = inds
-                summed_mask[zero_mask] = -1
+                summed_mask[zero_mask] = 0
                 # nb: old code above was
                 #     summed_mask[summed_mask > 0] = inds
                 #     summed_mask[summed_mask == 0] = -1
