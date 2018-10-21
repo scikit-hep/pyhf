@@ -41,6 +41,7 @@ class _ModelConfig(object):
         self.samples = []
         self.parameters = []
         self.modifiers = []
+        # keep track of the width of each channel (how many bins)
         self.channel_nbins = {}
         # bookkeep all requirements for paramsets we need to build
         self.paramset_requirements = {}
@@ -196,6 +197,16 @@ class Model(object):
             'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
         }
 
+        # the mega-channel will consist of mega-samples that subscribe to
+        # mega-modifiers. i.e. while in normal histfactory, each sample might
+        # be affected by some modifiers and some not, here we change it so that
+        # samples are affected by all modifiers, but we set up the modifier
+        # data such that the application of the modifier does not actually
+        # change the bin value for bins that are not originally affected by
+        # that modifier
+        #
+        # We don't actually set up the modifier data here for no-ops, but we do
+        # set up the entire structure
         mega_mods = {}
         for m,mtype in self.config.modifiers:
             for s in self.config.samples:
@@ -205,6 +216,7 @@ class Model(object):
                     'data': default_data_makers[mtype]()
                 }
 
+        # helper maps channel-name/sample-name to pairs of channel-sample structs
         helper = {}
         for c in self.spec['channels']:
             for s in c['samples']:
@@ -216,10 +228,12 @@ class Model(object):
             for c in self.config.channels:
                 defined_samp = helper.get(c,{}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
+                # set nominal to 0 for channel/sample if the pair doesn't exist
                 nom = defined_samp['data'] if defined_samp else [0.0]*self.config.channel_nbins[c]
                 mega_nom += nom
                 defined_mods = {x['name']:x for x in defined_samp['modifiers']} if defined_samp else {}
                 for m,mtype in self.config.modifiers:
+                    # this is None if modifier doesn't affect channel/sample.
                     thismod = defined_mods.get(m)
                     if mtype == 'histosys':
                         lo_data = thismod['data']['lo_data'] if thismod else nom
