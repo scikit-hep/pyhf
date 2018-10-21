@@ -292,6 +292,29 @@ class Model(object):
         return deltas, factors
 
     def expected_actualdata(self,pars):
+        """
+        For a single channel single sample, we compute
+
+            Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
+
+        where:
+            - delta(pars) is the result of an apply(pars) of combined modifiers
+              with 'addition' op_code
+            - factor(pars) is the result of apply(pars) of combined modifiers
+              with 'multiplication' op_code
+            - pars[is_gaus] are the subset of parameters that are constrained by
+              gauss (with sigmas accordingly, some of which are computed by
+              modifiers)
+            - pars[is_pois] are the poissons and their rates (they come with
+              their own additional factors unrelated to factor(pars) which are
+              also computed by the finalize() of the modifier)
+
+        So in the end we only make 3 calls to pdfs
+
+            1. The main pdf of data and modified rates
+            2. All Gaussian constraint as one call
+            3. All Poisson constraints as one call
+        """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
 
