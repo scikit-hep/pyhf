@@ -128,6 +128,7 @@ class _ModelConfig(object):
         self.paramsets.get(name).append(parset)
 
     def combine_paramsets(self):
+        # nb: normsys and histosys have different op_codes so can't currently be shared
         param_keys = ['constraint',
                       'n_parameters',
                       'op_code',
