@@ -42,8 +42,8 @@ class _ModelConfig(object):
         self.parameters = []
         self.modifiers = []
         self.channel_nbins = {}
-        # bookkeep all modifiers we need to build
-        self.paramsets = {}
+        # bookkeep all requirements for paramsets we need to build
+        self.paramset_requirements = {}
         # hacky, need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in spec['channels']:
@@ -65,8 +65,7 @@ class _ModelConfig(object):
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self.combine_paramsets()
-        self.add_paramsets()
+        self.combine_and_add_paramsets()
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -114,20 +113,20 @@ class _ModelConfig(object):
             log.exception('Modifier type not implemented yet (processing {0:s}). Current modifier types: {1}'.format(modifier_type, modifiers.registry.keys()))
             raise exceptions.InvalidModifier()
 
-        self.paramsets.setdefault(name, [])
+        self.paramset_requirements.setdefault(name, [])
 
         parset = modifier_cls.required_parset(len(sample['data']))
         parset.update({'channel,sample': (channel['name'], sample['name'])})
 
-        if not(parset['is_shared']) and self.paramsets.get(name):
+        if not(parset['is_shared']) and self.paramset_requirements.get(name):
             raise ValueError("Trying to add unshared-paramset but other paramsets exist with the same name.")
 
-        if parset['is_shared'] and self.paramsets.get(name) and not(self.paramsets.get(name)[0]['is_shared']):
+        if parset['is_shared'] and self.paramset_requirements.get(name) and not(self.paramset_requirements.get(name)[0]['is_shared']):
             raise ValueError("Trying to add shared-paramset but other paramset of same name is indicated to be unshared.")
 
-        self.paramsets.get(name).append(parset)
+        self.paramset_requirements.get(name).append(parset)
 
-    def combine_paramsets(self):
+    def combine_and_add_paramsets(self):
         # nb: normsys and histosys have different op_codes so can't currently be shared
         param_keys = ['constraint',
                       'n_parameters',
@@ -137,8 +136,8 @@ class _ModelConfig(object):
                       'auxdata',
                       'factors']
 
-        for param_name in list(self.paramsets.keys()):
-            params = self.paramsets[param_name]
+        for param_name in list(self.paramset_requirements.keys()):
+            params = self.paramset_requirements[param_name]
 
             combined_param = {}
             for param in params:
@@ -154,22 +153,13 @@ class _ModelConfig(object):
                     if isinstance(v, tuple): v = list(v)
                     combined_param[k] = v
 
-            # unique enough, so combine
-            self.paramsets[param_name] = combined_param
-
-    def add_paramsets(self):
-        for name,param in self.paramsets.items():
-            parset = param['constraint'](param['n_parameters'],
-                                     param['inits'],
-                                     param['bounds'],
-                                     param['auxdata'],
-                                     param['factors']
+            parset = combined_param['constraint'](combined_param['n_parameters'],
+                                     combined_param['inits'],
+                                     combined_param['bounds'],
+                                     combined_param['auxdata'],
+                                     combined_param['factors']
                                     )
-            self.register_paramset(
-                name,
-                parset.n_parameters,
-                parset
-            )
+            self.register_paramset(param_name, parset.n_parameters, parset)
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
