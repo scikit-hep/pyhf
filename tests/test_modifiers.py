@@ -27,7 +27,8 @@ def test_modifiers_structure():
 
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
-        def __init__(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
@@ -37,7 +38,8 @@ def test_modifiers_structure():
 
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
-        def __init__(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
@@ -51,7 +53,8 @@ def test_modifier_name_auto():
 
     @modifier
     class myCustomModifier(object):
-        def __init__(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -65,7 +68,8 @@ def test_modifier_name_auto_withkwargs():
 
     @modifier(name=None, constrained=False)
     class myCustomModifier(object):
-        def __init__(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' in pyhf.modifiers.registry
@@ -79,7 +83,8 @@ def test_modifier_name_custom():
 
     @modifier(name='myCustomName')
     class myCustomModifier(object):
-        def __init__(self): pass
+        @classmethod
+        def required_parset(cls, n_parameters): pass
 
     assert inspect.isclass(myCustomModifier)
     assert 'myCustomModifier' not in pyhf.modifiers.registry
@@ -119,6 +124,7 @@ def test_registry_name_clash():
 
     with pytest.raises(KeyError):
         class myCustomModifier(object):
-            pass
+            @classmethod
+            def required_parset(cls, n_parameters): pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')

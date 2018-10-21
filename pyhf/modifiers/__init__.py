@@ -8,15 +8,14 @@ from .. import get_backend
 registry = {}
 
 '''
-Check if given object contains the right structure for constrained and unconstrained modifiers
+Check if given object contains the right structure for modifiers
 '''
-def validate_modifier_structure(modifier, constrained):
-    required_methods = ['__init__']
-    required_constrained_methods = []
+def validate_modifier_structure(modifier):
+    required_methods = ['required_parset']
 
-    for method in required_methods + required_constrained_methods*constrained:
+    for method in required_methods:
         if not hasattr(modifier, method):
-            raise exceptions.InvalidModifier('Expected {0:s} method on {1:s}constrained modifier {2:s}'.format(method, '' if constrained else 'un', modifier.__name__))
+            raise exceptions.InvalidModifier('Expected {0:s} method on modifier {1:s}'.format(method, modifier.__name__))
     return True
 
 '''
@@ -30,7 +29,7 @@ def add_to_registry(cls, cls_name=None, constrained=False, pdf_type='normal', op
     cls_name = cls_name or cls.__name__
     if cls_name in registry: raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
     # validate the structure
-    validate_modifier_structure(cls, constrained)
+    validate_modifier_structure(cls)
     # set is_constrained
     cls.is_constrained = constrained
     if constrained:
@@ -69,39 +68,39 @@ Examples:
 
   >>> @modifiers.modifier
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(name='myCustomNamer')
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(constrained=False)
   >>> ... class myUnconstrainedModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myUnconstrainedModifier.pdf_type
   None
 
   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
   >>> ... class myConstrainedCustomPoissonModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myConstrainedCustomGaussianModifier.pdf_type
   'poisson'
 
   >>> @modifiers.modifier(constrained=True)
   >>> ... class myCustomModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
 
   >>> @modifiers.modifier(op_code='multiplication')
   >>> ... class myMultiplierModifier(object):
-  >>> ...   def __init__(self): pass
-  >>> ...   def apply(self): pass
+  >>> ...   @classmethod
+  >>> ...   def required_parset(cls, npars): pass
   >>> ...
   >>> myMultiplierModifier.op_code
   'multiplication'
