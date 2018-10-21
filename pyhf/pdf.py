@@ -10,24 +10,6 @@ from .constraints import gaussian_constraint_combined, poisson_constraint_combin
 from .paramsets import reduce_paramset_requirements
 
 
-from .modifiers.combined_mods import (
-    normsys_combinedmod,
-    histosys_combinedmod,
-    normfac_combinedmod,
-    staterror_combined,
-    shapefactor_combined,
-    shapesys_combined
-)
-
-MOD_REGISTRY = {
-    'normsys': normsys_combinedmod,
-    'histosys': histosys_combinedmod,
-    'normfactor': normfac_combinedmod,
-    'staterror': staterror_combined,
-    'shapefactor': shapefactor_combined,
-    'shapesys': shapesys_combined
-}
-
 
 class _ModelConfig(object):
     def __init__(self, spec, poiname = 'mu', qualify_names = False):
@@ -262,7 +244,7 @@ class Model(object):
                 self.config,
                 mega_mods
             )
-            for k,c in MOD_REGISTRY.items()
+            for k,c in modifiers.combined.items()
         }
 
     def expected_auxdata(self, pars):

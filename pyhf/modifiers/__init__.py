@@ -136,10 +136,26 @@ def modifier(*args, **kwargs):
     else:
         raise ValueError('@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(len(args)))
 
-from .histosys import histosys
-from .normfactor import normfactor
-from .normsys import normsys
-from .shapefactor import shapefactor
-from .shapesys import shapesys
-from .staterror import staterror
-__all__ = ['histosys','normfactor','normsys','shapefactor','shapesys','staterror']
+from .histosys import histosys, histosys_combined
+from .normfactor import normfactor, normfactor_combined
+from .normsys import normsys, normsys_combined
+from .shapefactor import shapefactor, shapefactor_combined
+from .shapesys import shapesys, shapesys_combined
+from .staterror import staterror, staterror_combined
+combined = {
+    'normsys': normsys_combined,
+    'histosys': histosys_combined,
+    'normfactor': normfactor_combined,
+    'staterror': staterror_combined,
+    'shapefactor': shapefactor_combined,
+    'shapesys': shapesys_combined
+}
+__all__ = [
+    'histosys','histosys_combined',
+    'normfactor','normfactor_combined',
+    'normsys','normsys_combined',
+    'shapefactor','shapefactor_combined',
+    'shapesys','shapesys_combined',
+    'staterror','staterror_combined',
+    'combined'
+]
