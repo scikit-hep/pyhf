@@ -7,6 +7,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
+from .paramsets import reduce_paramset_requirements
 
 
 from .modifiers.combined_mods import (
@@ -66,7 +67,7 @@ class _ModelConfig(object):
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self.combine_and_add_paramsets()
+        self.add_paramsets()
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -125,33 +126,8 @@ class _ModelConfig(object):
 
         self.paramset_requirements.setdefault(name,[]).append(parset)
 
-    def combine_and_add_paramsets(self):
-        # nb: normsys and histosys have different op_codes so can't currently be shared
-        param_keys = ['constraint',
-                      'n_parameters',
-                      'op_code',
-                      'inits',
-                      'bounds',
-                      'auxdata',
-                      'factors']
-
-        for param_name in list(self.paramset_requirements.keys()):
-            params = self.paramset_requirements[param_name]
-
-            combined_param = {}
-            for param in params:
-                for k in param_keys:
-                    combined_param.setdefault(k, set([])).add(param[k])
-
-            for k in param_keys:
-                v = combined_param[k]
-                if len(v) != 1:
-                    raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(v), param_name))
-                else:
-                    v = list(v)[0]
-                    if isinstance(v, tuple): v = list(v)
-                    combined_param[k] = v
-
+    def add_paramsets(self):
+        for param_name, combined_param in reduce_paramset_requirements(self.paramset_requirements).items():
             parset = combined_param['constraint'](combined_param['n_parameters'],
                                      combined_param['inits'],
                                      combined_param['bounds'],

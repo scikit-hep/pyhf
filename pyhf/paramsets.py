@@ -1,4 +1,6 @@
 from . import get_backend
+from . import exceptions
+
 class paramset(object):
     def __init__(self, n_parameters, inits, bounds):
         self.n_parameters = n_parameters
@@ -33,3 +35,35 @@ class constrained_by_poisson(paramset):
             axis=0
         )
 
+def reduce_paramset_requirements(paramset_requirements):
+    reduced_paramset_requirements = {}
+
+    # nb: normsys and histosys have different op_codes so can't currently be shared
+    param_keys = ['constraint',
+                  'n_parameters',
+                  'op_code',
+                  'inits',
+                  'bounds',
+                  'auxdata',
+                  'factors']
+
+    for param_name in list(paramset_requirements.keys()):
+        params = paramset_requirements[param_name]
+
+        combined_param = {}
+        for param in params:
+            for k in param_keys:
+                combined_param.setdefault(k, set([])).add(param[k])
+
+        for k in param_keys:
+            v = combined_param[k]
+            if len(v) != 1:
+                raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(v), param_name))
+            else:
+                v = list(v)[0]
+                if isinstance(v, tuple): v = list(v)
+                combined_param[k] = v
+
+        reduced_paramset_requirements[param_name] = combined_param
+
+    return reduced_paramset_requirements
