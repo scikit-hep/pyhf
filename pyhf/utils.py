@@ -76,9 +76,11 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     """
     tensorlib, optimizer = get_backend()
     mubhathat = optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds)
+        loglambdav, mu, data, pdf, init_pars, par_bounds
+    )
     muhatbhat = optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds)
+        loglambdav, data, pdf, init_pars, par_bounds
+    )
     qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
     qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
     return qmu
@@ -87,7 +89,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     _, optimizer = get_backend()
     bestfit_nuisance_asimov = optimizer.constrained_bestfit(
-        loglambdav, asimov_mu, data, pdf, init_pars, par_bounds)
+        loglambdav, asimov_mu, data, pdf, init_pars, par_bounds
+    )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
@@ -151,16 +154,15 @@ def runOnePoint(muTest, data, pdf, init_pars=None, par_bounds=None):
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    asimov_mu = 0.
-    asimov_data = generate_asimov_data(
-        asimov_mu, data, pdf, init_pars, par_bounds)
+    asimov_mu = 0.0
+    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v = tensorlib.clip(
-        qmu(muTest, data, pdf, init_pars, par_bounds), 0, max=None)
+    qmu_v = tensorlib.clip(qmu(muTest, data, pdf, init_pars, par_bounds), 0, max=None)
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
     qmuA_v = tensorlib.clip(
-        qmu(muTest, asimov_data, pdf, init_pars, par_bounds), 0, max=None)
+        qmu(muTest, asimov_data, pdf, init_pars, par_bounds), 0, max=None
+    )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
@@ -168,7 +170,6 @@ def runOnePoint(muTest, data, pdf, init_pars=None, par_bounds=None):
     CLs_exp = []
     for nsigma in [-2, -1, 0, 1, 2]:
         sqrtqmu_v_sigma = sqrtqmuA_v - nsigma
-        CLs_exp.append(
-            pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+        CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
     CLs_exp = tensorlib.astensor(CLs_exp)
     return qmu_v, qmuA_v, CLsb, CLb, CLs, CLs_exp
