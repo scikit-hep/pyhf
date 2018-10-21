@@ -8,22 +8,32 @@ log = logging.getLogger(__name__)
 
 registry = {}
 
-'''
-Check if given object contains the right structure for modifiers
-'''
+
 def validate_modifier_structure(modifier):
+    """
+    Check if given object contains the right structure for modifiers
+    """
     required_methods = ['required_parset']
 
     for method in required_methods:
         if not hasattr(modifier, method):
-            raise exceptions.InvalidModifier('Expected {0:s} method on modifier {1:s}'.format(method, modifier.__name__))
+            raise exceptions.InvalidModifier(
+                'Expected {0:s} method on modifier {1:s}'.format(
+                    method, modifier.__name__
+                )
+            )
     return True
 
 
-Raises an error if the name to register for the modifier already exists in the registry,
-or if the modifier does not have the right structure.
-'''
-def add_to_registry(cls, cls_name=None, constrained=False, pdf_type='normal', op_code='addition'):
+def add_to_registry(
+    cls, cls_name=None, constrained=False, pdf_type='normal', op_code='addition'
+):
+    """
+    Consistent add_to_registry() function that handles actually adding thing to the registry.
+
+    Raises an error if the name to register for the modifier already exists in the registry,
+    or if the modifier does not have the right structure.
+    """
     global registry
     cls_name = cls_name or cls.__name__
     if cls_name in registry:
@@ -59,16 +69,10 @@ def modifier(*args, **kwargs):
     """
     Decorator for registering modifiers. To flag the modifier as a constrained modifier, add `constrained=True`.
 
-Args:
-    name: the name of the modifier to use. Use the class name by default. (default: None)
-    constrained: whether the modifier is constrained or not. (default: False)
-    pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
-    op_code: the name of the operation the modifier performs on the data (e.g. addition, multiplication)
 
     Args:
         name: the name of the modifier to use. Use the class name by default. (default: None)
         constrained: whether the modifier is constrained or not. (default: False)
-        shared: whether the modifier is shared or not. (default: False)
         pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
         op_code: the name of the operation the modifier performs on the data (e.g. addition, multiplication)
 
@@ -79,55 +83,49 @@ Args:
         ValueError: too many keyword arguments, or too many arguments, or wrong arguments
         TypeError: provided name is not a string
         pyhf.exceptions.InvalidModifier: object does not have necessary modifier structure
-
-  >>> @modifiers.modifier
-  >>> ... class myCustomModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-
-  >>> @modifiers.modifier(name='myCustomNamer')
-  >>> ... class myCustomModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-
-  >>> @modifiers.modifier(constrained=False)
-  >>> ... class myUnconstrainedModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-  >>> ...
-  >>> myUnconstrainedModifier.pdf_type
-  None
-
-  >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
-  >>> ... class myConstrainedCustomPoissonModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-  >>> ...
-  >>> myConstrainedCustomGaussianModifier.pdf_type
-  'poisson'
-
-  >>> @modifiers.modifier(constrained=True)
-  >>> ... class myCustomModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-
-  >>> @modifiers.modifier(op_code='multiplication')
-  >>> ... class myMultiplierModifier(object):
-  >>> ...   @classmethod
-  >>> ...   def required_parset(cls, npars): pass
-  >>> ...
-  >>> myMultiplierModifier.op_code
-  'multiplication'
-
-      >>> @modifiers.modifier(op_code='multiplication')
-      >>> ... class myMultiplierModifier(object):
-      >>> ...   def __init__(self): pass
-      >>> ...   def add_sample(self): pass
-      >>> ...   def apply(self): pass
-      >>> ...
-      >>> myMultiplierModifier.op_code
-      'multiplication'
     """
+    #
+    # Examples:
+    #
+    #   >>> @modifiers.modifier
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #
+    #   >>> @modifiers.modifier(name='myCustomNamer')
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #
+    #   >>> @modifiers.modifier(constrained=False)
+    #   >>> ... class myUnconstrainedModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...
+    #   >>> myUnconstrainedModifier.pdf_type
+    #   None
+    #
+    #   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
+    #   >>> ... class myConstrainedCustomPoissonModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...
+    #   >>> myConstrainedCustomGaussianModifier.pdf_type
+    #   'poisson'
+    #
+    #   >>> @modifiers.modifier(constrained=True)
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #
+    #   >>> @modifiers.modifier(op_code='multiplication')
+    #   >>> ... class myMultiplierModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...
+    #   >>> myMultiplierModifier.op_code
+    #   'multiplication'
+
     name = kwargs.pop('name', None)
     constrained = bool(kwargs.pop('constrained', False))
     pdf_type = str(kwargs.pop('pdf_type', 'normal'))
@@ -143,7 +141,13 @@ Args:
 
     def _modifier(name, constrained, pdf_type, op_code):
         def wrapper(cls):
-            add_to_registry(cls, cls_name=name, constrained=constrained, pdf_type=pdf_type, op_code=op_code)
+            add_to_registry(
+                cls,
+                cls_name=name,
+                constrained=constrained,
+                pdf_type=pdf_type,
+                op_code=op_code,
+            )
             return cls
 
         return wrapper
@@ -155,7 +159,13 @@ Args:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
-        add_to_registry(args[0], cls_name=name, constrained=constrained, pdf_type=pdf_type, op_code=op_code)
+        add_to_registry(
+            args[0],
+            cls_name=name,
+            constrained=constrained,
+            pdf_type=pdf_type,
+            op_code=op_code,
+        )
         return args[0]
     else:
         raise ValueError(
@@ -164,28 +174,34 @@ Args:
             )
         )
 
+
 from .histosys import histosys, histosys_combined
 from .normfactor import normfactor, normfactor_combined
 from .normsys import normsys, normsys_combined
 from .shapefactor import shapefactor, shapefactor_combined
 from .shapesys import shapesys, shapesys_combined
 from .staterror import staterror, staterror_combined
+
 combined = {
     'normsys': normsys_combined,
     'histosys': histosys_combined,
     'normfactor': normfactor_combined,
     'staterror': staterror_combined,
     'shapefactor': shapefactor_combined,
-    'shapesys': shapesys_combined
+    'shapesys': shapesys_combined,
 }
 __all__ = [
-    'histosys','histosys_combined',
-    'normfactor','normfactor_combined',
-    'normsys','normsys_combined',
-    'shapefactor','shapefactor_combined',
-    'shapesys','shapesys_combined',
-    'staterror','staterror_combined',
-    'combined'
+    'histosys',
+    'histosys_combined',
+    'normfactor',
+    'normfactor_combined',
+    'normsys',
+    'normsys_combined',
+    'shapefactor',
+    'shapefactor_combined',
+    'shapesys',
+    'shapesys_combined',
+    'staterror',
+    'staterror_combined',
+    'combined',
 ]
-
-__all__ = ['histosys', 'normfactor', 'normsys', 'shapefactor', 'shapesys', 'staterror']
