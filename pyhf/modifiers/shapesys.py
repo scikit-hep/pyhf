@@ -18,8 +18,10 @@ class shapesys(object):
             'op_code': cls.op_code,
             'inits': (1.0,) * n_parameters,
             'bounds': ((1e-10, 10.),) * n_parameters,
-            'auxdata': (-1.,) * n_parameters,
-            'factors': (-1.,) * n_parameters
+            # nb: auxdata/factors set by finalize. Set to non-numeric to crash
+            # if we fail to set auxdata/factors correctly
+            'auxdata': (None,) * n_parameters,
+            'factors': (None,) * n_parameters
         }
 
 class shapesys_combined(object):

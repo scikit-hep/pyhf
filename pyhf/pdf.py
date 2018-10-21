@@ -43,16 +43,15 @@ class _ModelConfig(object):
                             poiname = fullname
                         modifier_def['name'] = fullname
 
-                    # get modifier class associated with modifier type
+                    # get the paramset requirements for the given modifier. If
+                    # modifier does not exist, we'll have a KeyError
                     try:
-                        modifier_cls = modifiers.registry[modifier_def['type']]
+                        paramset_requirements = modifiers.registry[modifier_def['type']].required_parset(len(sample['data']))
                     except KeyError:
                         log.exception('Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(modifier_def['type'], modifiers.registry.keys()))
                         raise exceptions.InvalidModifier()
                     self.modifiers.append((modifier_def['name'],modifier_def['type']))
 
-                    # get the paramset requirements for the given modifier
-                    paramset_requirements = modifier_cls.required_parset(len(sample['data']))
                     # check the shareability (e.g. for shapesys for example)
                     is_shared = paramset_requirements['is_shared']
                     if not(is_shared) and modifier_def['name'] in _paramsets_requirements:
