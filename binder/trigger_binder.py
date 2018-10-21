@@ -8,14 +8,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 
-class SeleniumSession():
+class SeleniumSession:
     def __init__(self, args):
         self.options = Options()
         self.options.set_headless()
         self.options.add_argument('--no-sandbox')
         if args.chromedriver_path is not None:
             self.browser = webdriver.Chrome(
-                args.chromedriver_path, chrome_options=self.options)
+                args.chromedriver_path, chrome_options=self.options
+            )
         else:
             self.browser = webdriver.Chrome(chrome_options=self.options)
 
@@ -39,13 +40,23 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose', dest='is_verbose',
-                        action='store_true',
-                        help='Print out more information')
-    parser.add_argument('--chromedriver-path', dest='chromedriver_path',
-                        type=str, default=None, help='System path to ChromeDriver')
-    parser.add_argument('--url', dest='url',
-                        type=str, default=None, help='URL for Selinium to open')
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        dest='is_verbose',
+        action='store_true',
+        help='Print out more information',
+    )
+    parser.add_argument(
+        '--chromedriver-path',
+        dest='chromedriver_path',
+        type=str,
+        default=None,
+        help='System path to ChromeDriver',
+    )
+    parser.add_argument(
+        '--url', dest='url', type=str, default=None, help='URL for Selinium to open'
+    )
     args = parser.parse_args()
 
     main(args)

@@ -26,7 +26,7 @@ ac.SetQTilde(True)
 calc = ROOT.RooStats.HypoTestInverter(ac)
 calc.SetConfidenceLevel(0.95)
 calc.UseCLs(True)
-calc.RunFixedScan(1,1,1)
+calc.RunFixedScan(1, 1, 1)
 
 result = calc.GetInterval()
 
@@ -39,4 +39,5 @@ CLs_obs = result.CLs(index)
 CLs_exp = list(v)[3:-3]
 
 import json
+
 print(json.dumps({'CLs_obs': CLs_obs, 'CLs_exp': CLs_exp}, sort_keys=True, indent=4))

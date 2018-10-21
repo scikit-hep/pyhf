@@ -2,7 +2,9 @@ import numpy as np
 import logging
 from scipy.special import gammaln
 from scipy.stats import norm
+
 log = logging.getLogger(__name__)
+
 
 class numpy_backend(object):
     """NumPy backend for pyhf"""
@@ -32,19 +34,20 @@ class numpy_backend(object):
         """
         return np.clip(tensor_in, min, max)
 
-    def tolist(self,tensor_in):
+    def tolist(self, tensor_in):
         try:
             return tensor_in.tolist()
         except AttributeError:
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return np.outer(tensor_in_1,tensor_in_2)
+        return np.outer(tensor_in_1, tensor_in_2)
 
-    def gather(self,tensor,indices):
+    def gather(self, tensor, indices):
         return tensor[indices]
 
     def boolean_mask(self, tensor, mask):
@@ -53,7 +56,7 @@ class numpy_backend(object):
     def isfinite(self, tensor):
         return np.isfinite(tensor)
 
-    def astensor(self, tensor_in, dtype = 'float'):
+    def astensor(self, tensor_in, dtype='float'):
         """
         Convert to a NumPy array.
 
@@ -65,40 +68,40 @@ class numpy_backend(object):
         """
         dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         dtype = dtypemap[dtype]
-        return np.asarray(tensor_in, dtype = dtype)
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in, axis=None):
-        return np.product(tensor_in, axis = axis)
+        return np.product(tensor_in, axis=axis)
 
     def abs(self, tensor):
         return np.abs(tensor)
 
-    def ones(self,shape):
+    def ones(self, shape):
         return np.ones(shape)
 
-    def zeros(self,shape):
+    def zeros(self, shape):
         return np.zeros(shape)
 
-    def power(self,tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1, tensor_in_2):
         return np.power(tensor_in_1, tensor_in_2)
 
-    def sqrt(self,tensor_in):
+    def sqrt(self, tensor_in):
         return np.sqrt(tensor_in)
 
-    def divide(self,tensor_in_1, tensor_in_2):
+    def divide(self, tensor_in_1, tensor_in_2):
         return np.divide(tensor_in_1, tensor_in_2)
 
-    def log(self,tensor_in):
+    def log(self, tensor_in):
         return np.log(tensor_in)
 
-    def exp(self,tensor_in):
+    def exp(self, tensor_in):
         return np.exp(tensor_in)
 
-    def stack(self, sequence, axis = 0):
-        return np.stack(sequence,axis = axis)
+    def stack(self, sequence, axis=0):
+        return np.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         return np.where(mask, tensor_in_1, tensor_in_2)
@@ -143,7 +146,7 @@ class numpy_backend(object):
         return tensor.shape
 
     def reshape(self, tensor, newshape):
-        return np.reshape(tensor,newshape)
+        return np.reshape(tensor, newshape)
 
     def einsum(self, subscripts, *operands):
         """
@@ -167,7 +170,7 @@ class numpy_backend(object):
     def poisson_logpdf(self, n, lam):
         n = np.asarray(n)
         lam = np.asarray(lam)
-        return n * np.log(lam) - lam - gammaln(n + 1.)
+        return n * np.log(lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -193,17 +196,17 @@ class numpy_backend(object):
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.))
+        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
         # norm.logpdf(x, loc=mu, scale=sigma)
         # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
         root2 = np.sqrt(2)
-        root2pi = np.sqrt(2*np.pi)
+        root2pi = np.sqrt(2 * np.pi)
         prefactor = -np.log(sigma * root2pi)
-        summand = -np.square(np.divide((x - mu),(root2 * sigma)))
-        return  prefactor + summand
+        summand = -np.square(np.divide((x - mu), (root2 * sigma)))
+        return prefactor + summand
 
     # def normal_logpdf(self, x, mu, sigma):
     #     return norm.logpdf(x, loc=mu, scale=sigma)

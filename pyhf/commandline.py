@@ -1,6 +1,4 @@
 import logging
-logging.basicConfig()
-log = logging.getLogger(__name__)
 
 import click
 import json
@@ -14,16 +12,29 @@ from .utils import runOnePoint
 from .pdf import Model
 from .version import __version__
 
+logging.basicConfig()
+log = logging.getLogger(__name__)
+
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(version=__version__)
 def pyhf():
     pass
 
+
 @pyhf.command()
 @click.argument('entrypoint-xml', type=click.Path(exists=True))
-@click.option('--basedir', help='The base directory for the XML files to point relative to.', type=click.Path(exists=True), default=os.getcwd())
-@click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
+@click.option(
+    '--basedir',
+    help='The base directory for the XML files to point relative to.',
+    type=click.Path(exists=True),
+    default=os.getcwd(),
+)
+@click.option(
+    '--output-file',
+    help='The location of the output json file. If not specified, prints to screen.',
+    default=None,
+)
 @click.option('--track-progress/--hide-progress', default=True)
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     """ Entrypoint XML: The top-level XML file for the PDF definition. """
@@ -36,6 +47,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         log.debug("Written to {0:s}".format(output_file))
     sys.exit(0)
 
+
 @pyhf.command()
 @click.argument('workspace', default='-')
 @click.argument('xmlfile', default='-')
@@ -45,12 +57,19 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
         with click.open_file(xmlfile, 'w') as outstream:
-            outstream.write(writexml.writexml(d, specroot, dataroot,'').decode('utf-8'))
+            outstream.write(
+                writexml.writexml(d, specroot, dataroot, '').decode('utf-8')
+            )
     sys.exit(0)
+
 
 @pyhf.command()
 @click.argument('workspace', default='-')
-@click.option('--output-file', help='The location of the output json file. If not specified, prints to screen.', default=None)
+@click.option(
+    '--output-file',
+    help='The location of the output json file. If not specified, prints to screen.',
+    default=None,
+)
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
 @click.option('--qualify-names/--no-qualify-names', default=False)
@@ -60,10 +79,14 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
     measurements = d['toplvl']['measurements']
     measurement_names = [m['name'] for m in measurements]
     measurement_index = 0
-        
+
     log.debug('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
     if measurement and measurement not in measurement_names:
-        log.error('no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(measurement))
+        log.error(
+            'no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(
+                measurement
+            )
+        )
         sys.exit(1)
     else:
         if not measurement and len(measurements) > 1:
@@ -72,16 +95,27 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
         elif measurement:
             measurement_index = measurement_names.index(measurement)
 
-        log.debug('calculating CLs for measurement {0:s}'.format(measurements[measurement_index]['name']))
-        spec = {'channels':d['channels']}
+        log.debug(
+            'calculating CLs for measurement {0:s}'.format(
+                measurements[measurement_index]['name']
+            )
+        )
+        spec = {'channels': d['channels']}
         for p in patch:
             with click.open_file(p, 'r') as read_file:
                 p = jsonpatch.JsonPatch(json.loads(read_file.read()))
             spec = p.apply(spec)
-        p = Model(spec, poiname=measurements[measurement_index]['config']['poi'], qualify_names=qualify_names)
-        observed = sum((d['data'][c] for c in p.config.channels),[]) + p.config.auxdata
+        p = Model(
+            spec,
+            poiname=measurements[measurement_index]['config']['poi'],
+            qualify_names=qualify_names,
+        )
+        observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
         result = runOnePoint(1.0, observed, p)
-        result = {'CLs_obs': result[-2].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+        result = {
+            'CLs_obs': result[-2].tolist()[0],
+            'CLs_exp': result[-1].ravel().tolist(),
+        }
         if output_file is None:
             print(json.dumps(result, indent=4, sort_keys=True))
         else:

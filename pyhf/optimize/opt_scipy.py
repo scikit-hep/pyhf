@@ -1,6 +1,8 @@
 from scipy.optimize import minimize
 import logging
+
 log = logging.getLogger(__name__)
+
 
 class scipy_optimizer(object):
     def __init__(self):
@@ -8,8 +10,9 @@ class scipy_optimizer(object):
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         # The Global Fit
-        result = minimize(objective, init_pars, method='SLSQP',
-                          args=(data, pdf), bounds=par_bounds)
+        result = minimize(
+            objective, init_pars, method='SLSQP', args=(data, pdf), bounds=par_bounds
+        )
         try:
             assert result.success
         except AssertionError:
@@ -17,13 +20,19 @@ class scipy_optimizer(object):
             raise
         return result.x
 
-
-    def constrained_bestfit(self, objective, constrained_mu, data, pdf, init_pars, par_bounds):
+    def constrained_bestfit(
+        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
+    ):
         # The Fit Conditions on a specific POI value
-        cons = {'type': 'eq', 'fun': lambda v: v[
-            pdf.config.poi_index] - constrained_mu}
-        result = minimize(objective, init_pars, constraints=cons,
-                          method='SLSQP', args=(data, pdf), bounds=par_bounds)
+        cons = {'type': 'eq', 'fun': lambda v: v[pdf.config.poi_index] - constrained_mu}
+        result = minimize(
+            objective,
+            init_pars,
+            constraints=cons,
+            method='SLSQP',
+            args=(data, pdf),
+            bounds=par_bounds,
+        )
         try:
             assert result.success
         except AssertionError:

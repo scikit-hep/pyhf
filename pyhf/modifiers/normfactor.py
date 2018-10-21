@@ -1,11 +1,13 @@
 import logging
-log = logging.getLogger(__name__)
 
 from . import modifier
 from ..paramsets import unconstrained
 from .. import get_backend, default_backend, events
 
-@modifier(name='normfactor', op_code = 'multiplication')
+log = logging.getLogger(__name__)
+
+
+@modifier(name='normfactor', op_code='multiplication')
 class normfactor(object):
     @classmethod
     def required_parset(cls, n_parameters):
@@ -17,20 +19,19 @@ class normfactor(object):
             'is_shared': True,
             'op_code': cls.op_code,
             'inits': (1.0,),
-            'bounds': ((0, 10),)
+            'bounds': ((0, 10),),
         }
 
+
 class normfactor_combined(object):
-    def __init__(self,normfactor_mods,pdfconfig,mega_mods):
+    def __init__(self, normfactor_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._normfactor_indices = [self._parindices[pdfconfig.par_slice(m)] for m in normfactor_mods]
+        self._normfactor_indices = [
+            self._parindices[pdfconfig.par_slice(m)] for m in normfactor_mods
+        ]
         self._normfactor_mask = [
-            [
-                [
-                    mega_mods[s][m]['data']['mask'],
-                ]
-                for s in pdfconfig.samples
-            ] for m in normfactor_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
+            for m in normfactor_mods
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -39,15 +40,23 @@ class normfactor_combined(object):
         tensorlib, _ = get_backend()
         self.normfactor_mask = default_backend.astensor(self._normfactor_mask)
         self.normfactor_default = default_backend.ones(self.normfactor_mask.shape)
-        self.normfactor_indices = default_backend.astensor(self._normfactor_indices, dtype='int')
+        self.normfactor_indices = default_backend.astensor(
+            self._normfactor_indices, dtype='int'
+        )
 
-    def apply(self,pars):
+    def apply(self, pars):
         tensorlib, _ = get_backend()
         normfactor_indices = tensorlib.astensor(self.normfactor_indices, dtype='int')
         normfactor_mask = tensorlib.astensor(self.normfactor_mask)
         if not tensorlib.shape(normfactor_indices)[0]:
             return
-        normfactors = tensorlib.gather(pars,normfactor_indices)
-        results_normfactor = normfactor_mask * tensorlib.reshape(normfactors,tensorlib.shape(normfactors) + (1,1))
-        results_normfactor = tensorlib.where(normfactor_mask,results_normfactor,tensorlib.astensor(self.normfactor_default))
+        normfactors = tensorlib.gather(pars, normfactor_indices)
+        results_normfactor = normfactor_mask * tensorlib.reshape(
+            normfactors, tensorlib.shape(normfactors) + (1, 1)
+        )
+        results_normfactor = tensorlib.where(
+            normfactor_mask,
+            results_normfactor,
+            tensorlib.astensor(self.normfactor_default),
+        )
         return results_normfactor

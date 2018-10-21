@@ -1,7 +1,9 @@
 import torch
 import torch.autograd
 import logging
+
 log = logging.getLogger(__name__)
+
 
 class pytorch_backend(object):
     """PyTorch backend for pyhf"""
@@ -36,15 +38,16 @@ class pytorch_backend(object):
         try:
             return tensor_in.data.numpy().tolist()
         except AttributeError:
-            if isinstance(tensor_in, list): return tensor_in
+            if isinstance(tensor_in, list):
+                return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return torch.ger(tensor_in_1,tensor_in_2)
+        return torch.ger(tensor_in_1, tensor_in_2)
 
-    def astensor(self, tensor_in, dtype = 'float'):
+    def astensor(self, tensor_in, dtype='float'):
         """
         Convert to a PyTorch Tensor.
 
@@ -56,24 +59,28 @@ class pytorch_backend(object):
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         dtype = dtypemap[dtype]
-        return torch.as_tensor(tensor_in, dtype = dtype)
+        return torch.as_tensor(tensor_in, dtype=dtype)
 
-    def gather(self,tensor,indices):
-        return torch.take(tensor,indices.type(torch.LongTensor))
+    def gather(self, tensor, indices):
+        return torch.take(tensor, indices.type(torch.LongTensor))
 
     def boolean_mask(self, tensor, mask):
         mask = self.astensor(mask).type(torch.ByteTensor)
-        return torch.masked_select(tensor,mask)
+        return torch.masked_select(tensor, mask)
 
     def reshape(self, tensor, newshape):
-        return torch.reshape(tensor,newshape)
+        return torch.reshape(tensor, newshape)
 
     def shape(self, tensor):
-        return tuple(map(int,tensor.shape))
+        return tuple(map(int, tensor.shape))
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
-        return torch.sum(tensor_in) if (axis is None or tensor_in.shape == torch.Size([])) else torch.sum(tensor_in, axis)
+        return (
+            torch.sum(tensor_in)
+            if (axis is None or tensor_in.shape == torch.Size([]))
+            else torch.sum(tensor_in, axis)
+        )
 
     def product(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -94,31 +101,31 @@ class pytorch_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
 
-    def sqrt(self,tensor_in):
+    def sqrt(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return torch.sqrt(tensor_in)
 
-    def divide(self,tensor_in_1, tensor_in_2):
+    def divide(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
         return torch.div(tensor_in_1, tensor_in_2)
 
-    def log(self,tensor_in):
+    def log(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return torch.log(tensor_in)
 
-    def exp(self,tensor_in):
+    def exp(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
         return torch.exp(tensor_in)
 
-    def stack(self, sequence, axis = 0):
-        return torch.stack(sequence,dim = axis)
+    def stack(self, sequence, axis=0):
+        return torch.stack(sequence, dim=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         mask = self.astensor(mask).type(torch.FloatTensor)
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1-mask) * tensor_in_2
+        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
 
     def concatenate(self, sequence, axis=0):
         """
@@ -157,6 +164,7 @@ class pytorch_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
+
         def generic_len(a):
             try:
                 return len(a)
@@ -171,11 +179,14 @@ class pytorch_backend(object):
         try:
             assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
         except AssertionError as error:
-            log.error('ERROR: The arguments must be of compatible size: 1 or %i', max_dim)
+            log.error(
+                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
+            )
             raise error
 
-        broadcast = [arg if generic_len(arg) > 1 else arg.expand(max_dim)
-                     for arg in args]
+        broadcast = [
+            arg if generic_len(arg) > 1 else arg.expand(max_dim) for arg in args
+        ]
         return broadcast
 
     def einsum(self, subscripts, *operands):
@@ -262,7 +273,7 @@ class pytorch_backend(object):
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
-    def normal_cdf(self, x, mu=[0.], sigma=[1.]):
+    def normal_cdf(self, x, mu=[0.0], sigma=[1.0]):
         """
         The cumulative distribution function for the Normal distribution
 

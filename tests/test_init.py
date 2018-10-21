@@ -1,13 +1,17 @@
 import pytest
 import sys
 
-@pytest.mark.parametrize("param", [
+
+@pytest.mark.parametrize(
+    "param",
+    [
         ["numpy", "numpy_backend", pytest.raises(ImportError)],
         ["torch", "pytorch_backend", pytest.raises(AttributeError)],
         ["tensorflow", "tensorflow_backend", pytest.raises(AttributeError)],
         ["mxnet", "mxnet_backend", pytest.raises(AttributeError)],
     ],
-    ids=["numpy", "pytorch", "tensorflow", "mxnet"])
+    ids=["numpy", "pytorch", "tensorflow", "mxnet"],
+)
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, expectation = param
 
@@ -20,6 +24,7 @@ def test_missing_backends(isolate_modules, param):
 
     with expectation:
         import pyhf.tensor
+
         getattr(pyhf.tensor, module_name)
 
     # put back
