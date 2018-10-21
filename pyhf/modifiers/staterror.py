@@ -15,8 +15,8 @@ class staterror(object):
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
             'op_code': cls.op_code,
-            'inits': [1.] * n_parameters,
-            'bounds': [[1e-10, 10.]] * n_parameters,
-            'auxdata': [1.] * n_parameters,
-            'factors': [] * n_parameters
+            'inits': (1.,) * n_parameters,
+            'bounds': ((1e-10, 10.),) * n_parameters,
+            'auxdata': (1.,) * n_parameters,
+            'factors': () * n_parameters
         }

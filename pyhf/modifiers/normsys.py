@@ -16,8 +16,8 @@ class normsys(object):
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
             'op_code': cls.op_code,
-            'inits': [0.0] * n_parameters,
-            'bounds': [[-5., 5.]] * n_parameters,
-            'auxdata': [0.] * n_parameters,
-            'factors': [] * n_parameters
+            'inits': (0.0,) * n_parameters,
+            'bounds': ((-5., 5.),) * n_parameters,
+            'auxdata': (0.,) * n_parameters,
+            'factors': () * n_parameters
         }

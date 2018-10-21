@@ -128,33 +128,33 @@ class _ModelConfig(object):
         self.paramsets.get(name).append(parset)
 
     def combine_paramsets(self):
+        param_keys = ['constraint',
+                      'n_parameters',
+                      'op_code',
+                      'inits',
+                      'bounds',
+                      'auxdata',
+                      'factors']
+
         for param_name in list(self.paramsets.keys()):
             params = self.paramsets[param_name]
 
-            if len(params) == 1:
-                self.paramsets[param_name] = self.paramsets[param_name][0]
-            else:
-                channel_sample = set([])
-                constraints = set([])
-                n_parameters = set([])
-                mod_types = set([])
-                for param in params:
-                    channel_sample.add(param['channel,sample'])
-                    constraints.add(param['constraint'])
-                    n_parameters.add(param['n_parameters'])
-                    mod_types.add(param['modifier'])
+            combined_param = {}
+            for param in params:
+                for k in param_keys:
+                    combined_param.setdefault(k, set([])).add(param[k])
 
-                if len(constraints) != 1:
-                    raise exceptions.InvalidNameReuse("Multiply constraint types were found for {} ({}).".format(param_name, list(constraints)))
-                    raise ValueError("Multiple constraint types exist for {}".format(param_name))
+            for k in param_keys:
+                v = combined_param[k]
+                if len(v) != 1:
+                    raise exceptions.InvalidNameReuse("Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(k, list(v), param_name))
+                else:
+                    v = list(v)[0]
+                    if isinstance(v, tuple): v = list(v)
+                    combined_param[k] = v
 
-                if len(mod_types) != 1:
-                    raise exceptions.InvalidNameReuse('Shared paramsets of multiple modifier types were found for {} ({}). Use unique modifier names or use qualify_names=True when constructing the pdf.'.format(param_name, list(mod_types)))
-
-                mod_type = list(mod_types)[0]
-
-                self.paramsets[param_name] = modifiers.registry[mod_type].required_parset(max(n_parameters))
-                self.paramsets[param_name].update({'channel,sample': list(channel_sample)})
+            # unique enough, so combine
+            self.paramsets[param_name] = combined_param
 
     def add_paramsets(self):
         for name,param in self.paramsets.items():

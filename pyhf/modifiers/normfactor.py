@@ -16,8 +16,8 @@ class normfactor(object):
             'is_constrained': cls.is_constrained,
             'is_shared': cls.is_shared,
             'op_code': cls.op_code,
-            'inits': [1.0] * n_parameters,
-            'bounds': [[0, 10]] * n_parameters,
-            'auxdata': [] * n_parameters,
-            'factors': [] * n_parameters
+            'inits': (1.0,) * n_parameters,
+            'bounds': ((0, 10),) * n_parameters,
+            'auxdata': () * n_parameters,
+            'factors': () * n_parameters
         }
