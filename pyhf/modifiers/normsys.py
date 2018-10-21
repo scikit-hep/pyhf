@@ -1,11 +1,11 @@
 import logging
 
-log = logging.getLogger(__name__)
-
 from . import modifier
 from ..paramsets import constrained_by_normal
 from .. import get_backend, events
 from ..interpolate import _hfinterpolator_code1
+
+log = logging.getLogger(__name__)
 
 
 @modifier(name='normsys', constrained=True, op_code='multiplication')

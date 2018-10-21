@@ -1,10 +1,10 @@
 import logging
 
-log = logging.getLogger(__name__)
-
 from . import modifier
 from ..paramsets import constrained_by_poisson
 from .. import get_backend, default_backend, events
+
+log = logging.getLogger(__name__)
 
 
 @modifier(
