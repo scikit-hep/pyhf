@@ -56,10 +56,6 @@ class staterror_combined(object):
                 # then apply the mask
                 summed_mask[positive_mask] = inds
                 summed_mask[zero_mask] = 0
-                # nb: old code above was
-                #     summed_mask[summed_mask > 0] = inds
-                #     summed_mask[summed_mask == 0] = -1
-                # This code broke when the `inds` included a '0' because it would replace that value with -1.
                 access_rows.append(summed_mask.tolist())
             self._factor_access_indices = default_backend.tolist(default_backend.stack(access_rows))
             self.finalize(pdfconfig)
