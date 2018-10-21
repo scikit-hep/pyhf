@@ -35,6 +35,7 @@ extras_require = {
         'uproot>=3.0.0',
         'papermill',
         'graphviz',
+        'bumpversion',
         'sphinx',
         'sphinxcontrib-bibtex',
         'sphinxcontrib-napoleon',
