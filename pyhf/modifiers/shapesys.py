@@ -58,7 +58,7 @@ class shapesys_combined(object):
                 zero_mask = summed_mask == 0
                 # then apply the mask
                 summed_mask[positive_mask] = inds
-                summed_mask[zero_mask] = 0
+                summed_mask[zero_mask] = len(self._parindices) - 1
                 access_rows.append(summed_mask.tolist())
             self._factor_access_indices = default_backend.tolist(default_backend.stack(access_rows))
             self.finalize(pdfconfig)
