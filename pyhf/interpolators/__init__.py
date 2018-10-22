@@ -18,6 +18,7 @@ def _slow_interpolator_looper(histogramssets, alphasets, func):
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
 from .code0 import code0, _slow_code0
 from .code1 import code1, _slow_code1
+from .code2 import code2, _slow_code2
 from .. import exceptions
 
 
@@ -25,6 +26,7 @@ def get(interpcode, do_tensorized_calc=True):
     interpcodes = {
         0: code0 if do_tensorized_calc else _slow_code0,
         1: code1 if do_tensorized_calc else _slow_code1,
+        2: code2 if do_tensorized_calc else _slow_code2,
     }
 
     try:
@@ -33,4 +35,4 @@ def get(interpcode, do_tensorized_calc=True):
         raise exceptions.InvalidInterpCode
 
 
-__all__ = ['code0', 'code1']
+__all__ = ['code0', 'code1', 'code2']
