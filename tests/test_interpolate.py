@@ -56,9 +56,7 @@ def random_histosets_alphasets_pair():
 def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    interpolator = getattr(
-        pyhf.interpolate, '_hfinterpolator_code{}'.format(interpcode)
-    )(histogramssets.tolist())
+    interpolator = pyhf.interpolators.get(interpcode)(histogramssets.tolist())
     assert interpolator.alphasets_shape == (histogramssets.shape[0], 1)
     interpolator(pyhf.tensorlib.astensor(alphasets.tolist()))
     assert interpolator.alphasets_shape == alphasets.shape
@@ -76,19 +74,17 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
         histogramssets = np.asarray(histogramssets, dtype=np.float32)
         alphasets = np.asarray(alphasets, dtype=np.float32)
 
-    slow_result = np.asarray(
-        pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=False)(
-            histogramssets=histogramssets, alphasets=alphasets
-        )
+    histogramssets = histogramssets.tolist()
+    alphasets = pyhf.tensorlib.astensor(alphasets.tolist())
+
+    slow_interpolator = pyhf.interpolators.get(interpcode, do_tensorized_calc=False)(
+        histogramssets
     )
-    fast_result = np.asarray(
-        pyhf.tensorlib.tolist(
-            pyhf.interpolate.interpolator(interpcode, do_tensorized_calc=True)(
-                histogramssets=pyhf.tensorlib.astensor(histogramssets.tolist()),
-                alphasets=pyhf.tensorlib.astensor(alphasets.tolist()),
-            )
-        )
+    fast_interpolator = pyhf.interpolators.get(interpcode, do_tensorized_calc=True)(
+        histogramssets
     )
+    slow_result = np.asarray(slow_interpolator(alphasets))
+    fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
 
     assert (
         pytest.approx(slow_result[~np.isnan(slow_result)].ravel().tolist())
@@ -99,24 +95,21 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
 def test_interpcode_0(backend, do_tensorized_calc):
-    histogramssets = pyhf.tensorlib.astensor([[[[0.5], [1.0], [2.0]]]])
+    histogramssets = [[[[0.5], [1.0], [2.0]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor([[[[0], [0.5], [1.0], [2.0], [3.0]]]])
 
-    if do_tensorized_calc:
-        result_deltas = pyhf.interpolate.interpolator(
-            0, do_tensorized_calc=do_tensorized_calc
-        )(histogramssets, alphasets)
-    else:
-        result_deltas = pyhf.tensorlib.astensor(
-            pyhf.interpolate.interpolator(0, do_tensorized_calc=do_tensorized_calc)(
-                pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)
-            )
-        )
+    interpolator = pyhf.interpolators.get(0, do_tensorized_calc=do_tensorized_calc)(
+        histogramssets
+    )
+    result_deltas = pyhf.tensorlib.astensor(interpolator(alphasets))
 
     # calculate the actual change
+    histogramssets = pyhf.tensorlib.astensor(histogramssets)
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
-        'sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:, :, 1]
+        'sa,shb->shab',
+        pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
+        histogramssets[:, :, 1],
     )
     results = allsets_allhistos_noms_repeated + result_deltas
 
@@ -129,26 +122,23 @@ def test_interpcode_0(backend, do_tensorized_calc):
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
 def test_interpcode_1(backend, do_tensorized_calc):
-    histogramssets = pyhf.tensorlib.astensor([[[[0.9], [1.0], [1.1]]]])
+    histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor(
         [[[[0.9 ** 2], [0.9], [1.0], [1.1], [1.1 ** 2]]]]
     )
 
-    if do_tensorized_calc:
-        result_deltas = pyhf.interpolate.interpolator(
-            1, do_tensorized_calc=do_tensorized_calc
-        )(histogramssets, alphasets)
-    else:
-        result_deltas = pyhf.tensorlib.astensor(
-            pyhf.interpolate.interpolator(1, do_tensorized_calc=do_tensorized_calc)(
-                pyhf.tensorlib.tolist(histogramssets), pyhf.tensorlib.tolist(alphasets)
-            )
-        )
+    interpolator = pyhf.interpolators.get(1, do_tensorized_calc=do_tensorized_calc)(
+        histogramssets
+    )
+    result_deltas = pyhf.tensorlib.astensor(interpolator(alphasets))
 
     # calculate the actual change
+    histogramssets = pyhf.tensorlib.astensor(histogramssets)
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
-        'sa,shb->shab', pyhf.tensorlib.ones(alphasets.shape), histogramssets[:, :, 1]
+        'sa,shb->shab',
+        pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
+        histogramssets[:, :, 1],
     )
     results = allsets_allhistos_noms_repeated * result_deltas
 
@@ -160,10 +150,10 @@ def test_interpcode_1(backend, do_tensorized_calc):
 
 def test_invalid_interpcode():
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
-        pyhf.interpolate.interpolator('fake')
+        pyhf.interpolators.get('fake')
 
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
-        pyhf.interpolate.interpolator(1.2)
+        pyhf.interpolators.get(1.2)
 
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
-        pyhf.interpolate.interpolator(-1)
+        pyhf.interpolators.get(-1)
