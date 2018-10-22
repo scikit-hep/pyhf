@@ -83,7 +83,7 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     fast_interpolator = pyhf.interpolators.get(interpcode, do_tensorized_calc=True)(
         histogramssets
     )
-    slow_result = np.asarray(slow_interpolator(alphasets))
+    slow_result = np.asarray(pyhf.tensorlib.tolist(slow_interpolator(alphasets)))
     fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
 
     assert (
@@ -131,7 +131,7 @@ def test_interpcode_1(backend, do_tensorized_calc):
     interpolator = pyhf.interpolators.get(1, do_tensorized_calc=do_tensorized_calc)(
         histogramssets
     )
-    result_deltas = pyhf.tensorlib.astensor(interpolator(alphasets))
+    result_deltas = interpolator(alphasets)
 
     # calculate the actual change
     histogramssets = pyhf.tensorlib.astensor(histogramssets)

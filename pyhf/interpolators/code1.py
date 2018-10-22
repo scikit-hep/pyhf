@@ -91,6 +91,8 @@ class _slow_code1(object):
 
     def __call__(self, alphasets):
         tensorlib, _ = get_backend()
-        return _slow_interpolator_looper(
-            self._histogramssets, tensorlib.tolist(alphasets), self.product
+        return tensorlib.astensor(
+            _slow_interpolator_looper(
+                self._histogramssets, tensorlib.tolist(alphasets), self.product
+            )
         )
