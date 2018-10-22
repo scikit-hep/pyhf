@@ -43,7 +43,7 @@ class code1(object):
                 self._histogramssets[:, :, 0], self._histogramssets[:, :, 1]
             )
         )
-        self.broadcast_helper = tensorlib.ones(self.deltas_up.shape)
+        self.broadcast_helper = tensorlib.ones(tensorlib.shape(self.deltas_up))
         self.bases_up = tensorlib.einsum(
             'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
         )

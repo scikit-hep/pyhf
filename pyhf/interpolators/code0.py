@@ -39,7 +39,7 @@ class code0(object):
         self.deltas_dn = tensorlib.astensor(
             self._histogramssets[:, :, 1] - self._histogramssets[:, :, 0]
         )
-        self.broadcast_helper = tensorlib.ones(self.deltas_up.shape)
+        self.broadcast_helper = tensorlib.ones(tensorlib.shape(self.deltas_up))
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
