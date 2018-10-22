@@ -2,10 +2,17 @@
 
 from setuptools import setup, find_packages
 from os import path
+import sys
 
 this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
-    long_description = readme_md.read()
+if sys.version_info.major < 3:
+    from io import open
+
+    with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
+        long_description = readme_md.read()
+else:
+    with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
+        long_description = readme_md.read()
 
 extras_require = {
     'tensorflow': [
