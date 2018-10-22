@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
+    long_description = readme_md.read()
 
 extras_require = {
     'tensorflow': [
@@ -46,6 +51,7 @@ extras_require = {
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
         'pre-commit',
         'black;python_version>="3.6"',  # Black is Python3 only
+        'twine',
     ],
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
@@ -54,6 +60,8 @@ setup(
     name='pyhf',
     version='0.0.15',
     description='(partial) pure python histfactory implementation',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/diana-hep/pyhf',
     author='Lukas Heinrich',
     author_email='lukas.heinrich@cern.ch',
