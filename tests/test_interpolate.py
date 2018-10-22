@@ -52,7 +52,7 @@ def random_histosets_alphasets_pair():
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.parametrize("interpcode", [0, 1])
+@pytest.mark.parametrize("interpcode", [0, 1, 2])
 def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
@@ -63,16 +63,17 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.parametrize("interpcode", [0, 1])
+@pytest.mark.parametrize("interpcode", [0, 1, 2])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     # single-float precision backends, calculate using single-floats
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend) or isinstance(
-        pyhf.tensorlib, pyhf.tensor.pytorch_backend
-    ):
+    if pyhf.tensorlib.name in ['tensorflow', 'pytorch']:
+        abs_tolerance = 1e-6
         histogramssets = np.asarray(histogramssets, dtype=np.float32)
         alphasets = np.asarray(alphasets, dtype=np.float32)
+    else:
+        abs_tolerance = 1e-12
 
     histogramssets = histogramssets.tolist()
     alphasets = pyhf.tensorlib.astensor(alphasets.tolist())
@@ -87,7 +88,9 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
 
     assert (
-        pytest.approx(slow_result[~np.isnan(slow_result)].ravel().tolist())
+        pytest.approx(
+            slow_result[~np.isnan(slow_result)].ravel().tolist(), abs=abs_tolerance
+        )
         == fast_result[~np.isnan(fast_result)].ravel().tolist()
     )
 
