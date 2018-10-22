@@ -7,6 +7,21 @@ log = logging.getLogger(__name__)
 
 
 class code1(object):
+    r"""
+    The piecewise-exponential interpolation strategy.
+
+    .. math::
+        \eta_s (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) \underbrace{\prod_{p \in \text{Syst}} I_\text{exp.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{factors to calculate}
+
+
+    with
+
+    .. math::
+        I_\text{exp.}(\alpha; I^0, I^+, I^-) = \begin{cases} \left(\frac{I^+}{I^0}\right)^{\alpha} \qquad \alpha \geq 0\\ \left(\frac{I^-}{I^0}\right)^{-\alpha} \qquad \alpha < 0 \end{cases}
+
+
+    """
+
     def __init__(self, histogramssets, subscribe=True):
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)

@@ -8,6 +8,8 @@ log = logging.getLogger(__name__)
 
 class code0(object):
     r"""
+    The piecewise-linear interpolation strategy.
+
     .. math::
         \eta_s (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
 
