@@ -138,7 +138,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
 
     Keyword Args:
-        return_observed_set (bool): Bool for returning :math:`CL_{s+b}` and :math:`CL_{b}`
+        return_p_values (bool): Bool for returning :math:`CL_{s+b}` and :math:`CL_{b}`
         return_expected (bool): Bool for returning :math:`CL_{\textrm{exp}}`
         return_expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`CL_{\textrm{exp}}` --- the "Brazil band"
         return_test_statistics (bool): Bool for returning :math:`q_{\mu}` and :math:`q_{\mu,A}`
@@ -148,7 +148,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
             :math:`CL_{s}`: The modified :math:`p`-value
 
-            :math:`\left[CL_{s+b}, CL_{b}\right]`: The signal + background and background-only :math:`p`-values. Only returned when :code:`return_observed_set` is :code:`True`.
+            :math:`\left[CL_{s+b}, CL_{b}\right]`: The signal + background and background-only :math:`p`-values. Only returned when :code:`return_p_values` is :code:`True`.
 
             :math:`CL_{\textrm{exp}}`: The expected :math:`CL_{s}` value corresponding to the background-only. Only returned when :code:`return_expected` is :code:`True`.
 
@@ -175,7 +175,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
     _returns = [CLs]
-    if kwargs.get('return_observed_set'):
+    if kwargs.get('return_p_values'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
