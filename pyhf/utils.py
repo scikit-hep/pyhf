@@ -127,12 +127,12 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
     return CLsb, CLb, CLs
 
 
-def cls(mu_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
+def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     r"""
     Computes test statistics (and expected statistics) for a single value of the parameter of interest
 
     Args:
-        mu_test (Number or Tensor): The value of the parameter of interest (POI)
+        poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
@@ -164,11 +164,11 @@ def cls(mu_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v = tensorlib.clip(qmu(mu_test, data, pdf, init_pars, par_bounds), 0, max=None)
+    qmu_v = tensorlib.clip(qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max=None)
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
     qmuA_v = tensorlib.clip(
-        qmu(mu_test, asimov_data, pdf, init_pars, par_bounds), 0, max=None
+        qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max=None
     )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
@@ -176,37 +176,21 @@ def cls(mu_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     _returns = CLs
     if kwargs:
         _returns = [CLs]
-        if 'observed_set' in kwargs:
-            observed_set = kwargs['observed_set']
-        else:
-            observed_set = False
-        if 'expected' in kwargs:
-            expected = kwargs['expected']
-        else:
-            expected = False
-        if 'expected_set' in kwargs:
-            expected_set = kwargs['expected_set']
-        else:
-            expected_set = False
-        if 'test_statistics' in kwargs:
-            test_statistics = kwargs['test_statistics']
-        else:
-            test_statistics = False
 
-        if observed_set:
+        if kwargs.get('observed_set'):
             _returns.append([CLsb, CLb])
-        if expected_set:
+        if kwargs.get('expected_set'):
             CLs_exp = []
             for n_sigma in [-2, -1, 0, 1, 2]:
                 sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
                 CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
             CLs_exp = tensorlib.astensor(CLs_exp)
-            if expected:
+            if kwargs.get('expected'):
                 _returns.append(CLs_exp[2])
             _returns.append(CLs_exp)
-        elif expected:
+        elif kwargs.get('expected'):
             _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
-        if test_statistics:
+        if kwargs.get('test_statistics'):
             _returns.append([qmu_v, qmuA_v])
         _returns = tuple(_returns)
 
