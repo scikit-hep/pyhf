@@ -138,23 +138,23 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
 
     Keyword Args:
-        observed_set (bool): Bool for returning :math:`CL_{s+b}` and :math:`CL_{b}`
-        expected (bool): Bool for returning :math:`CL_{\textrm{exp}}`
-        expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`CL_{\textrm{exp}}` --- the "Brazil band"
-        test_statistics (bool): Bool for returning :math:`q_{\mu}` and :math:`q_{\mu,A}`
+        return_observed_set (bool): Bool for returning :math:`CL_{s+b}` and :math:`CL_{b}`
+        return_expected (bool): Bool for returning :math:`CL_{\textrm{exp}}`
+        return_expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`CL_{\textrm{exp}}` --- the "Brazil band"
+        return_test_statistics (bool): Bool for returning :math:`q_{\mu}` and :math:`q_{\mu,A}`
 
     Returns:
         Tuple of Floats and lists of Floats:
 
             :math:`CL_{s}`: The modified :math:`p`-value
 
-            :math:`\left[CL_{s+b}, CL_{b}\right]`: The signal + background and background-only :math:`p`-values. Only returned when :code:`observed_set` is :code:`True`.
+            :math:`\left[CL_{s+b}, CL_{b}\right]`: The signal + background and background-only :math:`p`-values. Only returned when :code:`return_observed_set` is :code:`True`.
 
-            :math:`CL_{\textrm{exp}}`: The expected :math:`CL_{s}` value corresponding to the background-only. Only returned when :code:`expected` is :code:`True`.
+            :math:`CL_{\textrm{exp}}`: The expected :math:`CL_{s}` value corresponding to the background-only. Only returned when :code:`return_expected` is :code:`True`.
 
-            :math:`\left(CL_{\textrm{exp}}\right)`: 5-tuple of expected :math:`CL_{s}` values at percentiles of the background-only test-statistics corresponding to percentiles of the normal distribution for :math:`(-2,-1,0,1,2)\sigma`. Also known as the "Brazil band". Only returned when :code:`expected_set` is :code:`True`.
+            :math:`\left(CL_{\textrm{exp}}\right)`: 5-tuple of expected :math:`CL_{s}` values at percentiles of the background-only test-statistics corresponding to percentiles of the normal distribution for :math:`(-2,-1,0,1,2)\sigma`. Also known as the "Brazil band". Only returned when :code:`return_expected_set` is :code:`True`.
 
-            :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when :code:`test_statistics` is :code:`True`.
+            :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when :code:`return_test_statistics` is :code:`True`.
     """
 
     init_pars = init_pars or pdf.config.suggested_init()
@@ -177,20 +177,20 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     if kwargs:
         _returns = [CLs]
 
-        if kwargs.get('observed_set'):
+        if kwargs.get('return_observed_set'):
             _returns.append([CLsb, CLb])
-        if kwargs.get('expected_set'):
+        if kwargs.get('return_expected_set'):
             CLs_exp = []
             for n_sigma in [-2, -1, 0, 1, 2]:
                 sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
                 CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
             CLs_exp = tensorlib.astensor(CLs_exp)
-            if kwargs.get('expected'):
+            if kwargs.get('return_expected'):
                 _returns.append(CLs_exp[2])
             _returns.append(CLs_exp)
-        elif kwargs.get('expected'):
+        elif kwargs.get('return_expected'):
             _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
-        if kwargs.get('test_statistics'):
+        if kwargs.get('return_test_statistics'):
             _returns.append([qmu_v, qmuA_v])
         _returns = tuple(_returns)
 
