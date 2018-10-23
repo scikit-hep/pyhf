@@ -11,7 +11,7 @@ class code1(object):
     The piecewise-exponential interpolation strategy.
 
     .. math::
-        \eta_s (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) \underbrace{\prod_{p \in \text{Syst}} I_\text{exp.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{factors to calculate}
+        \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) \underbrace{\prod_{p \in \text{Syst}} I_\text{exp.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{factors to calculate}
 
 
     with
@@ -91,8 +91,7 @@ class code1(object):
 
 
 class _slow_code1(object):
-    @classmethod
-    def product(cls, down, nom, up, alpha):
+    def product(self, down, nom, up, alpha):
         delta_up = up / nom
         delta_down = down / nom
         if alpha > 0:

@@ -11,7 +11,7 @@ class code2(object):
     The quadratic interpolation and linear extrapolation strategy.
 
     .. math::
-        \eta_s (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{quad.|lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
+        \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{quad.|lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
 
 
     with
@@ -107,13 +107,12 @@ class code2(object):
 
 
 class _slow_code2(object):
-    @classmethod
-    def summand(cls, down, nom, up, alpha):
+    def summand(self, down, nom, up, alpha):
         a = 0.5 * (up + down) - nom
         b = 0.5 * (up - down)
         if alpha > 1:
             delta = (b + 2 * a) * (alpha - 1)
-        if -1 <= alpha <= 1:
+        elif -1 <= alpha <= 1:
             delta = a * alpha * alpha + b * alpha
         else:
             delta = (b - 2 * a) * (alpha + 1)

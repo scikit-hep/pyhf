@@ -11,7 +11,7 @@ class code0(object):
     The piecewise-linear interpolation strategy.
 
     .. math::
-        \eta_s (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
+        \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
 
 
     with
@@ -77,8 +77,7 @@ class code0(object):
 
 
 class _slow_code0(object):
-    @classmethod
-    def summand(cls, down, nom, up, alpha):
+    def summand(self, down, nom, up, alpha):
         delta_up = up - nom
         delta_down = nom - down
         if alpha > 0:
