@@ -192,9 +192,4 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
         _returns.append([qmu_v, qmuA_v])
 
     # Enforce a consistent return type of the observed CLs
-    if len(_returns) > 1:
-        _returns = tuple(_returns)
-    else:
-        _returns = _returns[0]
-
-    return _returns
+    return tuple(_returns) if len(_returns) > 1 else _returns[0]
