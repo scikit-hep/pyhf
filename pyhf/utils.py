@@ -173,25 +173,28 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
-    _returns = CLs
-    if kwargs:
-        _returns = [CLs]
 
-        if kwargs.get('return_observed_set'):
-            _returns.append([CLsb, CLb])
-        if kwargs.get('return_expected_set'):
-            CLs_exp = []
-            for n_sigma in [-2, -1, 0, 1, 2]:
-                sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
-                CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
-            CLs_exp = tensorlib.astensor(CLs_exp)
-            if kwargs.get('return_expected'):
-                _returns.append(CLs_exp[2])
-            _returns.append(CLs_exp)
-        elif kwargs.get('return_expected'):
-            _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
-        if kwargs.get('return_test_statistics'):
-            _returns.append([qmu_v, qmuA_v])
+    _returns = [CLs]
+    if kwargs.get('return_observed_set'):
+        _returns.append([CLsb, CLb])
+    if kwargs.get('return_expected_set'):
+        CLs_exp = []
+        for n_sigma in [-2, -1, 0, 1, 2]:
+            sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
+            CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+        CLs_exp = tensorlib.astensor(CLs_exp)
+        if kwargs.get('return_expected'):
+            _returns.append(CLs_exp[2])
+        _returns.append(CLs_exp)
+    elif kwargs.get('return_expected'):
+        _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
+    if kwargs.get('return_test_statistics'):
+        _returns.append([qmu_v, qmuA_v])
+
+    # Enforce a consistent return type of the observed CLs
+    if len(_returns) > 1:
         _returns = tuple(_returns)
+    else:
+        _returns = _returns[0]
 
     return _returns
