@@ -59,7 +59,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
-def test_runOnePoint_q_mu(
+def test_hypotest_q_mu(
     n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
 ):
     """
@@ -118,9 +118,14 @@ def test_runOnePoint_q_mu(
             backend.session = tf.Session()
         pyhf.set_backend(backend)
 
-        q_mu = pyhf.utils.runOnePoint(
-            1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds()
-        )[0]
+        q_mu = pyhf.utils.hypotest(
+            1.0,
+            data,
+            pdf,
+            pdf.config.suggested_init(),
+            pdf.config.suggested_bounds(),
+            return_test_statistics=True,
+        )[-1][0]
         test_statistic.append(pyhf.tensorlib.tolist(q_mu))
 
     # compare to NumPy/SciPy
