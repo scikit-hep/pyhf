@@ -63,7 +63,7 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.parametrize("interpcode", [0, 1, 2])
+@pytest.mark.parametrize("interpcode", [0, 1, 2, 4])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
