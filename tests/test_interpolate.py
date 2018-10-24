@@ -87,6 +87,8 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     slow_result = np.asarray(pyhf.tensorlib.tolist(slow_interpolator(alphasets)))
     fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
 
+    assert slow_result.shape == fast_result.shape
+
     assert (
         pytest.approx(
             slow_result[~np.isnan(slow_result)].ravel().tolist(), abs=abs_tolerance
