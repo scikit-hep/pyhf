@@ -133,8 +133,12 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
+        pdf (|pyhf.pdf.Model|_): The HistFactory statistical model
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
+
+    .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
+    .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Keyword Args:
         return_p_values (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
