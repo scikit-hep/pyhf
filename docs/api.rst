@@ -89,6 +89,8 @@ Interpolators
 
    code0
    code1
+   code2
+   code4
 
 Exceptions
 ----------
