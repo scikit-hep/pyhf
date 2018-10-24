@@ -181,9 +181,9 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
                 V\left[q\right] = \frac{4}{\sigma^{2}}
 
-            of the test statistic :math:`q` under the background only and and signal + background hypotheses. Only returned when :code:`return_p_values` is :code:`True`.
+            of the test statistic :math:`q` under the background only and and signal + background hypotheses. Only returned when ``return_p_values`` is ``True``.
 
-            - :math:`\textrm{CL}_{s,\textrm{exp}}`: The expected :math:`\textrm{CL}_{s}` value corresponding to the test statistic under the background only hypothesis :math:`\left(\mu=0\right)`. Only returned when :code:`return_expected` is :code:`True`.
+            - :math:`\textrm{CL}_{s,\textrm{exp}}`: The expected :math:`\textrm{CL}_{s}` value corresponding to the test statistic under the background only hypothesis :math:`\left(\mu=0\right)`. Only returned when ``return_expected`` is ``True``.
 
             - :math:`\textrm{CL}_{s,\textrm{exp}}` band: The set of expected :math:`\textrm{CL}_{s}` values corresponding to the median significance of variations of the signal strength from the background only hypothesis :math:`\left(\mu=0\right)` at :math:`(-2,-1,0,1,2)\sigma`. That is, the :math:`p`-values that satisfy Equation (89) of `arXiv:1007.1727`_
 
@@ -191,9 +191,9 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
                 \textrm{band}_{N\sigma} = \mu' + \sigma\,\Phi^{-1}\left(1-\alpha\right) \pm N\sigma
 
-            for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when :code:`return_expected_set` is :code:`True`.
+            for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when ``return_expected_set`` is ``True``.
 
-            - :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when :code:`return_test_statistics` is :code:`True`.
+            - :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when ``return_test_statistics`` is ``True``.
     """
 
     init_pars = init_pars or pdf.config.suggested_init()
