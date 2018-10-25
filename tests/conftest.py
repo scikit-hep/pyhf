@@ -96,3 +96,12 @@ def backend(request):
         pyhf.tensorlib.session = tf.Session()
 
     yield request.param
+
+
+@pytest.fixture(
+    scope='function',
+    params=[0, 1, 2, 4],
+    ids=['interpcode0', 'interpcode1', 'interpcode2', 'interpcode4'],
+)
+def interpcode(request):
+    yield request.param

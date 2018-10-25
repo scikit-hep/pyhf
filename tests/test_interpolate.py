@@ -1,6 +1,7 @@
 import pyhf
 import numpy as np
 import pytest
+import mock
 
 
 @pytest.fixture
@@ -52,18 +53,18 @@ def random_histosets_alphasets_pair():
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.parametrize("interpcode", [0, 1, 2])
 def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    interpolator = pyhf.interpolators.get(interpcode)(histogramssets.tolist(), subscribe=False)
+    interpolator = pyhf.interpolators.get(interpcode)(
+        histogramssets.tolist(), subscribe=False
+    )
     assert interpolator.alphasets_shape == (histogramssets.shape[0], 1)
     interpolator(pyhf.tensorlib.astensor(alphasets.tolist()))
     assert interpolator.alphasets_shape == alphasets.shape
 
 
 @pytest.mark.skip_mxnet
-@pytest.mark.parametrize("interpcode", [0, 1, 2, 4])
 def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
@@ -162,3 +163,27 @@ def test_invalid_interpcode():
 
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
         pyhf.interpolators.get(-1)
+
+
+def test_interpcode_subscription(interpcode, random_histosets_alphasets_pair):
+    histogramssets, alphasets = random_histosets_alphasets_pair
+    ename = 'tensorlib_changed'
+
+    # make a mock function
+    m = mock.Mock()
+    # inject into our interpolator class
+    interpolator_cls = pyhf.interpolators.get(interpcode)
+    interpolator_cls._precompute = m
+
+    interpolator = interpolator_cls(histogramssets.tolist(), subscribe=False)
+    assert m.call_count == 1
+    assert m not in pyhf.events.__events.get(ename, [])
+    pyhf.events.trigger(ename)()
+    assert m.call_count == 1
+
+    m.reset_mock()
+    interpolator = interpolator_cls(histogramssets.tolist(), subscribe=True)
+    assert m.call_count == 1
+    assert m in pyhf.events.__events.get(ename, [])
+    pyhf.events.trigger(ename)()
+    assert m.call_count == 2
