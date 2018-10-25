@@ -10,6 +10,7 @@
    talks
    installation
    development
+   faq
    api
    citations
 

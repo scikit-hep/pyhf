@@ -49,6 +49,7 @@ extras_require = {
         'sphinxcontrib-napoleon',
         'sphinx_rtd_theme',
         'nbsphinx',
+        'sphinx-issues',
         'm2r',
         'jsonpatch',
         'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
