@@ -1,6 +1,7 @@
 from .tensor import BackendRetriever as tensor
+from .optimize import OptimizerRetriever as optimize
 from .version import __version__
-from . import events, optimize
+from . import events
 
 tensorlib = tensor.numpy_backend()
 default_backend = tensorlib
