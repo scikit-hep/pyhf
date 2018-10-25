@@ -59,7 +59,11 @@ def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
         histogramssets.tolist(), subscribe=False
     )
     assert callable(interpolator)
+    assert hasattr(interpolator, 'alphasets_shape')
     assert hasattr(interpolator, '_precompute') and callable(interpolator._precompute)
+    assert hasattr(interpolator, '_precompute_alphasets') and callable(
+        interpolator._precompute_alphasets
+    )
 
 
 def test_interpolator_subscription(interpcode, random_histosets_alphasets_pair):
@@ -84,6 +88,22 @@ def test_interpolator_subscription(interpcode, random_histosets_alphasets_pair):
 
 
 @pytest.mark.skip_mxnet
+def test_interpolator_alphaset_change(
+    backend, interpcode, random_histosets_alphasets_pair
+):
+    histogramssets, alphasets = random_histosets_alphasets_pair
+    interpolator = pyhf.interpolators.get(interpcode)(
+        histogramssets.tolist(), subscribe=False
+    )
+    # set to None to force recomputation
+    interpolator.alphasets_shape = None
+    # expect recomputation to not fail
+    interpolator._precompute_alphasets(alphasets.shape)
+    # make sure it sets the right shape
+    assert interpolator.alphasets_shape == alphasets.shape
+
+
+@pytest.mark.skip_mxnet
 def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
@@ -91,12 +111,13 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
         histogramssets.tolist(), subscribe=False
     )
     assert interpolator.alphasets_shape == (histogramssets.shape[0], 1)
+    interpolator.alphasets_shape = None
     interpolator(pyhf.tensorlib.astensor(alphasets.tolist()))
     assert interpolator.alphasets_shape == alphasets.shape
 
 
 @pytest.mark.skip_mxnet
-def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
+def test_validate_implementation(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     # single-float precision backends, calculate using single-floats
@@ -131,7 +152,7 @@ def test_interpcode(backend, interpcode, random_histosets_alphasets_pair):
 
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
-def test_interpcode_0(backend, do_tensorized_calc):
+def test_code0_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor([[[[0], [0.5], [1.0], [2.0], [3.0]]]])
@@ -158,7 +179,7 @@ def test_interpcode_0(backend, do_tensorized_calc):
 
 @pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
-def test_interpcode_1(backend, do_tensorized_calc):
+def test_code1_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor(
