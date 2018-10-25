@@ -31,35 +31,37 @@ class code2(object):
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
+        # precompute terms that only depend on the histogramssets
+        self._a = (
+            0.5 * (self._histogramssets[:, :, 2] + self._histogramssets[:, :, 0])
+            - self._histogramssets[:, :, 1]
+        )
+        self._b = 0.5 * (self._histogramssets[:, :, 2] - self._histogramssets[:, :, 0])
+        self._b_plus_2a = self._b + 2 * self._a
+        self._b_minus_2a = self._b - 2 * self._a
+        self._broadcast_helper = default_backend.ones(default_backend.shape(self._a))
         self._precompute()
         if subscribe:
             events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.a = tensorlib.astensor(
-            0.5 * (self._histogramssets[:, :, 2] + self._histogramssets[:, :, 0])
-            - self._histogramssets[:, :, 1]
-        )
-        self.b = tensorlib.astensor(
-            0.5 * (self._histogramssets[:, :, 2] - self._histogramssets[:, :, 0])
-        )
-        self.b_plus_2a = self.b + 2 * self.a
-        self.b_minus_2a = self.b - 2 * self.a
+        self.a = tensorlib.astensor(self._a)
+        self.b = tensorlib.astensor(self._b)
+        self.b_plus_2a = tensorlib.astensor(self._b_plus_2a)
+        self.b_minus_2a = tensorlib.astensor(self._b_minus_2a)
         # make up the masks correctly
-        self.broadcast_helper = tensorlib.ones(tensorlib.shape(self.a))
+        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
-        self.ones = tensorlib.ones(self.alphasets_shape)
 
     def _precompute_alphasets(self, alphasets_shape):
         if alphasets_shape == self.alphasets_shape:
             return
         tensorlib, _ = get_backend()
-        self.mask_on = tensorlib.ones(alphasets_shape)
-        self.mask_off = tensorlib.zeros(alphasets_shape)
-        self.ones = tensorlib.ones(alphasets_shape)
         self.alphasets_shape = alphasets_shape
+        self.mask_on = tensorlib.ones(self.alphasets_shape)
+        self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
     def __call__(self, alphasets):
         tensorlib, _ = get_backend()
@@ -80,13 +82,13 @@ class code2(object):
         # h: histogram affected by modifier
         # b: bin of histogram
         value_gt1 = tensorlib.einsum(
-            'sa,shb->shab', alphasets - self.ones, self.b_plus_2a
+            'sa,shb->shab', alphasets - self.mask_on, self.b_plus_2a
         )
         value_btwn = tensorlib.einsum(
             'sa,sa,shb->shab', alphasets, alphasets, self.a
         ) + tensorlib.einsum('sa,shb->shab', alphasets, self.b)
         value_lt1 = tensorlib.einsum(
-            'sa,shb->shab', alphasets + self.ones, self.b_minus_2a
+            'sa,shb->shab', alphasets + self.mask_off, self.b_minus_2a
         )
 
         masks_gt1 = tensorlib.einsum(
