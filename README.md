@@ -52,10 +52,10 @@ Computational Backends:
 
 Available Optimizers
 
-| NumPy        |Tensorflow           |PyTorch  | MxNet|
-|:------------- |:-------------:|:-----|:-|
-| SLSQP (`scipy.optimize`)    | Newton's Method (autodiff)| Newton's Method (autodiff) | N/A |
-| MINUIT (`iminuit`)      |       |    | |
+| NumPy                       | Tensorflow                                | PyTorch                    | MxNet|
+|:----------------------------|:-----------------------------------------:|:---------------------------|:-----|
+| SLSQP (`scipy.optimize`)    | Newton's Method (autodiff)                | Newton's Method (autodiff) |  N/A |
+| MINUIT (`iminuit`)          |                                         . |                          . |    . |
 
 
 ## Todo
