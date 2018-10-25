@@ -49,7 +49,11 @@ extensions = [
     'sphinxcontrib.napoleon',
     'nbsphinx',
     'm2r',
+    'sphinx_issues',
 ]
+
+# Github repo
+issues_github_path = 'diana-hep/pyhf'
 
 # Generate the API documentation when building
 autosummary_generate = True

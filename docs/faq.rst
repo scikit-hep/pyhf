@@ -12,7 +12,7 @@ Is it possible to set the backend from the CLI?
 Not at the moment. `Pull Requests <https://github.com/diana-hep/pyhf/compare>`__ are welcome.
 
 See also:
-  - `#266 <https://github.com/diana-hep/pyhf/issues/266#issuecomment-422033611>`__
+  - :issue:`266`
 
 Troubleshooting
 ---------------
