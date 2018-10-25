@@ -3,7 +3,7 @@ import logging
 from . import modifier
 from ..paramsets import constrained_by_normal
 from .. import get_backend, events
-from ..interpolate import _hfinterpolator_code0
+from .. import interpolators
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class histosys_combined(object):
         ]
 
         if len(histosys_mods):
-            self.interpolator = _hfinterpolator_code0(self._histosys_histoset)
+            self.interpolator = interpolators.code0(self._histosys_histoset)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

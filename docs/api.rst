@@ -77,6 +77,21 @@ Modifiers
    shapesys
    staterror
 
+Interpolators
+-------------
+
+.. currentmodule:: pyhf.interpolators
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+   :template: modifierclass.rst
+
+   code0
+   code1
+   code2
+   code4
+
 Exceptions
 ----------
 
