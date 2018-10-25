@@ -30,40 +30,29 @@ class code4(object):
     """
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
+        # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
+        # we cannot calculate the coefficients (e.g. determinant == 0)
+        assert alpha0 > 0
+        self.__alpha0 = alpha0
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
-        # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
-        # we cannot calculate the coefficients (e.g. determinant == 0)
-        assert alpha0 > 0
-        self._broadcast_helper = default_backend.ones(
-            self._histogramssets[:, :, 0].shape
-        )
-        self.__alpha0 = alpha0
-        self._alpha0 = self._broadcast_helper * self.__alpha0
+        # precompute terms that only depend on the histogramssets
         self._deltas_up = default_backend.divide(
             self._histogramssets[:, :, 2], self._histogramssets[:, :, 1]
         )
         self._deltas_dn = default_backend.divide(
             self._histogramssets[:, :, 0], self._histogramssets[:, :, 1]
         )
+        self._broadcast_helper = default_backend.ones(
+            default_backend.shape(self._deltas_up)
+        )
+        self._alpha0 = self._broadcast_helper * self.__alpha0
 
         deltas_up_alpha0 = default_backend.power(self._deltas_up, self._alpha0)
         deltas_dn_alpha0 = default_backend.power(self._deltas_dn, self._alpha0)
         # x = A^{-1} b
-        b = default_backend.stack(
-            [
-                deltas_up_alpha0 - self._broadcast_helper,
-                deltas_dn_alpha0 - self._broadcast_helper,
-                default_backend.log(self._deltas_up) * deltas_up_alpha0,
-                -default_backend.log(self._deltas_dn) * deltas_dn_alpha0,
-                default_backend.power(default_backend.log(self._deltas_up), 2)
-                * deltas_up_alpha0,
-                default_backend.power(default_backend.log(self._deltas_dn), 2)
-                * deltas_dn_alpha0,
-            ]
-        )
         A_inverse = default_backend.astensor(
             [
                 [
@@ -116,6 +105,18 @@ class code4(object):
                 ],
             ]
         )
+        b = default_backend.stack(
+            [
+                deltas_up_alpha0 - self._broadcast_helper,
+                deltas_dn_alpha0 - self._broadcast_helper,
+                default_backend.log(self._deltas_up) * deltas_up_alpha0,
+                -default_backend.log(self._deltas_dn) * deltas_dn_alpha0,
+                default_backend.power(default_backend.log(self._deltas_up), 2)
+                * deltas_up_alpha0,
+                default_backend.power(default_backend.log(self._deltas_dn), 2)
+                * deltas_dn_alpha0,
+            ]
+        )
         self._coefficients = default_backend.einsum(
             'rc,shb,cshb->rshb', A_inverse, self._broadcast_helper, b
         )
@@ -126,13 +127,11 @@ class code4(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-
-        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
-        self.alpha0 = tensorlib.astensor(self._alpha0)
         self.deltas_up = tensorlib.astensor(self._deltas_up)
         self.deltas_dn = tensorlib.astensor(self._deltas_dn)
+        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
+        self.alpha0 = tensorlib.astensor(self._alpha0)
         self.coefficients = tensorlib.astensor(self._coefficients)
-
         self.bases_up = tensorlib.einsum(
             'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
@@ -150,48 +149,53 @@ class code4(object):
         if alphasets_shape == self.alphasets_shape:
             return
         tensorlib, _ = get_backend()
+        self.alphasets_shape = alphasets_shape
         self.bases_up = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(alphasets_shape), self.deltas_up
+            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
         self.bases_dn = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(alphasets_shape), self.deltas_dn
+            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_dn
         )
-        self.mask_on = tensorlib.ones(alphasets_shape)
-        self.mask_off = tensorlib.zeros(alphasets_shape)
+        self.mask_on = tensorlib.ones(self.alphasets_shape)
+        self.mask_off = tensorlib.zeros(self.alphasets_shape)
         self.ones = tensorlib.einsum(
             'sa,shb->shab', self.mask_on, self.broadcast_helper
         )
-        self.alphasets_shape = alphasets_shape
         return
 
     def __call__(self, alphasets):
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
 
-        # select where alpha > alpha0
+        # select where alpha >= alpha0 and produce the mask
         where_alphasets_gtalpha0 = tensorlib.where(
             alphasets >= self.__alpha0, self.mask_on, self.mask_off
         )
+        masks_gtalpha0 = tensorlib.einsum(
+            'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+        )
 
-        # select where alpha >= -alpha0
+        # select where alpha > -alpha0 ["not(alpha <= -alpha0)"] and produce the mask
         where_alphasets_not_ltalpha0 = tensorlib.where(
             alphasets > -self.__alpha0, self.mask_on, self.mask_off
+        )
+        masks_not_ltalpha0 = tensorlib.einsum(
+            'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
         )
 
         # s: set under consideration (i.e. the modifier)
         # a: alpha variation
         # h: histogram affected by modifier
         # b: bin of histogram
-
         exponents = tensorlib.einsum(
             'sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper
         )
-        # for |alpha| > alpha0, we want to raise the bases to the exponent=alpha
-        # and for |alpha| <= alpha0, we want to raise the bases to the exponent=1
+        # for |alpha| >= alpha0, we want to raise the bases to the exponent=alpha
+        # and for |alpha| < alpha0, we want to raise the bases to the exponent=1
         masked_exponents = tensorlib.where(
-            exponents > self.__alpha0, exponents, self.ones
+            exponents >= self.__alpha0, exponents, self.ones
         )
-
+        # we need to produce the terms of alpha^i for summing up
         alphasets_powers = tensorlib.stack(
             [
                 alphasets,
@@ -202,15 +206,9 @@ class code4(object):
                 tensorlib.power(alphasets, 6),
             ]
         )
+        # this is the 1 + sum_i a_i alpha^i
         value_btwn = tensorlib.ones(exponents.shape) + tensorlib.einsum(
             'rshb,rsa->shab', self.coefficients, alphasets_powers
-        )
-
-        masks_gtalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
-        )
-        masks_not_ltalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
         )
 
         # first, build a result where:
