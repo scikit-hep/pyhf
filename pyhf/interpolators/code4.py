@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 class code4(object):
     r"""
-    The piecewise-exponential interpolation strategy.
+    The polynomial interpolation and exponential extrapolation strategy.
 
     .. math::
         \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) \underbrace{\prod_{p \in \text{Syst}} I_\text{poly|exp.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-, \alpha_0)}_\text{factors to calculate}
