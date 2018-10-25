@@ -27,19 +27,21 @@ class code0(object):
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
+        # precompute terms that only depend on the histogramssets
+        self._deltas_up = self._histogramssets[:, :, 2] - self._histogramssets[:, :, 1]
+        self._deltas_dn = self._histogramssets[:, :, 1] - self._histogramssets[:, :, 0]
+        self._broadcast_helper = default_backend.ones(
+            default_backend.shape(self._deltas_up)
+        )
         self._precompute()
         if subscribe:
             events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.deltas_up = tensorlib.astensor(
-            self._histogramssets[:, :, 2] - self._histogramssets[:, :, 1]
-        )
-        self.deltas_dn = tensorlib.astensor(
-            self._histogramssets[:, :, 1] - self._histogramssets[:, :, 0]
-        )
-        self.broadcast_helper = tensorlib.ones(tensorlib.shape(self.deltas_up))
+        self.deltas_up = tensorlib.astensor(self._deltas_up)
+        self.deltas_dn = tensorlib.astensor(self._deltas_dn)
+        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
@@ -47,9 +49,9 @@ class code0(object):
         if alphasets_shape == self.alphasets_shape:
             return
         tensorlib, _ = get_backend()
-        self.mask_on = tensorlib.ones(alphasets_shape)
-        self.mask_off = tensorlib.zeros(alphasets_shape)
         self.alphasets_shape = alphasets_shape
+        self.mask_on = tensorlib.ones(self.alphasets_shape)
+        self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
     def __call__(self, alphasets):
         tensorlib, _ = get_backend()
