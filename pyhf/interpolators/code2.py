@@ -120,7 +120,7 @@ class _slow_code2(object):
             delta = (b - 2 * a) * (alpha + 1)
         return delta
 
-    def __init__(self, histogramssets):
+    def __init__(self, histogramssets, subscribe=True):
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):

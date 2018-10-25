@@ -103,7 +103,7 @@ class _slow_code1(object):
             delta = delta_down ** (-alpha)
         return delta
 
-    def __init__(self, histogramssets):
+    def __init__(self, histogramssets, subscribe=True):
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):
