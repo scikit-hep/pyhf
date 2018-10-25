@@ -144,7 +144,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Keyword Args:
-        return_p_values (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
+        return_tail_probs (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
         return_expected (bool): Bool for returning :math:`\textrm{CL}_{\textrm{exp}}`
         return_expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\textrm{CL}_{\textrm{exp}}` --- the "Brazil band"
         return_test_statistics (bool): Bool for returning :math:`q_{\mu}` and :math:`q_{\mu,A}`
@@ -184,7 +184,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
                 V\left[q\right] = \frac{4}{\sigma^{2}}
 
-            of the test statistic :math:`q` under the background only and and signal + background hypotheses. Only returned when ``return_p_values`` is ``True``.
+            of the test statistic :math:`q` under the background only and and signal + background hypotheses. Only returned when ``return_tail_probs`` is ``True``.
 
             - :math:`\textrm{CL}_{s,\textrm{exp}}`: The expected :math:`\textrm{CL}_{s}` value corresponding to the test statistic under the background only hypothesis :math:`\left(\mu=0\right)`. Only returned when ``return_expected`` is ``True``.
 
@@ -217,7 +217,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
     _returns = [CLs]
-    if kwargs.get('return_p_values'):
+    if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []

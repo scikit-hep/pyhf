@@ -54,14 +54,14 @@ def test_hypotest_default(tmpdir, hypotest_args):
     assert isinstance(result, type(tb.astensor(result)))
 
 
-def test_hypotest_return_p_values(tmpdir, hypotest_args):
+def test_hypotest_return_tail_probs(tmpdir, hypotest_args):
     """
     Check that the return structure of pyhf.utils.hypotest with the
-    return_p_values keyword arg is as expected
+    return_tail_probs keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_p_values': True}
+    kwargs = {'return_tail_probs': True}
     result = pyhf.utils.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CL_sb, CL_b]
     assert len(list(result)) == 2
@@ -77,7 +77,7 @@ def test_hypotest_return_expected(tmpdir, hypotest_args):
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_p_values': True, 'return_expected': True}
+    kwargs = {'return_tail_probs': True, 'return_expected': True}
     result = pyhf.utils.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp
     assert len(list(result)) == 3
@@ -95,7 +95,7 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     tb = pyhf.tensorlib
 
     kwargs = {
-        'return_p_values': True,
+        'return_tail_probs': True,
         'return_expected': True,
         'return_expected_set': True,
     }
@@ -118,7 +118,7 @@ def test_hypotest_return_test_statistics(tmpdir, hypotest_args):
     tb = pyhf.tensorlib
 
     kwargs = {
-        'return_p_values': True,
+        'return_tail_probs': True,
         'return_expected': True,
         'return_expected_set': True,
         'return_test_statistics': True,

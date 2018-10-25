@@ -59,7 +59,7 @@ def hypotest(pdf, data):
         pdf,
         pdf.config.suggested_init(),
         pdf.config.suggested_bounds(),
-        return_p_values=True,
+        return_tail_probs=True,
         return_expected=True,
         return_expected_set=True,
         return_test_statistics=True,
