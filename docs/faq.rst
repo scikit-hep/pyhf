@@ -6,21 +6,23 @@ Frequently Asked Questions about :code:`pyhf` and its use.
 Questions
 ---------
 
-Need to invent a question to balance the one problem
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+Is it possible to set the backend from the CLI?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Not at the moment. `Pull Requests <https://github.com/diana-hep/pyhf/compare>`__ are welcome.
 
 Troubleshooting
 ---------------
 
-:code:`import torch` or :code:`import pyhf` causes a :code:`Segmentation fault (core dumped)`
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+- :code:`import torch` or :code:`import pyhf` causes a :code:`Segmentation fault (core dumped)`
 
-This is may be the result of a conflict with the NVIDIA drivers that you have installed on your machine.
-Try uninstalling and completely removing all of them from your machine
+    This is may be the result of a conflict with the NVIDIA drivers that you
+    have installed on your machine.  Try uninstalling and completely removing
+    all of them from your machine
 
-.. code-block:: console
+    .. code-block:: console
 
-    # On Ubuntu/Debian
-    sudo apt-get purge nvidia*
+        # On Ubuntu/Debian
+        sudo apt-get purge nvidia*
 
-and then installing the latest versions.
+    and then installing the latest versions.
