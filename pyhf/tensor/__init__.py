@@ -46,7 +46,6 @@ class _BackendRetriever(object):
             raise exceptions.InvalidBackend(
                 "Requested backend {} does not exist.".format(name)
             )
-        return None
 
 
 BackendRetriever = _BackendRetriever()

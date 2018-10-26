@@ -46,7 +46,6 @@ class _OptimizerRetriever(object):
             raise exceptions.InvalidOptimizer(
                 "Requested optimizer {} does not exist.".format(name)
             )
-        return None
 
 
 OptimizerRetriever = _OptimizerRetriever()
