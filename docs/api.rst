@@ -119,4 +119,4 @@ Utilities
    loglambdav
    pvals_from_teststat
    qmu
-   runOnePoint
+   hypotest

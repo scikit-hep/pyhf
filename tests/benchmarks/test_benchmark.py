@@ -52,9 +52,17 @@ def generate_source_poisson(n_bins):
     return source
 
 
-def runOnePoint(pdf, data):
-    return pyhf.utils.runOnePoint(
-        1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds()
+def hypotest(pdf, data):
+    return pyhf.utils.hypotest(
+        1.0,
+        data,
+        pdf,
+        pdf.config.suggested_init(),
+        pdf.config.suggested_bounds(),
+        return_tail_probs=True,
+        return_expected=True,
+        return_expected_set=True,
+        return_test_statistics=True,
     )
 
 
@@ -65,9 +73,9 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.skip_mxnet
-def test_runOnePoint(benchmark, backend, n_bins):
+def test_hypotest(benchmark, backend, n_bins):
     """
-    Benchmark the performance of pyhf.runOnePoint()
+    Benchmark the performance of pyhf.utils.hypotest()
     for various numbers of bins and different backends
 
     Args:
@@ -83,4 +91,4 @@ def test_runOnePoint(benchmark, backend, n_bins):
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
     data = source['bindata']['data'] + pdf.config.auxdata
-    assert benchmark(runOnePoint, pdf, data)
+    assert benchmark(hypotest, pdf, data)

@@ -618,16 +618,16 @@ def setup_2bin_2channel_coupledshapefactor(
     }
 
 
-def validate_runOnePoint(pdf, data, mu_test, expected_result, tolerance=1e-6):
+def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    CLs_obs, CLs_exp = pyhf.utils.runOnePoint(
-        mu_test, data, pdf, init_pars, par_bounds
-    )[-2:]
+    CLs_obs, CLs_exp_set = pyhf.utils.hypotest(
+        mu_test, data, pdf, init_pars, par_bounds, return_expected_set=True
+    )
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
-    for result, expected_result in zip(CLs_exp, expected_result['exp']):
+    for result, expected_result in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected_result) / expected_result < tolerance
 
 
@@ -672,6 +672,6 @@ def test_validation(setup_and_tolerance):
         len(pdf.config.suggested_bounds()) == setup['expected']['config']['par_bounds']
     )
 
-    validate_runOnePoint(
+    validate_hypotest(
         pdf, data, setup['mu'], setup['expected']['result'], tolerance=tolerance
     )

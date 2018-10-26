@@ -8,7 +8,7 @@ import sys
 
 from . import readxml
 from . import writexml
-from .utils import runOnePoint
+from .utils import hypotest
 from .pdf import Model
 from .version import __version__
 
@@ -111,9 +111,9 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
             qualify_names=qualify_names,
         )
         observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
-        result = runOnePoint(1.0, observed, p)
+        result = hypotest(1.0, observed, p, return_expected_set=True)
         result = {
-            'CLs_obs': result[-2].tolist()[0],
+            'CLs_obs': result[0].tolist()[0],
             'CLs_exp': result[-1].ravel().tolist(),
         }
         if output_file is None:
