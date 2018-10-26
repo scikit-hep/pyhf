@@ -18,9 +18,9 @@ class _BackendRetriever(object):
                 # for autocomplete and dir() calls
                 self.pytorch_backend = pytorch_backend
                 return pytorch_backend
-            except ImportError:
+            except ImportError as e:
                 raise exceptions.MissingLibraries(
-                    "PyTorch is not installed. This backend cannot be imported."
+                    "PyTorch is not installed. This backend cannot be imported.", e
                 )
         elif name == 'tensorflow_backend':
             try:
@@ -30,9 +30,9 @@ class _BackendRetriever(object):
                 # for autocomplete and dir() calls
                 self.tensorflow_backend = tensorflow_backend
                 return tensorflow_backend
-            except ImportError:
+            except ImportError as e:
                 raise exceptions.MissingLibraries(
-                    "TensorFlow is not installed. This backend cannot be imported."
+                    "TensorFlow is not installed. This backend cannot be imported.", e
                 )
         elif name == 'mxnet_backend':
             try:
@@ -42,9 +42,9 @@ class _BackendRetriever(object):
                 # for autocomplete and dir() calls
                 self.mxnet_backend = mxnet_backend
                 return mxnet_backend
-            except ImportError:
+            except ImportError as e:
                 raise exceptions.MissingLibraries(
-                    "MxNet is not installed. This backend cannot be imported."
+                    "MxNet is not installed. This backend cannot be imported.", e
                 )
 
 
