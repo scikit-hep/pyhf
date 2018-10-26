@@ -19,8 +19,9 @@ class _BackendRetriever(object):
                 self.pytorch_backend = pytorch_backend
                 return pytorch_backend
             except ImportError as e:
-                raise exceptions.MissingLibraries(
-                    "PyTorch is not installed. This backend cannot be imported.", e
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing PyTorch. The pytorch backend cannot be used.",
+                    e,
                 )
         elif name == 'tensorflow_backend':
             try:
@@ -31,8 +32,9 @@ class _BackendRetriever(object):
                 self.tensorflow_backend = tensorflow_backend
                 return tensorflow_backend
             except ImportError as e:
-                raise exceptions.MissingLibraries(
-                    "TensorFlow is not installed. This backend cannot be imported.", e
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing TensorFlow. The tensorflow backend cannot be used.",
+                    e,
                 )
         elif name == 'mxnet_backend':
             try:
@@ -43,8 +45,9 @@ class _BackendRetriever(object):
                 self.mxnet_backend = mxnet_backend
                 return mxnet_backend
             except ImportError as e:
-                raise exceptions.MissingLibraries(
-                    "MxNet is not installed. This backend cannot be imported.", e
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing MxNet. The mxnet backend cannot be used.",
+                    e,
                 )
 
 

@@ -18,9 +18,10 @@ class _OptimizerRetriever(object):
                 # for autocomplete and dir() calls
                 self.pytorch_optimizer = pytorch_optimizer
                 return pytorch_optimizer
-            except ImportError:
-                raise exceptions.MissingLibraries(
-                    "PyTorch is not installed. This optimizer cannot be imported."
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing PyTorch. The pytorch optimizer cannot be used.",
+                    e,
                 )
         elif name == 'tflow_optimizer':
             try:
@@ -30,9 +31,10 @@ class _OptimizerRetriever(object):
                 # for autocomplete and dir() calls
                 self.tflow_optimizer = tflow_optimizer
                 return tflow_optimizer
-            except ImportError:
-                raise exceptions.MissingLibraries(
-                    "TensorFlow is not installed. This optimizer cannot be imported."
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing TensorFlow. The tensorflow optimizer cannot be used.",
+                    e,
                 )
         elif name == 'minuit_optimizer':
             try:
@@ -42,9 +44,10 @@ class _OptimizerRetriever(object):
                 # for autocomplete and dir() calls
                 self.minuit_optimizer = minuit_optimizer
                 return minuit_optimizer
-            except ImportError:
-                raise exceptions.MissingLibraries(
-                    "Minuit is not installed. This optimizer cannot be imported."
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing Minuit. The minuit optimizer cannot be used.",
+                    e,
                 )
 
 

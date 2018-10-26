@@ -64,7 +64,7 @@ class InvalidInterpCode(Exception):
     pass
 
 
-class MissingLibraries(Exception):
+class ImportBackendError(Exception):
     """
     MissingLibraries is raised when something is imported by sustained an import error due to missing additional, non-default libraries.
     """
