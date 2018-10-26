@@ -42,10 +42,6 @@ class _OptimizerRetriever(object):
                 raise exceptions.MissingLibraries(
                     "Minuit is not installed. This optimizer cannot be imported."
                 )
-        else:
-            raise exceptions.InvalidOptimizer(
-                "Requested optimizer {} does not exist.".format(name)
-            )
 
 
 OptimizerRetriever = _OptimizerRetriever()

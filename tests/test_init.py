@@ -25,41 +25,33 @@ import pyhf
             "mxnet_backend",
             pytest.raises(pyhf.exceptions.MissingLibraries),
         ],
-        [
-            None,
-            "fake_backend",
-            "fake_backend",
-            pytest.raises(pyhf.exceptions.InvalidBackend),
-        ],
     ],
-    ids=["numpy", "pytorch", "tensorflow", "mxnet", "fake"],
+    ids=["numpy", "pytorch", "tensorflow", "mxnet"],
 )
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
 
-    # hide if defined
-    if backend_name:
-        CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-        sys.modules.setdefault('pyhf.tensor.{}'.format(import_name), None)
-        CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
-            sys.modules['pyhf.tensor.{}'.format(module_name)],
-            None,
-        )
-        try:
-            delattr(pyhf.tensor, module_name)
-        except:
-            pass
+    # hide
+    CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
+    sys.modules.setdefault('pyhf.tensor.{}'.format(import_name), None)
+    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+        sys.modules['pyhf.tensor.{}'.format(module_name)],
+        None,
+    )
+    try:
+        delattr(pyhf.tensor, module_name)
+    except:
+        pass
 
     with expectation:
         getattr(pyhf.tensor, module_name)
 
     # put back
-    if backend_name:
-        CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-        CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
-            None,
-            CACHE_MODULE,
-        )
+    CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
+    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+        None,
+        CACHE_MODULE,
+    )
 
 
 @pytest.mark.parametrize(
@@ -84,38 +76,30 @@ def test_missing_backends(isolate_modules, param):
             "opt_minuit",
             pytest.raises(pyhf.exceptions.MissingLibraries),
         ],
-        [
-            None,
-            "fake_optimizer",
-            "fake_opt",
-            pytest.raises(pyhf.exceptions.InvalidOptimizer),
-        ],
     ],
-    ids=["scipy", "pytorch", "tensorflow", "minuit", "fake"],
+    ids=["scipy", "pytorch", "tensorflow", "minuit"],
 )
 def test_missing_optimizer(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
 
-    # hide if defined
-    if backend_name:
-        CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-        sys.modules.setdefault('pyhf.optimize.{}'.format(import_name), None)
-        CACHE_MODULE, sys.modules['pyhf.optimize.{}'.format(import_name)] = (
-            sys.modules['pyhf.optimize.{}'.format(import_name)],
-            None,
-        )
-        try:
-            delattr(pyhf.optimize, module_name)
-        except:
-            pass
+    # hide
+    CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
+    sys.modules.setdefault('pyhf.optimize.{}'.format(import_name), None)
+    CACHE_MODULE, sys.modules['pyhf.optimize.{}'.format(import_name)] = (
+        sys.modules['pyhf.optimize.{}'.format(import_name)],
+        None,
+    )
+    try:
+        delattr(pyhf.optimize, module_name)
+    except:
+        pass
 
     with expectation:
         getattr(pyhf.optimize, module_name)
 
     # put back
-    if backend_name:
-        CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-        CACHE_MODULE, sys.modules['pyhf.optimize.{}'.format(import_name)] = (
-            None,
-            CACHE_MODULE,
-        )
+    CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
+    CACHE_MODULE, sys.modules['pyhf.optimize.{}'.format(import_name)] = (
+        None,
+        CACHE_MODULE,
+    )

@@ -42,10 +42,6 @@ class _BackendRetriever(object):
                 raise exceptions.MissingLibraries(
                     "MxNet is not installed. This backend cannot be imported."
                 )
-        else:
-            raise exceptions.InvalidBackend(
-                "Requested backend {} does not exist.".format(name)
-            )
 
 
 BackendRetriever = _BackendRetriever()
