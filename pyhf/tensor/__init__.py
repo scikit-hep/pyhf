@@ -1,3 +1,6 @@
+from .. import exceptions
+
+
 class _BackendRetriever(object):
     def __getattr__(self, name):
         if name == 'numpy_backend':
@@ -14,7 +17,9 @@ class _BackendRetriever(object):
                 self.pytorch_backend = pytorch_backend
                 return pytorch_backend
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "PyTorch is not installed. This backend cannot be imported."
+                )
         elif name == 'tensorflow_backend':
             try:
                 from .tensorflow_backend import tensorflow_backend
@@ -23,7 +28,9 @@ class _BackendRetriever(object):
                 self.tensorflow_backend = tensorflow_backend
                 return tensorflow_backend
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "TensorFlow is not installed. This backend cannot be imported."
+                )
         elif name == 'mxnet_backend':
             try:
                 from .mxnet_backend import mxnet_backend
@@ -32,7 +39,14 @@ class _BackendRetriever(object):
                 self.mxnet_backend = mxnet_backend
                 return mxnet_backend
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "MxNet is not installed. This backend cannot be imported."
+                )
+        else:
+            raise exceptions.InvalidBackend(
+                "Requested backend {} does not exist.".format(name)
+            )
+        return None
 
 
 BackendRetriever = _BackendRetriever()

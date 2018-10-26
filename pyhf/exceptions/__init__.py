@@ -62,3 +62,27 @@ class InvalidInterpCode(Exception):
     """
 
     pass
+
+
+class MissingLibraries(Exception):
+    """
+    MissingLibraries is raised when something is imported by sustained an import error due to missing additional, non-default libraries.
+    """
+
+    pass
+
+
+class InvalidOptimizer(Exception):
+    """
+    InvalidOptimizer is raised when an optimizer is requested that does not exist.
+    """
+
+    pass
+
+
+class InvalidBackend(Exception):
+    """
+    InvalidBackend is raised when a backend is requested that does not exist.
+    """
+
+    pass

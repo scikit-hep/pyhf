@@ -1,3 +1,6 @@
+from .. import exceptions
+
+
 class _OptimizerRetriever(object):
     def __getattr__(self, name):
         if name == 'scipy_optimizer':
@@ -14,7 +17,9 @@ class _OptimizerRetriever(object):
                 self.pytorch_optimizer = pytorch_optimizer
                 return pytorch_optimizer
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "PyTorch is not installed. This optimizer cannot be imported."
+                )
         elif name == 'tflow_optimizer':
             try:
                 from .opt_tflow import tflow_optimizer
@@ -23,7 +28,9 @@ class _OptimizerRetriever(object):
                 self.tflow_optimizer = tflow_optimizer
                 return tflow_optimizer
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "TensorFlow is not installed. This optimizer cannot be imported."
+                )
         elif name == 'minuit_optimizer':
             try:
                 from .opt_minuit import minuit_optimizer
@@ -32,7 +39,14 @@ class _OptimizerRetriever(object):
                 self.minuit_optimizer = minuit_optimizer
                 return minuit_optimizer
             except ImportError:
-                pass
+                raise exceptions.MissingLibraries(
+                    "Minuit is not installed. This optimizer cannot be imported."
+                )
+        else:
+            raise exceptions.InvalidOptimizer(
+                "Requested optimizer {} does not exist.".format(name)
+            )
+        return None
 
 
 OptimizerRetriever = _OptimizerRetriever()
