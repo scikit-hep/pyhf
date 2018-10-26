@@ -38,11 +38,6 @@ def reset_backend():
     pyhf.set_backend(pyhf.default_backend)
 
 
-import pdb
-
-pdb.set_trace()
-
-
 @pytest.fixture(
     scope='function',
     params=[
