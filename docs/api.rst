@@ -41,10 +41,10 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
    :nosignatures:
    :template: modifierclass.rst
 
-   mxnet_backend
-   numpy_backend
-   pytorch_backend
-   tensorflow_backend
+   mxnet_backend.mxnet_backend
+   numpy_backend.numpy_backend
+   pytorch_backend.pytorch_backend
+   tensorflow_backend.tensorflow_backend
 
 Optimizers
 ----------
@@ -56,9 +56,10 @@ Optimizers
    :nosignatures:
    :template: modifierclass.rst
 
-   pytorch_optimizer
-   scipy_optimizer
-   tflow_optimizer
+   opt_pytorch.pytorch_optimizer
+   opt_scipy.scipy_optimizer
+   opt_tflow.tflow_optimizer
+   opt_minuit.minuit_optimizer
 
 Modifiers
 ---------
