@@ -1,6 +1,21 @@
 import json
 import shlex
 import pyhf
+import time
+
+
+def test_version(script_runner):
+    command = 'pyhf --version'
+    start = time.time()
+    ret = script_runner.run(*shlex.split(command))
+    end = time.time()
+    elapsed = end - start
+    assert ret.success
+    assert pyhf.__version__ in ret.stdout
+    assert ret.stderr == ''
+    # make sure it took less than a second
+    assert elapsed < 1.0
+
 
 # see test_import.py for the same (detailed) test
 def test_import_prepHistFactory(tmpdir, script_runner):

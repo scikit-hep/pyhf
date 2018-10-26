@@ -1,24 +1,55 @@
-from .opt_scipy import scipy_optimizer
+from .. import exceptions
 
-assert scipy_optimizer
 
-try:
-    from .opt_pytorch import pytorch_optimizer
+class _OptimizerRetriever(object):
+    def __getattr__(self, name):
+        if name == 'scipy_optimizer':
+            from .opt_scipy import scipy_optimizer
 
-    assert pytorch_optimizer
-except ImportError:
-    pass
+            assert scipy_optimizer
+            # for autocomplete and dir() calls
+            self.scipy_optimizer = scipy_optimizer
+            return scipy_optimizer
+        elif name == 'pytorch_optimizer':
+            try:
+                from .opt_pytorch import pytorch_optimizer
 
-try:
-    from .opt_tflow import tflow_optimizer
+                assert pytorch_optimizer
+                # for autocomplete and dir() calls
+                self.pytorch_optimizer = pytorch_optimizer
+                return pytorch_optimizer
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing PyTorch. The pytorch optimizer cannot be used.",
+                    e,
+                )
+        elif name == 'tflow_optimizer':
+            try:
+                from .opt_tflow import tflow_optimizer
 
-    assert tflow_optimizer
-except ImportError:
-    pass
+                assert tflow_optimizer
+                # for autocomplete and dir() calls
+                self.tflow_optimizer = tflow_optimizer
+                return tflow_optimizer
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing TensorFlow. The tensorflow optimizer cannot be used.",
+                    e,
+                )
+        elif name == 'minuit_optimizer':
+            try:
+                from .opt_minuit import minuit_optimizer
 
-try:
-    from .opt_minuit import minuit_optimizer
+                assert minuit_optimizer
+                # for autocomplete and dir() calls
+                self.minuit_optimizer = minuit_optimizer
+                return minuit_optimizer
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing Minuit. The minuit optimizer cannot be used.",
+                    e,
+                )
 
-    assert minuit_optimizer
-except ImportError:
-    pass
+
+OptimizerRetriever = _OptimizerRetriever()
+__all__ = ['OptimizerRetriever']

@@ -1,4 +1,5 @@
-from . import tensor, optimize
+from .tensor import BackendRetriever as tensor
+from .optimize import OptimizerRetriever as optimize
 from .version import __version__
 from . import events
 
