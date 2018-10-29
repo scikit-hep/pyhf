@@ -21,8 +21,8 @@ and activating it
     source pyhf/bin/activate
 
 
-Install from `PyPI <https://pypi.org/project/pyhf/>`__...
----------------------------------------------------------
+Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
+-------------------------------------------------------------------------------
 
 ... with NumPy backend
 ++++++++++++++++++++++
@@ -59,64 +59,45 @@ Install from `PyPI <https://pypi.org/project/pyhf/>`__...
 
     pip install pyhf[tensorflow,torch,mxnet]
 
-Install from `GitHub <https://github.com/diana-hep/pyhf>`__...
---------------------------------------------------------------
-
-.. code-block:: console
-
-    git clone https://github.com/diana-hep/pyhf.git
-    cd pyhf
+Install latest development version from `GitHub <https://github.com/diana-hep/pyhf>`__...
+-----------------------------------------------------------------------------------------
 
 ... with NumPy backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U .
+    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf"
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U .[tensorflow]
+    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow]"
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U .[torch]
+    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[torch]"
 
 ... with MXNet backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U .[mxnet]
+    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[mxnet]"
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U .[tensorflow,torch,mxnet]
+    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow,torch,mxnet]"
 
-Updating :code:`pyhf`...
-------------------------
-
-... if installed from PyPI
-++++++++++++++++++++++++++
+Updating :code:`pyhf`
+---------------------
 
 Rerun the installation command. As the upgrade flag, :code:`-U`, is used then the libraries will be updated.
-
-... if installed from GitHub
-++++++++++++++++++++++++++++
-
-Pull the latest commits from GitHub
-
-.. code-block:: console
-
-    git pull
-
-and then rerun the installation command. As the upgrade flag, :code:`-U`, is used then the libraries will be updated.
