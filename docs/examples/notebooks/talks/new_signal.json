@@ -1,0 +1,5 @@
+[{
+    "op": "replace",
+    "path": "/channels/0/samples/0/data",
+    "value": [5.0, 6.0]
+}]
