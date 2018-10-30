@@ -198,6 +198,7 @@ class Model(object):
                 'nom_data': [],
                 'mask': [],
             },
+            'lumi': lambda: {'mask': []},
             'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
             'normfactor': lambda: {'mask': []},
             'shapefactor': lambda: {'mask': []},
@@ -280,7 +281,7 @@ class Model(object):
                         mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
-                    elif mtype in ['normfactor', 'shapefactor']:
+                    elif mtype in ['normfactor', 'shapefactor', 'lumi']:
                         maskval = True if thismod else False
                         mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom

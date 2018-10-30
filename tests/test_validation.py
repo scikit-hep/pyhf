@@ -72,6 +72,67 @@ def setup_1bin_shapesys(
         'expected': {'result': expected_result, 'config': config},
     }
 
+@pytest.fixture(scope='module')
+def spec_1bin_lumi(source=source_1bin_example1()):
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            { 'name': 'lumi', 'type': 'lumi', 'data': None, }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_1bin_lumi(mu=1.0):
+    ## TO DO - FIX THIS
+    if mu == 1:
+        expected_result = {
+            "exp": [
+                0.06371799398864626,
+                0.15096503398048894,
+                0.3279606950533305,
+                0.6046087303039118,
+                0.8662627605298466,
+            ],
+            "obs": 0.4541865416107029,
+        }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def setup_1bin_lumi(
+    source=source_1bin_example1(),
+    spec=spec_1bin_lumi(source_1bin_example1()),
+    mu=1,
+    expected_result=expected_result_1bin_lumi(1.0),
+    config={'init_pars': 2, 'par_bounds': 2},
+):
+    return {
+        'source': source,
+        'spec': spec,
+        'mu': mu,
+        'expected': {'result': expected_result, 'config': config},
+    }
+
+
 
 @pytest.fixture(scope='module')
 def source_1bin_normsys():
@@ -635,6 +696,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     'setup_and_tolerance',
     [
         (setup_1bin_shapesys(), 1e-6),
+        (setup_1bin_lumi(), 1e-6),
         (setup_1bin_normsys(), 1e-6),
         (setup_2bin_histosys(), 8e-5),
         (setup_2bin_2channel(), 1e-6),
@@ -644,6 +706,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     ],
     ids=[
         '1bin_shapesys_mu1',
+        '1bin_lumi_mu1',
         '1bin_normsys_mu1',
         '2bin_histosys_mu1',
         '2bin_2channel_mu1',
