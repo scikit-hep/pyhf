@@ -28,7 +28,6 @@ class lumi(object):
 
 class lumi_combined(object):
     def __init__(self, lumi_mods, pdfconfig, mega_mods):
-        self._lumi_mods = lumi_mods
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self._lumi_indices = [
             self._parindices[pdfconfig.par_slice(m)] for m in lumi_mods
@@ -37,23 +36,30 @@ class lumi_combined(object):
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
             for m in lumi_mods
         ]
-
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.lumi_mask = tensorlib.astensor(self._lumi_mask)
-        self.lumi_default = tensorlib.ones(tensorlib.shape(self.lumi_mask))
-
-        self.default_value = tensorlib.astensor([1.0])
-        self.sample_ones = tensorlib.ones(tensorlib.shape(self.lumi_mask)[1])
-        self.alpha_ones = tensorlib.astensor([1])
+        self.lumi_mask = default_backend.astensor(self._lumi_mask)
+        self.lumi_default = default_backend.ones(self.lumi_mask.shape)
+        self.lumi_indices = default_backend.astensor(
+            self._lumi_indices, dtype='int'
+        )
 
     def apply(self, pars):
         tensorlib, _ = get_backend()
-
-        if not tensorlib.shape(self.lumi_indices)[0]:
+        lumi_indices = tensorlib.astensor(self.lumi_indices, dtype='int')
+        lumi_mask = tensorlib.astensor(self.lumi_mask)
+        if not tensorlib.shape(lumi_indices)[0]:
             return
-
-        return
+        lumis = tensorlib.gather(pars, lumi_indices)
+        results_lumi = lumi_mask * tensorlib.reshape(
+            lumis, tensorlib.shape(lumis) + (1, 1)
+        )
+        results_lumi = tensorlib.where(
+            lumi_mask,
+            results_lumi,
+            tensorlib.astensor(self.lumi_default),
+        )
+        return results_lumi
