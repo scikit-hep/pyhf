@@ -9,7 +9,7 @@ Abstract
     The HistFactory p.d.f. template `[CERN-OPEN-2012-016]
     <https://cds.cern.ch/record/1456844>`_ is per-se independent of its
     implementation in ROOT and it is useful to be able to run statistical
-    analysis outside of the ROOT, RooFit, RooStats framework pyhf is a
+    analysis outside of the ROOT, RooFit, RooStats framework. pyhf is a
     pure-python implementation of that statistical model for multi-bin
     histogram-based analysis and its interval estimation is based on the
     asymptotic formulas of "Asymptotic formulae for likelihood-based tests of
