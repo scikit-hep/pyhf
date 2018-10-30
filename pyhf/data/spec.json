@@ -39,6 +39,7 @@
                     "items": {
                         "anyOf": [
                             { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/lumi" },
                             { "$ref": "#/definitions/modifier/normfactor" },
                             { "$ref": "#/definitions/modifier/normsys" },
                             { "$ref": "#/definitions/modifier/shapefactor" },
@@ -65,6 +66,16 @@
                         },
                         "required": ["lo_data", "hi_data"]
                     }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "lumi": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "lumi" },
+                    "data": { "type": "null" }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
