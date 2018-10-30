@@ -73,11 +73,10 @@
             "lumi": {
                 "type": "object",
                 "properties": {
-                    "name": { "type": "string" },
                     "type": { "const": "lumi" },
                     "data": { "type": "null" }
                 },
-                "required": ["name", "type", "data"],
+                "required": ["type", "data"],
                 "additionalProperties": false
             },
             "normfactor": {

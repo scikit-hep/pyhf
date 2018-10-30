@@ -68,6 +68,14 @@ def process_sample(
     data, err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
     modifiers = []
+    # first check if we need to add lumi modifier for this sample
+    if sample.attrib.get("NormalizeByTheory", "False") == 'True':
+        modifiers.append(
+            {
+                'type': 'lumi',
+                'data': None
+            }
+        )
 
     modtags = tqdm.tqdm(
         sample.iter(), unit='modifier', disable=not (track_progress), total=len(sample)
