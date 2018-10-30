@@ -90,7 +90,7 @@ def spec_1bin_lumi(source=source_1bin_example1()):
                         'name': 'background',
                         'data': source['bindata']['bkg'],
                         'modifiers': [
-                            { 'name': 'lumi', 'type': 'lumi', 'data': None, }
+                            { 'type': 'lumi', 'data': None, }
                         ],
                     },
                 ],
