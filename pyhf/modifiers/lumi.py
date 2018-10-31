@@ -7,9 +7,7 @@ from .. import get_backend, default_backend, events
 log = logging.getLogger(__name__)
 
 
-@modifier(
-    name='lumi', constrained=True, pdf_type='normal', op_code='multiplication'
-)
+@modifier(name='lumi', constrained=True, pdf_type='normal', op_code='multiplication')
 class lumi(object):
     @classmethod
     def required_parset(cls, n_parameters):
@@ -43,9 +41,7 @@ class lumi_combined(object):
         tensorlib, _ = get_backend()
         self.lumi_mask = default_backend.astensor(self._lumi_mask)
         self.lumi_default = default_backend.ones(self.lumi_mask.shape)
-        self.lumi_indices = default_backend.astensor(
-            self._lumi_indices, dtype='int'
-        )
+        self.lumi_indices = default_backend.astensor(self._lumi_indices, dtype='int')
 
     def apply(self, pars):
         tensorlib, _ = get_backend()
@@ -58,8 +54,6 @@ class lumi_combined(object):
             lumis, tensorlib.shape(lumis) + (1, 1)
         )
         results_lumi = tensorlib.where(
-            lumi_mask,
-            results_lumi,
-            tensorlib.astensor(self.lumi_default),
+            lumi_mask, results_lumi, tensorlib.astensor(self.lumi_default)
         )
         return results_lumi

@@ -72,6 +72,7 @@ def setup_1bin_shapesys(
         'expected': {'result': expected_result, 'config': config},
     }
 
+
 @pytest.fixture(scope='module')
 def spec_1bin_lumi(source=source_1bin_example1()):
     spec = {
@@ -89,9 +90,7 @@ def spec_1bin_lumi(source=source_1bin_example1()):
                     {
                         'name': 'background',
                         'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            { 'type': 'lumi', 'data': None, }
-                        ],
+                        'modifiers': [{'name': 'lumi', 'type': 'lumi', 'data': None}],
                     },
                 ],
             }
@@ -131,7 +130,6 @@ def setup_1bin_lumi(
         'mu': mu,
         'expected': {'result': expected_result, 'config': config},
     }
-
 
 
 @pytest.fixture(scope='module')

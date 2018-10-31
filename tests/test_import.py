@@ -47,13 +47,16 @@ def test_import_prepHistFactory():
     assert 'background1' in samples['channel1']
     assert 'background2' in samples['channel1']
 
-    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['type'] == 'staterror'
-    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['data'] == [0, 10.0]
+    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'lumi'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['type'] == 'lumi'
 
-    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'staterror'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][1]['type'] == 'staterror'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][1]['data'] == [0, 10.0]
+
+    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][1]['type'] == 'staterror'
     assert all(
         np.isclose(
-            pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['data'], [5.0, 0.0]
+            pdf.spec['channels'][0]['samples'][1]['modifiers'][1]['data'], [5.0, 0.0]
         )
     )
 
@@ -63,10 +66,10 @@ def test_import_prepHistFactory():
     ]
 
     assert pdf.config.auxdata_order == sorted(
-        ['syst1', 'staterror_channel1', 'syst2', 'syst3']
+        ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
     )
 
-    assert data == [122.0, 112.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
@@ -95,6 +98,8 @@ def test_import_histosys():
     }
 
     assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'
+    assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'lumi'
+    assert channels['channel2']['samples'][0]['modifiers'][1]['type'] == 'histosys'
 
 
 def test_import_filecache(mocker):

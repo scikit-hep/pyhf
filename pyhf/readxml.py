@@ -70,12 +70,7 @@ def process_sample(
     modifiers = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
-        modifiers.append(
-            {
-                'type': 'lumi',
-                'data': None
-            }
-        )
+        modifiers.append({'name': 'lumi', 'type': 'lumi', 'data': None})
 
     modtags = tqdm.tqdm(
         sample.iter(), unit='modifier', disable=not (track_progress), total=len(sample)
