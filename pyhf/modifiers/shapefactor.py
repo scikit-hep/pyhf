@@ -62,13 +62,17 @@ class shapefactor_combined(object):
 
         and at that point can be used to compute the effect of shapefactor.
         """
+
+        pnames = [pname for _, _, pname in shapefactor_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in shapefactor_mods]
+        shapefactor_mods = [m for m, _, _ in shapefactor_mods]
+
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self._shapefactor_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in shapefactor_mods
+            self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._shapefactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in shapefactor_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         global_concatenated_bin_indices = [
             j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])

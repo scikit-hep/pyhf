@@ -28,8 +28,13 @@ class normsys(object):
 class normsys_combined(object):
     def __init__(self, normsys_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
+
+        pnames = [pname for _, _, pname in normsys_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in normsys_mods]
+        normsys_mods = [m for m, _, _ in normsys_mods]
+
         self._normsys_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in normsys_mods
+            self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._normsys_histoset = [
             [
@@ -40,11 +45,10 @@ class normsys_combined(object):
                 ]
                 for s in pdfconfig.samples
             ]
-            for m in normsys_mods
+            for m in keys
         ]
         self._normsys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in normsys_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if len(normsys_mods):

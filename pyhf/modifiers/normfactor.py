@@ -26,12 +26,16 @@ class normfactor(object):
 class normfactor_combined(object):
     def __init__(self, normfactor_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
+
+        pnames = [pname for _, _, pname in normfactor_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in normfactor_mods]
+        normfactor_mods = [m for m, _, _ in normfactor_mods]
+
         self._normfactor_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in normfactor_mods
+            self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._normfactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in normfactor_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

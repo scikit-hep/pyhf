@@ -58,7 +58,13 @@ class _ModelConfig(object):
                             )
                         )
                         raise exceptions.InvalidModifier()
-                    self.modifiers.append((modifier_def['name'], modifier_def['type']))
+                    self.modifiers.append(
+                        (
+                            modifier_def['name'],  # mod name
+                            modifier_def['type'],  # mod type
+                            modifier_def['name'],
+                        )  # parset name
+                    )
 
                     # check the shareability (e.g. for shapesys for example)
                     is_shared = paramset_requirements['is_shared']
@@ -108,7 +114,7 @@ class _ModelConfig(object):
         return self.par_map[name]['paramset']
 
     def set_poi(self, name):
-        if name not in [x for x, _ in self.modifiers]:
+        if name not in [x for x, _, _ in self.modifiers]:
             raise exceptions.InvalidModel(
                 "The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
                     name
@@ -191,9 +197,10 @@ class Model(object):
         # We don't actually set up the modifier data here for no-ops, but we do
         # set up the entire structure
         mega_mods = {}
-        for m, mtype in self.config.modifiers:
+        for m, mtype, _ in self.config.modifiers:
+            key = '{}/{}'.format(mtype, m)
             for s in self.config.samples:
-                mega_mods.setdefault(s, {})[m] = {
+                mega_mods.setdefault(s, {})[key] = {
                     'type': mtype,
                     'name': m,
                     'data': default_data_makers[mtype](),
@@ -219,21 +226,26 @@ class Model(object):
                 )
                 mega_nom += nom
                 defined_mods = (
-                    {x['name']: x for x in defined_samp['modifiers']}
+                    {
+                        '{}/{}'.format(x['type'], x['name']): x
+                        for x in defined_samp['modifiers']
+                    }
                     if defined_samp
                     else {}
                 )
-                for m, mtype in self.config.modifiers:
+                for m, mtype, _ in self.config.modifiers:
+                    key = '{}/{}'.format(mtype, m)
                     # this is None if modifier doesn't affect channel/sample.
-                    thismod = defined_mods.get(m)
+                    thismod = defined_mods.get(key)
+                    # print('key',key,thismod['data'] if thismod else None)
                     if mtype == 'histosys':
                         lo_data = thismod['data']['lo_data'] if thismod else nom
                         hi_data = thismod['data']['hi_data'] if thismod else nom
                         maskval = True if thismod else False
-                        mega_mods[s][m]['data']['lo_data'] += lo_data
-                        mega_mods[s][m]['data']['hi_data'] += hi_data
-                        mega_mods[s][m]['data']['nom_data'] += nom
-                        mega_mods[s][m]['data']['mask'] += [maskval] * len(
+                        mega_mods[s][key]['data']['lo_data'] += lo_data
+                        mega_mods[s][key]['data']['hi_data'] += hi_data
+                        mega_mods[s][key]['data']['nom_data'] += nom
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                         pass
@@ -241,25 +253,25 @@ class Model(object):
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[s][m]['data']['nom_data'] += [1.0] * len(nom)
-                        mega_mods[s][m]['data']['lo'] += [lo_factor] * len(
+                        mega_mods[s][key]['data']['nom_data'] += [1.0] * len(nom)
+                        mega_mods[s][key]['data']['lo'] += [lo_factor] * len(
                             nom
                         )  # broadcasting
-                        mega_mods[s][m]['data']['hi'] += [hi_factor] * len(nom)
-                        mega_mods[s][m]['data']['mask'] += [maskval] * len(
+                        mega_mods[s][key]['data']['hi'] += [hi_factor] * len(nom)
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                     elif mtype in ['normfactor', 'shapefactor']:
                         maskval = True if thismod else False
-                        mega_mods[s][m]['data']['mask'] += [maskval] * len(
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                     elif mtype in ['shapesys', 'staterror']:
                         uncrt = thismod['data'] if thismod else [0.0] * len(nom)
                         maskval = [True if thismod else False] * len(nom)
-                        mega_mods[s][m]['data']['mask'] += maskval
-                        mega_mods[s][m]['data']['uncrt'] += uncrt
-                        mega_mods[s][m]['data']['nom_data'] += nom
+                        mega_mods[s][key]['data']['mask'] += maskval
+                        mega_mods[s][key]['data']['uncrt'] += uncrt
+                        mega_mods[s][key]['data']['nom_data'] += nom
                     else:
                         raise RuntimeError(
                             'not sure how to combine {mtype} into the mega-channel'.format(
@@ -290,7 +302,7 @@ class Model(object):
         )
         self.modifiers_appliers = {
             k: c(
-                [m for m, mtype in self.config.modifiers if mtype == k],
+                [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
             )
