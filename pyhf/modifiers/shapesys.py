@@ -44,8 +44,7 @@ class shapesys_combined(object):
             self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._shapesys_mask = [
-            [[[mega_mods][s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__shapesys_uncrt = default_backend.astensor(
             [
