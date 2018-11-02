@@ -31,14 +31,20 @@ class shapesys(object):
 
 class shapesys_combined(object):
     def __init__(self, shapesys_mods, pdfconfig, mega_mods):
+
+        pnames = [pname for _, _, pname in shapesys_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in shapesys_mods]
+        shapesys_mods = [m for m, _, _ in shapesys_mods]
+
         self._shapesys_mods = shapesys_mods
+        self._pnames = pnames
+
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self._shapesys_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in shapesys_mods
+            self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._shapesys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in shapesys_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__shapesys_uncrt = default_backend.astensor(
             [
@@ -49,7 +55,7 @@ class shapesys_combined(object):
                     ]
                     for s in pdfconfig.samples
                 ]
-                for m in shapesys_mods
+                for m in keys
             ]
         )
 
@@ -94,7 +100,7 @@ class shapesys_combined(object):
             self.factor_access_indices = None
 
     def finalize(self, pdfconfig):
-        for uncert_this_mod, mod in zip(self.__shapesys_uncrt, self._shapesys_mods):
+        for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._pnames):
             unc_nom = default_backend.astensor(
                 [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
             )
@@ -115,9 +121,9 @@ class shapesys_combined(object):
 
             factors = numerator / denominator
             factors = factors[factors > 0]
-            assert len(factors) == pdfconfig.param_set(mod).n_parameters
-            pdfconfig.param_set(mod).factors = default_backend.tolist(factors)
-            pdfconfig.param_set(mod).auxdata = default_backend.tolist(factors)
+            assert len(factors) == pdfconfig.param_set(pname).n_parameters
+            pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
+            pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
 
     def apply(self, pars):
         tensorlib, _ = get_backend()

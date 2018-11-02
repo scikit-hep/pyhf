@@ -27,13 +27,17 @@ class staterror(object):
 class staterror_combined(object):
     def __init__(self, staterr_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
+
+        pnames = [pname for _, _, pname in staterr_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in staterr_mods]
+        staterr_mods = [m for m, _, _ in staterr_mods]
+
         self._staterror_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in staterr_mods
+            self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
         self._staterr_mods = staterr_mods
         self._staterror_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in staterr_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__staterror_uncrt = default_backend.astensor(
             [
@@ -44,7 +48,7 @@ class staterror_combined(object):
                     ]
                     for s in pdfconfig.samples
                 ]
-                for m in staterr_mods
+                for m in keys
             ]
         )
 

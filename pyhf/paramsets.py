@@ -60,7 +60,7 @@ def reduce_paramset_requirements(paramset_requirements):
                 combined_param.setdefault(k, set([])).add(param.get(k))
 
         for k in param_keys:
-            if len(combined_param[k]) != 1:
+            if len(combined_param[k]) != 1 and k != 'op_code':
                 raise exceptions.InvalidNameReuse(
                     "Multiple values for '{}' ({}) were found for {}. Use unique modifier names or use qualify_names=True when constructing the pdf.".format(
                         k, list(combined_param[k]), param_name
