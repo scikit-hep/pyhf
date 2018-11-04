@@ -223,7 +223,7 @@ def test_parameters_duplicated():
         ],
         'parameters': [{'name': 'mypoi'}, {'name': 'mypoi'}],
     }
-    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+    with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec, poiname='mypoi')
 
 

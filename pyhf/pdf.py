@@ -24,7 +24,7 @@ class _ModelConfig(object):
         self.parameter_configs = {}
         for parameter in spec.get('parameters', []):
             if parameter['name'] in self.parameter_configs:
-                raise exceptions.InvalidSpecification(
+                raise exceptions.InvalidModel(
                     'Multiple parameter configurations for {} were found.'.format(
                         parameter['name']
                     )
