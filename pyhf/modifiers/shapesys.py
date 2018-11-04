@@ -20,12 +20,12 @@ class shapesys(object):
             'is_constrained': cls.is_constrained,
             'is_shared': False,
             'op_code': cls.op_code,
-            'inits': config.get('inits', (1.0,) * n_parameters),
-            'bounds': config.get('bounds', ((1e-10, 10.0),) * n_parameters),
+            'inits': config.get('inits', [1.0] * n_parameters),
+            'bounds': config.get('bounds', [1e-10, 10.0] * n_parameters),
             # nb: auxdata/factors set by finalize. Set to non-numeric to crash
             # if we fail to set auxdata/factors correctly
-            'auxdata': (None,) * n_parameters,
-            'factors': (None,) * n_parameters,
+            'auxdata': [None] * n_parameters,
+            'factors': [None] * n_parameters,
         }
 
 

@@ -19,9 +19,9 @@ class histosys(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': config.get('inits', (0.0,)),
-            'bounds': config.get('bounds', ((-5.0, 5.0),)),
-            'auxdata': config.get('auxdata', (0.0,)),
+            'inits': config.get('inits', [0.0]),
+            'bounds': config.get('bounds', [[-5.0, 5.0]]),
+            'auxdata': config.get('auxdata', [0.0]),
         }
 
 

@@ -57,7 +57,14 @@ def reduce_paramset_requirements(paramset_requirements):
         combined_param = {}
         for param in params:
             for k in param_keys:
-                combined_param.setdefault(k, set([])).add(param.get(k))
+                v = param.get(k)
+                # need to convert lists to tuples
+                if k in ['inits', 'auxdata', 'factors']:
+                    v = tuple(v)
+                # need to convert lists of lists to tuples
+                elif k in ['bounds']:
+                    v = tuple(map(tuple, v))
+                combined_param.setdefault(k, set([])).add(v)
 
         for k in param_keys:
             if len(combined_param[k]) != 1 and k != 'op_code':

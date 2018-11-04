@@ -18,8 +18,8 @@ class normfactor(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': config.get('inits', (1.0,)),
-            'bounds': config.get('bounds', ((0, 10),)),
+            'inits': config.get('inits', [1.0]),
+            'bounds': config.get('bounds', [[0, 10]]),
         }
 
 
