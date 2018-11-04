@@ -20,6 +20,19 @@ class _ModelConfig(object):
         self.auxdata_order = []
         self.next_index = 0
 
+        # build up a dictionary of the parameter configurations provided by the user
+        self.parameter_configs = {}
+        for parameter in spec.get('parameters', []):
+            if parameter['name'] in self._parameter_configs:
+                raise exceptions.InvalidModel(
+                    'Multiple parameter configurations for {} were found.'.format(
+                        parameter['name']
+                    )
+                )
+            self.parameter_configs[parameter['name']] = {
+                k: v for k, v in parameter.items() if k != 'name'
+            }
+
         self.channels = []
         self.samples = []
         self.parameters = []
@@ -43,7 +56,10 @@ class _ModelConfig(object):
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
-                        ].required_parset(len(sample['data']))
+                        ].required_parset(
+                            len(sample['data']),
+                            defaults=self.parameter_configs.get(param_name, {}),
+                        )
                     except KeyError:
                         log.exception(
                             'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
@@ -109,7 +125,7 @@ class _ModelConfig(object):
     def set_poi(self, name):
         if name not in [x for x, _, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
+                "The parameter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
                     name
                 )
             )

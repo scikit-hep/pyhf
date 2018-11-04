@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(name='staterror', constrained=True, op_code='multiplication')
 class staterror(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, n_parameters, config={}):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': n_parameters,
@@ -18,9 +18,9 @@ class staterror(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((1e-10, 10.0),) * n_parameters,
-            'auxdata': (1.0,) * n_parameters,
+            'inits': config.get('inits', (1.0,) * n_parameters),
+            'bounds': config.get('bounds', ((1e-10, 10.0),) * n_parameters),
+            'auxdata': config.get('auxdata', (1.0,) * n_parameters),
         }
 
 
