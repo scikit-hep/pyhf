@@ -157,3 +157,111 @@ def test_empty_histosys():
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
+
+
+def test_additional_properties():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'fake_additional_property': 2,
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+
+def test_parameters_definition():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'mypoi'}],
+    }
+    pyhf.Model(spec, poiname='mypoi')
+
+
+def test_parameters_all_props():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [
+            {
+                'name': 'mypoi',
+                'inits': [1],
+                'bounds': [[0, 1]],
+                'auxdata': [1],
+                'factors': [1],
+            }
+        ],
+    }
+    pyhf.Model(spec, poiname='mypoi')
+
+
+@pytest.mark.parametrize(
+    'bad_parameter',
+    [
+        {'name': 'mypoi', 'inits': ['a']},
+        {'name': 'mypoi', 'bounds': [0, 1]},
+        {'name': 'mypoi', 'auxdata': ['a']},
+        {'name': 'mypoi', 'factors': ['a']},
+    ],
+    ids=['inits', 'bounds', 'auxdata', 'factors'],
+)
+def test_parameters_bad_parameter(bad_parameter):
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [bad_parameter],
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec, poiname='mypoi')
