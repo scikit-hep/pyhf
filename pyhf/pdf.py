@@ -23,8 +23,8 @@ class _ModelConfig(object):
         # build up a dictionary of the parameter configurations provided by the user
         self.parameter_configs = {}
         for parameter in spec.get('parameters', []):
-            if parameter['name'] in self._parameter_configs:
-                raise exceptions.InvalidModel(
+            if parameter['name'] in self.parameter_configs:
+                raise exceptions.InvalidSpecification(
                     'Multiple parameter configurations for {} were found.'.format(
                         parameter['name']
                     )
