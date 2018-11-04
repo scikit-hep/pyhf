@@ -58,7 +58,9 @@ class _ModelConfig(object):
                             modifier_def['type']
                         ].required_parset(
                             len(sample['data']),
-                            default=self.parameter_configs.get(modifier_def['name'], {}),
+                            default=self.parameter_configs.get(
+                                modifier_def['name'], {}
+                            ),
                         )
                     except KeyError:
                         log.exception(

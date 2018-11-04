@@ -155,7 +155,7 @@ def test_registry_name_clash():
 def test_override_modifier_defaults(modifier):
     m = getattr(pyhf.modifiers, modifier)
 
-    new_config = {'inits': [99], 'bounds': [95]}
-    parset_requirements = m.required_parset(1, new_config)
+    default = {'inits': [99], 'bounds': [95]}
+    parset_requirements = m.required_parset(1, default=default)
     assert parset_requirements['inits'] == [99]
     assert parset_requirements['bounds'] == [95]
