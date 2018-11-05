@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class _ModelConfig(object):
-    def __init__(self, spec, poiname='mu', qualify_names=False):
+    def __init__(self, spec, poiname='mu'):
         self.poi_index = None
         self.par_map = {}
         self.par_order = []
@@ -37,13 +37,6 @@ class _ModelConfig(object):
                 self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     self.parameters.append(modifier_def['name'])
-                    if qualify_names:
-                        fullname = '{}/{}'.format(
-                            modifier_def['type'], modifier_def['name']
-                        )
-                        if modifier_def['name'] == poiname:
-                            poiname = fullname
-                        modifier_def['name'] = fullname
 
                     # get the paramset requirements for the given modifier. If
                     # modifier does not exist, we'll have a KeyError
@@ -62,8 +55,8 @@ class _ModelConfig(object):
                         (
                             modifier_def['name'],  # mod name
                             modifier_def['type'],  # mod type
-                            modifier_def['name'],
-                        )  # parset name
+                            modifier_def['name'],  # parset name
+                        )
                     )
 
                     # check the shareability (e.g. for shapesys for example)
