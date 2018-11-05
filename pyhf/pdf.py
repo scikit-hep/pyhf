@@ -49,16 +49,16 @@ class _ModelConfig(object):
             for sample in channel['samples']:
                 self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
-                    self.parameters.append(modifier_def['name'])
-
                     # get the paramset requirements for the given modifier. If
                     # modifier does not exist, we'll have a KeyError
+                    paramset_name = modifier_def['name']
+                    self.parameters.append(paramset_name)
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
                         ].required_parset(
                             len(sample['data']),
-                            config=self.parameter_configs.get(modifier_def['name'], {}),
+                            config=self.parameter_configs.get(paramset_name, {}),
                         )
                     except KeyError:
                         log.exception(
@@ -71,7 +71,7 @@ class _ModelConfig(object):
                         (
                             modifier_def['name'],  # mod name
                             modifier_def['type'],  # mod type
-                            modifier_def['name'],  # parset name
+                            paramset_name,  # parset name
                         )
                     )
 
