@@ -72,8 +72,7 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
 )
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
-@click.option('--qualify-names/--no-qualify-names', default=False)
-def cls(workspace, output_file, measurement, qualify_names, patch):
+def cls(workspace, output_file, measurement, patch):
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
     measurements = d['toplvl']['measurements']
@@ -105,11 +104,7 @@ def cls(workspace, output_file, measurement, qualify_names, patch):
             with click.open_file(p, 'r') as read_file:
                 p = jsonpatch.JsonPatch(json.loads(read_file.read()))
             spec = p.apply(spec)
-        p = Model(
-            spec,
-            poiname=measurements[measurement_index]['config']['poi'],
-            qualify_names=qualify_names,
-        )
+        p = Model(spec, poiname=measurements[measurement_index]['config']['poi'])
         observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
         result = hypotest(1.0, observed, p, return_expected_set=True)
         result = {
