@@ -372,6 +372,4 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pdf = pyhf.Model(spec, poiname='reused_name')
-
-    pdf = pyhf.Model(spec, poiname='reused_name')
+        pyhf.Model(spec, poiname='reused_name')
