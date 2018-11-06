@@ -149,13 +149,3 @@ def test_registry_name_clash():
                 pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')
-
-
-@pytest.mark.parametrize("modifier", modifiers_to_test)
-def test_override_modifier_defaults(modifier):
-    m = getattr(pyhf.modifiers, modifier)
-
-    config = {'inits': [99], 'bounds': [95]}
-    parset_requirements = m.required_parset(1, config=config)
-    assert parset_requirements['inits'] == [99]
-    assert parset_requirements['bounds'] == [95]
