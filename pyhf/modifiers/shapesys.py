@@ -19,7 +19,6 @@ class shapesys(object):
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': False,
-            'op_code': cls.op_code,
             'inits': (1.0,) * n_parameters,
             'bounds': ((1e-10, 10.0),) * n_parameters,
             # nb: auxdata/factors set by finalize. Set to non-numeric to crash

@@ -18,7 +18,6 @@ class normsys(object):
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'op_code': cls.op_code,
             'inits': (0.0,),
             'bounds': ((-5.0, 5.0),),
             'auxdata': (0.0,),

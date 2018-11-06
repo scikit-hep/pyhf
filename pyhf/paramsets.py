@@ -43,7 +43,6 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
     paramset_keys = [
         'paramset_type',
         'n_parameters',
-        'op_code',
         'inits',
         'bounds',
         'auxdata',
@@ -61,7 +60,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                 combined_paramset.setdefault(k, set([])).add(v)
 
         for k in paramset_keys:
-            if len(combined_paramset[k]) != 1 and k != 'op_code':
+            if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(
                     "Multiple values for '{}' ({}) were found for {}. Use unique modifier names when constructing the pdf.".format(
                         k, list(combined_paramset[k]), paramset_name

@@ -17,7 +17,6 @@ class normfactor(object):
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'op_code': cls.op_code,
             'inits': (1.0,),
             'bounds': ((0, 10),),
         }

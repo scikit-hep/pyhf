@@ -182,14 +182,24 @@ from .shapefactor import shapefactor, shapefactor_combined
 from .shapesys import shapesys, shapesys_combined
 from .staterror import staterror, staterror_combined
 
+uncombined = {
+    'histosys': histosys,
+    'normfactor': normfactor,
+    'normsys': normsys,
+    'shapefactor': shapefactor,
+    'shapesys': shapesys,
+    'staterror': staterror,
+}
+
 combined = {
-    'normsys': normsys_combined,
     'histosys': histosys_combined,
     'normfactor': normfactor_combined,
-    'staterror': staterror_combined,
+    'normsys': normsys_combined,
     'shapefactor': shapefactor_combined,
     'shapesys': shapesys_combined,
+    'staterror': staterror_combined,
 }
+
 __all__ = [
     'histosys',
     'histosys_combined',

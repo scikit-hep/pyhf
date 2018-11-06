@@ -330,8 +330,16 @@ class Model(object):
         return auxdata
 
     def _modifications(self, pars):
-        factor_mods = ['normsys', 'staterror', 'shapesys', 'normfactor', 'shapefactor']
-        delta_mods = ['histosys']
+        factor_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'multiplication'
+        ]
+        delta_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'addition'
+        ]
 
         deltas = list(
             filter(
