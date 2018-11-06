@@ -6,7 +6,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .paramsets import reduce_paramset_requirements
+from .paramsets import reduce_paramsets_requirements
 
 log = logging.getLogger(__name__)
 
@@ -29,9 +29,7 @@ class _ModelConfig(object):
                         parameter['name']
                     )
                 )
-            _paramsets_user_configs[parameter['name']] = {
-                k: v for k, v in parameter.items() if k != 'name'
-            }
+            _paramsets_user_configs[parameter.pop('name')] = parameter
 
         self.channels = []
         self.samples = []
@@ -148,7 +146,7 @@ class _ModelConfig(object):
     def _create_and_register_paramsets(
         self, paramsets_requirements, paramsets_user_configs
     ):
-        for param_name, paramset_requirements in reduce_paramset_requirements(
+        for param_name, paramset_requirements in reduce_paramsets_requirements(
             paramsets_requirements, paramsets_user_configs
         ).items():
             paramset_type = paramset_requirements.get('paramset_type')

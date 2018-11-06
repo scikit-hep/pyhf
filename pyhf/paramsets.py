@@ -37,10 +37,10 @@ class constrained_by_poisson(paramset):
         )
 
 
-def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
-    reduced_paramset_requirements = {}
+def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs):
+    reduced_paramsets_requirements = {}
 
-    param_keys = [
+    paramset_keys = [
         'paramset_type',
         'n_parameters',
         'op_code',
@@ -50,27 +50,27 @@ def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
         'factors',
     ]
 
-    for param_name in list(paramset_requirements.keys()):
-        params = paramset_requirements[param_name]
-        param_user_configs = paramsets_user_configs.get(param_name, {})
+    for paramset_name in list(paramsets_requirements.keys()):
+        paramset_requirements = paramsets_requirements[paramset_name]
+        paramset_user_configs = paramsets_user_configs.get(paramset_name, {})
 
-        combined_param = {}
-        for param in params:
-            for k in param_keys:
-                v = param.get(k)
-                combined_param.setdefault(k, set([])).add(v)
+        combined_paramset = {}
+        for paramset_requirement in paramset_requirements:
+            for k in paramset_keys:
+                v = paramset_requirement.get(k)
+                combined_paramset.setdefault(k, set([])).add(v)
 
-        for k in param_keys:
-            if len(combined_param[k]) != 1 and k != 'op_code':
+        for k in paramset_keys:
+            if len(combined_paramset[k]) != 1 and k != 'op_code':
                 raise exceptions.InvalidNameReuse(
                     "Multiple values for '{}' ({}) were found for {}. Use unique modifier names when constructing the pdf.".format(
-                        k, list(combined_param[k]), param_name
+                        k, list(combined_paramset[k]), paramset_name
                     )
                 )
             else:
-                default_v = combined_param[k].pop()
+                default_v = combined_paramset[k].pop()
                 # get user-defined-config if it exists or set to default config
-                v = param_user_configs.get(k, default_v)
+                v = paramset_user_configs.get(k, default_v)
                 # if v is a tuple, it's not user-configured, so convert to list
                 if isinstance(v, tuple):
                     v = list(v)
@@ -83,11 +83,11 @@ def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
                     )
                 elif v and not default_v:
                     raise exceptions.InvalidModel(
-                        '{} does not use the {} attribute.'.format(param_name, k)
+                        '{} does not use the {} attribute.'.format(paramset_name, k)
                     )
 
-                combined_param[k] = v
+                combined_paramset[k] = v
 
-        reduced_paramset_requirements[param_name] = combined_param
+        reduced_paramsets_requirements[paramset_name] = combined_paramset
 
-    return reduced_paramset_requirements
+    return reduced_paramsets_requirements
