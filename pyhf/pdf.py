@@ -21,15 +21,15 @@ class _ModelConfig(object):
         self.next_index = 0
 
         # build up a dictionary of the parameter configurations provided by the user
-        self.parameter_configs = {}
+        _paramsets_user_configs = {}
         for parameter in spec.get('parameters', []):
-            if parameter['name'] in self.parameter_configs:
+            if parameter['name'] in _paramsets_user_configs:
                 raise exceptions.InvalidModel(
                     'Multiple parameter configurations for {} were found.'.format(
                         parameter['name']
                     )
                 )
-            self.parameter_configs[parameter['name']] = {
+            _paramsets_user_configs[parameter['name']] = {
                 k: v for k, v in parameter.items() if k != 'name'
             }
 
@@ -56,10 +56,7 @@ class _ModelConfig(object):
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
-                        ].required_parset(
-                            len(sample['data']),
-                            config=self.parameter_configs.get(paramset_name, {}),
-                        )
+                        ].required_parset(len(sample['data']))
                     except KeyError:
                         log.exception(
                             'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
@@ -101,7 +98,9 @@ class _ModelConfig(object):
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self._create_and_register_paramsets(_paramsets_requirements)
+        self._create_and_register_paramsets(
+            _paramsets_requirements, _paramsets_user_configs
+        )
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -146,9 +145,11 @@ class _ModelConfig(object):
         self.par_order.append(param_name)
         self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
-    def _create_and_register_paramsets(self, paramsets_requirements):
+    def _create_and_register_paramsets(
+        self, paramsets_requirements, paramsets_user_configs
+    ):
         for param_name, paramset_requirements in reduce_paramset_requirements(
-            paramsets_requirements
+            paramsets_requirements, paramsets_user_configs
         ).items():
             paramset_type = paramset_requirements.get('paramset_type')
             paramset = paramset_type(**paramset_requirements)

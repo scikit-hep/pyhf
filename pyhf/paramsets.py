@@ -37,7 +37,7 @@ class constrained_by_poisson(paramset):
         )
 
 
-def reduce_paramset_requirements(paramset_requirements):
+def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
     reduced_paramset_requirements = {}
 
     # nb: normsys and histosys have different op_codes so can't currently be shared
@@ -53,18 +53,12 @@ def reduce_paramset_requirements(paramset_requirements):
 
     for param_name in list(paramset_requirements.keys()):
         params = paramset_requirements[param_name]
+        param_user_configs = paramsets_user_configs.get(param_name, {})
 
         combined_param = {}
         for param in params:
             for k in param_keys:
                 v = param.get(k)
-                if v:
-                    # need to convert lists to tuples
-                    if k in ['inits', 'auxdata', 'factors']:
-                        v = tuple(v)
-                    # need to convert lists of lists to tuples
-                    elif k in ['bounds']:
-                        v = tuple(map(tuple, v))
                 combined_param.setdefault(k, set([])).add(v)
 
         for k in param_keys:
@@ -75,9 +69,20 @@ def reduce_paramset_requirements(paramset_requirements):
                     )
                 )
             else:
-                v = combined_param[k].pop()
+                default_v = combined_param[k].pop()
+                # get user-defined-config if it exists or set to default config
+                v = param_user_configs.get(k, default_v)
+                # if v is a tuple, it's not user-configured, so convert to list
                 if isinstance(v, tuple):
                     v = list(v)
+                # this implies user-configured, so check that it has the right number of elements
+                elif isinstance(v, list) and len(v) != len(default_v):
+                    raise exceptions.InvalidModel(
+                        'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
+                            len(v), k, len(default_v)
+                        )
+                    )
+
                 combined_param[k] = v
 
         reduced_paramset_requirements[param_name] = combined_param

@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normsys', constrained=True, op_code='multiplication')
 class normsys(object):
     @classmethod
-    def required_parset(cls, n_parameters, config={}):
+    def required_parset(cls, n_parameters):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
@@ -19,9 +19,9 @@ class normsys(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': config.get('inits', [0.0]),
-            'bounds': config.get('bounds', [[-5.0, 5.0]]),
-            'auxdata': config.get('auxdata', [0.0]),
+            'inits': (0.0,),
+            'bounds': ((-5.0, 5.0),),
+            'auxdata': (0.0,),
         }
 
 
