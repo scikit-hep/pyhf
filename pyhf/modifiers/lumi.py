@@ -27,12 +27,14 @@ class lumi(object):
 class lumi_combined(object):
     def __init__(self, lumi_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._lumi_indices = [
-            self._parindices[pdfconfig.par_slice(m)] for m in lumi_mods
-        ]
+
+        pnames = [pname for _, _, pname in lumi_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in lumi_mods]
+        lumi_mods = [m for m, _, _ in lumi_mods]
+        self._lumi_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
+
         self._lumi_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples]
-            for m in lumi_mods
+            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
