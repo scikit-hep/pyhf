@@ -75,11 +75,15 @@ def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
                 if isinstance(v, tuple):
                     v = list(v)
                 # this implies user-configured, so check that it has the right number of elements
-                elif isinstance(v, list) and len(v) != len(default_v):
+                elif isinstance(v, list) and default_v and len(v) != len(default_v):
                     raise exceptions.InvalidModel(
                         'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
                             len(v), k, len(default_v)
                         )
+                    )
+                elif v and not default_v:
+                    raise exceptions.InvalidModel(
+                        '{} does not use the {} attribute.'.format(param_name, k)
                     )
 
                 combined_param[k] = v

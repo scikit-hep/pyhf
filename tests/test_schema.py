@@ -244,15 +244,7 @@ def test_parameters_all_props():
                 ],
             }
         ],
-        'parameters': [
-            {
-                'name': 'mypoi',
-                'inits': [1],
-                'bounds': [[0, 1]],
-                'auxdata': [1],
-                'factors': [1],
-            }
-        ],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'bounds': [[0, 1]]}],
     }
     pyhf.Model(spec, poiname='mypoi')
 
@@ -268,7 +260,15 @@ def test_parameters_all_props():
         {'name': 'mypoi', 'n_parameters': 5},
         {'name': 'mypoi', 'op_code': 'fake_op_code'},
     ],
-    ids=['inits', 'bounds', 'auxdata', 'factors', 'paramset_type', 'n_parameters', 'op_code'],
+    ids=[
+        'inits',
+        'bounds',
+        'auxdata',
+        'factors',
+        'paramset_type',
+        'n_parameters',
+        'op_code',
+    ],
 )
 def test_parameters_bad_parameter(bad_parameter):
     spec = {
@@ -290,4 +290,32 @@ def test_parameters_bad_parameter(bad_parameter):
         'parameters': [bad_parameter],
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec, poiname='mypoi')
+
+
+@pytest.mark.parametrize(
+    'bad_parameter',
+    [{'name': 'mypoi', 'auxdata': [0.0]}, {'name': 'mypoi', 'factors': [0.0]}],
+    ids=['auxdata', 'factors'],
+)
+def test_parameters_normfactor_bad_attribute(bad_parameter):
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [bad_parameter],
+    }
+    with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec, poiname='mypoi')
