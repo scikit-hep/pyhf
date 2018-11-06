@@ -82,5 +82,6 @@ def set_backend(backend, custom_optimizer=None):
 
 
 from .pdf import Model
+from . import simplemodels
 
-__all__ = ['Model', 'utils', 'modifiers', '__version__']
+__all__ = ['Model', 'utils', 'modifiers', 'simplemodels', '__version__']

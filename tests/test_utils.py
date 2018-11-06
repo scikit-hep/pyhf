@@ -2,8 +2,6 @@ import os
 import pytest
 
 import pyhf
-import pyhf.simplemodels
-import pyhf.utils
 
 
 def test_get_default_schema():
