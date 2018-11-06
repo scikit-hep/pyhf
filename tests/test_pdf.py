@@ -1,6 +1,5 @@
 import pyhf
 import pytest
-import pyhf.simplemodels
 import pyhf.exceptions
 import numpy as np
 import json
