@@ -294,9 +294,7 @@ def test_parameters_bad_parameter(bad_parameter):
 
 
 @pytest.mark.parametrize(
-    'bad_parameter',
-    [{'name': 'mypoi', 'auxdata': [0.0]}, {'name': 'mypoi', 'factors': [0.0]}],
-    ids=['auxdata', 'factors'],
+    'bad_parameter', [{'name': 'mypoi', 'factors': [0.0]}], ids=['factors']
 )
 def test_parameters_normfactor_bad_attribute(bad_parameter):
     spec = {

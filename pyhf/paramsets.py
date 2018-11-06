@@ -54,12 +54,11 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         paramset_user_configs = paramsets_user_configs.get(paramset_name, {})
 
         combined_paramset = {}
-        for paramset_requirement in paramset_requirements:
-            for k in paramset_keys:
+        for k in paramset_keys:
+            for paramset_requirement in paramset_requirements:
                 v = paramset_requirement.get(k)
                 combined_paramset.setdefault(k, set([])).add(v)
 
-        for k in paramset_keys:
             if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(
                     "Multiple values for '{}' ({}) were found for {}. Use unique modifier names when constructing the pdf.".format(
