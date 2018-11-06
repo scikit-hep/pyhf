@@ -264,8 +264,11 @@ def test_parameters_all_props():
         {'name': 'mypoi', 'bounds': [0, 1]},
         {'name': 'mypoi', 'auxdata': ['a']},
         {'name': 'mypoi', 'factors': ['a']},
+        {'name': 'mypoi', 'paramset_type': 'fake_paramset_type'},
+        {'name': 'mypoi', 'n_parameters': 5},
+        {'name': 'mypoi', 'op_code': 'fake_op_code'},
     ],
-    ids=['inits', 'bounds', 'auxdata', 'factors'],
+    ids=['inits', 'bounds', 'auxdata', 'factors', 'paramset_type', 'n_parameters', 'op_code'],
 )
 def test_parameters_bad_parameter(bad_parameter):
     spec = {
