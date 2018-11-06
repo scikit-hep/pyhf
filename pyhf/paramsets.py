@@ -40,7 +40,6 @@ class constrained_by_poisson(paramset):
 def reduce_paramset_requirements(paramset_requirements, paramsets_user_configs):
     reduced_paramset_requirements = {}
 
-    # nb: normsys and histosys have different op_codes so can't currently be shared
     param_keys = [
         'paramset_type',
         'n_parameters',
