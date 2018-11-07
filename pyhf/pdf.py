@@ -179,6 +179,17 @@ class Model(object):
         self.constraints_gaussian = gaussian_constraint_combined(self.config)
         self.constraints_poisson = poisson_constraint_combined(self.config)
 
+        self._factor_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'multiplication'
+        ]
+        self._delta_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'addition'
+        ]
+
     def _create_nominal_and_modifiers(self):
         default_data_makers = {
             'histosys': lambda: {
@@ -330,27 +341,16 @@ class Model(object):
         return auxdata
 
     def _modifications(self, pars):
-        factor_mods = [
-            modtype
-            for modtype, mod in modifiers.uncombined.items()
-            if mod.op_code == 'multiplication'
-        ]
-        delta_mods = [
-            modtype
-            for modtype, mod in modifiers.uncombined.items()
-            if mod.op_code == 'addition'
-        ]
-
         deltas = list(
             filter(
                 lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in delta_mods],
+                [self.modifiers_appliers[k].apply(pars) for k in self._delta_mods],
             )
         )
         factors = list(
             filter(
                 lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in factor_mods],
+                [self.modifiers_appliers[k].apply(pars) for k in self._factor_mods],
             )
         )
 
