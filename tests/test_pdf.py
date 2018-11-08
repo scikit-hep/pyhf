@@ -372,3 +372,66 @@ def test_invalid_modifier_name_resuse():
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
         pyhf.Model(spec, poiname='reused_name')
+
+
+def test_override_paramset_defaults():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [
+            {'name': 'bkg_norm', 'inits': [99, 99], 'bounds': [[95, 95], [95, 95]]}
+        ],
+    }
+    pdf = pyhf.Model(spec)
+    assert pdf.config.param_set('bkg_norm').suggested_bounds == [[95, 95], [95, 95]]
+    assert pdf.config.param_set('bkg_norm').suggested_init == [99, 99]
+
+
+def test_override_paramsets_incorrect_num_parameters():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'bkg_norm', 'inits': [99, 99], 'bounds': [[95, 95]]}],
+    }
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Model(spec)

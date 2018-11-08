@@ -37,41 +37,63 @@ class constrained_by_poisson(paramset):
         )
 
 
-def reduce_paramset_requirements(paramset_requirements):
-    reduced_paramset_requirements = {}
+def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs):
+    reduced_paramsets_requirements = {}
 
-    # nb: normsys and histosys have different op_codes so can't currently be shared
-    param_keys = [
+    paramset_keys = [
         'paramset_type',
         'n_parameters',
-        'op_code',
         'inits',
         'bounds',
         'auxdata',
         'factors',
     ]
 
-    for param_name in list(paramset_requirements.keys()):
-        params = paramset_requirements[param_name]
+    """
+    - process all defined paramsets
+    - determine the unique set of paramsets by param-name
+    - if the paramset is not unique, complain
+    - if the paramset is unique, build the paramset using the set() defined on its options
+      - if the value is a tuple, this came from default options so convert to a list and use it
+      - if the value is a list, this came from user-define options, so use it
+    """
+    for paramset_name in list(paramsets_requirements.keys()):
+        paramset_requirements = paramsets_requirements[paramset_name]
+        paramset_user_configs = paramsets_user_configs.get(paramset_name, {})
 
-        combined_param = {}
-        for param in params:
-            for k in param_keys:
-                combined_param.setdefault(k, set([])).add(param.get(k))
+        combined_paramset = {}
+        for k in paramset_keys:
+            for paramset_requirement in paramset_requirements:
+                v = paramset_requirement.get(k)
+                combined_paramset.setdefault(k, set([])).add(v)
 
-        for k in param_keys:
-            if len(combined_param[k]) != 1 and k != 'op_code':
+            if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(
                     "Multiple values for '{}' ({}) were found for {}. Use unique modifier names when constructing the pdf.".format(
-                        k, list(combined_param[k]), param_name
+                        k, list(combined_paramset[k]), paramset_name
                     )
                 )
             else:
-                v = combined_param[k].pop()
+                default_v = combined_paramset[k].pop()
+                # get user-defined-config if it exists or set to default config
+                v = paramset_user_configs.get(k, default_v)
+                # if v is a tuple, it's not user-configured, so convert to list
                 if isinstance(v, tuple):
                     v = list(v)
-                combined_param[k] = v
+                # this implies user-configured, so check that it has the right number of elements
+                elif isinstance(v, list) and default_v and len(v) != len(default_v):
+                    raise exceptions.InvalidModel(
+                        'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
+                            len(v), k, len(default_v)
+                        )
+                    )
+                elif v and not default_v:
+                    raise exceptions.InvalidModel(
+                        '{} does not use the {} attribute.'.format(paramset_name, k)
+                    )
 
-        reduced_paramset_requirements[param_name] = combined_param
+                combined_paramset[k] = v
 
-    return reduced_paramset_requirements
+        reduced_paramsets_requirements[paramset_name] = combined_paramset
+
+    return reduced_paramsets_requirements

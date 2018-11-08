@@ -6,7 +6,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .paramsets import reduce_paramset_requirements
+from .paramsets import reduce_paramsets_requirements
 
 log = logging.getLogger(__name__)
 
@@ -19,6 +19,17 @@ class _ModelConfig(object):
         self.auxdata = []
         self.auxdata_order = []
         self.next_index = 0
+
+        # build up a dictionary of the parameter configurations provided by the user
+        _paramsets_user_configs = {}
+        for parameter in spec.get('parameters', []):
+            if parameter['name'] in _paramsets_user_configs:
+                raise exceptions.InvalidModel(
+                    'Multiple parameter configurations for {} were found.'.format(
+                        parameter['name']
+                    )
+                )
+            _paramsets_user_configs[parameter.pop('name')] = parameter
 
         self.channels = []
         self.samples = []
@@ -36,10 +47,10 @@ class _ModelConfig(object):
             for sample in channel['samples']:
                 self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
-                    self.parameters.append(modifier_def['name'])
-
                     # get the paramset requirements for the given modifier. If
                     # modifier does not exist, we'll have a KeyError
+                    paramset_name = modifier_def['name']
+                    self.parameters.append(paramset_name)
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
@@ -55,7 +66,7 @@ class _ModelConfig(object):
                         (
                             modifier_def['name'],  # mod name
                             modifier_def['type'],  # mod type
-                            modifier_def['name'],  # parset name
+                            paramset_name,  # parset name
                         )
                     )
 
@@ -85,7 +96,9 @@ class _ModelConfig(object):
         self.parameters = list(set(self.parameters))
         self.modifiers = list(set(self.modifiers))
         self.channel_nbins = self.channel_nbins
-        self._create_and_register_paramsets(_paramsets_requirements)
+        self._create_and_register_paramsets(
+            _paramsets_requirements, _paramsets_user_configs
+        )
         self.set_poi(poiname)
 
     def suggested_init(self):
@@ -109,7 +122,7 @@ class _ModelConfig(object):
     def set_poi(self, name):
         if name not in [x for x, _, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The paramter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
+                "The parameter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
                     name
                 )
             )
@@ -130,9 +143,11 @@ class _ModelConfig(object):
         self.par_order.append(param_name)
         self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
-    def _create_and_register_paramsets(self, paramsets_requirements):
-        for param_name, paramset_requirements in reduce_paramset_requirements(
-            paramsets_requirements
+    def _create_and_register_paramsets(
+        self, paramsets_requirements, paramsets_user_configs
+    ):
+        for param_name, paramset_requirements in reduce_paramsets_requirements(
+            paramsets_requirements, paramsets_user_configs
         ).items():
             paramset_type = paramset_requirements.get('paramset_type')
             paramset = paramset_type(**paramset_requirements)
@@ -163,6 +178,17 @@ class Model(object):
 
         self.constraints_gaussian = gaussian_constraint_combined(self.config)
         self.constraints_poisson = poisson_constraint_combined(self.config)
+
+        self._factor_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'multiplication'
+        ]
+        self._delta_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'addition'
+        ]
 
     def _create_nominal_and_modifiers(self):
         default_data_makers = {
@@ -315,19 +341,16 @@ class Model(object):
         return auxdata
 
     def _modifications(self, pars):
-        factor_mods = ['normsys', 'staterror', 'shapesys', 'normfactor', 'shapefactor']
-        delta_mods = ['histosys']
-
         deltas = list(
             filter(
                 lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in delta_mods],
+                [self.modifiers_appliers[k].apply(pars) for k in self._delta_mods],
             )
         )
         factors = list(
             filter(
                 lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in factor_mods],
+                [self.modifiers_appliers[k].apply(pars) for k in self._factor_mods],
             )
         )
 
