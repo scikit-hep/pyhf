@@ -26,13 +26,18 @@ def extract_error(h):
     return np.sqrt(err).tolist()
 
 
-def import_root_histogram(rootdir, filename, path, name):
+def import_root_histogram(rootdir, filename, path, name, filecache={}):
     import uproot
 
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    f = uproot.open(os.path.join(rootdir, filename))
+    fullpath = os.path.join(rootdir, filename)
+    if not fullpath in filecache:
+        f = uproot.open(fullpath)
+        filecache[fullpath] = f
+    else:
+        f = filecache[fullpath]
     try:
         h = f[name]
     except KeyError:
