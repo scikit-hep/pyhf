@@ -8,7 +8,7 @@ import os
 def assert_equal_dictionary(d1, d2):
     "recursively compare 2 dictionaries"
     for k in d1.keys():
-        assert d2.has_key(k) == True
+        assert k in d2
         if type(d1[k]) is dict:
             assert_equal_dictionary(d1[k], d2[k])
         else:
