@@ -211,4 +211,5 @@ def parse(configfile, rootdir, track_progress=False):
 
 
 def clear_filecache():
+    global __FILECACHE__
     __FILECACHE__ = {}
