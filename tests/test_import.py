@@ -1,6 +1,18 @@
 import pyhf
 import pyhf.readxml
 import numpy as np
+import uproot
+import os
+
+
+def assert_equal_dictionary(d1, d2):
+    "recursively compare 2 dictionaries"
+    for k in d1.keys():
+        assert d2.has_key(k) == True
+        if type(d1[k]) is dict:
+            assert_equal_dictionary(d1[k], d2[k])
+        else:
+            assert d1[k] == d2[k]
 
 
 def test_import_prepHistFactory():
@@ -83,3 +95,27 @@ def test_import_histosys():
     }
 
     assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'
+
+
+def test_import_filecache(mocker):
+
+    # uproot is dynamically imported in readxml, so to wrap it we need to set it now
+    pyhf.readxml.uproot = uproot
+
+    mocker.patch("pyhf.readxml.uproot.open", wraps=uproot.open)
+
+    pyhf.readxml.clear_filecache()
+
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
+    )
+
+    # call a second time (file should be cached now)
+    parsed_xml2 = pyhf.readxml.parse(
+        'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
+    )
+
+    # check if uproot.open was only called once with the expected root file
+    pyhf.readxml.uproot.open.assert_called_once_with(os.path.join("validation/xmlimport_input", "./data/example.root"))
+
+    assert_equal_dictionary(parsed_xml, parsed_xml2)
