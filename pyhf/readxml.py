@@ -7,6 +7,7 @@ import tqdm
 
 log = logging.getLogger(__name__)
 
+__FILECACHE__ = {}
 
 def extract_error(h):
     """
@@ -26,7 +27,10 @@ def extract_error(h):
     return np.sqrt(err).tolist()
 
 
-def import_root_histogram(rootdir, filename, path, name, filecache={}):
+def import_root_histogram(rootdir, filename, path, name, filecache=None):
+    global __FILECACHE__
+    filecache = filecache or __FILECACHE__
+
     import uproot
 
     # strip leading slashes as uproot doesn't use "/" for top-level
@@ -204,3 +208,7 @@ def parse(configfile, rootdir, track_progress=False):
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
     }
+
+
+def clear_filecache():
+    __FILECACHE__ = {}
