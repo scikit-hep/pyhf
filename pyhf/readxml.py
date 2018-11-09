@@ -4,6 +4,7 @@ import os
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
+import uproot
 
 log = logging.getLogger(__name__)
 
@@ -30,8 +31,6 @@ def extract_error(h):
 def import_root_histogram(rootdir, filename, path, name, filecache=None):
     global __FILECACHE__
     filecache = filecache or __FILECACHE__
-
-    import uproot
 
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''

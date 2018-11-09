@@ -99,9 +99,6 @@ def test_import_histosys():
 
 def test_import_filecache(mocker):
 
-    # uproot is dynamically imported in readxml, so to wrap it we need to set it now
-    pyhf.readxml.uproot = uproot
-
     mocker.patch("pyhf.readxml.uproot.open", wraps=uproot.open)
 
     pyhf.readxml.clear_filecache()

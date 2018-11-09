@@ -6,7 +6,10 @@ import os
 import jsonpatch
 import sys
 
-from . import readxml
+try:
+    from . import readxml
+except ImportError:
+    pass # readxml not needed with json input
 from . import writexml
 from .utils import hypotest
 from .pdf import Model
