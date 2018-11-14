@@ -6,10 +6,6 @@ import os
 import jsonpatch
 import sys
 
-try:
-    from . import readxml
-except ImportError:
-    pass # readxml not needed with json input
 from . import writexml
 from .utils import hypotest
 from .pdf import Model
@@ -41,6 +37,15 @@ def pyhf():
 @click.option('--track-progress/--hide-progress', default=True)
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     """ Entrypoint XML: The top-level XML file for the PDF definition. """
+    try:
+        import uproot
+    except ImportError:
+        log.error(
+            "xml2json requires uproot, please install pyhf using the "
+            "xmlimport extra: pip install pyhf[xmlimport] or install uproot "
+            "manually: pip install uproot"
+        )
+    from . import readxml
     spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
     if output_file is None:
         print(json.dumps(spec, indent=4, sort_keys=True))
