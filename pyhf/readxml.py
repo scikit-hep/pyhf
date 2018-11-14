@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 __FILECACHE__ = {}
 
+
 def extract_error(h):
     """
     Determine the bin uncertainties for a histogram.

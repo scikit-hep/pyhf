@@ -46,6 +46,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
             "manually: pip install uproot"
         )
     from . import readxml
+
     spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
     if output_file is None:
         print(json.dumps(spec, indent=4, sort_keys=True))
