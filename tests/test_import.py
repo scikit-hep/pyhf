@@ -27,17 +27,20 @@ def test_import_measurements():
 
     measurement_configs = measurements[0]['config']
 
-    assert 'lumi' in measurement_configs
-    assert measurement_configs['lumi'] == 1.0
-    assert 'lumirelerr' in measurement_configs
-    assert measurement_configs['lumirelerr'] == 0.1
     assert 'parameters' in measurement_configs
-
     assert len(measurement_configs['parameters']) == 2
-    assert measurement_configs['parameters'][0]['name'] == 'Lumi'
+    assert measurement_configs['parameters'][0]['name'] == 'lumi'
     assert measurement_configs['parameters'][1]['name'] == 'alpha_syst1'
-    assert measurement_configs['lumi'] == 1
 
+    lumi_param_config = measurement_configs['parameters'][0]
+    assert 'auxdata' in lumi_param_config
+    assert lumi_param_config['auxdata'] == [1.0]
+    assert 'bounds' in lumi_param_config
+    assert lumi_param_config['bounds'] == [[0, 10.0]]
+    assert 'inits' in lumi_param_config
+    assert lumi_param_config['inits'] == [1.0]
+    assert 'sigma' in lumi_param_config
+    assert lumi_param_config['sigma'] == [0.1]
 
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse(

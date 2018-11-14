@@ -191,8 +191,6 @@ def process_measurements(toplvl):
             'name': x.attrib['Name'],
             'config': {
                 'poi': x.findall('POI')[0].text,
-                'lumi': float(x.attrib['Lumi']),
-                'lumirelerr': float(x.attrib['LumiRelErr']),
                 'parameters': [],
             },
         }
@@ -207,6 +205,11 @@ def process_measurements(toplvl):
             # might be specifying multiple parameters in the same ParamSetting
             for param_name in param.text.split(' '):
                 param_obj = {'name': param_name}
+                if param_name == 'Lumi':
+                  param_obj['name'] = 'lumi'
+                  lumi = float(x.attrib['Lumi'])
+                  lumierr = lumi*float(x.attrib['LumiRelErr'])
+                  param_obj.update({'auxdata': [lumi], 'bounds': [[0, 10*lumi]], 'inits': [lumi], 'sigma': [lumierr]})
                 param_obj.update(overall_param_obj)
                 result['config']['parameters'].append(param_obj)
         results.append(result)
