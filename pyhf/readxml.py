@@ -207,7 +207,7 @@ def process_measurements(toplvl):
                 if param_name == 'Lumi':
                   lumi = float(x.attrib['Lumi'])
                   lumierr = lumi*float(x.attrib['LumiRelErr'])
-                  param_obj = {'name': 'lumi', 'auxdata': [lumi], 'bounds': [[0., 10.*lumi]], 'inits': [lumi], 'sigma': [lumierr]}
+                  param_obj = {'name': 'lumi', 'auxdata': [lumi], 'bounds': [[0., 10.*lumi]], 'inits': [lumi], 'sigmas': [lumierr]}
                 else:
                   param_obj = {'name': param_name}
                 param_obj.update(overall_param_obj)

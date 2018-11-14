@@ -24,7 +24,8 @@
                 "name": { "type": "string" },
                 "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                 "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
-                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1}
             },
             "required": ["name"],
             "additionalProperties": false
