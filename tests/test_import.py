@@ -42,6 +42,7 @@ def test_import_measurements():
     assert 'sigma' in lumi_param_config
     assert lumi_param_config['sigma'] == [0.1]
 
+
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'

@@ -18,9 +18,10 @@ class lumi(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': (0.0,),
-            'bounds': ((-5.0, 5.0),),
-            'auxdata': (0.0,),
+            'inits': (1.0,),  # lumi
+            'bounds': ((0.0, 10.0),),  # (0, 10*lumi)
+            'auxdata': (1.0,),  # lumi
+            'sigmas': (0.0,),  # lumi * lumirelerror
         }
 
 
