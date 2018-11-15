@@ -6,7 +6,7 @@ import papermill as pm
 def test_notebooks(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     common_kwargs = {
-        'output': str(outputnb),
+        'output_path': str(outputnb),
         'kernel_name': 'python{}'.format(sys.version_info.major),
     }
 
