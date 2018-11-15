@@ -437,7 +437,7 @@ def test_override_paramsets_incorrect_num_parameters():
         pyhf.Model(spec)
 
 
-def test_lumi_change():
+def test_lumi_np_scaling():
     spec = {
         "channels": [
             {
@@ -455,11 +455,7 @@ def test_lumi_change():
                         ],
                         "name": "signal",
                     },
-                    {
-                        "data": [100.0, 0.0],
-                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
-                        "name": "background1",
-                    },
+                    {"data": [100.0, 0.0], "name": "background1", "modifiers": []},
                     {
                         "data": [0.0, 100.0],
                         "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
@@ -479,5 +475,44 @@ def test_lumi_change():
         ],
     }
     pdf = pyhf.pdf.Model(spec, poiname="SigXsecOverSM")
-    assert pdf.expected_data([1.0, 1.0]).tolist() == [120.0, 110.0, 1.0]
-    assert pdf.expected_data([2.0, 1.0]).tolist() == [120.0*2, 110.0*2, 1.0]
+
+    poi_slice = pdf.config.par_slice('SigXsecOverSM')
+    lumi_slice = pdf.config.par_slice('lumi')
+
+    index_bkg1 = pdf.config.samples.index('background1')
+    index_bkg2 = pdf.config.samples.index('background2')
+    index_sig = pdf.config.samples.index('signal')
+    bkg1_slice = slice(index_bkg1, index_bkg1 + 1)
+    bkg2_slice = slice(index_bkg2, index_bkg2 + 1)
+    sig_slice = slice(index_sig, index_sig + 1)
+
+    alpha_lumi = np.random.uniform(0.0, 10.0, 1)[0]
+
+    mods = [None, None, None]
+    pars = [None, None]
+
+    pars[poi_slice], pars[lumi_slice] = [[1.0], [1.0]]
+    mods[sig_slice], mods[bkg1_slice], mods[bkg2_slice] = [
+        [[[1.0, 1.0]]],
+        [[[1.0, 1.0]]],
+        [[[1.0, 1.0]]],
+    ]
+    assert pdf._modifications(np.array(pars))[1][
+        pdf._factor_mods.index('lumi')
+    ].tolist() == [mods]
+    assert pdf.expected_data(pars).tolist() == [120.0, 110.0, 1.0]
+
+    pars[poi_slice], pars[lumi_slice] = [[1.0], [alpha_lumi]]
+    mods[sig_slice], mods[bkg1_slice], mods[bkg2_slice] = [
+        [[[alpha_lumi, alpha_lumi]]],
+        [[[1.0, 1.0]]],
+        [[[alpha_lumi, alpha_lumi]]],
+    ]
+    assert pdf._modifications(np.array(pars))[1][
+        pdf._factor_mods.index('lumi')
+    ].tolist() == [mods]
+    assert pytest.approx(pdf.expected_data(pars).tolist()) == [
+        100 + 20.0 * alpha_lumi,
+        110.0 * alpha_lumi,
+        1.0 * alpha_lumi,
+    ]
