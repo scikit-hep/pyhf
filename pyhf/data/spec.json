@@ -24,7 +24,10 @@
                 "name": { "type": "string" },
                 "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                 "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
-                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
+                "fixed": { "type": "boolean" }
             },
             "required": ["name"],
             "additionalProperties": false
@@ -39,6 +42,7 @@
                     "items": {
                         "anyOf": [
                             { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/lumi" },
                             { "$ref": "#/definitions/modifier/normfactor" },
                             { "$ref": "#/definitions/modifier/normsys" },
                             { "$ref": "#/definitions/modifier/shapefactor" },
@@ -65,6 +69,16 @@
                         },
                         "required": ["lo_data", "hi_data"]
                     }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "lumi": {
+                "type": "object",
+                "properties": {
+                    "name": { "const": "lumi" },
+                    "type": { "const": "lumi" },
+                    "data": { "type": "null" }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false

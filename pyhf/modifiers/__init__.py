@@ -176,6 +176,7 @@ def modifier(*args, **kwargs):
 
 
 from .histosys import histosys, histosys_combined
+from .lumi import lumi, lumi_combined
 from .normfactor import normfactor, normfactor_combined
 from .normsys import normsys, normsys_combined
 from .shapefactor import shapefactor, shapefactor_combined
@@ -184,6 +185,7 @@ from .staterror import staterror, staterror_combined
 
 uncombined = {
     'histosys': histosys,
+    'lumi': lumi,
     'normfactor': normfactor,
     'normsys': normsys,
     'shapefactor': shapefactor,
@@ -193,6 +195,7 @@ uncombined = {
 
 combined = {
     'histosys': histosys_combined,
+    'lumi': lumi_combined,
     'normfactor': normfactor_combined,
     'normsys': normsys_combined,
     'shapefactor': shapefactor_combined,
@@ -203,6 +206,8 @@ combined = {
 __all__ = [
     'histosys',
     'histosys_combined',
+    'lumi',
+    'lumi_combined',
     'normfactor',
     'normfactor_combined',
     'normsys',

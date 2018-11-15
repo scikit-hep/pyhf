@@ -15,13 +15,44 @@ def assert_equal_dictionary(d1, d2):
             assert d1[k] == d2[k]
 
 
+def test_import_measurements():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
+    )
+    assert 'toplvl' in parsed_xml
+    assert 'measurements' in parsed_xml['toplvl']
+
+    measurements = parsed_xml['toplvl']['measurements']
+    assert len(measurements) == 4
+
+    measurement_configs = measurements[0]['config']
+
+    assert 'parameters' in measurement_configs
+    assert len(measurement_configs['parameters']) == 2
+    assert measurement_configs['parameters'][0]['name'] == 'lumi'
+    assert measurement_configs['parameters'][1]['name'] == 'alpha_syst1'
+
+    lumi_param_config = measurement_configs['parameters'][0]
+    assert 'auxdata' in lumi_param_config
+    assert lumi_param_config['auxdata'] == [1.0]
+    assert 'bounds' in lumi_param_config
+    assert lumi_param_config['bounds'] == [[0.5, 1.5]]
+    assert 'inits' in lumi_param_config
+    assert lumi_param_config['inits'] == [1.0]
+    assert 'sigmas' in lumi_param_config
+    assert lumi_param_config['sigmas'] == [0.1]
+
+
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
     )
 
     # build the spec, strictly checks properties included
-    spec = {'channels': parsed_xml['channels']}
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+    }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [
@@ -47,13 +78,16 @@ def test_import_prepHistFactory():
     assert 'background1' in samples['channel1']
     assert 'background2' in samples['channel1']
 
-    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['type'] == 'staterror'
-    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['data'] == [0, 10.0]
+    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'lumi'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][0]['type'] == 'lumi'
 
-    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['type'] == 'staterror'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][1]['type'] == 'staterror'
+    assert pdf.spec['channels'][0]['samples'][2]['modifiers'][1]['data'] == [0, 10.0]
+
+    assert pdf.spec['channels'][0]['samples'][1]['modifiers'][1]['type'] == 'staterror'
     assert all(
         np.isclose(
-            pdf.spec['channels'][0]['samples'][1]['modifiers'][0]['data'], [5.0, 0.0]
+            pdf.spec['channels'][0]['samples'][1]['modifiers'][1]['data'], [5.0, 0.0]
         )
     )
 
@@ -63,10 +97,10 @@ def test_import_prepHistFactory():
     ]
 
     assert pdf.config.auxdata_order == sorted(
-        ['syst1', 'staterror_channel1', 'syst2', 'syst3']
+        ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
     )
 
-    assert data == [122.0, 112.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
@@ -79,7 +113,10 @@ def test_import_histosys():
     )
 
     # build the spec, strictly checks properties included
-    spec = {'channels': parsed_xml['channels']}
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+    }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [
@@ -94,7 +131,8 @@ def test_import_histosys():
         for channel in pdf.spec['channels']
     }
 
-    assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'
+    assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'lumi'
+    assert channels['channel2']['samples'][0]['modifiers'][1]['type'] == 'histosys'
 
 
 def test_import_filecache(mocker):

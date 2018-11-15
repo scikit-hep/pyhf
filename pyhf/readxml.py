@@ -68,6 +68,9 @@ def process_sample(
     data, err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
     modifiers = []
+    # first check if we need to add lumi modifier for this sample
+    if sample.attrib.get("NormalizeByTheory", "False") == 'True':
+        modifiers.append({'name': 'lumi', 'type': 'lumi', 'data': None})
 
     modtags = tqdm.tqdm(
         sample.iter(), unit='modifier', disable=not (track_progress), total=len(sample)
@@ -181,6 +184,48 @@ def process_channel(channelxml, rootdir, track_progress=False):
     return channelname, parsed_data, results
 
 
+def process_measurements(toplvl):
+    results = []
+    for x in toplvl.findall('Measurement'):
+        lumi = float(x.attrib['Lumi'])
+        lumierr = lumi * float(x.attrib['LumiRelErr'])
+
+        result = {
+            'name': x.attrib['Name'],
+            'config': {
+                'poi': x.findall('POI')[0].text,
+                'parameters': [
+                    {
+                        'name': 'lumi',
+                        'auxdata': [lumi],
+                        'bounds': [[lumi - 5.0 * lumierr, lumi + 5.0 * lumierr]],
+                        'inits': [lumi],
+                        'sigmas': [lumierr],
+                    }
+                ],
+            },
+        }
+        for param in x.findall('ParamSetting'):
+            # determine what all parameters in the paramsetting have in common
+            overall_param_obj = {}
+            if param.attrib.get('Const'):
+                overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
+            if param.attrib.get('Val'):
+                overall_param_obj['value'] = param.attrib['Val']
+
+            # might be specifying multiple parameters in the same ParamSetting
+            for param_name in param.text.split(' '):
+                # lumi will always be the first parameter
+                if param_name == 'Lumi':
+                    result['config']['parameters'][0].update(overall_param_obj)
+                else:
+                    param_obj = {'name': param_name}
+                    param_obj.update(overall_param_obj)
+                    result['config']['parameters'].append(param_obj)
+        results.append(result)
+    return results
+
+
 def parse(configfile, rootdir, track_progress=False):
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
@@ -200,10 +245,7 @@ def parse(configfile, rootdir, track_progress=False):
     return {
         'toplvl': {
             'resultprefix': toplvl.getroot().attrib['OutputFilePrefix'],
-            'measurements': [
-                {'name': x.attrib['Name'], 'config': {'poi': x.findall('POI')[0].text}}
-                for x in toplvl.findall('Measurement')
-            ],
+            'measurements': process_measurements(toplvl),
         },
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
