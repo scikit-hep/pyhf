@@ -76,42 +76,49 @@ def setup_1bin_shapesys(
 @pytest.fixture(scope='module')
 def spec_1bin_lumi(source=source_1bin_example1()):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "channel1",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "data": [20.0, 10.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu", "type": "normfactor"}
                         ],
+                        "name": "signal",
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [{'name': 'lumi', 'type': 'lumi', 'data': None}],
+                        "data": [100.0, 0.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background1",
+                    },
+                    {
+                        "data": [0.0, 100.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background2",
                     },
                 ],
             }
-        ]
+        ],
+        "parameters": [
+            {
+                "auxdata": [1.0],
+                "bounds": [[0.0, 10.0]],
+                "inits": [1.0],
+                "name": "lumi",
+                "sigmas": [0.1],
+            }
+        ],
     }
     return spec
 
 
 @pytest.fixture(scope='module')
 def expected_result_1bin_lumi(mu=1.0):
-    ## TO DO - FIX THIS
     if mu == 1:
         expected_result = {
-            "exp": [
-                0.06371799398864626,
-                0.15096503398048894,
-                0.3279606950533305,
-                0.6046087303039118,
-                0.8662627605298466,
-            ],
-            "obs": 0.4541865416107029,
+            "exp": [0.00905976, 0.0357287, 0.12548957, 0.35338293, 0.69589171],
+            "obs": 0.00941757,
         }
     return expected_result
 
