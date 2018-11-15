@@ -18,7 +18,9 @@ class constrained_by_normal(paramset):
         super(constrained_by_normal, self).__init__(**kwargs)
         self.pdf_type = 'normal'
         self.auxdata = kwargs.pop('auxdata')
-        self.sigmas = kwargs.pop('sigmas')
+        sigmas = kwargs.pop('sigmas', None)
+        if sigmas:
+            self.sigmas = sigmas
 
     def expected_data(self, pars):
         return pars
