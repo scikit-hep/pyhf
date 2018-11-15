@@ -131,7 +131,6 @@ def test_import_histosys():
         for channel in pdf.spec['channels']
     }
 
-    assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'histosys'
     assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'lumi'
     assert channels['channel2']['samples'][0]['modifiers'][1]['type'] == 'histosys'
 
