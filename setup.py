@@ -31,7 +31,7 @@ extras_require = {
     'minuit': ['iminuit'],
     'develop': [
         'pyflakes',
-        'pytest>=3.5.1',
+        'pytest<4.0.0,>=3.5.1',
         'pytest-cov>=2.5.1',
         'pytest-benchmark[histogram]',
         'pytest-console-scripts',
