@@ -217,7 +217,7 @@ def process_measurements(toplvl):
             for param_name in param.text.split(' '):
                 # lumi will always be the first parameter
                 if param_name == 'Lumi':
-                    result['config']['parameters'][0].update(overall_param_object)
+                    result['config']['parameters'][0].update(overall_param_obj)
                 else:
                     param_obj = {'name': param_name}
                     param_obj.update(overall_param_obj)
