@@ -50,6 +50,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         'bounds',
         'auxdata',
         'factors',
+        'sigmas',
     ]
 
     """
