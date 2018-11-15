@@ -36,7 +36,7 @@ def test_import_measurements():
     assert 'auxdata' in lumi_param_config
     assert lumi_param_config['auxdata'] == [1.0]
     assert 'bounds' in lumi_param_config
-    assert lumi_param_config['bounds'] == [[0, 10.0]]
+    assert lumi_param_config['bounds'] == [[0.5, 1.5]]
     assert 'inits' in lumi_param_config
     assert lumi_param_config['inits'] == [1.0]
     assert 'sigmas' in lumi_param_config
