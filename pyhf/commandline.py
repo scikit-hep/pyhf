@@ -112,10 +112,11 @@ def cls(workspace, output_file, measurement, patch):
         )
         spec = {
             'channels': d['channels'],
-            'parameters': d['toplvl']['measurements'][measurement_index].get(
+            'parameters': d['toplvl']['measurements'][measurement_index]['config'].get(
                 'parameters', []
             ),
         }
+
         for p in patch:
             with click.open_file(p, 'r') as read_file:
                 p = jsonpatch.JsonPatch(json.loads(read_file.read()))
