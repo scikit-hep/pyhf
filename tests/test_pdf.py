@@ -437,8 +437,7 @@ def test_override_paramsets_incorrect_num_parameters():
         pyhf.Model(spec)
 
 
-@pytest.mark.parametrize('lumi', [1.0, 1.1, 1.2])
-def test_lumi_change(lumi):
+def test_lumi_change():
     spec = {
         "channels": [
             {
@@ -471,13 +470,14 @@ def test_lumi_change(lumi):
         ],
         "parameters": [
             {
-                "auxdata": [lumi],
-                "bounds": [[0.0, lumi * 10.0]],
-                "inits": [lumi],
+                "auxdata": [1.0],
+                "bounds": [[0.0, 10.0]],
+                "inits": [1.0],
                 "name": "lumi",
                 "sigmas": [0.1],
             }
         ],
     }
     pdf = pyhf.pdf.Model(spec, poiname="SigXsecOverSM")
-    assert pdf.expected_data([1.0, 1.0]).tolist() == [120.0 * lumi, 110.0 * lumi, lumi]
+    assert pdf.expected_data([1.0, 1.0]).tolist() == [120.0, 110.0, 1.0]
+    assert pdf.expected_data([2.0, 1.0]).tolist() == [120.0*2, 110.0*2, 1.0]
