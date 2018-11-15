@@ -39,8 +39,8 @@ def test_import_measurements():
     assert lumi_param_config['bounds'] == [[0, 10.0]]
     assert 'inits' in lumi_param_config
     assert lumi_param_config['inits'] == [1.0]
-    assert 'sigma' in lumi_param_config
-    assert lumi_param_config['sigma'] == [0.1]
+    assert 'sigmas' in lumi_param_config
+    assert lumi_param_config['sigmas'] == [0.1]
 
 
 def test_import_prepHistFactory():
@@ -49,7 +49,7 @@ def test_import_prepHistFactory():
     )
 
     # build the spec, strictly checks properties included
-    spec = {'channels': parsed_xml['channels']}
+    spec = {'channels': parsed_xml['channels'], 'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters']}
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [
@@ -97,7 +97,7 @@ def test_import_prepHistFactory():
         ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
     )
 
-    assert data == [122.0, 112.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]
@@ -110,7 +110,7 @@ def test_import_histosys():
     )
 
     # build the spec, strictly checks properties included
-    spec = {'channels': parsed_xml['channels']}
+    spec = {'channels': parsed_xml['channels'], 'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters']}
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
     data = [
