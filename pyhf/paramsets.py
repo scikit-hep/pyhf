@@ -68,7 +68,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         combined_paramset = {}
         for k in paramset_keys:
             for paramset_requirement in paramset_requirements:
-                v = paramset_requirement.get(k)
+                v = paramset_requirement.get(k, 'undefined')
                 combined_paramset.setdefault(k, set([])).add(v)
 
             if len(combined_paramset[k]) != 1:
@@ -82,6 +82,8 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                 # get user-defined-config if it exists or set to default config
                 v = paramset_user_configs.get(k, default_v)
                 # if v is a tuple, it's not user-configured, so convert to list
+                if v == 'undefined':
+                    continue
                 if isinstance(v, tuple):
                     v = list(v)
                 # this implies user-configured, so check that it has the right number of elements
@@ -91,7 +93,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                             len(v), k, len(default_v)
                         )
                     )
-                elif v and not default_v:
+                elif v and default_v == 'undefined':
                     raise exceptions.InvalidModel(
                         '{} does not use the {} attribute.'.format(paramset_name, k)
                     )
