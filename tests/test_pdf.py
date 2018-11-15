@@ -497,9 +497,7 @@ def test_lumi_np_scaling():
         [[[1.0, 1.0]]],
         [[[1.0, 1.0]]],
     ]
-    assert pdf._modifications(np.array(pars))[1][
-        pdf._factor_mods.index('lumi')
-    ].tolist() == [mods]
+    assert pdf._modifications(np.array(pars))[1][0].tolist() == [mods]
     assert pdf.expected_data(pars).tolist() == [120.0, 110.0, 1.0]
 
     pars[poi_slice], pars[lumi_slice] = [[1.0], [alpha_lumi]]
@@ -508,9 +506,7 @@ def test_lumi_np_scaling():
         [[[1.0, 1.0]]],
         [[[alpha_lumi, alpha_lumi]]],
     ]
-    assert pdf._modifications(np.array(pars))[1][
-        pdf._factor_mods.index('lumi')
-    ].tolist() == [mods]
+    assert pdf._modifications(np.array(pars))[1][0].tolist() == [mods]
     assert pytest.approx(pdf.expected_data(pars).tolist()) == [
         100 + 20.0 * alpha_lumi,
         110.0 * alpha_lumi,
