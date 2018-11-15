@@ -47,6 +47,7 @@ Computational Backends:
 - [x] PyTorch
 - [x] TensorFlow
 - [x] MXNet
+- [x] Lumi Uncertainty
 
 Available Optimizers
 
@@ -57,7 +58,6 @@ Available Optimizers
 
 
 ## Todo
-- [ ] Lumi Uncertainty
 - [ ] StatConfig
 - [ ] Non-asymptotic calculators
 
