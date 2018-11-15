@@ -187,9 +187,23 @@ def process_channel(channelxml, rootdir, track_progress=False):
 def process_measurements(toplvl):
     results = []
     for x in toplvl.findall('Measurement'):
+        lumi = float(x.attrib['Lumi'])
+        lumierr = lumi * float(x.attrib['LumiRelErr'])
+
         result = {
             'name': x.attrib['Name'],
-            'config': {'poi': x.findall('POI')[0].text, 'parameters': []},
+            'config': {
+                'poi': x.findall('POI')[0].text,
+                'parameters': [
+                    {
+                        'name': 'lumi',
+                        'auxdata': [lumi],
+                        'bounds': [[0.0, 10.0 * lumi]],
+                        'inits': [lumi],
+                        'sigmas': [lumierr],
+                    }
+                ],
+            },
         }
         for param in x.findall('ParamSetting'):
             # determine what all parameters in the paramsetting have in common
@@ -201,20 +215,13 @@ def process_measurements(toplvl):
 
             # might be specifying multiple parameters in the same ParamSetting
             for param_name in param.text.split(' '):
+                # lumi will always be the first parameter
                 if param_name == 'Lumi':
-                    lumi = float(x.attrib['Lumi'])
-                    lumierr = lumi * float(x.attrib['LumiRelErr'])
-                    param_obj = {
-                        'name': 'lumi',
-                        'auxdata': [lumi],
-                        'bounds': [[0.0, 10.0 * lumi]],
-                        'inits': [lumi],
-                        'sigmas': [lumierr],
-                    }
+                    result['config']['parameters'][0].update(overall_param_object)
                 else:
                     param_obj = {'name': param_name}
-                param_obj.update(overall_param_obj)
-                result['config']['parameters'].append(param_obj)
+                    param_obj.update(overall_param_obj)
+                    result['config']['parameters'].append(param_obj)
         results.append(result)
     return results
 
