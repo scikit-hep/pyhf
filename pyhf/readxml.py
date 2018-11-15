@@ -198,7 +198,7 @@ def process_measurements(toplvl):
                     {
                         'name': 'lumi',
                         'auxdata': [lumi],
-                        'bounds': [[0.0, 10.0 * lumi]],
+                        'bounds': [[lumi - 5.0 * lumierr, lumi + 5.0 * lumierr]],
                         'inits': [lumi],
                         'sigmas': [lumierr],
                     }
