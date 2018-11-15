@@ -4,8 +4,11 @@ import os
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
+import uproot
 
 log = logging.getLogger(__name__)
+
+__FILECACHE__ = {}
 
 
 def extract_error(h):
@@ -26,13 +29,19 @@ def extract_error(h):
     return np.sqrt(err).tolist()
 
 
-def import_root_histogram(rootdir, filename, path, name):
-    import uproot
+def import_root_histogram(rootdir, filename, path, name, filecache=None):
+    global __FILECACHE__
+    filecache = filecache or __FILECACHE__
 
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    f = uproot.open(os.path.join(rootdir, filename))
+    fullpath = os.path.join(rootdir, filename)
+    if not fullpath in filecache:
+        f = uproot.open(fullpath)
+        filecache[fullpath] = f
+    else:
+        f = filecache[fullpath]
     try:
         h = f[name]
     except KeyError:
@@ -199,3 +208,8 @@ def parse(configfile, rootdir, track_progress=False):
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
     }
+
+
+def clear_filecache():
+    global __FILECACHE__
+    __FILECACHE__ = {}

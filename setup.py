@@ -33,6 +33,7 @@ extras_require = {
         'pyflakes',
         'pytest<4.0.0,>=3.5.1',
         'pytest-cov>=2.5.1',
+        'pytest-mock',
         'pytest-benchmark[histogram]',
         'pytest-console-scripts',
         'python-coveralls',
