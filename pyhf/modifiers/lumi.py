@@ -18,10 +18,10 @@ class lumi(object):
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'op_code': cls.op_code,
-            'inits': (1.0,),  # lumi
-            'bounds': ((0.0, 10.0),),  # (0, 10*lumi)
-            'auxdata': (1.0,),  # lumi
-            'sigmas': (0.0,),  # lumi * lumirelerror
+            'inits': None,  # lumi
+            'bounds': None,  # (0, 10*lumi)
+            'auxdata': None,  # lumi
+            'sigmas': None,  # lumi * lumirelerror
         }
 
 
