@@ -435,3 +435,49 @@ def test_override_paramsets_incorrect_num_parameters():
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec)
+
+
+@pytest.mark.parametrize('lumi', [1.0, 1.1, 1.2])
+def test_lumi_change(lumi):
+    spec = {
+        "channels": [
+            {
+                "name": "channel1",
+                "samples": [
+                    {
+                        "data": [20.0, 10.0],
+                        "modifiers": [
+                            {
+                                "data": None,
+                                "name": "SigXsecOverSM",
+                                "type": "normfactor",
+                            },
+                            {"data": None, "name": "lumi", "type": "lumi"},
+                        ],
+                        "name": "signal",
+                    },
+                    {
+                        "data": [100.0, 0.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background1",
+                    },
+                    {
+                        "data": [0.0, 100.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background2",
+                    },
+                ],
+            }
+        ],
+        "parameters": [
+            {
+                "auxdata": [lumi],
+                "bounds": [[0.0, lumi * 10.0]],
+                "inits": [lumi],
+                "name": "lumi",
+                "sigmas": [0.1],
+            }
+        ],
+    }
+    pdf = pyhf.pdf.Model(spec, poiname="SigXsecOverSM")
+    assert pdf.expected_data([1.0, 1.0]).tolist() == [120.0 * lumi, 110.0 * lumi, lumi]
