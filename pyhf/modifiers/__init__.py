@@ -185,6 +185,7 @@ from .staterror import staterror, staterror_combined
 
 uncombined = {
     'histosys': histosys,
+    'lumi': lumi,
     'normfactor': normfactor,
     'normsys': normsys,
     'shapefactor': shapefactor,
