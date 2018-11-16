@@ -41,13 +41,13 @@ Implemented variations:
 - [x] Import from XML + ROOT via [uproot](https://github.com/scikit-hep/uproot)
 - [x] ShapeFactor
 - [x] StatError
+- [x] Lumi Uncertainty
 
 Computational Backends:
 - [x] NumPy
 - [x] PyTorch
 - [x] TensorFlow
 - [x] MXNet
-- [x] Lumi Uncertainty
 
 Available Optimizers
 
