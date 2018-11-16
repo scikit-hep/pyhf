@@ -15,6 +15,7 @@ script:
   - pyflakes pyhf
   - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then black --check --diff --verbose .; fi
+after_success: coveralls
 
 # always test (on both 'push' and 'pr' builds in Travis)
 # test docs on 'pr' builds and 'push' builds on master
@@ -38,11 +39,12 @@ jobs:
     python: '2.7'
     script:
       - pytest tests/test_notebooks.py
+    after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
       - pytest tests/test_notebooks.py
-    after_success: coveralls
+    after_success: skip
   - stage: benchmark
     python: '3.6'
     before_install:
@@ -51,6 +53,7 @@ jobs:
       - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
     script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
+    after_success: skip
   - stage: docs
     python: '3.6'
     addons:
@@ -71,12 +74,13 @@ jobs:
     before_script:
       - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
     script:
-    - python -m doctest README.md
-    - cd docs && make html && cd -
-    - touch docs/_build/html/.nojekyll
-    # Open Binder example in browser to trigger repo2docker to build image
-    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master
-    - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+      - python -m doctest README.md
+      - cd docs && make html && cd -
+      - touch docs/_build/html/.nojekyll
+      # Open Binder example in browser to trigger repo2docker to build image
+      - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master
+      - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+    after_success: skip
     deploy:
       provider: pages
       skip_cleanup: true
@@ -88,6 +92,7 @@ jobs:
     python: '3.6'
     install: skip
     script: skip
+    after_success: skip
     deploy:
       provider: pypi
       on:
