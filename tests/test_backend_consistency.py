@@ -108,6 +108,7 @@ def test_hypotest_q_mu(
         pyhf.tensor.numpy_backend(),
         pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()),
         pyhf.tensor.pytorch_backend(),
+        pyhf.tensor.jax_backend(),
     ]
 
     test_statistic = []
