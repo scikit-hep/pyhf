@@ -41,7 +41,7 @@ extras_require = {
         'matplotlib',
         'jupyter',
         'nbdime',
-        'uproot>=3.0.0',
+        'uproot>=3.3.0',
         'papermill>=0.16.0',
         'graphviz',
         'bumpversion',
