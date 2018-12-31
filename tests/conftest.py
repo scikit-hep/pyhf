@@ -1,4 +1,3 @@
-import torch  # Solves "cannot load any more object with static TLS" (thread local storage) error
 import pytest
 import pyhf
 import tensorflow as tf
