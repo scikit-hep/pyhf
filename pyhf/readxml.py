@@ -20,12 +20,12 @@ def extract_error(h):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        h: The histogram
+        h (uproot.rootio.TH1 object): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = h.variances if h.variances else h.numpy()[0]
+    err = h.variances if h.variances.any() else h.numpy()[0]
     return np.sqrt(err).tolist()
 
 
