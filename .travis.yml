@@ -56,30 +56,22 @@ jobs:
     after_success: skip
   - stage: docs
     python: '3.6'
-    addons:
-      chrome: stable
-      apt:
-        packages:
-          - chromium-chromedriver
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
       - sudo apt-get -qq install libtcmalloc-minimal4
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
-      - pip install selenium
     install:
       - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
-    before_script:
-      - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
     script:
       - python -m doctest README.md
       - cd docs && make html && cd -
       - touch docs/_build/html/.nojekyll
       # Open Binder example in browser to trigger repo2docker to build image
-      - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master
-      - python binder/trigger_binder.py --url https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+      - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
+      - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb"
     after_success: skip
     deploy:
       provider: pages
