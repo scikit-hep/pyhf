@@ -69,7 +69,7 @@ jobs:
       - python -m doctest README.md
       - cd docs && make html && cd -
       - touch docs/_build/html/.nojekyll
-      # Open Binder example in browser to trigger repo2docker to build image
+      # Use Binder build API to trigger repo2docker to build image
       - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
       - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb"
     after_success: skip
