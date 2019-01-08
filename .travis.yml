@@ -81,6 +81,8 @@ jobs:
         branch: master
   - stage: binder
     python: '3.6'
+    before_install: skip
+    install: skip
     script:
       # Use Binder build API to trigger repo2docker to build image
       - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
