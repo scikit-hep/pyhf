@@ -26,6 +26,8 @@ stages:
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
     if: (branch = master)
+  - name: binder
+    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
     if: (tag =~ v[0-9\.]*)
 
@@ -69,8 +71,6 @@ jobs:
       - python -m doctest README.md
       - cd docs && make html && cd -
       - touch docs/_build/html/.nojekyll
-      # Use Binder build API to trigger repo2docker to build image
-      - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
     after_success: skip
     deploy:
       provider: pages
@@ -79,6 +79,12 @@ jobs:
       local_dir: docs/_build/html
       on:
         branch: master
+  - stage: binder
+    python: '3.6'
+    script:
+      # Use Binder build API to trigger repo2docker to build image
+      - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
+    after_success: skip
   - stage: deploy
     python: '3.6'
     install: skip
