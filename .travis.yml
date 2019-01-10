@@ -73,7 +73,7 @@ jobs:
       - python -m doctest README.md
       - cd docs && make html && cd -
       - touch docs/_build/html/.nojekyll
-    after_success: skip
+    after_success: echo "Skipping after_success"
     deploy:
       provider: pages
       skip_cleanup: true
