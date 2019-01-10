@@ -13,7 +13,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
-  - pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+  - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then black --check --diff --verbose .; fi
 after_success: coveralls
 
@@ -40,12 +40,12 @@ jobs:
   - name: "Python 2.7 Notebook Tests"
     python: '2.7'
     script:
-      - pytest tests/test_notebooks.py
+      - python -m pytest tests/test_notebooks.py
     after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
-      - pytest tests/test_notebooks.py
+      - python -m pytest tests/test_notebooks.py
     after_success: skip
   - stage: benchmark
     python: '3.6'
@@ -56,7 +56,7 @@ jobs:
     install:
       - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
-    script: pytest -r sx --benchmark-sort=mean tests/benchmarks/
+    script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
     after_success: skip
   - stage: docs
     python: '3.6'
