@@ -1,7 +1,7 @@
 Installation
 ============
 
-To install, we suggest first setting up a `virtual environment <https://virtualenvwrapper.readthedocs.io/en/latest/>`__
+To install, we suggest first setting up a `virtual environment <https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__
 
 .. code-block:: console
 
