@@ -1,1 +1,1 @@
-pip install --ignore-installed -U -e .[complete]
+pip install --upgrade -e .[complete]
