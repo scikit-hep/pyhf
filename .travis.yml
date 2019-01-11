@@ -15,7 +15,7 @@ script:
   - pyflakes pyhf
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then black --check --diff --verbose .; fi
-after_success: coveralls
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then coveralls; fi
 
 # always test (on both 'push' and 'pr' builds in Travis)
 # test docs on 'pr' builds and 'push' builds on master
