@@ -87,7 +87,7 @@ jobs:
     install: skip
     script:
       # Use Binder build API to trigger repo2docker to build image
-      - python -m webbrowser "https://mybinder.org/build/gh/diana-hep/pyhf/master"
+      - curl https://mybinder.org/build/gh/diana-hep/pyhf/master
     after_success: skip
   - stage: deploy
     python: '3.6'
