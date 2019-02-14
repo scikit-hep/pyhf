@@ -201,6 +201,7 @@ def inspect(workspace, output_file, measurement):
                 else '(none)',
             )
         )
+
     click.echo()
 
     if output_file:
@@ -220,7 +221,18 @@ def inspect(workspace, output_file, measurement):
 @click.option('-p', '--patch', multiple=True)
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
-def cls(workspace, output_file, measurement, patch, testpoi, teststat):
+@click.option('--optimizer', default='scipy_optimizer')
+@click.option('-n', '--max-iterations', default=1000)
+def cls(
+    workspace,
+    output_file,
+    measurement,
+    patch,
+    testpoi,
+    teststat,
+    optimizer,
+    max_iterations,
+):
     with click.open_file(workspace, 'r') as specstream:
         wspec = json.load(specstream)
 
@@ -234,10 +246,23 @@ def cls(workspace, output_file, measurement, patch, testpoi, teststat):
         patches=patches,
         modifier_settings={'normsys': {'interpcode': 'code4'}},
     )
+
+    # set the new optimizer
+    if optimizer != 'scipy_optimizer':
+        new_optimizer = None
+        try:
+            new_optimizer = getattr(pyhf.optimize, optimizer)(maxiter=max_iterations)
+        except TypeError:
+            log.error('no optimizer by name \'{0:s}\' exists'.format(optimizer))
+
+        if new_optimizer:
+            pyhf.set_backend(pyhf.tensorlib, new_optimizer)
+
     result = hypotest(testpoi, w.data(p), p, qtilde=is_qtilde, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+
     if output_file is None:
-        click.echo(json.dumps(result, indent=4, sort_keys=True))
+        print(json.dumps(result, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)

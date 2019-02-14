@@ -5,8 +5,8 @@ log = logging.getLogger(__name__)
 
 
 class scipy_optimizer(object):
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        self.maxiter = kwargs.get('maxiter', 100000)
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         # The Global Fit
@@ -16,7 +16,7 @@ class scipy_optimizer(object):
             method='SLSQP',
             args=(data, pdf),
             bounds=par_bounds,
-            options=dict(maxiter=100000),
+            options=dict(maxiter=self.maxiter),
         )
         try:
             assert result.success
@@ -37,7 +37,7 @@ class scipy_optimizer(object):
             method='SLSQP',
             args=(data, pdf),
             bounds=par_bounds,
-            options=dict(maxiter=100000),
+            options=dict(maxiter=self.maxiter),
         )
         try:
             assert result.success
