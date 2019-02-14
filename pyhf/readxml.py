@@ -139,6 +139,23 @@ def process_sample(
                     'data': staterr,
                 }
             )
+        elif modtag.tag == 'ShapeSys':
+            # NB: ConstraintType is ignored
+            if modtag.attrib.get('ConstraintType', 'Poisson') != 'Poisson':
+                log.warning('shapesys modifier %s has a non-poisson constraint', modtag.attrib['Name'])
+            data, _ = import_root_histogram(
+                rootdir,
+                modtag.attrib.get('InputFile', inputfile),
+                modtag.attrib.get('HistoPath', ''),
+                modtag.attrib['HistoName'],
+            )
+            modifiers.append(
+                {
+                    'name': modtag.attrib['Name'],
+                    'type': 'shapesys',
+                    'data': data,
+                }
+            )
         else:
             log.warning('not considering modifier tag %s', modtag)
 
