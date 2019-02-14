@@ -221,7 +221,7 @@ def inspect(workspace, output_file, measurement):
 @click.option('-p', '--patch', multiple=True)
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
-@click.option('--optimizer', default='scipy_optimizer')
+@click.option('--optimizer')
 @click.option('-n', '--max-iterations', default=1000)
 def cls(
     workspace,
@@ -248,7 +248,7 @@ def cls(
     )
 
     # set the new optimizer
-    if optimizer != 'scipy_optimizer':
+    if optimizer:
         new_optimizer = None
         try:
             new_optimizer = getattr(pyhf.optimize, optimizer)(maxiter=max_iterations)
