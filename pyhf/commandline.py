@@ -147,16 +147,22 @@ def inspect(workspace, output_file, measurement):
 
     result = {}
     result['samples'] = p.config.samples
-    result['channels'] = [(channel, p.config.channel_nbins[channel]) for channel in p.config.channels]
+    result['channels'] = [
+        (channel, p.config.channel_nbins[channel]) for channel in p.config.channels
+    ]
     result['parameters'] = sorted(
-        (
-            parname,
-            p.config.par_map[parname]['paramset'].__class__.__name__
-        )
+        (parname, p.config.par_map[parname]['paramset'].__class__.__name__)
         for parname in p.config.parameters
     )
     result['systematics'] = [
-        (*parameter, [modifier[1] for modifier in p.config.modifiers if modifier[2] == parameter[0]])
+        (
+            *parameter,
+            [
+                modifier[1]
+                for modifier in p.config.modifiers
+                if modifier[2] == parameter[0]
+            ],
+        )
         for parameter in result['parameters']
     ]
     result['modifiers'] = p.config.modifiers
@@ -166,24 +172,25 @@ def inspect(workspace, output_file, measurement):
     maxlen = max([maxlen_channels, maxlen_samples, maxlen_parameters])
 
     # summary statistics
-    fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen+len('Summary'))
-    print(fmtStr.format('Summary Statistics',''))
-    print(fmtStr.format('-'*18, ''))
+    fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen + len('Summary'))
+    print(fmtStr.format('Summary Statistics', ''))
+    print(fmtStr.format('-' * 18, ''))
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen)
     for key in ['channels', 'samples', 'parameters', 'modifiers']:
         print(fmtStr.format(key, str(len(result[key]))))
+    print(fmtStr.format('poi', measurements[measurement_index]['config']['poi']))
     print()
 
     fmtStr = '{{0: >{0:d}s}}  {{1: ^5s}}'.format(maxlen)
     print(fmtStr.format('channels', 'nbins'))
-    print(fmtStr.format('-'*10, '-'*5))
+    print(fmtStr.format('-' * 10, '-' * 5))
     for channel, nbins in result['channels']:
         print(fmtStr.format(channel, str(nbins)))
     print()
 
     fmtStr = '{{0: >{0:d}s}}'.format(maxlen)
     print(fmtStr.format('samples'))
-    print(fmtStr.format('-'*10))
+    print(fmtStr.format('-' * 10))
     for sample in result['samples']:
         print(fmtStr.format(sample))
     print()
@@ -191,7 +198,7 @@ def inspect(workspace, output_file, measurement):
     # print parameters, constraints, modifiers
     fmtStr = '{{0: >{0:d}s}}  {{1: <22s}}  {{2:s}}'.format(maxlen)
     print(fmtStr.format('parameters', 'constraint', 'modifiers'))
-    print(fmtStr.format('-'*10, '-'*10, '-'*10))
+    print(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for parname, constraint, modtypes in result['systematics']:
         print(fmtStr.format(parname, constraint, ','.join(sorted(modtypes))))
     print()
