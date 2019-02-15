@@ -26,9 +26,9 @@ class normfactor_combined(object):
     def __init__(self, normfactor_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
 
-        pnames = [pname for _, _, pname in normfactor_mods]
-        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in normfactor_mods]
-        normfactor_mods = [m for m, _, _ in normfactor_mods]
+        pnames = [pname for pname, _ in normfactor_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
+        normfactor_mods = [m for m, _ in normfactor_mods]
 
         self._normfactor_indices = [
             self._parindices[pdfconfig.par_slice(p)] for p in pnames

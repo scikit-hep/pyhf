@@ -28,9 +28,9 @@ class histosys_combined(object):
     def __init__(self, histosys_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
 
-        pnames = [pname for _, _, pname in histosys_mods]
-        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in histosys_mods]
-        histosys_mods = [m for m, _, _ in histosys_mods]
+        pnames = [pname for pname, _ in histosys_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
+        histosys_mods = [m for m, _ in histosys_mods]
         self._histo_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
         self._histosys_histoset = [
             [

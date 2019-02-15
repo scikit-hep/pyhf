@@ -27,9 +27,9 @@ class staterror_combined(object):
     def __init__(self, staterr_mods, pdfconfig, mega_mods):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
 
-        pnames = [pname for _, _, pname in staterr_mods]
-        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in staterr_mods]
-        staterr_mods = [m for m, _, _ in staterr_mods]
+        pnames = [pname for pname, _ in staterr_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
+        staterr_mods = [m for m, _ in staterr_mods]
 
         self._staterror_indices = [
             self._parindices[pdfconfig.par_slice(p)] for p in pnames

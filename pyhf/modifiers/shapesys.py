@@ -31,9 +31,9 @@ class shapesys(object):
 class shapesys_combined(object):
     def __init__(self, shapesys_mods, pdfconfig, mega_mods):
 
-        pnames = [pname for _, _, pname in shapesys_mods]
-        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in shapesys_mods]
-        shapesys_mods = [m for m, _, _ in shapesys_mods]
+        pnames = [pname for pname, _ in shapesys_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
+        shapesys_mods = [m for m, _ in shapesys_mods]
 
         self._shapesys_mods = shapesys_mods
         self._pnames = pnames

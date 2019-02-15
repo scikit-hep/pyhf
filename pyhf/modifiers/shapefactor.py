@@ -62,9 +62,9 @@ class shapefactor_combined(object):
         and at that point can be used to compute the effect of shapefactor.
         """
 
-        pnames = [pname for _, _, pname in shapefactor_mods]
-        keys = ['{}/{}'.format(mtype, m) for m, mtype, _ in shapefactor_mods]
-        shapefactor_mods = [m for m, _, _ in shapefactor_mods]
+        pnames = [pname for pname, _ in shapefactor_mods]
+        keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
+        shapefactor_mods = [m for m, _ in shapefactor_mods]
 
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self._shapefactor_indices = [
