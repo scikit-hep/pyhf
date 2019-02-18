@@ -104,4 +104,4 @@ pip uninstall pyhf
 
 ## Authors
 
-Please check the [contribution statistics for a list of contributors](https://github.com/lukasheinrich/pyhf/graphs/contributors)
+Please check the [contribution statistics for a list of contributors](https://github.com/diana-hep/pyhf/graphs/contributors)
