@@ -49,8 +49,7 @@ class _ModelConfig(object):
                 for modifier_def in sample['modifiers']:
                     # get the paramset requirements for the given modifier. If
                     # modifier does not exist, we'll have a KeyError
-                    paramset_name = modifier_def['name']
-                    self.parameters.append(paramset_name)
+                    self.parameters.append(modifier_def['name'])
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
@@ -66,7 +65,6 @@ class _ModelConfig(object):
                         (
                             modifier_def['name'],  # mod name
                             modifier_def['type'],  # mod type
-                            paramset_name,  # parset name
                         )
                     )
 
@@ -120,7 +118,7 @@ class _ModelConfig(object):
         return self.par_map[name]['paramset']
 
     def set_poi(self, name):
-        if name not in [x for x, _, _ in self.modifiers]:
+        if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
                 "The parameter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
                     name
@@ -217,7 +215,7 @@ class Model(object):
         # We don't actually set up the modifier data here for no-ops, but we do
         # set up the entire structure
         mega_mods = {}
-        for m, mtype, _ in self.config.modifiers:
+        for m, mtype in self.config.modifiers:
             key = '{}/{}'.format(mtype, m)
             for s in self.config.samples:
                 mega_mods.setdefault(s, {})[key] = {
@@ -253,7 +251,7 @@ class Model(object):
                     if defined_samp
                     else {}
                 )
-                for m, mtype, _ in self.config.modifiers:
+                for m, mtype in self.config.modifiers:
                     key = '{}/{}'.format(mtype, m)
                     # this is None if modifier doesn't affect channel/sample.
                     thismod = defined_mods.get(key)
