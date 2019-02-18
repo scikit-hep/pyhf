@@ -87,7 +87,7 @@ jobs:
     install: skip
     script:
       # Use Binder build API to trigger repo2docker to build image
-      - curl https://mybinder.org/build/gh/diana-hep/pyhf/master
+      - bash binder/trigger_binder.sh https://mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
     after_success: skip
   - stage: deploy
     python: '3.6'
