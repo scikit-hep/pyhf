@@ -1,9 +1,11 @@
 # test matrix
+dist: xenial
 language: python
 cache: pip
 python:
   - '2.7'
   - '3.6'
+  - '3.7'
 before_install:
   - sudo apt-get install libtcmalloc-minimal4
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
@@ -44,6 +46,11 @@ jobs:
     after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
+    script:
+      - python -m pytest tests/test_notebooks.py
+    after_success: skip
+  - name: "Python 3.7 Notebook Tests"
+    python: '3.7'
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
