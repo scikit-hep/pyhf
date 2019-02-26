@@ -83,7 +83,7 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
 )
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
-@click.option('--testpoi', default = 1.0)
+@click.option('--testpoi', default=1.0)
 def cls(workspace, output_file, measurement, patch, testpoi):
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
