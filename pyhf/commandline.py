@@ -83,7 +83,8 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
 )
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
-def cls(workspace, output_file, measurement, patch):
+@click.option('--testpoi', default = 1.0)
+def cls(workspace, output_file, measurement, patch, testpoi):
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
     measurements = d['toplvl']['measurements']
@@ -123,7 +124,7 @@ def cls(workspace, output_file, measurement, patch):
             spec = p.apply(spec)
         p = Model(spec, poiname=measurements[measurement_index]['config']['poi'])
         observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
-        result = hypotest(1.0, observed, p, return_expected_set=True)
+        result = hypotest(testpoi, observed, p, return_expected_set=True)
         result = {
             'CLs_obs': result[0].tolist()[0],
             'CLs_exp': result[-1].ravel().tolist(),
