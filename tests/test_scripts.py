@@ -171,3 +171,37 @@ def test_bad_measurement_name(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     # assert 'no measurement by name' in ret.stderr  # numpy swallows the log.error() here, dunno why
+
+
+def test_testpoi(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    pois = [1.0, 0.5, 0.0]
+    results_exp = []
+    results_obs = []
+    for testpoi in pois:
+        command = 'pyhf cls {0:s} --testpoi {testpoi:f}'.format(
+            temp.strpath, testpoi=testpoi
+        )
+        ret = script_runner.run(*shlex.split(command))
+
+        assert ret.success
+        d = json.loads(ret.stdout)
+        assert d
+        assert 'CLs_obs' in d
+        assert 'CLs_exp' in d
+
+        results_exp.append(d['CLs_exp'])
+        results_obs.append(d['CLs_obs'])
+
+    import numpy as np
+    import itertools
+
+    for pair in itertools.combinations(results_exp, r=2):
+        assert not np.array_equal(*pair)
+
+    assert len(list(set(results_obs))) == len(pois)
