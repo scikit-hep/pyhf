@@ -161,8 +161,8 @@ def test_import_filecache(mocker):
 
 def test_import_shapesys():
     parsed_xml = pyhf.readxml.parse(
-        'validation/xmlimport_input/config/examples/example_ShapeSys.xml',
-        'validation/xmlimport_input',
+        'validation/xmlimport_input3/config/examples/example_ShapeSys.xml',
+        'validation/xmlimport_input3',
     )
 
     # build the spec, strictly checks properties included
