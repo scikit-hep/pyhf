@@ -3,6 +3,7 @@ import pyhf.readxml
 import numpy as np
 import uproot
 import os
+import pytest
 
 
 def assert_equal_dictionary(d1, d2):
@@ -156,3 +157,37 @@ def test_import_filecache(mocker):
     )
 
     assert_equal_dictionary(parsed_xml, parsed_xml2)
+
+
+def test_import_shapesys():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input3/config/examples/example_ShapeSys.xml',
+        'validation/xmlimport_input3',
+    )
+
+    # build the spec, strictly checks properties included
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+    }
+    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
+
+    data = [
+        binvalue
+        for k in pdf.spec['channels']
+        for binvalue in parsed_xml['data'][k['name']]
+    ] + pdf.config.auxdata
+
+    channels = {channel['name']: channel for channel in pdf.spec['channels']}
+    samples = {
+        channel['name']: [sample['name'] for sample in channel['samples']]
+        for channel in pdf.spec['channels']
+    }
+
+    assert channels['channel1']['samples'][1]['modifiers'][0]['type'] == 'lumi'
+    assert channels['channel1']['samples'][1]['modifiers'][1]['type'] == 'shapesys'
+    # NB: assert that relative uncertainty is converted to absolute uncertainty for shapesys
+    assert channels['channel1']['samples'][1]['data'] == pytest.approx([100.0, 1.0e-4])
+    assert channels['channel1']['samples'][1]['modifiers'][1]['data'] == pytest.approx(
+        [10.0, 1.5e-5]
+    )
