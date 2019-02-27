@@ -3,6 +3,7 @@ import pyhf.readxml
 import numpy as np
 import uproot
 import os
+import pytest
 
 
 def assert_equal_dictionary(d1, d2):
@@ -185,3 +186,8 @@ def test_import_shapesys():
 
     assert channels['channel1']['samples'][1]['modifiers'][0]['type'] == 'lumi'
     assert channels['channel1']['samples'][1]['modifiers'][1]['type'] == 'shapesys'
+    # NB: assert that relative uncertainty is converted to absolute uncertainty for shapesys
+    assert channels['channel1']['samples'][1]['data'] == pytest.approx([100.0, 1.0e-4])
+    assert channels['channel1']['samples'][1]['modifiers'][1]['data'] == pytest.approx(
+        [10.0, 1.5e-5]
+    )

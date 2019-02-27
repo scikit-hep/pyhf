@@ -146,14 +146,19 @@ def process_sample(
                     'shapesys modifier %s has a non-poisson constraint',
                     modtag.attrib['Name'],
                 )
-            data, _ = import_root_histogram(
+            shapesys_data, _ = import_root_histogram(
                 rootdir,
                 modtag.attrib.get('InputFile', inputfile),
                 modtag.attrib.get('HistoPath', ''),
                 modtag.attrib['HistoName'],
             )
+            # NB: we convert relative uncertainty to absolute uncertainty
             modifiers.append(
-                {'name': modtag.attrib['Name'], 'type': 'shapesys', 'data': data}
+                {
+                    'name': modtag.attrib['Name'],
+                    'type': 'shapesys',
+                    'data': [a * b for a, b in zip(data, shapesys_data)],
+                }
             )
         else:
             log.warning('not considering modifier tag %s', modtag)
