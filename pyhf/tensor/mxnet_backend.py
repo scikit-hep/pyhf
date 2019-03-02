@@ -108,6 +108,10 @@ class mxnet_backend(object):
         dtype = dtypemap[dtype]
         try:
             tensor = nd.array(tensor_in, dtype=dtype)
+            try:
+                tensor.shape[0]
+            except IndexError:
+                tensor = nd.array([tensor_in], dtype=dtype)
         except ValueError:
             tensor = nd.array([tensor_in], dtype=dtype)
         return tensor
