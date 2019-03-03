@@ -215,20 +215,10 @@ class tensorflow_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-
-        def generic_len(a):
-            try:
-                return len(a)
-            except TypeError:
-                if len(a.shape) < 1:
-                    return 0
-                else:
-                    return a.shape[0]
-
         args = [self.astensor(arg) for arg in args]
-        max_dim = max(map(generic_len, args))
+        max_dim = max(map(lambda arg: arg.shape[0], args))
         try:
-            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < arg.shape[0] < max_dim]) == 0
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
@@ -237,7 +227,7 @@ class tensorflow_backend(object):
 
         broadcast = [
             arg
-            if generic_len(arg) > 1
+            if arg.shape[0] > 1
             else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
             for arg in args
         ]
