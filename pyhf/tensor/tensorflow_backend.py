@@ -108,14 +108,14 @@ class tensorflow_backend(object):
         dtype = dtypemap[dtype]
 
         if isinstance(tensor_in, tf.Tensor):
-            v = tensor_in
+            tensor = tensor_in
         else:
             if isinstance(tensor_in, (int, float)):
                 tensor_in = [tensor_in]
-            v = tf.convert_to_tensor(tensor_in)
-        if v.dtype is not dtype:
-            v = tf.cast(v, dtype)
-        return v
+            tensor = tf.convert_to_tensor(tensor_in)
+        if tensor.dtype is not dtype:
+            tensor = tf.cast(tensor, dtype)
+        return tensor
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
