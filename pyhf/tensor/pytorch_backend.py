@@ -216,7 +216,7 @@ class pytorch_backend(object):
             >>> pyhf.tensorlib.poisson([5.], [6.])
             tensor([0.1606])
             >>> pyhf.tensorlib.poisson(5., 6.)
-            tensor(0.1606)
+            tensor([0.1606])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -251,7 +251,7 @@ class pytorch_backend(object):
             >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
             tensor([0.3521])
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            tensor(0.3521)
+            tensor([0.3521])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
