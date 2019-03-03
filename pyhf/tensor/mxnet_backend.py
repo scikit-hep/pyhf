@@ -108,11 +108,11 @@ class mxnet_backend(object):
         dtype = dtypemap[dtype]
         try:
             tensor = nd.array(tensor_in, dtype=dtype)
-            # Ensure non-empty tensor shape for consistency
+            # Ensure non-empty tensor shape for consistency with mxnet v1.4.0+
             try:
                 tensor.shape[0]
             except IndexError:
-                tensor = nd.array([tensor_in], dtype=dtype)
+                tensor = tensor.broadcast_to((1,))
         except ValueError:
             tensor = nd.array([tensor_in], dtype=dtype)
         return tensor
