@@ -68,7 +68,12 @@ class numpy_backend(object):
         """
         dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         dtype = dtypemap[dtype]
-        return np.asarray(tensor_in, dtype=dtype)
+        tensor = np.asarray(tensor_in, dtype=dtype)
+        try:
+            tensor.shape[0]
+        except IndexError:
+            tensor = tensor.reshape(1)
+        return tensor
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
