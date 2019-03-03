@@ -84,6 +84,9 @@ def test_reshape(backend):
 def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
+    assert tb.shape(tb.astensor([])) == (0,)
+    assert tb.shape(tb.astensor([1.0])) == (1,)
+    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
 
 
 def test_pdf_calculations(backend):
