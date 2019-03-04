@@ -105,7 +105,11 @@ class tensorflow_backend(object):
             `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
         """
         dtypemap = {'float': tf.float32, 'int': tf.int32, 'bool': tf.bool}
-        dtype = dtypemap[dtype]
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
 
         if isinstance(tensor_in, tf.Tensor):
             tensor = tensor_in

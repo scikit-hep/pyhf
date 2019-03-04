@@ -4,6 +4,13 @@ import pyhf
 from pyhf.simplemodels import hepdata_like
 
 
+@pytest.mark.xfail
+def test_astensor(backend):
+    tb = pyhf.tensorlib
+    assert tb.astensor('Hello')
+    assert tb.astensor([1, 2, 3], dtype='long')
+
+
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]

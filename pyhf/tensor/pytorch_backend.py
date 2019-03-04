@@ -58,7 +58,11 @@ class pytorch_backend(object):
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
-        dtype = dtypemap[dtype]
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
 
         if isinstance(tensor_in, (int, float)):
             # Ensure non-empty tensor shape for consistency

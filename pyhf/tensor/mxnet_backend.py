@@ -105,7 +105,11 @@ class mxnet_backend(object):
             MXNet NDArray: A multi-dimensional, fixed-size homogenous array.
         """
         dtypemap = {'float': 'float32', 'int': 'int32', 'bool': 'uint8'}
-        dtype = dtypemap[dtype]
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
 
         if isinstance(tensor_in, (int, float)):
             # Ensure non-empty tensor shape for consistency
