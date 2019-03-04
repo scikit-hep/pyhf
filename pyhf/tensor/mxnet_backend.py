@@ -106,15 +106,12 @@ class mxnet_backend(object):
         """
         dtypemap = {'float': 'float32', 'int': 'int32', 'bool': 'uint8'}
         dtype = dtypemap[dtype]
-        try:
-            tensor = nd.array(tensor_in, dtype=dtype)
-            # Ensure non-empty tensor shape for consistency with mxnet v1.4.0+
-            try:
-                tensor.shape[0]
-            except IndexError:
-                tensor = tensor.broadcast_to((1,))
-        except ValueError:
+
+        if isinstance(tensor_in, (int, float)):
+            # Ensure non-empty tensor shape for consistency
             tensor = nd.array([tensor_in], dtype=dtype)
+        else:
+            tensor = nd.array(tensor_in, dtype=dtype)
         return tensor
 
     def sum(self, tensor_in, axis=None):

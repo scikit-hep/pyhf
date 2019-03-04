@@ -59,11 +59,12 @@ class pytorch_backend(object):
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         dtype = dtypemap[dtype]
-        tensor = torch.as_tensor(tensor_in, dtype=dtype)
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.expand(1)
+
+        if isinstance(tensor_in, (int, float)):
+            # Ensure non-empty tensor shape for consistency
+            tensor = torch.as_tensor([tensor_in], dtype=dtype)
+        else:
+            tensor = torch.as_tensor(tensor_in, dtype=dtype)
         return tensor
 
     def gather(self, tensor, indices):

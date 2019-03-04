@@ -110,6 +110,7 @@ class tensorflow_backend(object):
         if isinstance(tensor_in, tf.Tensor):
             tensor = tensor_in
         else:
+            # Ensure non-empty tensor shape for consistency
             if isinstance(tensor_in, (int, float)):
                 tensor_in = [tensor_in]
             tensor = tf.convert_to_tensor(tensor_in)
