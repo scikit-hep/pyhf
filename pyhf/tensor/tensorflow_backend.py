@@ -111,13 +111,17 @@ class tensorflow_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        if isinstance(tensor_in, tf.Tensor):
-            tensor = tensor_in
-        else:
-            # Ensure non-empty tensor shape for consistency
-            if isinstance(tensor_in, (int, float)):
-                tensor_in = [tensor_in]
+        tensor = tensor_in
+        # If already a tensor then done
+        try:
+            tensor.op
+        except AttributeError:
             tensor = tf.convert_to_tensor(tensor_in)
+            # Ensure non-empty tensor shape for consistency
+            try:
+                tensor.shape[0]
+            except IndexError:
+                tensor = tf.reshape(tensor, [1])
         if tensor.dtype is not dtype:
             tensor = tf.cast(tensor, dtype)
         return tensor
