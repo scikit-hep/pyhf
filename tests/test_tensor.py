@@ -4,10 +4,15 @@ import pyhf
 from pyhf.simplemodels import hepdata_like
 
 
-@pytest.mark.xfail
-def test_astensor(backend):
+@pytest.mark.xfail(raises=(TypeError, ValueError))
+def test_astensor_type(backend):
     tb = pyhf.tensorlib
     assert tb.astensor('Hello')
+
+
+@pytest.mark.xfail(raises=KeyError)
+def test_astensor_dtype(backend):
+    tb = pyhf.tensorlib
     assert tb.astensor([1, 2, 3], dtype='long')
 
 
