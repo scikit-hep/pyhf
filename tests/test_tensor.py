@@ -4,10 +4,10 @@ import pyhf
 from pyhf.simplemodels import hepdata_like
 
 
-@pytest.mark.xfail(raises=KeyError)
 def test_astensor_dtype(backend):
     tb = pyhf.tensorlib
-    assert tb.astensor([1, 2, 3], dtype='long')
+    with pytest.raises(KeyError):
+        assert tb.astensor([1, 2, 3], dtype='long')
 
 
 def test_simple_tensor_ops(backend):
