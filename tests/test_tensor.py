@@ -1,7 +1,16 @@
 import pytest
+import logging
 import numpy as np
 import pyhf
 from pyhf.simplemodels import hepdata_like
+
+
+def test_astensor_dtype(backend, caplog):
+    tb = pyhf.tensorlib
+    with caplog.at_level(logging.INFO, 'pyhf.tensor'):
+        with pytest.raises(KeyError):
+            assert tb.astensor([1, 2, 3], dtype='long')
+            assert 'Invalid dtype' in caplog.text
 
 
 def test_simple_tensor_ops(backend):
@@ -84,6 +93,9 @@ def test_reshape(backend):
 def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
+    assert tb.shape(tb.astensor([])) == (0,)
+    assert tb.shape(tb.astensor([1.0])) == (1,)
+    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
 
 
 def test_pdf_calculations(backend):

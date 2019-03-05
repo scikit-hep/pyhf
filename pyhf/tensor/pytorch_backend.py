@@ -58,8 +58,19 @@ class pytorch_backend(object):
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
         dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
-        dtype = dtypemap[dtype]
-        return torch.as_tensor(tensor_in, dtype=dtype)
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
+
+        tensor = torch.as_tensor(tensor_in, dtype=dtype)
+        # Ensure non-empty tensor shape for consistency
+        try:
+            tensor.shape[0]
+        except IndexError:
+            tensor = tensor.expand(1)
+        return tensor
 
     def gather(self, tensor, indices):
         return torch.take(tensor, indices.type(torch.LongTensor))
@@ -165,28 +176,17 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
-        def generic_len(a):
-            try:
-                return len(a)
-            except TypeError:
-                if len(a.shape) < 1:
-                    return 0
-                else:
-                    return a.shape[0]
-
         args = [self.astensor(arg) for arg in args]
-        max_dim = max(map(generic_len, args))
+        max_dim = max(map(len, args))
         try:
-            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
             )
             raise error
 
-        broadcast = [
-            arg if generic_len(arg) > 1 else arg.expand(max_dim) for arg in args
-        ]
+        broadcast = [arg if len(arg) > 1 else arg.expand(max_dim) for arg in args]
         return broadcast
 
     def einsum(self, subscripts, *operands):
@@ -222,7 +222,7 @@ class pytorch_backend(object):
             >>> pyhf.tensorlib.poisson([5.], [6.])
             tensor([0.1606])
             >>> pyhf.tensorlib.poisson(5., 6.)
-            tensor(0.1606)
+            tensor([0.1606])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -257,7 +257,7 @@ class pytorch_backend(object):
             >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
             tensor([0.3521])
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            tensor(0.3521)
+            tensor([0.3521])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.

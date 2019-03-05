@@ -105,17 +105,26 @@ class tensorflow_backend(object):
             `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
         """
         dtypemap = {'float': tf.float32, 'int': tf.int32, 'bool': tf.bool}
-        dtype = dtypemap[dtype]
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
 
-        if isinstance(tensor_in, tf.Tensor):
-            v = tensor_in
-        else:
-            if isinstance(tensor_in, (int, float)):
-                tensor_in = [tensor_in]
-            v = tf.convert_to_tensor(tensor_in)
-        if v.dtype is not dtype:
-            v = tf.cast(v, dtype)
-        return v
+        tensor = tensor_in
+        # If already a tensor then done
+        try:
+            tensor.op
+        except AttributeError:
+            tensor = tf.convert_to_tensor(tensor_in)
+            # Ensure non-empty tensor shape for consistency
+            try:
+                tensor.shape[0]
+            except IndexError:
+                tensor = tf.reshape(tensor, [1])
+        if tensor.dtype is not dtype:
+            tensor = tf.cast(tensor, dtype)
+        return tensor
 
     def sum(self, tensor_in, axis=None):
         tensor_in = self.astensor(tensor_in)
@@ -215,20 +224,10 @@ class tensorflow_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-
-        def generic_len(a):
-            try:
-                return len(a)
-            except TypeError:
-                if len(a.shape) < 1:
-                    return 0
-                else:
-                    return a.shape[0]
-
         args = [self.astensor(arg) for arg in args]
-        max_dim = max(map(generic_len, args))
+        max_dim = max(map(lambda arg: arg.shape[0], args))
         try:
-            assert len([arg for arg in args if 1 < generic_len(arg) < max_dim]) == 0
+            assert len([arg for arg in args if 1 < arg.shape[0] < max_dim]) == 0
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
@@ -237,7 +236,7 @@ class tensorflow_backend(object):
 
         broadcast = [
             arg
-            if generic_len(arg) > 1
+            if arg.shape[0] > 1
             else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
             for arg in args
         ]
