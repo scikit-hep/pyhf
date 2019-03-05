@@ -1,13 +1,16 @@
 import pytest
+import logging
 import numpy as np
 import pyhf
 from pyhf.simplemodels import hepdata_like
 
 
-def test_astensor_dtype(backend):
+def test_astensor_dtype(backend, caplog):
     tb = pyhf.tensorlib
-    with pytest.raises(KeyError):
-        assert tb.astensor([1, 2, 3], dtype='long')
+    with caplog.at_level(logging.INFO, 'pyhf.tensor'):
+        with pytest.raises(KeyError):
+            assert tb.astensor([1, 2, 3], dtype='long')
+            assert 'Invalid dtype' in caplog.text
 
 
 def test_simple_tensor_ops(backend):
