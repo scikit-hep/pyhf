@@ -64,11 +64,12 @@ class pytorch_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        if isinstance(tensor_in, (int, float)):
-            # Ensure non-empty tensor shape for consistency
-            tensor = torch.as_tensor([tensor_in], dtype=dtype)
-        else:
-            tensor = torch.as_tensor(tensor_in, dtype=dtype)
+        tensor = torch.as_tensor(tensor_in, dtype=dtype)
+        # Ensure non-empty tensor shape for consistency
+        try:
+            tensor.shape[0]
+        except IndexError:
+            tensor = tensor.expand(1)
         return tensor
 
     def gather(self, tensor, indices):

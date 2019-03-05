@@ -111,11 +111,15 @@ class mxnet_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        if isinstance(tensor_in, (int, float)):
-            # Ensure non-empty tensor shape for consistency
-            tensor = nd.array([tensor_in], dtype=dtype)
-        else:
+        try:
             tensor = nd.array(tensor_in, dtype=dtype)
+            # Ensure non-empty tensor shape for consistency
+            try:
+                tensor.shape[0]
+            except IndexError:
+                tensor = tensor.broadcast_to((1,))
+        except ValueError:
+            tensor = nd.array([tensor_in], dtype=dtype)
         return tensor
 
     def sum(self, tensor_in, axis=None):
