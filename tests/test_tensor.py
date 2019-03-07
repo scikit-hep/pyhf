@@ -50,13 +50,13 @@ def test_complex_tensor_ops(backend):
     ) == [1, 2, 1]
 
 
-def test_zeros(backend):
+def test_ones(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
     assert tb.tolist(tb.ones((4, 5))) == [[1.0] * 5] * 4
 
 
-def test_ones(backend):
+def test_zeros(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.zeros((4, 5))) == [[0.0] * 5] * 4
 
@@ -93,9 +93,13 @@ def test_reshape(backend):
 def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
+    assert tb.shape(tb.ones((0, 0))) == (0, 0)
     assert tb.shape(tb.astensor([])) == (0,)
     assert tb.shape(tb.astensor([1.0])) == (1,)
     assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
+    assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
+    assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
+    assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
 
 
 def test_pdf_calculations(backend):
