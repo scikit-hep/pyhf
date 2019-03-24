@@ -1,10 +1,10 @@
 # test matrix
-dist: trusty
+dist: xenial
 language: python
 cache: pip
 python:
-  - '2.7'
   - '3.6'
+  - '3.7'
 before_install:
   - sudo apt-get install libtcmalloc-minimal4
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
@@ -15,8 +15,12 @@ install:
 script:
   - pyflakes pyhf
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then black --check --diff --verbose .; fi
-after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then coveralls; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then coveralls; fi
+# Include to force matrix expansion but use trusty for Python 3.6 instead
+matrix:
+  exclude:
+    - python: '3.6'
 
 # always test (on both 'push' and 'pr' builds in Travis)
 # test docs on 'pr' builds and 'push' builds on master
@@ -38,26 +42,29 @@ env:
 
 jobs:
   include:
-  - dist: xenial
-    python: '3.7'
+  - dist: trusty
+    python: '2.7'
+  - dist: trusty
+    python: '3.6'
   - name: "Python 2.7 Notebook Tests"
     python: '2.7'
+    dist: trusty
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
+    dist: trusty
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
   - name: "Python 3.7 Notebook Tests"
-    dist: xenial
     python: '3.7'
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
   - stage: benchmark
-    python: '3.6'
+    python: '3.7'
     before_install:
       - sudo apt-get install libtcmalloc-minimal4
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
@@ -68,7 +75,7 @@ jobs:
     script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
     after_success: skip
   - stage: docs
-    python: '3.6'
+    python: '3.7'
     before_install:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc
@@ -91,7 +98,7 @@ jobs:
       on:
         branch: master
   - stage: binder
-    python: '3.6'
+    python: '3.7'
     before_install: skip
     install: skip
     script:
@@ -99,7 +106,7 @@ jobs:
       - bash binder/trigger_binder.sh https://mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
     after_success: skip
   - stage: deploy
-    python: '3.6'
+    python: '3.7'
     install: skip
     script: skip
     after_success: echo "Skipping after_success"
