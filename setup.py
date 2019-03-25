@@ -12,14 +12,14 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
 
 extras_require = {
     'tensorflow': [
-        'tensorflow~=1.13.1',
-        'tensorflow-probability~=0.5.0',
+        'tensorflow~=1.13',
+        'tensorflow-probability~=0.5',
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
         'setuptools<=39.1.0',
     ],
-    'torch': ['torch~=1.0.0'],
+    'torch': ['torch~=1.0'],
     'mxnet': [
-        'mxnet~=1.0.0',
+        'mxnet~=1.0',
         'requests<2.19.0,>=2.18.4',
         'numpy<1.15.0,>=1.8.2',
         'requests<2.19.0,>=2.18.4',
@@ -31,7 +31,7 @@ extras_require = {
     'minuit': ['iminuit'],
     'develop': [
         'pyflakes',
-        'pytest~=3.5.1',
+        'pytest~=3.5',
         'pytest-cov>=2.5.1',
         'pytest-mock',
         'pytest-benchmark[histogram]',
@@ -41,8 +41,8 @@ extras_require = {
         'matplotlib',
         'jupyter',
         'nbdime',
-        'uproot~=3.3.0',
-        'papermill~=0.16.0',
+        'uproot~=3.3',
+        'papermill~=0.16',
         'graphviz',
         'bumpversion',
         'sphinx',
