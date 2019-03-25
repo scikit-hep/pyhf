@@ -18,12 +18,7 @@ extras_require = {
         'setuptools<=39.1.0',
     ],
     'torch': ['torch~=1.0'],
-    'mxnet': [
-        'mxnet~=1.0',
-        'requests<2.19.0,>=2.18.4',
-        'numpy<1.15.0,>=1.8.2',
-        'requests<2.19.0,>=2.18.4',
-    ],
+    'mxnet': ['mxnet~=1.0', 'requests~=2.18.4', 'numpy<1.15.0,>=1.8.2'],
     # 'dask': [
     #     'dask[array]'
     # ],
