@@ -64,21 +64,23 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--output-dir', type=click.Path(exists=True), default='.')
 @click.option('--xmlfile', default='FitConfig.xml')
 @click.option('--specroot', default='config')
-@click.option('--dataroot', default='results')
+@click.option('--dataroot', default='data')
 def json2xml(workspace, output_dir, xmlfile, specroot, dataroot):
-    os.makedirs(os.path.join(output_dir, specroot), exist_ok=True)
-    os.makedirs(os.path.join(output_dir, dataroot), exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
-        with click.open_file(os.path.join(output_dir, xmlfile), 'w') as outstream:
-            outstream.write(
-                writexml.writexml(
-                    d,
-                    os.path.join(output_dir, specroot),
-                    os.path.join(output_dir, dataroot),
-                    '',
-                ).decode('utf-8')
-            )
+        CWD = os.getcwd()
+        try:
+            os.chdir(output_dir)
+            os.makedirs(specroot, exist_ok=True)
+            os.makedirs(dataroot, exist_ok=True)
+            with click.open_file(xmlfile, 'w') as outstream:
+                outstream.write(
+                    writexml.writexml(d, specroot, dataroot, '').decode('utf-8')
+                )
+        finally:
+            os.chdir(CWD)
+
     sys.exit(0)
 
 
