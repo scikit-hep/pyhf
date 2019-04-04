@@ -105,6 +105,8 @@ def build_modifier(modifierspec, channelname, samplename):
         attrs['Low'] = '0'
     elif modifierspec['type'] == 'staterror':
         attrs['Activate'] = 'True'
+        attrs['HistoName'] = _HISTNAME.format(highlow='', **fmtvars)
+        export_root_histogram(attrs['HistoName'], modifierspec['data'])
     else:
         log.warning(
             'Skipping {0}({1}) for now'.format(
@@ -138,10 +140,20 @@ def build_sample(samplespec, channelname):
     return sample
 
 
-def build_channel(channelspec):
+def build_data(dataspec, channelname):
+    fmtvars = {'channel': channelname, 'sample': 'data', 'modifier': '_', 'highlow': ''}
+    histname = _HISTNAME.format(**fmtvars)
+    data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE._path)
+    export_root_histogram(histname, dataspec[channelname])
+    return data
+
+
+def build_channel(channelspec, dataspec):
     channel = ET.Element(
         'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
     )
+    data = build_data(dataspec, channelspec['name'])
+    channel.append(data)
     for samplespec in channelspec['samples']:
         channel.append(build_sample(samplespec, channelspec['name']))
     return channel
@@ -158,7 +170,7 @@ def writexml(spec, specdir, data_rootdir, result_outputprefix):
                 specdir, 'channel_{}.xml'.format(channelspec['name'])
             )
             with open(channelfilename, 'w') as channelfile:
-                channel = build_channel(channelspec)
+                channel = build_channel(channelspec, spec['data'])
                 indent(channel)
                 channelfile.write(
                     ET.tostring(channel, encoding='utf-8').decode('utf-8')
