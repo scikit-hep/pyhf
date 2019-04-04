@@ -1,18 +1,55 @@
 import os
 import xml.etree.cElementTree as ET
 
+# https://stackoverflow.com/a/4590052
+def indent(elem, level=0):
+    i = "\n" + level * "  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
 
-def measurement(lumi, lumierr, poi, param_settings=None, name='Meas1'):
-    param_settings = param_settings or []
 
+def build_measurement(measurement):
+    config = measurement['config']
+    name = measurement['name']
+    poi = config['poi']
+
+    # we want to know which parameters are fixed (constant)
+    # and to additionally extract the luminosity information
+    fixed_params = []
+    lumi = 1.0
+    lumierr = 0.0
+    for parameter in config['parameters']:
+        if parameter['fixed']:
+            pname = parameter['name']
+            if pname == 'lumi':
+                fixed_params.append('Lumi')
+            else:
+                fixed_params.append(pname)
+        # we found luminosity, so handle it
+        if parameter['name'] == 'lumi':
+            lumi = parameter['auxdata'][0]
+            lumierr = parameter['sigmas'][0]
+
+    # define measurement
     meas = ET.Element("Measurement", Name=name, Lumi=str(lumi), LumiRelErr=str(lumierr))
     poiel = ET.Element('POI')
     poiel.text = poi
     meas.append(poiel)
-    for s in param_settings:
-        se = ET.Element('ParamSetting', **s['attrs'])
-        se.text = ' '.join(s['params'])
-        meas.append(se)
+
+    # add fixed parameters (constant)
+    se = ET.Element('ParamSetting', Const='True')
+    se.text = ' '.join(fixed_params)
+    meas.append(se)
     return meas
 
 
@@ -35,11 +72,7 @@ def writexml(spec, specdir, data_rootdir, result_outputprefix):
         inp.text = channelfilename
         combination.append(inp)
 
-    m = measurement(
-        1,
-        0.1,
-        'SigXsecOverSM',
-        [{'attrs': {'Const': 'True'}, 'params': ['Lumi' 'alpha_syst1']}],
-    )
-    combination.append(m)
+    for measurement in spec['toplvl']['measurements']:
+        combination.append(build_measurement(measurement))
+    indent(combination)
     return ET.tostring(combination, encoding='utf-8')
