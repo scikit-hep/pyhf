@@ -103,6 +103,8 @@ def build_modifier(modifierspec, channelname, samplename):
         attrs['Val'] = '1'
         attrs['High'] = '10'
         attrs['Low'] = '0'
+    elif modifierspec['type'] == 'staterror':
+        attrs['Activate'] = 'True'
     else:
         log.warning(
             'Skipping {0}({1}) for now'.format(
@@ -122,7 +124,12 @@ def build_sample(samplespec, channelname):
         'highlow': '',
     }
     histname = _HISTNAME.format(**fmtvars)
-    sample = ET.Element('Sample', Name=samplespec['name'], HistoName=histname)
+    sample = ET.Element(
+        'Sample',
+        Name=samplespec['name'],
+        HistoName=histname,
+        InputFile=_ROOT_DATA_FILE._path,
+    )
     for modspec in samplespec['modifiers']:
         modifier = build_modifier(modspec, channelname, samplespec['name'])
         if modifier is not None:
@@ -132,7 +139,9 @@ def build_sample(samplespec, channelname):
 
 
 def build_channel(channelspec):
-    channel = ET.Element('Channel', Name=channelspec['name'])
+    channel = ET.Element(
+        'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
+    )
     for samplespec in channelspec['samples']:
         channel.append(build_sample(samplespec, channelspec['name']))
     return channel
