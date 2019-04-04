@@ -6,17 +6,19 @@ import numpy as np
 import uproot
 from uproot_methods.classes import TH1
 
-__ROOT_DATA_FILE = None
+_ROOT_DATA_FILE = None
+_HISTNAME = "h{sample}{modifier}{highlow}_{channel}_obs_cuts"
 
 log = logging.getLogger(__name__)
 
 
 def export_root_histogram(histname, data):
-    # strip leading slashes as uproot doesn't use "/" for top-level
-    f = __ROOT_DATA_FILE
     h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
     h._fName = histname
-    f[histname] = h
+    # NB: uproot crashes for some reason, figure out why later
+    # if histname in _ROOT_DATA_FILE:
+    #    raise KeyError('Duplicate key {0} being written.'.format(histname))
+    _ROOT_DATA_FILE[histname] = h
 
 
 # https://stackoverflow.com/a/4590052
@@ -83,7 +85,6 @@ def build_modifier(modifierspec, channelname, samplename):
         'shapefactor': 'ShapeFactor',
     }
 
-    histname = "h{sample}{modifier}{highlow}_{channel}_obs_cuts"
     fmtvars = {
         'channel': channelname,
         'sample': samplename,
@@ -91,8 +92,8 @@ def build_modifier(modifierspec, channelname, samplename):
     }
     attrs = {'Name': modifierspec['name']}
     if modifierspec['type'] == 'histosys':
-        attrs['HistoNameLow'] = histname.format(highlow='Low', **fmtvars)
-        attrs['HistoNameHigh'] = histname.format(highlow='High', **fmtvars)
+        attrs['HistoNameLow'] = _HISTNAME.format(highlow='Low', **fmtvars)
+        attrs['HistoNameHigh'] = _HISTNAME.format(highlow='High', **fmtvars)
         export_root_histogram(attrs['HistoNameLow'], modifierspec['data']['lo_data'])
         export_root_histogram(attrs['HistoNameHigh'], modifierspec['data']['hi_data'])
     elif modifierspec['type'] == 'normsys':
@@ -114,11 +115,19 @@ def build_modifier(modifierspec, channelname, samplename):
 
 
 def build_sample(samplespec, channelname):
-    sample = ET.Element('Sample', Name=samplespec['name'])
+    fmtvars = {
+        'channel': channelname,
+        'sample': samplespec['name'],
+        'modifier': '',
+        'highlow': '',
+    }
+    histname = _HISTNAME.format(**fmtvars)
+    sample = ET.Element('Sample', Name=samplespec['name'], HistoName=histname)
     for modspec in samplespec['modifiers']:
         modifier = build_modifier(modspec, channelname, samplespec['name'])
         if modifier is not None:
             sample.append(modifier)
+    export_root_histogram(histname, samplespec['data'])
     return sample
 
 
@@ -130,11 +139,11 @@ def build_channel(channelspec):
 
 
 def writexml(spec, specdir, data_rootdir, result_outputprefix):
-    global __ROOT_DATA_FILE
+    global _ROOT_DATA_FILE
 
     combination = ET.Element("Combination", OutputFilePrefix=result_outputprefix)
 
-    with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as __ROOT_DATA_FILE:
+    with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
             channelfilename = os.path.join(
                 specdir, 'channel_{}.xml'.format(channelspec['name'])
