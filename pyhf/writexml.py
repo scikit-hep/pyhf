@@ -2,14 +2,21 @@ import logging
 
 import os
 import xml.etree.cElementTree as ET
+import numpy as np
+import uproot
+from uproot_methods.classes import TH1
 
 __ROOT_DATA_FILE = None
 
 log = logging.getLogger(__name__)
 
 
-def store_root_data(histname, data):
-    pass
+def export_root_histogram(histname, data):
+    # strip leading slashes as uproot doesn't use "/" for top-level
+    f = __ROOT_DATA_FILE
+    h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
+    h._fName = histname
+    f[histname] = h
 
 
 # https://stackoverflow.com/a/4590052
@@ -86,7 +93,8 @@ def build_modifier(modifierspec, channelname, samplename):
     if modifierspec['type'] == 'histosys':
         attrs['HistoNameLow'] = histname.format(highlow='Low', **fmtvars)
         attrs['HistoNameHigh'] = histname.format(highlow='High', **fmtvars)
-        # lo_data, hi_data
+        export_root_histogram(attrs['HistoNameLow'], modifierspec['data']['lo_data'])
+        export_root_histogram(attrs['HistoNameHigh'], modifierspec['data']['hi_data'])
     elif modifierspec['type'] == 'normsys':
         attrs['High'] = str(modifierspec['data']['hi'])
         attrs['Low'] = str(modifierspec['data']['lo'])
@@ -122,20 +130,25 @@ def build_channel(channelspec):
 
 
 def writexml(spec, specdir, data_rootdir, result_outputprefix):
+    global __ROOT_DATA_FILE
+
     combination = ET.Element("Combination", OutputFilePrefix=result_outputprefix)
 
-    for channelspec in spec['channels']:
-        channelfilename = os.path.join(
-            specdir, 'channel_{}.xml'.format(channelspec['name'])
-        )
-        with open(channelfilename, 'w') as channelfile:
-            channel = build_channel(channelspec)
-            indent(channel)
-            channelfile.write(ET.tostring(channel, encoding='utf-8').decode('utf-8'))
+    with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as __ROOT_DATA_FILE:
+        for channelspec in spec['channels']:
+            channelfilename = os.path.join(
+                specdir, 'channel_{}.xml'.format(channelspec['name'])
+            )
+            with open(channelfilename, 'w') as channelfile:
+                channel = build_channel(channelspec)
+                indent(channel)
+                channelfile.write(
+                    ET.tostring(channel, encoding='utf-8').decode('utf-8')
+                )
 
-        inp = ET.Element("Input")
-        inp.text = channelfilename
-        combination.append(inp)
+            inp = ET.Element("Input")
+            inp.text = channelfilename
+            combination.append(inp)
 
     for measurement in spec['toplvl']['measurements']:
         combination.append(build_measurement(measurement))
