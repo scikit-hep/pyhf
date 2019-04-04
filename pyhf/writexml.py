@@ -1,5 +1,16 @@
+import logging
+
 import os
 import xml.etree.cElementTree as ET
+
+__ROOT_DATA_FILE = None
+
+log = logging.getLogger(__name__)
+
+
+def store_root_data(histname, data):
+    pass
+
 
 # https://stackoverflow.com/a/4590052
 def indent(elem, level=0):
@@ -18,9 +29,9 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def build_measurement(measurement):
-    config = measurement['config']
-    name = measurement['name']
+def build_measurement(measurementspec):
+    config = measurementspec['config']
+    name = measurementspec['name']
     poi = config['poi']
 
     # we want to know which parameters are fixed (constant)
@@ -53,21 +64,75 @@ def build_measurement(measurement):
     return meas
 
 
-def write_channel(channelspec, filename, data_rootdir):
-    # need to write channelfile here
-    with open(filename, 'w') as f:
-        channel = ET.Element('Channel', Name=channelspec['name'])
-        channel = ET.Element('Channel', Name=channelspec['name'])
-        f.write(ET.tostring(channel, encoding='utf-8').decode('utf-8'))
-    pass
+def build_modifier(modifierspec, channelname, samplename):
+    if modifierspec['name'] == 'lumi':
+        return None
+    mod_map = {
+        'histosys': 'HistoSys',
+        'staterror': 'StatError',
+        'normsys': 'OverallSys',
+        'shapesys': 'ShapeSys',
+        'normfactor': 'NormFactor',
+        'shapefactor': 'ShapeFactor',
+    }
+
+    histname = "h{sample}{modifier}{highlow}_{channel}_obs_cuts"
+    fmtvars = {
+        'channel': channelname,
+        'sample': samplename,
+        'modifier': modifierspec['name'],
+    }
+    attrs = {'Name': modifierspec['name']}
+    if modifierspec['type'] == 'histosys':
+        attrs['HistoNameLow'] = histname.format(highlow='Low', **fmtvars)
+        attrs['HistoNameHigh'] = histname.format(highlow='High', **fmtvars)
+        # lo_data, hi_data
+    elif modifierspec['type'] == 'normsys':
+        attrs['High'] = str(modifierspec['data']['hi'])
+        attrs['Low'] = str(modifierspec['data']['lo'])
+    elif modifierspec['type'] == 'normfactor':
+        attrs['Val'] = '1'
+        attrs['High'] = '10'
+        attrs['Low'] = '0'
+    else:
+        log.warning(
+            'Skipping {0}({1}) for now'.format(
+                modifierspec['name'], modifierspec['type']
+            )
+        )
+
+    modifier = ET.Element(mod_map[modifierspec['type']], **attrs)
+    return modifier
+
+
+def build_sample(samplespec, channelname):
+    sample = ET.Element('Sample', Name=samplespec['name'])
+    for modspec in samplespec['modifiers']:
+        modifier = build_modifier(modspec, channelname, samplespec['name'])
+        if modifier is not None:
+            sample.append(modifier)
+    return sample
+
+
+def build_channel(channelspec):
+    channel = ET.Element('Channel', Name=channelspec['name'])
+    for samplespec in channelspec['samples']:
+        channel.append(build_sample(samplespec, channelspec['name']))
+    return channel
 
 
 def writexml(spec, specdir, data_rootdir, result_outputprefix):
     combination = ET.Element("Combination", OutputFilePrefix=result_outputprefix)
 
-    for c in spec['channels']:
-        channelfilename = os.path.join(specdir, 'channel_{}.xml'.format(c['name']))
-        write_channel(c, channelfilename, data_rootdir)
+    for channelspec in spec['channels']:
+        channelfilename = os.path.join(
+            specdir, 'channel_{}.xml'.format(channelspec['name'])
+        )
+        with open(channelfilename, 'w') as channelfile:
+            channel = build_channel(channelspec)
+            indent(channel)
+            channelfile.write(ET.tostring(channel, encoding='utf-8').decode('utf-8'))
+
         inp = ET.Element("Input")
         inp.text = channelfilename
         combination.append(inp)
