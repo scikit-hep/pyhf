@@ -62,10 +62,10 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @pyhf.command()
 @click.argument('workspace', default='-')
 @click.option('--output-dir', type=click.Path(exists=True), default='.')
-@click.option('--xmlfile', default='FitConfig.xml')
 @click.option('--specroot', default='config')
 @click.option('--dataroot', default='data')
-def json2xml(workspace, output_dir, xmlfile, specroot, dataroot):
+@click.option('--resultprefix', default='FitConfig')
+def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
     os.makedirs(output_dir, exist_ok=True)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
@@ -74,9 +74,11 @@ def json2xml(workspace, output_dir, xmlfile, specroot, dataroot):
             os.chdir(output_dir)
             os.makedirs(specroot, exist_ok=True)
             os.makedirs(dataroot, exist_ok=True)
-            with click.open_file(xmlfile, 'w') as outstream:
+            with click.open_file('{0:s}.xml'.format(resultprefix), 'w') as outstream:
                 outstream.write(
-                    writexml.writexml(d, specroot, dataroot, '').decode('utf-8')
+                    writexml.writexml(d, specroot, dataroot, resultprefix).decode(
+                        'utf-8'
+                    )
                 )
         finally:
             os.chdir(CWD)

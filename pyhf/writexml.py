@@ -73,7 +73,7 @@ def build_measurement(measurementspec):
     return meas
 
 
-def build_modifier(modifierspec, channelname, samplename):
+def build_modifier(modifierspec, channelname, samplename, sampledata):
     if modifierspec['name'] == 'lumi':
         return None
     mod_map = {
@@ -106,7 +106,10 @@ def build_modifier(modifierspec, channelname, samplename):
     elif modifierspec['type'] == 'staterror':
         attrs['Activate'] = 'True'
         attrs['HistoName'] = _HISTNAME.format(highlow='', **fmtvars)
-        export_root_histogram(attrs['HistoName'], modifierspec['data'])
+        # need to make this a relative uncertainty stored in ROOT file
+        export_root_histogram(
+            attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
+        )
     else:
         log.warning(
             'Skipping {0}({1}) for now'.format(
@@ -126,14 +129,20 @@ def build_sample(samplespec, channelname):
         'highlow': '',
     }
     histname = _HISTNAME.format(**fmtvars)
-    sample = ET.Element(
-        'Sample',
-        Name=samplespec['name'],
-        HistoName=histname,
-        InputFile=_ROOT_DATA_FILE._path,
-    )
+    attrs = {
+        'Name': samplespec['name'],
+        'HistoName': histname,
+        'InputFile': _ROOT_DATA_FILE._path,
+        'NormalizeByTheory': 'False',
+    }
+    sample = ET.Element('Sample', **attrs)
     for modspec in samplespec['modifiers']:
-        modifier = build_modifier(modspec, channelname, samplespec['name'])
+        # if lumi modifier added for this sample, need to set NormalizeByTheory
+        if modspec['type'] == 'lumi':
+            sample.attrib.update({'NormalizeByTheory': 'True'})
+        modifier = build_modifier(
+            modspec, channelname, samplespec['name'], samplespec['data']
+        )
         if modifier is not None:
             sample.append(modifier)
     export_root_histogram(histname, samplespec['data'])
@@ -159,15 +168,17 @@ def build_channel(channelspec, dataspec):
     return channel
 
 
-def writexml(spec, specdir, data_rootdir, result_outputprefix):
+def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
-    combination = ET.Element("Combination", OutputFilePrefix=result_outputprefix)
+    combination = ET.Element(
+        "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
+    )
 
     with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
             channelfilename = os.path.join(
-                specdir, 'channel_{}.xml'.format(channelspec['name'])
+                specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )
             with open(channelfilename, 'w') as channelfile:
                 channel = build_channel(channelspec, spec['data'])
