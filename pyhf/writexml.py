@@ -110,6 +110,14 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         export_root_histogram(
             attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
         )
+    elif modifierspec['type'] == 'shapesys':
+        attrs['ConstraintType'] = 'Poisson'
+        attrs['HistoName'] = _HISTNAME.format(highlow='', **fmtvars)
+        # need to make this a relative uncertainty stored in ROOT file
+        export_root_histogram(
+            attrs['HistoName'],
+            [np.divide(a, b) for a, b in zip(modifierspec['data'], sampledata)],
+        )
     else:
         log.warning(
             'Skipping {0}({1}) for now'.format(
