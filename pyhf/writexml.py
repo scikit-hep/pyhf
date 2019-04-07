@@ -49,7 +49,7 @@ def build_measurement(measurementspec):
     lumi = 1.0
     lumierr = 0.0
     for parameter in config['parameters']:
-        if parameter['fixed']:
+        if parameter.get('fixed', False):
             pname = parameter['name']
             if pname == 'lumi':
                 fixed_params.append('Lumi')
