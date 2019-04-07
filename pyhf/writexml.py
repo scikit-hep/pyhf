@@ -67,9 +67,10 @@ def build_measurement(measurementspec):
     meas.append(poiel)
 
     # add fixed parameters (constant)
-    se = ET.Element('ParamSetting', Const='True')
-    se.text = ' '.join(fixed_params)
-    meas.append(se)
+    if fixed_params:
+        se = ET.Element('ParamSetting', Const='True')
+        se.text = ' '.join(fixed_params)
+        meas.append(se)
     return meas
 
 
