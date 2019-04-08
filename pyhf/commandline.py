@@ -69,19 +69,19 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
     os.makedirs(output_dir, exist_ok=True)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
-        CWD = os.getcwd()
-        try:
-            os.chdir(output_dir)
-            os.makedirs(specroot, exist_ok=True)
-            os.makedirs(dataroot, exist_ok=True)
-            with click.open_file('{0:s}.xml'.format(resultprefix), 'w') as outstream:
-                outstream.write(
-                    writexml.writexml(d, specroot, dataroot, resultprefix).decode(
-                        'utf-8'
-                    )
-                )
-        finally:
-            os.chdir(CWD)
+        os.makedirs(os.path.join(output_dir, specroot), exist_ok=True)
+        os.makedirs(os.path.join(output_dir, dataroot), exist_ok=True)
+        with click.open_file(
+            os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
+        ) as outstream:
+            outstream.write(
+                writexml.writexml(
+                    d,
+                    os.path.join(output_dir, specroot),
+                    os.path.join(output_dir, dataroot),
+                    resultprefix,
+                ).decode('utf-8')
+            )
 
     sys.exit(0)
 
