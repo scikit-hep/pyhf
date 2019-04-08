@@ -7,12 +7,19 @@ import uproot
 from uproot_methods.classes import TH1
 
 _ROOT_DATA_FILE = {}
-_HISTNAME = "hist_{channel}_{sample}_{modifier}{highlow}"
 
 log = logging.getLogger(__name__)
 
 
-def export_root_histogram(histname, data):
+def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
+    return "{prefix}{middle}{suffix}".format(
+        prefix=prefix,
+        suffix=suffix,
+        middle='_'.join(filter(lambda x: x, [channel, sample, modifier])),
+    )
+
+
+def _export_root_histogram(histname, data):
     h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
     h._fName = histname
     # NB: uproot crashes for some reason, figure out why later
@@ -86,17 +93,16 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         'shapefactor': 'ShapeFactor',
     }
 
-    fmtvars = {
-        'channel': channelname,
-        'sample': samplename,
-        'modifier': modifierspec['name'],
-    }
     attrs = {'Name': modifierspec['name']}
     if modifierspec['type'] == 'histosys':
-        attrs['HistoNameLow'] = _HISTNAME.format(highlow='Low', **fmtvars)
-        attrs['HistoNameHigh'] = _HISTNAME.format(highlow='High', **fmtvars)
-        export_root_histogram(attrs['HistoNameLow'], modifierspec['data']['lo_data'])
-        export_root_histogram(attrs['HistoNameHigh'], modifierspec['data']['hi_data'])
+        attrs['HistoNameLow'] = _make_hist_name(
+            channelname, samplename, modifierspec['name'], suffix='Low'
+        )
+        attrs['HistoNameHigh'] = _make_hist_name(
+            channelname, samplename, modifierspec['name'], suffix='High'
+        )
+        _export_root_histogram(attrs['HistoNameLow'], modifierspec['data']['lo_data'])
+        _export_root_histogram(attrs['HistoNameHigh'], modifierspec['data']['hi_data'])
     elif modifierspec['type'] == 'normsys':
         attrs['High'] = str(modifierspec['data']['hi'])
         attrs['Low'] = str(modifierspec['data']['lo'])
@@ -106,16 +112,20 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         attrs['Low'] = '0'
     elif modifierspec['type'] == 'staterror':
         attrs['Activate'] = 'True'
-        attrs['HistoName'] = _HISTNAME.format(highlow='', **fmtvars)
+        attrs['HistoName'] = _make_hist_name(
+            channelname, samplename, modifierspec['name']
+        )
         # need to make this a relative uncertainty stored in ROOT file
-        export_root_histogram(
+        _export_root_histogram(
             attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
         )
     elif modifierspec['type'] == 'shapesys':
         attrs['ConstraintType'] = 'Poisson'
-        attrs['HistoName'] = _HISTNAME.format(highlow='', **fmtvars)
+        attrs['HistoName'] = _make_hist_name(
+            channelname, samplename, modifierspec['name']
+        )
         # need to make this a relative uncertainty stored in ROOT file
-        export_root_histogram(
+        _export_root_histogram(
             attrs['HistoName'],
             [np.divide(a, b) for a, b in zip(modifierspec['data'], sampledata)],
         )
@@ -131,13 +141,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
 
 
 def build_sample(samplespec, channelname):
-    fmtvars = {
-        'channel': channelname,
-        'sample': samplespec['name'],
-        'modifier': '',
-        'highlow': '',
-    }
-    histname = _HISTNAME.format(**fmtvars)
+    histname = _make_hist_name(channelname, samplespec['name'])
     attrs = {
         'Name': samplespec['name'],
         'HistoName': histname,
@@ -154,15 +158,14 @@ def build_sample(samplespec, channelname):
         )
         if modifier is not None:
             sample.append(modifier)
-    export_root_histogram(histname, samplespec['data'])
+    _export_root_histogram(histname, samplespec['data'])
     return sample
 
 
 def build_data(dataspec, channelname):
-    fmtvars = {'channel': channelname, 'sample': 'data', 'modifier': '_', 'highlow': ''}
-    histname = _HISTNAME.format(**fmtvars)
+    histname = _make_hist_name(channelname, 'data')
     data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE._path)
-    export_root_histogram(histname, dataspec[channelname])
+    _export_root_histogram(histname, dataspec[channelname])
     return data
 
 
