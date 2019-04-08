@@ -24,7 +24,7 @@ def export_root_histogram(histname, data):
 # https://stackoverflow.com/a/4590052
 def indent(elem, level=0):
     i = "\n" + level * "  "
-    if len(elem):
+    if elem:
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         if not elem.tail or not elem.tail.strip():
