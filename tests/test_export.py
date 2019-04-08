@@ -240,7 +240,7 @@ def test_export_channel(mocker, spec):
     channel = pyhf.writexml.build_channel(channelspec, {})
     assert channel.attrib['Name'] == channelspec['name']
     assert channel.attrib['InputFile']
-    assert pyhf.writexml.build_data.called
+    assert pyhf.writexml.build_data.called == False
     assert pyhf.writexml.build_sample.called
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == False
 
