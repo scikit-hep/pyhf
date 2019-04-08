@@ -7,7 +7,7 @@ import uproot
 from uproot_methods.classes import TH1
 
 _ROOT_DATA_FILE = {}
-_HISTNAME = "h{sample}{modifier}{highlow}_{channel}_obs_cuts"
+_HISTNAME = "hist_{channel}_{sample}_{modifier}{highlow}"
 
 log = logging.getLogger(__name__)
 
