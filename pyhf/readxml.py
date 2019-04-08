@@ -235,14 +235,15 @@ def process_measurements(toplvl):
                 overall_param_obj['value'] = param.attrib['Val']
 
             # might be specifying multiple parameters in the same ParamSetting
-            for param_name in param.text.split(' '):
-                # lumi will always be the first parameter
-                if param_name == 'Lumi':
-                    result['config']['parameters'][0].update(overall_param_obj)
-                else:
-                    param_obj = {'name': param_name}
-                    param_obj.update(overall_param_obj)
-                    result['config']['parameters'].append(param_obj)
+            if param.text:
+                for param_name in param.text.split(' '):
+                    # lumi will always be the first parameter
+                    if param_name == 'Lumi':
+                        result['config']['parameters'][0].update(overall_param_obj)
+                    else:
+                        param_obj = {'name': param_name}
+                        param_obj.update(overall_param_obj)
+                        result['config']['parameters'].append(param_obj)
         results.append(result)
     return results
 

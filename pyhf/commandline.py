@@ -14,6 +14,14 @@ from .version import __version__
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
+# This is only needed for Python 2/3 compatibility
+def ensure_dirs(path):
+    try:
+        os.makedirs(path, exist_ok=True)
+    except TypeError:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(version=__version__)
@@ -61,16 +69,28 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 
 @pyhf.command()
 @click.argument('workspace', default='-')
-@click.argument('xmlfile', default='-')
-@click.option('--specroot', default=click.Path(exists=True))
-@click.option('--dataroot', default=click.Path(exists=True))
-def json2xml(workspace, xmlfile, specroot, dataroot):
+@click.option('--output-dir', type=click.Path(exists=True), default='.')
+@click.option('--specroot', default='config')
+@click.option('--dataroot', default='data')
+@click.option('--resultprefix', default='FitConfig')
+def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
+    ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
-        with click.open_file(xmlfile, 'w') as outstream:
+        ensure_dirs(os.path.join(output_dir, specroot))
+        ensure_dirs(os.path.join(output_dir, dataroot))
+        with click.open_file(
+            os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
+        ) as outstream:
             outstream.write(
-                writexml.writexml(d, specroot, dataroot, '').decode('utf-8')
+                writexml.writexml(
+                    d,
+                    os.path.join(output_dir, specroot),
+                    os.path.join(output_dir, dataroot),
+                    resultprefix,
+                ).decode('utf-8')
             )
+
     sys.exit(0)
 
 
