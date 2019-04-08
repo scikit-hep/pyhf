@@ -106,8 +106,8 @@ def test_import_and_export(tmpdir, script_runner):
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf json2xml {0:s} --specroot {1:s} --dataroot {1:s}'.format(
-        temp.strpath, str(tmpdir)
+    command = 'pyhf json2xml {0:s} --output-dir {1:s}'.format(
+        temp.strpath, tmpdir.strpath
     )
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
