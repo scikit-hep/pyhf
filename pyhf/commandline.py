@@ -14,6 +14,14 @@ from .version import __version__
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
+# This is only needed for Python 2/3 compatibility
+def ensure_dirs(path):
+    try:
+        os.makedirs(path, exist_ok=True)
+    except TypeError:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(version=__version__)
@@ -66,11 +74,11 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--dataroot', default='data')
 @click.option('--resultprefix', default='FitConfig')
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
-    os.makedirs(output_dir, exist_ok=True)
+    ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
-        os.makedirs(os.path.join(output_dir, specroot), exist_ok=True)
-        os.makedirs(os.path.join(output_dir, dataroot), exist_ok=True)
+        ensure_dirs(os.path.join(output_dir, specroot))
+        ensure_dirs(os.path.join(output_dir, dataroot))
         with click.open_file(
             os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
         ) as outstream:
