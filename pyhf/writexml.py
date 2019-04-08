@@ -170,8 +170,9 @@ def build_channel(channelspec, dataspec):
     channel = ET.Element(
         'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
     )
-    data = build_data(dataspec, channelspec['name'])
-    channel.append(data)
+    if dataspec:
+        data = build_data(dataspec, channelspec['name'])
+        channel.append(data)
     for samplespec in channelspec['samples']:
         channel.append(build_sample(samplespec, channelspec['name']))
     return channel
@@ -190,7 +191,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )
             with open(channelfilename, 'w') as channelfile:
-                channel = build_channel(channelspec, spec['data'])
+                channel = build_channel(channelspec, spec.get('data'))
                 indent(channel)
                 channelfile.write(
                     ET.tostring(channel, encoding='utf-8').decode('utf-8')
