@@ -1,6 +1,8 @@
 import pyhf
+import pyhf.writexml, pyhf.readxml
 import json
 import pytest
+import os
 
 
 @pytest.fixture(scope='module')
@@ -723,6 +725,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
 def test_validation(setup_and_tolerance):
     setup, tolerance = setup_and_tolerance
     source = setup['source']
+
     pdf = pyhf.Model(setup['spec'])
 
     if 'channels' in source:
@@ -743,3 +746,96 @@ def test_validation(setup_and_tolerance):
     validate_hypotest(
         pdf, data, setup['mu'], setup['expected']['result'], tolerance=tolerance
     )
+
+
+@pytest.mark.parametrize(
+    'toplvl, basedir',
+    [
+        (
+            'validation/xmlimport_input/config/example.xml',
+            'validation/xmlimport_input/',
+        ),
+        (
+            'validation/xmlimport_input2/config/example.xml',
+            'validation/xmlimport_input2',
+        ),
+        (
+            'validation/xmlimport_input3/config/examples/example_ShapeSys.xml',
+            'validation/xmlimport_input3',
+        ),
+    ],
+    ids=['example-one', 'example-two', 'example-three'],
+)
+def test_import_roundtrip(tmpdir, toplvl, basedir):
+    parsed_xml_before = pyhf.readxml.parse(toplvl, basedir)
+    spec = {
+        'channels': parsed_xml_before['channels'],
+        'parameters': parsed_xml_before['toplvl']['measurements'][0]['config'][
+            'parameters'
+        ],
+    }
+    pdf_before = pyhf.Model(spec, poiname='SigXsecOverSM')
+
+    tmpconfig = tmpdir.mkdir('config')
+    tmpdata = tmpdir.mkdir('data')
+    tmpxml = tmpdir.join('FitConfig.xml')
+    tmpxml.write(
+        pyhf.writexml.writexml(
+            parsed_xml_before,
+            tmpconfig.strpath,
+            tmpdata.strpath,
+            os.path.join(tmpdir.strpath, 'FitConfig'),
+        ).decode('utf-8')
+    )
+    parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)
+    spec = {
+        'channels': parsed_xml_after['channels'],
+        'parameters': parsed_xml_after['toplvl']['measurements'][0]['config'][
+            'parameters'
+        ],
+    }
+    pdf_after = pyhf.Model(spec, poiname='SigXsecOverSM')
+
+    data_before = [
+        binvalue
+        for k in pdf_before.spec['channels']
+        for binvalue in parsed_xml_before['data'][k['name']]
+    ] + pdf_before.config.auxdata
+
+    data_after = [
+        binvalue
+        for k in pdf_after.spec['channels']
+        for binvalue in parsed_xml_after['data'][k['name']]
+    ] + pdf_after.config.auxdata
+
+    assert data_before == data_after
+
+    init_pars_before = pdf_before.config.suggested_init()
+    init_pars_after = pdf_after.config.suggested_init()
+    assert init_pars_before == init_pars_after
+
+    par_bounds_before = pdf_before.config.suggested_bounds()
+    par_bounds_after = pdf_after.config.suggested_bounds()
+    assert par_bounds_before == par_bounds_after
+
+    CLs_obs_before, CLs_exp_set_before = pyhf.utils.hypotest(
+        1,
+        data_before,
+        pdf_before,
+        init_pars_before,
+        par_bounds_before,
+        return_expected_set=True,
+    )
+    CLs_obs_after, CLs_exp_set_after = pyhf.utils.hypotest(
+        1,
+        data_after,
+        pdf_after,
+        init_pars_after,
+        par_bounds_after,
+        return_expected_set=True,
+    )
+
+    tolerance = 1e-6
+    assert abs(CLs_obs_after - CLs_obs_before) / CLs_obs_before < tolerance
+    for result, expected_result in zip(CLs_exp_set_after, CLs_exp_set_before):
+        assert abs(result - expected_result) / expected_result < tolerance
