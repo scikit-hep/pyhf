@@ -6,7 +6,7 @@ import numpy as np
 import uproot
 from uproot_methods.classes import TH1
 
-_ROOT_DATA_FILE = None
+_ROOT_DATA_FILE = {}
 _HISTNAME = "h{sample}{modifier}{highlow}_{channel}_obs_cuts"
 
 log = logging.getLogger(__name__)
