@@ -52,7 +52,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     except ImportError:
         log.error(
             "xml2json requires uproot, please install pyhf using the "
-            "xmlimport extra: pip install pyhf[xmlimport] or install uproot "
+            "xmlio extra: pip install pyhf[xmlio] or install uproot "
             "manually: pip install uproot"
         )
     from . import readxml
@@ -74,6 +74,17 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--dataroot', default='data')
 @click.option('--resultprefix', default='FitConfig')
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
+    try:
+        import uproot
+
+        assert uproot
+    except ImportError:
+        log.error(
+            "json2xml requires uproot, please install pyhf using the "
+            "xmlio extra: pip install pyhf[xmlio] or install uproot "
+            "manually: pip install uproot"
+        )
+
     ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)

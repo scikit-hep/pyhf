@@ -12,6 +12,10 @@ def test_notebooks(tmpdir):
 
     pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
+    pm.execute_notebook(
+        'docs/examples/notebooks/XML_ImportExport.ipynb', **common_kwargs
+    )
+
     if sys.version_info.major > 2:
         # The Binder example uses specific relative paths
         cwd = os.getcwd()
