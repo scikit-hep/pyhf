@@ -197,7 +197,9 @@ def test_export_modifier(mocker, spec, has_root_data, attrs):
     modifier = pyhf.writexml.build_modifier(
         modifierspec, channelname, samplename, sampledata
     )
-    assert modifier.attrib['Name'] == modifierspec['name']
+    # if the modifier is a staterror, it has no Name
+    if 'Name' in modifier.attrib:
+        assert modifier.attrib['Name'] == modifierspec['name']
     assert all(attr in modifier.attrib for attr in attrs)
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == has_root_data
 
