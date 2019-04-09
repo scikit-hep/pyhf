@@ -115,6 +115,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         attrs['HistoName'] = _make_hist_name(
             channelname, samplename, modifierspec['name']
         )
+        del attrs['Name']
         # need to make this a relative uncertainty stored in ROOT file
         _export_root_histogram(
             attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
