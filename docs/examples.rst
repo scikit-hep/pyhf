@@ -13,6 +13,7 @@ Notebooks:
 
    examples/notebooks/hello-world.ipynb
    examples/notebooks/binderexample/StatisticalAnalysis.ipynb
+   examples/notebooks/XML_ImportExport.ipynb
    examples/notebooks/ShapeFactor.ipynb
    examples/notebooks/multiBinPois.ipynb
    examples/notebooks/multichannel-coupled-histo.ipynb
