@@ -197,6 +197,9 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 channel = build_channel(channelspec, spec.get('data'))
                 indent(channel)
                 channelfile.write(
+                    "<!DOCTYPE Channel SYSTEM '../HistFactorySchema.dtd'>\n\n"
+                )
+                channelfile.write(
                     ET.tostring(channel, encoding='utf-8').decode('utf-8')
                 )
 
@@ -207,4 +210,6 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     for measurement in spec['toplvl']['measurements']:
         combination.append(build_measurement(measurement))
     indent(combination)
-    return ET.tostring(combination, encoding='utf-8')
+    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
+        "utf-8"
+    ) + ET.tostring(combination, encoding='utf-8')
