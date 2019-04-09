@@ -1,6 +1,8 @@
 import logging
 
 import os
+import shutil
+import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
 import uproot
@@ -185,6 +187,10 @@ def build_channel(channelspec, dataspec):
 def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
+    shutil.copyfile(
+        pkg_resources.resource_filename(__name__, 'data/HistFactorySchema.dtd'),
+        os.path.dirname(specdir),
+    )
     combination = ET.Element(
         "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
     )
