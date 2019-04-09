@@ -70,7 +70,13 @@ def build_measurement(measurementspec):
             lumierr = parameter['sigmas'][0]
 
     # define measurement
-    meas = ET.Element("Measurement", Name=name, Lumi=str(lumi), LumiRelErr=str(lumierr))
+    meas = ET.Element(
+        "Measurement",
+        Name=name,
+        Lumi=str(lumi),
+        LumiRelErr=str(lumierr),
+        ExportOnly=str(True),
+    )
     poiel = ET.Element('POI')
     poiel.text = poi
     meas.append(poiel)
