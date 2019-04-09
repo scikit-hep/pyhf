@@ -33,6 +33,8 @@ stages:
     if: (branch = master)
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
+  - name: test_deploy
+    # if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
     if: (tag =~ v[0-9\.]*)
 
@@ -105,6 +107,20 @@ jobs:
       # Use Binder build API to trigger repo2docker to build image
       - bash binder/trigger_binder.sh https://mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
     after_success: skip
+  - stage: test_deploy
+    name: "TestPyPI deploy"
+    python: '3.7'
+    install: skip
+    script: skip
+    after_success: echo "Skipping after_success"
+    deploy:
+      provider: pypi
+      server: https://test.pypi.org/legacy/
+      username:
+        secure: KDi40+7LVX2E/tWtVhGB/jWrNDqNiO+dKzqkbOTP7ZvGrMu3VIVA1KbfDiWxygd5rgC7UAQcqTFbUHnwuyFAmooIhH3fDwpzpugz5zzW4Hia0eBUanarw40DHlBS0wVzw+zZoLP/wltR8Dg75vp2awPTqrvFyq444Jgzzah+xhHwTYx4VB9oeMAoiS0OSLn561pR1N+nzSRMe3R1Sl8AZtPLTCgOZ5tZARZjqiqtYXfTEaMQPj/BNmVYatsaUkCkljZjiLv/uiL6Ushz/Y0dhPdVF63dKDTM6NvDxT+pBA/+58U6RqcRmMdlYmCurgKTJ5W4VAXckHXaYwu5pvrd1pxqPJ7oNvdpDZ9JktHsQog8IxVjoij8Je5T4iE3hjEH/Jm8yKUL2WlPeyLxV0S9xmSdhTIeTZgAtbPQgP0KN7SC1ZB/S7irstJ68PilHc/ZxBbYthGu0tPOmHHye+lzVyV6qAhZkbRFarro0MgWjJR9U8vM5JHFsEvBm7ghHaKDGd75wE9MDHqxftxXGKJbZ19OlRCqnte8LA8a1Wa0E5Iw3QPaG7eq2cBp3TwwECw0ipMBBXfOz4ZIIcDRC/vcnW03zf6ziWaZ152QAVsmiJqXnzFBV7thPA28vqQtv0vAdzXO8e2lROYz18z8m2LTdvG4DiNxkNlN7KHjK1i+VEg=
+      password:
+        secure: CqHxAg2GWY+7ogMKJYCqH8Eynmc1Xhh+WocntEfsJXOgsqksmHF5q9dp6IxGwrrts1ZWbxOs80mici2LSAxtHnVBAXfiqWm5cZ6nEv6+hvAzidvGO7Q2OVs3CIVKU4jCDg2BJIBo84Whqwe6T5S+DKUDo6PYQUtIvHqnO4PmDyB2Y2rLquavMqMkh8wIfFaDj51J5zm2aNdXx4349LvlMcW2yn0/Mh1t6yP1LUCkirCPjdIAljmqmrkxscEdCepR3sXjgYggpW/RLTXtMaUc/6Pz1Ax5uU3Y/mtuXT19lC+9PiFpciuLBvM6h0RjRz87tVE4US7DfbjZIIZFdrd97eog9Jqh0cDsD+lymgzTpeEaisXtDwBlI+osUtjB5d1rWCtsIu39fBRi368SLgBH3yrbYEIuNBzczeQ1wxMmJlWflQ/6nbPEaRxKpMZVjMRngdd8rccNj0vAJxsMlzqJZ99RbUjyMQ5n1JO1GU/9mnu1NH/+gZrvoGCLBaqKQDewrTkVKAMTmm/lti9hIEpgXr+U5KyAM0dtvU3ncLCEhIV6H9KujHx8S52hz/C1OJAXwh4otC2rnuiS21XhFfADJbVtXE9lBX0ANgc/pWs11Yu38ZbfoXnx5GkALuUnw2jZ2ZeEiugu5/dqlPTmleBgkxcRsVNx8/fft3raIscIYjM=
+      distributions: "sdist bdist_wheel"
   - stage: deploy
     python: '3.7'
     install: skip
