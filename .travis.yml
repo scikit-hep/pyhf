@@ -33,8 +33,6 @@ stages:
     if: (branch = master)
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
-  - name: test_deploy
-    # if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
     if: (tag =~ v[0-9\.]*)
 
@@ -107,7 +105,9 @@ jobs:
       # Use Binder build API to trigger repo2docker to build image
       - bash binder/trigger_binder.sh https://mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
     after_success: skip
-  - stage: test_deploy
+  - stage: deploy
+    # Tests deployment to PyPI for all tags
+    if: type NOT IN (pull_request)  # Always run, except if PR
     name: "TestPyPI deploy"
     python: '3.7'
     install: skip
