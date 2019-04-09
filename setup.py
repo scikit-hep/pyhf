@@ -22,7 +22,7 @@ extras_require = {
     # 'dask': [
     #     'dask[array]'
     # ],
-    'xmlimport': ['uproot'],
+    'xmlio': ['uproot'],
     'minuit': ['iminuit'],
     'develop': [
         'pyflakes',
