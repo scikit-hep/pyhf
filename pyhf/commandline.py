@@ -160,7 +160,7 @@ def inspect(workspace, output_file, measurement):
             [
                 modifier[1]
                 for modifier in p.config.modifiers
-                if modifier[2] == parameter[0]
+                if modifier[0] == parameter[0]
             ],
         )
         for parameter in result['parameters']
@@ -200,7 +200,7 @@ def inspect(workspace, output_file, measurement):
     print(fmtStr.format('parameters', 'constraint', 'modifiers'))
     print(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for parname, constraint, modtypes in result['systematics']:
-        print(fmtStr.format(parname, constraint, ','.join(sorted(modtypes))))
+        print(fmtStr.format(parname, constraint, ','.join(sorted(set(modtypes)))))
     print()
 
     if output_file:
