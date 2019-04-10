@@ -34,7 +34,7 @@ stages:
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
-    if: (tag =~ v[0-9\.]*)
+    # if: (tag =~ v[0-9\.]*)
 
 env:
   global:
@@ -122,6 +122,7 @@ jobs:
         secure: CqHxAg2GWY+7ogMKJYCqH8Eynmc1Xhh+WocntEfsJXOgsqksmHF5q9dp6IxGwrrts1ZWbxOs80mici2LSAxtHnVBAXfiqWm5cZ6nEv6+hvAzidvGO7Q2OVs3CIVKU4jCDg2BJIBo84Whqwe6T5S+DKUDo6PYQUtIvHqnO4PmDyB2Y2rLquavMqMkh8wIfFaDj51J5zm2aNdXx4349LvlMcW2yn0/Mh1t6yP1LUCkirCPjdIAljmqmrkxscEdCepR3sXjgYggpW/RLTXtMaUc/6Pz1Ax5uU3Y/mtuXT19lC+9PiFpciuLBvM6h0RjRz87tVE4US7DfbjZIIZFdrd97eog9Jqh0cDsD+lymgzTpeEaisXtDwBlI+osUtjB5d1rWCtsIu39fBRi368SLgBH3yrbYEIuNBzczeQ1wxMmJlWflQ/6nbPEaRxKpMZVjMRngdd8rccNj0vAJxsMlzqJZ99RbUjyMQ5n1JO1GU/9mnu1NH/+gZrvoGCLBaqKQDewrTkVKAMTmm/lti9hIEpgXr+U5KyAM0dtvU3ncLCEhIV6H9KujHx8S52hz/C1OJAXwh4otC2rnuiS21XhFfADJbVtXE9lBX0ANgc/pWs11Yu38ZbfoXnx5GkALuUnw2jZ2ZeEiugu5/dqlPTmleBgkxcRsVNx8/fft3raIscIYjM=
       distributions: "sdist bdist_wheel"
   - stage: deploy
+    if: (tag =~ v[0-9\.]*)
     python: '3.7'
     install: skip
     script: skip
