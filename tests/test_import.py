@@ -20,10 +20,7 @@ def test_import_measurements():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
     )
-    assert 'toplvl' in parsed_xml
-    assert 'measurements' in parsed_xml['toplvl']
-
-    measurements = parsed_xml['toplvl']['measurements']
+    measurements = parsed_xml['measurements']
     assert len(measurements) == 4
 
     measurement_configs = measurements[0]['config']
@@ -51,8 +48,8 @@ def test_import_prepHistFactory():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['channels'],
-        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+        'channels': parsed_xml['model']['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
@@ -115,8 +112,8 @@ def test_import_histosys():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['channels'],
-        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+        'channels': parsed_xml['model']['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
@@ -167,8 +164,8 @@ def test_import_shapesys():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['channels'],
-        'parameters': parsed_xml['toplvl']['measurements'][0]['config']['parameters'],
+        'channels': parsed_xml['model']['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
