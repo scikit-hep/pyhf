@@ -1,6 +1,8 @@
 import logging
 
 import os
+import shutil
+import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
 import uproot
@@ -68,7 +70,13 @@ def build_measurement(measurementspec):
             lumierr = parameter['sigmas'][0]
 
     # define measurement
-    meas = ET.Element("Measurement", Name=name, Lumi=str(lumi), LumiRelErr=str(lumierr))
+    meas = ET.Element(
+        "Measurement",
+        Name=name,
+        Lumi=str(lumi),
+        LumiRelErr=str(lumierr),
+        ExportOnly=str(True),
+    )
     poiel = ET.Element('POI')
     poiel.text = poi
     meas.append(poiel)
@@ -115,6 +123,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         attrs['HistoName'] = _make_hist_name(
             channelname, samplename, modifierspec['name']
         )
+        del attrs['Name']
         # need to make this a relative uncertainty stored in ROOT file
         _export_root_histogram(
             attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
@@ -184,6 +193,10 @@ def build_channel(channelspec, dataspec):
 def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
+    shutil.copyfile(
+        pkg_resources.resource_filename(__name__, 'data/HistFactorySchema.dtd'),
+        os.path.join(os.path.dirname(specdir), 'HistFactorySchema.dtd'),
+    )
     combination = ET.Element(
         "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
     )
@@ -197,6 +210,9 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 channel = build_channel(channelspec, spec.get('data'))
                 indent(channel)
                 channelfile.write(
+                    "<!DOCTYPE Channel SYSTEM '../HistFactorySchema.dtd'>\n\n"
+                )
+                channelfile.write(
                     ET.tostring(channel, encoding='utf-8').decode('utf-8')
                 )
 
@@ -207,4 +223,6 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     for measurement in spec['toplvl']['measurements']:
         combination.append(build_measurement(measurement))
     indent(combination)
-    return ET.tostring(combination, encoding='utf-8')
+    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
+        "utf-8"
+    ) + ET.tostring(combination, encoding='utf-8')
