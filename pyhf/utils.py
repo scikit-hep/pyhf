@@ -1,21 +1,10 @@
 import json
 import jsonschema
 import pkg_resources
+import os
 
 from .exceptions import InvalidSpecification
 from . import get_backend
-
-
-def get_default_schema():
-    r"""
-    Returns the absolute filepath default schema for pyhf. This usually points
-    to pyhf/data/spec.json.
-
-    Returns:
-        Schema File Path: a string containing the absolute path to the default
-                          schema file.
-    """
-    return pkg_resources.resource_filename(__name__, 'data/spec.json')
 
 
 SCHEMA_CACHE = {}
@@ -28,7 +17,8 @@ def load_schema(schema):
     except KeyError:
         pass
 
-    with open(schema) as json_schema:
+    path = pkg_resources.resource_filename(__name__, os.path.join('data', schema))
+    with open(path) as json_schema:
         SCHEMA_CACHE[schema] = json.load(json_schema)
     return SCHEMA_CACHE[schema]
 

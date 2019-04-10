@@ -1,4 +1,4 @@
-include pyhf/data/spec.json
+include pyhf/data/model.json
 include pyhf/data/measurements.json
 include pyhf/data/HistFactorySchema.dtd
 

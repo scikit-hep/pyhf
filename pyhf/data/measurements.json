@@ -23,7 +23,7 @@
                 "poi": { "type" : "string" },
                 "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
             },
-            "required": ["poi"],
+            "required": ["poi", "parameters"],
             "additionalProperties": false
         },
         "parameter": {

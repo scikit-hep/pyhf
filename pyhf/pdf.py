@@ -13,12 +13,10 @@ log = logging.getLogger(__name__)
 
 class _ModelConfig(object):
     def __init__(self, spec, poiname='mu'):
+        self._reset()
         self.poi_index = None
-        self.par_map = {}
-        self.par_order = []
         self.auxdata = []
         self.auxdata_order = []
-        self.next_index = 0
 
         # build up a dictionary of the parameter configurations provided by the user
         _paramsets_user_configs = {}
@@ -144,6 +142,7 @@ class _ModelConfig(object):
     def _create_and_register_paramsets(
         self, paramsets_requirements, paramsets_user_configs
     ):
+        self._reset()
         for param_name, paramset_requirements in reduce_paramsets_requirements(
             paramsets_requirements, paramsets_user_configs
         ).items():
@@ -151,11 +150,16 @@ class _ModelConfig(object):
             paramset = paramset_type(**paramset_requirements)
             self._register_paramset(param_name, paramset)
 
+    def _reset(self):
+        self.par_map = {}
+        self.par_order = []
+        self.next_index = 0
+
 
 class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec)  # may get modified by config
-        self.schema = config_kwargs.pop('schema', utils.get_default_schema())
+        self.schema = config_kwargs.pop('schema', 'model.json')
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
