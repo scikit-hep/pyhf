@@ -1,3 +1,5 @@
+from . import utils
+
 import logging
 
 import os
@@ -264,14 +266,19 @@ def parse(configfile, rootdir, track_progress=False):
         )
         channels[channel] = {'data': data, 'samples': samples}
 
-    return {
-        'toplvl': {
-            'resultprefix': toplvl.getroot().attrib['OutputFilePrefix'],
-            'measurements': process_measurements(toplvl),
+    result = {
+        'measurements': process_measurements(toplvl),
+        'model': {
+            'channels': [
+                {'name': k, 'samples': v['samples']} for k, v in channels.items()
+            ]
         },
-        'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
     }
+
+    utils.validate(result, 'workspace.json')
+
+    return result
 
 
 def clear_filecache():

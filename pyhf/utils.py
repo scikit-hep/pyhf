@@ -6,27 +6,43 @@ import os
 from .exceptions import InvalidSpecification
 from . import get_backend
 
-
 SCHEMA_CACHE = {}
+SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
 
 
-def load_schema(schema):
+def load_schema(schema_id):
     global SCHEMA_CACHE
     try:
-        return SCHEMA_CACHE[schema]
+        return SCHEMA_CACHE["{0:s}{1:s}".format(SCHEMA_BASE, schema_id)]
     except KeyError:
         pass
 
-    path = pkg_resources.resource_filename(__name__, os.path.join('data', schema))
+    path = pkg_resources.resource_filename(__name__, os.path.join('data', schema_id))
     with open(path) as json_schema:
-        SCHEMA_CACHE[schema] = json.load(json_schema)
-    return SCHEMA_CACHE[schema]
+        schema = json.load(json_schema)
+        SCHEMA_CACHE[schema['$id']] = schema
+    return SCHEMA_CACHE[schema['$id']]
 
 
-def validate(spec, schema):
-    schema = load_schema(schema)
+load_schema('workspace.json')
+load_schema('model.json')
+load_schema('measurements.json')
+
+
+def validate(spec, schema_name):
+    schema = load_schema(schema_name)
     try:
-        return jsonschema.validate(spec, schema)
+        resolver = jsonschema.RefResolver(
+            base_uri='file://{0:s}'.format(
+                pkg_resources.resource_filename(__name__, 'data/')
+            ),
+            referrer=schema_name,
+            store=SCHEMA_CACHE,
+        )
+        validator = jsonschema.Draft6Validator(
+            schema, resolver=resolver, format_checker=None
+        )
+        return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise InvalidSpecification(err)
 
