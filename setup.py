@@ -88,4 +88,5 @@ setup(
     extras_require=extras_require,
     entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},
     dependency_links=[],
+    use_scm_version=True,
 )
