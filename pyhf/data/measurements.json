@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "properties": {
+        "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"} }
+    },
+    "additionalProperties": false,
+    "required": ["measurements"],
+
+    "definitions": {
+        "measurement": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "config": { "$ref": "#/definitions/config" }
+            },
+            "required": ["name", "config"],
+            "additionalProperties": false
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "poi": { "type" : "string" },
+                "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+            },
+            "required": ["poi"],
+            "additionalProperties": false
+        },
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
+                "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
+                "fixed": { "type": "boolean" }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+        }
+    }
+}

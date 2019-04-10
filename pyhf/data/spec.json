@@ -2,8 +2,7 @@
     "$schema": "http://json-schema.org/draft-06/schema#",
     "type": "object",
     "properties": {
-        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} },
-        "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
     },
     "additionalProperties": false,
     "required": ["channels"],
@@ -16,20 +15,6 @@
                 "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 }
             },
             "required": ["name", "samples"],
-            "additionalProperties": false
-        },
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "name": { "type": "string" },
-                "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
-                "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
-                "fixed": { "type": "boolean" }
-            },
-            "required": ["name"],
             "additionalProperties": false
         },
         "sample": {
