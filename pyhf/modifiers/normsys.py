@@ -51,7 +51,7 @@ class normsys_combined(object):
         ]
 
         if len(normsys_mods):
-            self.interpolator = interpolators.code1(self._normsys_histoset)
+            self.interpolator = interpolators.code4(self._normsys_histoset)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

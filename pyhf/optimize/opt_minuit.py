@@ -6,8 +6,8 @@ log = logging.getLogger(__name__)
 
 
 class minuit_optimizer(object):
-    def __init__(self, verbose=False, ncall=10000, errordef=1, steps=100):
-        self.verbose = 0
+    def __init__(self, verbose=False, ncall=50000, errordef=1, steps=100):
+        self.verbose = 3
         self.ncall = ncall
         self.errordef = errordef
         self.steps = steps
@@ -37,7 +37,7 @@ class minuit_optimizer(object):
             kwargs.update(**d)
         mm = iminuit.Minuit(
             f,
-            print_level=1 if self.verbose else 0,
+            print_level= self.verbose,
             errordef=1,
             use_array_call=True,
             forced_parameters=parnames,

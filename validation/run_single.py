@@ -20,7 +20,7 @@ bModel.SetSnapshot(ROOT.RooArgSet(poi))
 ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
 ac.SetPrintLevel(10)
 ac.SetOneSided(True)
-ac.SetQTilde(True)
+ac.SetQTilde(False)
 
 
 calc = ROOT.RooStats.HypoTestInverter(ac)

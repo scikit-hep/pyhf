@@ -11,6 +11,8 @@ from .paramsets import reduce_paramsets_requirements
 log = logging.getLogger(__name__)
 
 
+import numba
+
 class _ModelConfig(object):
     def __init__(self, spec, poiname='mu'):
         self.poi_index = None
@@ -415,7 +417,11 @@ class Model(object):
     def constraint_logpdf(self, auxdata, pars):
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return normal + poisson
+
+        # print('normal', normal,len(auxdata))
+        # print('poisson', poisson, len(auxdata))
+
+        return (normal + poisson)
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
@@ -423,8 +429,26 @@ class Model(object):
         summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
         tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
         mainpdf = tensorlib.sum(tosum)
+
+        # print('o',maindata)
+        # print('e',)
+
+        exp_total    = tensorlib.sum(lambdas_data)
+        obs_total    = tensorlib.sum(maindata)
+        exp_norm     = lambdas_data/exp_total/float(len(lambdas_data))
+        exp_norm_log = tensorlib.log(exp_norm)
+        extended_term = -exp_total + obs_total*tensorlib.log(exp_total) 
+        shapelog = tensorlib.sum(maindata*exp_norm_log)
+        attempt_main = (extended_term + shapelog)
+
+        # print('attempt_main',attempt_main)
+        # print('shape',shapelog)
+        # print('extended_term',extended_term)
+        # print(attempt_main,mainpdf)
+        return attempt_main
         return mainpdf
 
+    # @numba.jit
     def logpdf(self, pars, data):
         try:
             tensorlib, _ = get_backend()
@@ -436,6 +460,8 @@ class Model(object):
             constraint = self.constraint_logpdf(aux_data, pars)
 
             result = mainpdf + constraint
+            # print('total',result,mainpdf,constraint)
+            # raise RuntimeError('!')
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy

@@ -1,10 +1,12 @@
 import json
+import logging
 import jsonschema
 import pkg_resources
 
 from .exceptions import InvalidSpecification
 from . import get_backend
 
+log = logging.getLogger(__name__)
 
 def get_default_schema():
     r"""
@@ -41,9 +43,12 @@ def validate(spec, schema):
         raise InvalidSpecification(err)
 
 
-def loglambdav(pars, data, pdf):
-    return -2 * pdf.logpdf(pars, data)
+def nll(pars, data, pdf):
+    return - pdf.logpdf(pars, data)
 
+
+def loglambdav(pars, data, pdf):
+    return 2 * nll(pars,data,pdf)
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
@@ -77,22 +82,46 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
+    import json
     tensorlib, optimizer = get_backend()
+
+
+    zerobhat = optimizer.constrained_bestfit(
+        nll, 0.0, data, pdf, init_pars, par_bounds
+    )
+
     mubhathat = optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds
+        nll, mu, data, pdf, init_pars, par_bounds
     )
+    log.warning('constrained: {}'.format(json.dumps(mubhathat.tolist())))
+
     muhatbhat = optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds
+        nll, data, pdf, init_pars, par_bounds
     )
-    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
+    log.warning('unconstrained: {}'.format(json.dumps(muhatbhat.tolist())))
+
+    numerator = loglambdav(mubhathat, data, pdf)
+    denominator = loglambdav(muhatbhat, data, pdf)
+    denominator_zero = loglambdav(zerobhat, data, pdf)
+
+    qmu =  numerator - denominator
+    qmu_zero =  numerator - denominator_zero
+
+
+    print('muhat @ {}: {}'.format(pdf.config.poi_index,muhatbhat[pdf.config.poi_index] ))
+
     qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
+    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] <  0, [0], qmu_zero)
+
+
+    log.warning('muhat: {} mu: {} num: {}, denom: {} qmu: {}'.format(muhatbhat[pdf.config.poi_index], mu, numerator, denominator, qmu))
     return qmu
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     _, optimizer = get_backend()
     bestfit_nuisance_asimov = optimizer.constrained_bestfit(
-        loglambdav, asimov_mu, data, pdf, init_pars, par_bounds
+        nll, asimov_mu, data, pdf, init_pars, par_bounds
     )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
@@ -123,10 +152,44 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
     tensorlib, _ = get_backend()
-    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
-    CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
+    nullval = sqrtqmu_v
+    altval  = -(sqrtqmuA_v - sqrtqmu_v)
+    
+    qmu = sqrtqmu_v**2
+    qmu_A = sqrtqmuA_v**2
+    nullval = (qmu + qmu_A)/(2 * sqrtqmuA_v)
+    altval  = (qmu - qmu_A)/(2 * sqrtqmuA_v)
+
+
+    CLsb = 1 - tensorlib.normal_cdf(nullval)
+    CLb = 1 - tensorlib.normal_cdf(altval)
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
+
+def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,nsigma):
+    tensorlib, _ = get_backend()
+    import scipy.stats
+    qmu   = sqrtqmu_v**2
+    qmu_A = sqrtqmuA_v**2
+    print(qmu,qmu_A,sqrtqmuA_v)
+    print((qmu + qmu_A)/(2 * sqrtqmuA_v))
+    print((qmu - qmu_A)/(2 * sqrtqmuA_v))
+    pnull = 1-tensorlib.normal_cdf( (qmu + qmu_A)/(2 * sqrtqmuA_v))
+    palt  = 1-tensorlib.normal_cdf( (qmu - qmu_A)/(2 * sqrtqmuA_v))
+    print(pnull,palt)
+    sqrtqmu =   -scipy.stats.norm.ppf( pnull,1.)
+    sqrtqmu_A =  scipy.stats.norm.ppf( palt,1.) + sqrtqmu
+    print(sqrtqmu,sqrtqmu_A)
+    clsplusb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
+    clb = tensorlib.normal_cdf( nsigma)
+    return clsplusb / clb;  
+
+# import numpy as np
+# print(
+#     [
+#     pvals_from_teststat_expected(np.sqrt(17.69325539),np.sqrt(13.294885),i)
+#     for i in [-2,-1,0,1,2]]
+# )
 
 
 def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
@@ -201,14 +264,19 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+
+    log.warning('hypotest on model with {} parameters and poivalue {}'.format(len(init_pars),poi_test))
     tensorlib, _ = get_backend()
 
     asimov_mu = 0.0
+    log.warning('generate asimov')
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
+    log.warning('observed')
     qmu_v = tensorlib.clip(qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max=None)
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
+    log.warning('asimov')
     qmuA_v = tensorlib.clip(
         qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max=None
     )
@@ -216,22 +284,22 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
 
+    log.warning('Observed:  CLsb: {}, CLb: {}, CLs: {}'.format(CLsb, CLb, CLs))
+
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
-            CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+            CLs_exp.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,n_sigma))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
+        _returns.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,0))
     if kwargs.get('return_test_statistics'):
         _returns.append([qmu_v, qmuA_v])
-
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]

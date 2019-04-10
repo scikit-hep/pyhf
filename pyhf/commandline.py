@@ -85,6 +85,8 @@ def json2xml(workspace, xmlfile, specroot, dataroot):
 @click.option('-p', '--patch', multiple=True)
 @click.option('--testpoi', default=1.0)
 def cls(workspace, output_file, measurement, patch, testpoi):
+
+
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
     measurements = d['toplvl']['measurements']
@@ -124,7 +126,22 @@ def cls(workspace, output_file, measurement, patch, testpoi):
             spec = p.apply(spec)
         p = Model(spec, poiname=measurements[measurement_index]['config']['poi'])
         observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
-        result = hypotest(testpoi, observed, p, return_expected_set=True)
+
+
+        init_pars = p.config.suggested_init()
+
+        import numpy as np
+        from . import set_backend
+        from .optimize import OptimizerRetriever as optimizer
+        from .tensor import BackendRetriever as tensor
+        numpy_tl = tensor.numpy_backend()
+        opt = optimizer.minuit_optimizer()
+        set_backend(numpy_tl,opt)
+        p.config.suggested_init()
+        init_pars = (np.asarray(p.config.suggested_init())).tolist()
+
+
+        result = hypotest(testpoi, observed, p, return_expected_set=True, init_pars = init_pars)
         result = {
             'CLs_obs': result[0].tolist()[0],
             'CLs_exp': result[-1].ravel().tolist(),

@@ -35,6 +35,7 @@ class shapesys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
         shapesys_mods = [m for m, _ in shapesys_mods]
 
+
         self._shapesys_mods = shapesys_mods
         self._pnames = pnames
 
@@ -99,18 +100,26 @@ class shapesys_combined(object):
             self.factor_access_indices = None
 
     def finalize(self, pdfconfig):
+        # print('LUKAS',self.__shapesys_uncrt.shape,len(self._pnames))
         for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._pnames):
+            # print(uncert_this_mod.shape)
+            # this picks up those samples that have a non-zero nominal count
             unc_nom = default_backend.astensor(
-                [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
+                [sample_mod_this_uncert for sample_mod_this_uncert in uncert_this_mod[:, :, :] if any(sample_mod_this_uncert[0][sample_mod_this_uncert[0] > 0])]
             )
+            assert len(unc_nom) == 1 #only one sample can participate in this shapesys (not shared)
             unc = unc_nom[0, 0]
             nom = unc_nom[0, 1]
+            # print('nom shape:', pname,unc_nom.shape)
             unc_sq = default_backend.power(unc, 2)
             nom_sq = default_backend.power(nom, 2)
 
             # the below tries to filter cases in which
             # this modifier is not used by checking non
             # zeroness.. shoudl probably use mask
+            
+            # print('unc_sq:', unc_sq.tolist)
+
             numerator = default_backend.where(
                 unc_sq > 0, nom_sq, default_backend.zeros(unc_sq.shape)
             )
@@ -119,7 +128,11 @@ class shapesys_combined(object):
             )
 
             factors = numerator / denominator
+            # print('num!!',numerator)
+            # print('denom!!',denominator)
+            # print('fac!', factors)
             factors = factors[factors > 0]
+            # print(pdfconfig.param_set(pname).n_parameters, len(factors) )
             assert len(factors) == pdfconfig.param_set(pname).n_parameters
             pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
             pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
