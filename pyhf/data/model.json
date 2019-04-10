@@ -1,11 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://diana-hep.org/pyhf/schemas/model.json",
     "type": "object",
     "properties": {
-        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} }
+        "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"} },
+        "parameters": { "type": "array", "items": {"$ref": "measurements.json#/definitions/parameter"} }
     },
     "additionalProperties": false,
-    "required": ["channels"],
+    "required": ["channels", "parameters"],
 
     "definitions": {
         "channel": {

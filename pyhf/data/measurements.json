@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://diana-hep.org/pyhf/schemas/measurements.json",
     "type": "object",
     "properties": {
         "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"} }
