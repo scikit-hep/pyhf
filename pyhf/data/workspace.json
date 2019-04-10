@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "object",
+    "properties": {
+        "model": { "$ref": "model.json" },
+        "measurements": { "type": "array", "items": {"$ref": "measurements.json#/definitions/measurement"} },
+        "data": { "type": "object" }
+    },
+    "additionalProperties": false,
+    "required": ["channels", "measurements", "data"]
+}
