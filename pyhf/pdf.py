@@ -469,6 +469,7 @@ class Workspace(object):
         for measurement in self.spec.get('measurements', []):
             self.measurements.append(measurement['name'])
 
+    # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
         """
         Get (or create) a measurement object using the following logic:
@@ -487,6 +488,14 @@ class Workspace(object):
         Returns:
             measurement: A measurement object adhering to the schema defs.json#/definitions/measurement
 
+        """
+        m = self._get_measurement(**config_kwargs)
+        utils.validate(m, 'measurement.json')
+        return m
+
+    def _get_measurement(self, **config_kwargs):
+        """
+        See `Workspace::get_measurement`.
         """
         poi_name = config_kwargs.get('poi_name')
         if poi_name:

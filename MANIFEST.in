@@ -1,4 +1,5 @@
 include pyhf/data/defs.json
+include pyhf/data/measurement.json
 include pyhf/data/measurements.json
 include pyhf/data/model.json
 include pyhf/data/workspace.json

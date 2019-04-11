@@ -4,9 +4,10 @@ import pytest
 import pyhf.exceptions
 import json
 
-@pytest.mark.parametrize(
-    'toplvl, basedir',
-    [
+
+@pytest.fixture(
+    scope='function',
+    params=[
         (
             'validation/xmlimport_input/config/example.xml',
             'validation/xmlimport_input/',
@@ -22,7 +23,35 @@ import json
     ],
     ids=['example-one', 'example-two', 'example-three'],
 )
-def test_build_workspace(toplvl, basedir):
-    w = pyhf.Workspace(pyhf.readxml.parse(toplvl, basedir))
+def workspace_factory(request):
+    return lambda: pyhf.Workspace(pyhf.readxml.parse(*request.param))
+
+
+def test_build_workspace(workspace_factory):
+    w = workspace_factory()
     assert w
+
+
+def test_build_model(workspace_factory):
+    w = workspace_factory()
     assert w.model()
+
+
+def test_get_measurement(workspace_factory):
+    w = workspace_factory()
+    m = w.get_measurement()
+    assert m
+
+
+def test_get_measurement_fake(workspace_factory):
+    w = workspace_factory()
+    m = w.get_measurement(poi_name='fake_poi')
+    assert m
+
+
+"""
+test the following
+- check for workspace.json schema validation failure
+- check that the schema validation is being called
+- check that setting a measurement works (via checks to get_measurement())
+"""
