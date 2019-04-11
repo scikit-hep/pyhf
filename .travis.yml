@@ -109,6 +109,9 @@ jobs:
     # Tests deployment to PyPI for all tags
     if: type NOT IN (pull_request)  # Always run, except if PR
     name: "TestPyPI deploy"
+    # Signal that setup.py should use use_scm_version=True
+    env:
+      TESTPYPI_UPLOAD: true
     python: '3.7'
     install: skip
     script: skip
