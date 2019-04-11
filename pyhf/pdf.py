@@ -454,3 +454,76 @@ class Model(object):
     def pdf(self, pars, data):
         tensorlib, _ = get_backend()
         return tensorlib.exp(self.logpdf(pars, data))
+
+
+class Workspace(object):
+    def __init__(self, spec, **config_kwargs):
+        self.spec = spec
+
+        self.schema = config_kwargs.pop('schema', 'workspace.json')
+        # run jsonschema validation of input specification against the (provided) schema
+        log.info("Validating spec against schema: {0:s}".format(self.schema))
+        utils.validate(self.spec, self.schema)
+
+        self.measurements = []
+        for measurement in self.spec.get('measurements', []):
+            self.measurements.append(measurement['name'])
+
+    def get_measurement(self, **config_kwargs):
+        """
+        Get (or create) a measurement object using the following logic:
+
+        1. if the poi name is given, create a measurement object for that poi
+        1. if the measurement name is given, find the measurement for the given name
+        1. if the measurement index is given, return the measurement at that index
+        1. if there are measurements but none of the above have been specified, return the 0th measurement
+        1. otherwise, raises `InvalidMeasurement`
+
+        Args:
+            poi_name: The name of the parameter of interest to create a new measurement from
+            measurement_name: The name of the measurement to use
+            measurement_index: The index of the measurement to use
+
+        Returns:
+            measurement: A measurement object adhering to the schema defs.json#/definitions/measurement
+
+        """
+        poi_name = config_kwargs.get('poi_name')
+        if poi_name:
+            return {
+                'name': 'NormalMeasurement',
+                'config': {'poi': poi_name, 'parameters': []},
+            }
+
+        if self.measurements:
+            measurement_name = config_kwargs.get('measurement_name')
+            if measurement_name:
+                if measurement_name not in self.measurements:
+                    raise exceptions.InvalidMeasurement(
+                        "The measurement '{0:s}' was not found in the workspace.".format(
+                            measurement_name
+                        )
+                    )
+                return self.spec['measurements'][
+                    self.measurements.index(measurement_name)
+                ]
+
+            measurement_index = config_kwargs.get('measurement_index')
+            if measurement_index:
+                return self.spec['measurements'][measurement_index]
+
+            return self.spec['measurements'][0]
+
+        raise exceptions.InvalidMeasurement(
+            "A measurement was not given to create the Model."
+        )
+
+    def model(self, **config_kwargs):
+        measurement = self.get_measurement(**config_kwargs)
+        return Model(
+            {
+                'channels': self.spec['channels'],
+                'parameters': measurement['config']['parameters'],
+            },
+            poiname=measurement['config']['poi'],
+        )
