@@ -81,7 +81,7 @@ def _is_test_pypi():
 
 setup(
     name='pyhf',
-    version='0.0.16',
+    version='0.0.17',
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
     long_description_content_type='text/markdown',
