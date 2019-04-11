@@ -107,7 +107,7 @@ jobs:
   - stage: deploy
     # Tests deployment to PyPI for all commits to master
     name: "TestPyPI deploy"
-    if: (branch = master) AND (NOT (type IN (pull_request)))
+    if: (branch = master) AND type = push
     env:
       # Signal that setup.py should use use_scm_version with local_scheme
       TESTPYPI_UPLOAD: true
