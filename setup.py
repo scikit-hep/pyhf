@@ -63,7 +63,7 @@ def _is_test_pypi():
     set to true (c.f. .travis.yml)
 
     The use_scm_version kwarg accepts a callable for the local_scheme
-    configuration paramter with argument "version". This can be replaced
+    configuration parameter with argument "version". This can be replaced
     with a lambda as the desired version structure is {next_version}.dev{distance}
     c.f. https://github.com/pypa/setuptools_scm/#importing-in-setuppy
     """
