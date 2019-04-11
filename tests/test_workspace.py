@@ -23,4 +23,6 @@ import json
     ids=['example-one', 'example-two', 'example-three'],
 )
 def test_build_workspace(toplvl, basedir):
-    assert pyhf.Workspace(pyhf.readxml.parse(toplvl, basedir))
+    w = pyhf.Workspace(pyhf.readxml.parse(toplvl, basedir))
+    assert w
+    assert w.model()
