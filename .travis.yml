@@ -118,9 +118,6 @@ jobs:
     deploy:
       provider: pypi
       server: https://test.pypi.org/legacy/
-      # This test case only
-      on:
-        all_branches: true
       username:
         secure: KDi40+7LVX2E/tWtVhGB/jWrNDqNiO+dKzqkbOTP7ZvGrMu3VIVA1KbfDiWxygd5rgC7UAQcqTFbUHnwuyFAmooIhH3fDwpzpugz5zzW4Hia0eBUanarw40DHlBS0wVzw+zZoLP/wltR8Dg75vp2awPTqrvFyq444Jgzzah+xhHwTYx4VB9oeMAoiS0OSLn561pR1N+nzSRMe3R1Sl8AZtPLTCgOZ5tZARZjqiqtYXfTEaMQPj/BNmVYatsaUkCkljZjiLv/uiL6Ushz/Y0dhPdVF63dKDTM6NvDxT+pBA/+58U6RqcRmMdlYmCurgKTJ5W4VAXckHXaYwu5pvrd1pxqPJ7oNvdpDZ9JktHsQog8IxVjoij8Je5T4iE3hjEH/Jm8yKUL2WlPeyLxV0S9xmSdhTIeTZgAtbPQgP0KN7SC1ZB/S7irstJ68PilHc/ZxBbYthGu0tPOmHHye+lzVyV6qAhZkbRFarro0MgWjJR9U8vM5JHFsEvBm7ghHaKDGd75wE9MDHqxftxXGKJbZ19OlRCqnte8LA8a1Wa0E5Iw3QPaG7eq2cBp3TwwECw0ipMBBXfOz4ZIIcDRC/vcnW03zf6ziWaZ152QAVsmiJqXnzFBV7thPA28vqQtv0vAdzXO8e2lROYz18z8m2LTdvG4DiNxkNlN7KHjK1i+VEg=
       password:
