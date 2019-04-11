@@ -24,9 +24,8 @@ def load_schema(schema_id):
     return SCHEMA_CACHE[schema['$id']]
 
 
-load_schema('workspace.json')
-load_schema('model.json')
-load_schema('measurements.json')
+# load the defs.json as it is included by $ref
+load_schema('defs.json')
 
 
 def validate(spec, schema_name):

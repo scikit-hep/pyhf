@@ -1,0 +1,156 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://diana-hep.org/pyhf/schemas/defs.json",
+    "definitions": {
+        "measurement": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "config": { "$ref": "#/definitions/config" }
+            },
+            "required": ["name", "config"],
+            "additionalProperties": false
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "poi": { "type" : "string" },
+                "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+            },
+            "required": ["poi", "parameters"],
+            "additionalProperties": false
+        },
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
+                "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
+                "fixed": { "type": "boolean" }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+        },
+        "channel": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 }
+            },
+            "required": ["name", "samples"],
+            "additionalProperties": false
+        },
+        "sample": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "modifiers": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/lumi" },
+                            { "$ref": "#/definitions/modifier/normfactor" },
+                            { "$ref": "#/definitions/modifier/normsys" },
+                            { "$ref": "#/definitions/modifier/shapefactor" },
+                            { "$ref": "#/definitions/modifier/shapesys" },
+                            { "$ref": "#/definitions/modifier/staterror" }
+                        ]
+                    }
+                }
+            },
+            "required": ["name", "data", "modifiers"],
+            "additionalProperties": false
+        },
+        "modifier": {
+            "histosys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "histosys" },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                            "hi_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                        },
+                        "required": ["lo_data", "hi_data"]
+                    }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "lumi": {
+                "type": "object",
+                "properties": {
+                    "name": { "const": "lumi" },
+                    "type": { "const": "lumi" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "normfactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normfactor" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "normsys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normsys" },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo": { "type": "number" },
+                            "hi": { "type": "number"}
+                        },
+                        "required": ["lo", "hi"]
+                    }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapefactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapefactor" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapesys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapesys" },
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "staterror": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "staterror" },
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            }
+        }
+    }
+}
