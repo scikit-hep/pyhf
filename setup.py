@@ -56,6 +56,29 @@ extras_require = {
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
+
+def _is_test_pypi():
+    """
+    Determine if the Travis CI environment has TESTPYPI_UPLOAD defined and
+    set to true (c.f. .travis.yml)
+
+    The use_scm_version kwarg accepts a callable for the local_scheme
+    configuration parameter with argument "version". This can be replaced
+    with a lambda as the desired version structure is {next_version}.dev{distance}
+    c.f. https://github.com/pypa/setuptools_scm/#importing-in-setuppy
+
+    As the scm versioning is only desired for TestPyPI, for depolyment to PyPI the version
+    controlled through bumpversion is used.
+    """
+    from os import getenv
+
+    return (
+        {'local_scheme': lambda version: ''}
+        if getenv('TESTPYPI_UPLOAD') == 'true'
+        else False
+    )
+
+
 setup(
     name='pyhf',
     version='0.0.16',
@@ -88,4 +111,5 @@ setup(
     extras_require=extras_require,
     entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},
     dependency_links=[],
+    use_scm_version=_is_test_pypi(),
 )
