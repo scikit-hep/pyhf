@@ -66,6 +66,9 @@ def _is_test_pypi():
     configuration parameter with argument "version". This can be replaced
     with a lambda as the desired version structure is {next_version}.dev{distance}
     c.f. https://github.com/pypa/setuptools_scm/#importing-in-setuppy
+
+    As the scm versioning is only desired for TestPyPI, for depolyment to PyPI the version
+    controlled through bumpversion is used.
     """
     from os import getenv
 
