@@ -202,7 +202,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     )
 
     with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
-        for channelspec in spec['channels']:
+        for channelspec in spec['model']['channels']:
             channelfilename = os.path.join(
                 specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )
@@ -220,7 +220,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             inp.text = channelfilename
             combination.append(inp)
 
-    for measurement in spec['toplvl']['measurements']:
+    for measurement in spec['measurements']:
         combination.append(build_measurement(measurement))
     indent(combination)
     return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(

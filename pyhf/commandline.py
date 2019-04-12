@@ -118,7 +118,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
 def cls(workspace, output_file, measurement, patch, testpoi):
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
-    measurements = d['toplvl']['measurements']
+    measurements = d['measurements']
     measurement_names = [m['name'] for m in measurements]
     measurement_index = 0
 
@@ -143,8 +143,8 @@ def cls(workspace, output_file, measurement, patch, testpoi):
             )
         )
         spec = {
-            'channels': d['channels'],
-            'parameters': d['toplvl']['measurements'][measurement_index]['config'].get(
+            'channels': d['model']['channels'],
+            'parameters': d['measurements'][measurement_index]['config'].get(
                 'parameters', []
             ),
         }
