@@ -204,6 +204,28 @@ def test_parameters_definition():
     pyhf.Model(spec, poiname='mypoi')
 
 
+def test_parameters_incorrect_format():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': {'a': 'fake', 'object': 2},
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec, poiname='mypoi')
+
 def test_parameters_duplicated():
     spec = {
         'channels': [
