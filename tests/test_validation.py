@@ -770,7 +770,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     parsed_xml_before = pyhf.readxml.parse(toplvl, basedir)
     spec = {
         'channels': parsed_xml_before['model']['channels'],
-        'parameters': parsed_xml_before['toplvl']['measurements'][0]['config'][
+        'parameters': parsed_xml_before['measurements'][0]['config'][
             'parameters'
         ],
     }
@@ -789,8 +789,8 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     )
     parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)
     spec = {
-        'channels': parsed_xml_after['channels'],
-        'parameters': parsed_xml_after['toplvl']['measurements'][0]['config'][
+        'channels': parsed_xml_after['model']['channels'],
+        'parameters': parsed_xml_after['measurements'][0]['config'][
             'parameters'
         ],
     }
