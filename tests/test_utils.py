@@ -4,12 +4,11 @@ import pytest
 import pyhf
 
 
-def test_get_spec_schema():
-    assert pyhf.utils.load_schema('model.json')
-
-
-def test_get_measurements_schema():
-    assert pyhf.utils.load_schema('measurements.json')
+@pytest.mark.parametrize(
+    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+)
+def test_get_schema(schema):
+    assert pyhf.utils.load_schema(schema)
 
 
 def test_load_missing_schema():

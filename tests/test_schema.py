@@ -226,6 +226,7 @@ def test_parameters_incorrect_format():
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec, poiname='mypoi')
 
+
 def test_parameters_duplicated():
     spec = {
         'channels': [
