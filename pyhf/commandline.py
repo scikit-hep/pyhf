@@ -3,13 +3,11 @@ import logging
 import click
 import json
 import os
-import sys
 
 from . import writexml
 from .utils import hypotest
-from .pdf import Workspace, Model
+from .pdf import Workspace
 from .version import __version__
-from .exceptions import InvalidMeasurement
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -120,6 +118,9 @@ def cls(workspace, output_file, measurement, patch, testpoi):
 
     patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
     p = w.model(measurement_name=measurement, patches=patches)
+    import pdb
+
+    pdb.set_trace()
     result = hypotest(testpoi, w.data(p), p, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
     if output_file is None:

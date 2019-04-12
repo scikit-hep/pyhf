@@ -84,4 +84,4 @@ def set_backend(backend, custom_optimizer=None):
 from .pdf import Model, Workspace
 from . import simplemodels
 
-__all__ = ['Model', 'utils', 'modifiers', 'simplemodels', '__version__']
+__all__ = ['Model', 'Workspace', 'utils', 'modifiers', 'simplemodels', '__version__']
