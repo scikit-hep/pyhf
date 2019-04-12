@@ -13,7 +13,9 @@ log = logging.getLogger(__name__)
 
 class _ModelConfig(object):
     def __init__(self, spec, poiname='mu'):
-        self._reset()
+        self.par_map = {}
+        self.par_order = []
+        self.next_index = 0
         self.poi_index = None
         self.auxdata = []
         self.auxdata_order = []
@@ -142,18 +144,12 @@ class _ModelConfig(object):
     def _create_and_register_paramsets(
         self, paramsets_requirements, paramsets_user_configs
     ):
-        self._reset()
         for param_name, paramset_requirements in reduce_paramsets_requirements(
             paramsets_requirements, paramsets_user_configs
         ).items():
             paramset_type = paramset_requirements.get('paramset_type')
             paramset = paramset_type(**paramset_requirements)
             self._register_paramset(param_name, paramset)
-
-    def _reset(self):
-        self.par_map = {}
-        self.par_order = []
-        self.next_index = 0
 
 
 class Model(object):
