@@ -88,10 +88,10 @@ def test_get_measurement_schema_validation(mocker, workspace_factory):
     assert pyhf.utils.validate.called is False
     w = workspace_factory()
     assert pyhf.utils.validate.call_count == 1
-    pyhf.utils.validate.call_args[0][1] == 'workspace.json'
+    assert pyhf.utils.validate.call_args[0][1] == 'workspace.json'
     m = w.get_measurement()
     assert pyhf.utils.validate.call_count == 2
-    pyhf.utils.validate.call_args[0][1] == 'measurement.json'
+    assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
 
 
 def test_get_workspace_model_default(workspace_factory):
