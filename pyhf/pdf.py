@@ -1,5 +1,6 @@
 import copy
 import logging
+import jsonpatch
 
 from . import get_backend, default_backend
 from . import exceptions
@@ -504,8 +505,13 @@ class Workspace(object):
             measurement_name = config_kwargs.get('measurement_name')
             if measurement_name:
                 if measurement_name not in self.measurements:
+                    log.debug(
+                        'measurements defined:\n\t{0:s}'.format(
+                            '\n\t'.join(self.measurements)
+                        )
+                    )
                     raise exceptions.InvalidMeasurement(
-                        "The measurement '{0:s}' was not found in the workspace.".format(
+                        'no measurement by name \'{0:s}\' was found in the workspace, pick from one of the valid ones above'.format(
                             measurement_name
                         )
                     )
@@ -517,6 +523,10 @@ class Workspace(object):
             if measurement_index:
                 return self.spec['measurements'][measurement_index]
 
+            if len(self.measurements) > 1:
+                log.warning(
+                    'multiple measurements defined. Taking the first measurement.'
+                )
             return self.spec['measurements'][0]
 
         raise exceptions.InvalidMeasurement(
@@ -524,11 +534,28 @@ class Workspace(object):
         )
 
     def model(self, **config_kwargs):
+        """
+        Create a model object with/without patches applied.
+
+        Args:
+            patches: A list of JSON patches to apply to the model specification
+
+        Returns:
+            model: A model object adhering to the schema model.json
+
+        """
         measurement = self.get_measurement(**config_kwargs)
-        return Model(
-            {
-                'channels': self.spec['channels'],
-                'parameters': measurement['config']['parameters'],
-            },
-            poiname=measurement['config']['poi'],
+        log.debug(
+            'model being created for measurement {0:s}'.format(measurement['name'])
         )
+
+        patches = config_kwargs.get('patches', [])
+
+        modelspec = {
+            'channels': self.spec['channels'],
+            'parameters': measurement['config']['parameters'],
+        }
+        for patch in patches:
+            modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
+
+        return Model(modelspec, poiname=measurement['config']['poi'])
