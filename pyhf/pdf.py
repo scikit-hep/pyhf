@@ -454,6 +454,10 @@ class Model(object):
 
 
 class Workspace(object):
+    """
+    An object that is built from a JSON spec that follows `workspace.json`.
+    """
+
     def __init__(self, spec, **config_kwargs):
         self.spec = spec
 
@@ -471,11 +475,11 @@ class Workspace(object):
         """
         Get (or create) a measurement object using the following logic:
 
-        1. if the poi name is given, create a measurement object for that poi
-        1. if the measurement name is given, find the measurement for the given name
-        1. if the measurement index is given, return the measurement at that index
-        1. if there are measurements but none of the above have been specified, return the 0th measurement
-        1. otherwise, raises `InvalidMeasurement`
+          1. if the poi name is given, create a measurement object for that poi
+          2. if the measurement name is given, find the measurement for the given name
+          3. if the measurement index is given, return the measurement at that index
+          4. if there are measurements but none of the above have been specified, return the 0th measurement
+          5. otherwise, raises `InvalidMeasurement`
 
         Args:
             poi_name: The name of the parameter of interest to create a new measurement from
