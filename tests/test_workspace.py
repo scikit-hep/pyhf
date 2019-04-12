@@ -50,12 +50,12 @@ def test_get_measurement_default(workspace_factory):
 
 def test_get_measurement(workspace_factory):
     w = workspace_factory()
-    for measurement in w.measurements:
+    for measurement in w.measurement_names:
         m = w.get_measurement(measurement_name=measurement)
         assert m['name'] == measurement
-    for measurement_idx in range(len(w.measurements)):
+    for measurement_idx in range(len(w.measurement_names)):
         m = w.get_measurement(measurement_index=measurement_idx)
-        assert m['name'] == w.measurements[measurement_idx]
+        assert m['name'] == w.measurement_names[measurement_idx]
 
 
 def test_get_measurement_fake(workspace_factory):
@@ -74,11 +74,13 @@ def test_get_workspace_measurement_priority(workspace_factory):
     assert m['config']['poi'] == 'fake_poi'
 
     # does measurement_name override measurement_index?
-    m = w.get_measurement(measurement_name=w.measurements[0], measurement_index=999)
-    assert m['name'] == w.measurements[0]
+    m = w.get_measurement(
+        measurement_name=w.measurement_names[0], measurement_index=999
+    )
+    assert m['name'] == w.measurement_names[0]
     # only in cases where we have more than one measurement to pick from
-    if len(w.measurements) > 1:
-        assert m['name'] != w.measurements[-1]
+    if len(w.measurement_names) > 1:
+        assert m['name'] != w.measurement_names[-1]
 
 
 def test_get_measurement_schema_validation(mocker, workspace_factory):

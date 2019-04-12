@@ -462,9 +462,9 @@ class Workspace(object):
         log.info("Validating spec against schema: {0:s}".format(self.schema))
         utils.validate(self.spec, self.schema)
 
-        self.measurements = []
+        self.measurement_names = []
         for measurement in self.spec.get('measurements', []):
-            self.measurements.append(measurement['name'])
+            self.measurement_names.append(measurement['name'])
 
     # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
@@ -501,13 +501,13 @@ class Workspace(object):
                 'config': {'poi': poi_name, 'parameters': []},
             }
 
-        if self.measurements:
+        if self.measurement_names:
             measurement_name = config_kwargs.get('measurement_name')
             if measurement_name:
-                if measurement_name not in self.measurements:
+                if measurement_name not in self.measurement_names:
                     log.debug(
                         'measurements defined:\n\t{0:s}'.format(
-                            '\n\t'.join(self.measurements)
+                            '\n\t'.join(self.measurement_names)
                         )
                     )
                     raise exceptions.InvalidMeasurement(
@@ -516,14 +516,14 @@ class Workspace(object):
                         )
                     )
                 return self.spec['measurements'][
-                    self.measurements.index(measurement_name)
+                    self.measurement_names.index(measurement_name)
                 ]
 
             measurement_index = config_kwargs.get('measurement_index')
             if measurement_index:
                 return self.spec['measurements'][measurement_index]
 
-            if len(self.measurements) > 1:
+            if len(self.measurement_names) > 1:
                 log.warning(
                     'multiple measurements defined. Taking the first measurement.'
                 )
