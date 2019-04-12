@@ -104,11 +104,3 @@ def test_get_workspace_model_default(workspace_factory):
     w = workspace_factory()
     m = w.model()
     assert m
-
-
-"""
-test the following
-- check for workspace.json schema validation failure
-- check that the schema validation is being called
-- check that setting a measurement works (via checks to get_measurement())
-"""
