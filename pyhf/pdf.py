@@ -559,3 +559,22 @@ class Workspace(object):
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
         return Model(modelspec, poiname=measurement['config']['poi'])
+
+    def data(self, model, with_aux=True):
+        """
+        Return the data for the supplied model with or without auxiliary data from the model.
+
+        The model is needed as the order of the data depends on the order of the channels in the model.
+
+        Args:
+            model: A model object adhering to the schema model.json
+            with_aux: Whether to include auxiliary data from the model or not
+
+        Returns:
+            data: A list of numbers
+        """
+
+        observed_data = sum((self.spec['data'][c] for c in model.config.channels), [])
+        if with_aux:
+            observed_data += model.config.auxdata
+        return observed_data
