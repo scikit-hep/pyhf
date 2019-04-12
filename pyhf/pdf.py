@@ -527,7 +527,7 @@ class Workspace(object):
         measurement = self.get_measurement(**config_kwargs)
         return Model(
             {
-                'channels': self.spec['model']['channels'],
+                'channels': self.spec['channels'],
                 'parameters': measurement['config']['parameters'],
             },
             poiname=measurement['config']['poi'],

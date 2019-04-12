@@ -48,7 +48,7 @@ def test_import_prepHistFactory():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['model']['channels'],
+        'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
@@ -112,7 +112,7 @@ def test_import_histosys():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['model']['channels'],
+        'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
@@ -164,7 +164,7 @@ def test_import_shapesys():
 
     # build the spec, strictly checks properties included
     spec = {
-        'channels': parsed_xml['model']['channels'],
+        'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')

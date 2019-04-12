@@ -769,10 +769,8 @@ def test_validation(setup_and_tolerance):
 def test_import_roundtrip(tmpdir, toplvl, basedir):
     parsed_xml_before = pyhf.readxml.parse(toplvl, basedir)
     spec = {
-        'channels': parsed_xml_before['model']['channels'],
-        'parameters': parsed_xml_before['measurements'][0]['config'][
-            'parameters'
-        ],
+        'channels': parsed_xml_before['channels'],
+        'parameters': parsed_xml_before['measurements'][0]['config']['parameters'],
     }
     pdf_before = pyhf.Model(spec, poiname='SigXsecOverSM')
 
@@ -789,10 +787,8 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     )
     parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)
     spec = {
-        'channels': parsed_xml_after['model']['channels'],
-        'parameters': parsed_xml_after['measurements'][0]['config'][
-            'parameters'
-        ],
+        'channels': parsed_xml_after['channels'],
+        'parameters': parsed_xml_after['measurements'][0]['config']['parameters'],
     }
     pdf_after = pyhf.Model(spec, poiname='SigXsecOverSM')
 

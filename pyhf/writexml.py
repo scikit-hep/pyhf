@@ -202,7 +202,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     )
 
     with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
-        for channelspec in spec['model']['channels']:
+        for channelspec in spec['channels']:
             channelfilename = os.path.join(
                 specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )

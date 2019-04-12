@@ -268,11 +268,7 @@ def parse(configfile, rootdir, track_progress=False):
 
     result = {
         'measurements': process_measurements(toplvl),
-        'model': {
-            'channels': [
-                {'name': k, 'samples': v['samples']} for k, v in channels.items()
-            ]
-        },
+        'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
     }
 

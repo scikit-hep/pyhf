@@ -143,7 +143,7 @@ def cls(workspace, output_file, measurement, patch, testpoi):
             )
         )
         spec = {
-            'channels': d['model']['channels'],
+            'channels': d['channels'],
             'parameters': d['measurements'][measurement_index]['config'].get(
                 'parameters', []
             ),
