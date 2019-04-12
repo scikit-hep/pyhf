@@ -64,7 +64,6 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         with open(output_file, 'w+') as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
-    sys.exit(0)
 
 
 @pyhf.command()
@@ -102,8 +101,6 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
                 ).decode('utf-8')
             )
 
-    sys.exit(0)
-
 
 @pyhf.command()
 @click.argument('workspace', default='-')
@@ -132,4 +129,3 @@ def cls(workspace, output_file, measurement, patch, testpoi):
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
-    sys.exit(0)
