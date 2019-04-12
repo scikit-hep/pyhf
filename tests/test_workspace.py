@@ -64,6 +64,23 @@ def test_get_measurement_fake(workspace_factory):
     assert m
 
 
+def test_get_workspace_measurement_priority(workspace_factory):
+    w = workspace_factory()
+
+    # does poi_name override all others?
+    m = w.get_measurement(
+        poi_name='fake_poi', measurement_name='FakeMeasurement', measurement_index=999
+    )
+    assert m['config']['poi'] == 'fake_poi'
+
+    # does measurement_name override measurement_index?
+    m = w.get_measurement(measurement_name=w.measurements[0], measurement_index=999)
+    assert m['name'] == w.measurements[0]
+    # only in cases where we have more than one measurement to pick from
+    if len(w.measurements) > 1:
+        assert m['name'] != w.measurements[-1]
+
+
 def test_get_measurement_schema_validation(mocker, workspace_factory):
     mocker.patch('pyhf.utils.validate', return_value=None)
     assert pyhf.utils.validate.called is False
