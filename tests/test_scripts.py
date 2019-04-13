@@ -204,3 +204,49 @@ def test_testpoi(tmpdir, script_runner):
         assert not np.array_equal(*pair)
 
     assert len(list(set(results_obs))) == len(pois)
+
+
+def test_inspect(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf inspect {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    output = """Summary Statistics
+       ------------------
+          channels  1
+           samples  3
+        parameters  6
+         modifiers  6
+
+          channels  nbins
+        ----------  -----
+          channel1    2
+
+           samples
+        ----------
+       background1
+       background2
+            signal
+
+        parameters  constraint              modifiers
+        ----------  ----------              ----------
+     SigXsecOverSM  unconstrained           normfactor
+              lumi  constrained_by_normal   lumi
+staterror_channel1  constrained_by_normal   staterror
+             syst1  constrained_by_normal   normsys
+             syst2  constrained_by_normal   normsys
+             syst3  constrained_by_normal   normsys
+
+       measurement           poi            parameters
+        ----------        ----------        ----------
+  (*) GaussExample      SigXsecOverSM       lumi,alpha_syst1
+      GammaExample      SigXsecOverSM       lumi,alpha_syst1
+    LogNormExample      SigXsecOverSM       lumi,alpha_syst1
+      ConstExample      SigXsecOverSM       lumi,alpha_syst1
+    """
+    assert output.split() == ret.stdout.split()

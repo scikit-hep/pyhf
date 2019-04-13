@@ -17,6 +17,7 @@ class _ModelConfig(object):
         self.par_map = {}
         self.par_order = []
         self.next_index = 0
+        self.poi_name = None
         self.poi_index = None
         self.auxdata = []
         self.auxdata_order = []
@@ -127,6 +128,7 @@ class _ModelConfig(object):
             )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
+        self.poi_name = name
         self.poi_index = s.start
 
     def _register_paramset(self, param_name, paramset):
