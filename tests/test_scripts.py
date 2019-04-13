@@ -30,7 +30,7 @@ def test_import_prepHistFactory(tmpdir, script_runner):
 
     parsed_xml = json.loads(temp.read())
     spec = {'channels': parsed_xml['channels']}
-    pyhf.utils.validate(spec, pyhf.utils.get_default_schema())
+    pyhf.utils.validate(spec, 'model.json')
 
 
 def test_import_prepHistFactory_withProgress(tmpdir, script_runner):
@@ -55,7 +55,6 @@ def test_import_prepHistFactory_stdout(tmpdir, script_runner):
     assert ret.stderr != ''
     d = json.loads(ret.stdout)
     assert d
-    assert 'channels' in d
 
 
 def test_import_prepHistFactory_and_cls(tmpdir, script_runner):

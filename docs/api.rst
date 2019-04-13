@@ -26,6 +26,7 @@ Making Probability Distribution Functions (PDFs)
    :nosignatures:
    :template: modifierclass.rst
 
+   Workspace
    Model
    _ModelConfig
 

@@ -3,12 +3,10 @@ import logging
 import click
 import json
 import os
-import jsonpatch
-import sys
 
 from . import writexml
 from .utils import hypotest
-from .pdf import Model
+from .pdf import Workspace
 from .version import __version__
 
 logging.basicConfig()
@@ -64,7 +62,6 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         with open(output_file, 'w+') as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
-    sys.exit(0)
 
 
 @pyhf.command()
@@ -102,8 +99,6 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
                 ).decode('utf-8')
             )
 
-    sys.exit(0)
-
 
 @pyhf.command()
 @click.argument('workspace', default='-')
@@ -117,53 +112,17 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
 @click.option('--testpoi', default=1.0)
 def cls(workspace, output_file, measurement, patch, testpoi):
     with click.open_file(workspace, 'r') as specstream:
-        d = json.load(specstream)
-    measurements = d['toplvl']['measurements']
-    measurement_names = [m['name'] for m in measurements]
-    measurement_index = 0
+        wspec = json.load(specstream)
 
-    log.debug('measurements defined:\n\t{0:s}'.format('\n\t'.join(measurement_names)))
-    if measurement and measurement not in measurement_names:
-        log.error(
-            'no measurement by name \'{0:s}\' exists, pick from one of the valid ones above'.format(
-                measurement
-            )
-        )
-        sys.exit(1)
+    w = Workspace(wspec)
+
+    patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
+    p = w.model(measurement_name=measurement, patches=patches)
+    result = hypotest(testpoi, w.data(p), p, return_expected_set=True)
+    result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+    if output_file is None:
+        print(json.dumps(result, indent=4, sort_keys=True))
     else:
-        if not measurement and len(measurements) > 1:
-            log.warning('multiple measurements defined. Taking the first measurement.')
-            measurement_index = 0
-        elif measurement:
-            measurement_index = measurement_names.index(measurement)
-
-        log.debug(
-            'calculating CLs for measurement {0:s}'.format(
-                measurements[measurement_index]['name']
-            )
-        )
-        spec = {
-            'channels': d['channels'],
-            'parameters': d['toplvl']['measurements'][measurement_index]['config'].get(
-                'parameters', []
-            ),
-        }
-
-        for p in patch:
-            with click.open_file(p, 'r') as read_file:
-                p = jsonpatch.JsonPatch(json.loads(read_file.read()))
-            spec = p.apply(spec)
-        p = Model(spec, poiname=measurements[measurement_index]['config']['poi'])
-        observed = sum((d['data'][c] for c in p.config.channels), []) + p.config.auxdata
-        result = hypotest(testpoi, observed, p, return_expected_set=True)
-        result = {
-            'CLs_obs': result[0].tolist()[0],
-            'CLs_exp': result[-1].ravel().tolist(),
-        }
-        if output_file is None:
-            print(json.dumps(result, indent=4, sort_keys=True))
-        else:
-            with open(output_file, 'w+') as out_file:
-                json.dump(result, out_file, indent=4, sort_keys=True)
-            log.debug("Written to {0:s}".format(output_file))
-        sys.exit(0)
+        with open(output_file, 'w+') as out_file:
+            json.dump(result, out_file, indent=4, sort_keys=True)
+        log.debug("Written to {0:s}".format(output_file))

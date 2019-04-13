@@ -1,42 +1,47 @@
 import json
 import jsonschema
 import pkg_resources
+import os
 
 from .exceptions import InvalidSpecification
 from . import get_backend
 
-
-def get_default_schema():
-    r"""
-    Returns the absolute filepath default schema for pyhf. This usually points
-    to pyhf/data/spec.json.
-
-    Returns:
-        Schema File Path: a string containing the absolute path to the default
-                          schema file.
-    """
-    return pkg_resources.resource_filename(__name__, 'data/spec.json')
-
-
 SCHEMA_CACHE = {}
+SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
 
 
-def load_schema(schema):
+def load_schema(schema_id):
     global SCHEMA_CACHE
     try:
-        return SCHEMA_CACHE[schema]
+        return SCHEMA_CACHE["{0:s}{1:s}".format(SCHEMA_BASE, schema_id)]
     except KeyError:
         pass
 
-    with open(schema) as json_schema:
-        SCHEMA_CACHE[schema] = json.load(json_schema)
-    return SCHEMA_CACHE[schema]
+    path = pkg_resources.resource_filename(__name__, os.path.join('data', schema_id))
+    with open(path) as json_schema:
+        schema = json.load(json_schema)
+        SCHEMA_CACHE[schema['$id']] = schema
+    return SCHEMA_CACHE[schema['$id']]
 
 
-def validate(spec, schema):
-    schema = load_schema(schema)
+# load the defs.json as it is included by $ref
+load_schema('defs.json')
+
+
+def validate(spec, schema_name):
+    schema = load_schema(schema_name)
     try:
-        return jsonschema.validate(spec, schema)
+        resolver = jsonschema.RefResolver(
+            base_uri='file://{0:s}'.format(
+                pkg_resources.resource_filename(__name__, 'data/')
+            ),
+            referrer=schema_name,
+            store=SCHEMA_CACHE,
+        )
+        validator = jsonschema.Draft6Validator(
+            schema, resolver=resolver, format_checker=None
+        )
+        return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise InvalidSpecification(err)
 

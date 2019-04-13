@@ -220,7 +220,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             inp.text = channelfilename
             combination.append(inp)
 
-    for measurement in spec['toplvl']['measurements']:
+    for measurement in spec['measurements']:
         combination.append(build_measurement(measurement))
     indent(combination)
     return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
