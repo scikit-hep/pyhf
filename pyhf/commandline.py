@@ -128,7 +128,8 @@ def inspect(workspace, output_file, measurement):
     )
     result['systematics'] = [
         (
-            *parameter,
+            parameter[0],
+            parameter[1],
             [
                 modifier[1]
                 for modifier in default_model.config.modifiers
