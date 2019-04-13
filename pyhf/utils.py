@@ -128,10 +128,32 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
     tensorlib, _ = get_backend()
-    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_v)
-    CLb = 1 - tensorlib.normal_cdf(sqrtqmu_v - sqrtqmuA_v)
+    nullval = sqrtqmu_v
+    altval  = -(sqrtqmuA_v - sqrtqmu_v)
+    
+    qmu = sqrtqmu_v**2
+    qmu_A = sqrtqmuA_v**2
+    nullval = (qmu + qmu_A)/(2 * sqrtqmuA_v)
+    altval  = (qmu - qmu_A)/(2 * sqrtqmuA_v)
+
+
+    CLsb = 1 - tensorlib.normal_cdf(nullval)
+    CLb = 1 - tensorlib.normal_cdf(altval)
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
+
+def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,nsigma):
+    tensorlib, _ = get_backend()
+    import scipy.stats
+    qmu   = sqrtqmu_v**2
+    qmu_A = sqrtqmuA_v**2
+    pnull = 1-tensorlib.normal_cdf( (qmu + qmu_A)/(2 * sqrtqmuA_v))
+    palt  = 1-tensorlib.normal_cdf( (qmu - qmu_A)/(2 * sqrtqmuA_v))
+    sqrtqmu =   -scipy.stats.norm.ppf( pnull,1.)
+    sqrtqmu_A =  scipy.stats.norm.ppf( palt,1.) + sqrtqmu
+    clsplusb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
+    clb = tensorlib.normal_cdf( nsigma)
+    return clsplusb / clb;  
 
 
 def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
@@ -227,16 +249,14 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            sqrtqmu_v_sigma = sqrtqmuA_v - n_sigma
-            CLs_exp.append(pvals_from_teststat(sqrtqmu_v_sigma, sqrtqmuA_v)[-1])
+            CLs_exp.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,n_sigma))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat(sqrtqmuA_v, sqrtqmuA_v)[-1])
+        _returns.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,0))
     if kwargs.get('return_test_statistics'):
         _returns.append([qmu_v, qmuA_v])
-
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
