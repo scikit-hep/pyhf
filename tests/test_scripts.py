@@ -250,3 +250,18 @@ staterror_channel1  constrained_by_normal   staterror
       ConstExample      SigXsecOverSM       lumi,alpha_syst1
     """
     assert output.split() == ret.stdout.split()
+
+
+def test_inspect_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("inspect_output.json")
+    command = 'pyhf inspect {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
