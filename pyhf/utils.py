@@ -149,8 +149,8 @@ def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,nsigma):
     qmu_A = tensorlib.power(sqrtqmuA_v,2)
     pnull = 1-tensorlib.normal_cdf( (qmu + qmu_A)/(2 * sqrtqmuA_v))
     palt  = 1-tensorlib.normal_cdf( (qmu - qmu_A)/(2 * sqrtqmuA_v))
-    sqrtqmu =   -tensorlib.normal_icdf(pnull)
-    sqrtqmu_A =  tensorlib.normal_icdf(palt) + sqrtqmu
+    sqrtqmu   =   -tensorlib.normal_icdf(pnull)
+    sqrtqmu_A =    tensorlib.normal_icdf(palt) + sqrtqmu
     CLsb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
     CLb = tensorlib.normal_cdf( nsigma)
     CLs = CLsb / CLb

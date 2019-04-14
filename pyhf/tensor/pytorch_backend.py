@@ -273,6 +273,31 @@ class pytorch_backend(object):
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
+    def normal_icdf(self, x, mu=0, sigma=1):
+        """
+        The inverse cumulative distribution function for the Normal distribution
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.tensorlib.normal_icdf([0.8])
+            tensor([0.8416])
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            PyTorch FloatTensor: The inverse CDF
+        """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+        normal = torch.distributions.Normal(mu, sigma)
+        return normal.icdf(x)
+
     def normal_cdf(self, x, mu=[0.0], sigma=[1.0]):
         """
         The cumulative distribution function for the Normal distribution
