@@ -102,7 +102,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
-def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
+def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde = False):
     r"""
     The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of `arXiv:1007.1727`_
 
@@ -128,14 +128,15 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
     tensorlib, _ = get_backend()
-    nullval = sqrtqmu_v
-    altval  = -(sqrtqmuA_v - sqrtqmu_v)
-    
-    qmu = sqrtqmu_v**2
-    qmu_A = sqrtqmuA_v**2
-    nullval = (qmu + qmu_A)/(2 * sqrtqmuA_v)
-    altval  = (qmu - qmu_A)/(2 * sqrtqmuA_v)
+    if not qtilde:  # qmu 
+        nullval = sqrtqmu_v
+        altval  = -(sqrtqmuA_v - sqrtqmu_v)
 
+    else: # qtilde
+        qmu = tensorlib.power(sqrtqmu_v,2)
+        qmu_A = tensorlib.power(sqrtqmuA_v,2)
+        nullval = (qmu + qmu_A)/(2 * sqrtqmuA_v)
+        altval  = (qmu - qmu_A)/(2 * sqrtqmuA_v)
 
     CLsb = 1 - tensorlib.normal_cdf(nullval)
     CLb = 1 - tensorlib.normal_cdf(altval)
@@ -144,19 +145,18 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v):
 
 def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,nsigma):
     tensorlib, _ = get_backend()
-    import scipy.stats
     qmu   = sqrtqmu_v**2
     qmu_A = sqrtqmuA_v**2
     pnull = 1-tensorlib.normal_cdf( (qmu + qmu_A)/(2 * sqrtqmuA_v))
     palt  = 1-tensorlib.normal_cdf( (qmu - qmu_A)/(2 * sqrtqmuA_v))
-    sqrtqmu =   -scipy.stats.norm.ppf( pnull,1.)
-    sqrtqmu_A =  scipy.stats.norm.ppf( palt,1.) + sqrtqmu
+    sqrtqmu =   -tensorlib.normal_icdf(pnull)
+    sqrtqmu_A =  tensorlib.normal_icdf(palt) + sqrtqmu
     clsplusb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
     clb = tensorlib.normal_cdf( nsigma)
     return clsplusb / clb;  
 
 
-def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
+def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde = False, **kwargs):
     r"""
     Computes :math:`p`-values and test statistics for a single value of the parameter of interest
 
@@ -241,7 +241,7 @@ def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v)
+    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde = qtilde)
 
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):

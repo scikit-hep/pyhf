@@ -245,9 +245,9 @@ class numpy_backend(object):
         """
         return norm.pdf(x, loc=mu, scale=sigma)
 
-    def normal_cdf(self, x, mu=0, sigma=1):
+    def normal_icdf(self, x, mu=0, sigma=1):
         """
-        The cumulative distribution function for the Normal distribution
+        The inverse cumulative distribution function for the Normal distribution
 
         Example:
 
@@ -263,5 +263,26 @@ class numpy_backend(object):
 
         Returns:
             NumPy float: The CDF
+        """
+        return norm.ppf(x, loc=mu, scale=sigma)
+
+    def normal_cdf(self, x, mu=0, sigma=1):
+        """
+        The cumulative distribution function (i.e. percent-point function) for the Normal distribution
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            0.8416212335729143
+
+        Args:
+            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            NumPy float: The inverse CDF 
         """
         return norm.cdf(x, loc=mu, scale=sigma)
