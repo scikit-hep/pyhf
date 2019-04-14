@@ -57,7 +57,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 
     spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
     if output_file is None:
-        print(json.dumps(spec, indent=4, sort_keys=True))
+        click.echo(json.dumps(spec, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
@@ -156,42 +156,42 @@ def inspect(workspace, output_file, measurement):
 
     # summary
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen + len('Summary'))
-    print(fmtStr.format('     Summary     ', ''))
-    print(fmtStr.format('-' * 18, ''))
+    click.echo(fmtStr.format('     Summary     ', ''))
+    click.echo(fmtStr.format('-' * 18, ''))
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen)
     for key in ['channels', 'samples', 'parameters', 'modifiers']:
-        print(fmtStr.format(key, str(len(result[key]))))
-    print()
+        click.echo(fmtStr.format(key, str(len(result[key]))))
+    click.echo()
 
     fmtStr = '{{0: >{0:d}s}}  {{1: ^5s}}'.format(maxlen)
-    print(fmtStr.format('channels', 'nbins'))
-    print(fmtStr.format('-' * 10, '-' * 5))
+    click.echo(fmtStr.format('channels', 'nbins'))
+    click.echo(fmtStr.format('-' * 10, '-' * 5))
     for channel, nbins in result['channels']:
-        print(fmtStr.format(channel, str(nbins)))
-    print()
+        click.echo(fmtStr.format(channel, str(nbins)))
+    click.echo()
 
     fmtStr = '{{0: >{0:d}s}}'.format(maxlen)
-    print(fmtStr.format('samples'))
-    print(fmtStr.format('-' * 10))
+    click.echo(fmtStr.format('samples'))
+    click.echo(fmtStr.format('-' * 10))
     for sample in result['samples']:
-        print(fmtStr.format(sample))
-    print()
+        click.echo(fmtStr.format(sample))
+    click.echo()
 
     # print parameters, constraints, modifiers
     fmtStr = '{{0: >{0:d}s}}  {{1: <22s}}  {{2:s}}'.format(maxlen)
-    print(fmtStr.format('parameters', 'constraint', 'modifiers'))
-    print(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
+    click.echo(fmtStr.format('parameters', 'constraint', 'modifiers'))
+    click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for parname, constraint, modtypes in result['systematics']:
-        print(fmtStr.format(parname, constraint, ','.join(sorted(set(modtypes)))))
-    print()
+        click.echo(fmtStr.format(parname, constraint, ','.join(sorted(set(modtypes)))))
+    click.echo()
 
     fmtStr = '{{0: >{0:d}s}}  {{1: ^22s}}  {{2:s}}'.format(maxlen)
-    print(fmtStr.format('measurement', 'poi', 'parameters'))
-    print(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
+    click.echo(fmtStr.format('measurement', 'poi', 'parameters'))
+    click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for measurement_name, measurement_poi, measurement_parameters in result[
         'measurements'
     ]:
-        print(
+        click.echo(
             fmtStr.format(
                 ('(*) ' if measurement_name == default_measurement['name'] else '')
                 + measurement_name,
@@ -201,7 +201,7 @@ def inspect(workspace, output_file, measurement):
                 else '(none)',
             )
         )
-    print()
+    click.echo()
 
     if output_file:
         with open(output_file, 'w+') as out_file:
@@ -230,7 +230,7 @@ def cls(workspace, output_file, measurement, patch, testpoi):
     result = hypotest(testpoi, w.data(p), p, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
     if output_file is None:
-        print(json.dumps(result, indent=4, sort_keys=True))
+        click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
