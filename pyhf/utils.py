@@ -145,16 +145,16 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde = False):
 
 def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v,nsigma):
     tensorlib, _ = get_backend()
-    qmu   = sqrtqmu_v**2
-    qmu_A = sqrtqmuA_v**2
+    qmu   = tensorlib.power(sqrtqmu_v,2)
+    qmu_A = tensorlib.power(sqrtqmuA_v,2)
     pnull = 1-tensorlib.normal_cdf( (qmu + qmu_A)/(2 * sqrtqmuA_v))
     palt  = 1-tensorlib.normal_cdf( (qmu - qmu_A)/(2 * sqrtqmuA_v))
     sqrtqmu =   -tensorlib.normal_icdf(pnull)
     sqrtqmu_A =  tensorlib.normal_icdf(palt) + sqrtqmu
-    clsplusb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
-    clb = tensorlib.normal_cdf( nsigma)
-    return clsplusb / clb;  
-
+    CLsb = 1-tensorlib.normal_cdf( sqrtqmu_A - nsigma)
+    CLb = tensorlib.normal_cdf( nsigma)
+    CLs = CLsb / CLb
+    return CLs
 
 def hypotest(poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde = False, **kwargs):
     r"""
