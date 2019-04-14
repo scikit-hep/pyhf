@@ -142,11 +142,7 @@ def inspect(workspace, output_file, measurement):
     result['modifiers'] = default_model.config.modifiers
 
     result['measurements'] = [
-        (
-            ('(*) ' if m['name'] == default_measurement['name'] else '') + m['name'],
-            m['config']['poi'],
-            [p['name'] for p in m['config']['parameters']],
-        )
+        (m['name'], m['config']['poi'], [p['name'] for p in m['config']['parameters']])
         for m in w.spec.get('measurements')
     ]
 
@@ -197,7 +193,8 @@ def inspect(workspace, output_file, measurement):
     ]:
         print(
             fmtStr.format(
-                measurement_name,
+                ('(*) ' if measurement_name == default_measurement['name'] else '')
+                + measurement_name,
                 measurement_poi,
                 ','.join(measurement_parameters)
                 if measurement_parameters
