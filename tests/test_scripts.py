@@ -216,40 +216,6 @@ def test_inspect(tmpdir, script_runner):
     command = 'pyhf inspect {0:s}'.format(temp.strpath)
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
-    output = """Summary Statistics
-       ------------------
-          channels  1
-           samples  3
-        parameters  6
-         modifiers  6
-
-          channels  nbins
-        ----------  -----
-          channel1    2
-
-           samples
-        ----------
-       background1
-       background2
-            signal
-
-        parameters  constraint              modifiers
-        ----------  ----------              ----------
-     SigXsecOverSM  unconstrained           normfactor
-              lumi  constrained_by_normal   lumi
-staterror_channel1  constrained_by_normal   staterror
-             syst1  constrained_by_normal   normsys
-             syst2  constrained_by_normal   normsys
-             syst3  constrained_by_normal   normsys
-
-       measurement           poi            parameters
-        ----------        ----------        ----------
-  (*) GaussExample      SigXsecOverSM       lumi,alpha_syst1
-      GammaExample      SigXsecOverSM       lumi,alpha_syst1
-    LogNormExample      SigXsecOverSM       lumi,alpha_syst1
-      ConstExample      SigXsecOverSM       lumi,alpha_syst1
-    """
-    assert output.split() == ret.stdout.split()
 
 
 def test_inspect_outfile(tmpdir, script_runner):
@@ -265,3 +231,19 @@ def test_inspect_outfile(tmpdir, script_runner):
     )
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
+
+    summary = json.loads(tempout.read())
+    assert [
+        'channels',
+        'measurements',
+        'modifiers',
+        'parameters',
+        'samples',
+        'systematics',
+    ] == sorted(summary.keys())
+    assert len(summary['channels']) == 1
+    assert len(summary['measurements']) == 4
+    assert len(summary['modifiers']) == 6
+    assert len(summary['parameters']) == 6
+    assert len(summary['samples']) == 3
+    assert len(summary['systematics']) == 6
