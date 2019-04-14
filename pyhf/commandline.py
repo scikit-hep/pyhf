@@ -158,9 +158,9 @@ def inspect(workspace, output_file, measurement):
         [maxlen_channels, maxlen_samples, maxlen_parameters, maxlen_measurements]
     )
 
-    # summary statistics
+    # summary
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen + len('Summary'))
-    print(fmtStr.format('Summary Statistics', ''))
+    print(fmtStr.format('     Summary     ', ''))
     print(fmtStr.format('-' * 18, ''))
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen)
     for key in ['channels', 'samples', 'parameters', 'modifiers']:
