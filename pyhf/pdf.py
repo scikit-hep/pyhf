@@ -319,11 +319,17 @@ class Model(object):
                 sum(list(self.config.channel_nbins.values())),
             ),
         )
+
+        modifier_settings = {
+            'normsys': {'interpcode': 'code1'}
+        }
+
         self.modifiers_appliers = {
             k: c(
                 [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
+                **modifier_settings.get(k,{})
             )
             for k, c in modifiers.combined.items()
         }

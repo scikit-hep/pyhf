@@ -114,7 +114,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
 def cls(workspace, output_file, measurement, patch, testpoi, teststat):
     with click.open_file(workspace, 'r') as specstream:
         wspec = json.load(specstream)
-    
+
     w = Workspace(wspec)
 
     is_qtilde = (teststat == 'qtilde')

@@ -25,7 +25,7 @@ class normsys(object):
 
 
 class normsys_combined(object):
-    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode = 'code4'):
+    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode = 'code1'):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self.interpcode = interpcode
         assert self.interpcode in ['code1','code4']
