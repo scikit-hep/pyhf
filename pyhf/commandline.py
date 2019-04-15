@@ -4,7 +4,6 @@ import click
 import json
 import os
 
-from . import writexml
 from .utils import hypotest
 from .pdf import Workspace
 from .version import __version__
@@ -81,6 +80,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
             "xmlio extra: pip install pyhf[xmlio] or install uproot "
             "manually: pip install uproot"
         )
+    from . import writexml
 
     ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
