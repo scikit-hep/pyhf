@@ -70,8 +70,6 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--dataroot', default='data')
 @click.option('--resultprefix', default='FitConfig')
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
-    from . import writexml
-
     try:
         import uproot
 
@@ -82,6 +80,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
             "xmlio extra: pip install pyhf[xmlio] or install uproot "
             "manually: pip install uproot"
         )
+    from . import writexml
 
     ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
