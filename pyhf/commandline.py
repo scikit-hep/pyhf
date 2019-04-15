@@ -120,7 +120,7 @@ def cls(workspace, output_file, measurement, patch, testpoi, teststat):
     is_qtilde = (teststat == 'qtilde')
 
     patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
-    p = w.model(measurement_name=measurement, patches=patches)
+    p = w.model(measurement_name=measurement, patches=patches, modifier_settings = {'normsys': {'interpcode': 'code4'}})
     result = hypotest(testpoi, w.data(p), p, qtilde = is_qtilde, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
     if output_file is None:
