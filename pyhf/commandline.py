@@ -4,7 +4,6 @@ import click
 import json
 import os
 
-from . import writexml
 from .utils import hypotest
 from .pdf import Workspace
 from .version import __version__
@@ -71,6 +70,8 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--dataroot', default='data')
 @click.option('--resultprefix', default='FitConfig')
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
+    from . import writexml
+
     try:
         import uproot
 
