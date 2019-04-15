@@ -21,6 +21,10 @@ class _ModelConfig(object):
         self.auxdata = []
         self.auxdata_order = []
 
+        self.modifier_settings = {
+            'normsys': {'interpcode': 'code1'}
+        }
+
         # build up a dictionary of the parameter configurations provided by the user
         _paramsets_user_configs = {}
         for parameter in spec.get('parameters', []):
@@ -320,16 +324,13 @@ class Model(object):
             ),
         )
 
-        modifier_settings = {
-            'normsys': {'interpcode': 'code1'}
-        }
 
         self.modifiers_appliers = {
             k: c(
                 [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
-                **modifier_settings.get(k,{})
+                **self.config.modifier_settings.get(k,{})
             )
             for k, c in modifiers.combined.items()
         }
