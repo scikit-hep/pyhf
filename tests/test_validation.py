@@ -691,7 +691,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     par_bounds = pdf.config.suggested_bounds()
 
     CLs_obs, CLs_exp_set = pyhf.utils.hypotest(
-        mu_test, data, pdf, init_pars, par_bounds, return_expected_set=True
+        mu_test, data, pdf, init_pars, par_bounds, return_expected_set=True, qtilde = False
     )
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
