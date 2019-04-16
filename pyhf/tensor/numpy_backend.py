@@ -253,8 +253,8 @@ class numpy_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
-            >>> pyhf.tensorlib.normal_cdf(0.8)
-            0.7881446014166034
+            >>> pyhf.tensorlib.normal_icdf(0.8)
+            0.8416212335729143
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -275,7 +275,7 @@ class numpy_backend(object):
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
             >>> pyhf.tensorlib.normal_cdf(0.8)
-            0.8416212335729143
+            0.7881446014166034
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
