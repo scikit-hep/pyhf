@@ -25,10 +25,10 @@ class normsys(object):
 
 
 class normsys_combined(object):
-    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode = 'code1'):
+    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1'):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self.interpcode = interpcode
-        assert self.interpcode in ['code1','code4']
+        assert self.interpcode in ['code1', 'code4']
 
         pnames = [pname for pname, _ in normsys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
@@ -53,7 +53,9 @@ class normsys_combined(object):
         ]
 
         if len(normsys_mods):
-            self.interpolator = getattr(interpolators,self.interpcode)(self._normsys_histoset)
+            self.interpolator = getattr(interpolators, self.interpcode)(
+                self._normsys_histoset
+            )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
