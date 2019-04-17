@@ -794,13 +794,13 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
 
     data_before = [
         binvalue
-        for k in pdf_before.spec['channels']
+        for k in pdf_before.config.channels
         for binvalue in parsed_xml_before['data'][k['name']]
     ] + pdf_before.config.auxdata
 
     data_after = [
         binvalue
-        for k in pdf_after.spec['channels']
+        for k in pdf_after.config.channels
         for binvalue in parsed_xml_after['data'][k['name']]
     ] + pdf_after.config.auxdata
 
