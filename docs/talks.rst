@@ -44,3 +44,14 @@ This list will be updated with talks given on :code:`pyhf`:
    :list: bullet
    :all:
    :style: plain
+
+
+Posters
+-------
+
+This list will be updated with posters presented on :code:`pyhf`:
+
+.. bibliography:: bib/posters.bib
+   :list: bullet
+   :all:
+   :style: plain
