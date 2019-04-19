@@ -247,7 +247,7 @@ class numpy_backend(object):
         
     def normal_cdf(self, x, mu=0, sigma=1):
         """
-        The cumulative distribution function (i.e. percent-point function) for the Normal distribution
+        The cumulative distribution function for the Normal distribution
 
         Example:
 
