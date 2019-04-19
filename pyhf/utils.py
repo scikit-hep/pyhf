@@ -146,7 +146,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     return CLsb, CLb, CLs
 
 
-def pvals_from_teststat_expected(sqrtqmuA_v, nsigma = 0):
+def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     r"""
     Computes the expected :math:`p`p-values CLsb, CLb and CLs for data corresponding to a given percentile
     of the alternate hypothesis.
@@ -157,19 +157,20 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma = 0):
     Returns:
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
-    
+
     # NOTE:
     # To compute the expected p-value, one would need to first compute a hypothetical
     # observed test-statistic for a dataset whose best-fit value is mu^ = mu'-n*sigma:
     # $q_n$, and the proceed with the normal p-value computation for whatever test-statistic
     # was used. Howeever we can make a shortcut by just computing the p-values in mu^/sigma
-    # space, where the p-values 
-    # 
+    # space, where the p-values
+    #
     tensorlib, _ = get_backend()
-    CLsb = tensorlib.normal_cdf(nsigma-sqrtqmuA_v)
+    CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
     CLb = tensorlib.normal_cdf(nsigma)
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
+
 
 def hypotest(
     poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
@@ -266,7 +267,7 @@ def hypotest(
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma = n_sigma)[-1])
+            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[-1])
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
