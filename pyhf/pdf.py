@@ -13,13 +13,21 @@ log = logging.getLogger(__name__)
 
 
 class _ModelConfig(object):
-    def __init__(self, spec, poiname='mu'):
+    def __init__(self, spec, **config_kwargs):
+        poiname = config_kwargs.get('poiname', 'mu')
+
         self.par_map = {}
         self.par_order = []
         self.next_index = 0
         self.poi_index = None
         self.auxdata = []
         self.auxdata_order = []
+
+        default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
+
+        self.modifier_settings = (
+            config_kwargs.get('modifier_settings') or default_modifier_settings
+        )
 
         # build up a dictionary of the parameter configurations provided by the user
         _paramsets_user_configs = {}
@@ -319,11 +327,13 @@ class Model(object):
                 sum(list(self.config.channel_nbins.values())),
             ),
         )
+
         self.modifiers_appliers = {
             k: c(
                 [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
+                **self.config.modifier_settings.get(k, {})
             )
             for k, c in modifiers.combined.items()
         }
@@ -562,7 +572,7 @@ class Workspace(object):
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poiname=measurement['config']['poi'])
+        return Model(modelspec, poiname=measurement['config']['poi'], **config_kwargs)
 
     def data(self, model, with_aux=True):
         """

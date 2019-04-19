@@ -187,7 +187,7 @@ def expected_result_1bin_normsys(mu=1.0):
     if mu == 1:
         expected_result = {
             "exp": [
-                7.471684419037565e-10,
+                7.471694618861785e-10,
                 5.7411551509088054e-08,
                 3.6898088058290313e-06,
                 0.000169657315363677,
@@ -691,7 +691,13 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     par_bounds = pdf.config.suggested_bounds()
 
     CLs_obs, CLs_exp_set = pyhf.utils.hypotest(
-        mu_test, data, pdf, init_pars, par_bounds, return_expected_set=True
+        mu_test,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        return_expected_set=True,
+        qtilde=False,
     )
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
@@ -794,14 +800,14 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
 
     data_before = [
         binvalue
-        for k in pdf_before.spec['channels']
-        for binvalue in parsed_xml_before['data'][k['name']]
+        for k in pdf_before.config.channels
+        for binvalue in parsed_xml_before['data'][k]
     ] + pdf_before.config.auxdata
 
     data_after = [
         binvalue
-        for k in pdf_after.spec['channels']
-        for binvalue in parsed_xml_after['data'][k['name']]
+        for k in pdf_after.config.channels
+        for binvalue in parsed_xml_after['data'][k]
     ] + pdf_after.config.auxdata
 
     assert data_before == data_after
