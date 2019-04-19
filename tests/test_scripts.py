@@ -204,3 +204,46 @@ def test_testpoi(tmpdir, script_runner):
         assert not np.array_equal(*pair)
 
     assert len(list(set(results_obs))) == len(pois)
+
+
+def test_inspect(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf inspect {0:s}'.format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_inspect_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("inspect_output.json")
+    command = 'pyhf inspect {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    summary = json.loads(tempout.read())
+    assert [
+        'channels',
+        'measurements',
+        'modifiers',
+        'parameters',
+        'samples',
+        'systematics',
+    ] == sorted(summary.keys())
+    assert len(summary['channels']) == 1
+    assert len(summary['measurements']) == 4
+    assert len(summary['modifiers']) == 6
+    assert len(summary['parameters']) == 6
+    assert len(summary['samples']) == 3
+    assert len(summary['systematics']) == 6
