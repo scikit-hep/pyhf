@@ -164,9 +164,8 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     # observed test-statistic for a dataset whose best-fit value is mu^ = mu'-n*sigma:
     # $q_n$, and the proceed with the normal p-value computation for whatever test-statistic
     # was used. However, we can make a shortcut by just computing the p-values in mu^/sigma
-    # space, where the p-values are Clsb = cdf(x-sqrt(lambda)) for  and CLb=cdf(x) 
-    #
-    
+    # space, where the p-values are Clsb = cdf(x-sqrt(lambda)) for  and CLb=cdf(x)
+
     tensorlib, _ = get_backend()
     CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
     CLb = tensorlib.normal_cdf(nsigma)
