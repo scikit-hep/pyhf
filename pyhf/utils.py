@@ -146,24 +146,35 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     return CLsb, CLb, CLs
 
 
-def pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v, nsigma):
+def pvals_from_teststat_expected(sqrtqmuA_v, nsigma = 0):
+    r"""
+    Computes the expected :math:`p`p-values CLsb, CLb and CLs for data corresponding to a given percentile
+    of the alternate hypothesis.
+
+    Args:
+        sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
+
+    Returns:
+        Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
+    """
+    
+    # NOTE:
+    # To compute the expected p-value, one would need to first compute a hypothetical
+    # observed test-statistic for a dataset whose best-fit value is mu^ = mu'-n*sigma:
+    # $q_n$, and the proceed with the normal p-value computation for whatever test-statistic
+    # was used. Howeever we can make a shortcut by just computing the p-values in mu^/sigma
+    # space, where the p-values 
+    # 
     tensorlib, _ = get_backend()
-    qmu = tensorlib.power(sqrtqmu_v, 2)
-    qmu_A = tensorlib.power(sqrtqmuA_v, 2)
-    pnull = 1 - tensorlib.normal_cdf((qmu + qmu_A) / (2 * sqrtqmuA_v))
-    palt = 1 - tensorlib.normal_cdf((qmu - qmu_A) / (2 * sqrtqmuA_v))
-    sqrtqmu = -tensorlib.normal_icdf(pnull)
-    sqrtqmu_A = tensorlib.normal_icdf(palt) + sqrtqmu
-    CLsb = 1 - tensorlib.normal_cdf(sqrtqmu_A - nsigma)
+    CLsb = tensorlib.normal_cdf(nsigma-sqrtqmuA_v)
     CLb = tensorlib.normal_cdf(nsigma)
     CLs = CLsb / CLb
-    return CLs
-
+    return CLsb, CLb, CLs
 
 def hypotest(
     poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
 ):
-    r"""
+    r"""fpvals_from_teststat_expected
     Computes :math:`p`-values and test statistics for a single value of the parameter of interest
 
     Args:
@@ -255,13 +266,13 @@ def hypotest(
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v, n_sigma))
+            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma = n_sigma)[-1])
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmu_v, sqrtqmuA_v, 0))
+        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
     if kwargs.get('return_test_statistics'):
         _returns.append([qmu_v, qmuA_v])
     # Enforce a consistent return type of the observed CLs
