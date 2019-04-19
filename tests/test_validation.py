@@ -187,7 +187,7 @@ def expected_result_1bin_normsys(mu=1.0):
     if mu == 1:
         expected_result = {
             "exp": [
-                7.471684419037565e-10,
+                7.471694618861785e-10,
                 5.7411551509088054e-08,
                 3.6898088058290313e-06,
                 0.000169657315363677,
@@ -703,7 +703,6 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected_result in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected_result) / expected_result < tolerance
-
 
 @pytest.mark.parametrize(
     'setup_and_tolerance',
