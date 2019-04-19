@@ -244,7 +244,7 @@ class numpy_backend(object):
             NumPy float: Value of Normal(x|mu, sigma)
         """
         return norm.pdf(x, loc=mu, scale=sigma)
-        
+
     def normal_cdf(self, x, mu=0, sigma=1):
         """
         The cumulative distribution function for the Normal distribution
