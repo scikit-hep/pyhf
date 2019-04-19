@@ -262,6 +262,6 @@ class numpy_backend(object):
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
 
         Returns:
-            NumPy float: The inverse CDF 
+            NumPy float: The CDF 
         """
         return norm.cdf(x, loc=mu, scale=sigma)
