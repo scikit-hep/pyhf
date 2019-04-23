@@ -17,7 +17,7 @@ def load_schema(schema_id):
     except KeyError:
         pass
 
-    path = pkg_resources.resource_filename(__name__, os.path.join('data', schema_id))
+    path = pkg_resources.resource_filename(__name__, os.path.join('schemas', schema_id))
     with open(path) as json_schema:
         schema = json.load(json_schema)
         SCHEMA_CACHE[schema['$id']] = schema
@@ -33,7 +33,7 @@ def validate(spec, schema_name):
     try:
         resolver = jsonschema.RefResolver(
             base_uri='file://{0:s}'.format(
-                pkg_resources.resource_filename(__name__, 'data/')
+                pkg_resources.resource_filename(__name__, 'schemas/')
             ),
             referrer=schema_name,
             store=SCHEMA_CACHE,
