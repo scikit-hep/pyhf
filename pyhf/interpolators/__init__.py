@@ -20,6 +20,7 @@ from .code0 import code0, _slow_code0
 from .code1 import code1, _slow_code1
 from .code2 import code2, _slow_code2
 from .code4 import code4, _slow_code4
+from .codex import codex, _slow_codex
 from .. import exceptions
 
 
@@ -29,6 +30,7 @@ def get(interpcode, do_tensorized_calc=True):
         1: code1 if do_tensorized_calc else _slow_code1,
         2: code2 if do_tensorized_calc else _slow_code2,
         4: code4 if do_tensorized_calc else _slow_code4,
+        'x': codex if do_tensorized_calc else _slow_codex,
     }
 
     try:
