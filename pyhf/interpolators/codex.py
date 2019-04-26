@@ -8,11 +8,11 @@ log = logging.getLogger(__name__)
 
 class codex(object):
     r"""
-    The piecewise-linear interpolation strategy, with polynomial at |a| < 1
+    The piecewise-linear interpolation strategy, with polynomial at :math:`\left|a\right| < 1`
 
     .. math::
         \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
-    
+
     """
 
     def __init__(self, histogramssets, subscribe=True):
