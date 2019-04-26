@@ -66,8 +66,7 @@ class codex(object):
         # h: histogram affected by modifier
         # b: bin of histogram
 
-
-        #for a > 1
+        # for a > 1
         alphas_times_deltas_up = tensorlib.einsum(
             'sa,shb->shab', alphasets, self.deltas_up
         )
@@ -77,21 +76,15 @@ class codex(object):
             'sa,shb->shab', alphasets, self.deltas_dn
         )
 
-
         # for |a| < 1
-        asquare = tensorlib.power(alphasets,2)
-        tmp1 = asquare*3.0-10.0
-        tmp2 = asquare*tmp1 + 15.0
-        tmp3 = asquare*tmp2
+        asquare = tensorlib.power(alphasets, 2)
+        tmp1 = asquare * 3.0 - 10.0
+        tmp2 = asquare * tmp1 + 15.0
+        tmp3 = asquare * tmp2
 
+        tmp3_times_A = tensorlib.einsum('sa,shb->shab', tmp3, self.A)
 
-        tmp3_times_A = tensorlib.einsum(
-            'sa,shb->shab', tmp3, self.A
-        )
-
-        alphas_times_S = tensorlib.einsum(
-            'sa,shb->shab', alphasets, self.S
-        )
+        alphas_times_S = tensorlib.einsum('sa,shb->shab', alphasets, self.S)
 
         deltas = tmp3_times_A + alphas_times_S
         # end |a| < 1
@@ -104,15 +97,10 @@ class codex(object):
             'sa,shb->shab', where_alphasets_smaller_m1, self.broadcast_helper
         )
 
-
         return tensorlib.where(
             masks_m1,
             alphas_times_deltas_dn,
-            tensorlib.where(
-                masks_p1,
-                alphas_times_deltas_up,
-                deltas
-            )
+            tensorlib.where(masks_p1, alphas_times_deltas_up, deltas),
         )
 
 
@@ -123,11 +111,13 @@ class _slow_codex(object):
         S = 0.5 * (delta_up + delta_down)
         A = 0.0625 * (delta_up - delta_down)
         if alpha > 1:
-            delta = delta_up*x
+            delta = delta_up * x
         elif alpha < -1:
-            delta = delta_down*x
+            delta = delta_down * x
         else:
-            delta = alpha * (S + alpha * A * ( 15 + alpha * alpha * (-10 + alpha * alpha * 3  ) ) )
+            delta = alpha * (
+                S + alpha * A * (15 + alpha * alpha * (-10 + alpha * alpha * 3))
+            )
         return delta
 
     def __init__(self, histogramssets, subscribe=True):
