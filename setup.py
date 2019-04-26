@@ -38,6 +38,7 @@ extras_require = {
         'nbdime',
         'uproot~=3.3',
         'papermill~=1.0',
+        'nteract-scrapbook~=0.2',
         'graphviz',
         'bumpversion',
         'sphinx',

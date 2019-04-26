@@ -1,6 +1,7 @@
 import sys
 import os
 import papermill as pm
+import scrapbook as sb
 
 
 def test_notebooks(tmpdir):
@@ -39,5 +40,5 @@ def test_notebooks(tmpdir):
         **common_kwargs
     )
 
-    nb = pm.read_notebook(str(outputnb))
-    assert nb.data['number_2d_successpoints'] > 200
+    nb = sb.read_notebook(str(outputnb))
+    assert nb.scraps['number_2d_successpoints'].data > 200
