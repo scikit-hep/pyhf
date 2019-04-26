@@ -6,7 +6,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code4pw(object):
+class code4p(object):
     r"""
     The piecewise-linear interpolation strategy, with polynomial at :math:`\left|a\right| < 1`
 

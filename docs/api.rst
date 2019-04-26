@@ -93,7 +93,7 @@ Interpolators
    code1
    code2
    code4
-   codex
+   code4p
 
 Exceptions
 ----------
