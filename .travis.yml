@@ -10,7 +10,7 @@ before_install:
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
   - pip install --upgrade pip setuptools wheel
 install:
-  - pip install --ignore-installed -U -q -e .[complete]
+  - pip install --ignore-installed -U -q --no-use-pep517 -e .[complete]
   - pip freeze
 script:
   - pyflakes pyhf
@@ -69,7 +69,7 @@ jobs:
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[complete]
+      - pip install --ignore-installed -U -q --no-use-pep517 -e .[complete]
       - pip freeze
     script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
     after_success: skip
@@ -82,7 +82,7 @@ jobs:
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q -e .[complete]
+      - pip install --ignore-installed -U -q --no-use-pep517 -e .[complete]
       - pip freeze
     script:
       - python -m doctest README.md

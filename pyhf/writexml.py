@@ -194,7 +194,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
     shutil.copyfile(
-        pkg_resources.resource_filename(__name__, 'data/HistFactorySchema.dtd'),
+        pkg_resources.resource_filename(__name__, 'schemas/HistFactorySchema.dtd'),
         os.path.join(os.path.dirname(specdir), 'HistFactorySchema.dtd'),
     )
     combination = ET.Element(
