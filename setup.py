@@ -37,7 +37,7 @@ extras_require = {
         'jupyter',
         'nbdime',
         'uproot~=3.3',
-        'papermill~=0.16',
+        'papermill~=1.0',
         'graphviz',
         'bumpversion',
         'sphinx',
