@@ -132,6 +132,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
                 sampledata,
                 out=np.zeros_like(sampledata),
                 where=np.asarray(sampledata) != 0,
+                dtype='float',
             ).tolist(),
         )
     elif modifierspec['type'] == 'shapesys':
@@ -143,7 +144,9 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         _export_root_histogram(
             attrs['HistoName'],
             [
-                np.divide(a, b, out=np.zeros_like(a), where=np.asarray(b) != 0)
+                np.divide(
+                    a, b, out=np.zeros_like(a), where=np.asarray(b) != 0, dtype='float'
+                )
                 for a, b in np.array((modifierspec['data'], sampledata)).T
             ],
         )
