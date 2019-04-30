@@ -144,7 +144,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
             attrs['HistoName'],
             [
                 np.divide(a, b, out=np.zeros_like(a), where=np.asarray(b) != 0)
-                for a, b in zip(modifierspec['data'], sampledata)
+                for a, b in np.array((modifierspec['data'], sampledata)).T
             ],
         )
     else:
