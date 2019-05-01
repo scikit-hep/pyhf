@@ -126,7 +126,14 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         del attrs['Name']
         # need to make this a relative uncertainty stored in ROOT file
         _export_root_histogram(
-            attrs['HistoName'], np.divide(modifierspec['data'], sampledata).tolist()
+            attrs['HistoName'],
+            np.divide(
+                modifierspec['data'],
+                sampledata,
+                out=np.zeros_like(sampledata),
+                where=np.asarray(sampledata) != 0,
+                dtype='float',
+            ).tolist(),
         )
     elif modifierspec['type'] == 'shapesys':
         attrs['ConstraintType'] = 'Poisson'
@@ -136,7 +143,12 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         # need to make this a relative uncertainty stored in ROOT file
         _export_root_histogram(
             attrs['HistoName'],
-            [np.divide(a, b) for a, b in zip(modifierspec['data'], sampledata)],
+            [
+                np.divide(
+                    a, b, out=np.zeros_like(a), where=np.asarray(b) != 0, dtype='float'
+                )
+                for a, b in np.array((modifierspec['data'], sampledata)).T
+            ],
         )
     else:
         log.warning(

@@ -228,6 +228,26 @@ def test_export_sample(mocker, spec):
 
 
 @pytest.mark.parametrize(
+    "spec", [spec_staterror(), spec_shapesys()], ids=['staterror', 'shapesys']
+)
+def test_export_sample_zerodata(mocker, spec):
+    channelspec = spec['channels'][0]
+    channelname = channelspec['name']
+    samplespec = channelspec['samples'][1]
+    samplename = samplespec['name']
+    sampledata = [0.0] * len(samplespec['data'])
+
+    mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
+    # make sure no RuntimeWarning, https://stackoverflow.com/a/45671804
+    with pytest.warns(None) as record:
+        for modifierspec in samplespec['modifiers']:
+            modifier = pyhf.writexml.build_modifier(
+                modifierspec, channelname, samplename, sampledata
+            )
+    assert not record.list
+
+
+@pytest.mark.parametrize(
     "spec",
     [spec_staterror(), spec_histosys(), spec_normsys(), spec_shapesys()],
     ids=['staterror', 'histosys', 'normsys', 'shapesys'],
