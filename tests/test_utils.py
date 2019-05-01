@@ -16,6 +16,25 @@ def test_load_missing_schema():
         pyhf.utils.load_schema('fake_schema.json')
 
 
+@pytest.mark.parametrize(
+    'opt,obj',
+    [
+        ('a=10', {'a': 10}),
+        ('b=test', {'b': 'test'}),
+        ('c=1.0e-8', {'c': 1.0e-8}),
+        ('d=3.14', {'d': 3.14}),
+        ('e=True', {'e': True}),
+        ('f=false', {'f': False}),
+    ],
+)
+def test_options_from_eqdelimstring(opt, obj):
+    assert pyhf.utils.options_from_eqdelimstring([opt]) == obj
+
+
+def test_options_from_eqdelimstrings():
+    assert pyhf.utils.options_from_eqdelimstring(['a=b', 'c=d']) == {'a': 'b', 'c': 'd'}
+
+
 @pytest.fixture(scope='module')
 def hypotest_args():
     pdf = pyhf.simplemodels.hepdata_like(

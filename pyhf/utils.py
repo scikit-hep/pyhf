@@ -2,6 +2,7 @@ import json
 import jsonschema
 import pkg_resources
 import os
+import yaml
 
 from .exceptions import InvalidSpecification
 from . import get_backend
@@ -44,6 +45,11 @@ def validate(spec, schema_name):
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise InvalidSpecification(err)
+
+
+def options_from_eqdelimstring(opts):
+    document = '\n'.join('{0}: {1}'.format(*opt.split('=')) for opt in opts)
+    return yaml.full_load(document)
 
 
 def loglambdav(pars, data, pdf):
