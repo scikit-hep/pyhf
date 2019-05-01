@@ -512,3 +512,19 @@ def test_lumi_np_scaling():
         110.0 * alpha_lumi,
         1.0 * alpha_lumi,
     ]
+
+
+def test_sample_wrong_bins():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {'name': 'goodsample', 'data': [1.0, 2.0], 'modifiers': []},
+                    {'name': 'badsample', 'data': [3.0, 4.0, 5.0], 'modifiers': []},
+                ],
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pdf = pyhf.Model(spec)
