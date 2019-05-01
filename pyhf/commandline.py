@@ -7,6 +7,7 @@ import os
 from .utils import hypotest, EqDelimStringParamType
 from .pdf import Workspace
 from .version import __version__
+from . import tensorlib, set_backend, optimize
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -223,17 +224,8 @@ def inspect(workspace, output_file, measurement):
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
 @click.option('--optimizer')
 @click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
-@click.option('-n', '--max-iterations', default=1000)
 def cls(
-    workspace,
-    output_file,
-    measurement,
-    patch,
-    testpoi,
-    teststat,
-    optimizer,
-    optconf,
-    max_iterations,
+    workspace, output_file, measurement, patch, testpoi, teststat, optimizer, optconf
 ):
     with click.open_file(workspace, 'r') as specstream:
         wspec = json.load(specstream)
@@ -253,14 +245,8 @@ def cls(
 
     # set the new optimizer
     if optimizer:
-        new_optimizer = None
-        try:
-            new_optimizer = getattr(pyhf.optimize, optimizer)(maxiter=max_iterations)
-        except TypeError:
-            log.error('no optimizer by name \'{0:s}\' exists'.format(optimizer))
-
-        if new_optimizer:
-            pyhf.set_backend(pyhf.tensorlib, new_optimizer)
+        new_optimizer = getattr(optimize, optimizer)
+        set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(testpoi, w.data(p), p, qtilde=is_qtilde, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
