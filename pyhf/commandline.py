@@ -4,7 +4,7 @@ import click
 import json
 import os
 
-from .utils import hypotest
+from .utils import hypotest, EqDelimStringParamType
 from .pdf import Workspace
 from .version import __version__
 
@@ -222,6 +222,7 @@ def inspect(workspace, output_file, measurement):
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
 @click.option('--optimizer')
+@click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
 @click.option('-n', '--max-iterations', default=1000)
 def cls(
     workspace,
@@ -231,6 +232,7 @@ def cls(
     testpoi,
     teststat,
     optimizer,
+    optconf,
     max_iterations,
 ):
     with click.open_file(workspace, 'r') as specstream:
@@ -246,6 +248,8 @@ def cls(
         patches=patches,
         modifier_settings={'normsys': {'interpcode': 'code4'}},
     )
+
+    optconf = {k: v for item in optconf for k, v in item.items()}
 
     # set the new optimizer
     if optimizer:

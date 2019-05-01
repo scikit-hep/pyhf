@@ -3,6 +3,7 @@ import jsonschema
 import pkg_resources
 import os
 import yaml
+import click
 
 from .exceptions import InvalidSpecification
 from . import get_backend
@@ -50,6 +51,18 @@ def validate(spec, schema_name):
 def options_from_eqdelimstring(opts):
     document = '\n'.join('{0}: {1}'.format(*opt.split('=', 1)) for opt in opts)
     return yaml.full_load(document)
+
+
+class EqDelimStringParamType(click.ParamType):
+    name = 'equal-delimited option'
+
+    def convert(self, value, param, ctx):
+        try:
+            return options_from_eqdelimstring([value])
+        except IndexError:
+            self.fail(
+                '{0:s} is not a valid equal-delimited string'.format(value), param, ctx
+            )
 
 
 def loglambdav(pars, data, pdf):
