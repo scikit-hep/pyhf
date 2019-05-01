@@ -55,6 +55,15 @@ class _ModelConfig(object):
             self.channels.append(channel['name'])
             self.channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
             for sample in channel['samples']:
+                if len(sample['data']) != self.channel_nbins[channel['name']]:
+                    raise exceptions.InvalidModel(
+                        'The sample {0:s} has {1:d} bins, but the channel it belongs to ({2:s}) has {3:d} bins.'.format(
+                            sample['name'],
+                            len(sample['data']),
+                            channel['name'],
+                            self.channel_nbins[channel['name']],
+                        )
+                    )
                 self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     # get the paramset requirements for the given modifier. If
