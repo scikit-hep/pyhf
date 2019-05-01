@@ -48,7 +48,7 @@ def validate(spec, schema_name):
 
 
 def options_from_eqdelimstring(opts):
-    document = '\n'.join('{0}: {1}'.format(*opt.split('=')) for opt in opts)
+    document = '\n'.join('{0}: {1}'.format(*opt.split('=', 1)) for opt in opts)
     return yaml.full_load(document)
 
 

@@ -17,22 +17,20 @@ def test_load_missing_schema():
 
 
 @pytest.mark.parametrize(
-    'opt,obj',
+    'opts,obj',
     [
-        ('a=10', {'a': 10}),
-        ('b=test', {'b': 'test'}),
-        ('c=1.0e-8', {'c': 1.0e-8}),
-        ('d=3.14', {'d': 3.14}),
-        ('e=True', {'e': True}),
-        ('f=false', {'f': False}),
+        (['a=10'], {'a': 10}),
+        (['b=test'], {'b': 'test'}),
+        (['c=1.0e-8'], {'c': 1.0e-8}),
+        (['d=3.14'], {'d': 3.14}),
+        (['e=True'], {'e': True}),
+        (['f=false'], {'f': False}),
+        (['a=b', 'c=d'], {'a': 'b', 'c': 'd'}),
+        (['g=h=i'], {'g': 'h=i'}),
     ],
 )
-def test_options_from_eqdelimstring(opt, obj):
-    assert pyhf.utils.options_from_eqdelimstring([opt]) == obj
-
-
-def test_options_from_eqdelimstrings():
-    assert pyhf.utils.options_from_eqdelimstring(['a=b', 'c=d']) == {'a': 'b', 'c': 'd'}
+def test_options_from_eqdelimstring(opts, obj):
+    assert pyhf.utils.options_from_eqdelimstring(opts) == obj
 
 
 @pytest.fixture(scope='module')
