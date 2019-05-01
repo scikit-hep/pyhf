@@ -70,3 +70,9 @@ class ImportBackendError(Exception):
     """
 
     pass
+
+
+class InvalidOptimizer(Exception):
+    """
+    InvalidOptimizer is raised when trying to set using an optimizer that does not exist.
+    """

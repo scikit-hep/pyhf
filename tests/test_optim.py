@@ -2,6 +2,11 @@ import pyhf
 import pytest
 
 
+def test_get_invalid_optimizer():
+    with pytest.raises(pyhf.exceptions.InvalidOptimizer):
+        assert pyhf.optimize.scipy
+
+
 @pytest.fixture(scope='module')
 def source():
     source = {

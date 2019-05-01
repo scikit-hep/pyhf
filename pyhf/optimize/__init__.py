@@ -49,6 +49,10 @@ class _OptimizerRetriever(object):
                     "There was a problem importing Minuit. The minuit optimizer cannot be used.",
                     e,
                 )
+        else:
+            raise exceptions.InvalidOptimizer(
+                "The requested optimizer \"{0:s}\" does not exist.".format(name)
+            )
 
 
 OptimizerRetriever = _OptimizerRetriever()
