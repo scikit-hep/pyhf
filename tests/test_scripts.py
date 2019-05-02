@@ -2,6 +2,7 @@ import json
 import shlex
 import pyhf
 import time
+import pytest
 
 
 def test_version(script_runner):
@@ -204,6 +205,25 @@ def test_testpoi(tmpdir, script_runner):
         assert not np.array_equal(*pair)
 
     assert len(list(set(results_obs))) == len(pois)
+
+
+@pytest.mark.parametrize(
+    'opts,success',
+    [(['maxiter=1000'], True), (['maxiter=100'], True), (['maxiter=10'], False)],
+)
+def test_cls_optimizer(tmpdir, script_runner, opts, success):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls {0:s} --optimizer scipy_optimizer {1:s}'.format(
+        temp.strpath, ' '.join('--optconf {0:s}'.format(opt) for opt in opts)
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success == success
 
 
 def test_inspect(tmpdir, script_runner):
