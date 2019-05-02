@@ -6,11 +6,11 @@ log = logging.getLogger(__name__)
 
 
 class tflow_optimizer(object):
-    def __init__(self, tensorlib):
+    def __init__(self, tensorlib, **kwargs):
         self.tb = tensorlib
-        self.relax = 0.1
-        self.maxit = 1000
-        self.eps = 1e-4
+        self.relax = kwargs.get('relax', 0.1)
+        self.maxiter = kwargs.get('maxiter', 100000)
+        self.eps = kwargs.get('eps', 1e-4)
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         # the graph
@@ -26,7 +26,7 @@ class tflow_optimizer(object):
 
         # run newton's method
         best_fit = init_pars
-        for i in range(self.maxit):
+        for i in range(self.maxiter):
             up = self.tb.session.run(update, feed_dict={pars: best_fit})
             best_fit = best_fit - self.relax * up
             if np.abs(np.max(up)) < self.eps:
@@ -65,7 +65,7 @@ class tflow_optimizer(object):
         best_fit_nuis = [
             x for i, x in enumerate(init_pars) if i != pdf.config.poi_index
         ]
-        for i in range(self.maxit):
+        for i in range(self.maxiter):
             up = self.tb.session.run(update, feed_dict={nuis_cat: best_fit_nuis})
             best_fit_nuis = best_fit_nuis - self.relax * up
             if np.abs(np.max(up)) < self.eps:

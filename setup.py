@@ -108,6 +108,7 @@ setup(
         'six',  # for modifiers
         'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
         'jsonpatch',
+        'pyyaml',  # for parsing CLI equal-delimited options
     ],
     extras_require=extras_require,
     entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},

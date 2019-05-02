@@ -4,9 +4,10 @@ import click
 import json
 import os
 
-from .utils import hypotest
+from .utils import hypotest, EqDelimStringParamType
 from .pdf import Workspace
 from .version import __version__
+from . import tensorlib, set_backend, optimize
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -201,6 +202,7 @@ def inspect(workspace, output_file, measurement):
                 else '(none)',
             )
         )
+
     click.echo()
 
     if output_file:
@@ -220,7 +222,11 @@ def inspect(workspace, output_file, measurement):
 @click.option('-p', '--patch', multiple=True)
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
-def cls(workspace, output_file, measurement, patch, testpoi, teststat):
+@click.option('--optimizer')
+@click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
+def cls(
+    workspace, output_file, measurement, patch, testpoi, teststat, optimizer, optconf
+):
     with click.open_file(workspace, 'r') as specstream:
         wspec = json.load(specstream)
 
@@ -234,10 +240,19 @@ def cls(workspace, output_file, measurement, patch, testpoi, teststat):
         patches=patches,
         modifier_settings={'normsys': {'interpcode': 'code4'}},
     )
+
+    optconf = {k: v for item in optconf for k, v in item.items()}
+
+    # set the new optimizer
+    if optimizer:
+        new_optimizer = getattr(optimize, optimizer)
+        set_backend(tensorlib, new_optimizer(**optconf))
+
     result = hypotest(testpoi, w.data(p), p, qtilde=is_qtilde, return_expected_set=True)
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+
     if output_file is None:
-        click.echo(json.dumps(result, indent=4, sort_keys=True))
+        print(json.dumps(result, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
