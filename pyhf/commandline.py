@@ -252,7 +252,7 @@ def cls(
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
 
     if output_file is None:
-        print(json.dumps(result, indent=4, sort_keys=True))
+        click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
