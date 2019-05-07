@@ -10,10 +10,13 @@ from . import get_backend
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
+SCHEMA_VERSION = '1.0.0'
 
 
-def load_schema(schema_id, version='1.0.0'):
+def load_schema(schema_id, version=None):
     global SCHEMA_CACHE
+    if not version:
+        version = SCHEMA_VERSION
     try:
         return SCHEMA_CACHE[
             "{0:s}{1:s}".format(SCHEMA_BASE, os.path.join(version, schema_id))

@@ -5,8 +5,9 @@
     "properties": {
         "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
         "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-        "data": { "type": "object" }
+        "data": { "type": "object" },
+        "version": { "const": "1.0.0" }
     },
     "additionalProperties": false,
-    "required": ["channels", "measurements", "data"]
+    "required": ["channels", "measurements", "data", "version"]
 }
