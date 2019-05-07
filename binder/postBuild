@@ -1,1 +1,1 @@
-pip install --upgrade -e .[complete]
+pip install --upgrade .[complete]
