@@ -11,9 +11,9 @@ before_install:
   - pip install --upgrade pip setuptools wheel
 install:
   - if [[ $TRAVIS_DIST == 'trusty' ]]; then
-      pip install --ignore-installed -U -q --no-use-pep517 --no-cache-dir -e .[complete];
+      pip install --ignore-installed -U -q --no-cache-dir -e .[complete];
     else
-      pip install --ignore-installed -U -q --no-use-pep517 -e .[complete];
+      pip install --ignore-installed -U -q -e .[complete];
     fi
   - pip freeze
 script:
@@ -73,7 +73,7 @@ jobs:
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q --no-use-pep517 -e .[complete]
+      - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
     script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
     after_success: skip
@@ -86,7 +86,7 @@ jobs:
       - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       - pip install --upgrade pip setuptools wheel
     install:
-      - pip install --ignore-installed -U -q --no-use-pep517 -e .[complete]
+      - pip install --ignore-installed -U -q -e .[complete]
       - pip freeze
     script:
       - python -m doctest README.md
