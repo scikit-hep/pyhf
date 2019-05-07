@@ -12,7 +12,7 @@ SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
 
 
-def load_schema(schema_id, version='v1'):
+def load_schema(schema_id, version='1.0.0'):
     global SCHEMA_CACHE
     try:
         return SCHEMA_CACHE[
