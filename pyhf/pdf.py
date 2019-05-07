@@ -176,9 +176,10 @@ class Model(object):
     def __init__(self, spec, **config_kwargs):
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
+        self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema)
+        utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
@@ -483,9 +484,10 @@ class Workspace(object):
         self.spec = spec
 
         self.schema = config_kwargs.pop('schema', 'workspace.json')
+        self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema)
+        utils.validate(self.spec, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.spec.get('measurements', []):
@@ -512,7 +514,7 @@ class Workspace(object):
 
         """
         m = self._get_measurement(**config_kwargs)
-        utils.validate(m, 'measurement.json')
+        utils.validate(m, 'measurement.json', self.version)
         return m
 
     def _get_measurement(self, **config_kwargs):

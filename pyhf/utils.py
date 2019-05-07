@@ -37,8 +37,8 @@ def load_schema(schema_id, version=None):
 load_schema('defs.json')
 
 
-def validate(spec, schema_name):
-    schema = load_schema(schema_name)
+def validate(spec, schema_name, version=None):
+    schema = load_schema(schema_name, version=version)
     try:
         resolver = jsonschema.RefResolver(
             base_uri='file://{0:s}'.format(
