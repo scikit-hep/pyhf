@@ -12,14 +12,18 @@ SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
 
 
-def load_schema(schema_id):
+def load_schema(schema_id, version='v1'):
     global SCHEMA_CACHE
     try:
-        return SCHEMA_CACHE["{0:s}{1:s}".format(SCHEMA_BASE, schema_id)]
+        return SCHEMA_CACHE[
+            "{0:s}{1:s}".format(SCHEMA_BASE, os.path.join(version, schema_id))
+        ]
     except KeyError:
         pass
 
-    path = pkg_resources.resource_filename(__name__, os.path.join('schemas', schema_id))
+    path = pkg_resources.resource_filename(
+        __name__, os.path.join('schemas', version, schema_id)
+    )
     with open(path) as json_schema:
         schema = json.load(json_schema)
         SCHEMA_CACHE[schema['$id']] = schema

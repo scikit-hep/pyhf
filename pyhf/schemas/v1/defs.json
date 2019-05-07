@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "https://diana-hep.org/pyhf/schemas/defs.json",
+    "$id": "https://diana-hep.org/pyhf/schemas/v1/defs.json",
     "definitions": {
         "measurement": {
             "type": "object",

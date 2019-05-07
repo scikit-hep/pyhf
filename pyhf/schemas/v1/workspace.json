@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "https://diana-hep.org/pyhf/schemas/workspace.json",
+    "$id": "https://diana-hep.org/pyhf/schemas/v1/workspace.json",
     "type": "object",
     "properties": {
         "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
