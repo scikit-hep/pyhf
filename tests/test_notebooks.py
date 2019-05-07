@@ -25,12 +25,11 @@ def test_xml_importexport(common_kwargs):
 
 
 def test_statisticalanalysis(common_kwargs):
-    if sys.version_info.major > 2:
-        # The Binder example uses specific relative paths
-        cwd = os.getcwd()
-        os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
-        pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
-        os.chdir(cwd)
+    # The Binder example uses specific relative paths
+    cwd = os.getcwd()
+    os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
+    pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
+    os.chdir(cwd)
 
 
 def test_shapefactor(common_kwargs):
