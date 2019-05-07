@@ -10,7 +10,7 @@ before_install:
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
   - pip install --upgrade pip setuptools wheel
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then
+  - if [[ $TRAVIS_DIST == 'trusty' ]]; then
       pip install --ignore-installed -U -q --no-use-pep517 --no-cache-dir -e .[complete];
     else
       pip install --ignore-installed -U -q --no-use-pep517 -e .[complete];
