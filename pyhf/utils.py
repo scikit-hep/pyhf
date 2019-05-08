@@ -10,16 +10,23 @@ from . import get_backend
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
+SCHEMA_VERSION = '1.0.0'
 
 
-def load_schema(schema_id):
+def load_schema(schema_id, version=None):
     global SCHEMA_CACHE
+    if not version:
+        version = SCHEMA_VERSION
     try:
-        return SCHEMA_CACHE["{0:s}{1:s}".format(SCHEMA_BASE, schema_id)]
+        return SCHEMA_CACHE[
+            "{0:s}{1:s}".format(SCHEMA_BASE, os.path.join(version, schema_id))
+        ]
     except KeyError:
         pass
 
-    path = pkg_resources.resource_filename(__name__, os.path.join('schemas', schema_id))
+    path = pkg_resources.resource_filename(
+        __name__, os.path.join('schemas', version, schema_id)
+    )
     with open(path) as json_schema:
         schema = json.load(json_schema)
         SCHEMA_CACHE[schema['$id']] = schema
@@ -30,8 +37,8 @@ def load_schema(schema_id):
 load_schema('defs.json')
 
 
-def validate(spec, schema_name):
-    schema = load_schema(schema_name)
+def validate(spec, schema_name, version=None):
+    schema = load_schema(schema_name, version=version)
     try:
         resolver = jsonschema.RefResolver(
             base_uri='file://{0:s}'.format(

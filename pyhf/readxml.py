@@ -270,6 +270,7 @@ def parse(configfile, rootdir, track_progress=False):
         'measurements': process_measurements(toplvl),
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'data': {k: v['data'] for k, v in channels.items()},
+        'version': utils.SCHEMA_VERSION,
     }
 
     utils.validate(result, 'workspace.json')
