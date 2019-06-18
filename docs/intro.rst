@@ -1,0 +1,203 @@
+.. _sec:intro:
+
+Introduction
+============
+
+Measurements in High Energy Physics (HEP) rely on determining the
+compatibility of observed collision events with theoretical predictions.
+The relationship between them is often formalised in a statistical
+:math:`f(\bm{x}|\fullset)` describing the probability of data
+:math:`\bm{x}` given model parameters :math:`\fullset`. Given observed
+data, the :math:`\mathcal{L}(\fullset)` then serves as the basis to test
+hypotheses on the parameters \ :math:`\fullset`. For measurements based
+on binned data (), the family of statistical models has been widely used
+in both Standard Model measurements :cite:`HIGG-2013-02` as
+well as searches for new
+physics :cite:`ATLAS-CONF-2018-041`. In this note, a
+declarative, plain-text format for describing -based likelihoods is
+presented that is targeted for reinterpretation and long-term
+preservation in analysis data repositories such as
+HEPData :cite:`Maguire:2017ypu`.
+
+Statistical models described using :cite:`Cranmer:1456844`
+center around the simultaneous measurement of disjoint binned
+distributions () observed as event counts :math:`\channelcounts`. For
+each channel, the overall expected event rate [1]_ is the sum over a
+number of physics processes (). The sample rates may be subject to
+parametrised variations, both to express the effect of
+:math:`\freeset`  [2]_ and to account for systematic uncertainties as a
+function of :math:`\constrset`. The degree to which the latter can cause
+a deviation of the expected event rates from the nominal rates is
+limited by . In a frequentist framework these constraint terms can be
+viewed as with additional global observable data :math:`\auxdata`, which
+paired with the channel data :math:`\channelcounts` completes the
+observation :math:`\bm{x} =
+(\channelcounts,\auxdata)`. In addition to the partition of the full
+parameter set into free and constrained parameters :math:`\fullset =
+(\freeset,\constrset)`, a separate partition :math:`\fullset =
+(\poiset,\nuisset)` will be useful in the context of hypothesis testing,
+where a subset of the parameters are declared :math:`\poiset` and the
+remaining ones as :math:`\nuisset`.
+
+.. math::
+
+   \label{eqn:parameters_partitions}
+    f(\bm{x}|\fullset) = f(\bm{x}|\annoterel{free}{\freeset},\annotereldn{constrained\hspace{1cm}}{\constrset}) = f(\bm{x}|\annoterel{\hspace{2cm}parameters of interest}{\poiset},\annotereldn{\hspace{1cm}nuisance parameters}{\nuisset})
+
+Thus, the overall structure of a probability model is a product of the
+analysis-specific model term describing the measurements of the channels
+and the analysis-independent set of constraint terms:
+
+.. math::
+
+   \label{eqn:hifa_template}
+    f(\channelcounts, \auxdata \,|\,\freeset,\constrset) = \underbrace{\color{blue}{\prod_{c\in\mathrm{\,channels}} \prod_{b \in \mathrm{\,bins}_c}\textrm{Pois}\left(n_{cb} \,\middle|\, \nu_{cb}\left(\freeset,\constrset\right)\right)}}_{\substack{\text{Simultaneous measurement}\\%
+      \text{of multiple channels}}} \underbrace{\color{red}{\prod_{\singleconstr \in \constrset} c_{\singleconstr}(a_{\singleconstr} |\, \singleconstr)}}_{\substack{\text{constraint terms}\\%
+      \text{for ``auxiliary measurements''}}},
+
+where within a certain integrated luminosity we observe :math:`n_{cb}`
+events given the expected rate of events
+:math:`\nu_{cb}(\freeset,\constrset)` as a function of unconstrained
+parameters :math:`\freeset` and constrained parameters
+:math:`\constrset`. The latter has corresponding one-dimensional
+constraint terms
+:math:`c_\singleconstr(a_\singleconstr|\,\singleconstr)` with auxiliary
+data :math:`a_\singleconstr` constraining the parameter
+:math:`\singleconstr`. The event rates :math:`\nu_{cb}` are defined as
+
+.. math::
+
+   \label{eqn:sample_rates}
+    \nu_{cb}\left(\fullset\right) = \sum_{s\in\mathrm{\,samples}} \nu_{scb}\left(\freeset,\constrset\right) = \sum_{s\in\mathrm{\,samples}}\underbrace{\left(\prod_{\kappa\in\,\bm{\kappa}} \kappa_{scb}\left(\freeset,\constrset\right)\right)}_{\text{multiplicative modifiers}}\, \Bigg(\nu_{scb}^0\left(\freeset, \constrset\right) + \underbrace{\sum_{\Delta\in\bm{\Delta}} \Delta_{scb}\left(\freeset,\constrset\right)}_{\text{additive modifiers}}\Bigg)\,.
+
+The total rates are the sum over sample rates :math:`\nu_{csb}`, each
+determined from a :math:`\nu_{scb}^0` and a set of multiplicative and
+additive denoted :math:`\bm{\kappa}(\fullset)` and
+:math:`\bm{\Delta}(\fullset)`. These modifiers are functions of (usually
+a single) model parameters. Starting from constant nominal rates, one
+can derive the per-bin event rate modification by iterating over all
+sample rate modifications as shown in .
+
+As summarised in , modifiers implementing uncertainties are paired with
+a corresponding default constraint term on the parameter limiting the
+rate modification. The available modifiers may affect only the total
+number of exected events of a sample within a given channel, i.e. only
+change its normalisation, while holding the distribution of events
+across the bins of a channel, i.e. its “shape”, invariant.
+Alternatively, modifiers may change the sample shapes. Here supports
+correlated an uncorrelated bin-by-bin shape modifications. In the
+former, a single nuisance parameter affects the expected sample rates
+within the bins of a given channel, while the latter introduces one
+nuisance parameter for each bin, each with their own constraint term.
+For the correlated shape and normalisation uncertainties, makes use of
+interpolating functions, :math:`f_p` and :math:`g_p`, constructed from a
+small number of evaluations of the expected rate at fixed values of the
+parameter :math:`\alpha`\  [3]_. For the remaining modifiers, the
+parameter directly affects the rate.
+
+==================== ============================================================================================================= ===================================================================================================== ================================
+Description          Modification                                                                                                  Constraint Term :math:`c_\singleconstr`                                                               Input
+==================== ============================================================================================================= ===================================================================================================== ================================
+Uncorrelated Shape   :math:`\kappa_{scb}(\gamma_b) = \gamma_b`                                                                     :math:`\prod_b \mathrm{Pois}\left(r_b = \sigma_b^{-2}\middle|\,\rho_b = \sigma_b^{-2}\gamma_b\right)` :math:`\sigma_{b}`
+Correlated Shape     :math:`\Delta_{scb}(\alpha) = f_p\left(\alpha\middle|\,\Delta_{scb,\alpha=-1},\Delta_{scb,\alpha = 1}\right)` :math:`\displaystyle\mathrm{Gaus}\left(a = 0\middle|\,\alpha,\sigma = 1\right)`                       :math:`\Delta_{scb,\alpha=\pm1}`
+Normalisation Unc.   :math:`\kappa_{scb}(\alpha) = g_p\left(\alpha\middle|\,\kappa_{scb,\alpha=-1},\kappa_{scb,\alpha=1}\right)`   :math:`\displaystyle\mathrm{Gaus}\left(a = 0\middle|\,\alpha,\sigma = 1\right)`                       :math:`\kappa_{scb,\alpha=\pm1}`
+MC Stat. Uncertainty :math:`\kappa_{scb}(\gamma_b) = \gamma_b`                                                                     :math:`\prod_b \mathrm{Gaus}\left(a_{\gamma_b} = 1\middle|\,\gamma_b,\delta_b\right)`                 :math:`\delta_b^2 = \sum_s\delta^2_{sb}`
+Luminosity           :math:`\kappa_{scb}(\lambda) = \lambda`                                                                       :math:`\displaystyle\mathrm{Gaus}\left(l = \lambda_0\middle|\,\lambda,\sigma_\lambda\right)`          :math:`\lambda_0,\sigma_\lambda`
+Normalisation        :math:`\kappa_{scb}(\mu_b) = \mu_b`
+Data-driven Shape    :math:`\kappa_{scb}(\gamma_b) = \gamma_b`
+==================== ============================================================================================================= ===================================================================================================== ================================
+
+[tab:modifiers_and_constraints]
+
+Given the likelihood :math:`\mathcal{L}(\fullset)`, constructed from
+observed data in all channels and the implied auxiliary data, in the
+form of point and interval estimates can be defined. The majority of the
+parameters are — parameters that are not the main target of the
+measurement but are necessary to correctly model the data. A small
+subset of the unconstrained parameters may be declared as for which
+measurements hypothesis tests are performed, e.g. profile likelihood
+methods :cite:`Cowan:2010js`. provides a summary of all the
+notation introduced in this note.
+
+======== =================================================================== ===============================================================
+\        Symbol                                                              Name
+======== =================================================================== ===============================================================
+\        :math:`f(\bm{x} | \fullset)`                                        model
+\        :math:`\mathcal{L}(\fullset)`                                       likelihood
+[0.75em] :math:`\bm{x} = \{\channelcounts, \auxdata\}`                       full dataset (including auxiliary data)
+\        :math:`\channelcounts`                                              channel data (or event counts)
+\        :math:`\auxdata`                                                    auxiliary data
+\        :math:`\nu(\fullset)`                                               calculated event rates
+[0.75em] :math:`\fullset = \{\freeset, \constrset\} = \{\poiset, \nuisset\}` all parameters
+\        :math:`\freeset`                                                    free parameters
+\        :math:`\constrset`                                                  constrained parameters
+\        :math:`\poiset`                                                     parameters of interest
+\        :math:`\nuisset`                                                    nuisance parameters
+[0.75em] :math:`\bm{\kappa}(\fullset)`                                       multiplicative rate modifier
+\        :math:`\bm{\Delta}(\fullset)`                                       additive rate modifier
+[0.75em] :math:`c_\singleconstr(a_\singleconstr | \singleconstr)`            constraint term for constrained parameter :math:`\singleconstr`
+\        :math:`\sigma_\singleconstr`                                        relative uncertainty in the constrained parameter
+======== =================================================================== ===============================================================
+
+[tab:symbol_summary]
+
+Declarative Formats
+-------------------
+
+While flexible enough to describe a wide range of LHC measurements, the
+design of the specification is sufficiently simple to admit a that fully
+encodes the statistical model of the analysis. This format defines the
+channels, all associated samples, their parameterised rate modifiers and
+implied constraint terms as well as the measurements. Additionally, the
+format represents the mathematical model, leaving the implementation of
+the likelihood minimisation to be analysis-dependent and/or
+language-dependent. Originally XML was chosen as a specification
+language to define the structure of the model while introducing a
+dependence on to encode the nominal rates and required input data of the
+constraint terms :cite:`Cranmer:1456844`. Using this
+specification, a model can be constructed and evaluated within the
+framework.
+
+This ATLAS Note introduces an updated form of the specification based on
+the ubiquitous plain-text JSON format and its schema-language .
+Described in more detail in , this schema fully specifies both structure
+and necessary constrained data in a single document and thus is
+implementation independent. In , we will demonstrate that the JSON
+documents describing the statistical model of analyses are sufficient to
+reproduce key results of the originally published analyses such as
+best-fit event yields, upper limits on parameters and exclusion
+contours. The results are reproduced in two *independent*
+implementations of the model; one based on the framework and one
+developed within the scientific Python ecosystem.
+
+Additional Material
+-------------------
+
+Footnotes
+~~~~~~~~~
+
+.. [1]
+   Here rate refers to the number of events expected to be observed
+   within a given data-taking interval defined through its integrated
+   luminosity. It often appears as the input parameter to the Poisson
+   distribution, hence the name “rate”.
+
+.. [2]
+   These frequently include the of a given process, i.e. its cross-section
+   normalised to a particular reference cross-section such as that expected
+   from the Standard Model or a given BSM scenario.
+
+.. [3]
+   This is usually constructed from the nominal rate and measurements of the
+   event rate at :math:`\alpha=\pm1`, where the value of the modifier at
+   :math:`\alpha=\pm1` must be provided and the value at :math:`\alpha=0`
+   corresponds to the corresponding identity operation of the modifier, i.e.
+   :math:`f_{p}(\alpha=0) = 0` and :math:`g_{p}(\alpha = 0)=1` for additive and
+   multiplicative modifiers respectively. See Section 4.1
+   in :cite:`Cranmer:1456844`.
+
+Bibliography
+~~~~~~~~~~~~
+
+.. bibliography:: bib/docs.bib
+   :style: plain

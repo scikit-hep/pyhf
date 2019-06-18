@@ -6,6 +6,7 @@
 .. toctree::
    :hidden:
 
+   intro
    examples
    talks
    installation
