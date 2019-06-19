@@ -13,7 +13,7 @@ hypotheses on the parameters \ :math:`\fullset`. For measurements based
 on binned data (*histograms*), the :math:`\HiFa{}` family of statistical models has been widely used
 in both Standard Model measurements :cite:`HIGG-2013-02` as
 well as searches for new
-physics :cite:`ATLAS-CONF-2018-041`. In this note, a
+physics :cite:`ATLAS-CONF-2018-041`. In this package, a
 declarative, plain-text format for describing :math:`\HiFa{}`-based likelihoods is
 presented that is targeted for reinterpretation and long-term
 preservation in analysis data repositories such as
@@ -134,7 +134,7 @@ measurement but are necessary to correctly model the data. A small
 subset of the unconstrained parameters may be declared as *parameters of interest* for which
 measurements hypothesis tests are performed, e.g. profile likelihood
 methods :cite:`Cowan:2010js`. The :ref:`tab:symbol_summary` table provides a summary of all the
-notation introduced in this note.
+notation introduced in this documentation.
 
 .. _tab:symbol_summary:
 
@@ -177,17 +177,11 @@ constraint terms :cite:`Cranmer:1456844`. Using this
 specification, a model can be constructed and evaluated within the
 :math:`\RooFit{}` framework.
 
-This ATLAS Note introduces an updated form of the specification based on
+This package introduces an updated form of the specification based on
 the ubiquitous plain-text JSON format and its schema-language *JSON Schema*.
-Described in more detail in , this schema fully specifies both structure
+Described in more detail in <TODO>, this schema fully specifies both structure
 and necessary constrained data in a single document and thus is
-implementation independent. In , we will demonstrate that the JSON
-documents describing the statistical model of analyses are sufficient to
-reproduce key results of the originally published analyses such as
-best-fit event yields, upper limits on parameters and exclusion
-contours. The results are reproduced in two *independent*
-implementations of the :math:`\HiFa{}` model; one based on the :math:`\Root{}` framework and one
-developed within the scientific Python ecosystem.
+implementation independent.
 
 Additional Material
 -------------------
