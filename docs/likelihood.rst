@@ -148,7 +148,7 @@ shown below:
 An example of an uncorrelated shape modifier with three absolute uncertainty terms for a 3-bin channel.
 
 Correlated Shape (histosys)
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This modifier represents the same source of uncertainty which has a
 different effect on the various sample shapes, hence a correlated shape.
