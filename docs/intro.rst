@@ -179,7 +179,7 @@ specification, a model can be constructed and evaluated within the
 
 This package introduces an updated form of the specification based on
 the ubiquitous plain-text JSON format and its schema-language *JSON Schema*.
-Described in more detail in <TODO>, this schema fully specifies both structure
+Described in more detail in :ref:`sec:likelihood`, this schema fully specifies both structure
 and necessary constrained data in a single document and thus is
 implementation independent.
 
