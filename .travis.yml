@@ -18,6 +18,7 @@ install:
   - pip freeze
 script:
   - pyflakes pyhf
+  - check-manifest
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then coveralls; fi
