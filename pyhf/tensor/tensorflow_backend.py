@@ -174,7 +174,7 @@ class tensorflow_backend(object):
 
     def log(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
-        return tf.log(tensor_in)
+        return tf.math.log(tensor_in)
 
     def exp(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
