@@ -371,9 +371,7 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 mathjax_config = {
-    'tex2jax': {
-        'inlineMath': [['$','$'], ['\\(','\\)']],
-    },
+    'tex2jax': {'inlineMath': [['$', '$'], ['\\(', '\\)']]},
     'TeX': {
         'Macros': {
             'bm': ["\\boldsymbol{#1}", 1],  # \usepackage{bm}, see mathjax/MathJax#1219
@@ -393,5 +391,5 @@ mathjax_config = {
             'fullset': r'\bm{\phi}',
             'singlefull': r'\phi',
         }
-    }
+    },
 }
