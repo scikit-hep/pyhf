@@ -11,3 +11,18 @@ exclude = '''
   | build
 )/
 '''
+
+[tool.check-manifest]
+ignore = [
+    'docs*',
+    'validation*',
+    'examples*',
+    'tests*',
+    'docker*',
+    'binder*',
+    '.*',
+    'pyproject.toml',
+    'pytest.ini',
+    'CODE_OF_CONDUCT.md',
+    'CONTRIBUTING.md',
+]

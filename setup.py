@@ -53,6 +53,7 @@ extras_require = {
         'pre-commit',
         'black;python_version>="3.6"',  # Black is Python3 only
         'twine',
+        'check-manifest',
     ],
 }
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
