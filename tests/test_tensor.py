@@ -197,7 +197,9 @@ def test_einsum(backend):
         with pytest.raises(NotImplementedError):
             assert tb.einsum('ij->ji', [1, 2, 3])
     else:
-        assert np.all(tb.tolist(tb.einsum('ij->ji', x)) == np.asarray(x).T.tolist())
+        assert np.all(
+            tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
+        )
         assert (
             tb.tolist(
                 tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3]))
