@@ -92,7 +92,7 @@ class tensorflow_backend(object):
         return tf.boolean_mask(tensor, mask)
 
     def isfinite(self, tensor):
-        return tf.is_finite(tensor)
+        return tf.math.is_finite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
         """
