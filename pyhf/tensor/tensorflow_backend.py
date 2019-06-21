@@ -92,7 +92,7 @@ class tensorflow_backend(object):
         return tf.boolean_mask(tensor, mask)
 
     def isfinite(self, tensor):
-        return tf.is_finite(tensor)
+        return tf.math.is_finite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -174,7 +174,7 @@ class tensorflow_backend(object):
 
     def log(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
-        return tf.log(tensor_in)
+        return tf.math.log(tensor_in)
 
     def exp(self, tensor_in):
         tensor_in = self.astensor(tensor_in)
