@@ -371,4 +371,5 @@ Bibliography
 ~~~~~~~~~~~~
 
 .. bibliography:: bib/docs.bib
+   :filter: docname in docnames
    :style: plain

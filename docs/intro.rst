@@ -56,7 +56,7 @@ and the analysis-independent set of constraint terms:
    \label{eqn:hifa_template}
     f(\channelcounts, \auxdata \,|\,\freeset,\constrset) = \underbrace{\color{blue}{\prod_{c\in\mathrm{\,channels}} \prod_{b \in \mathrm{\,bins}_c}\textrm{Pois}\left(n_{cb} \,\middle|\, \nu_{cb}\left(\freeset,\constrset\right)\right)}}_{\substack{\text{Simultaneous measurement}\\%
       \text{of multiple channels}}} \underbrace{\color{red}{\prod_{\singleconstr \in \constrset} c_{\singleconstr}(a_{\singleconstr} |\, \singleconstr)}}_{\substack{\text{constraint terms}\\%
-      \text{for ``auxiliary measurements''}}},
+      \text{for "auxiliary measurements"}}},
 
 where within a certain integrated luminosity we observe :math:`n_{cb}`
 events given the expected rate of events
@@ -213,4 +213,5 @@ Bibliography
 ~~~~~~~~~~~~
 
 .. bibliography:: bib/docs.bib
+   :filter: docname in docnames
    :style: plain
