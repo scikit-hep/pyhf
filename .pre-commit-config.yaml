@@ -5,7 +5,7 @@ repos:
     - id: black
       language_version: python3.6
 - repo: https://github.com/mgedmin/check-manifest
-    rev: stable
+    rev: "0.39"
     hooks:
     - id: check-manifest
       language_version: python3.6
