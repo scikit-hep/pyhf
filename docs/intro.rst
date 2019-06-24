@@ -43,8 +43,8 @@ where a subset of the parameters are declared *parameters of interest* :math:`\p
 remaining ones as *nuisance parameters* :math:`\nuisset`.
 
 .. math::
+    :label: eqn:parameters_partitions
 
-   \label{eqn:parameters_partitions}
     f(\bm{x}|\fullset) = f(\bm{x}|\overbrace{\freeset}^{\llap{\text{free}}},\underbrace{\constrset}_{\llap{\text{constrained}}}) = f(\bm{x}|\overbrace{\poiset}^{\rlap{\text{parameters of interest}}},\underbrace{\nuisset}_{\rlap{\text{nuisance parameters}}})
 
 Thus, the overall structure of a :math:`\HiFa{}` probability model is a product of the
@@ -52,8 +52,8 @@ analysis-specific model term describing the measurements of the channels
 and the analysis-independent set of constraint terms:
 
 .. math::
+    :label: eqn:hifa_template
 
-   \label{eqn:hifa_template}
     f(\channelcounts, \auxdata \,|\,\freeset,\constrset) = \underbrace{\color{blue}{\prod_{c\in\mathrm{\,channels}} \prod_{b \in \mathrm{\,bins}_c}\textrm{Pois}\left(n_{cb} \,\middle|\, \nu_{cb}\left(\freeset,\constrset\right)\right)}}_{\substack{\text{Simultaneous measurement}\\%
       \text{of multiple channels}}} \underbrace{\color{red}{\prod_{\singleconstr \in \constrset} c_{\singleconstr}(a_{\singleconstr} |\, \singleconstr)}}_{\substack{\text{constraint terms}\\%
       \text{for }\unicode{x201C}\text{auxiliary measurements}\unicode{x201D}}},
@@ -69,8 +69,8 @@ data :math:`a_\singleconstr` constraining the parameter
 :math:`\singleconstr`. The event rates :math:`\nu_{cb}` are defined as
 
 .. math::
+    :label: eqn:sample_rates
 
-   \label{eqn:sample_rates}
     \nu_{cb}\left(\fullset\right) = \sum_{s\in\mathrm{\,samples}} \nu_{scb}\left(\freeset,\constrset\right) = \sum_{s\in\mathrm{\,samples}}\underbrace{\left(\prod_{\kappa\in\,\bm{\kappa}} \kappa_{scb}\left(\freeset,\constrset\right)\right)}_{\text{multiplicative modifiers}}\, \Bigg(\nu_{scb}^0\left(\freeset, \constrset\right) + \underbrace{\sum_{\Delta\in\bm{\Delta}} \Delta_{scb}\left(\freeset,\constrset\right)}_{\text{additive modifiers}}\Bigg)\,.
 
 The total rates are the sum over sample rates :math:`\nu_{csb}`, each
@@ -79,7 +79,7 @@ additive denoted *rate modifiers* :math:`\bm{\kappa}(\fullset)` and
 :math:`\bm{\Delta}(\fullset)`. These modifiers are functions of (usually
 a single) model parameters. Starting from constant nominal rates, one
 can derive the per-bin event rate modification by iterating over all
-sample rate modifications as shown in .
+sample rate modifications as shown in :eq:`eqn:sample_rates`.
 
 As summarised in :ref:`tab:modifiers_and_constraints`, rate modifications
 are defined in :math:`\HiFa{}` for bin :math:`b`, sample :math:`s`, channel
