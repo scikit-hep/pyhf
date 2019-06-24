@@ -96,7 +96,7 @@ total event rate :math:`\nu_b = \sum_s = \nu^0_{sb}`.
 Modifiers implementing uncertainties are paired with
 a corresponding default constraint term on the parameter limiting the
 rate modification. The available modifiers may affect only the total
-number of exected events of a sample within a given channel, i.e. only
+number of expected events of a sample within a given channel, i.e. only
 change its normalisation, while holding the distribution of events
 across the bins of a channel, i.e. its “shape”, invariant.
 Alternatively, modifiers may change the sample shapes. Here :math:`\HiFa{}` supports
