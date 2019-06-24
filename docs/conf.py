@@ -390,6 +390,7 @@ mathjax_config = {
             'nuisset': r'\bm{\theta}',
             'fullset': r'\bm{\phi}',
             'singlefull': r'\phi',
+            'TeV': r'\textrm{TeV}',
         }
     },
 }
