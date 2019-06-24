@@ -369,3 +369,28 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+mathjax_config = {
+    'tex2jax': {'inlineMath': [['$', '$'], ['\\(', '\\)']]},
+    'TeX': {
+        'Macros': {
+            'bm': ["\\boldsymbol{#1}", 1],  # \usepackage{bm}, see mathjax/MathJax#1219
+            'HiFa': r'\texttt{HistFactory}',
+            'Root': r'\texttt{ROOT}',
+            'RooStats': r'\texttt{RooStats}',
+            'RooFit': r'\texttt{RooFit}',
+            'pyhf': r'\texttt{pyhf}',
+            'CLs': r'\mathrm{CL}_{s}',
+            'freeset': r'\bm{\eta}',
+            'constrset': r'\bm{\chi}',
+            'singleconstr': r'\chi',
+            'channelcounts': r'\bm{n}',
+            'auxdata': r'\bm{a}',
+            'poiset': r'\bm{\psi}',
+            'nuisset': r'\bm{\theta}',
+            'fullset': r'\bm{\phi}',
+            'singlefull': r'\phi',
+            'TeV': r'\textrm{TeV}',
+        }
+    },
+}

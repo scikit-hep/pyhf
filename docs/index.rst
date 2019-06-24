@@ -6,6 +6,8 @@
 .. toctree::
    :hidden:
 
+   intro
+   likelihood
    examples
    talks
    installation
