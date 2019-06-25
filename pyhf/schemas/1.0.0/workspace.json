@@ -5,7 +5,18 @@
     "properties": {
         "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
         "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-        "data": { "type": "object" },
+        "data": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "data": { "type": "array", "items": { "type": "number" }, "minItems": 1 }
+                },
+                "required": ["name", "data"],
+                "additionalProperties": false
+            }
+        },
         "version": { "const": "1.0.0" }
     },
     "additionalProperties": false,
