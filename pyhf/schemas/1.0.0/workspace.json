@@ -5,20 +5,9 @@
     "properties": {
         "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
         "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-        "data": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "name": { "type": "string" },
-                    "data": { "type": "array", "items": { "type": "number" }, "minItems": 1 }
-                },
-                "required": ["name", "data"],
-                "additionalProperties": false
-            }
-        },
+        "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" } },
         "version": { "const": "1.0.0" }
     },
     "additionalProperties": false,
-    "required": ["channels", "measurements", "data", "version"]
+    "required": ["channels", "measurements", "observations", "version"]
 }
