@@ -336,31 +336,8 @@ An example of an observation. This observation recorded for a 2-bin channel ``ch
 Toy example
 -----------
 
-.. code:: json
-
-   {
-       "channels": [
-           { "name": "singlechannel",
-             "samples": [
-               { "name": "signal",
-                 "data": [5.0, 10.0],
-                 "modifiers": [ { "name": "mu", "type": "normfactor", "data": null} ]
-               },
-               { "name": "background",
-                 "data": [50.0, 60.0],
-                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [5.0, 12.0]} ]
-               }
-             ]
-           }
-       ],
-       "observations": [
-            { "name": "singlechannel", "data": [50.0, 60.0] }
-        ],
-       "measurements": [
-           { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
-       ],
-       "version": "1.0.0"
-   }
+.. literalinclude:: ../pyhf/examples/2-bin_single-channel.json
+   :language: json
 
 In the above example, we demonstrate a simple measurement of a
 single two-bin channel with two samples: a signal sample and a background
