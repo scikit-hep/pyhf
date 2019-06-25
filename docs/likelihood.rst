@@ -9,21 +9,8 @@ original XML-based specification :cite:`Cranmer:1456844`.
 Workspace
 ---------
 
-.. code:: json
-
-   {
-       "$schema": "http://json-schema.org/draft-06/schema#",
-       "$id": "https://diana-hep.org/pyhf/schemas/1.0.0/workspace.json",
-       "type": "object",
-       "properties": {
-           "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
-           "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-           "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" } },
-           "version": { "const": "1.0.0" }
-       },
-       "additionalProperties": false,
-       "required": ["channels", "measurements", "observations", "version"]
-   }
+.. literalinclude:: ../pyhf/schemas/1.0.0/workspace.json
+   :language: json
 
 The overall document in the above code snippet describes a *workspace*, which includes
 
