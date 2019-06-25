@@ -369,10 +369,6 @@ sample. The signal sample has an unconstrained normalisation factor
 systematic controlled by parameters :math:`\gamma_1` and :math:`\gamma_2`. The
 background uncertainty for the bins is 10% and 20% respectively.
 
-
-
-A toy example of a 2-bin single channel workspace with two samples.
-
 Additional Material
 -------------------
 
