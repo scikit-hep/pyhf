@@ -601,7 +601,15 @@ class Workspace(object):
             data: A list of numbers
         """
 
-        observed_data = sum((self.spec['data'][c] for c in model.config.channels), [])
+        observed_data = sum(
+            (
+                next(obs for obs in self.spec['observations'] if obs['name'] == c)[
+                    'data'
+                ]
+                for c in model.config.channels
+            ),
+            [],
+        )
         if with_aux:
             observed_data += model.config.auxdata
         return observed_data
