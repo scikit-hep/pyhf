@@ -332,7 +332,6 @@ An example is shown below:
 
 An example of an observation. This observation recorded for a 2-bin channel ``channel1``, has values ``110.0`` and ``120.0``.
 
-
 Toy example
 -----------
 
