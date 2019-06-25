@@ -56,7 +56,9 @@ def test_import_prepHistFactory():
     data = [
         binvalue
         for k in pdf.spec['channels']
-        for binvalue in parsed_xml['data'][k['name']]
+        for binvalue in next(
+            obs for obs in parsed_xml['observations'] if obs['name'] == k['name']
+        )['data']
     ] + pdf.config.auxdata
 
     channels = {channel['name'] for channel in pdf.spec['channels']}
@@ -120,7 +122,9 @@ def test_import_histosys():
     data = [
         binvalue
         for k in pdf.spec['channels']
-        for binvalue in parsed_xml['data'][k['name']]
+        for binvalue in next(
+            obs for obs in parsed_xml['observations'] if obs['name'] == k['name']
+        )['data']
     ] + pdf.config.auxdata
 
     channels = {channel['name']: channel for channel in pdf.spec['channels']}
@@ -172,7 +176,9 @@ def test_import_shapesys():
     data = [
         binvalue
         for k in pdf.spec['channels']
-        for binvalue in parsed_xml['data'][k['name']]
+        for binvalue in next(
+            obs for obs in parsed_xml['observations'] if obs['name'] == k['name']
+        )['data']
     ] + pdf.config.auxdata
 
     channels = {channel['name']: channel for channel in pdf.spec['channels']}

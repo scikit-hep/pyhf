@@ -801,13 +801,17 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     data_before = [
         binvalue
         for k in pdf_before.config.channels
-        for binvalue in parsed_xml_before['data'][k]
+        for binvalue in next(
+            obs for obs in parsed_xml_before['observations'] if obs['name'] == k
+        )['data']
     ] + pdf_before.config.auxdata
 
     data_after = [
         binvalue
         for k in pdf_after.config.channels
-        for binvalue in parsed_xml_after['data'][k]
+        for binvalue in next(
+            obs for obs in parsed_xml_after['observations'] if obs['name'] == k
+        )['data']
     ] + pdf_after.config.auxdata
 
     assert data_before == data_after

@@ -2,6 +2,15 @@
     "$schema": "http://json-schema.org/draft-06/schema#",
     "$id": "https://diana-hep.org/pyhf/schemas/1.0.0/defs.json",
     "definitions": {
+        "observation": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+            },
+            "required": ["name", "data"],
+            "additionalProperties": false
+        },
         "measurement": {
             "type": "object",
             "properties": {

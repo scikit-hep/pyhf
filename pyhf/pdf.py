@@ -493,6 +493,10 @@ class Workspace(object):
         for measurement in self.spec.get('measurements', []):
             self.measurement_names.append(measurement['name'])
 
+        self.observations = {}
+        for obs in self.spec['observations']:
+            self.observations[obs['name']] = obs['data']
+
     # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
         """
@@ -601,7 +605,15 @@ class Workspace(object):
             data: A list of numbers
         """
 
-        observed_data = sum((self.spec['data'][c] for c in model.config.channels), [])
+        try:
+            observed_data = sum(
+                (self.observations[c] for c in model.config.channels), []
+            )
+        except KeyError:
+            log.error(
+                "Invalid channel: the workspace does not have observation data for one of the channels in the model."
+            )
+            raise
         if with_aux:
             observed_data += model.config.auxdata
         return observed_data

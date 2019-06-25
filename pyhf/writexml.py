@@ -183,19 +183,21 @@ def build_sample(samplespec, channelname):
     return sample
 
 
-def build_data(dataspec, channelname):
+def build_data(obsspec, channelname):
     histname = _make_hist_name(channelname, 'data')
     data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE._path)
-    _export_root_histogram(histname, dataspec[channelname])
+
+    observation = next((obs for obs in obsspec if obs['name'] == channelname), None)
+    _export_root_histogram(histname, observation['data'])
     return data
 
 
-def build_channel(channelspec, dataspec):
+def build_channel(channelspec, obsspec):
     channel = ET.Element(
         'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
     )
-    if dataspec:
-        data = build_data(dataspec, channelspec['name'])
+    if obsspec:
+        data = build_data(obsspec, channelspec['name'])
         channel.append(data)
     for samplespec in channelspec['samples']:
         channel.append(build_sample(samplespec, channelspec['name']))
@@ -219,7 +221,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )
             with open(channelfilename, 'w') as channelfile:
-                channel = build_channel(channelspec, spec.get('data'))
+                channel = build_channel(channelspec, spec.get('observations'))
                 indent(channel)
                 channelfile.write(
                     "<!DOCTYPE Channel SYSTEM '../HistFactorySchema.dtd'>\n\n"

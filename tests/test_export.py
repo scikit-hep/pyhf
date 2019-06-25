@@ -269,7 +269,7 @@ def test_export_channel(mocker, spec):
 
 def test_export_data(mocker):
     channelname = 'channel'
-    dataspec = {channelname: [0, 1, 2, 3]}
+    dataspec = [{'name': channelname, 'data': [0, 1, 2, 3]}]
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
     data = pyhf.writexml.build_data(dataspec, channelname)

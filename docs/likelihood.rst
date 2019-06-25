@@ -18,18 +18,18 @@ Workspace
        "properties": {
            "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
            "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-           "data": { "type": "object" },
+           "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" } },
            "version": { "const": "1.0.0" }
        },
        "additionalProperties": false,
-       "required": ["channels", "measurements", "data", "version"]
+       "required": ["channels", "measurements", "observations", "version"]
    }
 
 The overall document in the above code snippet describes a *workspace*, which includes
 
 * **measurements**: The channels in the model, which include a description of the samples
   within each channel and their possible parametrised modifiers.
-* **data**: The observed data, with which a likelihood can be constructed from the
+* **observations**: The observed data, with which a likelihood can be constructed from the
 * **model**: A set of measurements, which define among others the parameters of
   interest for a given statistical analysis objective.
 
@@ -307,6 +307,31 @@ An example is shown below:
    }
 
 An example of a measurement. This measurement, which scans over the parameter of interest ``SigXSec``, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named ``alpha_ttbar``, and specifying that the modifier ``rw_1CR`` is held constant (``fixed``).
+
+.. _ssec:observations:
+
+Observations
+------------
+
+This is what we evaluate the hypothesis testing against, to determine the
+compatibility of signal+background hypothesis to the background-only
+hypothesis. This is specified as a list of objects, with each object structured
+as
+
+* **name**: the channel for which the observations are recorded
+* **data**: the bin-by-bin observations for the named channel
+
+An example is shown below:
+
+.. code:: json
+
+   {
+       "name": "channel1",
+       "data": [110.0, 120.0]
+   }
+
+An example of an observation. This observation recorded for a 2-bin channel ``channel1``, has values ``110.0`` and ``120.0``.
+
 
 Toy example
 -----------
