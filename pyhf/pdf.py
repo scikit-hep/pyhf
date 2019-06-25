@@ -605,7 +605,15 @@ class Workspace(object):
             data: A list of numbers
         """
 
-        observed_data = sum((self.observations[c] for c in model.config.channels), [])
+        try:
+            observed_data = sum(
+                (self.observations[c] for c in model.config.channels), []
+            )
+        except KeyError:
+            log.error(
+                "Invalid channel: the workspace does not have observation data for one of the channels in the model."
+            )
+            raise
         if with_aux:
             observed_data += model.config.auxdata
         return observed_data

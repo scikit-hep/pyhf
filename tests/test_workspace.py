@@ -3,6 +3,7 @@ import pyhf.readxml
 import pytest
 import pyhf.exceptions
 import json
+import logging
 
 
 @pytest.fixture(
@@ -104,3 +105,25 @@ def test_get_workspace_model_default(workspace_factory):
     w = workspace_factory()
     m = w.model()
     assert m
+
+
+def test_workspace_observations(workspace_factory):
+    w = workspace_factory()
+    assert w.observations
+
+
+def test_get_workspace_data(workspace_factory):
+    w = workspace_factory()
+    m = w.model()
+    assert w.data(m)
+
+
+def test_get_workspace_data_bad_model(workspace_factory, caplog):
+    w = workspace_factory()
+    m = w.model()
+    # the iconic fragrance of an expected failure
+    m.config.channels = [c.replace('channel', 'chanel') for c in m.config.channels]
+    with caplog.at_level(logging.INFO, 'pyhf.pdf'):
+        with pytest.raises(KeyError):
+            assert w.data(m)
+            assert 'Invalid channel' in caplog.text
