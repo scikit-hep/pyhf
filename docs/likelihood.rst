@@ -348,17 +348,18 @@ Toy example
                },
                { "name": "background",
                  "data": [50.0, 60.0],
-                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [5.0,12.0]} ]
+                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [5.0, 12.0]} ]
                }
              ]
            }
        ],
-       "data": {
-           "singlechannel": [50, 60]
-       },
+       "observations": [
+            { "name": "singlechannel", "data": [50.0, 60.0] }
+        ],
        "measurements": [
            { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
-       ]
+       ],
+       "version": "1.0.0"
    }
 
 In the above example, we demonstrate a simple measurement of a
