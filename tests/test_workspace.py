@@ -101,12 +101,6 @@ def test_get_workspace_model_default(workspace_factory):
     assert m
 
 
-def test_get_workspace_model_default(workspace_factory):
-    w = workspace_factory()
-    m = w.model()
-    assert m
-
-
 def test_workspace_observations(workspace_factory):
     w = workspace_factory()
     assert w.observations
