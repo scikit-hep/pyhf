@@ -3,4 +3,5 @@ include pyhf/schemas/1.0.0/measurement.json
 include pyhf/schemas/1.0.0/model.json
 include pyhf/schemas/1.0.0/workspace.json
 include pyhf/schemas/HistFactorySchema.dtd
+include pyhf/examples/2-bin_single-channel.json
 include LICENSE
