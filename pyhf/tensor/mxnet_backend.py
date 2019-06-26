@@ -14,7 +14,7 @@ class mxnet_backend(object):
     def __init__(self, **kwargs):
         self.name = 'mxnet'
 
-    def clip(self, tensor_in, min, max):
+    def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
@@ -30,14 +30,14 @@ class mxnet_backend(object):
 
         Args:
             tensor_in (`tensor`): The input tensor object
-            min (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
+            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
             MXNet NDArray: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
-        return nd.clip(tensor_in, min, max)
+        return nd.clip(tensor_in, min_value, max_value)
 
     def tolist(self, tensor_in):
         """

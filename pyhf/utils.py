@@ -279,11 +279,13 @@ def hypotest(
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v = tensorlib.clip(qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max=None)
+    qmu_v = tensorlib.clip(
+        qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
+    )
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
     qmuA_v = tensorlib.clip(
-        qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max=None
+        qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max_value=None
     )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
