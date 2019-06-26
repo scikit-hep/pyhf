@@ -322,6 +322,7 @@ An example of an observation. This observation recorded for a 2-bin channel ``ch
 Toy example
 -----------
 
+.. # N.B. If the following literalinclude is changed test_examples.py must be changed accordingly
 .. literalinclude:: ../examples/2-bin_1-channel.json
    :language: json
 
