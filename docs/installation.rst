@@ -92,6 +92,13 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
     pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
 
+... with JAX backend
+++++++++++++++++++++++
+
+.. code-block:: console
+
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]"
+
 ... with all backends
 +++++++++++++++++++++
 
