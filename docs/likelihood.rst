@@ -9,21 +9,8 @@ original XML-based specification :cite:`Cranmer:1456844`.
 Workspace
 ---------
 
-.. code:: json
-
-   {
-       "$schema": "http://json-schema.org/draft-06/schema#",
-       "$id": "https://diana-hep.org/pyhf/schemas/1.0.0/workspace.json",
-       "type": "object",
-       "properties": {
-           "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
-           "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-           "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" } },
-           "version": { "const": "1.0.0" }
-       },
-       "additionalProperties": false,
-       "required": ["channels", "measurements", "observations", "version"]
-   }
+.. literalinclude:: ../pyhf/schemas/1.0.0/workspace.json
+   :language: json
 
 The overall document in the above code snippet describes a *workspace*, which includes
 
@@ -332,34 +319,12 @@ An example is shown below:
 
 An example of an observation. This observation recorded for a 2-bin channel ``channel1``, has values ``110.0`` and ``120.0``.
 
-
-Toy example
+Toy Example
 -----------
 
-.. code:: json
-
-   {
-       "channels": [
-           { "name": "singlechannel",
-             "samples": [
-               { "name": "signal",
-                 "data": [5.0, 10.0],
-                 "modifiers": [ { "name": "mu", "type": "normfactor", "data": null} ]
-               },
-               { "name": "background",
-                 "data": [50.0, 60.0],
-                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [5.0,12.0]} ]
-               }
-             ]
-           }
-       ],
-       "data": {
-           "singlechannel": [50, 60]
-       },
-       "measurements": [
-           { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
-       ]
-   }
+.. # N.B. If the following literalinclude is changed test_examples.py must be changed accordingly
+.. literalinclude:: ../examples/2-bin_1-channel.json
+   :language: json
 
 In the above example, we demonstrate a simple measurement of a
 single two-bin channel with two samples: a signal sample and a background
@@ -367,10 +332,6 @@ sample. The signal sample has an unconstrained normalisation factor
 :math:`\mu`, while the background sample carries an uncorrelated shape
 systematic controlled by parameters :math:`\gamma_1` and :math:`\gamma_2`. The
 background uncertainty for the bins is 10% and 20% respectively.
-
-
-
-A toy example of a 2-bin single channel workspace with two samples.
 
 Additional Material
 -------------------
