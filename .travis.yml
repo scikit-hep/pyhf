@@ -3,6 +3,7 @@ dist: xenial
 language: python
 cache: pip
 python:
+  - '2.7'
   - '3.6'
   - '3.7'
 before_install:
@@ -10,11 +11,7 @@ before_install:
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
   - pip install --upgrade pip setuptools wheel
 install:
-  - if [[ $TRAVIS_DIST == 'trusty' ]]; then
-      pip install --ignore-installed -U -q --no-cache-dir -e .[complete];
-    else
-      pip install --ignore-installed -U -q -e .[complete];
-    fi
+  - pip install --ignore-installed -U -q -e .[complete];
   - pip freeze
 script:
   - pyflakes pyhf
@@ -22,10 +19,6 @@ script:
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then coveralls; fi
-# Include to force matrix expansion but use trusty for Python 3.6 instead
-matrix:
-  exclude:
-    - python: '3.6'
 
 # always test (on both 'push' and 'pr' builds in Travis)
 # test docs on 'pr' builds and 'push' builds on master
@@ -46,19 +39,13 @@ env:
 
 jobs:
   include:
-  - dist: trusty
-    python: '2.7'
-  - dist: trusty
-    python: '3.6'
   - name: "Python 2.7 Notebook Tests"
     python: '2.7'
-    dist: trusty
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
-    dist: trusty
     script:
       - python -m pytest tests/test_notebooks.py
     after_success: skip
