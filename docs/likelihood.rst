@@ -322,7 +322,7 @@ An example of an observation. This observation recorded for a 2-bin channel ``ch
 Toy example
 -----------
 
-.. literalinclude:: ../pyhf/examples/2-bin_single-channel.json
+.. literalinclude:: ../examples/2-bin_1-channel.json
    :language: json
 
 In the above example, we demonstrate a simple measurement of a
