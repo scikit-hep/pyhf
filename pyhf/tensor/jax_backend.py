@@ -4,6 +4,7 @@ import logging
 from scipy.special import gammaln
 from scipy.stats import norm
 from opt_einsum import contract
+
 log = logging.getLogger(__name__)
 
 
@@ -13,7 +14,7 @@ class jax_backend(object):
     def __init__(self, **kwargs):
         self.name = 'jax'
 
-    def clip(self, tensor_in, min, max):
+    def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
@@ -27,13 +28,13 @@ class jax_backend(object):
 
         Args:
             tensor_in (`tensor`): The input tensor object
-            min (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
+            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
             NumPy ndarray: A clipped `tensor`
         """
-        return np.clip(tensor_in, min, max)
+        return np.clip(tensor_in, min_value, max_value)
 
     def tolist(self, tensor_in):
         try:
@@ -55,7 +56,7 @@ class jax_backend(object):
         return tensor[mask]
 
     def isfinite(self, tensor):
-        return np.ones_like(tensor, dtype = onp.bool)
+        return np.ones_like(tensor, dtype=onp.bool)
         # return np.isfinite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
@@ -103,9 +104,10 @@ class jax_backend(object):
         return np.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
-        if axis==0:
+        if axis == 0:
             return np.stack(sequence)
         raise RuntimeError('stack axis!=0')
+
     def where(self, mask, tensor_in_1, tensor_in_2):
         return np.where(mask, tensor_in_1, tensor_in_2)
 
