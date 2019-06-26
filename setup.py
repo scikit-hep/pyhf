@@ -15,10 +15,9 @@ extras_require = {
         'tensorflow~=1.14',
         'tensorflow-probability~=0.5',
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
-        'setuptools<=39.1.0',
     ],
     'torch': ['torch~=1.0'],
-    'mxnet': ['mxnet~=1.0', 'requests~=2.18.4', 'numpy<1.15.0,>=1.8.2'],
+    'mxnet': ['mxnet~=1.0', 'numpy<1.15.0,>=1.8.2', 'graphviz<0.9.0,>=0.8.1'],
     # 'dask': [
     #     'dask[array]'
     # ],
@@ -49,7 +48,7 @@ extras_require = {
         'sphinx-issues',
         'm2r',
         'jsonpatch',
-        'ipython<7',  # jupyter_console and ipython clash in dependency requirement -- downgrade ipython for now
+        'ipython',
         'pre-commit',
         'black;python_version>="3.6"',  # Black is Python3 only
         'twine',
