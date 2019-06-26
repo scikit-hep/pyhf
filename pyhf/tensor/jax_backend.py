@@ -3,7 +3,6 @@ import numpy as onp
 import logging
 from scipy.special import gammaln
 from scipy.stats import norm
-from opt_einsum import contract
 
 log = logging.getLogger(__name__)
 
