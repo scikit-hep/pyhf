@@ -12,6 +12,7 @@ def test_get_invalid_optimizer():
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_tensorflow
 @pytest.mark.skip_mxnet
+@pytest.mark.skip_numpy_minuit
 def test_scipy_minimize(backend, capsys):
     tensorlib, _ = backend
 
@@ -20,12 +21,10 @@ def test_scipy_minimize(backend, capsys):
         return sum(100.0 * (x[1:] - x[:-1] ** 2.0) ** 2.0 + (1 - x[:-1]) ** 2.0)
 
     x0 = tensorlib.astensor([1.3, 0.7, 0.8, 1.9, 1.2])
-    res = minimize(
-        rosen, x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': True}
-    )
+    res = minimize(rosen, x0, method='SLSQP', options=dict(disp=True))
     captured = capsys.readouterr()
     assert "Optimization terminated successfully" in captured.out
-    assert pytest.approx(tensorlib.tolist(res.x)) == [1.0, 1.0, 1.0, 1.0, 1.0]
+    assert pytest.approx([1.0, 1.0, 1.0, 1.0, 1.0], rel=5e-5) == tensorlib.tolist(res.x)
 
 
 @pytest.fixture(scope='module')
