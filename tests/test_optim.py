@@ -1,10 +1,31 @@
 import pyhf
 import pytest
+from scipy.optimize import minimize
 
 
 def test_get_invalid_optimizer():
     with pytest.raises(pyhf.exceptions.InvalidOptimizer):
         assert pyhf.optimize.scipy
+
+
+# from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
+@pytest.mark.skip_pytorch
+@pytest.mark.skip_tensorflow
+@pytest.mark.skip_mxnet
+def test_optimizer_functionality(backend, capsys):
+    tensorlib, _ = backend
+
+    def rosen(x):
+        """The Rosenbrock function"""
+        return sum(100.0 * (x[1:] - x[:-1] ** 2.0) ** 2.0 + (1 - x[:-1]) ** 2.0)
+
+    x0 = tensorlib.astensor([1.3, 0.7, 0.8, 1.9, 1.2])
+    res = minimize(
+        rosen, x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': True}
+    )
+    captured = capsys.readouterr()
+    assert "Optimization terminated successfully" in captured.out
+    assert pytest.approx(tensorlib.tolist(res.x)) == [1.0, 1.0, 1.0, 1.0, 1.0]
 
 
 @pytest.fixture(scope='module')
