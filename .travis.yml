@@ -21,7 +21,7 @@ script:
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then coveralls; fi
 
 # always test (on both 'push' and 'pr' builds in Travis)
-# test docs on 'pr' builds and 'push' builds on master
+# test docs on 'pr' builds and 'push' builds on master and on docs branches
 # benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - name: test
@@ -29,7 +29,7 @@ stages:
   - name: benchmark
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
-    if: (branch = master)
+    if: (branch = master) OR (branch =~ /^docs\//)
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
