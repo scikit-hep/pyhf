@@ -1,4 +1,5 @@
 import jax.numpy as np
+from jax.config import config
 import numpy as onp
 import logging
 from scipy.special import gammaln
@@ -12,6 +13,7 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
+        config.update('jax_enable_x64', True)
 
     def clip(self, tensor_in, min_value, max_value):
         """
