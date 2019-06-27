@@ -29,7 +29,7 @@ stages:
   - name: benchmark
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
-    if: (branch = master)
+    if: (branch = master) OR (branch =~ /^docs\//)
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
