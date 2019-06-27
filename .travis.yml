@@ -24,7 +24,8 @@ after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then coveralls; fi
 # test docs on 'pr' builds and 'push' builds on master
 # benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
-  - test
+  - name: test
+    if: NOT (branch =~ /^docs\//)
   - name: benchmark
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
