@@ -12,7 +12,7 @@ def test_get_invalid_optimizer():
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_tensorflow
 @pytest.mark.skip_mxnet
-def test_optimizer_functionality(backend, capsys):
+def test_scipy_minimize(backend, capsys):
     tensorlib, _ = backend
 
     def rosen(x):
