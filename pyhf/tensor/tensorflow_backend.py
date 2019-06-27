@@ -12,7 +12,7 @@ class tensorflow_backend(object):
         self.session = kwargs.get('session')
         self.name = 'tensorflow'
 
-    def clip(self, tensor_in, min, max):
+    def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
@@ -31,18 +31,18 @@ class tensorflow_backend(object):
 
         Args:
             tensor_in (`tensor`): The input tensor object
-            min (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
+            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
             TensorFlow Tensor: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
-        if min is None:
-            min = tf.reduce_min(tensor_in)
-        if max is None:
-            max = tf.reduce_max(tensor_in)
-        return tf.clip_by_value(tensor_in, min, max)
+        if min_value is None:
+            min_value = tf.reduce_min(tensor_in)
+        if max_value is None:
+            max_value = tf.reduce_max(tensor_in)
+        return tf.clip_by_value(tensor_in, min_value, max_value)
 
     def tolist(self, tensor_in):
         try:

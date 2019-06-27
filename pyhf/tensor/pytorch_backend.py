@@ -11,7 +11,7 @@ class pytorch_backend(object):
     def __init__(self, **kwargs):
         self.name = 'pytorch'
 
-    def clip(self, tensor_in, min, max):
+    def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
@@ -25,14 +25,14 @@ class pytorch_backend(object):
 
         Args:
             tensor_in (`tensor`): The input tensor object
-            min (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
+            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
             PyTorch tensor: A clipped `tensor`
         """
         tensor_in = self.astensor(tensor_in)
-        return torch.clamp(tensor_in, min, max)
+        return torch.clamp(tensor_in, min_value, max_value)
 
     def tolist(self, tensor_in):
         try:
