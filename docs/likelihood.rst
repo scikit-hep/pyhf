@@ -18,7 +18,7 @@ The overall document in the above code snippet describes a *workspace*, which i
   within each channel and their possible parametrised modifiers.
 * **measurements**: A set of measurements, which define among others the parameters of
   interest for a given statistical analysis objective.
-* **observations**: The observed data, with which a likelihood can be constructed from the
+* **observations**: The observed data, with which a likelihood can be constructed from the model
 
 A workspace consists of the channels, one set of observed data, but can
 include multiple measurements. If provided a JSON file, one can quickly
