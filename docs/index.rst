@@ -8,6 +8,7 @@
 
    intro
    likelihood
+   learn
    examples
    talks
    installation
