@@ -293,7 +293,7 @@ An example is shown below:
        }
    }
 
-An example of a measurement. This measurement, which scans over the parameter of interest ``SigXSec``, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named ``alpha_ttbar``, and specifying that the modifier ``rw_1CR`` is held constant (``fixed``).
+An example of a measurement. This measurement, which scans over the parameter of interest ``SignalCrossSection``, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named ``mu_ttbar``, and specifying that the modifier ``rw_1CR`` is held constant (``fixed``).
 
 .. _ssec:observations:
 
