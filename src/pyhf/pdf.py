@@ -6,6 +6,7 @@ from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
+from .prob import Simultaneous
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .paramsets import reduce_paramsets_requirements
 
@@ -435,33 +436,48 @@ class Model(object):
         )
         return tensorlib.concatenate(tocat)
 
-    def constraint_logpdf(self, auxdata, pars):
-        normal = self.constraints_gaussian.logpdf(auxdata, pars)
-        poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return normal + poisson
+    def constraint_pdf(self, pars):
+        tensorlib, _ = get_backend()
+        gview = self.constraints_gaussian.dataview()
+        pview = self.constraints_poisson.dataview()
 
-    def mainlogpdf(self, maindata, pars):
+        factors = []
+        projections = []
+        if gview is not None:
+            gpdf  = self.constraints_gaussian.pdf(pars)
+            factors.append(gpdf)
+            projections.append(gview)
+        if pview is not None:
+            ppdf = self.constraints_poisson.pdf(pars)
+            factors.append(ppdf)
+            projections.append(pview)
+
+        sim = Simultaneous(factors, projections)
+        return sim
+
+    def mainpdf(self, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_actualdata(pars)
-        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
-        mainpdf = tensorlib.sum(tosum)
-        return mainpdf
+        poisson = tensorlib.Poisson(lambdas_data)
+        return poisson
+
+    def pdfobj(self, pars):
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+        mainpdf = self.mainpdf(pars)
+        conspdf = self.constraint_pdf(pars)
+        indices = list(range(mainpdf.batch_shape[0] + conspdf.batch_shape[0]))
+        cut = len(indices) - len(self.config.auxdata)
+        data_proj = indices[:cut]
+        aux_proj = indices[cut:]
+        sim = Simultaneous([mainpdf,conspdf], [data_proj,aux_proj])
+        return sim
 
     def logpdf(self, pars, data):
         try:
             tensorlib, _ = get_backend()
-            pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-            cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-            actual_data, aux_data = data[:cut], data[cut:]
-
-            mainpdf = self.mainlogpdf(actual_data, pars)
-            constraint = self.constraint_logpdf(aux_data, pars)
-
-            result = mainpdf + constraint
-            return result * tensorlib.ones(
-                (1)
-            )  # ensure (1,) array shape also for numpy
+            sim = self.pdfobj(pars)
+            return sim.log_prob(data)
         except:
             log.error(
                 'eval failed for data {} pars: {}'.format(

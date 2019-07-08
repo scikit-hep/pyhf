@@ -77,16 +77,18 @@ class gaussian_constraint_combined(object):
                 None,
                 None,
             )
+    
+    def dataview(self):
+        return self.normal_data
 
-    def logpdf(self, auxdata, pars):
+    def pdf(self, pars):
+        tensorlib, _ = get_backend()
         if self.normal_data is None:
             return 0
         tensorlib, _ = get_backend()
-        normal_data = tensorlib.gather(auxdata, self.normal_data)
         normal_means = tensorlib.gather(pars, self.normal_mean_idc)
-        normal = tensorlib.normal_logpdf(normal_data, normal_means, self.normal_sigmas)
-        return tensorlib.sum(normal)
-
+        normal = tensorlib.Normal(normal_means, self.normal_sigmas)
+        return normal
 
 class poisson_constraint_combined(object):
     def __init__(self, pdfconfig):
@@ -171,16 +173,16 @@ class poisson_constraint_combined(object):
                 None,
             )
 
-    def logpdf(self, auxdata, pars):
-        if self.poisson_data is None:
-            return 0
+    def dataview(self):
+        return self.poisson_data
+
+    def pdf(self, pars):
         tensorlib, _ = get_backend()
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         poisson_rate_base = tensorlib.gather(pars, self.poisson_rate_idc)
         poisson_factors = self.poisson_rate_fac
 
         poisson_rate = tensorlib.product(
             tensorlib.stack([poisson_rate_base, poisson_factors]), axis=0
         )
-        poisson = tensorlib.poisson_logpdf(poisson_data, poisson_rate)
-        return tensorlib.sum(poisson)
+        poisson = tensorlib.Poisson(poisson_rate)
+        return poisson

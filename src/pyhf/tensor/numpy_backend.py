@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from scipy.special import gammaln
-from scipy.stats import norm
+from scipy.stats import norm, poisson
 
 log = logging.getLogger(__name__)
 
@@ -265,3 +265,42 @@ class numpy_backend(object):
             NumPy float: The CDF
         """
         return norm.cdf(x, loc=mu, scale=sigma)
+
+
+    class Poisson(object):
+        def __init__(self, rate):
+            self.pdf =  poisson(mu = rate)
+            self.rate = rate
+            self.batch_shape = self.rate.shape
+
+        def sample(self, sample_shape = None):
+            if sample_shape is not None:
+                return self.pdf.rvs(size = sample_shape + self.batch_shape)
+            else:
+                return self.pdf.rvs()
+            
+        def log_prob(self, data):
+            n = np.asarray(data)
+            lam = np.asarray(self.rate)
+            return n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
+
+    class Normal(object):
+        def __init__(self, loc, scale):
+            self.loc = loc
+            self.scale = scale
+            self.pdf = norm(loc = loc, scale = scale)
+            self.batch_shape = loc.shape
+        
+        def sample(self, sample_shape = None):
+            if sample_shape is not None:
+                return self.pdf.rvs(size = sample_shape + self.batch_shape)
+            else:
+                return self.pdf.rvs()
+        
+        def log_prob(self, data):
+            x = data
+            root2 = np.sqrt(2)
+            root2pi = np.sqrt(2 * np.pi)
+            prefactor = -np.log(self.scale * root2pi)
+            summand = -np.square(np.divide((x - self.loc), (root2 * self.scale)))
+            return summand
