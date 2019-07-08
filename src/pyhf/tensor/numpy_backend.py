@@ -2,7 +2,6 @@ import numpy as np
 import logging
 from scipy.special import gammaln
 from scipy.stats import norm, poisson
-
 log = logging.getLogger(__name__)
 
 
@@ -282,7 +281,9 @@ class numpy_backend(object):
         def log_prob(self, data):
             n = np.asarray(data)
             lam = np.asarray(self.rate)
-            return n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
+            summand =  n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
+            return np.sum(summand[np.isfinite(summand)], axis = -1).reshape(1)
+
 
     class Normal(object):
         def __init__(self, loc, scale):
@@ -303,4 +304,4 @@ class numpy_backend(object):
             root2pi = np.sqrt(2 * np.pi)
             prefactor = -np.log(self.scale * root2pi)
             summand = -np.square(np.divide((x - self.loc), (root2 * self.scale)))
-            return summand
+            return np.sum(summand[np.isfinite(summand)], axis = -1).reshape(1)

@@ -22,7 +22,6 @@ class Simultaneous(object):
         for fac_index,fac in enumerate(self.factors):
             projected = self.project(value,fac_index)
             projected = fac.log_prob(projected)
-            projected = tensorlib.boolean_mask(projected, tensorlib.isfinite(projected))
             log_sum.append(projected)
         return tensorlib.reshape(tensorlib.sum(tensorlib.concatenate(log_sum,axis=-1),axis=-1), (1,))
 
