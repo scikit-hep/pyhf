@@ -282,7 +282,8 @@ class numpy_backend(object):
             n = np.asarray(data)
             lam = np.asarray(self.rate)
             summand =  n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
-            return np.sum(summand[np.isfinite(summand)], axis = -1).reshape(1)
+            what = np.sum(summand[np.isfinite(summand)].reshape(summand.shape[0],-1), axis = -1)
+            return what
 
 
     class Normal(object):
@@ -304,4 +305,6 @@ class numpy_backend(object):
             root2pi = np.sqrt(2 * np.pi)
             prefactor = -np.log(self.scale * root2pi)
             summand = -np.square(np.divide((x - self.loc), (root2 * self.scale)))
-            return np.sum(summand[np.isfinite(summand)], axis = -1).reshape(1)
+            summand = prefactor + summand
+            what = np.sum(summand[np.isfinite(summand)].reshape(summand.shape[0],-1), axis = -1)
+            return what

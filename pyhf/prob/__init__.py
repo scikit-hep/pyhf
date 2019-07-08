@@ -19,11 +19,18 @@ class Simultaneous(object):
         tensorlib, _ = get_backend()
         value = tensorlib.astensor(value, dtype = 'float')
         log_sum = []
+        flat = False
+        if len(tensorlib.shape(value)) == 1:
+            flat = True
+            value = tensorlib.reshape(value,(1,-1))
         for fac_index,fac in enumerate(self.factors):
             projected = self.project(value,fac_index)
             projected = fac.log_prob(projected)
-            log_sum.append(projected)
-        return tensorlib.reshape(tensorlib.sum(tensorlib.concatenate(log_sum,axis=-1),axis=-1), (1,))
+            log_sum.append(tensorlib.reshape(projected,(value.shape[0],-1)))
+        result = tensorlib.reshape(tensorlib.sum(tensorlib.concatenate(log_sum,axis=-1),axis=-1), (value.shape[0],))
+        if flat:
+            return result[0]
+        return result
 
     def project(self,data,factor_index):
         tensorlib, _ = get_backend()
