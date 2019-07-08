@@ -38,6 +38,8 @@ class Simultaneous(object):
             return tensorlib.gather(data,self.projections[factor_index])
         mask = np.zeros(data.shape[-1])
         mask[self.projections[factor_index]] = 1
-        mask = tensorlib.concatenate([mask.reshape(1,-1)]*data.shape[0])
+        mask = mask.reshape(1,-1)
         mask = tensorlib.astensor(mask, dtype = 'bool')
-        return tensorlib.gather(data,mask).reshape(data.shape[0],-1)
+        mask = [mask]*data.shape[0]
+        mask = tensorlib.concatenate(mask)
+        return tensorlib.boolean_mask(data,mask).reshape(data.shape[0],-1)
