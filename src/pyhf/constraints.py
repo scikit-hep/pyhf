@@ -168,6 +168,7 @@ class poisson_constraint_combined(object):
                 default_backend.tolist(poisson_rate_fac), dtype='float'
             )
         else:
+            self._poisson_data = None
             self.poisson_rate_idc, self.poisson_data, self.poisson_rate_fac = (
                 None,
                 None,
