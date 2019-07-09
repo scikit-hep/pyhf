@@ -424,7 +424,7 @@ class tensorflow_backend(object):
         
         def log_prob(self, data):
             d = self.pdf.log_prob(data)
-            return tf.reduce_sum(self.pdf.log_prob(data), axis = -1)
+            return tf.reduce_sum(d, axis = -1)
 
     class Normal(object):
         def __init__(self, loc, scale):

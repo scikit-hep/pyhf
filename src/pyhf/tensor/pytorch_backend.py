@@ -307,7 +307,7 @@ class pytorch_backend(object):
         
         def log_prob(self, data):
             d = self.pdf.log_prob(data)
-            return torch.sum(self.pdf.log_prob(data), dim = -1)
+            return torch.sum(d, dim = -1)
 
     class Normal(object):
         def __init__(self, loc, scale):
