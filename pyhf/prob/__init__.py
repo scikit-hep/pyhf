@@ -20,6 +20,7 @@ class Simultaneous(object):
         value = tensorlib.astensor(value, dtype = 'float')
         log_sum = []
         flat = False
+        
         if len(tensorlib.shape(value)) == 1:
             flat = True
             value = tensorlib.reshape(value,(1,-1))
@@ -36,10 +37,10 @@ class Simultaneous(object):
         tensorlib, _ = get_backend()
         if len(tensorlib.shape(data)) == 1:
             return tensorlib.gather(data,self.projections[factor_index])
-        mask = np.zeros(data.shape[-1])
+        mask = np.zeros(self.batch_shape[0])
         mask[self.projections[factor_index]] = 1
         mask = mask.reshape(1,-1)
         mask = tensorlib.astensor(mask, dtype = 'bool')
         mask = [mask]*data.shape[0]
         mask = tensorlib.concatenate(mask)
-        return tensorlib.boolean_mask(data,mask).reshape(data.shape[0],-1)
+        return tensorlib.reshape(tensorlib.boolean_mask(data,mask),(data.shape[0],-1))

@@ -157,6 +157,7 @@ class poisson_constraint_combined(object):
                 )
             )
 
+            self._poisson_data = poisson_data
             self.poisson_data = tensorlib.astensor(
                 default_backend.tolist(poisson_data), dtype='int'
             )
@@ -174,7 +175,7 @@ class poisson_constraint_combined(object):
             )
 
     def dataview(self):
-        return self.poisson_data
+        return self._poisson_data
 
     def pdf(self, pars):
         tensorlib, _ = get_backend()

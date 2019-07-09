@@ -162,7 +162,7 @@ class tensorflow_backend(object):
         return tf.sqrt(tensor_in)
 
     def shape(self, tensor):
-        return tuple(map(int, tensor.shape))
+        return tuple([x.value for x in tensor.shape])
 
     def reshape(self, tensor, newshape):
         return tf.reshape(tensor, newshape)
@@ -414,3 +414,26 @@ class tensorflow_backend(object):
         sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
+
+    class Poisson(object):
+        def __init__(self, rate):
+            self.pdf =  tfp.distributions.Poisson(rate = rate)
+            self.batch_shape = self.pdf.batch_shape
+        def sample(self, *args, **kwargs):
+            return self.pdf.sample(*args, **kwargs)
+        
+        def log_prob(self, data):
+            d = self.pdf.log_prob(data)
+            return tf.reduce_sum(self.pdf.log_prob(data), axis = -1)
+
+    class Normal(object):
+        def __init__(self, loc, scale):
+            self.pdf = tfp.distributions.Normal(loc = loc, scale = scale)
+            self.batch_shape = self.pdf.batch_shape
+
+        def sample(self, *args, **kwargs):
+            return self.pdf.sample(*args, **kwargs)
+        
+        def log_prob(self, data):
+            d = self.pdf.log_prob(data)
+            return tf.reduce_sum(d, axis = -1)
