@@ -10,7 +10,7 @@ from .constraints import gaussian_constraint_combined, poisson_constraint_combin
 from .paramsets import reduce_paramsets_requirements
 
 log = logging.getLogger(__name__)
-
+    
 
 class _ModelConfig(object):
     def __init__(self, spec, **config_kwargs):
@@ -173,7 +173,7 @@ class _ModelConfig(object):
 
 
 class Model(object):
-    def __init__(self, spec, **config_kwargs):
+    def __init__(self, spec, batch_size, **config_kwargs):
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
@@ -183,7 +183,10 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
+        self.batch_size = batch_size
         self._create_nominal_and_modifiers()
+
+
 
         # this is tricky, must happen before constraint
         # terms try to access auxdata but after
@@ -345,6 +348,7 @@ class Model(object):
                 [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
+                batch_size = self.batch_size,
                 **self.config.modifier_settings.get(k, {})
             )
             for k, c in modifiers.combined.items()
@@ -407,7 +411,12 @@ class Model(object):
 
         deltas, factors = self._modifications(pars)
 
-        allsum = tensorlib.concatenate(deltas + [tensorlib.astensor(self.thenom)])
+
+
+        import numpy as np
+        thenom = np.repeat(self.thenom,self.batch_size,axis=2)
+
+        allsum = tensorlib.concatenate(deltas + [tensorlib.astensor(thenom)])
 
         nom_plus_delta = tensorlib.sum(allsum, axis=0)
         nom_plus_delta = tensorlib.reshape(
@@ -418,12 +427,14 @@ class Model(object):
 
         newbysample = tensorlib.product(allfac, axis=0)
         newresults = tensorlib.sum(newbysample, axis=0)
-        return newresults[0]  # only one alphas
+        return newresults
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         expected_actual = self.expected_actualdata(pars)
+
+
 
         if not include_auxdata:
             return expected_actual
@@ -443,9 +454,14 @@ class Model(object):
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_actualdata(pars)
+        import numpy as np
+        maindata = tensorlib.astensor([maindata] * lambdas_data.shape[0])
+        print('lambdas!!',lambdas_data.shape)
+        print('data!!',maindata.shape)
         summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
-        mainpdf = tensorlib.sum(tosum)
+        # tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
+        tosum = summands
+        mainpdf = tensorlib.sum(tosum, axis = 1)
         return mainpdf
 
     def logpdf(self, pars, data):
@@ -564,7 +580,7 @@ class Workspace(object):
             "A measurement was not given to create the Model."
         )
 
-    def model(self, **config_kwargs):
+    def model(self, batch_size, **config_kwargs):
         """
         Create a model object with/without patches applied.
 
@@ -589,7 +605,7 @@ class Workspace(object):
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poiname=measurement['config']['poi'], **config_kwargs)
+        return Model(modelspec, batch_size = batch_size, poiname=measurement['config']['poi'], **config_kwargs)
 
     def data(self, model, with_aux=True):
         """

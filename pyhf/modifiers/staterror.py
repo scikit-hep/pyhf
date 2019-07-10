@@ -24,7 +24,7 @@ class staterror(object):
 
 
 class staterror_combined(object):
-    def __init__(self, staterr_mods, pdfconfig, mega_mods):
+    def __init__(self, staterr_mods, pdfconfig, mega_mods, batch_size):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
 
         pnames = [pname for pname, _ in staterr_mods]

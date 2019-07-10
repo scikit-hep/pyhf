@@ -3,7 +3,7 @@ import logging
 from . import modifier
 from ..paramsets import unconstrained
 from .. import get_backend, default_backend, events
-
+from ..utils import Parameters
 log = logging.getLogger(__name__)
 
 
@@ -23,16 +23,16 @@ class normfactor(object):
 
 
 class normfactor_combined(object):
-    def __init__(self, normfactor_mods, pdfconfig, mega_mods):
+    def __init__(self, normfactor_mods, pdfconfig, mega_mods, batch_size):
+        self.batch_size = batch_size
         self._parindices = list(range(len(pdfconfig.suggested_init())))
 
         pnames = [pname for pname, _ in normfactor_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
         normfactor_mods = [m for m, _ in normfactor_mods]
 
-        self._normfactor_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
+        self.parameters_helper = Parameters((self.batch_size,len(pdfconfig.suggested_init()),), pdfconfig.par_map)
+        self.parameters_helper._select_indices(pnames)
         self._normfactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
@@ -41,21 +41,22 @@ class normfactor_combined(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
+        import numpy as np
         self.normfactor_mask = default_backend.astensor(self._normfactor_mask)
+        self.normfactor_mask = np.repeat(self.normfactor_mask,self.batch_size,axis=2)
         self.normfactor_default = default_backend.ones(self.normfactor_mask.shape)
-        self.normfactor_indices = default_backend.astensor(
-            self._normfactor_indices, dtype='int'
-        )
 
     def apply(self, pars):
         tensorlib, _ = get_backend()
-        normfactor_indices = tensorlib.astensor(self.normfactor_indices, dtype='int')
         normfactor_mask = tensorlib.astensor(self.normfactor_mask)
-        if not tensorlib.shape(normfactor_indices)[0]:
+        if not self.parameters_helper.index_selection:
             return
-        normfactors = tensorlib.gather(pars, normfactor_indices)
+        what = self.parameters_helper.get_slice(pars)
+        what = tensorlib.reshape(what, (tensorlib.shape(normfactor_mask)[0],1,self.batch_size))
+        normfactors = tensorlib.astensor(what)
+        #TODO: explain why astensor here assumes some regularity about the slices   z
         results_normfactor = normfactor_mask * tensorlib.reshape(
-            normfactors, tensorlib.shape(normfactors) + (1, 1)
+            normfactors, tensorlib.shape(normfactors) + (1,)
         )
         results_normfactor = tensorlib.where(
             normfactor_mask,

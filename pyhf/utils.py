@@ -12,7 +12,53 @@ SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
 SCHEMA_VERSION = '1.0.0'
 
+import pyhf
+from pyhf import get_backend, default_backend
+class Parameters(object):
+    def __init__(self, tensor_shape, par_map):
+        tensorlib, _ = get_backend()
+        
+        self.tensor_shape = tensor_shape
+        self.batch_shape = tensor_shape[:-1]
+        x = list(range(int(default_backend.product(tensor_shape))))
+        self.indices = tensorlib.reshape(
+            x
+        ,tensor_shape)
+        self.par_map = par_map
+        
+    def __select_indices(self, name):
+        tensorlib, _ = get_backend()
+        if isinstance(name,list):
+            self.is_list = True
+            return [
+                self.__select_indices(x) for x in name
+            ]
+        parfield_slice = tuple(slice(None,None) for x in self.batch_shape) + (self.par_map[name]['slice'],)
+        indices = self.indices[parfield_slice]
+        return indices.tolist()
 
+    def _select_indices(self, name):
+        tensorlib, _ = get_backend()
+        self.index_selection = self.__select_indices(name)
+        
+    def __repr__(self):
+        return '({} w/ [{}])'.format(self.tensor_shape,' '.join(list(self.par_map.keys())))
+    
+    def get_slice(self,tensor, index_selection = None):
+        if self.is_list and index_selection is None:
+            return [
+                self.get_slice(tensor, s) for s in self.index_selection
+            ]
+        index_selection or self.index_selection
+        tensorlib, _ = get_backend()
+        tensor  = tensorlib.astensor(tensor)
+        indices = tensorlib.astensor(index_selection, dtype = 'int')
+        result = tensorlib.gather(
+            tensorlib.reshape(tensor,-1),
+            indices
+        )
+        return result
+        
 def load_schema(schema_id, version=None):
     global SCHEMA_CACHE
     if not version:

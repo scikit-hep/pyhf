@@ -25,7 +25,8 @@ class normsys(object):
 
 
 class normsys_combined(object):
-    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1'):
+    def __init__(self, normsys_mods, pdfconfig, mega_mods, batch_size, interpcode='code1'):
+        # raise RuntimeError('batchsize not implemented')
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
@@ -70,7 +71,8 @@ class normsys_combined(object):
         tensorlib, _ = get_backend()
         if not tensorlib.shape(self.normsys_indices)[0]:
             return
-        normsys_alphaset = tensorlib.gather(pars, self.normsys_indices)
+        flat_pars = tensorlib.reshape(pars,-1)
+        normsys_alphaset = tensorlib.gather(flat_pars, self.normsys_indices)
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below

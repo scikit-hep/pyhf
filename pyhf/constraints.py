@@ -83,7 +83,9 @@ class gaussian_constraint_combined(object):
             return 0
         tensorlib, _ = get_backend()
         normal_data = tensorlib.gather(auxdata, self.normal_data)
-        normal_means = tensorlib.gather(pars, self.normal_mean_idc)
+
+        flat_pars = tensorlib.reshape(pars,-1)
+        normal_means = tensorlib.gather(flat_pars, self.normal_mean_idc)
         normal = tensorlib.normal_logpdf(normal_data, normal_means, self.normal_sigmas)
         return tensorlib.sum(normal)
 
@@ -176,7 +178,10 @@ class poisson_constraint_combined(object):
             return 0
         tensorlib, _ = get_backend()
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        poisson_rate_base = tensorlib.gather(pars, self.poisson_rate_idc)
+
+
+        flat_pars = tensorlib.reshape(pars,-1)
+        poisson_rate_base = tensorlib.gather(flat_pars, self.poisson_rate_idc)
         poisson_factors = self.poisson_rate_fac
 
         poisson_rate = tensorlib.product(

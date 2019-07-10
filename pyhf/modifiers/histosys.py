@@ -4,6 +4,7 @@ from . import modifier
 from ..paramsets import constrained_by_normal
 from .. import get_backend, events
 from .. import interpolators
+from ..utils import Parameters
 
 log = logging.getLogger(__name__)
 
@@ -25,13 +26,14 @@ class histosys(object):
 
 
 class histosys_combined(object):
-    def __init__(self, histosys_mods, pdfconfig, mega_mods):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
-
+    def __init__(self, histosys_mods, pdfconfig, mega_mods, batch_size):
+        self.batch_size = batch_size
         pnames = [pname for pname, _ in histosys_mods]
+        self.parameters_helper = Parameters((self.batch_size,len(pdfconfig.suggested_init()),), pdfconfig.par_map)
+        self.parameters_helper._select_indices(pnames)
+
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
-        self._histo_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
         self._histosys_histoset = [
             [
                 [
@@ -53,18 +55,23 @@ class histosys_combined(object):
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
+
     def _precompute(self):
+        import numpy as np
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        self.histosys_mask = np.repeat(self.histosys_mask,self.batch_size,axis=2)
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
-        self.histo_indices = tensorlib.astensor(self._histo_indices, dtype='int')
 
     def apply(self, pars):
         tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.histo_indices)[0]:
+        if not self.parameters_helper.index_selection:
             return
-        histosys_alphaset = tensorlib.gather(pars, self.histo_indices)
+
+        slices = self.parameters_helper.get_slice(pars)
+        histosys_alphaset = tensorlib.astensor([tensorlib.reshape(x,tensorlib.shape(x)[:-1]) for x in slices])
         results_histo = self.interpolator(histosys_alphaset)
+
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(
             self.histosys_mask, results_histo, self.histosys_default

@@ -29,7 +29,7 @@ class shapesys(object):
 
 
 class shapesys_combined(object):
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods):
+    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size):
 
         pnames = [pname for pname, _ in shapesys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]

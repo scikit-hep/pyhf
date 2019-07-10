@@ -23,7 +23,7 @@ class shapefactor(object):
 
 
 class shapefactor_combined(object):
-    def __init__(self, shapefactor_mods, pdfconfig, mega_mods):
+    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
         bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
@@ -61,6 +61,7 @@ class shapefactor_combined(object):
 
         and at that point can be used to compute the effect of shapefactor.
         """
+        # raise RuntimeError('batch size not implemented')
 
         pnames = [pname for pname, _ in shapefactor_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
@@ -113,7 +114,8 @@ class shapefactor_combined(object):
         if not self._shapefactor_indices:
             return
         tensorlib, _ = get_backend()
-        shapefactors = tensorlib.gather(pars, self.shapefactor_indices)
+        flat_pars = tensorlib.reshape(pars,-1)
+        shapefactors = tensorlib.gather(flat_pars, self.shapefactor_indices)
         results_shapefactor = tensorlib.einsum(
             's,a,mb->msab', self.sample_ones, self.alpha_ones, shapefactors
         )
