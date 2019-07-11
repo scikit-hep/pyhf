@@ -228,8 +228,8 @@ class code4(object):
 
 class _slow_code4(object):
     """
-    delta_up**alpha0 = 1 + a1 alpha0 + a2 alpha0^2 + a3 alpha0^3 + a4 alpha0^4 + a5 alpha0^5 + a6 alpha0^6
-    delta_down**alpha0 = 1 - a1 alpha0 + a2 alpha0^2 - a3 alpha0^3 + a4 alpha0^4 - a5 alpha0^5 + a6 alpha0^6
+    delta_up^alpha0 = 1 + a1 alpha0 + a2 alpha0^2 + a3 alpha0^3 + a4 alpha0^4 + a5 alpha0^5 + a6 alpha0^6
+    delta_down^alpha0 = 1 - a1 alpha0 + a2 alpha0^2 - a3 alpha0^3 + a4 alpha0^4 - a5 alpha0^5 + a6 alpha0^6
 
     f[alpha_] := 1 + a1 * alpha + a2 * alpha^2 + a3 * alpha^3 + a4 * alpha^4 + a5 * alpha^5 + a6 * alpha^6
     up[alpha_] := delta_up^alpha
@@ -269,17 +269,17 @@ class _slow_code4(object):
         delta_up = up / nom
         delta_down = down / nom
         if alpha >= self.alpha0:
-            delta = delta_up ** alpha
+            delta = math.pow(delta_up, alpha)
         elif -self.alpha0 < alpha < self.alpha0:
-            delta_up_alpha0 = delta_up ** self.alpha0
-            delta_down_alpha0 = delta_down ** self.alpha0
+            delta_up_alpha0 = math.pow(delta_up, self.alpha0)
+            delta_down_alpha0 = math.pow(delta_down, self.alpha0)
             b = [
                 delta_up_alpha0 - 1,
                 delta_down_alpha0 - 1,
                 math.log(delta_up) * delta_up_alpha0,
                 -math.log(delta_down) * delta_down_alpha0,
-                math.log(delta_up) ** 2 * delta_up_alpha0,
-                math.log(delta_down) ** 2 * delta_down_alpha0,
+                math.pow(math.log(delta_up), 2) * delta_up_alpha0,
+                math.pow(math.log(delta_down), 2) * delta_down_alpha0,
             ]
             A_inverse = [
                 [
@@ -291,44 +291,44 @@ class _slow_code4(object):
                     -1.0 / 16 * self.alpha0,
                 ],
                 [
-                    3.0 / (2 * self.alpha0 ** 2),
-                    3.0 / (2 * self.alpha0 ** 2),
+                    3.0 / (2 * math.pow(self.alpha0, 2)),
+                    3.0 / (2 * math.pow(self.alpha0, 2)),
                     -9.0 / (16 * self.alpha0),
                     9.0 / (16 * self.alpha0),
                     1.0 / 16,
                     1.0 / 16,
                 ],
                 [
-                    -5.0 / (8 * self.alpha0 ** 3),
-                    5.0 / (8 * self.alpha0 ** 3),
-                    5.0 / (8 * self.alpha0 ** 2),
-                    5.0 / (8 * self.alpha0 ** 2),
+                    -5.0 / (8 * math.pow(self.alpha0, 3)),
+                    5.0 / (8 * math.pow(self.alpha0, 3)),
+                    5.0 / (8 * math.pow(self.alpha0, 2)),
+                    5.0 / (8 * math.pow(self.alpha0, 2)),
                     -1.0 / (8 * self.alpha0),
                     1.0 / (8 * self.alpha0),
                 ],
                 [
-                    3.0 / (-2 * self.alpha0 ** 4),
-                    3.0 / (-2 * self.alpha0 ** 4),
-                    -7.0 / (-8 * self.alpha0 ** 3),
-                    7.0 / (-8 * self.alpha0 ** 3),
-                    -1.0 / (8 * self.alpha0 ** 2),
-                    -1.0 / (8 * self.alpha0 ** 2),
+                    3.0 / (-2 * math.pow(self.alpha0, 4)),
+                    3.0 / (-2 * math.pow(self.alpha0, 4)),
+                    -7.0 / (-8 * math.pow(self.alpha0, 3)),
+                    7.0 / (-8 * math.pow(self.alpha0, 3)),
+                    -1.0 / (8 * math.pow(self.alpha0, 2)),
+                    -1.0 / (8 * math.pow(self.alpha0, 2)),
                 ],
                 [
-                    3.0 / (16 * self.alpha0 ** 5),
-                    -3.0 / (16 * self.alpha0 ** 5),
-                    -3.0 / (16 * self.alpha0 ** 4),
-                    -3.0 / (16 * self.alpha0 ** 4),
-                    1.0 / (16 * self.alpha0 ** 3),
-                    -1.0 / (16 * self.alpha0 ** 3),
+                    3.0 / (16 * math.pow(self.alpha0, 5)),
+                    -3.0 / (16 * math.pow(self.alpha0, 5)),
+                    -3.0 / (16 * math.pow(self.alpha0, 4)),
+                    -3.0 / (16 * math.pow(self.alpha0, 4)),
+                    1.0 / (16 * math.pow(self.alpha0, 3)),
+                    -1.0 / (16 * math.pow(self.alpha0, 3)),
                 ],
                 [
-                    1.0 / (2 * self.alpha0 ** 6),
-                    1.0 / (2 * self.alpha0 ** 6),
-                    -5.0 / (16 * self.alpha0 ** 5),
-                    5.0 / (16 * self.alpha0 ** 5),
-                    1.0 / (16 * self.alpha0 ** 4),
-                    1.0 / (16 * self.alpha0 ** 4),
+                    1.0 / (2 * math.pow(self.alpha0, 6)),
+                    1.0 / (2 * math.pow(self.alpha0, 6)),
+                    -5.0 / (16 * math.pow(self.alpha0, 5)),
+                    5.0 / (16 * math.pow(self.alpha0, 5)),
+                    1.0 / (16 * math.pow(self.alpha0, 4)),
+                    1.0 / (16 * math.pow(self.alpha0, 4)),
                 ],
             ]
 
@@ -337,9 +337,9 @@ class _slow_code4(object):
             ]
             delta = 1
             for i in range(1, 7):
-                delta += coefficients[i - 1] * alpha ** i
+                delta += coefficients[i - 1] * math.pow(alpha, i)
         else:
-            delta = delta_down ** (-alpha)
+            delta = math.pow(delta_down, (-alpha))
         return delta
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
