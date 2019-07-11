@@ -25,8 +25,10 @@ class histosys(object):
 
 
 class histosys_combined(object):
-    def __init__(self, histosys_mods, pdfconfig, mega_mods):
+    def __init__(self, histosys_mods, pdfconfig, mega_mods, interpcode='code0'):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
+        self.interpcode = interpcode
+        assert self.interpcode in ['code0', 'code2', 'code4p']
 
         pnames = [pname for pname, _ in histosys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
@@ -48,7 +50,9 @@ class histosys_combined(object):
         ]
 
         if len(histosys_mods):
-            self.interpolator = interpolators.code0(self._histosys_histoset)
+            self.interpolator = getattr(interpolators, self.interpcode)(
+                self._histosys_histoset
+            )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

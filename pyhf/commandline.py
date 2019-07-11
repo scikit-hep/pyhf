@@ -238,7 +238,10 @@ def cls(
     p = w.model(
         measurement_name=measurement,
         patches=patches,
-        modifier_settings={'normsys': {'interpcode': 'code4'}},
+        modifier_settings={
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        },
     )
 
     optconf = {k: v for item in optconf for k, v in item.items()}
