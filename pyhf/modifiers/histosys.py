@@ -28,7 +28,7 @@ class histosys_combined(object):
     def __init__(self, histosys_mods, pdfconfig, mega_mods, interpcode='code0'):
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self.interpcode = interpcode
-        assert self.interpcode in ['code0', 'code2']
+        assert self.interpcode in ['code0', 'code2', 'code4p']
 
         pnames = [pname for pname, _ in histosys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
