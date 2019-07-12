@@ -1,4 +1,5 @@
 import logging
+import math
 from .. import get_backend, default_backend
 from .. import events
 from . import _slow_interpolator_looper
@@ -98,9 +99,9 @@ class _slow_code1(object):
         delta_up = up / nom
         delta_down = down / nom
         if alpha > 0:
-            delta = delta_up ** alpha
+            delta = math.pow(delta_up, alpha)
         else:
-            delta = delta_down ** (-alpha)
+            delta = math.pow(delta_down, (-alpha))
         return delta
 
     def __init__(self, histogramssets, subscribe=True):
