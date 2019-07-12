@@ -77,7 +77,7 @@ class gaussian_constraint_combined(object):
                 None,
                 None,
             )
-    
+
     def logpdf(self, auxdata, pars):
         if self.normal_data is None:
             return 0

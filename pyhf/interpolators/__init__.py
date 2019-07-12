@@ -39,4 +39,4 @@ def get(interpcode, do_tensorized_calc=True):
         raise exceptions.InvalidInterpCode
 
 
-__all__ = ['code0', 'code1', 'code2']
+__all__ = ['code0', 'code1', 'code2', 'code4', 'code4p']
