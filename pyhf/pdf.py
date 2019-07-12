@@ -333,9 +333,9 @@ class Model(object):
         self.thenom = default_backend.reshape(
             thenom,
             (
-                1,
+                1,  # modifier dimension.. thenom is the base
                 len(self.config.samples),
-                1,
+                1,  # alphaset dimension
                 sum(list(self.config.channel_nbins.values())),
             ),
         )

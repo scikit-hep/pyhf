@@ -130,6 +130,13 @@ def test_patch(tmpdir, script_runner):
     command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath, patch.strpath)
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
+
+    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch {2:s}'.format(
+        temp.strpath, tmpdir.mkdir('output_1').strpath, patch.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
     import io
 
     command = 'pyhf cls {0:s} --patch -'.format(temp.strpath, patch.strpath)
@@ -138,7 +145,15 @@ def test_patch(tmpdir, script_runner):
         patchcontent
     )  # python 2.7 pytest-files are not file-like enough
     ret = script_runner.run(*shlex.split(command), stdin=pipefile)
-    print(ret.stderr)
+    assert ret.success
+
+    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch -'.format(
+        temp.strpath, tmpdir.mkdir('output_2').strpath, patch.strpath
+    )
+    pipefile = io.StringIO(
+        patchcontent
+    )  # python 2.7 pytest-files are not file-like enough
+    ret = script_runner.run(*shlex.split(command), stdin=pipefile)
     assert ret.success
 
 
@@ -154,6 +169,12 @@ def test_patch_fail(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
 
     command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath, patch.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+
+    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch {2:s}'.format(
+        temp.strpath, tmpdir.mkdir('output').strpath, patch.strpath
+    )
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
 

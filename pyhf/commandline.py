@@ -3,6 +3,7 @@ import logging
 import click
 import json
 import os
+import jsonpatch
 
 from .utils import hypotest, EqDelimStringParamType
 from .pdf import Workspace
@@ -70,7 +71,8 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--specroot', default='config')
 @click.option('--dataroot', default='data')
 @click.option('--resultprefix', default='FitConfig')
-def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
+@click.option('-p', '--patch', multiple=True)
+def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     try:
         import uproot
 
@@ -86,6 +88,9 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix):
     ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         d = json.load(specstream)
+        for pfile in patch:
+            patch = json.loads(click.open_file(pfile, 'r').read())
+            d = jsonpatch.JsonPatch(patch).apply(d)
         ensure_dirs(os.path.join(output_dir, specroot))
         ensure_dirs(os.path.join(output_dir, dataroot))
         with click.open_file(
@@ -238,7 +243,10 @@ def cls(
     p = w.model(
         measurement_name=measurement,
         patches=patches,
-        modifier_settings={'normsys': {'interpcode': 'code4'}},
+        modifier_settings={
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        },
     )
 
     optconf = {k: v for item in optconf for k, v in item.items()}
