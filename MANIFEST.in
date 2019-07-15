@@ -1,6 +1,2 @@
-include src/schemas/1.0.0/defs.json
-include src/schemas/1.0.0/measurement.json
-include src/schemas/1.0.0/model.json
-include src/schemas/1.0.0/workspace.json
-include src/schemas/HistFactorySchema.dtd
+graft src
 include LICENSE
