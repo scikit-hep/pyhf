@@ -1,2 +1,5 @@
 graft src
+
 include LICENSE
+
+global-exclude __pycache__ *.py[cod]
