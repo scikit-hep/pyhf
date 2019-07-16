@@ -136,8 +136,7 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         if axis is None or tensor_in.shape == nd.array([]).size:
             return nd.sum(tensor_in)
-        else:
-            return nd.sum(tensor_in, axis)
+        return nd.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         """
@@ -153,8 +152,7 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         if axis is None:
             return nd.prod(tensor_in)
-        else:
-            return nd.prod(tensor_in, axis)
+        return nd.prod(tensor_in, axis)
 
     def abs(self, tensor):
         tensor = self.astensor(tensor)
