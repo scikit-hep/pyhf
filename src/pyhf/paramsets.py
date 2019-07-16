@@ -53,14 +53,12 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         'sigmas',
     ]
 
-    """
-    - process all defined paramsets
-    - determine the unique set of paramsets by param-name
-    - if the paramset is not unique, complain
-    - if the paramset is unique, build the paramset using the set() defined on its options
-      - if the value is a tuple, this came from default options so convert to a list and use it
-      - if the value is a list, this came from user-define options, so use it
-    """
+    # - process all defined paramsets
+    # - determine the unique set of paramsets by param-name
+    # - if the paramset is not unique, complain
+    # - if the paramset is unique, build the paramset using the set() defined on its options
+    #   - if the value is a tuple, this came from default options so convert to a list and use it
+    #   - if the value is a list, this came from user-define options, so use it
     for paramset_name in list(paramsets_requirements.keys()):
         paramset_requirements = paramsets_requirements[paramset_name]
         paramset_user_configs = paramsets_user_configs.get(paramset_name, {})
