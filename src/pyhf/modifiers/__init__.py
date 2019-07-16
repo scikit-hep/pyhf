@@ -126,19 +126,6 @@ def modifier(*args, **kwargs):
     #   >>> myMultiplierModifier.op_code
     #   'multiplication'
 
-    name = kwargs.pop('name', None)
-    constrained = bool(kwargs.pop('constrained', False))
-    pdf_type = str(kwargs.pop('pdf_type', 'normal'))
-    op_code = str(kwargs.pop('op_code', 'addition'))
-    # check for unparsed keyword arguments
-    if kwargs:
-        raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
-    # check to make sure the given name is a string, if passed in one
-    if not isinstance(name, string_types) and name is not None:
-        raise TypeError(
-            '@modifier must be given a string. You gave it {}'.format(type(name))
-        )
-
     def _modifier(name, constrained, pdf_type, op_code):
         def wrapper(cls):
             add_to_registry(
@@ -151,6 +138,19 @@ def modifier(*args, **kwargs):
             return cls
 
         return wrapper
+
+    name = kwargs.pop('name', None)
+    constrained = bool(kwargs.pop('constrained', False))
+    pdf_type = str(kwargs.pop('pdf_type', 'normal'))
+    op_code = str(kwargs.pop('op_code', 'addition'))
+    # check for unparsed keyword arguments
+    if kwargs:
+        raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
+    # check to make sure the given name is a string, if passed in one
+    if not isinstance(name, string_types) and name is not None:
+        raise TypeError(
+            '@modifier must be given a string. You gave it {}'.format(type(name))
+        )
 
     if not args:
         # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
