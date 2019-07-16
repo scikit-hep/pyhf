@@ -702,8 +702,8 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     )
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
-    for result, expected_result in zip(CLs_exp_set, expected_result['exp']):
-        assert abs(result - expected_result) / expected_result < tolerance
+    for result, expected in zip(CLs_exp_set, expected_result['exp']):
+        assert abs(result - expected) / expected < tolerance
 
 
 @pytest.mark.parametrize(
