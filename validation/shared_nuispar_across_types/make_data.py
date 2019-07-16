@@ -8,8 +8,6 @@ histo_dn = 'hdn', [10, 11]
 
 data = 'data', [15, 16]
 
-import ROOT
-
 f = ROOT.TFile.Open('data.root', 'recreate')
 
 
