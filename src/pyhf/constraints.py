@@ -77,7 +77,7 @@ class gaussian_constraint_combined(object):
                 None,
                 None,
             )
-    
+
     def dataview(self):
         return self.normal_data
 
@@ -89,6 +89,7 @@ class gaussian_constraint_combined(object):
         normal_means = tensorlib.gather(pars, self.normal_mean_idc)
         normal = tensorlib.Normal(normal_means, self.normal_sigmas)
         return normal
+
 
 class poisson_constraint_combined(object):
     def __init__(self, pdfconfig):

@@ -417,23 +417,24 @@ class tensorflow_backend(object):
 
     class Poisson(object):
         def __init__(self, rate):
-            self.pdf =  tfp.distributions.Poisson(rate = rate)
+            self.pdf = tfp.distributions.Poisson(rate=rate)
             self.batch_shape = self.pdf.batch_shape
+
         def sample(self, *args, **kwargs):
             return self.pdf.sample(*args, **kwargs)
-        
+
         def log_prob(self, data):
             d = self.pdf.log_prob(data)
-            return tf.reduce_sum(d, axis = -1)
+            return tf.reduce_sum(d, axis=-1)
 
     class Normal(object):
         def __init__(self, loc, scale):
-            self.pdf = tfp.distributions.Normal(loc = loc, scale = scale)
+            self.pdf = tfp.distributions.Normal(loc=loc, scale=scale)
             self.batch_shape = self.pdf.batch_shape
 
         def sample(self, *args, **kwargs):
             return self.pdf.sample(*args, **kwargs)
-        
+
         def log_prob(self, data):
             d = self.pdf.log_prob(data)
-            return tf.reduce_sum(d, axis = -1)
+            return tf.reduce_sum(d, axis=-1)

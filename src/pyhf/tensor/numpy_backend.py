@@ -2,6 +2,7 @@ import numpy as np
 import logging
 from scipy.special import gammaln
 from scipy.stats import norm, poisson
+
 log = logging.getLogger(__name__)
 
 
@@ -265,40 +266,40 @@ class numpy_backend(object):
         """
         return norm.cdf(x, loc=mu, scale=sigma)
 
-
     class Poisson(object):
         def __init__(self, rate):
-            self.pdf =  poisson(mu = rate)
+            self.pdf = poisson(mu=rate)
             self.rate = rate
             self.batch_shape = self.rate.shape
 
-        def sample(self, sample_shape = None):
+        def sample(self, sample_shape=None):
             if sample_shape is not None:
-                return self.pdf.rvs(size = sample_shape + self.batch_shape)
+                return self.pdf.rvs(size=sample_shape + self.batch_shape)
             else:
                 return self.pdf.rvs()
-            
+
         def log_prob(self, data):
             n = np.asarray(data)
             lam = np.asarray(self.rate)
-            summand =  n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
-            what = np.sum(summand[np.isfinite(summand)].reshape(summand.shape[0],-1), axis = -1)
+            summand = n * np.log(self.rate) - self.rate - gammaln(n + 1.0)
+            what = np.sum(
+                summand[np.isfinite(summand)].reshape(summand.shape[0], -1), axis=-1
+            )
             return what
-
 
     class Normal(object):
         def __init__(self, loc, scale):
             self.loc = loc
             self.scale = scale
-            self.pdf = norm(loc = loc, scale = scale)
+            self.pdf = norm(loc=loc, scale=scale)
             self.batch_shape = loc.shape
-        
-        def sample(self, sample_shape = None):
+
+        def sample(self, sample_shape=None):
             if sample_shape is not None:
-                return self.pdf.rvs(size = sample_shape + self.batch_shape)
+                return self.pdf.rvs(size=sample_shape + self.batch_shape)
             else:
                 return self.pdf.rvs()
-        
+
         def log_prob(self, data):
             x = data
             root2 = np.sqrt(2)
@@ -306,5 +307,7 @@ class numpy_backend(object):
             prefactor = -np.log(self.scale * root2pi)
             summand = -np.square(np.divide((x - self.loc), (root2 * self.scale)))
             summand = prefactor + summand
-            what = np.sum(summand[np.isfinite(summand)].reshape(summand.shape[0],-1), axis = -1)
+            what = np.sum(
+                summand[np.isfinite(summand)].reshape(summand.shape[0], -1), axis=-1
+            )
             return what

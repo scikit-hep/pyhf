@@ -444,7 +444,7 @@ class Model(object):
         factors = []
         projections = []
         if gview is not None:
-            gpdf  = self.constraints_gaussian.pdf(pars)
+            gpdf = self.constraints_gaussian.pdf(pars)
             factors.append(gpdf)
             projections.append(gview)
         if pview is not None:
@@ -470,7 +470,7 @@ class Model(object):
         cut = len(indices) - len(self.config.auxdata)
         data_proj = indices[:cut]
         aux_proj = indices[cut:]
-        sim = Simultaneous([mainpdf,conspdf], [data_proj,aux_proj])
+        sim = Simultaneous([mainpdf, conspdf], [data_proj, aux_proj])
         return sim
 
     def logpdf(self, pars, data):
