@@ -41,8 +41,6 @@ class InvalidModel(Exception):
     This can occur, for example, when the provided parameter of interest to fit against does not get declared in the specification provided.
     """
 
-    pass
-
 
 class InvalidModifier(Exception):
     """
@@ -53,23 +51,17 @@ class InvalidModifier(Exception):
 
     """
 
-    pass
-
 
 class InvalidInterpCode(Exception):
     """
     InvalidInterpCode is raised when an invalid/unimplemented interpolation code is requested.
     """
 
-    pass
-
 
 class ImportBackendError(Exception):
     """
     MissingLibraries is raised when something is imported by sustained an import error due to missing additional, non-default libraries.
     """
-
-    pass
 
 
 class InvalidOptimizer(Exception):
