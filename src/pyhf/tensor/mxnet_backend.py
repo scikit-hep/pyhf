@@ -92,7 +92,6 @@ class mxnet_backend(object):
 
     def boolean_mask(self, tensor, mask):
         raise NotImplementedError("mxnet::boolean_mask is not implemented.")
-        return
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -380,7 +379,6 @@ class mxnet_backend(object):
             tensor: the calculation based on the Einstein summation convention
         """
         raise NotImplementedError("mxnet::einsum is not implemented.")
-        return self.astensor([])
 
     def poisson_logpdf(self, n, lam):
         n = self.astensor(n)
