@@ -131,7 +131,7 @@ def modifier(*args, **kwargs):
     pdf_type = str(kwargs.pop('pdf_type', 'normal'))
     op_code = str(kwargs.pop('op_code', 'addition'))
     # check for unparsed keyword arguments
-    if len(kwargs) != 0:
+    if kwargs:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
     # check to make sure the given name is a string, if passed in one
     if not isinstance(name, string_types) and name is not None:
@@ -152,7 +152,7 @@ def modifier(*args, **kwargs):
 
         return wrapper
 
-    if len(args) == 0:
+    if not args:
         # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
         return _modifier(name, constrained, pdf_type, op_code)
     elif len(args) == 1:
