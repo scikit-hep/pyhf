@@ -1,5 +1,6 @@
 import pyhf
-import pyhf.writexml, pyhf.readxml
+import pyhf.writexml
+import pyhf.readxml
 import json
 import pytest
 import os
