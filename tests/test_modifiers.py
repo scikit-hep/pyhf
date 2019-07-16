@@ -43,7 +43,7 @@ def test_modifiers_structure():
     assert inspect.isclass(myCustomModifier)
     assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myUnconstrainedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_constrained == False
+    assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_constrained is False
     del pyhf.modifiers.registry['myUnconstrainedModifier']
 
     @modifier(name='myConstrainedModifier', constrained=True)
@@ -55,7 +55,7 @@ def test_modifiers_structure():
     assert inspect.isclass(myCustomModifier)
     assert 'myConstrainedModifier' in pyhf.modifiers.registry
     assert pyhf.modifiers.registry['myConstrainedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained == True
+    assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained is True
     del pyhf.modifiers.registry['myConstrainedModifier']
 
 
