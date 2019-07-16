@@ -287,7 +287,6 @@ class Model(object):
                         mega_mods[s][key]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
-                        pass
                     elif mtype == 'normsys':
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
