@@ -9,7 +9,7 @@ original XML-based specification :cite:`Cranmer:1456844`.
 Workspace
 ---------
 
-.. literalinclude:: ../pyhf/schemas/1.0.0/workspace.json
+.. literalinclude:: ../src/pyhf/schemas/1.0.0/workspace.json
    :language: json
 
 The overall document in the above code snippet describes a *workspace*, which includes

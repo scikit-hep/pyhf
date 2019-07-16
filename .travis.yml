@@ -14,7 +14,7 @@ install:
   - pip install --ignore-installed -U -q -e .[complete];
   - pip freeze
 script:
-  - pyflakes pyhf
+  - pyflakes src
   - check-manifest || travis_terminate 1
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
   - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi

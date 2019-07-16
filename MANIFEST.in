@@ -1,6 +1,5 @@
-include pyhf/schemas/1.0.0/defs.json
-include pyhf/schemas/1.0.0/measurement.json
-include pyhf/schemas/1.0.0/model.json
-include pyhf/schemas/1.0.0/workspace.json
-include pyhf/schemas/HistFactorySchema.dtd
+graft src
+
 include LICENSE
+
+global-exclude __pycache__ *.py[cod]
