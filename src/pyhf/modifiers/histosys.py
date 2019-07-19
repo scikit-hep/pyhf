@@ -49,7 +49,7 @@ class histosys_combined(object):
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
-        if len(histosys_mods):
+        if histosys_mods:
             self.interpolator = getattr(interpolators, self.interpcode)(
                 self._histosys_histoset
             )

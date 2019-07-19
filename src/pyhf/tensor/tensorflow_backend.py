@@ -227,7 +227,7 @@ class tensorflow_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(lambda arg: arg.shape[0], args))
         try:
-            assert len([arg for arg in args if 1 < arg.shape[0] < max_dim]) == 0
+            assert not [arg for arg in args if 1 < arg.shape[0] < max_dim]
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim

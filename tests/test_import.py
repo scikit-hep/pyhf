@@ -10,7 +10,7 @@ def assert_equal_dictionary(d1, d2):
     "recursively compare 2 dictionaries"
     for k in d1.keys():
         assert k in d2
-        if type(d1[k]) is dict:
+        if isinstance(d1[k], dict):
             assert_equal_dictionary(d1[k], d2[k])
         else:
             assert d1[k] == d2[k]

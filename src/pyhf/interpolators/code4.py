@@ -143,7 +143,6 @@ class code4(object):
         self.ones = tensorlib.einsum(
             'sa,shb->shab', self.mask_on, self.broadcast_helper
         )
-        return
 
     def _precompute_alphasets(self, alphasets_shape):
         if alphasets_shape == self.alphasets_shape:

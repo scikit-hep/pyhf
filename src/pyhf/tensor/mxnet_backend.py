@@ -92,7 +92,6 @@ class mxnet_backend(object):
 
     def boolean_mask(self, tensor, mask):
         raise NotImplementedError("mxnet::boolean_mask is not implemented.")
-        return
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -136,8 +135,7 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         if axis is None or tensor_in.shape == nd.array([]).size:
             return nd.sum(tensor_in)
-        else:
-            return nd.sum(tensor_in, axis)
+        return nd.sum(tensor_in, axis)
 
     def product(self, tensor_in, axis=None):
         """
@@ -153,8 +151,7 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         if axis is None:
             return nd.prod(tensor_in)
-        else:
-            return nd.prod(tensor_in, axis)
+        return nd.prod(tensor_in, axis)
 
     def abs(self, tensor):
         tensor = self.astensor(tensor)
@@ -344,7 +341,7 @@ class mxnet_backend(object):
         args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
         try:
-            assert len([arg for arg in args if 1 < len(arg) < max_dim]) == 0
+            assert not [arg for arg in args if 1 < len(arg) < max_dim]
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
@@ -382,7 +379,6 @@ class mxnet_backend(object):
             tensor: the calculation based on the Einstein summation convention
         """
         raise NotImplementedError("mxnet::einsum is not implemented.")
-        return self.astensor([])
 
     def poisson_logpdf(self, n, lam):
         n = self.astensor(n)
