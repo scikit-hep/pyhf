@@ -3,6 +3,7 @@ from pyhf.pdf import _ModelConfig
 from pyhf.modifiers.histosys import histosys_combined
 from pyhf.paramsets import paramset
 import pyhf
+import pytest
 
 class MockConfig(object):
     def __init__(self, par_map, par_order, samples):
@@ -28,7 +29,8 @@ class MockConfig(object):
     def param_set(self, name):
         return self.par_map[name]['paramset']
 
-def test_histosys():
+@pytest.mark.skip_mxnet
+def test_histosys(backend):
     mc = MockConfig(
         par_map = {
             'hello': {
