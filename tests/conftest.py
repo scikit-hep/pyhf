@@ -56,7 +56,7 @@ def reset_backend():
         'pytorch',
         'tensorflow',
         # 'mxnet',
-        'numpy_minuit'
+        'numpy_minuit',
     ],
 )
 def backend(request):
