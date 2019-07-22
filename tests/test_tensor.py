@@ -138,7 +138,7 @@ def test_pdf_calculations(backend):
     )
 
 
-@pytest.mark.skip_mxnet
+#@pytest.mark.skip_mxnet
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
@@ -243,7 +243,7 @@ def test_tensorflow_tolist_nosession():
         assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
 
 
-@pytest.mark.skip_mxnet
+#@pytest.mark.skip_mxnet
 def test_pdf_eval(backend):
     source = {
         "binning": [2, -0.5, 1.5],

@@ -45,13 +45,19 @@ def reset_backend():
         (pyhf.tensor.numpy_backend(), None),
         (pyhf.tensor.pytorch_backend(), None),
         (pyhf.tensor.tensorflow_backend(session=tf.Session()), None),
-        (pyhf.tensor.mxnet_backend(), None),
+        # (pyhf.tensor.mxnet_backend(), None),
         (
             pyhf.tensor.numpy_backend(poisson_from_normal=True),
             pyhf.optimize.minuit_optimizer(),
         ),
     ],
-    ids=['numpy', 'pytorch', 'tensorflow', 'mxnet', 'numpy_minuit'],
+    ids=[
+        'numpy',
+        'pytorch',
+        'tensorflow',
+        # 'mxnet',
+        'numpy_minuit'
+    ],
 )
 def backend(request):
     param = request.param
