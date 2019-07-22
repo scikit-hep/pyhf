@@ -8,6 +8,7 @@ from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.modifiers.normfactor import normfactor_combined
 from pyhf.modifiers.shapefactor import shapefactor_combined
 from pyhf.paramsets import paramset
+import numpy as np
 import pyhf
 import pytest
 
@@ -107,6 +108,8 @@ def test_histosys(backend):
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5,-1.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [0.5,1.0,1.5])
 
 
 @pytest.mark.skip_mxnet
@@ -129,39 +132,39 @@ def test_normsys(backend):
     mega_mods = {
         'signal': {
             'normsys/hello': {
-                'type': 'histosys',
+                'type': 'normsys',
                 'name': 'hello',
                 'data': {
                     'hi' : [1.1]*3,
                     'lo' : [0.9]*3,
-                    'nom_data': [10,10,10],
+                    'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
             },
             'normsys/world': {
-                'type': 'histosys',
+                'type': 'v',
                 'name': 'world',
                 'data': {
                     'hi' : [1.1]*3,
                     'lo' : [0.9]*3,
-                    'nom_data': [10,10,10],
+                    'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
             }
         },
         'background': {
             'normsys/hello': {
-                'type': 'histosys',
+                'type': 'normsys',
                 'name': 'hello',
                 'data': {
                     'hi' : [1.1]*3,
                     'lo' : [0.9]*3,
-                    'nom_data': [10,10,10],
+                    'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
             },
             'normsys/world': {
-                'type': 'histosys',
+                'type': 'normsys',
                 'name': 'world',
                 'data': {
                     'hi' : [1.1]*3,
@@ -178,9 +181,11 @@ def test_normsys(backend):
         mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([0.5,-1.0]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,-1.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [1.1,1.1,1.1])
 
 
 @pytest.mark.skip_mxnet
