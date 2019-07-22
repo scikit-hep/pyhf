@@ -149,8 +149,8 @@ def test_normsys(backend):
                 'type': 'v',
                 'name': 'world',
                 'data': {
-                    'hi' : [1.1]*3,
-                    'lo' : [0.9]*3,
+                    'hi' : [1.3]*3,
+                    'lo' : [0.7]*3,
                     'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
@@ -161,8 +161,8 @@ def test_normsys(backend):
                 'type': 'normsys',
                 'name': 'hello',
                 'data': {
-                    'hi' : [1.1]*3,
-                    'lo' : [0.9]*3,
+                    'hi' : [1.2]*3,
+                    'lo' : [0.8]*3,
                     'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
@@ -171,9 +171,9 @@ def test_normsys(backend):
                 'type': 'normsys',
                 'name': 'world',
                 'data': {
-                    'hi' : [1.1]*3,
-                    'lo' : [0.9]*3,
-                    'nom_data': [10,10,10],
+                    'hi' : [1.4]*3,
+                    'lo' : [0.6]*3,
+                    'nom_data': [1,1,1],
                     'mask'    : [True,True,True]
                 }
             }
@@ -190,6 +190,9 @@ def test_normsys(backend):
     assert shape == (2,2,1,3)
     mod = np.asarray(pyhf.tensorlib.tolist(mod))
     assert np.allclose(mod[0,0,0], [1.1,1.1,1.1])
+    assert np.allclose(mod[0,1,0], [1.2,1.2,1.2])
+    assert np.allclose(mod[1,0,0], [0.7,0.7,0.7])
+    assert np.allclose(mod[1,1,0], [0.6,0.6,0.6])
 
 
 @pytest.mark.skip_mxnet
@@ -237,6 +240,7 @@ def test_lumi(backend):
 
     mod = np.asarray(pyhf.tensorlib.tolist(mod))
     assert np.allclose(mod[0,0,0], [0.5,0.5,0.5])
+    assert np.allclose(mod[0,1,0], [0.5,0.5,0.5])
 
 @pytest.mark.skip_mxnet
 def test_stat(backend):
