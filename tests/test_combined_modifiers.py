@@ -5,6 +5,8 @@ from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
 from pyhf.modifiers.staterror import staterror_combined
 from pyhf.modifiers.shapesys import shapesys_combined
+from pyhf.modifiers.normfactor import normfactor_combined
+from pyhf.modifiers.shapefactor import shapefactor_combined
 from pyhf.paramsets import paramset
 import pyhf
 import pytest
@@ -352,6 +354,66 @@ def test_shapesys(backend):
         }}
     hsc = staterror_combined(
         [('shapesys1','shapesys'),('shapesys2','shapesys')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2,2,1,3)
+
+@pytest.mark.skip_mxnet
+def test_normfactor(backend):
+    mc = MockConfig(
+        par_map = {
+            'mu1': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'slice': slice(0,1),
+            },
+            'mu2': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'slice': slice(1,2),
+            },
+        },
+        par_order = ['mu1','mu2'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'normfactor/mu1': {
+                'type': 'normfactor',
+                'name': 'mu1',
+                'data': {
+                    'mask'    : [True,False,False],
+                }
+            },
+            'normfactor/mu2': {
+                'type': 'normfactor',
+                'name': 'mu2',
+                'data': {
+                    'mask'    : [False,True,True],
+                }
+            },
+        },
+        'background': {
+            'normfactor/mu1': {
+                'type': 'normfactor',
+                'name': 'mu1',
+                'data': {
+                    'mask'    : [True,False,False],
+                }
+            },
+            'normfactor/mu2': {
+                'type': 'normfactor',
+                'name': 'mu2',
+                'data': {
+                    'mask'    : [False,True,True],
+                }
+            },
+        }}
+    hsc = normfactor_combined(
+        [('mu1','normfactor'),('mu2','normfactor')] ,
         mc,
         mega_mods
     )
