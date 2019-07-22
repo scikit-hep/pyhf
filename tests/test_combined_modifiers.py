@@ -4,6 +4,7 @@ from pyhf.modifiers.histosys import histosys_combined
 from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
 from pyhf.modifiers.staterror import staterror_combined
+from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.paramsets import paramset
 import pyhf
 import pytest
@@ -291,3 +292,70 @@ def test_stat(backend):
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
 
+@pytest.mark.skip_mxnet
+def test_shapesys(backend):
+    mc = MockConfig(
+        par_map = {
+            'shapesys1': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'slice': slice(0,1),
+            },
+            'shapesys2': {
+                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[0,10],[0,10]]),
+                'slice': slice(1,3),
+            },
+        },
+        par_order = ['shapesys1','shapesys2'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'shapesys/shapesys1': {
+                'type': 'shapesys',
+                'name': 'shapesys1',
+                'data': {
+                    'mask'    : [True,False,False],
+                    'nom_data': [10,10,10],
+                    'uncrt': [1,0,0],
+                }
+            },
+            'shapesys/shapesys2': {
+                'type': 'shapesys',
+                'name': 'shapesys1',
+                'data': {
+                    'mask'    : [False,True,True],
+                    'nom_data': [10,10,10],
+                    'uncrt': [0,1,1],
+                }
+            },
+        },
+        'background': {
+            'shapesys/shapesys1': {
+                'type': 'shapesys',
+                'name': 'shapesys1',
+                'data': {
+                    'mask'    : [True,False,False],
+                    'nom_data': [10,10,10],
+                    'uncrt': [1,0,0],
+                }
+            },
+            'shapesys/shapesys2': {
+                'type': 'shapesys',
+                'name': 'shapesys1',
+                'data': {
+                    'mask'    : [False,True,True],
+                    'nom_data': [10,10,10],
+                    'uncrt': [0,1,1],
+                }
+            },
+        }}
+    hsc = staterror_combined(
+        [('shapesys1','shapesys'),('shapesys2','shapesys')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2,2,1,3)
