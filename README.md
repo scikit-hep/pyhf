@@ -49,7 +49,7 @@ Computational Backends:
 - [x] NumPy
 - [x] PyTorch
 - [x] TensorFlow
-- ([x]) MXNet (mxnet support is experimental)
+- ([x]) MXNet (MXNet support is experimental)
 
 Available Optimizers
 
