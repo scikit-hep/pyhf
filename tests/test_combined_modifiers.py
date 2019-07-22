@@ -13,10 +13,12 @@ import pyhf
 import pytest
 
 class MockConfig(object):
-    def __init__(self, par_map, par_order, samples):
+    def __init__(self, par_map, par_order, samples, channels = None, channel_nbins = None):
         self.par_order = par_order
         self.par_map = par_map
         self.samples = samples
+        self.channels = channels
+        self.channel_nbins = channel_nbins
 
     def suggested_init(self):
         init = []
@@ -35,6 +37,8 @@ class MockConfig(object):
 
     def param_set(self, name):
         return self.par_map[name]['paramset']
+
+        z
 
 @pytest.mark.skip_mxnet
 def test_histosys(backend):
@@ -434,9 +438,13 @@ def test_normfactor(backend):
         mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([2.0,3.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [2.0,1.0,1.0])
+    assert np.allclose(mod[1,0,0], [1.0,3.0,3.0])
 
 @pytest.mark.skip_mxnet
 def test_shapefactor(backend):
@@ -448,11 +456,13 @@ def test_shapefactor(backend):
             },
             'shapefac2': {
                 'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[0,10],[0,10]]),
-                'slice': slice(1,2),
+                'slice': slice(1,3),
             },
         },
         par_order = ['shapefac1','shapefac2'],
-        samples = ['signal','background']
+        samples = ['signal','background'],
+        channels = ['chan_one', 'chan_two'],
+        channel_nbins={'chan_one': 1, 'chan_two': 2}
     )
 
     mega_mods = {
@@ -488,12 +498,16 @@ def test_shapefactor(backend):
                 }
             },
         }}
-    hsc = normfactor_combined(
+    hsc = shapefactor_combined(
         [('shapefac1','shapefactor'),('shapefac2','shapefactor')] ,
         mc,
         mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([2.0,3.0,4.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [2.0,1.0,1.0])
+    assert np.allclose(mod[1,0,0], [1.0,3.0,4.0])
