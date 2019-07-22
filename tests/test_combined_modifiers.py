@@ -3,6 +3,7 @@ from pyhf.pdf import _ModelConfig
 from pyhf.modifiers.histosys import histosys_combined
 from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
+from pyhf.modifiers.staterror import staterror_combined
 from pyhf.paramsets import paramset
 import pyhf
 import pytest
@@ -36,11 +37,11 @@ def test_histosys(backend):
     mc = MockConfig(
         par_map = {
             'hello': {
-                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[-5,5]]),
                 'slice': slice(0,1),
             },
             'world': {
-                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[-5,5]]),
                 'slice': slice(1,2),
             }
         },
@@ -110,11 +111,11 @@ def test_normsys(backend):
     mc = MockConfig(
         par_map = {
             'hello': {
-                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[-5,5]]),
                 'slice': slice(0,1),
             },
             'world': {
-                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[-5,5]]),
                 'slice': slice(1,2),
             }
         },
@@ -221,4 +222,72 @@ def test_lumi(backend):
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (1,2,1,3)
+
+@pytest.mark.skip_mxnet
+def test_stat(backend):
+    mc = MockConfig(
+        par_map = {
+            'staterror_chan1': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'slice': slice(0,1),
+            },
+            'staterror_chan2': {
+                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[0,10],[0,10]]),
+                'slice': slice(1,3),
+            },
+        },
+        par_order = ['staterror_chan1','staterror_chan2'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'staterror/staterror_chan1': {
+                'type': 'staterror',
+                'name': 'staterror_chan1',
+                'data': {
+                    'mask'    : [True,False,False],
+                    'nom_data': [10,10,10],
+                    'uncrt': [1,0,0],
+                }
+            },
+            'staterror/staterror_chan2': {
+                'type': 'staterror',
+                'name': 'staterror_chan2',
+                'data': {
+                    'mask'    : [False,True,True],
+                    'nom_data': [10,10,10],
+                    'uncrt': [0,1,1],
+                }
+            },
+        },
+        'background': {
+            'staterror/staterror_chan1': {
+                'type': 'staterror',
+                'name': 'staterror_chan1',
+                'data': {
+                    'mask'    : [True,False,False],
+                    'nom_data': [10,10,10],
+                    'uncrt': [1,0,0],
+                }
+            },
+            'staterror/staterror_chan2': {
+                'type': 'staterror',
+                'name': 'c',
+                'data': {
+                    'mask'    : [False,True,True],
+                    'nom_data': [10,10,10],
+                    'uncrt': [0,1,1],
+                }
+            },
+        }}
+    hsc = staterror_combined(
+        [('staterror_chan1','staterror'),('staterror_chan2','staterror')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2,2,1,3)
 
