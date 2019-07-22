@@ -47,6 +47,10 @@ class lumi_combined(object):
         self.lumi_indices = default_backend.astensor(self._lumi_indices, dtype='int')
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         tensorlib, _ = get_backend()
         lumi_indices = tensorlib.astensor(self.lumi_indices, dtype='int')
         lumi_mask = tensorlib.astensor(self.lumi_mask)

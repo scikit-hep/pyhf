@@ -64,6 +64,10 @@ class histosys_combined(object):
         self.histo_indices = tensorlib.astensor(self._histo_indices, dtype='int')
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         tensorlib, _ = get_backend()
         if not tensorlib.shape(self.histo_indices)[0]:
             return

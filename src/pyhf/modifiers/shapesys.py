@@ -125,6 +125,10 @@ class shapesys_combined(object):
             pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         tensorlib, _ = get_backend()
         if self.factor_access_indices is None:
             return
