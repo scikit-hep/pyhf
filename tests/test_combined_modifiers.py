@@ -2,6 +2,7 @@
 from pyhf.pdf import _ModelConfig
 from pyhf.modifiers.histosys import histosys_combined
 from pyhf.modifiers.normsys import normsys_combined
+from pyhf.modifiers.lumi import lumi_combined
 from pyhf.paramsets import paramset
 import pyhf
 import pytest
@@ -176,4 +177,48 @@ def test_normsys(backend):
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5,-1.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+
+@pytest.mark.skip_mxnet
+def test_lumi(backend):
+    mc = MockConfig(
+        par_map = {
+            'lumi': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[-5,5]]),
+                'slice': slice(0,1),
+            },
+        },
+        par_order = ['lumi'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'lumi/lumi': {
+                'type': 'lumi',
+                'name': 'lumi',
+                'data': {
+                    'mask'    : [True,True,True]
+                }
+            },
+        },
+        'background': {
+            'lumi/lumi': {
+                'type': 'lumi',
+                'name': 'lumi',
+                'data': {
+                    'mask'    : [True,True,True]
+                }
+            },
+        }}
+
+    hsc = lumi_combined(
+        [('lumi','lumi')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([0.5]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (1,2,1,3)
 
