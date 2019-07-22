@@ -12,7 +12,11 @@ before_install:
   - pip install --upgrade pip setuptools wheel
   - pip install -U docutils==0.14
 install:
-  - pip install --ignore-installed -U -q -e .[complete];
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then
+      pip install --ignore-installed -U -q --no-cache-dir -e .[complete];
+    else
+      pip install --ignore-installed -U -q -e .[complete];
+    fi
   - pip freeze
 script:
   - pyflakes src
