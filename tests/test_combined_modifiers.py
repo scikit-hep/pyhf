@@ -421,3 +421,63 @@ def test_normfactor(backend):
     mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+@pytest.mark.skip_mxnet
+def test_shapefactor(backend):
+    mc = MockConfig(
+        par_map = {
+            'shapefac1': {
+                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'slice': slice(0,1),
+            },
+            'shapefac2': {
+                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[0,10],[0,10]]),
+                'slice': slice(1,2),
+            },
+        },
+        par_order = ['shapefac1','shapefac2'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'shapefactor/shapefac1': {
+                'type': 'shapefactor',
+                'name': 'shapefac1',
+                'data': {
+                    'mask'    : [True,False,False],
+                }
+            },
+            'shapefactor/shapefac2': {
+                'type': 'shapefactor',
+                'name': 'shapefac2',
+                'data': {
+                    'mask'    : [False,True,True],
+                }
+            },
+        },
+        'background': {
+            'shapefactor/shapefac1': {
+                'type': 'shapefactor',
+                'name': 'shapefac1',
+                'data': {
+                    'mask'    : [True,False,False],
+                }
+            },
+            'shapefactor/shapefac2': {
+                'type': 'normfactor',
+                'name': 'shapefac2',
+                'data': {
+                    'mask'    : [False,True,True],
+                }
+            },
+        }}
+    hsc = normfactor_combined(
+        [('shapefac1','shapefactor'),('shapefac2','shapefactor')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2,2,1,3)
