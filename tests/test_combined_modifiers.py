@@ -1,6 +1,7 @@
 
 from pyhf.pdf import _ModelConfig
 from pyhf.modifiers.histosys import histosys_combined
+from pyhf.modifiers.normsys import normsys_combined
 from pyhf.paramsets import paramset
 import pyhf
 import pytest
@@ -101,3 +102,78 @@ def test_histosys(backend):
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5,-1.0]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+
+@pytest.mark.skip_mxnet
+def test_normsys(backend):
+    mc = MockConfig(
+        par_map = {
+            'hello': {
+                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'slice': slice(0,1),
+            },
+            'world': {
+                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[-5,5],[-5,5]]),
+                'slice': slice(1,2),
+            }
+        },
+        par_order = ['hello','world'],
+        samples = ['signal','background']
+    )
+
+    mega_mods = {
+        'signal': {
+            'normsys/hello': {
+                'type': 'histosys',
+                'name': 'hello',
+                'data': {
+                    'hi' : [1.1]*3,
+                    'lo' : [0.9]*3,
+                    'nom_data': [10,10,10],
+                    'mask'    : [True,True,True]
+                }
+            },
+            'normsys/world': {
+                'type': 'histosys',
+                'name': 'world',
+                'data': {
+                    'hi' : [1.1]*3,
+                    'lo' : [0.9]*3,
+                    'nom_data': [10,10,10],
+                    'mask'    : [True,True,True]
+                }
+            }
+        },
+        'background': {
+            'normsys/hello': {
+                'type': 'histosys',
+                'name': 'hello',
+                'data': {
+                    'hi' : [1.1]*3,
+                    'lo' : [0.9]*3,
+                    'nom_data': [10,10,10],
+                    'mask'    : [True,True,True]
+                }
+            },
+            'normsys/world': {
+                'type': 'histosys',
+                'name': 'world',
+                'data': {
+                    'hi' : [1.1]*3,
+                    'lo' : [0.9]*3,
+                    'nom_data': [10,10,10],
+                    'mask'    : [True,True,True]
+                }
+            }
+        }}
+
+    hsc = normsys_combined(
+        [('hello','normsys'),('world','normsys')] ,
+        mc,
+        mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([0.5,-1.0]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2,2,1,3)
+
