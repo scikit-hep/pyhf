@@ -231,16 +231,19 @@ def test_lumi(backend):
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (1,2,1,3)
 
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [0.5,0.5,0.5])
+
 @pytest.mark.skip_mxnet
 def test_stat(backend):
     mc = MockConfig(
         par_map = {
             'staterror_chan1': {
-                'paramset': paramset(n_parameters = 1, inits = [0], bounds = [[0,10]]),
+                'paramset': paramset(n_parameters = 1, inits = [1], bounds = [[0,10]]),
                 'slice': slice(0,1),
             },
             'staterror_chan2': {
-                'paramset': paramset(n_parameters = 2, inits = [0,0], bounds = [[0,10],[0,10]]),
+                'paramset': paramset(n_parameters = 2, inits = [1,1], bounds = [[0,10],[0,10]]),
                 'slice': slice(1,3),
             },
         },
@@ -295,9 +298,13 @@ def test_stat(backend):
         mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.1,1.2,1.3]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [1.1,1.,1.0])
+    assert np.allclose(mod[1,0,0], [1,1.2,1.3])
 
 @pytest.mark.skip_mxnet
 def test_shapesys(backend):
@@ -363,9 +370,13 @@ def test_shapesys(backend):
         mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([1.0,1.0,1.0]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([1.1,1.2,1.3]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2,2,1,3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0,0,0], [1.1,1.,1.0])
+    assert np.allclose(mod[1,0,0], [1,1.2,1.3])
 
 @pytest.mark.skip_mxnet
 def test_normfactor(backend):
