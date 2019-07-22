@@ -11,11 +11,7 @@ before_install:
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
   - pip install --upgrade pip setuptools wheel
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then
-      pip install --ignore-installed -U -q --no-cache-dir -e .[complete];
-    else
-      pip install --ignore-installed -U -q -e .[complete];
-    fi
+  - pip install --ignore-installed -U -q --no-cache-dir -e .[complete];
   - pip freeze
 script:
   - pyflakes src
