@@ -38,7 +38,7 @@ class MockConfig(object):
     def param_set(self, name):
         return self.par_map[name]['paramset']
 
-        z
+        
 
 @pytest.mark.skip_mxnet
 def test_histosys(backend):
