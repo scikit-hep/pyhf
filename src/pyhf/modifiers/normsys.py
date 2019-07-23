@@ -4,6 +4,7 @@ from . import modifier
 from ..paramsets import constrained_by_normal
 from .. import get_backend, events
 from .. import interpolators
+from ..paramview import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +27,6 @@ class normsys(object):
 
 class normsys_combined(object):
     def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1'):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
@@ -34,9 +34,8 @@ class normsys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
         normsys_mods = [m for m, _ in normsys_mods]
 
-        self._normsys_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
+        parfield_shape = (len(pdfconfig.suggested_init()),)
+        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
         self._normsys_histoset = [
             [
                 [
@@ -61,10 +60,11 @@ class normsys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.parameters_helper.index_selection:
+            return
         tensorlib, _ = get_backend()
         self.normsys_mask = tensorlib.astensor(self._normsys_mask)
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
-        self.normsys_indices = tensorlib.astensor(self._normsys_indices, dtype='int')
 
     def apply(self, pars):
         '''
@@ -72,9 +72,22 @@ class normsys_combined(object):
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
         tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.normsys_indices)[0]:
+        if not self.parameters_helper.index_selection:
             return
-        normsys_alphaset = tensorlib.gather(pars, self.normsys_indices)
+
+        slices = self.parameters_helper.get_slice(pars)
+        normsys_alphaset = tensorlib.stack(
+            [
+                # reshape in order to go from 1 slement column
+                # to flat array
+                # [
+                #  [a1],  -> [a1,a2]
+                #  [a2],
+                # ]
+                tensorlib.reshape(x,(-1,)) for x in slices 
+            ]
+        )
+
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below
