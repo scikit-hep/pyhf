@@ -62,23 +62,31 @@ class shapesys_combined(object):
             access_rows = []
             shapesys_mask = default_backend.astensor(self._shapesys_mask)
             for mask, inds in zip(shapesys_mask, self._shapesys_indices):
+                #this is basically an OR across samples
+                #which is true only at the affected channel  [False,False, True,True, True, False, False]
                 summed_mask = default_backend.sum(mask[:, 0, :], axis=0)
                 assert default_backend.shape(
                     summed_mask[summed_mask > 0]
-                ) == default_backend.shape(default_backend.astensor(inds))
+                ) == default_backend.shape(default_backend.astensor(inds))  
                 # make masks of > 0 and == 0
                 positive_mask = summed_mask > 0
                 zero_mask = summed_mask == 0
                 # then apply the mask
                 summed_mask[positive_mask] = inds
-                summed_mask[zero_mask] = len(self._parindices) - 1
+                dummy_value = len(self._parindices) - 1
+                summed_mask[zero_mask] = dummy_value
+                #will be shapesys indices and 
+                #which is true only at the affected channel  [dummy, dummy, 0, 1, 2, dummy, dummy]
                 access_rows.append(summed_mask.tolist())
+
+            #this is a tensor of shape (nsys, nglobalbins) holding indices of parameters
             self._factor_access_indices = default_backend.tolist(
                 default_backend.stack(access_rows)
             )
             self.finalize(pdfconfig)
         else:
             self._factor_access_indices = None
+
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -92,6 +100,8 @@ class shapesys_combined(object):
             self.factor_access_indices = tensorlib.astensor(
                 self._factor_access_indices, dtype='int'
             )
+
+            print('hello')
             self.default_value = tensorlib.astensor([1.0])
             self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
             self.alpha_ones = tensorlib.astensor([1])
