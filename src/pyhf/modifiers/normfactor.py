@@ -48,6 +48,10 @@ class normfactor_combined(object):
         )
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         tensorlib, _ = get_backend()
         normfactor_indices = tensorlib.astensor(self.normfactor_indices, dtype='int')
         normfactor_mask = tensorlib.astensor(self.normfactor_mask)

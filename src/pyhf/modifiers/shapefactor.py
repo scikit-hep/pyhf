@@ -110,6 +110,10 @@ class shapefactor_combined(object):
         self.alpha_ones = tensorlib.ones([1])
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         if not self._shapefactor_indices:
             return
         tensorlib, _ = get_backend()

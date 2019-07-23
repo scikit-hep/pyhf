@@ -67,6 +67,10 @@ class normsys_combined(object):
         self.normsys_indices = tensorlib.astensor(self._normsys_indices, dtype='int')
 
     def apply(self, pars):
+        '''
+        Returns:
+            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
+        '''
         tensorlib, _ = get_backend()
         if not tensorlib.shape(self.normsys_indices)[0]:
             return
