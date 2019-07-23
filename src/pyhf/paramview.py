@@ -26,6 +26,12 @@ class ParamViewer(object):
         return '({} with [{}] batched: {})'.format(self.tensor_shape,' '.join(list(self.par_map.keys())), bool(self.batch_shape))
     
     def get_slice(self,tensor, index_selection = None):
+        """
+        Returns:
+            list of parameter slices:
+                type when batched: list of (batchsize, slicesize,) tensors
+                type when not batched: list of (slicesize, ) tensors
+        """
         if self.is_list and index_selection is None:
             return [
                 self.get_slice(tensor, s) for s in self.index_selection
