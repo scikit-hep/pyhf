@@ -86,6 +86,7 @@ class histosys_combined(object):
                 tensorlib.reshape(x,(-1,)) for x in slices 
             ]
         )
+
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(
