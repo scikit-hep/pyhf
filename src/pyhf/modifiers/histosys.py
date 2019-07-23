@@ -73,9 +73,19 @@ class histosys_combined(object):
         if not self.parameters_helper.index_selection:
             return
 
-        slices = [self.parameters_helper.get_slice(pars)] #wrap in array for batch size 1. Will change once we enable batching
-        slices = tensorlib.astensor(slices)
-        histosys_alphaset = tensorlib.astensor([tensorlib.reshape(x,tensorlib.shape(x)[:-1]) for x in slices])
+
+        slices = self.parameters_helper.get_slice(pars)
+        histosys_alphaset = tensorlib.astensor(
+            [
+                # reshape in order to go from 1 slement column
+                # to flat array
+                # [
+                #  [a1],  -> [a1,a2]
+                #  [a2],
+                # ]
+                tensorlib.reshape(x,(-1,)) for x in slices 
+            ]
+        )
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(
