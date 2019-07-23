@@ -75,7 +75,7 @@ class histosys_combined(object):
 
 
         slices = self.parameters_helper.get_slice(pars)
-        histosys_alphaset = tensorlib.astensor(
+        histosys_alphaset = tensorlib.stack(
             [
                 # reshape in order to go from 1 slement column
                 # to flat array
