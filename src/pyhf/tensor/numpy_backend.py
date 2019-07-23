@@ -34,6 +34,9 @@ class numpy_backend(object):
         """
         return np.clip(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        return np.tile(tensor_in, repeats)
+
     def tolist(self, tensor_in):
         try:
             return tensor_in.tolist()

@@ -155,6 +155,16 @@ def test_boolean_mask(backend):
     ) == [1, 2, 4]
 
 
+@pytest.mark.skip_mxnet
+def test_tensor_tile(backend):
+    a  = [[1],[2],[3]]
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.tile(tb.astensor(a),(1,2))) == [[1,1],[2,2],[3,3]]
+
+    a  = [1,2,3]
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.tile(tb.astensor(a),(2,))) == [1,2,3,1,2,3]
+
 def test_1D_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(

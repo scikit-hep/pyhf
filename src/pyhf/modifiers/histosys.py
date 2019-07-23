@@ -62,6 +62,8 @@ class histosys_combined(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        batch_size = 1
+        self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,batch_size,1,1))
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
     def apply(self, pars):

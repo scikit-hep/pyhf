@@ -44,6 +44,9 @@ class tensorflow_backend(object):
             max_value = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        return tf.tile(tensor_in, repeats)
+
     def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()

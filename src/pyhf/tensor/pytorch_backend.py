@@ -42,6 +42,9 @@ class pytorch_backend(object):
                 return tensor_in
             raise
 
+    def tile(self, tensor_in, repeats):
+        return tensor_in.repeat(repeats)
+
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)

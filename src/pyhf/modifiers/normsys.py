@@ -63,6 +63,8 @@ class normsys_combined(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.normsys_mask = tensorlib.astensor(self._normsys_mask)
+        batch_size = 1
+        self.normsys_mask = tensorlib.tile(self.normsys_mask,(1,batch_size,1,1))
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
     def apply(self, pars):
