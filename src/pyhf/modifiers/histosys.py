@@ -64,7 +64,6 @@ class histosys_combined(object):
             return
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
-        raise RuntimeError(self.histosys_mask.shape)
         batch_size = 1
         self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,batch_size,1,1))
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
