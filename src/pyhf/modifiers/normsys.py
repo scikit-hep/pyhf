@@ -61,6 +61,8 @@ class normsys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.parameters_helper.index_selection:
+            return
         tensorlib, _ = get_backend()
         self.normsys_mask = tensorlib.astensor(self._normsys_mask)
         batch_size = 1
@@ -76,7 +78,7 @@ class normsys_combined(object):
         if not self.parameters_helper.index_selection:
             return
         slices = self.parameters_helper.get_slice(pars)
-        normsys_alphaset = tensorlib.stack(
+        normsys_alphaset = [
             [
                 # reshape in order to go from 1 slement column
                 # to flat array
@@ -86,7 +88,7 @@ class normsys_combined(object):
                 # ]
                 tensorlib.reshape(x,(-1,)) for x in slices 
             ]
-        )
+        ]
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below

@@ -60,8 +60,11 @@ class histosys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.parameters_helper.index_selection:
+            return
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        raise RuntimeError(self.histosys_mask.shape)
         batch_size = 1
         self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,batch_size,1,1))
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)

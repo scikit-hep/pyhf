@@ -42,6 +42,8 @@ class lumi_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.parameters_helper.index_selection:
+            return
         tensorlib, _ = get_backend()
         batch_size = 1
         self.lumi_mask = tensorlib.tile(tensorlib.astensor(self._lumi_mask),(1,batch_size,1,1))
@@ -52,10 +54,10 @@ class lumi_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
-        lumi_mask = tensorlib.astensor(self.lumi_mask)
         if not self.parameters_helper.index_selection:
             return
+        tensorlib, _ = get_backend()
+        lumi_mask = tensorlib.astensor(self.lumi_mask)
 
         lumis = tensorlib.astensor(self.parameters_helper.get_slice(pars))
         batch_size = 1
