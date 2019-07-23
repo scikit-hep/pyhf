@@ -368,7 +368,7 @@ def test_shapesys(backend):
             },
         },
     }
-    hsc = staterror_combined(
+    hsc = shapesys_combined(
         [('shapesys1', 'shapesys'), ('shapesys2', 'shapesys')], mc, mega_mods
     )
 
