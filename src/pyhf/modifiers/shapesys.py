@@ -3,6 +3,7 @@ import logging
 from . import modifier
 from ..paramsets import constrained_by_poisson
 from .. import get_backend, default_backend, events
+from ..paramview import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +43,11 @@ class shapesys_combined(object):
         self._shapesys_indices = [
             self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
+
+
+        parfield_shape = (len(pdfconfig.suggested_init()),)
+        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
@@ -58,6 +64,8 @@ class shapesys_combined(object):
             ]
         )
 
+
+
         if self._shapesys_indices:
             access_rows = []
             shapesys_mask = default_backend.astensor(self._shapesys_mask)
@@ -73,7 +81,7 @@ class shapesys_combined(object):
                 zero_mask = summed_mask == 0
                 # then apply the mask
                 summed_mask[positive_mask] = inds
-                dummy_value = len(self._parindices) - 1
+                dummy_value = len(self._parindices) 
                 summed_mask[zero_mask] = dummy_value
                 #will be shapesys indices and 
                 #which is true only at the affected channel  [dummy, dummy, 0, 1, 2, dummy, dummy]
@@ -100,8 +108,6 @@ class shapesys_combined(object):
             self.factor_access_indices = tensorlib.astensor(
                 self._factor_access_indices, dtype='int'
             )
-
-            print('hello')
             self.default_value = tensorlib.astensor([1.0])
             self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
             self.alpha_ones = tensorlib.astensor([1])
@@ -144,8 +150,11 @@ class shapesys_combined(object):
             return
         tensorlib, _ = get_backend()
 
+        with_dummy = tensorlib.concatenate([tensorlib.astensor(pars), self.default_value])
+        print(self.factor_access_indices)
+        print(with_dummy)
         factor_row = tensorlib.gather(
-            tensorlib.concatenate([tensorlib.astensor(pars), self.default_value]),
+            with_dummy,
             self.factor_access_indices,
         )
 

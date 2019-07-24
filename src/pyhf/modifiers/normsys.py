@@ -26,7 +26,7 @@ class normsys(object):
 
 
 class normsys_combined(object):
-    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1'):
+    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1', batch_size = 1):
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
@@ -34,7 +34,9 @@ class normsys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
         normsys_mods = [m for m, _ in normsys_mods]
 
-        parfield_shape = (len(pdfconfig.suggested_init()),)
+        self.batch_size = batch_size
+
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
         self._normsys_histoset = [
             [
@@ -64,6 +66,7 @@ class normsys_combined(object):
             return
         tensorlib, _ = get_backend()
         self.normsys_mask = tensorlib.astensor(self._normsys_mask)
+        self.normsys_mask = tensorlib.tile(self.normsys_mask,(1,1,self.batch_size,1))
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
     def apply(self, pars):
@@ -71,11 +74,18 @@ class normsys_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
         if not self.parameters_helper.index_selection:
             return
 
-        slices = self.parameters_helper.get_slice(pars)
+        tensorlib, _ = get_backend()
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
+        slices = self.parameters_helper.get_slice(batched_pars)
+
+
+        # slices is [(batch, slicesize)] = [(batch,1)]
         normsys_alphaset = tensorlib.stack(
             [
                 # reshape in order to go from 1 slement column
@@ -84,9 +94,10 @@ class normsys_combined(object):
                 #  [a1],  -> [a1,a2]
                 #  [a2],
                 # ]
-                tensorlib.reshape(x,(-1,)) for x in slices 
-            ]
-        )
+                tensorlib.reshape(x,(-1,))
+                for x in slices 
+            ] #list comp is [(batch,)]
+        ) # normsys_alphaset is (nsys, batch, )
 
         results_norm = self.interpolator(normsys_alphaset)
 

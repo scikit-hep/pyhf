@@ -27,13 +27,14 @@ class lumi(object):
 
 
 class lumi_combined(object):
-    def __init__(self, lumi_mods, pdfconfig, mega_mods):
+    def __init__(self, lumi_mods, pdfconfig, mega_mods,batch_size = 1):
+        self.batch_size = batch_size
 
         pnames = [pname for pname, _ in lumi_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
 
-        parfield_shape = (len(pdfconfig.suggested_init()),)
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
         self._lumi_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -45,8 +46,7 @@ class lumi_combined(object):
         if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
-        batch_size = 1
-        self.lumi_mask = tensorlib.tile(tensorlib.astensor(self._lumi_mask),(1,batch_size,1,1))
+        self.lumi_mask = tensorlib.tile(tensorlib.astensor(self._lumi_mask),(1,1,self.batch_size, 1))
         self.lumi_default = tensorlib.ones(self.lumi_mask.shape)
 
     def apply(self, pars):
@@ -57,14 +57,20 @@ class lumi_combined(object):
         if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
+
         lumi_mask = tensorlib.astensor(self.lumi_mask)
 
-        lumis = tensorlib.astensor(self.parameters_helper.get_slice(pars))
-        batch_size = 1
-        lumis = tensorlib.reshape(lumis, (1,1,batch_size))
-        results_lumi = lumi_mask * tensorlib.reshape(
-            lumis, tensorlib.shape(lumis) + (1,)
-        )
+
+        lumis = self.parameters_helper.get_slice(batched_pars)[0]
+        #lumis is [(batch, 1)]
+
+        #mask is (nsys, nsam, batch, globalbin)
+        results_lumi = tensorlib.einsum('ysab,ax->ysab',lumi_mask,lumis)
+
         results_lumi = tensorlib.where(
             lumi_mask, results_lumi, tensorlib.astensor(self.lumi_default)
         )
