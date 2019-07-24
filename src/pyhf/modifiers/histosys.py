@@ -65,7 +65,6 @@ class histosys_combined(object):
             return
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
-        batch_size = 1
         self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,1,self.batch_size,1))
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
@@ -82,7 +81,7 @@ class histosys_combined(object):
             batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
-        slices = self.parameters_helper.get_slice(pars)
+        slices = self.parameters_helper.get_slice(batched_pars)
 
         histosys_alphaset = tensorlib.stack(
             [
