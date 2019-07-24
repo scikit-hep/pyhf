@@ -25,7 +25,8 @@ class histosys(object):
 
 
 class histosys_combined(object):
-    def __init__(self, histosys_mods, pdfconfig, mega_mods, interpcode='code0'):
+    def __init__(self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size = 1):
+        self.batch_size = batch_size
         self.interpcode = interpcode
         assert self.interpcode in ['code0', 'code2', 'code4p']
 
@@ -33,7 +34,7 @@ class histosys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
 
-        parfield_shape = (len(pdfconfig.suggested_init()),)
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._histosys_histoset = [
@@ -65,7 +66,7 @@ class histosys_combined(object):
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
         batch_size = 1
-        self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,batch_size,1,1))
+        self.histosys_mask = tensorlib.tile(self.histosys_mask,(1,1,self.batch_size,1))
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
     def apply(self, pars):
@@ -73,15 +74,19 @@ class histosys_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
         if not self.parameters_helper.index_selection:
             return
 
-
+        tensorlib, _ = get_backend()
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
         slices = self.parameters_helper.get_slice(pars)
+
         histosys_alphaset = tensorlib.stack(
             [
-                # reshape in order to go from 1 slement column
+                # reshape in order to go from 1 element column
                 # to flat array
                 # [
                 #  [a1],  -> [a1,a2]
