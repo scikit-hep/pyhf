@@ -505,6 +505,32 @@ def test_normfactor(backend):
     assert np.allclose(mod[0, 0, 0], [2.0, 1.0, 1.0])
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 3.0])
 
+    hsc = normfactor_combined(
+        [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods,
+        batch_size = 4
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor(
+        [
+             [ 1.0,  5.0],
+             [ 2.0,  6.0],
+             [ 3.0,  7.0],
+             [ 4.0,  8.0],
+        ]
+    ))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [1.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 1], [2.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 2], [3.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 3], [4.0, 1.0, 1.0])
+
+    assert np.allclose(mod[1, 0, 0], [1.0, 5.0, 5.0])
+    assert np.allclose(mod[1, 0, 1], [1.0, 6.0, 6.0])
+    assert np.allclose(mod[1, 0, 2], [1.0, 7.0, 7.0])
+    assert np.allclose(mod[1, 0, 3], [1.0, 8.0, 8.0])
 
 @pytest.mark.skip_mxnet
 def test_shapefactor(backend):
