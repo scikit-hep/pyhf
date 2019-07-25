@@ -19,14 +19,19 @@ import pyhf
             "tensorflow_backend",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
-        [
-            "mxnet",
-            "mxnet_backend",
-            "mxnet_backend",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
+        # [
+        #     "mxnet",
+        #     "mxnet_backend",
+        #     "mxnet_backend",
+        #     pytest.raises(pyhf.exceptions.ImportBackendError),
+        # ],
     ],
-    ids=["numpy", "pytorch", "tensorflow", "mxnet"],
+    ids=[
+        "numpy",
+        "pytorch",
+        "tensorflow",
+        # "mxnet"
+    ],
 )
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
