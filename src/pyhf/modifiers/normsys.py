@@ -78,6 +78,7 @@ class normsys_combined(object):
             return
 
         tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
         if self.batch_size == 1:
             batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
         else:
@@ -86,7 +87,7 @@ class normsys_combined(object):
 
 
         # slices is [(batch, slicesize)] = [(batch,1)]
-        normsys_alphaset = tensorlib.stack(slices)
+        normsys_alphaset = slices
         normsys_alphaset = tensorlib.reshape(normsys_alphaset,tensorlib.shape(normsys_alphaset)[:2])
 
 

@@ -13,7 +13,7 @@ class ParamViewer(object):
     """
     Helper class to extract parameter data from possibly batched input
     """
-    def __init__(self, tensor_shape, par_map, name):
+    def __init__(self, tensor_shape, par_map, name, regular = True):
         self.tensor_shape = tensor_shape
         self.batch_shape = tensor_shape[:-1]
         x = list(range(int(default_backend.product(tensor_shape))))
@@ -22,13 +22,16 @@ class ParamViewer(object):
         self.is_list = isinstance(name,list)
         self.index_selection = index_helper(name, self.indices, self.batch_shape, self.par_map, self.is_list)
         
+        self.regular = regular
+
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.indices = tensorlib.astensor(self.index_selection, dtype = 'int')
-
+        if self.regular:
+            self.indices = tensorlib.astensor(self.index_selection, dtype = 'int')
+            
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(self.tensor_shape,' '.join(list(self.par_map.keys())), bool(self.batch_shape))
     
