@@ -44,11 +44,6 @@ class ParamViewer(object):
             bool(self.batch_shape),
         )
 
-    def expand_indices(self, indices):
-        """
-        """
-        pass
-
     def get_slice(self, tensor):
         """
         Returns:
