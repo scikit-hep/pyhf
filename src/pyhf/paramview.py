@@ -1,4 +1,4 @@
-from . import get_backend, default_backend
+from . import get_backend, default_backend, events
 
 def index_helper(name, indices, batch_shape, par_map, is_list):
     if isinstance(name,list):
@@ -22,6 +22,13 @@ class ParamViewer(object):
         self.is_list = isinstance(name,list)
         self.index_selection = index_helper(name, self.indices, self.batch_shape, self.par_map, self.is_list)
         
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.indices = tensorlib.astensor(self.index_selection, dtype = 'int')
+
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(self.tensor_shape,' '.join(list(self.par_map.keys())), bool(self.batch_shape))
     
@@ -31,24 +38,17 @@ class ParamViewer(object):
         pass
 
 
-    def get_slice(self,tensor, index_selection = None):
+    def get_slice(self,tensor):
         """
         Returns:
             list of parameter slices:
                 type when batched: list of (batchsize, slicesize,) tensors
                 type when not batched: list of (slicesize, ) tensors
         """
-        # if self.is_list and index_selection is None:
-        #     return [
-        #         self.get_slice(tensor, s) for s in self.index_selection
-        #     ]
         tensorlib, _ = get_backend()
-        index_selection = tensorlib.astensor(index_selection or self.index_selection)
-        tensor  = tensorlib.astensor(tensor)
-        indices = tensorlib.astensor(index_selection, dtype = 'int')
         result = tensorlib.gather(
             tensorlib.reshape(tensor,(-1,)),
-            indices
+            self.indices
         )
         return result
    
