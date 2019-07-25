@@ -86,6 +86,8 @@ class shapesys_combined(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
+        if not self.parameters_helper.index_selection:
+            return
         self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
         self.shapesys_mask = tensorlib.tile(self.shapesys_mask,(1,1,self.batch_size,1))
         self.access_field     = tensorlib.astensor(self._access_field, dtype = 'int')
