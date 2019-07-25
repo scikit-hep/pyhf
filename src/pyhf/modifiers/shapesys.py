@@ -30,7 +30,7 @@ class shapesys(object):
 
 
 class shapesys_combined(object):
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size = 1):
+    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=1):
         self.batch_size = batch_size
 
         pnames = [pname for pname, _ in shapesys_mods]
@@ -45,9 +45,10 @@ class shapesys_combined(object):
             self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
 
-
-        parfield_shape = (self.batch_size,len(pdfconfig.suggested_init()),)
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        self.parameters_helper = ParamViewer(
+            parfield_shape, pdfconfig.par_map, pnames, regular=False
+        )
 
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -65,21 +66,23 @@ class shapesys_combined(object):
             ]
         )
 
-
-
         self.finalize(pdfconfig)
 
-        global_concatenated_bin_indices = [[[
-            j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
-        ]]]
+        global_concatenated_bin_indices = [
+            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+        ]
 
-        self._access_field = default_backend.tile(global_concatenated_bin_indices,(len(pnames),self.batch_size,1))
+        self._access_field = default_backend.tile(
+            global_concatenated_bin_indices, (len(pnames), self.batch_size, 1)
+        )
         # access field is shape (sys, batch, globalbin)
-        for s,syst_access in enumerate(self._access_field): 
-            for t,batch_access in enumerate(syst_access):
+        for s, syst_access in enumerate(self._access_field):
+            for t, batch_access in enumerate(syst_access):
                 selection = self.parameters_helper.index_selection[s][t]
                 for b, bin_access in enumerate(batch_access):
-                    self._access_field[s,t,b] = selection[bin_access] if bin_access < len(selection) else 0
+                    self._access_field[s, t, b] = (
+                        selection[bin_access] if bin_access < len(selection) else 0
+                    )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -89,12 +92,12 @@ class shapesys_combined(object):
         if not self.parameters_helper.index_selection:
             return
         self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
-        self.shapesys_mask = tensorlib.tile(self.shapesys_mask,(1,1,self.batch_size,1))
-        self.access_field     = tensorlib.astensor(self._access_field, dtype = 'int')
-        self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
-        self.shapesys_default = tensorlib.ones(
-            tensorlib.shape(self.shapesys_mask)
+        self.shapesys_mask = tensorlib.tile(
+            self.shapesys_mask, (1, 1, self.batch_size, 1)
         )
+        self.access_field = tensorlib.astensor(self._access_field, dtype='int')
+        self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
+        self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
 
     def finalize(self, pdfconfig):
         for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._pnames):
@@ -135,14 +138,18 @@ class shapesys_combined(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1:
-            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+            batched_pars = tensorlib.reshape(
+                pars, (self.batch_size,) + tensorlib.shape(pars)
+            )
         else:
             batched_pars = pars
 
-        flat_pars = tensorlib.reshape(batched_pars,(-1,))
+        flat_pars = tensorlib.reshape(batched_pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
-        print('what??',flat_pars)
-        results_shapesys = tensorlib.einsum('yab,s->ysab',shapefactors,self.sample_ones)
+        print('what??', flat_pars)
+        results_shapesys = tensorlib.einsum(
+            'yab,s->ysab', shapefactors, self.sample_ones
+        )
 
         results_shapesys = tensorlib.where(
             self.shapesys_mask, results_shapesys, self.shapesys_default
