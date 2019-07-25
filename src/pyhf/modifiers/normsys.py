@@ -86,18 +86,9 @@ class normsys_combined(object):
 
 
         # slices is [(batch, slicesize)] = [(batch,1)]
-        normsys_alphaset = tensorlib.stack(
-            [
-                # reshape in order to go from 1 slement column
-                # to flat array
-                # [
-                #  [a1],  -> [a1,a2]
-                #  [a2],
-                # ]
-                tensorlib.reshape(x,(-1,))
-                for x in slices 
-            ] #list comp is [(batch,)]
-        ) # normsys_alphaset is (nsys, batch, )
+        normsys_alphaset = tensorlib.stack(slices)
+        normsys_alphaset = tensorlib.reshape(normsys_alphaset,tensorlib.shape(normsys_alphaset)[:2])
+
 
         results_norm = self.interpolator(normsys_alphaset)
 
