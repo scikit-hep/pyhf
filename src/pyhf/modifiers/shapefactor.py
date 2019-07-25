@@ -71,20 +71,14 @@ class shapefactor_combined(object):
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._shapefactor_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
         self._shapefactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
-        print('ok', self.parameters_helper.index_selection, pdfconfig.channels)
         global_concatenated_bin_indices = [[[
             j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
         ]]]
 
-        
         self._access_field = default_backend.tile(global_concatenated_bin_indices,(len(pnames),self.batch_size,1))
         # access field is shape (sys, batch, globalbin)
         for s,syst_access in enumerate(self._access_field): 
@@ -97,7 +91,7 @@ class shapefactor_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self._shapefactor_indices:
+        if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
