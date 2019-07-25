@@ -38,12 +38,12 @@ class ParamViewer(object):
                 type when batched: list of (batchsize, slicesize,) tensors
                 type when not batched: list of (slicesize, ) tensors
         """
-        if self.is_list and index_selection is None:
-            return [
-                self.get_slice(tensor, s) for s in self.index_selection
-            ]
-        index_selection = index_selection or self.index_selection
+        # if self.is_list and index_selection is None:
+        #     return [
+        #         self.get_slice(tensor, s) for s in self.index_selection
+        #     ]
         tensorlib, _ = get_backend()
+        index_selection = tensorlib.astensor(index_selection or self.index_selection)
         tensor  = tensorlib.astensor(tensor)
         indices = tensorlib.astensor(index_selection, dtype = 'int')
         result = tensorlib.gather(
