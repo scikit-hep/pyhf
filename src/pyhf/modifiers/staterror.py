@@ -51,6 +51,7 @@ class staterror_combined(object):
                 for m in keys
             ]
         )
+        self.finalize(pdfconfig)
 
         global_concatenated_bin_indices = [[[
             j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])

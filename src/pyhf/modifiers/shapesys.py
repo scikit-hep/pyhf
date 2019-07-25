@@ -30,7 +30,8 @@ class shapesys(object):
 
 
 class shapesys_combined(object):
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods):
+    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size = 1):
+        self.batch_size = batch_size
 
         pnames = [pname for pname, _ in shapesys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
@@ -45,7 +46,7 @@ class shapesys_combined(object):
         ]
 
 
-        parfield_shape = (len(pdfconfig.suggested_init()),)
+        parfield_shape = (self.batch_size,len(pdfconfig.suggested_init()),)
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._shapesys_mask = [
@@ -66,35 +67,19 @@ class shapesys_combined(object):
 
 
 
-        if self._shapesys_indices:
-            access_rows = []
-            shapesys_mask = default_backend.astensor(self._shapesys_mask)
-            for mask, inds in zip(shapesys_mask, self._shapesys_indices):
-                #this is basically an OR across samples
-                #which is true only at the affected channel  [False,False, True,True, True, False, False]
-                summed_mask = default_backend.sum(mask[:, 0, :], axis=0)
-                assert default_backend.shape(
-                    summed_mask[summed_mask > 0]
-                ) == default_backend.shape(default_backend.astensor(inds))  
-                # make masks of > 0 and == 0
-                positive_mask = summed_mask > 0
-                zero_mask = summed_mask == 0
-                # then apply the mask
-                summed_mask[positive_mask] = inds
-                dummy_value = len(self._parindices) 
-                summed_mask[zero_mask] = dummy_value
-                #will be shapesys indices and 
-                #which is true only at the affected channel  [dummy, dummy, 0, 1, 2, dummy, dummy]
-                access_rows.append(summed_mask.tolist())
+        self.finalize(pdfconfig)
 
-            #this is a tensor of shape (nsys, nglobalbins) holding indices of parameters
-            self._factor_access_indices = default_backend.tolist(
-                default_backend.stack(access_rows)
-            )
-            self.finalize(pdfconfig)
-        else:
-            self._factor_access_indices = None
+        global_concatenated_bin_indices = [[[
+            j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
+        ]]]
 
+        self._access_field = default_backend.tile(global_concatenated_bin_indices,(len(pnames),self.batch_size,1))
+        # access field is shape (sys, batch, globalbin)
+        for s,syst_access in enumerate(self._access_field): 
+            for t,batch_access in enumerate(syst_access):
+                selection = self.parameters_helper.index_selection[s][t]
+                for b, bin_access in enumerate(batch_access):
+                    self._access_field[s,t,b] = selection[bin_access] if bin_access < len(selection) else 0
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -102,17 +87,12 @@ class shapesys_combined(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
-        self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
-
-        if self._shapesys_indices:
-            self.factor_access_indices = tensorlib.astensor(
-                self._factor_access_indices, dtype='int'
-            )
-            self.default_value = tensorlib.astensor([1.0])
-            self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
-            self.alpha_ones = tensorlib.astensor([1])
-        else:
-            self.factor_access_indices = None
+        self.shapesys_mask = tensorlib.tile(self.shapesys_mask,(1,1,self.batch_size,1))
+        self.access_field     = tensorlib.astensor(self._access_field, dtype = 'int')
+        self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
+        self.shapesys_default = tensorlib.ones(
+            tensorlib.shape(self.shapesys_mask)
+        )
 
     def finalize(self, pdfconfig):
         for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._pnames):
@@ -146,24 +126,21 @@ class shapesys_combined(object):
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
         tensorlib, _ = get_backend()
-        if self.factor_access_indices is None:
+        if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
 
-        with_dummy = tensorlib.concatenate([tensorlib.astensor(pars), self.default_value])
-        print(self.factor_access_indices)
-        print(with_dummy)
-        factor_row = tensorlib.gather(
-            with_dummy,
-            self.factor_access_indices,
-        )
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
 
-        results_shapesys = tensorlib.einsum(
-            's,a,mb->msab',
-            tensorlib.astensor(self.sample_ones),
-            tensorlib.astensor(self.alpha_ones),
-            factor_row,
-        )
+        flat_pars = tensorlib.reshape(batched_pars,(-1,))
+        shapefactors = tensorlib.gather(flat_pars, self.access_field)
+        print('what??',flat_pars)
+        results_shapesys = tensorlib.einsum('yab,s->ysab',shapefactors,self.sample_ones)
 
         results_shapesys = tensorlib.where(
             self.shapesys_mask, results_shapesys, self.shapesys_default

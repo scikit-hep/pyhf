@@ -393,6 +393,8 @@ def test_shapesys(backend):
                 'slice': slice(4, 5),
             },
         },
+        channels=['chan1', 'chan2'],
+        channel_nbins={'chan1': 1, 'chan2': 2},
         par_order=['dummy1','shapesys1', 'shapesys2','dummy2'],
         samples=['signal', 'background'],
     )
@@ -443,7 +445,7 @@ def test_shapesys(backend):
         [('shapesys1', 'shapesys'), ('shapesys2', 'shapesys')], mc, mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([np.nan,1.1, 1.2, 1.3,np.nan]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([-10,1.1, 1.2, 1.3,-20]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2, 2, 1, 3)
 
