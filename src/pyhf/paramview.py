@@ -50,6 +50,5 @@ class ParamViewer(object):
             tensorlib.reshape(tensor,(-1,)),
             indices
         )
-        print('???',result)
         return result
    

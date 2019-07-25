@@ -64,6 +64,7 @@ class histosys_combined(object):
         if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
+        self.histosys_mask = tensorlib.astensor(self._histosys_mask)
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
 
     def apply(self, pars):
