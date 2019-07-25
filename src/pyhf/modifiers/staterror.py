@@ -33,7 +33,7 @@ class staterror_combined(object):
         staterr_mods = [m for m, _ in staterr_mods]
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
 
         self._staterr_mods = staterr_mods
         self._staterror_mask = [

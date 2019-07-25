@@ -69,7 +69,7 @@ class shapefactor_combined(object):
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
 
         self._shapefactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys

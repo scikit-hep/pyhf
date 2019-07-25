@@ -60,9 +60,8 @@ class normfactor_combined(object):
         else:
             batched_pars = pars
 
-        normfactors = tensorlib.stack(
-            self.parameters_helper.get_slice(batched_pars)
-        )
+        normfactors = self.parameters_helper.get_slice(batched_pars)
+    
 
         #normfactors is (nsys,batch,1)
         #mask is (nsys,nsam,batch,gb)
