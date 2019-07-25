@@ -25,6 +25,12 @@ class ParamViewer(object):
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(self.tensor_shape,' '.join(list(self.par_map.keys())), bool(self.batch_shape))
     
+    def expand_indices(self, indices):
+        """
+        """
+        pass
+
+
     def get_slice(self,tensor, index_selection = None):
         """
         Returns:
