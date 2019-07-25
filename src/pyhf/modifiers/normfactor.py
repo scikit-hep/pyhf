@@ -2,7 +2,7 @@ import logging
 
 from . import modifier
 from ..paramsets import unconstrained
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
 from ..paramview import ParamViewer
 log = logging.getLogger(__name__)
 

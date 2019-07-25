@@ -49,6 +49,7 @@ class ParamViewer(object):
                 type when not batched: list of (slicesize, ) tensors
         """
         tensorlib, _ = get_backend()
+        tensor = tensorlib.astensor(tensor)
         result = tensorlib.gather(
             tensorlib.reshape(tensor,(-1,)),
             self.indices
