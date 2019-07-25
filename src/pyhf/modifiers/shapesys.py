@@ -146,7 +146,6 @@ class shapesys_combined(object):
 
         flat_pars = tensorlib.reshape(batched_pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
-        print('what??', flat_pars)
         results_shapesys = tensorlib.einsum(
             'yab,s->ysab', shapefactors, self.sample_ones
         )
