@@ -82,18 +82,8 @@ class histosys_combined(object):
             batched_pars = pars
         slices = self.parameters_helper.get_slice(batched_pars)
 
-        histosys_alphaset = tensorlib.stack(
-            [
-                # reshape in order to go from 1 element column
-                # to flat array
-                # [
-                #  [a1],  -> [a1,a2]
-                #  [a2],
-                # ]
-                tensorlib.reshape(x,(-1,)) for x in slices 
-            ]
-        )
-
+        histosys_alphaset = tensorlib.stack(slices) #(nsys, nbatch, slicesiz)
+        histosys_alphaset = tensorlib.reshape(histosys_alphaset,tensorlib.shape(histosys_alphaset)[:2])
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(
