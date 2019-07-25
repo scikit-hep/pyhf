@@ -590,3 +590,30 @@ def test_shapefactor(backend):
     mod = np.asarray(pyhf.tensorlib.tolist(mod))
     assert np.allclose(mod[0, 0, 0], [2.0, 1.0, 1.0])
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 4.0])
+
+    hsc = shapefactor_combined(
+        [('shapefac1', 'shapefactor'), ('shapefac2', 'shapefactor')], mc, mega_mods,
+        batch_size = 4
+    )
+    mod = hsc.apply(pyhf.tensorlib.astensor(
+        [
+             [ 2.0, 3.0, 4.0],
+             [ 5.0, 6.0, 7.0],
+             [ 8.0, 9.0,10.0],
+             [11.0,12.0,13.0],
+        ]
+    ))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [ 2.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 1], [ 5.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 2], [ 8.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 3], [11.0, 1.0, 1.0])
+
+
+    assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 4.0])
+    assert np.allclose(mod[1, 0, 1], [1.0, 6.0, 7.0])
+    assert np.allclose(mod[1, 0, 2], [1.0, 9.0,10.0])
+    assert np.allclose(mod[1, 0, 3], [1.0,12.0,13.0])
