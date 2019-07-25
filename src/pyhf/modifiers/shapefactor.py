@@ -24,7 +24,7 @@ class shapefactor(object):
 
 
 class shapefactor_combined(object):
-    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size = 1):
+    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=1):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
         bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
@@ -68,25 +68,31 @@ class shapefactor_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()),)
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        self.parameters_helper = ParamViewer(
+            parfield_shape, pdfconfig.par_map, pnames, regular=False
+        )
 
         self._shapefactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
-        global_concatenated_bin_indices = [[[
-            j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
-        ]]]
+        global_concatenated_bin_indices = [
+            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+        ]
 
-        self._access_field = default_backend.tile(global_concatenated_bin_indices,(len(pnames),self.batch_size,1))
+        self._access_field = default_backend.tile(
+            global_concatenated_bin_indices, (len(pnames), self.batch_size, 1)
+        )
         # access field is shape (sys, batch, globalbin)
-        for s,syst_access in enumerate(self._access_field): 
-            for t,batch_access in enumerate(syst_access):
+        for s, syst_access in enumerate(self._access_field):
+            for t, batch_access in enumerate(syst_access):
                 selection = self.parameters_helper.index_selection[s][t]
                 for b, bin_access in enumerate(batch_access):
-                    self._access_field[s,t,b] = selection[bin_access] if bin_access < len(selection) else 0
-                
+                    self._access_field[s, t, b] = (
+                        selection[bin_access] if bin_access < len(selection) else 0
+                    )
+
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
@@ -95,8 +101,10 @@ class shapefactor_combined(object):
             return
         tensorlib, _ = get_backend()
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
-        self.shapefactor_mask = tensorlib.tile(self.shapefactor_mask,(1,1,self.batch_size,1))
-        self.access_field     = tensorlib.astensor(self._access_field, dtype = 'int')
+        self.shapefactor_mask = tensorlib.tile(
+            self.shapefactor_mask, (1, 1, self.batch_size, 1)
+        )
+        self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
         self.shapefactor_default = tensorlib.ones(
             tensorlib.shape(self.shapefactor_mask)
@@ -114,13 +122,17 @@ class shapefactor_combined(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1:
-            batched_pars = tensorlib.reshape(pars, (self.batch_size,) + tensorlib.shape(pars))
+            batched_pars = tensorlib.reshape(
+                pars, (self.batch_size,) + tensorlib.shape(pars)
+            )
         else:
             batched_pars = pars
 
-        flat_pars = tensorlib.reshape(batched_pars,(-1,))
+        flat_pars = tensorlib.reshape(batched_pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
-        results_shapefactor = tensorlib.einsum('yab,s->ysab',shapefactors,self.sample_ones)
+        results_shapefactor = tensorlib.einsum(
+            'yab,s->ysab', shapefactors, self.sample_ones
+        )
         results_shapefactor = tensorlib.where(
             self.shapefactor_mask, results_shapefactor, self.shapefactor_default
         )
