@@ -307,6 +307,8 @@ def test_stat(backend):
                 'slice': slice(1, 3),
             },
         },
+        channels=['chan1', 'chan2'],
+        channel_nbins={'chan1': 1, 'chan2': 2},
         par_order=['staterror_chan1', 'staterror_chan2'],
         samples=['signal', 'background'],
     )
@@ -344,7 +346,7 @@ def test_stat(backend):
             },
             'staterror/staterror_chan2': {
                 'type': 'staterror',
-                'name': 'c',
+                'name': 'staterror_chan2',
                 'data': {
                     'mask': [False, True, True],
                     'nom_data': [10, 10, 10],
