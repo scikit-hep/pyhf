@@ -58,7 +58,7 @@ def test_ones(backend):
 
 def test_normal(backend):
     tb = pyhf.tensorlib
-    assert tb.normal_logpdf([0], [0], [1])
+    assert tb.tolist(tb.normal_logpdf(tb.astensor([0]), tb.astensor([0]), tb.astensor([1])))
 
 def test_zeros(backend):
     tb = pyhf.tensorlib
