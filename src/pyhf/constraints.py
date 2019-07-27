@@ -70,7 +70,7 @@ class gaussian_constraint_combined(object):
                 default_backend.tolist(normal_sigmas)
             )
         else:
-            self._normal_data, self._normal_sigmas (
+            self._normal_data, self._normal_sigmas = (
                 None,
                 None,
             )
