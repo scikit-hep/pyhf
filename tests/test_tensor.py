@@ -56,6 +56,10 @@ def test_ones(backend):
     assert tb.tolist(tb.ones((4, 5))) == [[1.0] * 5] * 4
 
 
+def test_normal(backend):
+    tb = pyhf.tensorlib
+    assert tb.normal_logpdf([0], [0], [1])
+
 def test_zeros(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.zeros((4, 5))) == [[0.0] * 5] * 4
