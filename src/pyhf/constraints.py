@@ -1,9 +1,11 @@
 from . import get_backend, default_backend
 from . import events
+from .paramview import ParamViewer
 
 
 class gaussian_constraint_combined(object):
-    def __init__(self, pdfconfig):
+    def __init__(self, pdfconfig, batch_size = 1):
+        self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -12,14 +14,21 @@ class gaussian_constraint_combined(object):
             (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
-        self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
 
-    def _precompute(self):
-        tensorlib, _ = get_backend()
+        pnames = [cname for cname in pdfconfig.auxdata_order if pdfconfig.param_set(cname).pdf_type == 'normal']
+
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
+
+        # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
+        access_field = None
+        for x in self.parameter_helper.index_selection:
+            access_field = x if access_field is None else default_backend.concatenate([access_field,x], axis=1)
+        #access field is (nbatch, normals)
+        self._access_field = access_field
+        
         start_index = 0
         normal_constraint_data = []
-        normal_constraint_mean_indices = []
         normal_constraint_sigmas = []
         for parset, parslice in self.parset_and_slice:
             end_index = start_index + parset.n_parameters
@@ -39,17 +48,9 @@ class gaussian_constraint_combined(object):
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
 
             normal_constraint_data.append(thisauxdata)
-            normal_constraint_mean_indices.append(self.par_indices[parslice])
 
-        if normal_constraint_mean_indices:
-            normal_mean_idc = default_backend.concatenate(
-                list(
-                    map(
-                        lambda x: default_backend.astensor(x, dtype='int'),
-                        normal_constraint_mean_indices,
-                    )
-                )
-            )
+
+        if self.parameter_helper.index_selection:
             normal_sigmas = default_backend.concatenate(
                 list(map(default_backend.astensor, normal_constraint_sigmas))
             )
@@ -62,34 +63,59 @@ class gaussian_constraint_combined(object):
                 )
             )
 
-            self.normal_data = tensorlib.astensor(
+            self._normal_data = default_backend.astensor(
                 default_backend.tolist(normal_data), dtype='int'
             )
-            self.normal_sigmas = tensorlib.astensor(
+            self._normal_sigmas = default_backend.astensor(
                 default_backend.tolist(normal_sigmas)
             )
-            self.normal_mean_idc = tensorlib.astensor(
-                default_backend.tolist(normal_mean_idc), dtype='int'
-            )
         else:
-            self.normal_data, self.normal_sigmas, self.normal_mean_idc = (
-                None,
+            self._normal_data, self._normal_sigmas (
                 None,
                 None,
             )
 
-    def logpdf(self, auxdata, pars):
-        if self.normal_data is None:
-            return 0
+        sigmas = default_backend.reshape(self._normal_sigmas,(1,-1)) # (1, normals)
+        self._batched_sigmas = default_backend.tile(sigmas,(self.batch_size,1))
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        if not self.parameter_helper.index_selection:
+            return
         tensorlib, _ = get_backend()
+        self.batched_sigmas = tensorlib.astensor(self._batched_sigmas)
+        self.normal_data    = tensorlib.astensor(self._normal_data,dtype='int')
+        self.normal_sigmas  = tensorlib.astensor(self._normal_sigmas)
+        self.access_field    = tensorlib.astensor(self._access_field,dtype='int')
+
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        if not self.parameter_helper.index_selection:
+            return tensorlib.zeros(self.batch_size,)
+
+        pars = tensorlib.astensor(pars)
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(
+                pars, (self.batch_size,) + tensorlib.shape(pars)
+            )
+        else:
+            batched_pars = pars
+
+
+        auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
-        normal_means = tensorlib.gather(pars, self.normal_mean_idc)
-        normal = tensorlib.normal_logpdf(normal_data, normal_means, self.normal_sigmas)
-        return tensorlib.sum(normal)
+        flat_pars = tensorlib.reshape(batched_pars,(-1,))
+        normal_means = tensorlib.gather(flat_pars, self.access_field)
+        normal = tensorlib.normal_logpdf(normal_data, normal_means, self.batched_sigmas)
+        result = tensorlib.sum(normal, axis = 1)
+        return result
 
 
 class poisson_constraint_combined(object):
-    def __init__(self, pdfconfig):
+    def __init__(self, pdfconfig, batch_size = 1):
+        self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
@@ -98,15 +124,14 @@ class poisson_constraint_combined(object):
             (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
-        self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
+    
+        pnames = [cname for cname in pdfconfig.auxdata_order if pdfconfig.param_set(cname).pdf_type == 'poisson']
 
-    def _precompute(self):
-        tensorlib, _ = get_backend()
+        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames, regular = False)
 
         start_index = 0
         poisson_constraint_data = []
-        poisson_constraint_rate_indices = []
         poisson_constraint_rate_factors = []
         for parset, parslice in self.mod_and_slice:
             end_index = start_index + parset.n_parameters
@@ -116,7 +141,6 @@ class poisson_constraint_combined(object):
                 continue
 
             poisson_constraint_data.append(thisauxdata)
-            poisson_constraint_rate_indices.append(self.par_indices[parslice])
 
             # poisson constraints can specify a scaling factor for the
             # backgrounds rates (see: on-off problem with a aux measurement
@@ -129,15 +153,7 @@ class poisson_constraint_combined(object):
                     default_backend.shape(self.par_indices[parslice])
                 )
 
-        if poisson_constraint_rate_indices:
-            poisson_rate_idc = default_backend.concatenate(
-                list(
-                    map(
-                        lambda x: default_backend.astensor(x, dtype='int'),
-                        poisson_constraint_rate_indices,
-                    )
-                )
-            )
+        if self.parameter_helper.index_selection:
             poisson_rate_fac = default_backend.concatenate(
                 list(
                     map(
@@ -155,32 +171,62 @@ class poisson_constraint_combined(object):
                 )
             )
 
-            self.poisson_data = tensorlib.astensor(
+            self._poisson_data = default_backend.astensor(
                 default_backend.tolist(poisson_data), dtype='int'
             )
-            self.poisson_rate_idc = tensorlib.astensor(
-                default_backend.tolist(poisson_rate_idc), dtype='int'
-            )
-            self.poisson_rate_fac = tensorlib.astensor(
+            self.poisson_rate_fac = default_backend.astensor(
                 default_backend.tolist(poisson_rate_fac), dtype='float'
             )
         else:
-            self.poisson_rate_idc, self.poisson_data, self.poisson_rate_fac = (
-                None,
+            self._poisson_data, self.poisson_rate_fac = (
                 None,
                 None,
             )
 
-    def logpdf(self, auxdata, pars):
-        if self.poisson_data is None:
-            return 0
-        tensorlib, _ = get_backend()
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        poisson_rate_base = tensorlib.gather(pars, self.poisson_rate_idc)
-        poisson_factors = self.poisson_rate_fac
 
-        poisson_rate = tensorlib.product(
-            tensorlib.stack([poisson_rate_base, poisson_factors]), axis=0
-        )
-        poisson = tensorlib.poisson_logpdf(poisson_data, poisson_rate)
-        return tensorlib.sum(poisson)
+        # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
+        access_field = None
+        for x in self.parameter_helper.index_selection:
+            access_field = x if access_field is None else default_backend.concatenate([access_field,x], axis=1)
+        #access field is (nbatch, normals)
+        self._access_field = access_field
+
+
+        factors = default_backend.reshape(self.poisson_rate_fac,(1,-1)) # (1, normals)
+        self._batched_factors = default_backend.tile(factors,(self.batch_size,1))
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        if not self.parameter_helper.index_selection:
+            return
+        tensorlib, _ = get_backend()
+        self.poisson_data    = tensorlib.astensor(self._poisson_data,dtype='int')
+        self.access_field    = tensorlib.astensor(self._access_field,dtype='int')
+        self.batched_factors = tensorlib.astensor(self._batched_factors)
+    
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        if not self.parameter_helper.index_selection:
+            return tensorlib.zeros(self.batch_size,)
+        tensorlib, _ = get_backend()
+        auxdata = tensorlib.astensor(auxdata)
+        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
+
+        pars = tensorlib.astensor(pars)
+        if self.batch_size == 1:
+            batched_pars = tensorlib.reshape(
+                pars, (self.batch_size,) + tensorlib.shape(pars)
+            )
+        else:
+            batched_pars = pars
+        flat_pars = tensorlib.reshape(batched_pars,(-1,))
+        nuispars  = tensorlib.gather(flat_pars,self.access_field)
+
+
+        pois_rates = tensorlib.product(tensorlib.stack([nuispars, self.batched_factors]), axis=0)
+
+        result = tensorlib.poisson_logpdf(poisson_data,pois_rates)
+        result = tensorlib.sum(result, axis = 1)
+        return result
