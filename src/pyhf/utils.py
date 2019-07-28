@@ -76,6 +76,44 @@ def loglambdav(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 
+def pll_and_estimators(mu, data, pdf, init_pars, par_bounds):
+    r"""The profile likelihood ratio :math:`\lambda(\mu)` for creating the various
+    test statistics, as defined in Equation (7) in `arXiv:1007.1727`_ .
+
+    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
+
+    .. math::
+
+       \lambda(\mu) = \frac{L(\mu,\hat{\hat{\pmb{\theta}}})}{L(\hat{\mu},\hat{\pmb{\theta}})}
+
+    Args:
+        mu (Number or Tensor): The signal strength parameter
+        data (Tensor): The data to be considered
+        pdf (|pyhf.pdf.Model|_): The HistFactory statistical model used in the likelihood ratio calculation
+        init_pars (Tensor): The initial parameters :math:`\pmb{\theta}`
+        par_bounds(Tensor): The bounds on the paramter values
+
+    .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
+    .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
+
+    Returns:
+        Tuple of (Tensor, Tensor, Float): The parameters :math:`\hat{\hat{\pmb{\theta}}}` that maximise the likelihood for the given value of :math:`\mu`, the parameters :math:`\hat{\pmb{\theta}}` that maximise the likelihood unconditionally (including :math:`\hat{\mu}`) and the value of :math:`-2\ln\lambda(\mu)`
+
+    """
+    tensorlib, optimizer = get_backend()
+    mubhathat = optimizer.constrained_bestfit(
+        loglambdav, mu, data, pdf, init_pars, par_bounds
+    )
+    muhatbhat = optimizer.unconstrained_bestfit(
+        loglambdav, data, pdf, init_pars, par_bounds
+    )
+    return (
+        mubhathat,
+        muhatbhat,
+        loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf),
+    )
+
+
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
@@ -109,15 +147,46 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     tensorlib, optimizer = get_backend()
-    mubhathat = optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds
-    )
-    muhatbhat = optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds
-    )
-    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
+    mubhathat, muhatbhat, qmu = pll_and_estimators(mu, data, pdf, init_pars, par_bounds)
     qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, [0], qmu)
     return qmu
+
+
+def q0(mu, data, pdf, init_pars, par_bounds):
+    r"""
+    The test statistic, :math:`q_{0}`, for discovery of a positive signal
+    as defiend in Equation (12) in `arXiv:1007.1727`_, for :math:`\mu=0`.
+
+    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
+
+    .. math::
+       :nowrap:
+
+       \begin{equation}
+          q_{0} = \left\{\begin{array}{ll}
+          -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
+          0, & \hat{\mu} < 0,
+          \end{array}\right.
+        \end{equation}
+
+
+    Args:
+        mu (Number or Tensor): The signal strength parameter (typically 0)
+        data (Tensor): The data to be considered
+        pdf (|pyhf.pdf.Model|_): The HistFactory statistical model used in the likelihood ratio calculation
+        init_pars (Tensor): The initial parameters
+        par_bounds(Tensor): The bounds on the paramter values
+
+    .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
+    .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
+
+    Returns:
+        Float: The calculated test statistic, :math:`q_{0}`
+    """
+    tensorlib, optimizer = get_backend()
+    mubhathat, muhatbhat, q0 = pll_and_estimators(mu, data, pdf, init_pars, par_bounds)
+    q0 = tensorlib.where(muhatbhat[pdf.config.poi_index] < mu, [0], q0)
+    return q0
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):

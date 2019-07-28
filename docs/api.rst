@@ -119,8 +119,10 @@ Utilities
    :toctree: _generated/
 
    generate_asimov_data
+   pll_and_estimators
    loglambdav
    pvals_from_teststat
    pvals_from_teststat_expected
    qmu
+   q0
    hypotest
