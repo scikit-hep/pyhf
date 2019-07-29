@@ -155,7 +155,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 def q0(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`q_{0}`, for discovery of a positive signal
-    as defiend in Equation (12) in `arXiv:1007.1727`_, for :math:`\mu=0`.
+    as defined in Equation (12) in `arXiv:1007.1727`_, for :math:`\mu=0`.
 
     .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
 
