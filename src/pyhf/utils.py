@@ -269,7 +269,14 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
 
 
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    qtilde=False,
+    use_q0=False,
+    **kwargs
 ):
     r"""
     Computes :math:`p`-values and test statistics for a single value of the parameter of interest
@@ -281,6 +288,7 @@ def hypotest(
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of `arXiv:1007.1727`_
+        use_q0 (Bool): When ``True`` perform the calculation using the discovery test statistic, :math:`q_0`, as defined in Equation (12) of `arXiv:1007.1727`_
 
     .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
     .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
@@ -343,18 +351,21 @@ def hypotest(
 
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+    test_stat = qmu if not use_q0 else q0
+    if qtilde and use_q0:
+        raise ValueError("Can't have `use_q0` together with `qtilde`")
     tensorlib, _ = get_backend()
 
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
     qmu_v = tensorlib.clip(
-        qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
+        test_stat(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
     )
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
     qmuA_v = tensorlib.clip(
-        qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max_value=None
+        test_stat(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max_value=None
     )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
