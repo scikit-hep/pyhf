@@ -24,14 +24,14 @@ class normfactor(object):
 
 
 class normfactor_combined(object):
-    def __init__(self, normfactor_mods, pdfconfig, mega_mods, batch_size=1):
+    def __init__(self, normfactor_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
         pnames = [pname for pname, _ in normfactor_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
         normfactor_mods = [m for m, _ in normfactor_mods]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._normfactor_mask = [
@@ -46,7 +46,7 @@ class normfactor_combined(object):
             return
         self.normfactor_mask = tensorlib.astensor(self._normfactor_mask)
         self.normfactor_mask = tensorlib.tile(
-            self.normfactor_mask, (1, 1, self.batch_size, 1)
+            self.normfactor_mask, (1, 1, self.batch_size or 1, 1)
         )
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
 
@@ -58,24 +58,24 @@ class normfactor_combined(object):
         if not self.parameters_helper.index_selection:
             return
         tensorlib, _ = get_backend()
-        if self.batch_size == 1:
+        if self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
 
-        normfactors = self.parameters_helper.get_slice(batched_pars)
+        normfactors = self.parameters_helper.get(batched_pars)
 
-        # normfactors is (nsys,batch,1)
+        # normfactors is (nsys,batch)
         # mask is (nsys,nsam,batch,gb)
         results_normfactor = tensorlib.einsum(
-            'ysab,yax->ysab', self.normfactor_mask, normfactors
+            'ysab,ya->ysab', self.normfactor_mask, normfactors
         )
 
         results_normfactor = tensorlib.where(
             self.normfactor_mask,
             results_normfactor,
-            tensorlib.astensor(self.normfactor_default),
+            self.normfactor_default,
         )
         return results_normfactor

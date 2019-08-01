@@ -27,7 +27,7 @@ class normsys(object):
 
 class normsys_combined(object):
     def __init__(
-        self, normsys_mods, pdfconfig, mega_mods, interpcode='code1', batch_size=1
+        self, normsys_mods, pdfconfig, mega_mods, interpcode='code1', batch_size=None
     ):
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
@@ -38,7 +38,7 @@ class normsys_combined(object):
 
         self.batch_size = batch_size
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
         self._normsys_histoset = [
             [
@@ -69,7 +69,7 @@ class normsys_combined(object):
         tensorlib, _ = get_backend()
         self.normsys_mask = tensorlib.astensor(self._normsys_mask)
         self.normsys_mask = tensorlib.tile(
-            self.normsys_mask, (1, 1, self.batch_size, 1)
+            self.normsys_mask, (1, 1, self.batch_size or 1, 1)
         )
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
 
@@ -82,21 +82,13 @@ class normsys_combined(object):
             return
 
         tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1:
+        if self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
-        slices = self.parameters_helper.get_slice(batched_pars)
-
-        # slices is [(batch, slicesize)] = [(batch,1)]
-        normsys_alphaset = slices
-        normsys_alphaset = tensorlib.reshape(
-            normsys_alphaset, tensorlib.shape(normsys_alphaset)[:2]
-        )
-
+        normsys_alphaset = self.parameters_helper.get(batched_pars)
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below

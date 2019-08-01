@@ -23,7 +23,7 @@ class gaussian_constraint_combined(object):
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
         self.parameter_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames, regular=False
+            parfield_shape, pdfconfig.par_map, pnames
         )
 
         # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
@@ -138,7 +138,7 @@ class poisson_constraint_combined(object):
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
         self.parameter_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames, regular=False
+            parfield_shape, pdfconfig.par_map, pnames
         )
 
         start_index = 0

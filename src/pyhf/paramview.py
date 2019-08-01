@@ -1,9 +1,11 @@
 from . import get_backend, default_backend, events
 
 
-def index_helper(name, indices, batch_shape, par_map, is_list):
+def index_helper(name, tensor_shape, batch_shape, par_map):
     if isinstance(name, list):
-        return [index_helper(x, indices, batch_shape, par_map, is_list) for x in name]
+        return [index_helper(x, tensor_shape, batch_shape, par_map) for x in name]
+    x = list(range(int(default_backend.product(tensor_shape))))
+    indices = default_backend.reshape(x, tensor_shape)
     parfield_slice = tuple(slice(None, None) for x in batch_shape) + (
         par_map[name]['slice'],
     )
@@ -16,27 +18,33 @@ class ParamViewer(object):
     Helper class to extract parameter data from possibly batched input
     """
 
-    def __init__(self, tensor_shape, par_map, name, regular=True):
+    def __init__(self, tensor_shape, par_map, name):
         self.tensor_shape = tensor_shape
         self.batch_shape = tensor_shape[:-1]
-        x = list(range(int(default_backend.product(tensor_shape))))
-        self.indices = default_backend.reshape(x, tensor_shape)
         self.par_map = par_map
-        self.is_list = isinstance(name, list)
         self.index_selection = index_helper(
-            name, self.indices, self.batch_shape, self.par_map, self.is_list
+            name, tensor_shape, self.batch_shape, self.par_map
         )
 
-        self.regular = regular
+        last = 0
+        sl = []
+        for s in [par_map[x]['slice'].stop-par_map[x]['slice'].start for x in (name if isinstance(name,list) else [name])]:
+            sl.append(slice(last,last+s))
+            last +=s
+        self.slices = sl\
+
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
+
+    
     def _precompute(self):
         tensorlib, _ = get_backend()
-        if self.regular:
-            self.indices = tensorlib.astensor(self.index_selection, dtype='int')
-
+        if self.index_selection:
+            cat = tensorlib.concatenate([tensorlib.astensor(x, dtype = 'int') for x in self.index_selection],axis=1)
+            self.indices_concatenated = tensorlib.einsum('ij->ji',  cat)
+    
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(
             self.tensor_shape,
@@ -44,7 +52,7 @@ class ParamViewer(object):
             bool(self.batch_shape),
         )
 
-    def get_slice(self, tensor):
+    def get(self, tensor):
         """
         Returns:
             list of parameter slices:
@@ -52,6 +60,6 @@ class ParamViewer(object):
                 type when not batched: list of (slicesize, ) tensors
         """
         tensorlib, _ = get_backend()
-        tensor = tensorlib.astensor(tensor)
-        result = tensorlib.gather(tensorlib.reshape(tensor, (-1,)), self.indices)
+        result = tensorlib.gather(tensorlib.reshape(tensor, (-1,)), self.indices_concatenated)
         return result
+

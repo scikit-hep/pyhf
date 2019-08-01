@@ -30,7 +30,7 @@ class shapesys(object):
 
 
 class shapesys_combined(object):
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=1):
+    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
         pnames = [pname for pname, _ in shapesys_mods]
@@ -45,9 +45,9 @@ class shapesys_combined(object):
             self._parindices[pdfconfig.par_slice(p)] for p in pnames
         ]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameters_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames, regular=False
+            parfield_shape, pdfconfig.par_map, pnames
         )
 
         self._shapesys_mask = [
@@ -73,7 +73,7 @@ class shapesys_combined(object):
         ]
 
         self._access_field = default_backend.tile(
-            global_concatenated_bin_indices, (len(pnames), self.batch_size, 1)
+            global_concatenated_bin_indices, (len(pnames), self.batch_size or 1, 1)
         )
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
@@ -93,7 +93,7 @@ class shapesys_combined(object):
             return
         self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
         self.shapesys_mask = tensorlib.tile(
-            self.shapesys_mask, (1, 1, self.batch_size, 1)
+            self.shapesys_mask, (1, 1, self.batch_size or 1, 1)
         )
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
@@ -137,9 +137,9 @@ class shapesys_combined(object):
 
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        if self.batch_size == 1:
+        if self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
