@@ -22,9 +22,7 @@ class gaussian_constraint_combined(object):
         ]
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
-        self.parameter_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames
-        )
+        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
         access_field = None
@@ -137,9 +135,7 @@ class poisson_constraint_combined(object):
         ]
 
         parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
-        self.parameter_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames
-        )
+        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         start_index = 0
         poisson_constraint_data = []

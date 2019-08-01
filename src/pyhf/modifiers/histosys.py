@@ -80,13 +80,11 @@ class histosys_combined(object):
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (1,) + tensorlib.shape(pars)
-            )
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
         histosys_alphaset = self.parameters_helper.get(batched_pars)
-    
+
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(

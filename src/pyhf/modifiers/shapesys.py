@@ -46,9 +46,7 @@ class shapesys_combined(object):
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(
-            parfield_shape, pdfconfig.par_map, pnames
-        )
+        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -138,9 +136,7 @@ class shapesys_combined(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (1,) + tensorlib.shape(pars)
-            )
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
 

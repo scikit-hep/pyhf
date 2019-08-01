@@ -60,9 +60,7 @@ class lumi_combined(object):
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (1,) + tensorlib.shape(pars)
-            )
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
 
@@ -72,7 +70,5 @@ class lumi_combined(object):
         # mask is (nsys, nsam, batch, globalbin)
         results_lumi = tensorlib.einsum('ysab,xa->ysab', self.lumi_mask, lumis)
 
-        results_lumi = tensorlib.where(
-            self.lumi_mask, results_lumi, self.lumi_default
-        )
+        results_lumi = tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
         return results_lumi
