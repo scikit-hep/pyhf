@@ -59,9 +59,7 @@ class normfactor_combined(object):
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (1,) + tensorlib.shape(pars)
-            )
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
 
@@ -74,8 +72,6 @@ class normfactor_combined(object):
         )
 
         results_normfactor = tensorlib.where(
-            self.normfactor_mask,
-            results_normfactor,
-            self.normfactor_default,
+            self.normfactor_mask, results_normfactor, self.normfactor_default
         )
         return results_normfactor

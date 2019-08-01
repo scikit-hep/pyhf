@@ -4,22 +4,18 @@ from pyhf.paramview import ParamViewer
 
 
 def test_paramviewer(backend):
-    pars = [
-        [1, 2, 3, 4],
-        [5, 6, 7, 8],
-        [9, 10, 11, 12]
-    ]
+    pars = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 
     nbatch = len(pars)
     npars = len(pars[0])
 
     v = ParamViewer((nbatch, npars), {'hello': {'slice': slice(0, 2)}}, ['hello'])
     sl = v.get(pars)
-    assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [[1,5,9],[2,6,10]]
+    assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
 
     v = ParamViewer((nbatch, npars), {'hello': {'slice': slice(0, 2)}}, 'hello')
     sl = v.get(pars)
-    assert pyhf.tensorlib.tolist(sl) == [[1,5,9],[2,6,10]]
+    assert pyhf.tensorlib.tolist(sl) == [[1, 5, 9], [2, 6, 10]]
 
     # pars = [1, 2, 3, 4]
     # npars = len(pars)
@@ -30,7 +26,6 @@ def test_paramviewer(backend):
     # v = ParamViewer((npars,), {'hello': {'slice': slice(0, 2)}}, 'hello')
     # sl = v.get(pars)
     # assert pyhf.tensorlib.tolist(sl) == [1, 2]
-
 
     # pars = [
     #     list(range(5))
@@ -45,7 +40,6 @@ def test_paramviewer(backend):
     # sl = v.get_slice(pars)
     # assert np.all(np.isclose(pyhf.tensorlib.tolist(sl[0]),[[0,1]]*10))
     # assert np.all(np.isclose(pyhf.tensorlib.tolist(sl[1]),[[2,3,4]]*10))
-
 
     # pars = [
     #     list(range(4))

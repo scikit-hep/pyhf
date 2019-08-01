@@ -175,7 +175,7 @@ def test_ok(backend):
             },
         },
     )
-    sugg = [1.0]*3 + [0.0]*5 # 2 pois 5 norm
+    sugg = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     con = poisson_constraint_combined(c)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
@@ -191,7 +191,7 @@ def test_ok(backend):
     )
     assert result.shape == (1,)
 
-    sugg = [1.1]*3 + [0.0]*5 # 2 pois 5 norm
+    sugg = [1.1] * 3 + [0.0] * 5  # 2 pois 5 norm
     con = poisson_constraint_combined(c)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
@@ -201,7 +201,7 @@ def test_ok(backend):
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12*1.1, 13*1.1, 14*1.1])
+                for data, rate in zip([12, 13, 14], [12 * 1.1, 13 * 1.1, 14 * 1.1])
             ]
         ),
     )
@@ -212,30 +212,45 @@ def test_ok(backend):
     assert result.shape == (10,)
 
     sugg = [
-        [1.1,1.2,1.3] + [0.0]*5, # 2 pois 5 norm
-        [0.7,0.8,0.9] + [0.0]*5, # 2 pois 5 norm
-        [0.4,0.5,0.6] + [0.0]*5, # 2 pois 5 norm
+        [1.1, 1.2, 1.3] + [0.0] * 5,  # 2 pois 5 norm
+        [0.7, 0.8, 0.9] + [0.0] * 5,  # 2 pois 5 norm
+        [0.4, 0.5, 0.6] + [0.0] * 5,  # 2 pois 5 norm
     ]
-    con = poisson_constraint_combined(c, batch_size = 3)
+    con = poisson_constraint_combined(c, batch_size=3)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
     )
-    assert np.all(np.isclose(
-        result,
-        np.sum([
-            [ default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12*1.1, 13*1.2, 14*1.3]) ],
-            [ default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12*0.7, 13*0.8, 14*0.9]) ],
-            [ default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12*0.4, 13*0.5, 14*0.6]) ]
-        ]
-        ,axis=1),
-    ))
+    assert np.all(
+        np.isclose(
+            result,
+            np.sum(
+                [
+                    [
+                        default_backend.poisson_logpdf(data, rate)
+                        for data, rate in zip(
+                            [12, 13, 14], [12 * 1.1, 13 * 1.2, 14 * 1.3]
+                        )
+                    ],
+                    [
+                        default_backend.poisson_logpdf(data, rate)
+                        for data, rate in zip(
+                            [12, 13, 14], [12 * 0.7, 13 * 0.8, 14 * 0.9]
+                        )
+                    ],
+                    [
+                        default_backend.poisson_logpdf(data, rate)
+                        for data, rate in zip(
+                            [12, 13, 14], [12 * 0.4, 13 * 0.5, 14 * 0.6]
+                        )
+                    ],
+                ],
+                axis=1,
+            ),
+        )
+    )
     assert result.shape == (3,)
 
-
-    sugg = [1.0]*3 + [0.0]*5 # 2 pois 5 norm
+    sugg = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     con = gaussian_constraint_combined(c)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
@@ -253,7 +268,7 @@ def test_ok(backend):
     )
     assert result.shape == (1,)
 
-    sugg = [1.0]*3 + [1,2,3,4,5] # 2 pois 5 norm
+    sugg = [1.0] * 3 + [1, 2, 3, 4, 5]  # 2 pois 5 norm
     con = gaussian_constraint_combined(c)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
@@ -264,7 +279,7 @@ def test_ok(backend):
             [
                 default_backend.normal_logpdf(data, mu, sigma)
                 for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [1,2,3,4,5], [1.5, 2.0, 1.0, 1.0, 1.0]
+                    [0, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1.5, 2.0, 1.0, 1.0, 1.0]
                 )
             ]
         ),
@@ -272,26 +287,46 @@ def test_ok(backend):
     assert result.shape == (1,)
 
     sugg = [
-        [1.0]*3 + [ 1, 2, 3, 4, 5], # 2 pois 5 norm
-        [1.0]*3 + [-1,-2,-3,-4,-5], # 2 pois 5 norm
-        [1.0]*3 + [-1,-2, 0, 1, 2], # 2 pois 5 norm
-     ] 
-    con = gaussian_constraint_combined(c, batch_size = 3)
+        [1.0] * 3 + [1, 2, 3, 4, 5],  # 2 pois 5 norm
+        [1.0] * 3 + [-1, -2, -3, -4, -5],  # 2 pois 5 norm
+        [1.0] * 3 + [-1, -2, 0, 1, 2],  # 2 pois 5 norm
+    ]
+    con = gaussian_constraint_combined(c, batch_size=3)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
     )
-    assert np.all(np.isclose(
-        result,
-        np.sum([
-            [ default_backend.normal_logpdf(data, mu, sigma) for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [ 1, 2, 3, 4, 5], [1.5, 2.0, 1.0, 1.0, 1.0])],
-            [ default_backend.normal_logpdf(data, mu, sigma) for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [-1,-2,-3,-4,-5], [1.5, 2.0, 1.0, 1.0, 1.0])],
-            [ default_backend.normal_logpdf(data, mu, sigma) for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [-1,-2, 0, 1, 2], [1.5, 2.0, 1.0, 1.0, 1.0])],
-        ]
-        ,axis = 1),
-    ))
+    assert np.all(
+        np.isclose(
+            result,
+            np.sum(
+                [
+                    [
+                        default_backend.normal_logpdf(data, mu, sigma)
+                        for data, mu, sigma in zip(
+                            [0, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1.5, 2.0, 1.0, 1.0, 1.0]
+                        )
+                    ],
+                    [
+                        default_backend.normal_logpdf(data, mu, sigma)
+                        for data, mu, sigma in zip(
+                            [0, 0, 0, 0, 0],
+                            [-1, -2, -3, -4, -5],
+                            [1.5, 2.0, 1.0, 1.0, 1.0],
+                        )
+                    ],
+                    [
+                        default_backend.normal_logpdf(data, mu, sigma)
+                        for data, mu, sigma in zip(
+                            [0, 0, 0, 0, 0],
+                            [-1, -2, 0, 1, 2],
+                            [1.5, 2.0, 1.0, 1.0, 1.0],
+                        )
+                    ],
+                ],
+                axis=1,
+            ),
+        )
+    )
     assert result.shape == (3,)
 
     con = gaussian_constraint_combined(c, batch_size=10)

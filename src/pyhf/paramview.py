@@ -28,23 +28,26 @@ class ParamViewer(object):
 
         last = 0
         sl = []
-        for s in [par_map[x]['slice'].stop-par_map[x]['slice'].start for x in (name if isinstance(name,list) else [name])]:
-            sl.append(slice(last,last+s))
-            last +=s
-        self.slices = sl\
-
+        for s in [
+            par_map[x]['slice'].stop - par_map[x]['slice'].start
+            for x in (name if isinstance(name, list) else [name])
+        ]:
+            sl.append(slice(last, last + s))
+            last += s
+        self.slices = sl
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
-
-    
     def _precompute(self):
         tensorlib, _ = get_backend()
         if self.index_selection:
-            cat = tensorlib.concatenate([tensorlib.astensor(x, dtype = 'int') for x in self.index_selection],axis=1)
-            self.indices_concatenated = tensorlib.einsum('ij->ji',  cat)
-    
+            cat = tensorlib.concatenate(
+                [tensorlib.astensor(x, dtype='int') for x in self.index_selection],
+                axis=1,
+            )
+            self.indices_concatenated = tensorlib.einsum('ij->ji', cat)
+
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(
             self.tensor_shape,
@@ -60,6 +63,7 @@ class ParamViewer(object):
                 type when not batched: list of (slicesize, ) tensors
         """
         tensorlib, _ = get_backend()
-        result = tensorlib.gather(tensorlib.reshape(tensor, (-1,)), self.indices_concatenated)
+        result = tensorlib.gather(
+            tensorlib.reshape(tensor, (-1,)), self.indices_concatenated
+        )
         return result
-
