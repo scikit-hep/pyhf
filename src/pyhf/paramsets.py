@@ -1,7 +1,5 @@
 from . import get_backend
 from . import exceptions
-from .paramview import ParamViewer
-
 
 class paramset(object):
     def __init__(self, **kwargs):
