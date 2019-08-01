@@ -4,18 +4,18 @@ from pyhf.paramview import ParamViewer
 
 
 def test_paramviewer(backend):
-    pars = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    pars = pyhf.tensorlib.astensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
 
-    nbatch = len(pars)
-    npars = len(pars[0])
+    nbatch = pyhf.tensorlib.shape(pars)[0]
+    npars = pyhf.tensorlib.shape(pars)[1]
 
     v = ParamViewer((nbatch, npars), {'hello': {'slice': slice(0, 2)}}, ['hello'])
     sl = v.get(pars)
     assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
 
-    v = ParamViewer((nbatch, npars), {'hello': {'slice': slice(0, 2)}}, 'hello')
-    sl = v.get(pars)
-    assert pyhf.tensorlib.tolist(sl) == [[1, 5, 9], [2, 6, 10]]
+    # v = ParamViewer((nbatch, npars), {'hello': {'slice': slice(0, 2)}}, 'hello')
+    # sl = v.get(pars)
+    # assert pyhf.tensorlib.tolist(sl) == [[1, 5, 9], [2, 6, 10]]
 
     # pars = [1, 2, 3, 4]
     # npars = len(pars)
