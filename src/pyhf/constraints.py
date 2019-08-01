@@ -8,7 +8,6 @@ class gaussian_constraint_combined(object):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
-        self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
             (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
@@ -58,16 +57,10 @@ class gaussian_constraint_combined(object):
             normal_constraint_data.append(thisauxdata)
 
         if self.parameter_helper.index_selection:
-            normal_sigmas = default_backend.concatenate(
-                list(map(default_backend.astensor, normal_constraint_sigmas))
-            )
-            normal_data = default_backend.concatenate(
-                list(
-                    map(
-                        lambda x: default_backend.astensor(x, dtype='int'),
-                        normal_constraint_data,
-                    )
-                )
+            normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
+
+            normal_data = default_backend.astensor(
+                default_backend.concatenate(normal_constraint_data), dtype='int'
             )
 
             self._normal_data = default_backend.astensor(
@@ -161,21 +154,12 @@ class poisson_constraint_combined(object):
                 )
 
         if self.parameter_helper.index_selection:
-            poisson_rate_fac = default_backend.concatenate(
-                list(
-                    map(
-                        lambda x: default_backend.astensor(x, dtype='float'),
-                        poisson_constraint_rate_factors,
-                    )
-                )
+            poisson_rate_fac = default_backend.astensor(
+                default_backend.concatenate(poisson_constraint_rate_factors),
+                dtype='float',
             )
-            poisson_data = default_backend.concatenate(
-                list(
-                    map(
-                        lambda x: default_backend.astensor(x, dtype='int'),
-                        poisson_constraint_data,
-                    )
-                )
+            poisson_data = default_backend.astensor(
+                default_backend.concatenate(poisson_constraint_data), dtype='int'
             )
 
             self._poisson_data = default_backend.astensor(
