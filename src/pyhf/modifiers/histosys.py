@@ -27,7 +27,7 @@ class histosys(object):
 
 class histosys_combined(object):
     def __init__(
-        self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size=1
+        self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size=None
     ):
         self.batch_size = batch_size
         self.interpcode = interpcode
@@ -37,7 +37,7 @@ class histosys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._histosys_histoset = [
@@ -79,19 +79,14 @@ class histosys_combined(object):
             return
 
         tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1:
+        if self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
-        slices = self.parameters_helper.get_slice(batched_pars)
-
-        histosys_alphaset = slices  # (nsys, nbatch, slicesiz)
-        histosys_alphaset = tensorlib.reshape(
-            histosys_alphaset, tensorlib.shape(histosys_alphaset)[:2]
-        )
+        histosys_alphaset = self.parameters_helper.get(batched_pars)
+    
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(
