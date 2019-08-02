@@ -3,7 +3,8 @@ import logging
 import click
 import json
 
-from ..utils import hypotest, EqDelimStringParamType
+from ..utils import EqDelimStringParamType
+from ..stats import hypotest
 from ..workspace import Workspace
 from .. import tensor, get_backend, set_backend, optimize
 

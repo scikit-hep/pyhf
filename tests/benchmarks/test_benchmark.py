@@ -53,7 +53,7 @@ def generate_source_poisson(n_bins):
 
 
 def hypotest(pdf, data):
-    return pyhf.utils.hypotest(
+    return pyhf.stats.hypotest(
         1.0,
         data,
         pdf,

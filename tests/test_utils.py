@@ -56,7 +56,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
     tb = pyhf.tensorlib
 
     kwargs = {}
-    result = pyhf.utils.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
     # CLs_obs
     assert len(list(result)) == 1
     assert isinstance(result, type(tb.astensor(result)))
