@@ -97,7 +97,7 @@ def pll_and_estimators(mu, data, pdf, init_pars, par_bounds):
     .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Returns:
-        Tuple of (Tensor, Tensor, Float): The parameters :math:`\hat{\hat{\pmb{\theta}}}` that maximise the likelihood for the given value of :math:`\mu`, the parameters :math:`\hat{\pmb{\theta}}` that maximise the likelihood unconditionally (including :math:`\hat{\mu}`) and the value of :math:`-2\ln\lambda(\mu)`
+        Tuple of Tensors: The parameters :math:`\hat{\hat{\pmb{\theta}}}` that maximise the likelihood for the given value of :math:`\mu`, the parameters :math:`\hat{\pmb{\theta}}` that maximise the likelihood unconditionally (including :math:`\hat{\mu}`) and the value of :math:`-2\ln\lambda(\mu)`
 
     """
     tensorlib, optimizer = get_backend()
