@@ -90,8 +90,12 @@ class gaussian_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.parameter_helper.index_selection:
-            print('return scalar!', self.batch_size,tensorlib.astensor(0.0))
-            return tensorlib.zeros(self.batch_size) if self.batch_size is not None else tensorlib.astensor(0.0)[0]
+            print('return scalar!', self.batch_size, tensorlib.astensor(0.0))
+            return (
+                tensorlib.zeros(self.batch_size)
+                if self.batch_size is not None
+                else tensorlib.astensor(0.0)[0]
+            )
 
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1 or self.batch_size is None:
@@ -204,7 +208,11 @@ class poisson_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.parameter_helper.index_selection:
-            return tensorlib.zeros(self.batch_size) if self.batch_size is not None else tensorlib.astensor(0.0)[0]
+            return (
+                tensorlib.zeros(self.batch_size)
+                if self.batch_size is not None
+                else tensorlib.astensor(0.0)[0]
+            )
         tensorlib, _ = get_backend()
         auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
