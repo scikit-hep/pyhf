@@ -458,7 +458,7 @@ class Model(object):
             mainpdf = self.mainlogpdf(actual_data, pars)
             constraint = self.constraint_logpdf(aux_data, pars)
 
-            result = mainpdf + constraint
+            result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy
