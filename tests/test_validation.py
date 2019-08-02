@@ -751,7 +751,7 @@ def validate_hypotest(
     'setup_and_tolerance',
     [
         (setup_1bin_shapesys(), 1e-6),
-        (setup_1bin_shapesys_q0(), 1e-6),
+        (setup_1bin_shapesys_q0(), 3e-4),
         (setup_1bin_lumi(), 1e-6),
         (setup_1bin_normsys(), 1e-6),
         (setup_2bin_histosys(), 8e-5),

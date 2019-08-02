@@ -357,6 +357,8 @@ def hypotest(
     tensorlib, _ = get_backend()
 
     asimov_mu = 0.0
+    if use_q0:
+        asimov_mu = 1.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
     qmu_v = tensorlib.clip(
@@ -372,18 +374,25 @@ def hypotest(
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=qtilde)
 
     _returns = [CLs]
+
+    pvalue_index = -1
+    if use_q0:
+        _returns = [CLsb]
+        pvalue_index = 0
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[-1])
+            CLs_exp.append(
+                pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[pvalue_index]
+            )
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
+        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[pvalue_index])
     if kwargs.get('return_test_statistics'):
         _returns.append([qmu_v, qmuA_v])
     # Enforce a consistent return type of the observed CLs
