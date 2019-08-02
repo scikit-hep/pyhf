@@ -435,9 +435,11 @@ class Model(object):
         return tensorlib.concatenate(tocat)
 
     def constraint_logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return normal + poisson
+        print(normal, poisson)
+        return tensorlib.sum(tensorlib.stack([normal,poisson]), axis = 0)
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()

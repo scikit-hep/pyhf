@@ -4,7 +4,7 @@ from .paramview import ParamViewer
 
 
 class gaussian_constraint_combined(object):
-    def __init__(self, pdfconfig, batch_size=1):
+    def __init__(self, pdfconfig, batch_size=None):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -20,7 +20,7 @@ class gaussian_constraint_combined(object):
             if pdfconfig.param_set(cname).pdf_type == 'normal'
         ]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
@@ -73,7 +73,7 @@ class gaussian_constraint_combined(object):
             self._normal_data, self._normal_sigmas = (None, None)
 
         sigmas = default_backend.reshape(self._normal_sigmas, (1, -1))  # (1, normals)
-        self._batched_sigmas = default_backend.tile(sigmas, (self.batch_size, 1))
+        self._batched_sigmas = default_backend.tile(sigmas, (self.batch_size or 1, 1))
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -90,12 +90,13 @@ class gaussian_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.parameter_helper.index_selection:
-            return tensorlib.zeros(self.batch_size)
+            print('return scalar!', self.batch_size,tensorlib.astensor(0.0))
+            return tensorlib.zeros(self.batch_size) if self.batch_size is not None else tensorlib.astensor(0.0)[0]
 
         pars = tensorlib.astensor(pars)
-        if self.batch_size == 1:
+        if self.batch_size == 1 or self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (self.batch_size or 1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
@@ -106,11 +107,13 @@ class gaussian_constraint_combined(object):
         normal_means = tensorlib.gather(flat_pars, self.access_field)
         normal = tensorlib.normal_logpdf(normal_data, normal_means, self.batched_sigmas)
         result = tensorlib.sum(normal, axis=1)
+        if self.batch_size is None:
+            return result[0]
         return result
 
 
 class poisson_constraint_combined(object):
-    def __init__(self, pdfconfig, batch_size=1):
+    def __init__(self, pdfconfig, batch_size=None):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -127,7 +130,7 @@ class poisson_constraint_combined(object):
             if pdfconfig.param_set(cname).pdf_type == 'poisson'
         ]
 
-        parfield_shape = (self.batch_size, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         start_index = 0
@@ -185,7 +188,7 @@ class poisson_constraint_combined(object):
         factors = default_backend.reshape(
             self.poisson_rate_fac, (1, -1)
         )  # (1, normals)
-        self._batched_factors = default_backend.tile(factors, (self.batch_size, 1))
+        self._batched_factors = default_backend.tile(factors, (self.batch_size or 1, 1))
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -201,15 +204,15 @@ class poisson_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.parameter_helper.index_selection:
-            return tensorlib.zeros(self.batch_size)
+            return tensorlib.zeros(self.batch_size) if self.batch_size is not None else tensorlib.astensor(0.0)[0]
         tensorlib, _ = get_backend()
         auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
 
         pars = tensorlib.astensor(pars)
-        if self.batch_size == 1:
+        if self.batch_size == 1 or self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size,) + tensorlib.shape(pars)
+                pars, (self.batch_size or 1,) + tensorlib.shape(pars)
             )
         else:
             batched_pars = pars
@@ -222,4 +225,6 @@ class poisson_constraint_combined(object):
 
         result = tensorlib.poisson_logpdf(poisson_data, pois_rates)
         result = tensorlib.sum(result, axis=1)
+        if self.batch_size is None:
+            return result[0]
         return result
