@@ -251,7 +251,7 @@ def test_ok(backend):
     assert result.shape == (3,)
 
     sugg = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
-    con = gaussian_constraint_combined(c, batch_size = 1)
+    con = gaussian_constraint_combined(c, batch_size=1)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
     )
@@ -269,7 +269,7 @@ def test_ok(backend):
     assert result.shape == (1,)
 
     sugg = [1.0] * 3 + [1, 2, 3, 4, 5]  # 2 pois 5 norm
-    con = gaussian_constraint_combined(c, batch_size = 1)
+    con = gaussian_constraint_combined(c, batch_size=1)
     result = default_backend.astensor(
         pyhf.tensorlib.tolist(con.logpdf(c.auxdata, sugg))
     )
