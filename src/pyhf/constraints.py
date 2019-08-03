@@ -107,10 +107,12 @@ class gaussian_constraint_combined(object):
         else:
             batched_pars = pars
 
-        auxdata = tensorlib.astensor(auxdata)
-        normal_data = tensorlib.gather(auxdata, self.normal_data)
         flat_pars = tensorlib.reshape(batched_pars, (-1,))
         normal_means = tensorlib.gather(flat_pars, self.access_field)
+
+        # pdf pars are done, now get data and compute
+        auxdata = tensorlib.astensor(auxdata)
+        normal_data = tensorlib.gather(auxdata, self.normal_data)
         normal = tensorlib.normal_logpdf(normal_data, normal_means, self.batched_sigmas)
         result = tensorlib.sum(normal, axis=1)
         if self.batch_size is None:
@@ -213,8 +215,6 @@ class poisson_constraint_combined(object):
                 else tensorlib.astensor(0.0)[0]
             )
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
 
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1 or self.batch_size is None:
@@ -230,6 +230,9 @@ class poisson_constraint_combined(object):
             tensorlib.stack([nuispars, self.batched_factors]), axis=0
         )
 
+        # pdf pars are done, now get data and compute
+        auxdata = tensorlib.astensor(auxdata)
+        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         result = tensorlib.poisson_logpdf(poisson_data, pois_rates)
         result = tensorlib.sum(result, axis=1)
         if self.batch_size is None:
