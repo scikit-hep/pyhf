@@ -66,14 +66,17 @@ class gaussian_constraint_combined(object):
             self._normal_data = default_backend.astensor(
                 default_backend.tolist(normal_data), dtype='int'
             )
-            self._normal_sigmas = default_backend.astensor(
+            _normal_sigmas = default_backend.astensor(
                 default_backend.tolist(normal_sigmas)
             )
-        else:
-            self._normal_data, self._normal_sigmas = (None, None)
 
-        sigmas = default_backend.reshape(self._normal_sigmas, (1, -1))  # (1, normals)
-        self._batched_sigmas = default_backend.tile(sigmas, (self.batch_size or 1, 1))
+            sigmas = default_backend.reshape(_normal_sigmas, (1, -1))  # (1, normals)
+            self._batched_sigmas = default_backend.tile(sigmas, (self.batch_size or 1, 1))
+
+        else:
+            self._normal_data = None
+            self._batched_sigmas = None
+
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -84,7 +87,6 @@ class gaussian_constraint_combined(object):
         tensorlib, _ = get_backend()
         self.batched_sigmas = tensorlib.astensor(self._batched_sigmas)
         self.normal_data = tensorlib.astensor(self._normal_data, dtype='int')
-        self.normal_sigmas = tensorlib.astensor(self._normal_sigmas)
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def logpdf(self, auxdata, pars):
