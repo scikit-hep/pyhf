@@ -45,19 +45,11 @@ class gaussian_constraint_combined(object):
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
 
         if self.parameter_helper.index_selection:
-            normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
-
-            normal_data = default_backend.astensor(
+            self._normal_data = default_backend.astensor(
                 default_backend.concatenate(normal_constraint_data), dtype='int'
             )
 
-            self._normal_data = default_backend.astensor(
-                default_backend.tolist(normal_data), dtype='int'
-            )
-            _normal_sigmas = default_backend.astensor(
-                default_backend.tolist(normal_sigmas)
-            )
-
+            _normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
             sigmas = default_backend.reshape(_normal_sigmas, (1, -1))  # (1, normals)
             self._batched_sigmas = default_backend.tile(
                 sigmas, (self.batch_size or 1, 1)
