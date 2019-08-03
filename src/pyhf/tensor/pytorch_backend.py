@@ -43,6 +43,16 @@ class pytorch_backend(object):
             raise
 
     def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Args:
+            tensor_in (Tensor): Tensor to be repeated
+            repeats (Tensor): tuple of multipliers for each dimension
+
+        Returns:
+            Tensor: The tensor with repeated axes
+        """
         return tensor_in.repeat(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):

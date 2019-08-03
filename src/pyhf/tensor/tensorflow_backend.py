@@ -45,6 +45,16 @@ class tensorflow_backend(object):
         return tf.clip_by_value(tensor_in, min_value, max_value)
 
     def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Args:
+            tensor_in (Tensor): Tensor to be repeated
+            repeats (Tensor): tuple of multipliers for each dimension
+
+        Returns:
+            Tensor: The tensor with repeated axes
+        """
         return tf.tile(tensor_in, repeats)
 
     def tolist(self, tensor_in):
