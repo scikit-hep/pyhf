@@ -26,6 +26,15 @@ class ParamViewer(object):
             name, tensor_shape, self.batch_shape, self.par_map
         )
 
+        if self.index_selection:
+            cat = default_backend.astensor(
+                default_backend.concatenate(self.index_selection, axis=1), dtype='int'
+            )
+            self._indices_concatenated = default_backend.einsum('ij->ji', cat)
+        else:
+
+            self._indices_concatenated = None
+
         last = 0
         sl = []
         for s in [
@@ -41,12 +50,10 @@ class ParamViewer(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        if self.index_selection:
-            cat = tensorlib.astensor(tensorlib.concatenate(
-                self.index_selection,
-                axis=1), dtype='int'
+        if self._indices_concatenated is not None:
+            self.indices_concatenated = tensorlib.astensor(
+                self._indices_concatenated, dtype='int'
             )
-            self.indices_concatenated = tensorlib.einsum('ij->ji', cat)
 
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(
