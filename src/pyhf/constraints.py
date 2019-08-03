@@ -10,7 +10,7 @@ class gaussian_constraint_combined(object):
 
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
-            (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
+            pdfconfig.param_set(cname)
             for cname in pdfconfig.auxdata_order
         ]
 
@@ -26,7 +26,7 @@ class gaussian_constraint_combined(object):
         start_index = 0
         normal_constraint_data = []
         normal_constraint_sigmas = []
-        for parset, parslice in self.parset_and_slice:
+        for parset in self.parset_and_slice:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
@@ -127,7 +127,7 @@ class poisson_constraint_combined(object):
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
-            (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
+            pdfconfig.param_set(cname)
             for cname in pdfconfig.auxdata_order
         ]
 
@@ -143,7 +143,7 @@ class poisson_constraint_combined(object):
         start_index = 0
         poisson_constraint_data = []
         poisson_constraint_rate_factors = []
-        for parset, parslice in self.parset_and_slice:
+        for parset in self.parset_and_slice:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
@@ -159,9 +159,9 @@ class poisson_constraint_combined(object):
             try:
                 poisson_constraint_rate_factors.append(parset.factors)
             except AttributeError:
-                poisson_constraint_rate_factors.append(
-                    default_backend.shape(self.par_indices[parslice])
-                )
+                # this seems to be dead code
+                # TODO: add coverage
+                poisson_constraint_rate_factors.append([1.0] * len(thisauxdata))
 
         if self.parameter_helper.index_selection:
             self._poisson_data = default_backend.astensor(
