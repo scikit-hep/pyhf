@@ -160,38 +160,35 @@ class poisson_constraint_combined(object):
                 )
 
         if self.parameter_helper.index_selection:
-            poisson_rate_fac = default_backend.astensor(
-                default_backend.concatenate(poisson_constraint_rate_factors),
-                dtype='float',
-            )
-            poisson_data = default_backend.astensor(
+            self._poisson_data = default_backend.astensor(
                 default_backend.concatenate(poisson_constraint_data), dtype='int'
             )
 
-            self._poisson_data = default_backend.astensor(
-                default_backend.tolist(poisson_data), dtype='int'
+            _poisson_rate_fac = default_backend.astensor(
+                default_backend.concatenate(poisson_constraint_rate_factors),
+                dtype='float',
             )
-            self.poisson_rate_fac = default_backend.astensor(
-                default_backend.tolist(poisson_rate_fac), dtype='float'
-            )
+            factors = default_backend.reshape(
+                _poisson_rate_fac, (1, -1)
+            )  # (1, normals)
+            self._batched_factors = default_backend.tile(factors, (self.batch_size or 1, 1))
+
+
+            # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
+            access_field = None
+            for x in self.parameter_helper.index_selection:
+                access_field = (
+                    x
+                    if access_field is None
+                    else default_backend.concatenate([access_field, x], axis=1)
+                )
+            # access field is (nbatch, normals)
+            self._access_field = access_field
+
         else:
-            self._poisson_data, self.poisson_rate_fac = (None, None)
-
-        # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
-        access_field = None
-        for x in self.parameter_helper.index_selection:
-            access_field = (
-                x
-                if access_field is None
-                else default_backend.concatenate([access_field, x], axis=1)
-            )
-        # access field is (nbatch, normals)
-        self._access_field = access_field
-
-        factors = default_backend.reshape(
-            self.poisson_rate_fac, (1, -1)
-        )  # (1, normals)
-        self._batched_factors = default_backend.tile(factors, (self.batch_size or 1, 1))
+            self._poisson_data = None
+            self._access_field = None
+            self._batched_factors = None
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
