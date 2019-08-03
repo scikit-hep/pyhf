@@ -10,8 +10,7 @@ class gaussian_constraint_combined(object):
 
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
-            pdfconfig.param_set(cname)
-            for cname in pdfconfig.auxdata_order
+            pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
         ]
 
         pnames = [
@@ -127,8 +126,7 @@ class poisson_constraint_combined(object):
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parset_and_slice = [
-            pdfconfig.param_set(cname)
-            for cname in pdfconfig.auxdata_order
+            pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
         ]
 
         pnames = [
