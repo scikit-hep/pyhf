@@ -90,7 +90,6 @@ class gaussian_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.parameter_helper.index_selection:
-            print('return scalar!', self.batch_size, tensorlib.astensor(0.0))
             return (
                 tensorlib.zeros(self.batch_size)
                 if self.batch_size is not None
