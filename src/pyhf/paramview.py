@@ -42,9 +42,9 @@ class ParamViewer(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         if self.index_selection:
-            cat = tensorlib.concatenate(
-                [tensorlib.astensor(x, dtype='int') for x in self.index_selection],
-                axis=1,
+            cat = tensorlib.astensor(tensorlib.concatenate(
+                self.index_selection,
+                axis=1), dtype='int'
             )
             self.indices_concatenated = tensorlib.einsum('ij->ji', cat)
 
