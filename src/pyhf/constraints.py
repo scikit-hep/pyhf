@@ -23,17 +23,6 @@ class gaussian_constraint_combined(object):
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
-        # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
-        access_field = None
-        for x in self.parameter_helper.index_selection:
-            access_field = (
-                x
-                if access_field is None
-                else default_backend.concatenate([access_field, x], axis=1)
-            )
-        # access field is (nbatch, normals)
-        self._access_field = access_field
-
         start_index = 0
         normal_constraint_data = []
         normal_constraint_sigmas = []
@@ -44,6 +33,8 @@ class gaussian_constraint_combined(object):
             if not parset.pdf_type == 'normal':
                 continue
 
+            normal_constraint_data.append(thisauxdata)
+
             # many constraints are defined on a unit gaussian
             # but we reserved the possibility that a paramset
             # can define non-standard uncertainties. This is used
@@ -53,8 +44,6 @@ class gaussian_constraint_combined(object):
                 normal_constraint_sigmas.append(parset.sigmas)
             except AttributeError:
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
-
-            normal_constraint_data.append(thisauxdata)
 
         if self.parameter_helper.index_selection:
             normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
@@ -75,9 +64,21 @@ class gaussian_constraint_combined(object):
                 sigmas, (self.batch_size or 1, 1)
             )
 
+            # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
+            access_field = None
+            for x in self.parameter_helper.index_selection:
+                access_field = (
+                    x
+                    if access_field is None
+                    else default_backend.concatenate([access_field, x], axis=1)
+                )
+            # access field is (nbatch, normals)
+            self._access_field = access_field
+
         else:
             self._normal_data = None
             self._batched_sigmas = None
+            self._access_field = None
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -125,7 +126,7 @@ class poisson_constraint_combined(object):
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.mod_and_slice = [
+        self.parset_and_slice = [
             (pdfconfig.param_set(cname), pdfconfig.par_slice(cname))
             for cname in pdfconfig.auxdata_order
         ]
@@ -142,7 +143,7 @@ class poisson_constraint_combined(object):
         start_index = 0
         poisson_constraint_data = []
         poisson_constraint_rate_factors = []
-        for parset, parslice in self.mod_and_slice:
+        for parset, parslice in self.parset_and_slice:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
