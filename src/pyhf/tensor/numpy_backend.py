@@ -44,7 +44,7 @@ class numpy_backend(object):
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
             >>> pyhf.tensorlib.tile(pyhf.tensorlib.astensor([[1.],[2.]]), (1,2))
             array([[1., 1.],
-                [2., 2.]])
+                   [2., 2.]])
 
         Args:
             tensor_in (Tensor): Tensor to be repeated
