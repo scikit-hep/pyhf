@@ -71,12 +71,13 @@ class gaussian_constraint_combined(object):
             )
 
             sigmas = default_backend.reshape(_normal_sigmas, (1, -1))  # (1, normals)
-            self._batched_sigmas = default_backend.tile(sigmas, (self.batch_size or 1, 1))
+            self._batched_sigmas = default_backend.tile(
+                sigmas, (self.batch_size or 1, 1)
+            )
 
         else:
             self._normal_data = None
             self._batched_sigmas = None
-
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
