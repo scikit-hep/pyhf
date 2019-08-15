@@ -57,7 +57,7 @@ class pytorch_backend(object):
         Returns:
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
-        dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
+        dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.bool}
         try:
             dtype = dtypemap[dtype]
         except KeyError:
@@ -76,7 +76,7 @@ class pytorch_backend(object):
         return torch.take(tensor, indices.type(torch.LongTensor))
 
     def boolean_mask(self, tensor, mask):
-        mask = self.astensor(mask).type(torch.ByteTensor)
+        mask = self.astensor(mask, dtype='bool')
         return torch.masked_select(tensor, mask)
 
     def reshape(self, tensor, newshape):
