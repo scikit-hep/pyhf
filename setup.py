@@ -14,7 +14,7 @@ extras_require = {
         'tensorflow-probability~=0.5',
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
     ],
-    'torch': ['torch~=1.0'],
+    'torch': ['torch~=1.2'],
     'mxnet': ['mxnet~=1.0', 'numpy<1.15.0,>=1.8.2', 'graphviz<0.9.0,>=0.8.1'],
     # 'dask': [
     #     'dask[array]'
