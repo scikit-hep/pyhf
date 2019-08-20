@@ -29,8 +29,8 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
         pip list
-        apt-get update
-        apt-get -qq install pandoc
+        sudo apt-get update
+        sudo apt-get -qq install pandoc
     - name: Test and build docs
       run: |
         python -m doctest README.md
