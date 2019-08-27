@@ -1,14 +1,6 @@
 name: Docs build test
 
-on:
-  push:
-    branches:
-    - master
-    - docs/*
-  pull_request:
-    branches:
-    - master
-    - docs/*
+on: [push, pull_request]
 
 jobs:
   docs:
