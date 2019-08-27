@@ -1,6 +1,11 @@
 name: CI Python 3 on Linux
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  # Run daily at 0:01 UTC
+  schedule:
+  - cron:  '1 0 * * *'
 
 jobs:
   test:
@@ -36,3 +41,7 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/
+    - name: Run benchmarks
+      if: github.event_name == 'scheduled' && matrix.python-version == '3.7'
+      run: |
+        python -m pytest -r sx tests/benchmarks/test_benchmark.py
