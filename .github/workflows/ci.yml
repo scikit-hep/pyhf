@@ -42,6 +42,6 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/
     - name: Run benchmarks
-      if: github.event_name == 'scheduled' && matrix.python-version == '3.7'
+      if: github.event_name == 'schedule' && matrix.python-version == 3.7
       run: |
         python -m pytest -r sx tests/benchmarks/test_benchmark.py
