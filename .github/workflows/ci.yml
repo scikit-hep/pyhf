@@ -1,4 +1,4 @@
-name: "CI/CD"
+name: CI/CD
 
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
       run: |
         python -m pytest -r sx tests/benchmarks/test_benchmark.py
 
-        docs:
+  docs:
 
     runs-on: ubuntu-latest
     strategy:
