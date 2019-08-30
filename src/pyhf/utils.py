@@ -158,14 +158,24 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
         nullval = sqrtqmu_v
         altval = -(sqrtqmuA_v - sqrtqmu_v)
     else:  # qtilde
-        if sqrtqmu_v < sqrtqmuA_v:
+
+        def _sqrtqmu_v_case():
             nullval = sqrtqmu_v
             altval = -(sqrtqmuA_v - sqrtqmu_v)
-        else:
+            return nullval, altval
+
+        def _sqrtqmuA_v_case():
             qmu = tensorlib.power(sqrtqmu_v, 2)
             qmu_A = tensorlib.power(sqrtqmuA_v, 2)
             nullval = (qmu + qmu_A) / (2 * sqrtqmuA_v)
             altval = (qmu - qmu_A) / (2 * sqrtqmuA_v)
+            return nullval, altval
+
+        nullval, altval = tensorlib.conditional(
+            tensorlib.less(sqrtqmu_v[0], sqrtqmuA_v[0]),
+            _sqrtqmu_v_case,
+            _sqrtqmuA_v_case,
+        )
     CLsb = 1 - tensorlib.normal_cdf(nullval)
     CLb = 1 - tensorlib.normal_cdf(altval)
     CLs = CLsb / CLb
