@@ -5,7 +5,7 @@ import json
 
 from ..utils import hypotest, EqDelimStringParamType
 from ..workspace import Workspace
-from .. import tensorlib, set_backend, optimize
+from . import tensor, get_backend, set_backend, optimize
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -27,10 +27,24 @@ def cli():
 @click.option('-p', '--patch', multiple=True)
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option(
+    '--backend',
+    type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'np', 'torch', 'tf']),
+    help='The tensor backend used for the calculation.',
+    default='numpy',
+)
 @click.option('--optimizer')
 @click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
 def cls(
-    workspace, output_file, measurement, patch, testpoi, teststat, optimizer, optconf
+    workspace,
+    output_file,
+    measurement,
+    patch,
+    testpoi,
+    teststat,
+    backend,
+    optimizer,
+    optconf,
 ):
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
@@ -49,6 +63,15 @@ def cls(
         },
     )
 
+    # set the backend if not NumPy
+    if backend in ['pytorch', 'torch']:
+        set_backend(tensor.pytorch_backend())
+    elif backend in ['tensorflow', 'tf']:
+        from tensorflow.compat.v1 import Session
+
+        set_backend(tensor.tensorflow_backend(session=Session()))
+    tensorlib, _ = get_backend()
+
     optconf = {k: v for item in optconf for k, v in item.items()}
 
     # set the new optimizer
@@ -59,7 +82,10 @@ def cls(
     result = hypotest(
         testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
     )
-    result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+    result = {
+        'CLs_obs': tensorlib.tolist(result[0])[0],
+        'CLs_exp': tensorlib.tolist(tensorlib.reshape(result[-1], [-1])),
+    }
 
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
