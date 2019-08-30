@@ -9,10 +9,10 @@ Questions
 Is it possible to set the backend from the CLI?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Not at the moment. `Pull Requests <https://github.com/scikit-hep/pyhf/compare>`__ are welcome.
-
-See also:
-  - :issue:`266`
+Yes.
+Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backend.
+The default backend is NumPy.
+For more information see :code:`pyhf cls --help`.
 
 Troubleshooting
 ---------------
