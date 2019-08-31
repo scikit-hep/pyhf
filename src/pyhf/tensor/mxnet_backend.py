@@ -39,6 +39,87 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         return nd.clip(tensor_in, min_value, max_value)
 
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> import mxnet.ndarray as nd
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.conditional(
+            ...     nd.lesser(a,b)[0], lambda: nd.add(a, b), lambda: nd.subtract(a,b)
+            ... )
+            <BLANKLINE>
+            [9.]
+            <NDArray 1 @cpu(0)>
+
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            MXNet NDArray: The output of the callable that was evaluated
+        """
+        return nd.contrib.cond(predicate, true_callable, false_callable)
+
+    def less(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 < tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.less(a, b)
+            <BLANKLINE>
+            [1.]
+            <NDArray 1 @cpu(0)>
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            MXNet NDArray: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return nd.lesser(tensor_in_1, tensor_in_2)
+
+    def greater(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 > tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.greater(b, a)
+            <BLANKLINE>
+            [1.]
+            <NDArray 1 @cpu(0)>
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            MXNet NDArray: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return nd.greater(tensor_in_1, tensor_in_2)
+
     def tolist(self, tensor_in):
         """
         Convert a tensor to a list.
