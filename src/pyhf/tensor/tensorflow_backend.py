@@ -70,6 +70,96 @@ class tensorflow_backend(object):
         """
         return tf.tile(tensor_in, repeats)
 
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> with sess.as_default():
+            ...   sess.run(
+            ...       pyhf.tensorlib.conditional(
+            ...           tf.less(a, b)[0], lambda: tf.add(a, b), lambda: tf.subtract(a, b)
+            ...       )
+            ...   )
+            ...
+            array([9.], dtype=float32)
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            TensorFlow Tensor: The output of the callable that was evaluated
+        """
+        return tf.cond(predicate, true_callable, false_callable)
+
+    def less(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 < tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> with sess.as_default():
+            ...   sess.run(pyhf.tensorlib.less(a, b))
+            ...
+            array([ True])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            TensorFlow Tensor: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return tf.math.less(tensor_in_1, tensor_in_2)
+
+    def greater(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 > tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> with sess.as_default():
+            ...   sess.run(pyhf.tensorlib.greater(b, a))
+            ...
+            array([ True])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            TensorFlow Tensor: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return tf.math.greater(tensor_in_1, tensor_in_2)
+
     def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()
