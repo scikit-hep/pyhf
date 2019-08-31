@@ -34,6 +34,80 @@ class pytorch_backend(object):
         tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min_value, max_value)
 
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> import torch
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.conditional(
+            ...     torch.lt(a, b)[0], lambda: torch.add(a, b), lambda: torch.subtract(a, b)
+            ... )
+            tensor([9.])
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            PyTorch Tensor: The output of the callable that was evaluated
+        """
+        return true_callable() if predicate else false_callable()
+
+    def less(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 < tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.less(a, b)
+            tensor([True])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            PyTorch Tensor: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return torch.lt(tensor_in_1, tensor_in_2)
+
+    def greater(self, tensor_in_1, tensor_in_2):
+        """
+        The boolean value of :code:`(tensor_in_1 > tensor_in_2)` element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([4])
+            >>> b = pyhf.tensorlib.astensor([5])
+            >>> pyhf.tensorlib.greater(b, a)
+            tensor([True])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
+
+        Returns:
+            PyTorch Tensor: The bool of the comparison
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return torch.gt(tensor_in_1, tensor_in_2)
+
     def tolist(self, tensor_in):
         try:
             return tensor_in.data.numpy().tolist()
