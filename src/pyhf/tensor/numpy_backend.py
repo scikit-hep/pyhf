@@ -38,7 +38,7 @@ class numpy_backend(object):
 
     def subtract(self, tensor_in_1, tensor_in_2):
         """
-        Subtract two tensors element-wise
+        Subtract two tensors element-wise as :code:`(tensor_in_2 - tensor_in_1)`
 
         Example:
 
@@ -47,7 +47,7 @@ class numpy_backend(object):
             >>> a = pyhf.tensorlib.astensor([1, 2, 3, 4])
             >>> b = pyhf.tensorlib.astensor([5, 6, 7, 8])
             >>> pyhf.tensorlib.subtract(b, a)
-            array([ 4.,  4., 4., 4.])
+            array([4., 4., 4., 4.])
 
         Args:
             tensor_in_1 (`Tensor`): The first tensor

@@ -37,7 +37,7 @@ class pytorch_backend(object):
 
     def subtract(self, tensor_in_1, tensor_in_2):
         """
-        Subtract two tensors element-wise
+        Subtract two tensors element-wise as :code:`(tensor_in_2 - tensor_in_1)`
 
         Example:
 
@@ -57,7 +57,7 @@ class pytorch_backend(object):
         """
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
-        return torch.add(tensor_in_2, -1, tensor_in_1)
+        return torch.add(tensor_in_1, -1, tensor_in_2)
 
     def clip(self, tensor_in, min_value, max_value):
         """
