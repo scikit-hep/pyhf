@@ -11,6 +11,54 @@ class pytorch_backend(object):
     def __init__(self, **kwargs):
         self.name = 'pytorch'
 
+    def add(self, tensor_in_1, tensor_in_2):
+        """
+        Add two tensors element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([1, 2, 3, 4])
+            >>> b = pyhf.tensorlib.astensor([5, 6, 7, 8])
+            >>> pyhf.tensorlib.add(a, b)
+            tensor([ 6.,  8., 10., 12.])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type and shape as :code:`tensor_in_1`
+
+        Returns:
+            PyTorch tensor: The sum of the input tensors
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return torch.add(tensor_in_1, tensor_in_2)
+
+    def subtract(self, tensor_in_1, tensor_in_2):
+        """
+        Subtract two tensors element-wise
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([1, 2, 3, 4])
+            >>> b = pyhf.tensorlib.astensor([5, 6, 7, 8])
+            >>> pyhf.tensorlib.subtract(b, a)
+            tensor([4., 4., 4., 4.])
+
+        Args:
+            tensor_in_1 (`Tensor`): The first tensor
+            tensor_in_2 (`Tensor`): The tensor of same type and shape as :code:`tensor_in_1`
+
+        Returns:
+            PyTorch tensor: The difference of the input tensors
+        """
+        tensor_in_1 = self.astensor(tensor_in_1)
+        tensor_in_2 = self.astensor(tensor_in_2)
+        return torch.add(tensor_in_2, -1, tensor_in_1)
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
