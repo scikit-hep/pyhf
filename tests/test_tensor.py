@@ -20,6 +20,9 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.subtract([1, 2, 3], [4, 5, 6])) == [-3, -3, -3]
     assert tb.tolist(tb.subtract([4, 5, 6], [1])) == [3, 4, 5]
     assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
+    assert tb.tolist(tb.add([1, 2, 3], [4, 5, 6])) == tb.tolist(
+        tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)
+    )
     assert tb.tolist(tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
     assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
     assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
