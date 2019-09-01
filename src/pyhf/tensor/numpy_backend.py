@@ -90,7 +90,7 @@ class numpy_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
-            >>> tensorlib, _ = pyhf.get_backend()
+            >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
             >>> tensorlib.conditional(
