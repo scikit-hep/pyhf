@@ -14,7 +14,7 @@ class tensorflow_backend(object):
 
     def add(self, tensor_in_1, tensor_in_2):
         """
-        Add two tensors element-wise
+        Add two tensors element-wise. Equivalent to :code:`sum([tensor_in_1, tensor_in_2], axis=0)`.
 
         Example:
 
