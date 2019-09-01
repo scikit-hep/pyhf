@@ -139,12 +139,15 @@ class tensorflow_backend(object):
             >>> sess = tf.Session()
             ...
             >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
-            >>> a = pyhf.tensorlib.astensor([4])
-            >>> b = pyhf.tensorlib.astensor([5])
+            >>> tensorlib, _ = pyhf.get_backend()
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
             >>> with sess.as_default():
-            ...   sess.run(
-            ...       pyhf.tensorlib.conditional(
-            ...           tf.less(a, b)[0], lambda: tf.add(a, b), lambda: tf.subtract(a, b)
+            ...     sess.run(
+            ...         tensorlib.conditional(
+            ...             tensorlib.less(a, b)[0],
+            ...             lambda: tensorlib.add(a, b),
+            ...             lambda: tensorlib.subtract(a, b)
             ...       )
             ...   )
             ...
