@@ -42,7 +42,7 @@ class mxnet_backend(object):
 
     def subtract(self, tensor_in_1, tensor_in_2):
         """
-        Subtract two tensors element-wise as :code:`(tensor_in_2 - tensor_in_1)`
+        Subtract two tensors element-wise as :code:`(tensor_in_1 - tensor_in_2)`
 
         Example:
 
