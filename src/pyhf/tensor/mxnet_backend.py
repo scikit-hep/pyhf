@@ -98,12 +98,14 @@ class mxnet_backend(object):
         Example:
 
             >>> import pyhf
-            >>> import mxnet.ndarray as nd
             >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
-            >>> a = pyhf.tensorlib.astensor([4])
-            >>> b = pyhf.tensorlib.astensor([5])
-            >>> pyhf.tensorlib.conditional(
-            ...     nd.lesser(a,b)[0], lambda: nd.add(a, b), lambda: nd.subtract(a,b)
+            >>> tensorlib, _ = pyhf.get_backend()
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> tensorlib.conditional(
+            ...     tensorlib.less(a, b)[0],
+            ...     lambda: tensorlib.add(a, b),
+            ...     lambda: tensorlib.subtract(a, b)
             ... )
             <BLANKLINE>
             [9.]

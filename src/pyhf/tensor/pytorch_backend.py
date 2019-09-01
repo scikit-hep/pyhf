@@ -89,12 +89,14 @@ class pytorch_backend(object):
         Example:
 
             >>> import pyhf
-            >>> import torch
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> a = pyhf.tensorlib.astensor([4])
-            >>> b = pyhf.tensorlib.astensor([5])
-            >>> pyhf.tensorlib.conditional(
-            ...     torch.lt(a, b)[0], lambda: torch.add(a, b), lambda: torch.subtract(a, b)
+            >>> tensorlib, _ = pyhf.get_backend()
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> tensorlib.conditional(
+            ...     tensorlib.less(a, b)[0],
+            ...     lambda: tensorlib.add(a, b),
+            ...     lambda: tensorlib.subtract(a, b)
             ... )
             tensor([9.])
 
