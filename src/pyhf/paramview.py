@@ -28,9 +28,12 @@ class ParamViewer(object):
 
         if self.index_selection:
             cat = default_backend.astensor(
-                default_backend.concatenate(self.index_selection, axis=1), dtype='int'
+                default_backend.concatenate(self.index_selection, axis=-1), dtype='int'
             )
-            self._indices_concatenated = default_backend.einsum('ij->ji', cat)
+            if self.batch_shape:
+                self._indices_concatenated = default_backend.einsum('ij->ji', cat)
+            else:
+                self._indices_concatenated = cat
         else:
 
             self._indices_concatenated = None
@@ -43,7 +46,7 @@ class ParamViewer(object):
         ]:
             sl.append(slice(last, last + s))
             last += s
-        self.slices = sl
+        self._slices = sl
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -62,11 +65,19 @@ class ParamViewer(object):
             bool(self.batch_shape),
         )
 
+    @property
+    def slices(self):
+        """
+        Returns:
+            list index slices to retrieve a subset of the requested parameters
+        """
+        return  self._slices
+
     def get(self, tensor):
         """
         Returns:
-            list of parameter slices:
-                type when batched: list of (batchsize, slicesize,) tensors
+            list of view of subset of parameters:
+                type when batched: (sum of slice sizes, batchsize) tensor
                 type when not batched: list of (slicesize, ) tensors
         """
         tensorlib, _ = get_backend()
