@@ -244,15 +244,15 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
+            >>> pyhf.set_backend("tensorflow")
+            >>> b = pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
-            ...   pyhf.tensorlib.astensor([5, 6, 7])))
-            [array([1., 1., 1.], dtype=float32), array([2., 3., 4.], dtype=float32), array([5., 6., 7.], dtype=float32)]
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            >>> print([str(t) for t in b]) # doctest: +NORMALIZE_WHITESPACE
+            ['tf.Tensor([1. 1. 1.], shape=(3,), dtype=float32)',
+             'tf.Tensor([2. 3. 4.], shape=(3,), dtype=float32)',
+             'tf.Tensor([5. 6. 7.], shape=(3,), dtype=float32)']
 
         Args:
             args (Array of Tensors): Sequence of arrays
