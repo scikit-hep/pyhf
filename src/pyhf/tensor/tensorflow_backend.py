@@ -108,7 +108,7 @@ class tensorflow_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return self.session.run(tensor_in).tolist()
+            return tensor_in.numpy().tolist()
         except AttributeError as err:
             if isinstance(tensor_in, list):
                 return tensor_in
