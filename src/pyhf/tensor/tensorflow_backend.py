@@ -25,7 +25,6 @@ class tensorflow_backend(object):
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
-            ...
             >>> t = pyhf.tensorlib.clip(a, -1, 1)
             >>> print(t)
             tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float32)
@@ -51,16 +50,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.tile(a, (1, 2)))
-            ...
-            array([[1., 1.],
-                   [2., 2.]], dtype=float32)
+            >>> t = pyhf.tensorlib.tile(a, (1, 2))
+            >>> print(t)
+            tf.Tensor(
+            [[1. 1.]
+             [2. 2.]], shape=(2, 2), dtype=float32)
 
         Args:
             tensor_in (`Tensor`): The tensor to be repeated
