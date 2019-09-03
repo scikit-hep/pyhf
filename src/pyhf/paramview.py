@@ -71,7 +71,7 @@ class ParamViewer(object):
         Returns:
             list index slices to retrieve a subset of the requested parameters
         """
-        return  self._slices
+        return self._slices
 
     def get(self, tensor):
         """
