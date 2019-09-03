@@ -60,6 +60,8 @@ def test_normal(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.normal_logpdf(tb.astensor([0]), tb.astensor([0]), tb.astensor([1]))
+    ) == pytest.approx(
+        [-0.9189385332046727], 1e-07
     )
 
 
