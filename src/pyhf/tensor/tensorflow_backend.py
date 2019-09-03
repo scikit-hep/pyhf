@@ -23,15 +23,12 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.clip(a, -1, 1))
             ...
-            array([-1., -1.,  0.,  1.,  1.], dtype=float32)
+            >>> t = pyhf.tensorlib.clip(a, -1, 1)
+            >>> print(t)
+            tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float32)
 
         Args:
             tensor_in (`tensor`): The input tensor object
