@@ -66,13 +66,14 @@ class ParamViewer(object):
             ' '.join(list(self._par_map.keys())),
             bool(self.batch_shape),
         )
+
     @property
     def index_selection(self):
         """
         Returns:
             indices into parameter field accordig to requested subset of parameters
         """
-        return  self._index_selection
+        return self._index_selection
 
     @property
     def slices(self):
