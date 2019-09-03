@@ -9,7 +9,12 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
     long_description = readme_md.read()
 
 extras_require = {
-    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16'],
+    'tensorflow': [
+        # Temporarily pin to get TF 2.0 RCs
+        'tensorflow==2.0.0-rc0',
+        'tensorflow-probability==0.8.0rc0',
+        'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
+    ],
     'torch': ['torch~=1.2'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
