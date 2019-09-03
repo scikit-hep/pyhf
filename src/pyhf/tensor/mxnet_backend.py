@@ -39,6 +39,30 @@ class mxnet_backend(object):
         tensor_in = self.astensor(tensor_in)
         return nd.clip(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> pyhf.tensorlib.tile(a, (1, 2))
+            <BLANKLINE>
+            [[1. 1.]
+             [2. 2.]]
+            <NDArray 2x2 @cpu(0)>
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            MXNet NDArray: The tensor with repeated axes
+        """
+        return nd.tile(tensor_in, repeats)
+
     def tolist(self, tensor_in):
         """
         Convert a tensor to a list.

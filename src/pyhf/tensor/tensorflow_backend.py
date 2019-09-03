@@ -44,6 +44,33 @@ class tensorflow_backend(object):
             max_value = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> with sess.as_default():
+            ...   sess.run(pyhf.tensorlib.tile(a, (1, 2)))
+            ...
+            array([[1., 1.],
+                   [2., 2.]], dtype=float32)
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            TensorFlow Tensor: The tensor with repeated axes
+        """
+        return tf.tile(tensor_in, repeats)
+
     def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()

@@ -56,6 +56,13 @@ def test_ones(backend):
     assert tb.tolist(tb.ones((4, 5))) == [[1.0] * 5] * 4
 
 
+def test_normal(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(
+        tb.normal_logpdf(tb.astensor([0]), tb.astensor([0]), tb.astensor([1]))
+    )
+
+
 def test_zeros(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.zeros((4, 5))) == [[0.0] * 5] * 4
@@ -153,6 +160,16 @@ def test_boolean_mask(backend):
             tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'),
         )
     ) == [1, 2, 4]
+
+
+def test_tensor_tile(backend):
+    a = [[1], [2], [3]]
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.tile(tb.astensor(a), (1, 2))) == [[1, 1], [2, 2], [3, 3]]
+
+    a = [1, 2, 3]
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.tile(tb.astensor(a), (2,))) == [1, 2, 3, 1, 2, 3]
 
 
 def test_1D_gather(backend):
