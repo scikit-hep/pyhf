@@ -10,7 +10,6 @@ class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
 
     def __init__(self, **kwargs):
-        self.session = kwargs.get('session')
         self.name = 'tensorflow'
         self.dtypemap = {
             'float': getattr(tf, kwargs.get('float', 'float32')),
