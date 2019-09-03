@@ -296,18 +296,6 @@ def test_tensor_list_conversion(backend):
     assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
 
 
-def test_tensorflow_tolist_nosession():
-    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
-    tb = pyhf.tensorlib
-
-    # this isn't covered by test_list_to_list since we need to check if it's ok
-    # without a session explicitly
-    assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
-    with pytest.raises(RuntimeError):
-        # but a tensor shouldn't
-        assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
-
-
 def test_pdf_eval(backend):
     source = {
         "binning": [2, -0.5, 1.5],
