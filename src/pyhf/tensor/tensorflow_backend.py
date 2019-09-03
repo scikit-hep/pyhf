@@ -391,21 +391,16 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
-            ...
-            0.35206532
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.normal(0.5, 0., 1.)
+            >>> print(t)
+            tf.Tensor(0.35206532, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal(values, means, sigmas))
-            ...
-            array([0.35206532, 0.46481887], dtype=float32)
+            >>> t = pyhf.tensorlib.normal(values, means, sigmas)
+            >>> print(t)
+            tf.Tensor([0.35206532 0.46481887], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
