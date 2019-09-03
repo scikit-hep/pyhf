@@ -303,20 +303,15 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
-            ...
-            -1.8286943
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
+            >>> print(t)
+            tf.Tensor(-1.8286943, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson_logpdf(values, rates))
-            ...
-            array([-1.8286943, -2.086854 ], dtype=float32)
+            >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
+            >>> print(t)
+            tf.Tensor([-1.8286943 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
