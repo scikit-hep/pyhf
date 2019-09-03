@@ -42,6 +42,28 @@ class pytorch_backend(object):
                 return tensor_in
             raise
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> pyhf.tensorlib.tile(a, (1, 2))
+            tensor([[1., 1.],
+                    [2., 2.]])
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            PyTorch tensor: The tensor with repeated axes
+        """
+        return tensor_in.repeat(repeats)
+
     def outer(self, tensor_in_1, tensor_in_2):
         tensor_in_1 = self.astensor(tensor_in_1)
         tensor_in_2 = self.astensor(tensor_in_2)
