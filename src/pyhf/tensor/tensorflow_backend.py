@@ -104,10 +104,6 @@ class tensorflow_backend(object):
         except AttributeError as err:
             if isinstance(tensor_in, list):
                 return tensor_in
-            if "no attribute 'run'" in str(err):
-                raise RuntimeError(
-                    'evaluation of tensor requested via .tolist() but no session defined'
-                )
             raise
         except RuntimeError as err:
             # if no tensor operations have been added to the graph, but we want
