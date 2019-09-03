@@ -21,14 +21,16 @@ class ParamViewer(object):
     def __init__(self, tensor_shape, par_map, name):
         self.tensor_shape = tensor_shape
         self.batch_shape = tensor_shape[:-1]
-        self.par_map = par_map
-        self.index_selection = index_helper(
-            name, tensor_shape, self.batch_shape, self.par_map
+        # for more general batch shapes we need to revisit
+        assert len(self.batch_shape) <= 1
+        self._par_map = par_map
+        self._index_selection = index_helper(
+            name, tensor_shape, self.batch_shape, self._par_map
         )
 
-        if self.index_selection:
+        if self._index_selection:
             cat = default_backend.astensor(
-                default_backend.concatenate(self.index_selection, axis=-1), dtype='int'
+                default_backend.concatenate(self._index_selection, axis=-1), dtype='int'
             )
             if self.batch_shape:
                 self._indices_concatenated = default_backend.einsum('ij->ji', cat)
@@ -41,7 +43,7 @@ class ParamViewer(object):
         last = 0
         sl = []
         for s in [
-            par_map[x]['slice'].stop - par_map[x]['slice'].start
+            self._par_map[x]['slice'].stop - self._par_map[x]['slice'].start
             for x in (name if isinstance(name, list) else [name])
         ]:
             sl.append(slice(last, last + s))
@@ -61,9 +63,16 @@ class ParamViewer(object):
     def __repr__(self):
         return '({} with [{}] batched: {})'.format(
             self.tensor_shape,
-            ' '.join(list(self.par_map.keys())),
+            ' '.join(list(self._par_map.keys())),
             bool(self.batch_shape),
         )
+    @property
+    def index_selection(self):
+        """
+        Returns:
+            indices into parameter field accordig to requested subset of parameters
+        """
+        return  self._index_selection
 
     @property
     def slices(self):
@@ -76,9 +85,9 @@ class ParamViewer(object):
     def get(self, tensor):
         """
         Returns:
-            list of view of subset of parameters:
+            filtered set of parameter field/array :
                 type when batched: (sum of slice sizes, batchsize) tensor
-                type when not batched: list of (slicesize, ) tensors
+                type when not batched: (sum of slice sizes, ) tensors
         """
         tensorlib, _ = get_backend()
         result = tensorlib.gather(
