@@ -162,7 +162,8 @@ class tensorflow_backend(object):
         tensor = tensor_in
         # If already a tensor then done
         try:
-            tensor.op
+            # Use a tensor attribute that isn't meaningless when eager execution is enabled
+            tensor.device
         except AttributeError:
             tensor = tf.convert_to_tensor(tensor_in)
             # Ensure non-empty tensor shape for consistency
