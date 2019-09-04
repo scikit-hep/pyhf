@@ -9,7 +9,7 @@ class gaussian_constraint_combined(object):
         # iterate over all constraints order doesn't matter....
 
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.parset_and_slice = [
+        self.parsets = [
             pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
         ]
 
@@ -25,7 +25,7 @@ class gaussian_constraint_combined(object):
         start_index = 0
         normal_constraint_data = []
         normal_constraint_sigmas = []
-        for parset in self.parset_and_slice:
+        for parset in self.parsets:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
@@ -119,7 +119,7 @@ class poisson_constraint_combined(object):
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.parset_and_slice = [
+        self.parsets = [
             pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
         ]
 
@@ -135,7 +135,7 @@ class poisson_constraint_combined(object):
         start_index = 0
         poisson_constraint_data = []
         poisson_constraint_rate_factors = []
-        for parset in self.parset_and_slice:
+        for parset in self.parsets:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
