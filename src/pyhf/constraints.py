@@ -152,7 +152,7 @@ class poisson_constraint_combined(object):
                 poisson_constraint_rate_factors.append(parset.factors)
             except AttributeError:
                 # this seems to be dead code
-                # TODO: add coverage
+                # TODO: add coverage (issue #540)
                 poisson_constraint_rate_factors.append([1.0] * len(thisauxdata))
 
         if self.parameter_helper.index_selection:
