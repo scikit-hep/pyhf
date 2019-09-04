@@ -129,7 +129,7 @@ def test_numpy_pdf_inputs(backend):
     assert pytest.approx(slow_result) == fast_result
 
 
-def test_ok(backend):
+def test_batched_constraints(backend):
     c = MockConfig(
         par_order=['pois1', 'pois2', 'norm1', 'norm2'],
         par_map={
