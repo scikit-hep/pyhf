@@ -223,7 +223,31 @@ class tensorflow_backend(object):
         return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return tf.compat.v2.where(mask, tensor_in_1, tensor_in_2)
+        """
+        Apply a boolean selection mask to the elements of the input tensors.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.where(
+            ...     pyhf.tensorlib.astensor([1, 0, 1], dtype='bool'),
+            ...     pyhf.tensorlib.astensor([1, 1, 1]),
+            ...     pyhf.tensorlib.astensor([2, 2, 2]),
+            ... )
+            >>> print(t)
+            tf.Tensor([1. 2. 1.], shape=(3,), dtype=float32)
+
+        Args:
+            mask (bool): Boolean mask (boolean or tensor object of booleans)
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
+
+        Returns:
+            TensorFlow Tensor: The result of the mask being applied to the tensors.
+            
+        """
+        return tf.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
