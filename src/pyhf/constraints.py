@@ -209,6 +209,10 @@ class poisson_constraint_combined(object):
         flat_pars = tensorlib.reshape(batched_pars, (-1,))
         nuispars = tensorlib.gather(flat_pars, self.access_field)
 
+
+        # similar to expected_data() in constrained_by_poisson
+        # we multiply by the appropriate factor to achieve 
+        # the desired variance for poisson-type cosntraints
         pois_rates = tensorlib.product(
             tensorlib.stack([nuispars, self.batched_factors]), axis=0
         )
