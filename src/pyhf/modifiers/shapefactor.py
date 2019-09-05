@@ -68,7 +68,9 @@ class shapefactor_combined(object):
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, shapefactor_mods)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, shapefactor_mods
+        )
 
         self._shapefactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -79,7 +81,8 @@ class shapefactor_combined(object):
         ]
 
         self._access_field = default_backend.tile(
-            global_concatenated_bin_indices, (len(shapefactor_mods), self.batch_size or 1, 1)
+            global_concatenated_bin_indices,
+            (len(shapefactor_mods), self.batch_size or 1, 1),
         )
         # acess field is now
         # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model

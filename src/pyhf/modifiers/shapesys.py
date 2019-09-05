@@ -44,7 +44,9 @@ class shapesys_combined(object):
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, shapesys_mods)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, shapesys_mods
+        )
 
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -69,7 +71,8 @@ class shapesys_combined(object):
         ]
 
         self._access_field = default_backend.tile(
-            global_concatenated_bin_indices, (len(shapesys_mods), self.batch_size or 1, 1)
+            global_concatenated_bin_indices,
+            (len(shapesys_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):

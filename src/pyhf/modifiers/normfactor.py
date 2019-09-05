@@ -31,7 +31,9 @@ class normfactor_combined(object):
         normfactor_mods = [m for m, _ in normfactor_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, normfactor_mods)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, normfactor_mods
+        )
 
         self._normfactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys

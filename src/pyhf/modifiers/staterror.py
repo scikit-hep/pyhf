@@ -57,7 +57,8 @@ class staterror_combined(object):
         ]
 
         self._access_field = default_backend.tile(
-            global_concatenated_bin_indices, (len(staterr_mods), self.batch_size or 1, 1)
+            global_concatenated_bin_indices,
+            (len(staterr_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
