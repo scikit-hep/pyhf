@@ -332,20 +332,20 @@ class Model(object):
 
         self.mega_mods = mega_mods
 
-        thenom = default_backend.astensor(
+        nominal_rates = default_backend.astensor(
             [mega_samples[s]['nom'] for s in self.config.samples]
         )
-        self._thenom = default_backend.reshape(
-            thenom,
+        self._nominal_rates = default_backend.reshape(
+            nominal_rates,
             (
-                1,  # modifier dimension.. thenom is the base
+                1,  # modifier dimension.. nominal_rates is the base
                 len(self.config.samples),
                 1,  # alphaset dimension
                 sum(list(self.config.channel_nbins.values())),
             ),
         )
-        self._thenom = default_backend.tile(
-            self._thenom, (1, 1, self.batch_size or 1, 1)
+        self._nominal_rates = default_backend.tile(
+            self._nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 
         self.modifiers_appliers = {
@@ -363,7 +363,7 @@ class Model(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.thenom = tensorlib.astensor(self._thenom)
+        self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
     def expected_auxdata(self, pars):
         tensorlib, _ = get_backend()
@@ -432,7 +432,9 @@ class Model(object):
 
         deltas, factors = self._modifications(pars)
 
-        allsum = tensorlib.concatenate(deltas + [tensorlib.astensor(self.thenom)])
+        allsum = tensorlib.concatenate(
+            deltas + [tensorlib.astensor(self.nominal_rates)]
+        )
 
         nom_plus_delta = tensorlib.sum(allsum, axis=0)
         nom_plus_delta = tensorlib.reshape(
