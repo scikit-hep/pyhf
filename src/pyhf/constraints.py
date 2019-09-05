@@ -161,7 +161,7 @@ class poisson_constraint_combined(object):
             )
             factors = default_backend.reshape(
                 _poisson_rate_fac, (1, -1)
-            )  # (1, normals)
+            )
             self._batched_factors = default_backend.tile(
                 factors, (self.batch_size or 1, 1)
             )
