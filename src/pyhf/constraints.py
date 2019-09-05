@@ -18,7 +18,7 @@ class gaussian_constraint_combined(object):
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         start_index = 0
         normal_constraint_data = []
@@ -47,7 +47,7 @@ class gaussian_constraint_combined(object):
 
         # if this constraint terms is at all used (non-zrto idx selection
         # start preparing constant tensors
-        if self.parameter_helper.index_selection:
+        if self.param_viewer.index_selection:
             self._normal_data = default_backend.astensor(
                 default_backend.concatenate(normal_constraint_data), dtype='int'
             )
@@ -59,7 +59,7 @@ class gaussian_constraint_combined(object):
             )
 
             access_field = default_backend.concatenate(
-                self.parameter_helper.index_selection, axis=1
+                self.param_viewer.index_selection, axis=1
             )
             self._access_field = access_field
 
@@ -72,7 +72,7 @@ class gaussian_constraint_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self.parameter_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         self.batched_sigmas = tensorlib.astensor(self._batched_sigmas)
@@ -81,7 +81,7 @@ class gaussian_constraint_combined(object):
 
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
-        if not self.parameter_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return (
                 tensorlib.zeros(self.batch_size)
                 if self.batch_size is not None
@@ -125,7 +125,7 @@ class poisson_constraint_combined(object):
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameter_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         start_index = 0
         poisson_constraint_data = []
@@ -150,7 +150,7 @@ class poisson_constraint_combined(object):
                 # TODO: add coverage (issue #540)
                 poisson_constraint_rate_factors.append([1.0] * len(thisauxdata))
 
-        if self.parameter_helper.index_selection:
+        if self.param_viewer.index_selection:
             self._poisson_data = default_backend.astensor(
                 default_backend.concatenate(poisson_constraint_data), dtype='int'
             )
@@ -167,7 +167,7 @@ class poisson_constraint_combined(object):
             )
 
             access_field = default_backend.concatenate(
-                self.parameter_helper.index_selection, axis=1
+                self.param_viewer.index_selection, axis=1
             )
             self._access_field = access_field
 
@@ -180,7 +180,7 @@ class poisson_constraint_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self.parameter_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         self.poisson_data = tensorlib.astensor(self._poisson_data, dtype='int')
@@ -189,7 +189,7 @@ class poisson_constraint_combined(object):
 
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
-        if not self.parameter_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return (
                 tensorlib.zeros(self.batch_size)
                 if self.batch_size is not None
