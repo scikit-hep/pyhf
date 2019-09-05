@@ -60,13 +60,7 @@ class gaussian_constraint_combined(object):
                 sigmas, (self.batch_size or 1, 1)
             )
 
-            access_field = None
-            for x in self.parameter_helper.index_selection:
-                access_field = (
-                    x
-                    if access_field is None
-                    else default_backend.concatenate([access_field, x], axis=1)
-                )
+            access_field = default_backend.concatenate(self.parameter_helper.index_selection,axis=1)
             self._access_field = access_field
 
         else:
@@ -174,15 +168,7 @@ class poisson_constraint_combined(object):
                 factors, (self.batch_size or 1, 1)
             )
 
-            # self.parameter_helper.index_selection  is [ (batch, parslice) ] ]
-            access_field = None
-            for x in self.parameter_helper.index_selection:
-                access_field = (
-                    x
-                    if access_field is None
-                    else default_backend.concatenate([access_field, x], axis=1)
-                )
-            # access field is (nbatch, normals)
+            access_field = default_backend.concatenate(self.parameter_helper.index_selection, axis=1)
             self._access_field = access_field
 
         else:
