@@ -35,7 +35,7 @@ class ParamViewer(object):
             # index_selection is
             #   batched:   list of (batch_dim, slice size) tensors
             #   unbatched: list of (slice size,) tensors
-            # concatenated is 
+            # concatenated is
             #   batched: (batch_dim, sum of slice sizes)
             #   unbatched: (sum of slice sizes, )
             # indices_concatenated  is
@@ -46,8 +46,6 @@ class ParamViewer(object):
             else:
                 self._indices_concatenated = cat
 
-
-            
         else:
             self._indices_concatenated = None
 
