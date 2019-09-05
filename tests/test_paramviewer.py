@@ -7,17 +7,17 @@ def test_paramviewer_simple_nonbatched(backend):
 
     parshape = pyhf.tensorlib.shape(pars)
 
-    v = ParamViewer(
+    view = ParamViewer(
         parshape,
         {'hello': {'slice': slice(0, 2)}, 'world': {'slice': slice(5, 7)}},
         ['hello', 'world'],
     )
-    sl = v.get(pars)
-    assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [1, 2]
+    par_slice = view.get(pars)
+    assert pyhf.tensorlib.tolist(par_slice[view.slices[0]]) == [1, 2]
 
-    assert pyhf.tensorlib.tolist(sl[v.slices[1]]) == [6, 7]
+    assert pyhf.tensorlib.tolist(par_slice[view.slices[1]]) == [6, 7]
 
-    assert pyhf.tensorlib.tolist(sl) == [1, 2, 6, 7]
+    assert pyhf.tensorlib.tolist(par_slice) == [1, 2, 6, 7]
 
 
 def test_paramviewer_simple_batched(backend):
@@ -25,17 +25,17 @@ def test_paramviewer_simple_batched(backend):
 
     parshape = pyhf.tensorlib.shape(pars)
 
-    v = ParamViewer(
+    view = ParamViewer(
         parshape,
         {'hello': {'slice': slice(0, 2)}, 'world': {'slice': slice(3, 4)}},
         ['hello', 'world'],
     )
-    sl = v.get(pars)
+    par_slice = view.get(pars)
 
-    assert v.index_selection == 0
+    assert view.index_selection == 0
 
-    assert pyhf.tensorlib.shape(sl) == (3, 3)
-    assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
-    assert pyhf.tensorlib.tolist(sl[v.slices[1]]) == [[4, 8, 12]]
+    assert pyhf.tensorlib.shape(par_slice) == (3, 3)
+    assert pyhf.tensorlib.tolist(par_slice[view.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
+    assert pyhf.tensorlib.tolist(par_slice[view.slices[1]]) == [[4, 8, 12]]
 
-    assert pyhf.tensorlib.tolist(sl) == [[1, 5, 9], [2, 6, 10], [4, 8, 12]]
+    assert pyhf.tensorlib.tolist(par_slice) == [[1, 5, 9], [2, 6, 10], [4, 8, 12]]
