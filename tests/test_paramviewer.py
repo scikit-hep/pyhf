@@ -22,11 +22,7 @@ def test_paramviewer_simple_nonbatched(backend):
 
 
 def test_paramviewer_simple_batched(backend):
-    pars = pyhf.tensorlib.astensor([
-        [1, 2, 3, 4],
-        [5, 6, 7, 8],
-        [9, 10, 11, 12]
-    ])
+    pars = pyhf.tensorlib.astensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
 
     parshape = pyhf.tensorlib.shape(pars)
 

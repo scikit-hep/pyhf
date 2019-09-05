@@ -91,7 +91,8 @@ class gaussian_constraint_combined(object):
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1 or self.batch_size is None:
             batched_pars = tensorlib.reshape(
-                pars, (self.batch_size or 1,) + tensorlib.shape(pars)
+                pars,
+                (self.batch_size or 1,) + tensorlib.shape(pars)
                 # if batched, noop
                 # if unbatched, reshape parameters to (1, N parameters)
             )
