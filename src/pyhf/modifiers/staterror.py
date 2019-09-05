@@ -29,9 +29,7 @@ class staterror_combined(object):
         self.batch_size = batch_size
 
         keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
-        staterr_mods = [m for m, _ in staterr_mods]
-
-        self._staterr_mods = staterr_mods
+        self._staterr_mods = [m for m, _ in staterr_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, staterr_mods)

@@ -34,9 +34,7 @@ class shapesys_combined(object):
         self.batch_size = batch_size
 
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
-        shapesys_mods = [m for m, _ in shapesys_mods]
-
-        self._shapesys_mods = shapesys_mods
+        self._shapesys_mods = [m for m, _ in shapesys_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.param_viewer = ParamViewer(
