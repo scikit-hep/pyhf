@@ -1,0 +1,140 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ParamViewer	../histosys.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:7
+ParamViewer	../lumi.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:6
+ParamViewer	../normfactor.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:6
+ParamViewer	../normsys.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:7
+ParamViewer	../shapefactor.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:6
+ParamViewer	../shapesys.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:6
+ParamViewer	../staterror.py	/^from ..paramview import ParamViewer$/;"	kind:namespace	line:6
+__all__	../__init__.py	/^__all__ = [$/;"	kind:variable	line:206
+__init__	../histosys.py	/^    def __init__($/;"	kind:member	line:29
+__init__	../lumi.py	/^    def __init__(self, lumi_mods, pdfconfig, mega_mods, batch_size=None):$/;"	kind:member	line:30
+__init__	../normfactor.py	/^    def __init__(self, normfactor_mods, pdfconfig, mega_mods, batch_size=None):$/;"	kind:member	line:27
+__init__	../normsys.py	/^    def __init__($/;"	kind:member	line:29
+__init__	../shapefactor.py	/^    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=None):$/;"	kind:member	line:27
+__init__	../shapesys.py	/^    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):$/;"	kind:member	line:33
+__init__	../staterror.py	/^    def __init__(self, staterr_mods, pdfconfig, mega_mods, batch_size=None):$/;"	kind:member	line:28
+__init__.py	../__init__.py	1;"	kind:file	line:1
+_modifier	../__init__.py	/^    def _modifier(name, constrained, pdf_type, op_code):$/;"	kind:function	line:129
+_precompute	../histosys.py	/^    def _precompute(self):$/;"	kind:member	line:66
+_precompute	../lumi.py	/^    def _precompute(self):$/;"	kind:member	line:45
+_precompute	../normfactor.py	/^    def _precompute(self):$/;"	kind:member	line:43
+_precompute	../normsys.py	/^    def _precompute(self):$/;"	kind:member	line:66
+_precompute	../shapefactor.py	/^    def _precompute(self):$/;"	kind:member	line:97
+_precompute	../shapesys.py	/^    def _precompute(self):$/;"	kind:member	line:88
+_precompute	../staterror.py	/^    def _precompute(self):$/;"	kind:member	line:75
+add_to_registry	../__init__.py	/^def add_to_registry($/;"	kind:function	line:28
+apply	../histosys.py	/^    def apply(self, pars):$/;"	kind:member	line:73
+apply	../lumi.py	/^    def apply(self, pars):$/;"	kind:member	line:54
+apply	../normfactor.py	/^    def apply(self, pars):$/;"	kind:member	line:53
+apply	../normsys.py	/^    def apply(self, pars):$/;"	kind:member	line:76
+apply	../shapefactor.py	/^    def apply(self, pars):$/;"	kind:member	line:112
+apply	../shapesys.py	/^    def apply(self, pars):$/;"	kind:member	line:129
+apply	../staterror.py	/^    def apply(self, pars):$/;"	kind:member	line:118
+combined	../__init__.py	/^combined = {$/;"	kind:variable	line:196
+constrained_by_normal	../histosys.py	/^from ..paramsets import constrained_by_normal$/;"	kind:namespace	line:4
+constrained_by_normal	../lumi.py	/^from ..paramsets import constrained_by_normal$/;"	kind:namespace	line:4
+constrained_by_normal	../normsys.py	/^from ..paramsets import constrained_by_normal$/;"	kind:namespace	line:4
+constrained_by_normal	../staterror.py	/^from ..paramsets import constrained_by_normal$/;"	kind:namespace	line:4
+constrained_by_poisson	../shapesys.py	/^from ..paramsets import constrained_by_poisson$/;"	kind:namespace	line:4
+default_backend	../shapefactor.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+default_backend	../shapesys.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+default_backend	../staterror.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+events	../histosys.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+events	../lumi.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+events	../normfactor.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+events	../normsys.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+events	../shapefactor.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+events	../shapesys.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+events	../staterror.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+exceptions	../__init__.py	/^from .. import exceptions$/;"	kind:namespace	line:4
+finalize	../shapesys.py	/^    def finalize(self, pdfconfig):$/;"	kind:member	line:100
+finalize	../staterror.py	/^    def finalize(self, pdfconfig):$/;"	kind:member	line:87
+get_backend	../__init__.py	/^from .. import get_backend$/;"	kind:namespace	line:5
+get_backend	../histosys.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+get_backend	../lumi.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+get_backend	../normfactor.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+get_backend	../normsys.py	/^from .. import get_backend, events$/;"	kind:namespace	line:5
+get_backend	../shapefactor.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+get_backend	../shapesys.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+get_backend	../staterror.py	/^from .. import get_backend, default_backend, events$/;"	kind:namespace	line:5
+histosys	../__init__.py	/^from .histosys import histosys, histosys_combined$/;"	kind:namespace	line:178
+histosys	../histosys.py	/^class histosys(object):$/;"	kind:class	line:13
+histosys.py	../histosys.py	1;"	kind:file	line:1
+histosys_combined	../__init__.py	/^from .histosys import histosys, histosys_combined$/;"	kind:namespace	line:178
+histosys_combined	../histosys.py	/^class histosys_combined(object):$/;"	kind:class	line:28
+interpolators	../histosys.py	/^from .. import interpolators$/;"	kind:namespace	line:6
+interpolators	../normsys.py	/^from .. import interpolators$/;"	kind:namespace	line:6
+log	../__init__.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:7
+log	../histosys.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:9
+log	../lumi.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+log	../normfactor.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+log	../normsys.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:9
+log	../shapefactor.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+log	../shapesys.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+log	../staterror.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+logging	../__init__.py	/^import logging$/;"	kind:namespace	line:2
+logging	../histosys.py	/^import logging$/;"	kind:namespace	line:1
+logging	../lumi.py	/^import logging$/;"	kind:namespace	line:1
+logging	../normfactor.py	/^import logging$/;"	kind:namespace	line:1
+logging	../normsys.py	/^import logging$/;"	kind:namespace	line:1
+logging	../shapefactor.py	/^import logging$/;"	kind:namespace	line:1
+logging	../shapesys.py	/^import logging$/;"	kind:namespace	line:1
+logging	../staterror.py	/^import logging$/;"	kind:namespace	line:1
+lumi	../__init__.py	/^from .lumi import lumi, lumi_combined$/;"	kind:namespace	line:179
+lumi	../lumi.py	/^class lumi(object):$/;"	kind:class	line:12
+lumi.py	../lumi.py	1;"	kind:file	line:1
+lumi_combined	../__init__.py	/^from .lumi import lumi, lumi_combined$/;"	kind:namespace	line:179
+lumi_combined	../lumi.py	/^class lumi_combined(object):$/;"	kind:class	line:29
+modifier	../__init__.py	/^def modifier(*args, **kwargs):$/;"	kind:function	line:68
+modifier	../histosys.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../lumi.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../normfactor.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../normsys.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../shapefactor.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../shapesys.py	/^from . import modifier$/;"	kind:namespace	line:3
+modifier	../staterror.py	/^from . import modifier$/;"	kind:namespace	line:3
+normfactor	../__init__.py	/^from .normfactor import normfactor, normfactor_combined$/;"	kind:namespace	line:180
+normfactor	../normfactor.py	/^class normfactor(object):$/;"	kind:class	line:12
+normfactor.py	../normfactor.py	1;"	kind:file	line:1
+normfactor_combined	../__init__.py	/^from .normfactor import normfactor, normfactor_combined$/;"	kind:namespace	line:180
+normfactor_combined	../normfactor.py	/^class normfactor_combined(object):$/;"	kind:class	line:26
+normsys	../__init__.py	/^from .normsys import normsys, normsys_combined$/;"	kind:namespace	line:181
+normsys	../normsys.py	/^class normsys(object):$/;"	kind:class	line:13
+normsys.py	../normsys.py	1;"	kind:file	line:1
+normsys_combined	../__init__.py	/^from .normsys import normsys, normsys_combined$/;"	kind:namespace	line:181
+normsys_combined	../normsys.py	/^class normsys_combined(object):$/;"	kind:class	line:28
+registry	../__init__.py	/^registry = {}$/;"	kind:variable	line:9
+required_parset	../histosys.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:15
+required_parset	../lumi.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:14
+required_parset	../normfactor.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:14
+required_parset	../normsys.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:15
+required_parset	../shapefactor.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:14
+required_parset	../shapesys.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:16
+required_parset	../staterror.py	/^    def required_parset(cls, n_parameters):$/;"	kind:member	line:14
+shapefactor	../__init__.py	/^from .shapefactor import shapefactor, shapefactor_combined$/;"	kind:namespace	line:182
+shapefactor	../shapefactor.py	/^class shapefactor(object):$/;"	kind:class	line:12
+shapefactor.py	../shapefactor.py	1;"	kind:file	line:1
+shapefactor_combined	../__init__.py	/^from .shapefactor import shapefactor, shapefactor_combined$/;"	kind:namespace	line:182
+shapefactor_combined	../shapefactor.py	/^class shapefactor_combined(object):$/;"	kind:class	line:26
+shapesys	../__init__.py	/^from .shapesys import shapesys, shapesys_combined$/;"	kind:namespace	line:183
+shapesys	../shapesys.py	/^class shapesys(object):$/;"	kind:class	line:14
+shapesys.py	../shapesys.py	1;"	kind:file	line:1
+shapesys_combined	../__init__.py	/^from .shapesys import shapesys, shapesys_combined$/;"	kind:namespace	line:183
+shapesys_combined	../shapesys.py	/^class shapesys_combined(object):$/;"	kind:class	line:32
+staterror	../__init__.py	/^from .staterror import staterror, staterror_combined$/;"	kind:namespace	line:184
+staterror	../staterror.py	/^class staterror(object):$/;"	kind:class	line:12
+staterror.py	../staterror.py	1;"	kind:file	line:1
+staterror_combined	../__init__.py	/^from .staterror import staterror, staterror_combined$/;"	kind:namespace	line:184
+staterror_combined	../staterror.py	/^class staterror_combined(object):$/;"	kind:class	line:27
+string_types	../__init__.py	/^from six import string_types$/;"	kind:namespace	line:1
+uncombined	../__init__.py	/^uncombined = {$/;"	kind:variable	line:186
+unconstrained	../normfactor.py	/^from ..paramsets import unconstrained$/;"	kind:namespace	line:4
+unconstrained	../shapefactor.py	/^from ..paramsets import unconstrained$/;"	kind:namespace	line:4
+validate_modifier_structure	../__init__.py	/^def validate_modifier_structure(modifier):$/;"	kind:function	line:12
+wrapper	../__init__.py	/^        def wrapper(cls):$/;"	kind:function	line:130
