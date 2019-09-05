@@ -478,8 +478,6 @@ class Model(object):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_actualdata(pars)
         summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
-        mainpdf = tensorlib.sum(tosum)
         if self.batch_size is None:
             return tensorlib.sum(summands, axis=0)
         return tensorlib.sum(summands, axis=1)
