@@ -47,6 +47,9 @@ class gaussian_constraint_combined(object):
             except AttributeError:
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
 
+        self._normal_data = None
+        self._batched_sigmas = None
+        self._access_field = None
         # if this constraint terms is at all used (non-zrto idx selection
         # start preparing constant tensors
         if self.param_viewer.index_selection:
@@ -65,10 +68,6 @@ class gaussian_constraint_combined(object):
             )
             self._access_field = access_field
 
-        else:
-            self._normal_data = None
-            self._batched_sigmas = None
-            self._access_field = None
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -154,6 +153,9 @@ class poisson_constraint_combined(object):
                 # TODO: add coverage (issue #540)
                 poisson_constraint_rate_factors.append([1.0] * len(thisauxdata))
 
+        self._poisson_data = None
+        self._access_field = None
+        self._batched_factors = None
         if self.param_viewer.index_selection:
             self._poisson_data = default_backend.astensor(
                 default_backend.concatenate(poisson_constraint_data), dtype='int'
@@ -172,11 +174,6 @@ class poisson_constraint_combined(object):
                 self.param_viewer.index_selection, axis=1
             )
             self._access_field = access_field
-
-        else:
-            self._poisson_data = None
-            self._access_field = None
-            self._batched_factors = None
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
