@@ -38,11 +38,6 @@ class shapesys_combined(object):
 
         self._shapesys_mods = shapesys_mods
 
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._shapesys_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in shapesys_mods
-        ]
-
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, shapesys_mods
@@ -63,7 +58,6 @@ class shapesys_combined(object):
                 for m in keys
             ]
         )
-
         self.finalize(pdfconfig)
 
         global_concatenated_bin_indices = [
