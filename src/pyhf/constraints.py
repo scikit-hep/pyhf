@@ -25,6 +25,9 @@ class gaussian_constraint_combined(object):
         start_index = 0
         normal_constraint_data = []
         normal_constraint_sigmas = []
+        # loop over parameters (in auxdata order) and collect
+        # means / sigmas of constraint term as well as data
+        # skip parsets that are not constrained by onrmal
         for parset in self.parsets:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
@@ -44,6 +47,8 @@ class gaussian_constraint_combined(object):
             except AttributeError:
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
 
+        # if this constraint terms is at all used (non-zrto idx selection
+        # start preparing constant tensors
         if self.parameter_helper.index_selection:
             self._normal_data = default_backend.astensor(
                 default_backend.concatenate(normal_constraint_data), dtype='int'
