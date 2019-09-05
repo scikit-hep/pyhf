@@ -90,8 +90,19 @@ class shapefactor_combined(object):
         #   [0 1 2 0 1 0 1 2 3 4]
         # ]
 
+
+        # the index selection of param_viewer is a
+        # list of (batch_size, par_slice) tensors
+        # so self.param_viewer.index_selection[s][t] 
+        # points to the indices for a given systematic
+        # at a given position in the batch
+        # we thus populate the access field with these indices
+        # up to the point where we run out of bins (in case)
+        # the paramset slice is larger than the number of bins
+        # in which case we use a dummy index that will be masked
+        # anyways in apply (here: 0)
+
         # access field is shape (sys, batch, globalbin)
-        # 
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]

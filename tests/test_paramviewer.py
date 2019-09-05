@@ -22,7 +22,11 @@ def test_paramviewer_simple_nonbatched(backend):
 
 
 def test_paramviewer_simple_batched(backend):
-    pars = pyhf.tensorlib.astensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+    pars = pyhf.tensorlib.astensor([
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12]
+    ])
 
     parshape = pyhf.tensorlib.shape(pars)
 
@@ -32,6 +36,9 @@ def test_paramviewer_simple_batched(backend):
         ['hello', 'world'],
     )
     sl = v.get(pars)
+
+    assert v.index_selection == 0
+
     assert pyhf.tensorlib.shape(sl) == (3, 3)
     assert pyhf.tensorlib.tolist(sl[v.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
     assert pyhf.tensorlib.tolist(sl[v.slices[1]]) == [[4, 8, 12]]

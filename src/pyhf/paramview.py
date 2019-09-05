@@ -72,6 +72,7 @@ class ParamViewer(object):
         """
         Returns:
             indices into parameter field accordig to requested subset of parameters
+            list of (batch_size, parset_size) tensors
         """
         return self._index_selection
 
