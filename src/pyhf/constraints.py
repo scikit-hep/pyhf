@@ -9,9 +9,7 @@ class gaussian_constraint_combined(object):
         # iterate over all constraints order doesn't matter....
 
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.parsets = [
-            pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
-        ]
+        self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
         pnames = [
             cname
@@ -60,7 +58,9 @@ class gaussian_constraint_combined(object):
                 sigmas, (self.batch_size or 1, 1)
             )
 
-            access_field = default_backend.concatenate(self.parameter_helper.index_selection,axis=1)
+            access_field = default_backend.concatenate(
+                self.parameter_helper.index_selection, axis=1
+            )
             self._access_field = access_field
 
         else:
@@ -116,9 +116,7 @@ class poisson_constraint_combined(object):
 
         self.par_indices = list(range(len(pdfconfig.suggested_init())))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
-        self.parsets = [
-            pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order
-        ]
+        self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
         pnames = [
             cname
@@ -168,7 +166,9 @@ class poisson_constraint_combined(object):
                 factors, (self.batch_size or 1, 1)
             )
 
-            access_field = default_backend.concatenate(self.parameter_helper.index_selection, axis=1)
+            access_field = default_backend.concatenate(
+                self.parameter_helper.index_selection, axis=1
+            )
             self._access_field = access_field
 
         else:
