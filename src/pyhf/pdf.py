@@ -474,7 +474,6 @@ class Model(object):
             return normal + poisson
         terms = tensorlib.stack([normal, poisson])
         return tensorlib.sum(terms, axis=0)
-        return result
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
