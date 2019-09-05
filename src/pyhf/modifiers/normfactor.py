@@ -69,7 +69,7 @@ class normfactor_combined(object):
         # normfactors is (nsys,batch)
         # mask is (nsys,nsam,batch,gb)
         results_normfactor = tensorlib.einsum(
-            'ysab,ya->ysab', self.normfactor_mask, normfactors
+            'msab,ma->msab', self.normfactor_mask, normfactors
         )
 
         results_normfactor = tensorlib.where(

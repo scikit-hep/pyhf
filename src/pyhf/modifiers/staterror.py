@@ -127,7 +127,7 @@ class staterror_combined(object):
 
         flat_pars = tensorlib.reshape(batched_pars, (-1,))
         statfactors = tensorlib.gather(flat_pars, self.access_field)
-        results_staterr = tensorlib.einsum('yab,s->ysab', statfactors, self.sample_ones)
+        results_staterr = tensorlib.einsum('mab,s->msab', statfactors, self.sample_ones)
         results_staterr = tensorlib.where(
             self.staterror_mask, results_staterr, self.staterror_default
         )

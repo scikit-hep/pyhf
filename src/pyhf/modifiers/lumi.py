@@ -67,7 +67,7 @@ class lumi_combined(object):
         # lumis is [(1,batch)]
 
         # mask is (nsys, nsam, batch, globalbin)
-        results_lumi = tensorlib.einsum('ysab,xa->ysab', self.lumi_mask, lumis)
+        results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
 
         results_lumi = tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
         return results_lumi

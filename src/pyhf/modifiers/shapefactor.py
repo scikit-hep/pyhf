@@ -148,7 +148,7 @@ class shapefactor_combined(object):
         flat_pars = tensorlib.reshape(batched_pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
-            'yab,s->ysab', shapefactors, self.sample_ones
+            'mab,s->msab', shapefactors, self.sample_ones
         )
         results_shapefactor = tensorlib.where(
             self.shapefactor_mask, results_shapefactor, self.shapefactor_default
