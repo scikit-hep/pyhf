@@ -32,8 +32,10 @@ def test_paramviewer_simple_batched(backend):
     )
     par_slice = view.get(pars)
 
-    assert isinstance(view.index_selection) == list
-    assert all([len(x)==3 for x in view.index_selection]) # first dimension is batch dim
+    assert isinstance(view.index_selection, list)
+    assert all(
+        [len(x) == 3 for x in view.index_selection]
+    )  # first dimension is batch dim
 
     assert pyhf.tensorlib.shape(par_slice) == (3, 3)
     assert pyhf.tensorlib.tolist(par_slice[view.slices[0]]) == [[1, 5, 9], [2, 6, 10]]
