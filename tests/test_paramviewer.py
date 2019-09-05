@@ -1,5 +1,4 @@
 import pyhf
-import numpy as np
 from pyhf.paramview import ParamViewer
 
 
