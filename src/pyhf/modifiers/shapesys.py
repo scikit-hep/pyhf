@@ -33,20 +33,18 @@ class shapesys_combined(object):
     def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        pnames = [pname for pname, _ in shapesys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
         shapesys_mods = [m for m, _ in shapesys_mods]
 
         self._shapesys_mods = shapesys_mods
-        self._pnames = pnames
 
         self._parindices = list(range(len(pdfconfig.suggested_init())))
         self._shapesys_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
+            self._parindices[pdfconfig.par_slice(p)] for p in shapesys_mods
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, shapesys_mods)
 
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -71,7 +69,7 @@ class shapesys_combined(object):
         ]
 
         self._access_field = default_backend.tile(
-            global_concatenated_bin_indices, (len(pnames), self.batch_size or 1, 1)
+            global_concatenated_bin_indices, (len(shapesys_mods), self.batch_size or 1, 1)
         )
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
@@ -98,7 +96,7 @@ class shapesys_combined(object):
         self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
 
     def finalize(self, pdfconfig):
-        for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._pnames):
+        for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._shapesys_mods):
             unc_nom = default_backend.astensor(
                 [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
             )

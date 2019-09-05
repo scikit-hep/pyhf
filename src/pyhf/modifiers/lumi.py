@@ -30,12 +30,11 @@ class lumi_combined(object):
     def __init__(self, lumi_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        pnames = [pname for pname, _ in lumi_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
         self._lumi_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]

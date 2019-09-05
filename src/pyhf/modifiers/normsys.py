@@ -32,14 +32,13 @@ class normsys_combined(object):
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
-        pnames = [pname for pname, _ in normsys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
         normsys_mods = [m for m, _ in normsys_mods]
 
         self.batch_size = batch_size
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, normsys_mods)
         self._normsys_histoset = [
             [
                 [
