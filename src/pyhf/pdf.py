@@ -368,15 +368,15 @@ class Model(object):
     def expected_auxdata(self, pars):
         tensorlib, _ = get_backend()
         auxdata = None
-        v = ParamViewer(
+        viewer = ParamViewer(
             (self.batch_size or 1, len(self.config.suggested_init())),
             self.config.par_map,
             self.config.auxdata_order,
         )
-        if not v.index_selection:
+        if not viewer.index_selection:
             return None
-        slice_data = v.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, v.slices):
+        slice_data = viewer.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, viewer.slices):
             # order matters! because we generated auxdata in a certain order
             thisaux = self.config.param_set(parname).expected_data(
                 tensorlib.einsum('ij->ji', slice_data[sl])
