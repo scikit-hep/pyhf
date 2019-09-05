@@ -473,7 +473,7 @@ class Model(object):
         if self.batch_size is None:
             return normal + poisson
         terms = tensorlib.stack([normal, poisson])
-        result = tensorlib.sum(terms, axis=0)
+        return tensorlib.sum(terms, axis=0)
         return result
 
     def mainlogpdf(self, maindata, pars):
