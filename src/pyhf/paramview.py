@@ -32,12 +32,19 @@ class ParamViewer(object):
             cat = default_backend.astensor(
                 default_backend.concatenate(self._index_selection, axis=-1), dtype='int'
             )
+            # index_selection is list of (batch_dim, slice size) tensors
+            # concatenated is (batch_dim, sum of slice sizes)
+            # indices_concatenated  is
+            # batched: (sum of slice size, batch dim)
+            # unbatched: (sum of slice size, )
             if self.batch_shape:
                 self._indices_concatenated = default_backend.einsum('ij->ji', cat)
             else:
                 self._indices_concatenated = cat
-        else:
 
+
+            
+        else:
             self._indices_concatenated = None
 
         last = 0
