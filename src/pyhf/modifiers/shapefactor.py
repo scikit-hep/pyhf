@@ -69,7 +69,7 @@ class shapefactor_combined(object):
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._shapefactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -82,10 +82,19 @@ class shapefactor_combined(object):
         self._access_field = default_backend.tile(
             global_concatenated_bin_indices, (len(pnames), self.batch_size or 1, 1)
         )
+        # acess field is now
+        # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model
+        # [
+        #   [0 1 2 0 1 0 1 2 3 4] (number of rows according to batch_size but at least 1)
+        #   [0 1 2 0 1 0 1 2 3 4]
+        #   [0 1 2 0 1 0 1 2 3 4]
+        # ]
+
         # access field is shape (sys, batch, globalbin)
+        # 
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
-                selection = self.parameters_helper.index_selection[s][t]
+                selection = self.param_viewer.index_selection[s][t]
                 for b, bin_access in enumerate(batch_access):
                     self._access_field[s, t, b] = (
                         selection[bin_access] if bin_access < len(selection) else 0
@@ -95,7 +104,7 @@ class shapefactor_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
@@ -114,7 +123,7 @@ class shapefactor_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
 
         tensorlib, _ = get_backend()

@@ -32,7 +32,7 @@ class normfactor_combined(object):
         normfactor_mods = [m for m, _ in normfactor_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._normfactor_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -42,7 +42,7 @@ class normfactor_combined(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         self.normfactor_mask = tensorlib.astensor(self._normfactor_mask)
         self.normfactor_mask = tensorlib.tile(
@@ -55,7 +55,7 @@ class normfactor_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
@@ -63,7 +63,7 @@ class normfactor_combined(object):
         else:
             batched_pars = pars
 
-        normfactors = self.parameters_helper.get(batched_pars)
+        normfactors = self.param_viewer.get(batched_pars)
 
         # normfactors is (nsys,batch)
         # mask is (nsys,nsam,batch,gb)

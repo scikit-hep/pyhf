@@ -38,7 +38,7 @@ class histosys_combined(object):
         histosys_mods = [m for m, _ in histosys_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._histosys_histoset = [
             [
@@ -64,7 +64,7 @@ class histosys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
@@ -75,7 +75,7 @@ class histosys_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
 
         tensorlib, _ = get_backend()
@@ -83,7 +83,7 @@ class histosys_combined(object):
             batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
             batched_pars = pars
-        histosys_alphaset = self.parameters_helper.get(batched_pars)
+        histosys_alphaset = self.param_viewer.get(batched_pars)
 
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below

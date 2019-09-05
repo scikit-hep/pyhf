@@ -35,7 +35,7 @@ class lumi_combined(object):
         lumi_mods = [m for m, _ in lumi_mods]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
         self._lumi_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
@@ -43,7 +43,7 @@ class lumi_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         self.lumi_mask = tensorlib.tile(
@@ -56,7 +56,7 @@ class lumi_combined(object):
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
@@ -64,7 +64,7 @@ class lumi_combined(object):
         else:
             batched_pars = pars
 
-        lumis = self.parameters_helper.get(batched_pars)
+        lumis = self.param_viewer.get(batched_pars)
         # lumis is [(1,batch)]
 
         # mask is (nsys, nsam, batch, globalbin)

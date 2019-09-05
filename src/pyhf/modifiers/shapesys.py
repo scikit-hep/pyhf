@@ -46,7 +46,7 @@ class shapesys_combined(object):
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.parameters_helper = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
 
         self._shapesys_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
@@ -76,7 +76,7 @@ class shapesys_combined(object):
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
-                selection = self.parameters_helper.index_selection[s][t]
+                selection = self.param_viewer.index_selection[s][t]
                 for b, bin_access in enumerate(batch_access):
                     self._access_field[s, t, b] = (
                         selection[bin_access] if bin_access < len(selection) else 0
@@ -87,7 +87,7 @@ class shapesys_combined(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
         self.shapesys_mask = tensorlib.tile(
@@ -129,7 +129,7 @@ class shapesys_combined(object):
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
         tensorlib, _ = get_backend()
-        if not self.parameters_helper.index_selection:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
 
