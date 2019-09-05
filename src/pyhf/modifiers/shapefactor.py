@@ -90,10 +90,9 @@ class shapefactor_combined(object):
         #   [0 1 2 0 1 0 1 2 3 4]
         # ]
 
-
         # the index selection of param_viewer is a
         # list of (batch_size, par_slice) tensors
-        # so self.param_viewer.index_selection[s][t] 
+        # so self.param_viewer.index_selection[s][t]
         # points to the indices for a given systematic
         # at a given position in the batch
         # we thus populate the access field with these indices
