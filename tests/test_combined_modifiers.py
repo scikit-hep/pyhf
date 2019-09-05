@@ -113,6 +113,21 @@ def test_histosys(backend):
     mod = np.asarray(pyhf.tensorlib.tolist(mod))
     assert np.allclose(mod[0, 0, 0], [0.5, 1.0, 1.5])
 
+    hsc = histosys_combined(
+        [('hello', 'histosys'), ('world', 'histosys')], mc, mega_mods, batch_size=4
+    )
+
+    mod = hsc.apply(
+        pyhf.tensorlib.astensor([[-1.0, -1.0], [1.0, 1.0], [-1.0, 1.0], [1.0, 1.0]])
+    )
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [-1.0, -2.0, -3.0])
+    assert np.allclose(mod[0, 0, 1], [1.0, 2.0, 3.0])
+    assert np.allclose(mod[0, 0, 2], [-1.0, -2.0, -3.0])
+    assert np.allclose(mod[0, 0, 3], [1.0, 2.0, 3.0])
+
 
 @pytest.mark.skip_mxnet
 def test_normsys(backend):
@@ -189,6 +204,22 @@ def test_normsys(backend):
     assert np.allclose(mod[1, 0, 0], [0.7, 0.7, 0.7])
     assert np.allclose(mod[1, 1, 0], [0.6, 0.6, 0.6])
 
+    hsc = normsys_combined(
+        [('hello', 'normsys'), ('world', 'normsys')], mc, mega_mods, batch_size=4
+    )
+
+    mod = hsc.apply(
+        pyhf.tensorlib.astensor([[-1.0, -1.0], [1.0, 1.0], [-1.0, -1.0], [1.0, 1.0]])
+    )
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [0.9, 0.9, 0.9])
+    assert np.allclose(mod[0, 0, 1], [1.1, 1.1, 1.1])
+    assert np.allclose(mod[0, 0, 2], [0.9, 0.9, 0.9])
+    assert np.allclose(mod[0, 0, 3], [1.1, 1.1, 1.1])
+
 
 @pytest.mark.skip_mxnet
 def test_lumi(backend):
@@ -230,6 +261,18 @@ def test_lumi(backend):
     assert np.allclose(mod[0, 0, 0], [0.5, 0.5, 0.5])
     assert np.allclose(mod[0, 1, 0], [0.5, 0.5, 0.5])
 
+    hsc = lumi_combined([('lumi', 'lumi')], mc, mega_mods, batch_size=4)
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([[1.0], [2.0], [3.0], [4.0]]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (1, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [1.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 1], [2.0, 2.0, 2.0])
+    assert np.allclose(mod[0, 0, 2], [3.0, 3.0, 3.0])
+    assert np.allclose(mod[0, 0, 3], [4.0, 4.0, 4.0])
+
 
 @pytest.mark.skip_mxnet
 def test_stat(backend):
@@ -246,6 +289,8 @@ def test_stat(backend):
                 'slice': slice(1, 3),
             },
         },
+        channels=['chan1', 'chan2'],
+        channel_nbins={'chan1': 1, 'chan2': 2},
         par_order=['staterror_chan1', 'staterror_chan2'],
         samples=['signal', 'background'],
     )
@@ -283,7 +328,7 @@ def test_stat(backend):
             },
             'staterror/staterror_chan2': {
                 'type': 'staterror',
-                'name': 'c',
+                'name': 'staterror_chan2',
                 'data': {
                     'mask': [False, True, True],
                     'nom_data': [10, 10, 10],
@@ -311,18 +356,28 @@ def test_stat(backend):
 def test_shapesys(backend):
     mc = MockConfig(
         par_map={
-            'shapesys1': {
+            'dummy1': {
                 'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
                 'slice': slice(0, 1),
+            },
+            'shapesys1': {
+                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'slice': slice(1, 2),
             },
             'shapesys2': {
                 'paramset': paramset(
                     n_parameters=2, inits=[0, 0], bounds=[[0, 10], [0, 10]]
                 ),
-                'slice': slice(1, 3),
+                'slice': slice(2, 4),
+            },
+            'dummy2': {
+                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'slice': slice(4, 5),
             },
         },
-        par_order=['shapesys1', 'shapesys2'],
+        channels=['chan1', 'chan2'],
+        channel_nbins={'chan1': 1, 'chan2': 2},
+        par_order=['dummy1', 'shapesys1', 'shapesys2', 'dummy2'],
         samples=['signal', 'background'],
     )
 
@@ -368,11 +423,11 @@ def test_shapesys(backend):
             },
         },
     }
-    hsc = staterror_combined(
+    hsc = shapesys_combined(
         [('shapesys1', 'shapesys'), ('shapesys2', 'shapesys')], mc, mega_mods
     )
 
-    mod = hsc.apply(pyhf.tensorlib.astensor([1.1, 1.2, 1.3]))
+    mod = hsc.apply(pyhf.tensorlib.astensor([-10, 1.1, 1.2, 1.3, -20]))
     shape = pyhf.tensorlib.shape(mod)
     assert shape == (2, 2, 1, 3)
 
@@ -436,6 +491,27 @@ def test_normfactor(backend):
     assert np.allclose(mod[0, 0, 0], [2.0, 1.0, 1.0])
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 3.0])
 
+    hsc = normfactor_combined(
+        [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods, batch_size=4
+    )
+
+    mod = hsc.apply(
+        pyhf.tensorlib.astensor([[1.0, 5.0], [2.0, 6.0], [3.0, 7.0], [4.0, 8.0]])
+    )
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [1.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 1], [2.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 2], [3.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 3], [4.0, 1.0, 1.0])
+
+    assert np.allclose(mod[1, 0, 0], [1.0, 5.0, 5.0])
+    assert np.allclose(mod[1, 0, 1], [1.0, 6.0, 6.0])
+    assert np.allclose(mod[1, 0, 2], [1.0, 7.0, 7.0])
+    assert np.allclose(mod[1, 0, 3], [1.0, 8.0, 8.0])
+
 
 @pytest.mark.skip_mxnet
 def test_shapefactor(backend):
@@ -495,3 +571,28 @@ def test_shapefactor(backend):
     mod = np.asarray(pyhf.tensorlib.tolist(mod))
     assert np.allclose(mod[0, 0, 0], [2.0, 1.0, 1.0])
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 4.0])
+
+    hsc = shapefactor_combined(
+        [('shapefac1', 'shapefactor'), ('shapefac2', 'shapefactor')],
+        mc,
+        mega_mods,
+        batch_size=4,
+    )
+    mod = hsc.apply(
+        pyhf.tensorlib.astensor(
+            [[2.0, 3.0, 4.0], [5.0, 6.0, 7.0], [8.0, 9.0, 10.0], [11.0, 12.0, 13.0]]
+        )
+    )
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 4, 3)
+
+    mod = np.asarray(pyhf.tensorlib.tolist(mod))
+    assert np.allclose(mod[0, 0, 0], [2.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 1], [5.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 2], [8.0, 1.0, 1.0])
+    assert np.allclose(mod[0, 0, 3], [11.0, 1.0, 1.0])
+
+    assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 4.0])
+    assert np.allclose(mod[1, 0, 1], [1.0, 6.0, 7.0])
+    assert np.allclose(mod[1, 0, 2], [1.0, 9.0, 10.0])
+    assert np.allclose(mod[1, 0, 3], [1.0, 12.0, 13.0])

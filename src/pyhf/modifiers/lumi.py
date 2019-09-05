@@ -2,7 +2,8 @@ import logging
 
 from . import modifier
 from ..paramsets import constrained_by_normal
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
+from ..paramview import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -26,14 +27,14 @@ class lumi(object):
 
 
 class lumi_combined(object):
-    def __init__(self, lumi_mods, pdfconfig, mega_mods):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
+    def __init__(self, lumi_mods, pdfconfig, mega_mods, batch_size=None):
+        self.batch_size = batch_size
 
-        pnames = [pname for pname, _ in lumi_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
-        self._lumi_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
 
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
         self._lumi_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
@@ -41,26 +42,32 @@ class lumi_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.param_viewer.index_selection:
+            return
         tensorlib, _ = get_backend()
-        self.lumi_mask = default_backend.astensor(self._lumi_mask)
-        self.lumi_default = default_backend.ones(self.lumi_mask.shape)
-        self.lumi_indices = default_backend.astensor(self._lumi_indices, dtype='int')
+        self.lumi_mask = tensorlib.tile(
+            tensorlib.astensor(self._lumi_mask), (1, 1, self.batch_size or 1, 1)
+        )
+        self.lumi_default = tensorlib.ones(self.lumi_mask.shape)
 
     def apply(self, pars):
         '''
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
-        lumi_indices = tensorlib.astensor(self.lumi_indices, dtype='int')
-        lumi_mask = tensorlib.astensor(self.lumi_mask)
-        if not tensorlib.shape(lumi_indices)[0]:
+        if not self.param_viewer.index_selection:
             return
-        lumis = tensorlib.gather(pars, lumi_indices)
-        results_lumi = lumi_mask * tensorlib.reshape(
-            lumis, tensorlib.shape(lumis) + (1, 1)
-        )
-        results_lumi = tensorlib.where(
-            lumi_mask, results_lumi, tensorlib.astensor(self.lumi_default)
-        )
+        tensorlib, _ = get_backend()
+        if self.batch_size is None:
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
+
+        lumis = self.param_viewer.get(batched_pars)
+        # lumis is [(1,batch)]
+
+        # mask is (nsys, nsam, batch, globalbin)
+        results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
+
+        results_lumi = tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
         return results_lumi

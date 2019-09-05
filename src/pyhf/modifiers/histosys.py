@@ -4,6 +4,7 @@ from . import modifier
 from ..paramsets import constrained_by_normal
 from .. import get_backend, events
 from .. import interpolators
+from ..paramview import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -25,15 +26,21 @@ class histosys(object):
 
 
 class histosys_combined(object):
-    def __init__(self, histosys_mods, pdfconfig, mega_mods, interpcode='code0'):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
+    def __init__(
+        self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size=None
+    ):
+        self.batch_size = batch_size
         self.interpcode = interpcode
         assert self.interpcode in ['code0', 'code2', 'code4p']
 
-        pnames = [pname for pname, _ in histosys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
-        self._histo_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
+
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, histosys_mods
+        )
+
         self._histosys_histoset = [
             [
                 [
@@ -58,20 +65,27 @@ class histosys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.param_viewer.index_selection:
+            return
         tensorlib, _ = get_backend()
         self.histosys_mask = tensorlib.astensor(self._histosys_mask)
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
-        self.histo_indices = tensorlib.astensor(self._histo_indices, dtype='int')
 
     def apply(self, pars):
         '''
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.histo_indices)[0]:
+        if not self.param_viewer.index_selection:
             return
-        histosys_alphaset = tensorlib.gather(pars, self.histo_indices)
+
+        tensorlib, _ = get_backend()
+        if self.batch_size is None:
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
+        histosys_alphaset = self.param_viewer.get(batched_pars)
+
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
         results_histo = tensorlib.where(

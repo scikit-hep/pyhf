@@ -35,6 +35,11 @@ class constrained_by_poisson(paramset):
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
+        sh = tensorlib.shape(pars)
+        # if batched, tile the factors as they only depend on background uncertainty
+        if len(sh) > 1:
+            fc = tensorlib.tile(self.factors, (sh[0], 1))
+            return pars * fc
         return tensorlib.product(
             tensorlib.stack([pars, tensorlib.astensor(self.factors)]), axis=0
         )

@@ -435,9 +435,10 @@ class Model(object):
         return tensorlib.concatenate(tocat)
 
     def constraint_logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return normal + poisson
+        return tensorlib.sum(tensorlib.stack([normal, poisson]), axis=0)
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
@@ -457,7 +458,7 @@ class Model(object):
             mainpdf = self.mainlogpdf(actual_data, pars)
             constraint = self.constraint_logpdf(aux_data, pars)
 
-            result = mainpdf + constraint
+            result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy
