@@ -11,14 +11,16 @@ class gaussian_constraint_combined(object):
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
-        pnames = [
-            cname
-            for cname in pdfconfig.auxdata_order
-            if pdfconfig.param_set(cname).pdf_type == 'normal'
+        pars_constrained_by_normal = [
+            constrained_parameter
+            for constrained_parameter in pdfconfig.auxdata_order
+            if pdfconfig.param_set(constrained_parameter).pdf_type == 'normal'
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, pars_constrained_by_normal
+        )
 
         start_index = 0
         normal_constraint_data = []
@@ -118,14 +120,16 @@ class poisson_constraint_combined(object):
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
-        pnames = [
-            cname
-            for cname in pdfconfig.auxdata_order
-            if pdfconfig.param_set(cname).pdf_type == 'poisson'
+        pars_constrained_by_poisson = [
+            constrained_parameter
+            for constrained_parameter in pdfconfig.auxdata_order
+            if pdfconfig.param_set(constrained_parameter).pdf_type == 'poisson'
         ]
 
         parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
-        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, pnames)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, pars_constrained_by_poisson
+        )
 
         start_index = 0
         poisson_constraint_data = []
