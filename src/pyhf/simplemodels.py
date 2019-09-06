@@ -1,7 +1,7 @@
 from . import Model
 
 
-def hepdata_like(signal_data, bkg_data, bkg_uncerts):
+def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     spec = {
         'channels': [
             {
@@ -29,4 +29,4 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts):
             }
         ]
     }
-    return Model(spec)
+    return Model(spec, batch_size=batch_size)

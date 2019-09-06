@@ -6,8 +6,10 @@ from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
 from . import utils
+from . import events
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .paramsets import reduce_paramsets_requirements
+from .paramview import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -173,7 +175,8 @@ class _ModelConfig(object):
 
 
 class Model(object):
-    def __init__(self, spec, **config_kwargs):
+    def __init__(self, spec, batch_size=None, **config_kwargs):
+        self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
@@ -195,8 +198,12 @@ class Model(object):
                 self.config.auxdata += parset.auxdata
                 self.config.auxdata_order.append(k)
 
-        self.constraints_gaussian = gaussian_constraint_combined(self.config)
-        self.constraints_poisson = poisson_constraint_combined(self.config)
+        self.constraints_gaussian = gaussian_constraint_combined(
+            self.config, batch_size=self.batch_size
+        )
+        self.constraints_poisson = poisson_constraint_combined(
+            self.config, batch_size=self.batch_size
+        )
 
         self._factor_mods = [
             modtype
@@ -208,6 +215,12 @@ class Model(object):
             for modtype, mod in modifiers.uncombined.items()
             if mod.op_code == 'addition'
         ]
+
+        self.viewer_aux = ParamViewer(
+            (self.batch_size or 1, len(self.config.suggested_init())),
+            self.config.par_map,
+            self.config.auxdata_order,
+        )
 
     def _create_nominal_and_modifiers(self):
         default_data_makers = {
@@ -325,18 +338,20 @@ class Model(object):
 
         self.mega_mods = mega_mods
 
-        tensorlib, _ = get_backend()
-        thenom = default_backend.astensor(
+        nominal_rates = default_backend.astensor(
             [mega_samples[s]['nom'] for s in self.config.samples]
         )
-        self.thenom = default_backend.reshape(
-            thenom,
+        self._nominal_rates = default_backend.reshape(
+            nominal_rates,
             (
-                1,  # modifier dimension.. thenom is the base
+                1,  # modifier dimension.. nominal_rates is the base
                 len(self.config.samples),
                 1,  # alphaset dimension
                 sum(list(self.config.channel_nbins.values())),
             ),
+        )
+        self._nominal_rates = default_backend.tile(
+            self._nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 
         self.modifiers_appliers = {
@@ -344,21 +359,33 @@ class Model(object):
                 [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
                 self.config,
                 mega_mods,
+                batch_size=self.batch_size,
                 **self.config.modifier_settings.get(k, {})
             )
             for k, c in modifiers.combined.items()
         }
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
     def expected_auxdata(self, pars):
         tensorlib, _ = get_backend()
         auxdata = None
-        for parname in self.config.auxdata_order:
+        if not self.viewer_aux.index_selection:
+            return None
+        slice_data = self.viewer_aux.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
             # order matters! because we generated auxdata in a certain order
             thisaux = self.config.param_set(parname).expected_data(
-                pars[self.config.par_slice(parname)]
+                tensorlib.einsum('ij->ji', slice_data[sl])
             )
             tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat)
+            auxdata = tensorlib.concatenate(tocat, axis=1)
+        if self.batch_size is None:
+            return auxdata[0]
         return auxdata
 
     def _modifications(self, pars):
@@ -406,7 +433,7 @@ class Model(object):
 
         deltas, factors = self._modifications(pars)
 
-        allsum = tensorlib.concatenate(deltas + [tensorlib.astensor(self.thenom)])
+        allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
 
         nom_plus_delta = tensorlib.sum(allsum, axis=0)
         nom_plus_delta = tensorlib.reshape(
@@ -417,7 +444,9 @@ class Model(object):
 
         newbysample = tensorlib.product(allfac, axis=0)
         newresults = tensorlib.sum(newbysample, axis=0)
-        return newresults[0]  # only one alphas
+        if self.batch_size is None:
+            return newresults[0]
+        return newresults
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
@@ -432,21 +461,26 @@ class Model(object):
             if expected_constraints is None
             else [expected_actual, expected_constraints]
         )
-        return tensorlib.concatenate(tocat)
+        if self.batch_size is None:
+            return tensorlib.concatenate(tocat, axis=0)
+        return tensorlib.concatenate(tocat, axis=1)
 
     def constraint_logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return tensorlib.sum(tensorlib.stack([normal, poisson]), axis=0)
+        if self.batch_size is None:
+            return normal + poisson
+        terms = tensorlib.stack([normal, poisson])
+        return tensorlib.sum(terms, axis=0)
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_actualdata(pars)
         summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        tosum = tensorlib.boolean_mask(summands, tensorlib.isfinite(summands))
-        mainpdf = tensorlib.sum(tosum)
-        return mainpdf
+        if self.batch_size is None:
+            return tensorlib.sum(summands, axis=0)
+        return tensorlib.sum(summands, axis=1)
 
     def logpdf(self, pars, data):
         try:
@@ -459,9 +493,9 @@ class Model(object):
             constraint = self.constraint_logpdf(aux_data, pars)
 
             result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
-            return result * tensorlib.ones(
-                (1)
-            )  # ensure (1,) array shape also for numpy
+            if not self.batch_size:
+                return tensorlib.reshape(result, (1,))
+            return tensorlib.astensor(result)
         except:
             log.error(
                 'eval failed for data {} pars: {}'.format(
