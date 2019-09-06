@@ -7,6 +7,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from . import events
+from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
 
@@ -260,7 +261,7 @@ class _MainModel(object):
     def logpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
-        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
+        summands = prob.Poisson(lambdas_data).log_prob(maindata)
         if self.batch_size is None:
             return tensorlib.sum(summands, axis=0)
         return tensorlib.sum(summands, axis=1)

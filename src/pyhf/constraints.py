@@ -1,5 +1,6 @@
 from . import get_backend, default_backend
 from . import events
+from . import probability as prob
 from .parameters import ParamViewer
 
 
@@ -105,7 +106,7 @@ class gaussian_constraint_combined(object):
         # pdf pars are done, now get data and compute
         auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
-        normal = tensorlib.normal_logpdf(normal_data, normal_means, self.batched_sigmas)
+        normal = prob.Normal(normal_means, self.batched_sigmas).log_prob(normal_data)
         result = tensorlib.sum(normal, axis=1)
         if self.batch_size is None:
             return result[0]
@@ -218,7 +219,7 @@ class poisson_constraint_combined(object):
         # pdf pars are done, now get data and compute
         auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        result = tensorlib.poisson_logpdf(poisson_data, pois_rates)
+        result = prob.Poisson(pois_rates).log_prob(poisson_data)
         result = tensorlib.sum(result, axis=1)
         if self.batch_size is None:
             return result[0]
