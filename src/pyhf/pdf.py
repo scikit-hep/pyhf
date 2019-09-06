@@ -174,37 +174,8 @@ class _ModelConfig(object):
             self._register_paramset(param_name, paramset)
 
 
-class Model(object):
-    def __init__(self, spec, batch_size=None, **config_kwargs):
-        self.batch_size = batch_size
-        self.spec = copy.deepcopy(spec)  # may get modified by config
-        self.schema = config_kwargs.pop('schema', 'model.json')
-        self.version = config_kwargs.pop('version', None)
-        # run jsonschema validation of input specification against the (provided) schema
-        log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema, version=self.version)
-        # build up our representation of the specification
-        self.config = _ModelConfig(self.spec, **config_kwargs)
-
-        self._create_nominal_and_modifiers()
-
-        # this is tricky, must happen before constraint
-        # terms try to access auxdata but after
-        # combined mods have been created that
-        # set the aux data
-        for k in sorted(self.config.par_map.keys()):
-            parset = self.config.param_set(k)
-            if hasattr(parset, 'pdf_type'):  # is constrained
-                self.config.auxdata += parset.auxdata
-                self.config.auxdata_order.append(k)
-
-        self.constraints_gaussian = gaussian_constraint_combined(
-            self.config, batch_size=self.batch_size
-        )
-        self.constraints_poisson = poisson_constraint_combined(
-            self.config, batch_size=self.batch_size
-        )
-
+class MainModel(object):
+    def __init__(self, config, mega_mods, nominal_rates, batch_size):
         self._factor_mods = [
             modtype
             for modtype, mod in modifiers.uncombined.items()
@@ -215,155 +186,23 @@ class Model(object):
             for modtype, mod in modifiers.uncombined.items()
             if mod.op_code == 'addition'
         ]
+        self.batch_size = batch_size
 
-        self.viewer_aux = ParamViewer(
-            (self.batch_size or 1, len(self.config.suggested_init())),
-            self.config.par_map,
-            self.config.auxdata_order,
-        )
-
-    def _create_nominal_and_modifiers(self):
-        default_data_makers = {
-            'histosys': lambda: {
-                'hi_data': [],
-                'lo_data': [],
-                'nom_data': [],
-                'mask': [],
-            },
-            'lumi': lambda: {'mask': []},
-            'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
-            'normfactor': lambda: {'mask': []},
-            'shapefactor': lambda: {'mask': []},
-            'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
-            'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
-        }
-
-        # the mega-channel will consist of mega-samples that subscribe to
-        # mega-modifiers. i.e. while in normal histfactory, each sample might
-        # be affected by some modifiers and some not, here we change it so that
-        # samples are affected by all modifiers, but we set up the modifier
-        # data such that the application of the modifier does not actually
-        # change the bin value for bins that are not originally affected by
-        # that modifier
-        #
-        # We don't actually set up the modifier data here for no-ops, but we do
-        # set up the entire structure
-        mega_mods = {}
-        for m, mtype in self.config.modifiers:
-            key = '{}/{}'.format(mtype, m)
-            for s in self.config.samples:
-                mega_mods.setdefault(s, {})[key] = {
-                    'type': mtype,
-                    'name': m,
-                    'data': default_data_makers[mtype](),
-                }
-
-        # helper maps channel-name/sample-name to pairs of channel-sample structs
-        helper = {}
-        for c in self.spec['channels']:
-            for s in c['samples']:
-                helper.setdefault(c['name'], {})[s['name']] = (c, s)
-
-        mega_samples = {}
-        for s in self.config.samples:
-            mega_nom = []
-            for c in self.config.channels:
-                defined_samp = helper.get(c, {}).get(s)
-                defined_samp = None if not defined_samp else defined_samp[1]
-                # set nominal to 0 for channel/sample if the pair doesn't exist
-                nom = (
-                    defined_samp['data']
-                    if defined_samp
-                    else [0.0] * self.config.channel_nbins[c]
-                )
-                mega_nom += nom
-                defined_mods = (
-                    {
-                        '{}/{}'.format(x['type'], x['name']): x
-                        for x in defined_samp['modifiers']
-                    }
-                    if defined_samp
-                    else {}
-                )
-                for m, mtype in self.config.modifiers:
-                    key = '{}/{}'.format(mtype, m)
-                    # this is None if modifier doesn't affect channel/sample.
-                    thismod = defined_mods.get(key)
-                    # print('key',key,thismod['data'] if thismod else None)
-                    if mtype == 'histosys':
-                        lo_data = thismod['data']['lo_data'] if thismod else nom
-                        hi_data = thismod['data']['hi_data'] if thismod else nom
-                        maskval = True if thismod else False
-                        mega_mods[s][key]['data']['lo_data'] += lo_data
-                        mega_mods[s][key]['data']['hi_data'] += hi_data
-                        mega_mods[s][key]['data']['nom_data'] += nom
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype == 'normsys':
-                        maskval = True if thismod else False
-                        lo_factor = thismod['data']['lo'] if thismod else 1.0
-                        hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[s][key]['data']['nom_data'] += [1.0] * len(nom)
-                        mega_mods[s][key]['data']['lo'] += [lo_factor] * len(
-                            nom
-                        )  # broadcasting
-                        mega_mods[s][key]['data']['hi'] += [hi_factor] * len(nom)
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype in ['normfactor', 'shapefactor', 'lumi']:
-                        maskval = True if thismod else False
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype in ['shapesys', 'staterror']:
-                        uncrt = thismod['data'] if thismod else [0.0] * len(nom)
-                        maskval = [True if thismod else False] * len(nom)
-                        mega_mods[s][key]['data']['mask'] += maskval
-                        mega_mods[s][key]['data']['uncrt'] += uncrt
-                        mega_mods[s][key]['data']['nom_data'] += nom
-                    else:
-                        raise RuntimeError(
-                            'not sure how to combine {mtype} into the mega-channel'.format(
-                                mtype=mtype
-                            )
-                        )
-            sample_dict = {
-                'name': 'mega_{}'.format(s),
-                'nom': mega_nom,
-                'modifiers': list(mega_mods[s].values()),
-            }
-            mega_samples[s] = sample_dict
-
-        self.mega_mods = mega_mods
-
-        nominal_rates = default_backend.astensor(
-            [mega_samples[s]['nom'] for s in self.config.samples]
-        )
-        self._nominal_rates = default_backend.reshape(
-            nominal_rates,
-            (
-                1,  # modifier dimension.. nominal_rates is the base
-                len(self.config.samples),
-                1,  # alphaset dimension
-                sum(list(self.config.channel_nbins.values())),
-            ),
-        )
         self._nominal_rates = default_backend.tile(
-            self._nominal_rates, (1, 1, self.batch_size or 1, 1)
+            nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 
         self.modifiers_appliers = {
             k: c(
-                [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
-                self.config,
+                [x for x in config.modifiers if x[1] == k],  # x[1] is mtype
+                config,
                 mega_mods,
                 batch_size=self.batch_size,
-                **self.config.modifier_settings.get(k, {})
+                **config.modifier_settings.get(k, {})
             )
             for k, c in modifiers.combined.items()
         }
+
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
@@ -371,22 +210,13 @@ class Model(object):
         tensorlib, _ = get_backend()
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
-    def expected_auxdata(self, pars):
+    def logpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
+        lambdas_data = self.expected_actualdata(pars)
+        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
         if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
+            return tensorlib.sum(summands, axis=0)
+        return tensorlib.sum(summands, axis=1)
 
     def _modifications(self, pars):
         deltas = list(
@@ -448,10 +278,202 @@ class Model(object):
             return newresults[0]
         return newresults
 
+
+class Model(object):
+    def __init__(self, spec, batch_size=None, **config_kwargs):
+        self.batch_size = batch_size
+        self.spec = copy.deepcopy(spec)  # may get modified by config
+        self.schema = config_kwargs.pop('schema', 'model.json')
+        self.version = config_kwargs.pop('version', None)
+        # run jsonschema validation of input specification against the (provided) schema
+        log.info("Validating spec against schema: {0:s}".format(self.schema))
+        utils.validate(self.spec, self.schema, version=self.version)
+        # build up our representation of the specification
+        self.config = _ModelConfig(self.spec, **config_kwargs)
+
+        mega_mods, _nominal_rates = self._create_nominal_and_modifiers(
+            self.config, self.spec
+        )
+        self.main_model = MainModel(
+            self.config,
+            mega_mods=mega_mods,
+            nominal_rates=_nominal_rates,
+            batch_size=self.batch_size,
+        )
+
+        # this is tricky, must happen before constraint
+        # terms try to access auxdata but after
+        # combined mods have been created that
+        # set the aux data
+        for k in sorted(self.config.par_map.keys()):
+            parset = self.config.param_set(k)
+            if hasattr(parset, 'pdf_type'):  # is constrained
+                self.config.auxdata += parset.auxdata
+                self.config.auxdata_order.append(k)
+
+        self.constraints_gaussian = gaussian_constraint_combined(
+            self.config, batch_size=self.batch_size
+        )
+        self.constraints_poisson = poisson_constraint_combined(
+            self.config, batch_size=self.batch_size
+        )
+
+        self.viewer_aux = ParamViewer(
+            (self.batch_size or 1, len(self.config.suggested_init())),
+            self.config.par_map,
+            self.config.auxdata_order,
+        )
+
+    def _create_nominal_and_modifiers(self, config, spec):
+        default_data_makers = {
+            'histosys': lambda: {
+                'hi_data': [],
+                'lo_data': [],
+                'nom_data': [],
+                'mask': [],
+            },
+            'lumi': lambda: {'mask': []},
+            'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
+            'normfactor': lambda: {'mask': []},
+            'shapefactor': lambda: {'mask': []},
+            'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
+            'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
+        }
+
+        # the mega-channel will consist of mega-samples that subscribe to
+        # mega-modifiers. i.e. while in normal histfactory, each sample might
+        # be affected by some modifiers and some not, here we change it so that
+        # samples are affected by all modifiers, but we set up the modifier
+        # data such that the application of the modifier does not actually
+        # change the bin value for bins that are not originally affected by
+        # that modifier
+        #
+        # We don't actually set up the modifier data here for no-ops, but we do
+        # set up the entire structure
+        mega_mods = {}
+        for m, mtype in config.modifiers:
+            key = '{}/{}'.format(mtype, m)
+            for s in config.samples:
+                mega_mods.setdefault(s, {})[key] = {
+                    'type': mtype,
+                    'name': m,
+                    'data': default_data_makers[mtype](),
+                }
+
+        # helper maps channel-name/sample-name to pairs of channel-sample structs
+        helper = {}
+        for c in spec['channels']:
+            for s in c['samples']:
+                helper.setdefault(c['name'], {})[s['name']] = (c, s)
+
+        mega_samples = {}
+        for s in config.samples:
+            mega_nom = []
+            for c in config.channels:
+                defined_samp = helper.get(c, {}).get(s)
+                defined_samp = None if not defined_samp else defined_samp[1]
+                # set nominal to 0 for channel/sample if the pair doesn't exist
+                nom = (
+                    defined_samp['data']
+                    if defined_samp
+                    else [0.0] * config.channel_nbins[c]
+                )
+                mega_nom += nom
+                defined_mods = (
+                    {
+                        '{}/{}'.format(x['type'], x['name']): x
+                        for x in defined_samp['modifiers']
+                    }
+                    if defined_samp
+                    else {}
+                )
+                for m, mtype in config.modifiers:
+                    key = '{}/{}'.format(mtype, m)
+                    # this is None if modifier doesn't affect channel/sample.
+                    thismod = defined_mods.get(key)
+                    # print('key',key,thismod['data'] if thismod else None)
+                    if mtype == 'histosys':
+                        lo_data = thismod['data']['lo_data'] if thismod else nom
+                        hi_data = thismod['data']['hi_data'] if thismod else nom
+                        maskval = True if thismod else False
+                        mega_mods[s][key]['data']['lo_data'] += lo_data
+                        mega_mods[s][key]['data']['hi_data'] += hi_data
+                        mega_mods[s][key]['data']['nom_data'] += nom
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                            nom
+                        )  # broadcasting
+                    elif mtype == 'normsys':
+                        maskval = True if thismod else False
+                        lo_factor = thismod['data']['lo'] if thismod else 1.0
+                        hi_factor = thismod['data']['hi'] if thismod else 1.0
+                        mega_mods[s][key]['data']['nom_data'] += [1.0] * len(nom)
+                        mega_mods[s][key]['data']['lo'] += [lo_factor] * len(
+                            nom
+                        )  # broadcasting
+                        mega_mods[s][key]['data']['hi'] += [hi_factor] * len(nom)
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                            nom
+                        )  # broadcasting
+                    elif mtype in ['normfactor', 'shapefactor', 'lumi']:
+                        maskval = True if thismod else False
+                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                            nom
+                        )  # broadcasting
+                    elif mtype in ['shapesys', 'staterror']:
+                        uncrt = thismod['data'] if thismod else [0.0] * len(nom)
+                        maskval = [True if thismod else False] * len(nom)
+                        mega_mods[s][key]['data']['mask'] += maskval
+                        mega_mods[s][key]['data']['uncrt'] += uncrt
+                        mega_mods[s][key]['data']['nom_data'] += nom
+                    else:
+                        raise RuntimeError(
+                            'not sure how to combine {mtype} into the mega-channel'.format(
+                                mtype=mtype
+                            )
+                        )
+            sample_dict = {
+                'name': 'mega_{}'.format(s),
+                'nom': mega_nom,
+                'modifiers': list(mega_mods[s].values()),
+            }
+            mega_samples[s] = sample_dict
+
+        nominal_rates = default_backend.astensor(
+            [mega_samples[s]['nom'] for s in config.samples]
+        )
+        _nominal_rates = default_backend.reshape(
+            nominal_rates,
+            (
+                1,  # modifier dimension.. nominal_rates is the base
+                len(self.config.samples),
+                1,  # alphaset dimension
+                sum(list(config.channel_nbins.values())),
+            ),
+        )
+
+        return mega_mods, _nominal_rates
+
+    def expected_auxdata(self, pars):
+        tensorlib, _ = get_backend()
+        auxdata = None
+        if not self.viewer_aux.index_selection:
+            return None
+        slice_data = self.viewer_aux.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
+            # order matters! because we generated auxdata in a certain order
+            thisaux = self.config.param_set(parname).expected_data(
+                tensorlib.einsum('ij->ji', slice_data[sl])
+            )
+            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
+            auxdata = tensorlib.concatenate(tocat, axis=1)
+        if self.batch_size is None:
+            return auxdata[0]
+        return auxdata
+
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        expected_actual = self.expected_actualdata(pars)
+        expected_actual = self.main_model.expected_actualdata(pars)
 
         if not include_auxdata:
             return expected_actual
@@ -475,12 +497,7 @@ class Model(object):
         return tensorlib.sum(terms, axis=0)
 
     def mainlogpdf(self, maindata, pars):
-        tensorlib, _ = get_backend()
-        lambdas_data = self.expected_actualdata(pars)
-        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        if self.batch_size is None:
-            return tensorlib.sum(summands, axis=0)
-        return tensorlib.sum(summands, axis=1)
+        return self.main_model.logpdf(maindata, pars)
 
     def logpdf(self, pars, data):
         try:
