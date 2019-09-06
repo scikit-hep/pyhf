@@ -36,28 +36,28 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                         k, list(combined_paramset[k]), paramset_name
                     )
                 )
-            else:
-                default_v = combined_paramset[k].pop()
-                # get user-defined-config if it exists or set to default config
-                v = paramset_user_configs.get(k, default_v)
-                # if v is a tuple, it's not user-configured, so convert to list
-                if v == 'undefined':
-                    continue
-                if isinstance(v, tuple):
-                    v = list(v)
-                # this implies user-configured, so check that it has the right number of elements
-                elif isinstance(v, list) and default_v and len(v) != len(default_v):
-                    raise exceptions.InvalidModel(
-                        'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
-                            len(v), k, len(default_v)
-                        )
-                    )
-                elif v and default_v == 'undefined':
-                    raise exceptions.InvalidModel(
-                        '{} does not use the {} attribute.'.format(paramset_name, k)
-                    )
 
-                combined_paramset[k] = v
+            default_v = combined_paramset[k].pop()
+            # get user-defined-config if it exists or set to default config
+            v = paramset_user_configs.get(k, default_v)
+            # if v is a tuple, it's not user-configured, so convert to list
+            if v == 'undefined':
+                continue
+            if isinstance(v, tuple):
+                v = list(v)
+            # this implies user-configured, so check that it has the right number of elements
+            elif isinstance(v, list) and default_v and len(v) != len(default_v):
+                raise exceptions.InvalidModel(
+                    'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
+                        len(v), k, len(default_v)
+                    )
+                )
+            elif v and default_v == 'undefined':
+                raise exceptions.InvalidModel(
+                    '{} does not use the {} attribute.'.format(paramset_name, k)
+                )
+
+            combined_paramset[k] = v
 
         reduced_paramsets_requirements[paramset_name] = combined_paramset
 
