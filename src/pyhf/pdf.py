@@ -174,7 +174,25 @@ class _ModelConfig(object):
             self._register_paramset(param_name, paramset)
 
 
-class MainModel(object):
+class _ConstraintModel(object):
+    def __init__(self, gaussian, poisson, batch_size):
+        self.batch_size = batch_size
+        self.constraints_gaussian = gaussian
+        self.constraints_poisson = poisson
+        assert self.constraints_gaussian.batch_size == self.batch_size
+        assert self.constraints_poisson.batch_size == self.batch_size
+
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        normal = self.constraints_gaussian.logpdf(auxdata, pars)
+        poisson = self.constraints_poisson.logpdf(auxdata, pars)
+        if self.batch_size is None:
+            return normal + poisson
+        terms = tensorlib.stack([normal, poisson])
+        return tensorlib.sum(terms, axis=0)
+
+
+class _MainModel(object):
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
         self._factor_mods = [
             modtype
@@ -294,7 +312,7 @@ class Model(object):
         mega_mods, _nominal_rates = self._create_nominal_and_modifiers(
             self.config, self.spec
         )
-        self.main_model = MainModel(
+        self.main_model = _MainModel(
             self.config,
             mega_mods=mega_mods,
             nominal_rates=_nominal_rates,
@@ -311,11 +329,14 @@ class Model(object):
                 self.config.auxdata += parset.auxdata
                 self.config.auxdata_order.append(k)
 
-        self.constraints_gaussian = gaussian_constraint_combined(
-            self.config, batch_size=self.batch_size
-        )
-        self.constraints_poisson = poisson_constraint_combined(
-            self.config, batch_size=self.batch_size
+        self.constraint_model = _ConstraintModel(
+            gaussian=gaussian_constraint_combined(
+                self.config, batch_size=self.batch_size
+            ),
+            poisson=poisson_constraint_combined(
+                self.config, batch_size=self.batch_size
+            ),
+            batch_size=self.batch_size,
         )
 
         self.viewer_aux = ParamViewer(
@@ -498,13 +519,7 @@ class Model(object):
         return tensorlib.concatenate(tocat, axis=1)
 
     def constraint_logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
-        normal = self.constraints_gaussian.logpdf(auxdata, pars)
-        poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        if self.batch_size is None:
-            return normal + poisson
-        terms = tensorlib.stack([normal, poisson])
-        return tensorlib.sum(terms, axis=0)
+        return self.constraint_model.logpdf(auxdata, pars)
 
     def mainlogpdf(self, maindata, pars):
         return self.main_model.logpdf(maindata, pars)
