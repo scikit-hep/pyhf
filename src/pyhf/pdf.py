@@ -175,12 +175,42 @@ class _ModelConfig(object):
 
 
 class _ConstraintModel(object):
-    def __init__(self, gaussian, poisson, batch_size):
+    def __init__(self, config, batch_size):
         self.batch_size = batch_size
-        self.constraints_gaussian = gaussian
-        self.constraints_poisson = poisson
+        self.config = config
+
+        self.constraints_gaussian = gaussian_constraint_combined(
+            config, batch_size=self.batch_size
+        )
+        self.constraints_poisson = poisson_constraint_combined(
+            config, batch_size=self.batch_size
+        )
+
+        self.viewer_aux = ParamViewer(
+            (self.batch_size or 1, len(self.config.suggested_init())),
+            self.config.par_map,
+            self.config.auxdata_order,
+        )
+
         assert self.constraints_gaussian.batch_size == self.batch_size
         assert self.constraints_poisson.batch_size == self.batch_size
+
+    def expected_data(self, pars):
+        tensorlib, _ = get_backend()
+        auxdata = None
+        if not self.viewer_aux.index_selection:
+            return None
+        slice_data = self.viewer_aux.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
+            # order matters! because we generated auxdata in a certain order
+            thisaux = self.config.param_set(parname).expected_data(
+                tensorlib.einsum('ij->ji', slice_data[sl])
+            )
+            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
+            auxdata = tensorlib.concatenate(tocat, axis=1)
+        if self.batch_size is None:
+            return auxdata[0]
+        return auxdata
 
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
@@ -230,7 +260,7 @@ class _MainModel(object):
 
     def logpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
-        lambdas_data = self.expected_actualdata(pars)
+        lambdas_data = self.expected_data(pars)
         summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
         if self.batch_size is None:
             return tensorlib.sum(summands, axis=0)
@@ -252,7 +282,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def expected_actualdata(self, pars):
+    def expected_data(self, pars):
         """
         For a single channel single sample, we compute
 
@@ -330,19 +360,7 @@ class Model(object):
                 self.config.auxdata_order.append(k)
 
         self.constraint_model = _ConstraintModel(
-            gaussian=gaussian_constraint_combined(
-                self.config, batch_size=self.batch_size
-            ),
-            poisson=poisson_constraint_combined(
-                self.config, batch_size=self.batch_size
-            ),
-            batch_size=self.batch_size,
-        )
-
-        self.viewer_aux = ParamViewer(
-            (self.batch_size or 1, len(self.config.suggested_init())),
-            self.config.par_map,
-            self.config.auxdata_order,
+            config=self.config, batch_size=self.batch_size
         )
 
     def _create_nominal_and_modifiers(self, config, spec):
@@ -475,21 +493,7 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
-        if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
+        return self.constraint_model.expected_data(pars)
 
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
@@ -499,12 +503,12 @@ class Model(object):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        return self.main_model.expected_actualdata(pars)
+        return self.main_model.expected_data(pars)
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        expected_actual = self.main_model.expected_actualdata(pars)
+        expected_actual = self.main_model.expected_data(pars)
 
         if not include_auxdata:
             return expected_actual
