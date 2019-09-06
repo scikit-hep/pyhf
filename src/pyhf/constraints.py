@@ -1,6 +1,6 @@
 from . import get_backend, default_backend
 from . import events
-from .paramview import ParamViewer
+from .parameters import ParamViewer
 
 
 class gaussian_constraint_combined(object):

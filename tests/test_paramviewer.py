@@ -1,5 +1,5 @@
 import pyhf
-from pyhf.paramview import ParamViewer
+from pyhf.parameters import ParamViewer
 
 
 def test_paramviewer_simple_nonbatched(backend):
