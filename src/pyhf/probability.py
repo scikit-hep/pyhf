@@ -1,4 +1,4 @@
-from . import get_backend, default_backend
+from . import get_backend
 
 
 class Poisson(object):
