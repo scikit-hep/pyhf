@@ -216,6 +216,12 @@ class Model(object):
             if mod.op_code == 'addition'
         ]
 
+        self.viewer_aux = ParamViewer(
+            (self.batch_size or 1, len(self.config.suggested_init())),
+            self.config.par_map,
+            self.config.auxdata_order,
+        )
+
     def _create_nominal_and_modifiers(self):
         default_data_makers = {
             'histosys': lambda: {
@@ -368,15 +374,10 @@ class Model(object):
     def expected_auxdata(self, pars):
         tensorlib, _ = get_backend()
         auxdata = None
-        viewer = ParamViewer(
-            (self.batch_size or 1, len(self.config.suggested_init())),
-            self.config.par_map,
-            self.config.auxdata_order,
-        )
-        if not viewer.index_selection:
+        if not self.viewer_aux.index_selection:
             return None
-        slice_data = viewer.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, viewer.slices):
+        slice_data = self.viewer_aux.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
             # order matters! because we generated auxdata in a certain order
             thisaux = self.config.param_set(parname).expected_data(
                 tensorlib.einsum('ij->ji', slice_data[sl])
