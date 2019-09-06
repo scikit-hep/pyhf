@@ -470,6 +470,12 @@ class Model(object):
             return auxdata[0]
         return auxdata
 
+    def _modifications(self, pars):
+        return self.main_model._modifications(pars)
+
+    def expected_actualdata(self, pars):
+        return self.main_model.expected_actualdata(pars)
+
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
