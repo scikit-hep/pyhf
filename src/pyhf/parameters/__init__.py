@@ -1,14 +1,10 @@
-import logging
-
-log = logging.getLogger(__name__)
-
 from .paramsets import (
     paramset,
     unconstrained,
     constrained_by_normal,
     constrained_by_poisson,
 )
-from . import utils
+from .utils import reduce_paramsets_requirements
 from .paramview import ParamViewer
 
 __all__ = [
@@ -16,6 +12,6 @@ __all__ = [
     'unconstrained',
     'constrained_by_normal',
     'constrained_by_poisson',
-    'utils',
+    'reduce_paramsets_requirements',
     'ParamViewer',
 ]
