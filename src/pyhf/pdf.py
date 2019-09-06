@@ -291,16 +291,6 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        # this is tricky, must happen before constraint
-        # terms try to access auxdata but after
-        # combined mods have been created that
-        # set the aux data
-        for k in sorted(self.config.par_map.keys()):
-            parset = self.config.param_set(k)
-            if hasattr(parset, 'pdf_type'):  # is constrained
-                self.config.auxdata += parset.auxdata
-                self.config.auxdata_order.append(k)
-
         mega_mods, _nominal_rates = self._create_nominal_and_modifiers(
             self.config, self.spec
         )
@@ -310,6 +300,16 @@ class Model(object):
             nominal_rates=_nominal_rates,
             batch_size=self.batch_size,
         )
+
+        # this is tricky, must happen before constraint
+        # terms try to access auxdata but after
+        # combined mods have been created that
+        # set the aux data
+        for k in sorted(self.config.par_map.keys()):
+            parset = self.config.param_set(k)
+            if hasattr(parset, 'pdf_type'):  # is constrained
+                self.config.auxdata += parset.auxdata
+                self.config.auxdata_order.append(k)
 
         self.constraints_gaussian = gaussian_constraint_combined(
             self.config, batch_size=self.batch_size
