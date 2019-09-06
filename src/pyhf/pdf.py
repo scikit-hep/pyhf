@@ -473,6 +473,10 @@ class Model(object):
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
 
+    @property
+    def nominal_rates(self, pars):
+        return self.main_model.nominal_rates
+
     def expected_actualdata(self, pars):
         return self.main_model.expected_actualdata(pars)
 
