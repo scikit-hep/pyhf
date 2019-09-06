@@ -499,7 +499,7 @@ class Model(object):
         return self.main_model._modifications(pars)
 
     @property
-    def nominal_rates(self, pars):
+    def nominal_rates(self):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
