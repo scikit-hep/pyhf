@@ -8,7 +8,8 @@ from . import modifiers
 from . import utils
 from . import events
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .parameters import reduce_paramsets_requirements, ParamViewer
+from .parameters import ParamViewer
+from .parameters.utils import reduce_paramsets_requirements
 
 log = logging.getLogger(__name__)
 
