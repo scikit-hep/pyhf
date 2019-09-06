@@ -6,7 +6,7 @@ from pyhf.modifiers.staterror import staterror_combined
 from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.modifiers.normfactor import normfactor_combined
 from pyhf.modifiers.shapefactor import shapefactor_combined
-from pyhf.paramsets import paramset
+from pyhf.parameters import paramset
 import numpy as np
 import pyhf
 import pytest
