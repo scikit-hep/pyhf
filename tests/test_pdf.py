@@ -44,7 +44,9 @@ def test_pdf_basicapi_tests(backend):
 
     tensorlib, _ = backend
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx([0.002417118], 1e-05)
-    assert tensorlib.tolist(pdf.expected_data(pars))
+    assert tensorlib.tolist(pdf.expected_data(pars)) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
 
     pdf = pyhf.simplemodels.hepdata_like(
         source['bindata']['sig'],
@@ -57,8 +59,16 @@ def test_pdf_basicapi_tests(backend):
     data = source['bindata']['data'] + pdf.config.auxdata
 
     tensorlib, _ = backend
-    assert tensorlib.tolist(pdf.pdf(pars, data))
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417118, 0.002417118], 1e-05
+    )
     assert tensorlib.tolist(pdf.expected_data(pars))
+    assert tensorlib.tolist(pdf.expected_data(pars)[0]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars)[1]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
 
 
 @pytest.mark.only_numpy
