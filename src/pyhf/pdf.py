@@ -432,9 +432,7 @@ class Model(object):
 
         deltas, factors = self._modifications(pars)
 
-        allsum = tensorlib.concatenate(
-            deltas + [tensorlib.astensor(self.nominal_rates)]
-        )
+        allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
 
         nom_plus_delta = tensorlib.sum(allsum, axis=0)
         nom_plus_delta = tensorlib.reshape(
