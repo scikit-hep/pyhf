@@ -106,8 +106,10 @@ class gaussian_constraint_combined(object):
         # pdf pars are done, now get data and compute
         auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
-        normal = prob.Normal(normal_means, self.batched_sigmas).log_prob(normal_data)
-        result = tensorlib.sum(normal, axis=1)
+
+        result = prob.Independent(
+            prob.Normal(normal_means, self.batched_sigmas)
+        ).log_prob(normal_data)
         if self.batch_size is None:
             return result[0]
         return result
@@ -219,8 +221,7 @@ class poisson_constraint_combined(object):
         # pdf pars are done, now get data and compute
         auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        result = prob.Poisson(pois_rates).log_prob(poisson_data)
-        result = tensorlib.sum(result, axis=1)
+        result = prob.Independent(prob.Poisson(pois_rates)).log_prob(poisson_data)
         if self.batch_size is None:
             return result[0]
         return result
