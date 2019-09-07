@@ -30,10 +30,12 @@ class Independent(object):
     numbers.
     '''
 
-    def __init__(self, batched_pdf):
+    def __init__(self, batched_pdf, batch_size=None):
+        self.batch_size = batch_size
         self._pdf = batched_pdf
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
         result = self._pdf.log_prob(value)
-        return tensorlib.sum(result, axis=-1)
+        result = tensorlib.sum(result, axis=-1)
+        return result
