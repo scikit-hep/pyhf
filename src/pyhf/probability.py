@@ -39,3 +39,10 @@ class Independent(object):
         result = self._pdf.log_prob(value)
         result = tensorlib.sum(result, axis=-1)
         return result
+
+
+def joint_logpdf(terms):
+    tensorlib, _ = get_backend()
+    terms = tensorlib.stack(terms)
+    result = tensorlib.sum(terms, axis=0)
+    return result
