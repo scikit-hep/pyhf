@@ -214,18 +214,12 @@ class _ConstraintModel(object):
 
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
-        normal = self.constraints_gaussian.make_pdf(pars)
-
-        if normal:
-            normal = normal.log_prob(self.constraints_gaussian.dataprojection(auxdata))
-
-        poisson = self.constraints_poisson.make_pdf(pars)
-        if poisson:
-            poisson = poisson.log_prob(self.constraints_poisson.dataprojection(auxdata))
-
-        terms = tensorlib.stack([x for x in [normal, poisson] if x is not None])
-        summed = tensorlib.sum(terms, axis=0)
-        return summed
+        normal = self.constraints_gaussian.logpdf(auxdata, pars)
+        poisson = self.constraints_poisson.logpdf(auxdata, pars)
+        if self.batch_size is None:
+            return normal + poisson
+        terms = tensorlib.stack([normal, poisson])
+        return tensorlib.sum(terms, axis=0)
 
 
 class _MainModel(object):
