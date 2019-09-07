@@ -261,10 +261,8 @@ class _MainModel(object):
     def logpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
-        summands = prob.Poisson(lambdas_data).log_prob(maindata)
-        if self.batch_size is None:
-            return tensorlib.sum(summands, axis=0)
-        return tensorlib.sum(summands, axis=1)
+        result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
+        return result
 
     def _modifications(self, pars):
         deltas = list(
