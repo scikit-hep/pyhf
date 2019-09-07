@@ -212,6 +212,11 @@ class _ConstraintModel(object):
             return auxdata[0]
         return auxdata
 
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[cut:]
+
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
@@ -224,6 +229,7 @@ class _ConstraintModel(object):
 
 class _MainModel(object):
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
+        self.config = config
         self._factor_mods = [
             modtype
             for modtype, mod in modifiers.uncombined.items()
@@ -263,6 +269,11 @@ class _MainModel(object):
         lambdas_data = self.expected_data(pars)
         result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
         return result
+
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[:cut]
 
     def _modifications(self, pars):
         deltas = list(
@@ -530,11 +541,12 @@ class Model(object):
         try:
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-            cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-            actual_data, aux_data = data[:cut], data[cut:]
 
-            mainpdf = self.mainlogpdf(actual_data, pars)
-            constraint = self.constraint_logpdf(aux_data, pars)
+            actual_data = self.main_model._dataprojection(data)
+            aux_data = self.constraint_model._dataprojection(data)
+
+            mainpdf = self.main_model.logpdf(actual_data, pars)
+            constraint = self.constraint_model.logpdf(aux_data, pars)
 
             result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
             if not self.batch_size:
