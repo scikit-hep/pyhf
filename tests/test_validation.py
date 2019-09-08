@@ -84,19 +84,19 @@ def spec_1bin_lumi(source=source_1bin_example1()):
                 "name": "channel1",
                 "samples": [
                     {
-                        "data": [20.0, 10.0],
+                        "data": [20.0],
                         "modifiers": [
                             {"data": None, "name": "mu", "type": "normfactor"}
                         ],
                         "name": "signal",
                     },
                     {
-                        "data": [100.0, 0.0],
+                        "data": [100.0],
                         "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                         "name": "background1",
                     },
                     {
-                        "data": [0.0, 100.0],
+                        "data": [0.0],
                         "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                         "name": "background2",
                     },
@@ -120,8 +120,8 @@ def spec_1bin_lumi(source=source_1bin_example1()):
 def expected_result_1bin_lumi(mu=1.0):
     if mu == 1:
         expected_result = {
-            "exp": [0.00905976, 0.0357287, 0.12548957, 0.35338293, 0.69589171],
-            "obs": 0.00941757,
+            "exp": [0.01060338, 0.04022273, 0.13614217, 0.37078321, 0.71104119],
+            "obs": 0.01047275,
         }
     return expected_result
 

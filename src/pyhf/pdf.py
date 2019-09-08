@@ -232,8 +232,9 @@ class _ConstraintModel(object):
             indices.append(self.constraints_poisson._poisson_data)
             pdfobjs.append(poisson_pdf)
 
-        simpdf = prob.Simultaneous(pdfobjs, indices)
-        return simpdf
+        if pdfobjs:
+            simpdf = prob.Simultaneous(pdfobjs, indices)
+            return simpdf
 
     def logpdf(self, auxdata, pars):
         simpdf = self.make_pdf(pars)
@@ -555,15 +556,24 @@ class Model(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
 
-        mainpdf = self.main_model.make_pdf(pars)
-        constraint = self.constraint_model.make_pdf(pars)
-
         bindata = self.nominal_rates.shape[-1]
         cut = bindata
         total_size = bindata + len(self.config.auxdata)
         pos = list(range(total_size))
 
-        simpdf = prob.Simultaneous([mainpdf, constraint], [pos[:cut], pos[cut:]])
+        pdfobjs = []
+        indices = []
+
+        mainpdf = self.main_model.make_pdf(pars)
+        pdfobjs.append(mainpdf)
+        indices.append(pos[:cut])
+
+        constraint = self.constraint_model.make_pdf(pars)
+        if constraint:
+            pdfobjs.append(constraint)
+            indices.append(pos[cut:])
+
+        simpdf = prob.Simultaneous([mainpdf, constraint], indices)
         return simpdf
 
     def logpdf(self, pars, data):
