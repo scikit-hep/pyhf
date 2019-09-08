@@ -8,7 +8,6 @@ from . import modifiers
 from . import utils
 from . import events
 from . import probability as prob
-from .tensor.common import TensorViewer
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
 
