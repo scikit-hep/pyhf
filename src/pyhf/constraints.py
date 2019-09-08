@@ -119,6 +119,7 @@ class gaussian_constraint_combined(object):
                 if self.batch_size is not None
                 else tensorlib.astensor(0.0)[0]
             )
+        auxdata = tensorlib.astensor(auxdata)
         result = pdf.log_prob(tensorlib.gather(auxdata, self.normal_data))
         return result
 
@@ -236,5 +237,6 @@ class poisson_constraint_combined(object):
                 if self.batch_size is not None
                 else tensorlib.astensor(0.0)[0]
             )
+        auxdata = tensorlib.astensor(auxdata)
         result = pdf.log_prob(tensorlib.gather(auxdata, self.poisson_data))
         return result
