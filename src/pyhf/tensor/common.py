@@ -23,7 +23,9 @@ class TensorViewer(object):
 
         data = tensorlib.concatenate(data, axis=-1)
         data = tensorlib.einsum('...j->j...', data)
-        stitched = tensorlib.gather(data, tensorlib.astensor(self.sorted_indices))
+        stitched = tensorlib.gather(
+            data, tensorlib.astensor(self.sorted_indices, dtype='int')
+        )
         stitched = tensorlib.einsum('...j->j...', stitched)
         return stitched
 

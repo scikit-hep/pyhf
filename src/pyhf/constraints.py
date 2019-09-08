@@ -83,12 +83,6 @@ class gaussian_constraint_combined(object):
         self.normal_data = tensorlib.astensor(self._normal_data, dtype='int')
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
-    def _dataprojection(self, auxdata):
-        tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
-        normal_data = tensorlib.gather(auxdata, self.normal_data)
-        return normal_data
-
     def make_pdf(self, pars):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
@@ -125,7 +119,7 @@ class gaussian_constraint_combined(object):
                 if self.batch_size is not None
                 else tensorlib.astensor(0.0)[0]
             )
-        result = pdf.log_prob(self._dataprojection(auxdata))
+        result = pdf.log_prob(tensorlib.gather(auxdata, self.normal_data))
         return result
 
 
@@ -205,12 +199,6 @@ class poisson_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
-    def _dataprojection(self, auxdata):
-        tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        return poisson_data
-
     def make_pdf(self, pars):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
@@ -248,5 +236,5 @@ class poisson_constraint_combined(object):
                 if self.batch_size is not None
                 else tensorlib.astensor(0.0)[0]
             )
-        result = pdf.log_prob(self._dataprojection(auxdata))
+        result = pdf.log_prob(tensorlib.gather(auxdata, self.poisson_data))
         return result
