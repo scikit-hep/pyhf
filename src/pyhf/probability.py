@@ -1,4 +1,5 @@
 from . import get_backend
+from .tensor.common import TensorViewer
 
 
 class Poisson(object):
@@ -39,6 +40,17 @@ class Independent(object):
         result = self._pdf.log_prob(value)
         result = tensorlib.sum(result, axis=-1)
         return result
+
+
+class Simultaneous(object):
+    def __init__(self, pdfobjs, indices):
+        self.tv = TensorViewer(indices)
+        self.pdfobjs = pdfobjs
+
+    def log_prob(self, data):
+        constituent_data = self.tv.split(data)
+        pdfvals = [p.log_prob(d) for p, d in zip(self.pdfobjs, constituent_data)]
+        return joint_logpdf(pdfvals)
 
 
 def joint_logpdf(terms):

@@ -89,15 +89,10 @@ class gaussian_constraint_combined(object):
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return normal_data
 
-    def logpdf(self, auxdata, pars):
+    def make_pdf(self, pars):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
-            return (
-                tensorlib.zeros(self.batch_size)
-                if self.batch_size is not None
-                else tensorlib.astensor(0.0)[0]
-            )
-
+            return None
         pars = tensorlib.astensor(pars)
         if self.batch_size == 1 or self.batch_size is None:
             batched_pars = tensorlib.reshape(
@@ -118,7 +113,19 @@ class gaussian_constraint_combined(object):
 
         result = prob.Independent(
             prob.Normal(normal_means, self.sigmas), batch_size=self.batch_size
-        ).log_prob(self._dataprojection(auxdata))
+        )
+        return result
+
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        pdf = self.make_pdf(pars)
+        if pdf is None:
+            return (
+                tensorlib.zeros(self.batch_size)
+                if self.batch_size is not None
+                else tensorlib.astensor(0.0)[0]
+            )
+        result = pdf.log_prob(self._dataprojection(auxdata))
         return result
 
 
@@ -204,14 +211,10 @@ class poisson_constraint_combined(object):
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return poisson_data
 
-    def logpdf(self, auxdata, pars):
+    def make_pdf(self, pars):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
-            return (
-                tensorlib.zeros(self.batch_size)
-                if self.batch_size is not None
-                else tensorlib.astensor(0.0)[0]
-            )
+            return None
         tensorlib, _ = get_backend()
 
         pars = tensorlib.astensor(pars)
@@ -233,7 +236,17 @@ class poisson_constraint_combined(object):
         if self.batch_size is None:
             pois_rates = pois_rates[0]
         # pdf pars are done, now get data and compute
-        result = prob.Independent(
-            prob.Poisson(pois_rates), batch_size=self.batch_size
-        ).log_prob(self._dataprojection(auxdata))
+        result = prob.Independent(prob.Poisson(pois_rates), batch_size=self.batch_size)
+        return result
+
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        pdf = self.make_pdf(pars)
+        if pdf is None:
+            return (
+                tensorlib.zeros(self.batch_size)
+                if self.batch_size is not None
+                else tensorlib.astensor(0.0)[0]
+            )
+        result = pdf.log_prob(self._dataprojection(auxdata))
         return result

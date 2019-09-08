@@ -10,6 +10,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
+from .tensor.common import TensorViewer
 
 log = logging.getLogger(__name__)
 
@@ -217,11 +218,26 @@ class _ConstraintModel(object):
         cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
         return data[cut:]
 
+    def make_pdf(self, pars):
+        indices = []
+        pdfobjs = []
+
+        gaussian_pdf = self.constraints_gaussian.make_pdf(pars)
+        if gaussian_pdf:
+            indices.append(self.constraints_gaussian.normal_data)
+            pdfobjs.append(gaussian_pdf)
+
+        poisson_pdf = self.constraints_poisson.make_pdf(pars)
+        if poisson_pdf:
+            indices.append(self.constraints_poisson.poisson_data)
+            pdfobjs.append(poisson_pdf)
+
+        simpdf = prob.Simultaneous(pdfobjs, indices)
+        return simpdf
+
     def logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
-        normal = self.constraints_gaussian.logpdf(auxdata, pars)
-        poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return prob.joint_logpdf([normal, poisson])
+        simpdf = self.make_pdf(pars)
+        return simpdf.log_prob(auxdata)
 
 
 class _MainModel(object):
@@ -261,11 +277,12 @@ class _MainModel(object):
         tensorlib, _ = get_backend()
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
-    def logpdf(self, maindata, pars):
-        tensorlib, _ = get_backend()
+    def make_pdf(self, pars):
         lambdas_data = self.expected_data(pars)
-        result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
-        return result
+        return prob.Independent(prob.Poisson(lambdas_data))
+
+    def logpdf(self, maindata, pars):
+        return self.make_pdf(pars).log_prob(maindata)
 
     def _dataprojection(self, data):
         tensorlib, _ = get_backend()
@@ -534,18 +551,25 @@ class Model(object):
     def mainlogpdf(self, maindata, pars):
         return self.main_model.logpdf(maindata, pars)
 
+    def make_pdf(self, pars):
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+
+        mainpdf = self.main_model.make_pdf(pars)
+        constraint = self.constraint_model.make_pdf(pars)
+
+        bindata = self.nominal_rates.shape[-1]
+        cut = bindata
+        total_size = bindata + len(self.config.auxdata)
+        pos = list(range(total_size))
+
+        simpdf = prob.Simultaneous([mainpdf, constraint], [pos[:cut], pos[cut:]])
+        return simpdf
+
     def logpdf(self, pars, data):
         try:
             tensorlib, _ = get_backend()
-            pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-
-            actual_data = self.main_model._dataprojection(data)
-            aux_data = self.constraint_model._dataprojection(data)
-
-            mainpdf = self.main_model.logpdf(actual_data, pars)
-            constraint = self.constraint_model.logpdf(aux_data, pars)
-
-            result = prob.joint_logpdf([mainpdf, constraint])
+            result = self.make_pdf(pars).log_prob(data)
 
             if (
                 not self.batch_size
