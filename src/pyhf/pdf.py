@@ -10,7 +10,6 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import TensorViewer
 
 log = logging.getLogger(__name__)
 
