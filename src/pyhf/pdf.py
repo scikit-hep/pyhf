@@ -509,10 +509,10 @@ class Model(object):
 
     def make_pdf(self, pars):
         tensorlib, _ = get_backend()
-        if self._pdf and self._lastpars == tensorlib.tolist(pars):
-            return self._pdf
+        # if self._pdf and self._lastpars == tensorlib.tolist(pars):
+        #     return self._pdf
         pars = tensorlib.astensor(pars)
-        self._lastpars = tensorlib.tolist(pars)
+        # self._lastpars = tensorlib.tolist(pars)
 
         bindata = self.nominal_rates.shape[-1]
         cut = bindata
@@ -532,7 +532,7 @@ class Model(object):
             indices.append(pos[cut:])
 
         simpdf = prob.Simultaneous(pdfobjs, indices)
-        self._pdf = simpdf
+        # self._pdf = simpdf
         return simpdf
 
     def logpdf(self, pars, data):
