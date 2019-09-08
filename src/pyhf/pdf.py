@@ -224,12 +224,12 @@ class _ConstraintModel(object):
 
         gaussian_pdf = self.constraints_gaussian.make_pdf(pars)
         if gaussian_pdf:
-            indices.append(self.constraints_gaussian.normal_data)
+            indices.append(self.constraints_gaussian._normal_data)
             pdfobjs.append(gaussian_pdf)
 
         poisson_pdf = self.constraints_poisson.make_pdf(pars)
         if poisson_pdf:
-            indices.append(self.constraints_poisson.poisson_data)
+            indices.append(self.constraints_poisson._poisson_data)
             pdfobjs.append(poisson_pdf)
 
         simpdf = prob.Simultaneous(pdfobjs, indices)

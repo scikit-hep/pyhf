@@ -1,4 +1,5 @@
 from .. import default_backend, get_backend
+from .. import events
 
 
 class TensorViewer(object):
@@ -7,7 +8,14 @@ class TensorViewer(object):
         a = default_backend.astensor(
             default_backend.concatenate(self.partition_indices), dtype='int'
         )
-        self.sorted_indices = default_backend.tolist(a.argsort())
+        self._sorted_indices = default_backend.tolist(a.argsort())
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.sorted_indices = tensorlib.astensor(self._sorted_indices)
 
     def stitch(self, data):
         tensorlib, _ = get_backend()
@@ -21,6 +29,7 @@ class TensorViewer(object):
 
     def split(self, data):
         tensorlib, _ = get_backend()
+        data = tensorlib.astensor(data)
         data = tensorlib.einsum('...j->j...', data)
         split = [
             tensorlib.einsum('...j->j...', tensorlib.gather(data, idx))
