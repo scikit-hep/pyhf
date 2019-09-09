@@ -43,5 +43,4 @@ class Independent(object):
 def joint_logpdf(terms):
     tensorlib, _ = get_backend()
     terms = tensorlib.stack(terms)
-    result = tensorlib.sum(terms, axis=0)
-    return result
+    return tensorlib.sum(terms, axis=0)
