@@ -36,9 +36,8 @@ class Independent(object):
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        result = self._pdf.log_prob(value)
-        result = tensorlib.sum(result, axis=-1)
-        return result
+        _log_prob = self._pdf.log_prob(value)
+        return tensorlib.sum(_log_prob, axis=-1)
 
 
 def joint_logpdf(terms):
