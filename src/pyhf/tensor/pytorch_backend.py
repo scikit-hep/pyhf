@@ -320,3 +320,9 @@ class pytorch_backend(object):
         sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.cdf(x)
+
+    def poisson_pdfcls(self, rate):
+        return torch.distributions.Poisson(rate)
+
+    def normal_pdfcls(self, mu, sigma):
+        return torch.distributions.Normal(mu, sigma)

@@ -2,29 +2,33 @@ from . import get_backend
 from .tensor.common import TensorViewer
 
 
-class Poisson(object):
+class ForwardMixin(object):
+    def log_prob(self, value):
+        return self._pdf.log_prob(value)
+
+    def expected_data(self):
+        return self._pdf.expected_data()
+
+    def sample(self, sample_shape=()):
+        return self._pdf.sample(sample_shape)
+
+
+class Poisson(ForwardMixin):
     def __init__(self, rate):
         tensorlib, _ = get_backend()
         self.lam = tensorlib.astensor(rate)
-
-    def log_prob(self, value):
-        tensorlib, _ = get_backend()
-        n = tensorlib.astensor(value)
-        return tensorlib.poisson_logpdf(n, self.lam)
+        self._pdf = tensorlib.poisson_pdfcls(rate)
 
     def expected_data(self):
         return self.lam
 
 
-class Normal(object):
+class Normal(ForwardMixin):
     def __init__(self, loc, scale):
         tensorlib, _ = get_backend()
         self.mu = tensorlib.astensor(loc)
         self.sigma = tensorlib.astensor(scale)
-
-    def log_prob(self, value):
-        tensorlib, _ = get_backend()
-        return tensorlib.normal_logpdf(value, self.mu, self.sigma)
+        self._pdf = tensorlib.normal_pdfcls(loc, scale)
 
     def expected_data(self):
         return self.mu
@@ -43,6 +47,9 @@ class Independent(object):
 
     def expected_data(self):
         return self._pdf.expected_data()
+
+    def sample(self, sample_shape=()):
+        return self._pdf.sample(sample_shape)
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
@@ -64,6 +71,9 @@ class Simultaneous(object):
     def expected_data(self):
         tostitch = [p.expected_data() for p in self.pdfobjs]
         return self.tv.stitch(tostitch)
+
+    def sample(self, sample_shape=()):
+        return self.tv.stitch([p.sample(sample_shape) for p in self.pdfobjs])
 
 
 def joint_logpdf(terms):
