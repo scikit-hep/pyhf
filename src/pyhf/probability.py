@@ -26,7 +26,7 @@ class Normal(object):
 class Independent(object):
     '''
     A probability density corresponding to the joint
-    likelihood of a batch of identically distributed random
+    distribution of a batch of identically distributed random
     numbers.
     '''
 
