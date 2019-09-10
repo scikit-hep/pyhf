@@ -26,7 +26,7 @@ class Normal(object):
 class Independent(object):
     '''
     A probability density corresponding to the joint
-    likelihood of a batch of identically distributed random
+    distribution of a batch of identically distributed random
     numbers.
     '''
 
@@ -36,13 +36,11 @@ class Independent(object):
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        result = self._pdf.log_prob(value)
-        result = tensorlib.sum(result, axis=-1)
-        return result
+        _log_prob = self._pdf.log_prob(value)
+        return tensorlib.sum(_log_prob, axis=-1)
 
 
 def joint_logpdf(terms):
     tensorlib, _ = get_backend()
     terms = tensorlib.stack(terms)
-    result = tensorlib.sum(terms, axis=0)
-    return result
+    return tensorlib.sum(terms, axis=0)
