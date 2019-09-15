@@ -61,7 +61,7 @@ class gaussian_constraint_combined(object):
             _normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
             if self.batch_size:
                 sigmas = default_backend.reshape(_normal_sigmas, (1, -1))
-                self._sigmas = default_backend.tile(sigmas, (self.batch_size or 1, 1))
+                self._sigmas = default_backend.tile(sigmas, (self.batch_size, 1))
             else:
                 self._sigmas = _normal_sigmas
 
