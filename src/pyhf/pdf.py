@@ -545,7 +545,7 @@ class Model(object):
             mainpdf = self.main_model.logpdf(actual_data, pars)
             constraintpdf = self.constraint_model.logpdf(aux_data, pars)
 
-            result = prob.joint_logpdf([mainpdf, constraint])
+            result = prob.joint_logpdf([mainpdf, constraintpdf])
 
             if (
                 not self.batch_size
