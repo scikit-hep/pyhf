@@ -1,5 +1,6 @@
 from . import get_backend, default_backend
 from . import events
+from . import probability as prob
 from .parameters import ParamViewer
 
 
@@ -48,7 +49,7 @@ class gaussian_constraint_combined(object):
                 normal_constraint_sigmas.append([1.0] * len(thisauxdata))
 
         self._normal_data = None
-        self._batched_sigmas = None
+        self._sigmas = None
         self._access_field = None
         # if this constraint terms is at all used (non-zrto idx selection
         # start preparing constant tensors
@@ -58,10 +59,11 @@ class gaussian_constraint_combined(object):
             )
 
             _normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
-            sigmas = default_backend.reshape(_normal_sigmas, (1, -1))  # (1, normals)
-            self._batched_sigmas = default_backend.tile(
-                sigmas, (self.batch_size or 1, 1)
-            )
+            if self.batch_size:
+                sigmas = default_backend.reshape(_normal_sigmas, (1, -1))
+                self._sigmas = default_backend.tile(sigmas, (self.batch_size, 1))
+            else:
+                self._sigmas = _normal_sigmas
 
             access_field = default_backend.concatenate(
                 self.param_viewer.index_selection, axis=1
@@ -75,9 +77,15 @@ class gaussian_constraint_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.batched_sigmas = tensorlib.astensor(self._batched_sigmas)
+        self.sigmas = tensorlib.astensor(self._sigmas)
         self.normal_data = tensorlib.astensor(self._normal_data, dtype='int')
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
+
+    def _dataprojection(self, auxdata):
+        tensorlib, _ = get_backend()
+        auxdata = tensorlib.astensor(auxdata)
+        normal_data = tensorlib.gather(auxdata, self.normal_data)
+        return normal_data
 
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
@@ -103,12 +111,12 @@ class gaussian_constraint_combined(object):
         normal_means = tensorlib.gather(flat_pars, self.access_field)
 
         # pdf pars are done, now get data and compute
-        auxdata = tensorlib.astensor(auxdata)
-        normal_data = tensorlib.gather(auxdata, self.normal_data)
-        normal = tensorlib.normal_logpdf(normal_data, normal_means, self.batched_sigmas)
-        result = tensorlib.sum(normal, axis=1)
         if self.batch_size is None:
-            return result[0]
+            normal_means = normal_means[0]
+
+        result = prob.Independent(
+            prob.Normal(normal_means, self.sigmas), batch_size=self.batch_size
+        ).log_prob(self._dataprojection(auxdata))
         return result
 
 
@@ -188,6 +196,12 @@ class poisson_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
+    def _dataprojection(self, auxdata):
+        tensorlib, _ = get_backend()
+        auxdata = tensorlib.astensor(auxdata)
+        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
+        return poisson_data
+
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
@@ -214,12 +228,10 @@ class poisson_constraint_combined(object):
         pois_rates = tensorlib.product(
             tensorlib.stack([nuispars, self.batched_factors]), axis=0
         )
-
-        # pdf pars are done, now get data and compute
-        auxdata = tensorlib.astensor(auxdata)
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        result = tensorlib.poisson_logpdf(poisson_data, pois_rates)
-        result = tensorlib.sum(result, axis=1)
         if self.batch_size is None:
-            return result[0]
+            pois_rates = pois_rates[0]
+        # pdf pars are done, now get data and compute
+        result = prob.Independent(
+            prob.Poisson(pois_rates), batch_size=self.batch_size
+        ).log_prob(self._dataprojection(auxdata))
         return result

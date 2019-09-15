@@ -16,8 +16,23 @@ Top-Level
    get_backend
    set_backend
 
-Making Probability Distribution Functions (PDFs)
-------------------------------------------------
+Probability Distribution Functions (PDFs)
+-----------------------------------------
+
+.. currentmodule:: pyhf.probability
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+   :template: modifierclass.rst
+
+   Normal
+   Poisson
+   Independent
+   joint_logpdf
+
+Making Models from PDFs
+-----------------------
 
 .. currentmodule:: pyhf.pdf
 

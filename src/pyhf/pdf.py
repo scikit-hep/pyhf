@@ -7,6 +7,7 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from . import events
+from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
 
@@ -211,18 +212,21 @@ class _ConstraintModel(object):
             return auxdata[0]
         return auxdata
 
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[cut:]
+
     def logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        if self.batch_size is None:
-            return normal + poisson
-        terms = tensorlib.stack([normal, poisson])
-        return tensorlib.sum(terms, axis=0)
+        return prob.joint_logpdf([normal, poisson])
 
 
 class _MainModel(object):
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
+        self.config = config
         self._factor_mods = [
             modtype
             for modtype, mod in modifiers.uncombined.items()
@@ -260,10 +264,13 @@ class _MainModel(object):
     def logpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
-        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        if self.batch_size is None:
-            return tensorlib.sum(summands, axis=0)
-        return tensorlib.sum(summands, axis=1)
+        result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
+        return result
+
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[:cut]
 
     def _modifications(self, pars):
         deltas = list(
@@ -531,16 +538,20 @@ class Model(object):
         try:
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-            cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-            actual_data, aux_data = data[:cut], data[cut:]
 
-            mainpdf = self.mainlogpdf(actual_data, pars)
-            constraint = self.constraint_logpdf(aux_data, pars)
+            actual_data = self.main_model._dataprojection(data)
+            aux_data = self.constraint_model._dataprojection(data)
 
-            result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
-            if not self.batch_size:
+            mainpdf = self.main_model.logpdf(actual_data, pars)
+            constraintpdf = self.constraint_model.logpdf(aux_data, pars)
+
+            result = prob.joint_logpdf([mainpdf, constraintpdf])
+
+            if (
+                not self.batch_size
+            ):  # force to be not scalar, should we changed with #522
                 return tensorlib.reshape(result, (1,))
-            return tensorlib.astensor(result)
+            return result
         except:
             log.error(
                 'eval failed for data {} pars: {}'.format(
