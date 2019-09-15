@@ -543,7 +543,7 @@ class Model(object):
             aux_data = self.constraint_model._dataprojection(data)
 
             mainpdf = self.main_model.logpdf(actual_data, pars)
-            constraint = self.constraint_model.logpdf(aux_data, pars)
+            constraintpdf = self.constraint_model.logpdf(aux_data, pars)
 
             result = prob.joint_logpdf([mainpdf, constraint])
 
