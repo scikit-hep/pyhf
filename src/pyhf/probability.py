@@ -1,40 +1,61 @@
 from . import get_backend
+from .tensor.common import TensorViewer
 
 
-class Poisson(object):
+class ForwardMixin(object):
+    def log_prob(self, value):
+        return self._pdf.log_prob(value)
+
+    def expected_data(self):
+        return self._pdf.expected_data()
+
+    def sample(self, sample_shape=()):
+        return self._pdf.sample(sample_shape)
+
+
+class Poisson(ForwardMixin):
     def __init__(self, rate):
-        self.rate = rate
-
-    def log_prob(self, value):
         tensorlib, _ = get_backend()
-        return tensorlib.poisson_logpdf(value, self.rate)
+        self.lam = tensorlib.astensor(rate)
+        self._pdf = tensorlib.poisson_pdfcls(rate)
+
+    def expected_data(self):
+        return self.lam
 
 
-class Normal(object):
+class Normal(ForwardMixin):
     def __init__(self, loc, scale):
-        self.loc = loc
-        self.scale = scale
-
-    def log_prob(self, value):
         tensorlib, _ = get_backend()
-        return tensorlib.normal_logpdf(value, self.loc, self.scale)
+        self.mu = tensorlib.astensor(loc)
+        self.sigma = tensorlib.astensor(scale)
+        self._pdf = tensorlib.normal_pdfcls(loc, scale)
+
+    def expected_data(self):
+        return self.mu
 
 
 class Independent(object):
-    """
+    '''
     A probability density corresponding to the joint
-    distribution of a batch of identically distributed random
+    likelihood of a batch of identically distributed random
     numbers.
-    """
+    '''
 
     def __init__(self, batched_pdf, batch_size=None):
         self.batch_size = batch_size
         self._pdf = batched_pdf
 
+    def expected_data(self):
+        return self._pdf.expected_data()
+
+    def sample(self, sample_shape=()):
+        return self._pdf.sample(sample_shape)
+
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        _log_prob = self._pdf.log_prob(value)
-        return tensorlib.sum(_log_prob, axis=-1)
+        result = self._pdf.log_prob(value)
+        result = tensorlib.sum(result, axis=-1)
+        return result
 
 
 class Simultaneous(object):
@@ -42,6 +63,13 @@ class Simultaneous(object):
         self.tv = tensorview
         self.pdfobjs = pdfobjs
         self.batch_size = batch_size
+
+    def expected_data(self):
+        tostitch = [p.expected_data() for p in self.pdfobjs]
+        return self.tv.stitch(tostitch)
+
+    def sample(self, sample_shape=()):
+        return self.tv.stitch([p.sample(sample_shape) for p in self.pdfobjs])
 
     def log_prob(self, data):
         constituent_data = self.tv.split(data)

@@ -3,7 +3,39 @@ import logging
 from scipy.special import gammaln
 from scipy.stats import norm
 
+import scipy.stats
+
 log = logging.getLogger(__name__)
+
+
+class BasicPoisson(object):
+    def __init__(self, rate):
+        tensorlib = numpy_backend()
+        self.lam = tensorlib.astensor(rate)
+
+    def sample(self, sample_shape):
+        return scipy.stats.poisson(self.lam).rvs(size=sample_shape + self.lam.shape)
+
+    def log_prob(self, value):
+        tensorlib = numpy_backend()
+        n = tensorlib.astensor(value)
+        return tensorlib.poisson_logpdf(n, self.lam)
+
+
+class BasicNormal(object):
+    def __init__(self, loc, scale):
+        tensorlib = numpy_backend()
+        self.mu = tensorlib.astensor(loc)
+        self.sigma = tensorlib.astensor(scale)
+
+    def sample(self, sample_shape):
+        return scipy.stats.norm(self.mu, self.sigma).rvs(
+            size=sample_shape + self.mu.shape
+        )
+
+    def log_prob(self, value):
+        tensorlib = numpy_backend()
+        return tensorlib.normal_logpdf(value, self.mu, self.sigma)
 
 
 class numpy_backend(object):
@@ -285,3 +317,9 @@ class numpy_backend(object):
             NumPy float: The CDF
         """
         return norm.cdf(x, loc=mu, scale=sigma)
+
+    def poisson_pdfcls(self, rate):
+        return BasicPoisson(rate)
+
+    def normal_pdfcls(self, mu, sigma):
+        return BasicNormal(mu, sigma)
