@@ -81,20 +81,7 @@ class gaussian_constraint_combined(object):
         self.normal_data = tensorlib.astensor(self._normal_data, dtype='int')
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
-    def _dataprojection(self, auxdata):
-        tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
-        normal_data = tensorlib.gather(auxdata, self.normal_data)
-        return normal_data
-
     def make_pdf(self, pars):
-        """
-        Args:
-            pars (`tensor`): The model parameters
-
-        Returns:
-            pdf: The pdf object for the Normal Constraint
-        """
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
@@ -119,6 +106,19 @@ class gaussian_constraint_combined(object):
         result = prob.Independent(
             prob.Normal(normal_means, self.sigmas), batch_size=self.batch_size
         )
+        return result
+
+    def logpdf(self, auxdata, pars):
+        tensorlib, _ = get_backend()
+        pdf = self.make_pdf(pars)
+        if pdf is None:
+            return (
+                tensorlib.zeros(self.batch_size)
+                if self.batch_size is not None
+                else tensorlib.astensor(0.0)[0]
+            )
+        auxdata = tensorlib.astensor(auxdata)
+        result = pdf.log_prob(tensorlib.gather(auxdata, self.normal_data))
         return result
 
     def logpdf(self, auxdata, pars):
@@ -217,20 +217,7 @@ class poisson_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
-    def _dataprojection(self, auxdata):
-        tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
-        poisson_data = tensorlib.gather(auxdata, self.poisson_data)
-        return poisson_data
-
     def make_pdf(self, pars):
-        """
-        Args:
-            pars (`tensor`): The model parameters
-
-        Returns:
-            pdf: the pdf object for the Poisson Constraint
-        """
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
@@ -255,17 +242,10 @@ class poisson_constraint_combined(object):
         if self.batch_size is None:
             pois_rates = pois_rates[0]
         # pdf pars are done, now get data and compute
-        return prob.Independent(prob.Poisson(pois_rates), batch_size=self.batch_size)
+        result = prob.Independent(prob.Poisson(pois_rates), batch_size=self.batch_size)
+        return result
 
     def logpdf(self, auxdata, pars):
-        """
-        Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
-
-        Returns:
-            log pdf value: The log of the pdf value of the Poisson constraints
-        """
         tensorlib, _ = get_backend()
         pdf = self.make_pdf(pars)
         if pdf is None:
@@ -274,4 +254,6 @@ class poisson_constraint_combined(object):
                 if self.batch_size is not None
                 else tensorlib.astensor(0.0)[0]
             )
-        return pdf.log_prob(self._dataprojection(auxdata))
+        auxdata = tensorlib.astensor(auxdata)
+        result = pdf.log_prob(tensorlib.gather(auxdata, self.poisson_data))
+        return result

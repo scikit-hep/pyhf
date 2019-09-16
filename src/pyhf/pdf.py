@@ -199,38 +199,7 @@ class _ConstraintModel(object):
         assert self.constraints_gaussian.batch_size == self.batch_size
         assert self.constraints_poisson.batch_size == self.batch_size
 
-    def expected_data(self, pars):
-        tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
-        if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
-
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-        return data[cut:]
-
     def make_pdf(self, pars):
-        """
-        Args:
-            pars (`tensor`): The model parameters
-
-        Returns:
-            pdf: A distribution object implementing the constraint pdf of HistFactory.
-                 Either a Poissonn, a Gaussian or a joint pdf of both depending on the
-                 constraints used in the specification.
-        """
         indices = []
         pdfobjs = []
 
@@ -247,18 +216,6 @@ class _ConstraintModel(object):
         if pdfobjs:
             simpdf = prob.Simultaneous(pdfobjs, indices)
             return simpdf
-
-    def logpdf(self, auxdata, pars):
-        """
-        Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
-
-        Returns:
-            log pdf value: the log of the pdf value
-        """
-        simpdf = self.make_pdf(pars)
-        return simpdf.log_prob(auxdata)
 
 
 class _MainModel(object):
@@ -303,24 +260,8 @@ class _MainModel(object):
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
     def make_pdf(self, pars):
-        lambdas_data = self.expected_data(pars)
+        lambdas_data = self._expected_data(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
-
-    def logpdf(self, maindata, pars):
-        """
-        Args:
-            maindata (`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
-
-        Returns:
-            log pdf value: the log of the pdf value
-        """
-        return self.make_pdf(pars).log_prob(maindata)
-
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-        return data[:cut]
 
     def _modifications(self, pars):
         deltas = list(
@@ -338,7 +279,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def expected_data(self, pars):
+    def _expected_data(self, pars):
         """
         For a single channel single sample, we compute
 
@@ -385,6 +326,8 @@ class _MainModel(object):
 
 class Model(object):
     def __init__(self, spec, batch_size=None, **config_kwargs):
+        self._pdf = None
+        self._lastpars = None
         self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
@@ -549,7 +492,7 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        return self.constraint_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[1].expected_data()
 
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
@@ -559,30 +502,46 @@ class Model(object):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        return self.main_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
-        tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        expected_actual = self.main_model.expected_data(pars)
-
         if not include_auxdata:
-            return expected_actual
-        expected_constraints = self.expected_auxdata(pars)
-        tocat = (
-            [expected_actual]
-            if expected_constraints is None
-            else [expected_actual, expected_constraints]
-        )
-        if self.batch_size is None:
-            return tensorlib.concatenate(tocat, axis=0)
-        return tensorlib.concatenate(tocat, axis=1)
+            return self.make_pdf(pars).pdfobjs[0].expected_data()
+        return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
-        return self.constraint_model.logpdf(auxdata, pars)
+        return self.make_pdf(pars).pdfobjs[1].log_prob(auxdata)
 
     def mainlogpdf(self, maindata, pars):
-        return self.main_model.logpdf(maindata, pars)
+        return self.make_pdf(pars).pdfobjs[0].log_prob(maindata)
+
+    def make_pdf(self, pars):
+        tensorlib, _ = get_backend()
+        # if self._pdf and self._lastpars == tensorlib.tolist(pars):
+        #     return self._pdf
+        pars = tensorlib.astensor(pars)
+        # self._lastpars = tensorlib.tolist(pars)
+
+        bindata = self.nominal_rates.shape[-1]
+        cut = bindata
+        total_size = bindata + len(self.config.auxdata)
+        pos = list(range(total_size))
+
+        pdfobjs = []
+        indices = []
+
+        mainpdf = self.main_model.make_pdf(pars)
+        pdfobjs.append(mainpdf)
+        indices.append(pos[:cut])
+
+        constraint = self.constraint_model.make_pdf(pars)
+        if constraint:
+            pdfobjs.append(constraint)
+            indices.append(pos[cut:])
+
+        simpdf = prob.Simultaneous(pdfobjs, indices)
+        # self._pdf = simpdf
+        return simpdf
 
     def make_pdf(self, pars):
         """
