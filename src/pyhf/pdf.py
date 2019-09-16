@@ -324,7 +324,7 @@ class _MainModel(object):
         return True
 
     def make_pdf(self, pars):
-        lambdas_data = self.expected_data(pars)
+        lambdas_data = self._expected_data(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
@@ -359,7 +359,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def expected_data(self, pars):
+    def _expected_data(self, pars):
         """
         For a single channel single sample, we compute
 
@@ -404,6 +404,8 @@ class _MainModel(object):
 
 class Model(object):
     def __init__(self, spec, batch_size=None, **config_kwargs):
+        self._pdf = None
+        self._lastpars = None
         self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
@@ -578,7 +580,7 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        return self.constraint_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[1].expected_data()
 
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
@@ -588,30 +590,46 @@ class Model(object):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        return self.main_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
-        tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-        expected_actual = self.main_model.expected_data(pars)
-
         if not include_auxdata:
-            return expected_actual
-        expected_constraints = self.expected_auxdata(pars)
-        tocat = (
-            [expected_actual]
-            if expected_constraints is None
-            else [expected_actual, expected_constraints]
-        )
-        if self.batch_size is None:
-            return tensorlib.concatenate(tocat, axis=0)
-        return tensorlib.concatenate(tocat, axis=1)
+            return self.make_pdf(pars).pdfobjs[0].expected_data()
+        return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
-        return self.constraint_model.logpdf(auxdata, pars)
+        return self.make_pdf(pars).pdfobjs[1].log_prob(auxdata)
 
     def mainlogpdf(self, maindata, pars):
-        return self.main_model.logpdf(maindata, pars)
+        return self.make_pdf(pars).pdfobjs[0].log_prob(maindata)
+
+    def make_pdf(self, pars):
+        tensorlib, _ = get_backend()
+        # if self._pdf and self._lastpars == tensorlib.tolist(pars):
+        #     return self._pdf
+        pars = tensorlib.astensor(pars)
+        # self._lastpars = tensorlib.tolist(pars)
+
+        bindata = self.nominal_rates.shape[-1]
+        cut = bindata
+        total_size = bindata + len(self.config.auxdata)
+        pos = list(range(total_size))
+
+        pdfobjs = []
+        indices = []
+
+        mainpdf = self.main_model.make_pdf(pars)
+        pdfobjs.append(mainpdf)
+        indices.append(pos[:cut])
+
+        constraint = self.constraint_model.make_pdf(pars)
+        if constraint:
+            pdfobjs.append(constraint)
+            indices.append(pos[cut:])
+
+        simpdf = prob.Simultaneous(pdfobjs, self.fullpdf_tv, self.batch_size)
+        # self._pdf = simpdf
+        return simpdf
 
     def make_pdf(self, pars):
         """
@@ -674,3 +692,4 @@ class Model(object):
     def pdf(self, pars, data):
         tensorlib, _ = get_backend()
         return tensorlib.exp(self.logpdf(pars, data))
+    
