@@ -27,7 +27,7 @@ class TensorViewer(object):
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        self.sorted_indices = tensorlib.astensor(self._sorted_indices)
+        self.sorted_indices = tensorlib.astensor(self._sorted_indices, dtype = 'int')
 
     def stitch(self, data):
         tensorlib, _ = get_backend()

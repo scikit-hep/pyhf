@@ -441,3 +441,9 @@ class tensorflow_backend(object):
         sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
+
+    def poisson_pdfcls(self, rate):
+        return tfp.distributions.Poisson(rate)
+
+    def normal_pdfcls(self, mu, sigma):
+        return tfp.distributions.Normal(mu, sigma)
