@@ -77,7 +77,7 @@ def setup_1bin_shapesys(
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_lumi(source=source_1bin_example1()):
+def spec_1bin_lumi():
     spec = {
         "channels": [
             {
@@ -129,7 +129,7 @@ def expected_result_1bin_lumi(mu=1.0):
 @pytest.fixture(scope='module')
 def setup_1bin_lumi(
     source=source_1bin_example1(),
-    spec=spec_1bin_lumi(source_1bin_example1()),
+    spec=spec_1bin_lumi(),
     mu=1,
     expected_result=expected_result_1bin_lumi(1.0),
     config={'init_pars': 2, 'par_bounds': 2},
