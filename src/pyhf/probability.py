@@ -1,4 +1,5 @@
 from . import get_backend
+from .tensor.common import TensorViewer
 
 
 class _SimpleDistributionMixin(object):
@@ -119,13 +120,19 @@ class Normal(_SimpleDistributionMixin):
 class Independent(_SimpleDistributionMixin):
     """
     A probability density corresponding to the joint
-    distribution of a batch of identically distributed random
+    likelihood of a batch of identically distributed random
     numbers.
-    """
+    '''
 
     def __init__(self, batched_pdf, batch_size=None):
         self.batch_size = batch_size
         self._pdf = batched_pdf
+
+    def expected_data(self):
+        return self._pdf.expected_data()
+
+    def sample(self, sample_shape=()):
+        return self._pdf.sample(sample_shape)
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
