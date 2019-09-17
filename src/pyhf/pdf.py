@@ -200,6 +200,15 @@ class _ConstraintModel(object):
         assert self.constraints_poisson.batch_size == self.batch_size
 
     def make_pdf(self, pars):
+        """
+        Args:
+            pars (`tensor`): The model parameters
+
+        Returns:
+            pdf: A distribution object implementing the constraint pdf of HistFactory.
+                 Either a Poissonn, a Gaussian or a joint pdf of both depending on the
+                 constraints used in the specification.
+        """
         indices = []
         pdfobjs = []
 
@@ -326,8 +335,6 @@ class _MainModel(object):
 
 class Model(object):
     def __init__(self, spec, batch_size=None, **config_kwargs):
-        self._pdf = None
-        self._lastpars = None
         self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
