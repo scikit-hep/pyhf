@@ -14,7 +14,7 @@ If you would like to make a pull request please:
 
 1. Make a fork of the project
 2. Start a pull request to let the project maintainers know you're working on it
-3. Commit your changes to the fork and push your branch
+3. Commit your changes to a feature branch of your fork push to your branch
 4. Test your changes with `pytest`
 5. Update your fork to make sure your changes don't conflict with the current state of the master branch
 6. Request your changes be accepted
@@ -55,3 +55,7 @@ Make sure to run the complete suite before submitting a PR
 ```
 pytest
 ```
+
+## Making a pull request
+
+We try to follow [Conventional Commit](https://www.conventionalcommits.org/) for commit messages and PR titles. Since we merge PR's using squash commits, it's fine if the final commit messages (proposed in the PR body) follow this convention.
