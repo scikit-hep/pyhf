@@ -82,11 +82,12 @@ class gaussian_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def make_pdf(self, pars):
-        """	
-        Args:	
-            pars (`tensor`): The model parameters	
-        Returns:	
-            pdf: The pdf object for the Normal Constraint	
+        """
+        Args:
+            pars (`tensor`): The model parameters
+
+        Returns:
+            pdf: The pdf object for the Normal Constraint
         """
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
@@ -118,6 +119,7 @@ class gaussian_constraint_combined(object):
         Args:
             auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
             pars (`tensor`): The model parameters
+
         Returns:
             log pdf value: The log of the pdf value of the Normal constraints
         """
@@ -210,11 +212,12 @@ class poisson_constraint_combined(object):
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
     def make_pdf(self, pars):
-        """	
-        Args:	
-            pars (`tensor`): The model parameters	
-        Returns:	
-            pdf: the pdf object for the Poisson Constraint	
+        """
+        Args:
+            pars (`tensor`): The model parameters
+
+        Returns:
+            pdf: the pdf object for the Poisson Constraint
         """
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
@@ -244,11 +247,12 @@ class poisson_constraint_combined(object):
 
     def logpdf(self, auxdata, pars):
         """	
-        Args:	
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)	
-            pars (`tensor`): The model parameters	
-        Returns:	
-            log pdf value: The log of the pdf value of the Poisson constraints	
+        Args:
+            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (`tensor`): The model parameters
+
+        Returns:
+            log pdf value: The log of the pdf value of the Poisson constraints
         """
         tensorlib, _ = get_backend()
         pdf = self.make_pdf(pars)
