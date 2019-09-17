@@ -538,6 +538,23 @@ class Model(object):
         try:
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
+            # Verify parameter and data shapes
+            if pars.shape[-1] != len(self.config.suggested_init()):
+                raise exceptions.InvalidPdfParameters(
+                    'eval failed as pars has len {} but {} was expected'.format(
+                        pars.shape[-1], len(self.config.suggested_init())
+                    )
+                )
+
+            if data.shape[-1] != self.nominal_rates.shape[-1] + len(
+                self.config.auxdata
+            ):
+                raise exceptions.InvalidPdfData(
+                    'eval failed as data has len {} but {} was expected'.format(
+                        data.shape[-1],
+                        self.nominal_rates.shape[-1] + len(self.config.auxdata),
+                    )
+                )
 
             actual_data = self.main_model._dataprojection(data)
             aux_data = self.constraint_model._dataprojection(data)
