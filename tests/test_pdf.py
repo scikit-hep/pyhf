@@ -79,8 +79,9 @@ def test_invalid_pdf_inputs():
     else:
         data = source['bindata']['data'] + pdf.config.auxdata
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         pdf.logpdf(pars, data)
+    assert "eval failed as data has len" in str(excinfo.value)
 
 
 @pytest.mark.fail_mxnet
