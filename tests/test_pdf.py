@@ -29,59 +29,38 @@ def test_pdf_inputs(backend):
     )
 
 
-def test_invalid_pdf_inputs():
-    with open('validation/data/1bin_example1.json') as read_json:
-        source = json.load(read_json)
-    spec = {
-        "channels": [
-            {
-                "name": "channel1",
-                "samples": [
-                    {
-                        "data": [20.0, 10.0],
-                        "modifiers": [
-                            {"data": None, "name": "mu", "type": "normfactor"}
-                        ],
-                        "name": "signal",
-                    },
-                    {
-                        "data": [100.0, 0.0],
-                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
-                        "name": "background1",
-                    },
-                    {
-                        "data": [0.0, 100.0],
-                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
-                        "name": "background2",
-                    },
-                ],
-            }
-        ],
-        "parameters": [
-            {
-                "auxdata": [1.0],
-                "bounds": [[0.0, 10.0]],
-                "inits": [1.0],
-                "name": "lumi",
-                "sigmas": [0.1],
-            }
-        ],
+def test_invalid_pdf_data():
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
 
-    pdf = pyhf.Model(spec)
     pars = pdf.config.suggested_init()
-
-    if 'channels' in source:
-        data = []
-        for c in pdf.config.channels:
-            data += source['channels'][c]['bindata']['data']
-        data = data + pdf.config.auxdata
-    else:
-        data = source['bindata']['data'] + pdf.config.auxdata
+    data = source['bindata']['data'] + [10.0] + pdf.config.auxdata
 
     with pytest.raises(ValueError) as excinfo:
         pdf.logpdf(pars, data)
     assert "eval failed as data has len" in str(excinfo.value)
+
+
+def test_invalid_pdf_pars():
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init() + [1.0]
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    with pytest.raises(ValueError) as excinfo:
+        pdf.logpdf(pars, data)
+    assert "eval failed as pars has len" in str(excinfo.value)
 
 
 @pytest.mark.fail_mxnet
