@@ -516,34 +516,6 @@ class Model(object):
         return self.make_pdf(pars).pdfobjs[0].log_prob(maindata)
 
     def make_pdf(self, pars):
-        tensorlib, _ = get_backend()
-        # if self._pdf and self._lastpars == tensorlib.tolist(pars):
-        #     return self._pdf
-        pars = tensorlib.astensor(pars)
-        # self._lastpars = tensorlib.tolist(pars)
-
-        bindata = self.nominal_rates.shape[-1]
-        cut = bindata
-        total_size = bindata + len(self.config.auxdata)
-        pos = list(range(total_size))
-
-        pdfobjs = []
-        indices = []
-
-        mainpdf = self.main_model.make_pdf(pars)
-        pdfobjs.append(mainpdf)
-        indices.append(pos[:cut])
-
-        constraint = self.constraint_model.make_pdf(pars)
-        if constraint:
-            pdfobjs.append(constraint)
-            indices.append(pos[cut:])
-
-        simpdf = prob.Simultaneous(pdfobjs, indices)
-        # self._pdf = simpdf
-        return simpdf
-
-    def make_pdf(self, pars):
         """
         Args:
             pars (`tensor`): The model parameters
