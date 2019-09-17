@@ -246,7 +246,7 @@ class poisson_constraint_combined(object):
         return prob.Independent(prob.Poisson(pois_rates), batch_size=self.batch_size)
 
     def logpdf(self, auxdata, pars):
-        """	
+        """
         Args:
             auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
             pars (`tensor`): The model parameters
