@@ -29,6 +29,60 @@ def test_pdf_inputs(backend):
     )
 
 
+def test_invalid_pdf_inputs():
+    with open('validation/data/1bin_example1.json') as read_json:
+        source = json.load(read_json)
+    spec = {
+        "channels": [
+            {
+                "name": "channel1",
+                "samples": [
+                    {
+                        "data": [20.0, 10.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu", "type": "normfactor"}
+                        ],
+                        "name": "signal",
+                    },
+                    {
+                        "data": [100.0, 0.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background1",
+                    },
+                    {
+                        "data": [0.0, 100.0],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
+                        "name": "background2",
+                    },
+                ],
+            }
+        ],
+        "parameters": [
+            {
+                "auxdata": [1.0],
+                "bounds": [[0.0, 10.0]],
+                "inits": [1.0],
+                "name": "lumi",
+                "sigmas": [0.1],
+            }
+        ],
+    }
+
+    pdf = pyhf.Model(spec)
+    pars = pdf.config.suggested_init()
+
+    if 'channels' in source:
+        data = []
+        for c in pdf.config.channels:
+            data += source['channels'][c]['bindata']['data']
+        data = data + pdf.config.auxdata
+    else:
+        data = source['bindata']['data'] + pdf.config.auxdata
+
+    with pytest.raises(ValueError):
+        pdf.logpdf(pars, data)
+
+
 @pytest.mark.fail_mxnet
 def test_pdf_basicapi_tests(backend):
     source = {
