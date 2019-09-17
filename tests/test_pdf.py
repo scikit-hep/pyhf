@@ -29,23 +29,6 @@ def test_pdf_inputs(backend):
     )
 
 
-def test_invalid_pdf_data():
-    source = {
-        "binning": [2, -0.5, 1.5],
-        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
-    }
-    pdf = pyhf.simplemodels.hepdata_like(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
-    )
-
-    pars = pdf.config.suggested_init()
-    data = source['bindata']['data'] + [10.0] + pdf.config.auxdata
-
-    with pytest.raises(ValueError) as excinfo:
-        pdf.logpdf(pars, data)
-    assert "eval failed as data has len" in str(excinfo.value)
-
-
 def test_invalid_pdf_pars():
     source = {
         "binning": [2, -0.5, 1.5],
@@ -58,9 +41,24 @@ def test_invalid_pdf_pars():
     pars = pdf.config.suggested_init() + [1.0]
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.logpdf(pars, data)
-    assert "eval failed as pars has len" in str(excinfo.value)
+
+
+def test_invalid_pdf_data():
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init()
+    data = source['bindata']['data'] + [10.0] + pdf.config.auxdata
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfData):
+        pdf.logpdf(pars, data)
 
 
 @pytest.mark.fail_mxnet
