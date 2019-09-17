@@ -151,7 +151,7 @@ class _ModelConfig(object):
         self.poi_index = s.start
 
     def _register_paramset(self, param_name, paramset):
-        '''allocates n nuisance parameters and stores paramset > modifier map'''
+        """allocates n nuisance parameters and stores paramset > modifier map"""
         log.info(
             'adding modifier %s (%s new nuisance parameters)',
             param_name,
@@ -175,6 +175,10 @@ class _ModelConfig(object):
 
 
 class _ConstraintModel(object):
+    """
+    Factory class to create pdfs for the constraint terms
+    """
+
     def __init__(self, config, batch_size):
         self.batch_size = batch_size
         self.config = config
@@ -217,14 +221,51 @@ class _ConstraintModel(object):
         cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
         return data[cut:]
 
+    def make_pdf(self, pars):
+        """
+        Args:
+            pars (`tensor`): The model parameters
+
+        Returns:
+            pdf: A distribution object implementing the constraint pdf of HistFactory.
+                 Either a Poissonn, a Gaussian or a joint pdf of both depending on the
+                 constraints used in the specification.
+        """
+        indices = []
+        pdfobjs = []
+
+        gaussian_pdf = self.constraints_gaussian.make_pdf(pars)
+        if gaussian_pdf:
+            indices.append(self.constraints_gaussian._normal_data)
+            pdfobjs.append(gaussian_pdf)
+
+        poisson_pdf = self.constraints_poisson.make_pdf(pars)
+        if poisson_pdf:
+            indices.append(self.constraints_poisson._poisson_data)
+            pdfobjs.append(poisson_pdf)
+
+        if pdfobjs:
+            simpdf = prob.Simultaneous(pdfobjs, indices)
+            return simpdf
+
     def logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
-        normal = self.constraints_gaussian.logpdf(auxdata, pars)
-        poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return prob.joint_logpdf([normal, poisson])
+        """
+        Args:
+            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (`tensor`): The model parameters
+
+        Returns:
+            log pdf value: the log of the pdf value
+        """
+        simpdf = self.make_pdf(pars)
+        return simpdf.log_prob(auxdata)
 
 
 class _MainModel(object):
+    """
+    Factory class to create pdfs for the main measurement
+    """
+
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
         self.config = config
         self._factor_mods = [
@@ -261,11 +302,20 @@ class _MainModel(object):
         tensorlib, _ = get_backend()
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
-    def logpdf(self, maindata, pars):
-        tensorlib, _ = get_backend()
+    def make_pdf(self, pars):
         lambdas_data = self.expected_data(pars)
-        result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
-        return result
+        return prob.Independent(prob.Poisson(lambdas_data))
+
+    def logpdf(self, maindata, pars):
+        """
+        Args:
+            maindata (`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
+            pars (`tensor`): The model parameters
+
+        Returns:
+            log pdf value: the log of the pdf value
+        """
+        return self.make_pdf(pars).log_prob(maindata)
 
     def _dataprojection(self, data):
         tensorlib, _ = get_backend()
@@ -534,6 +584,36 @@ class Model(object):
     def mainlogpdf(self, maindata, pars):
         return self.main_model.logpdf(maindata, pars)
 
+    def make_pdf(self, pars):
+        """
+        Args:
+            pars (`tensor`): The model parameters
+
+        Returns:
+            pdf: A distribution object implementing the main measurement pdf of HistFactory
+        """
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+
+        cut = self.nominal_rates.shape[-1]
+        total_size = cut + len(self.config.auxdata)
+        position = list(range(total_size))
+
+        pdfobjs = []
+        indices = []
+
+        mainpdf = self.main_model.make_pdf(pars)
+        pdfobjs.append(mainpdf)
+        indices.append(position[:cut])
+
+        constraintpdf = self.constraint_model.make_pdf(pars)
+        if constraintpdf:
+            pdfobjs.append(constraintpdf)
+            indices.append(position[cut:])
+
+        simpdf = prob.Simultaneous(pdfobjs, indices)
+        return simpdf
+
     def logpdf(self, pars, data):
         try:
             tensorlib, _ = get_backend()
@@ -556,13 +636,7 @@ class Model(object):
                     )
                 )
 
-            actual_data = self.main_model._dataprojection(data)
-            aux_data = self.constraint_model._dataprojection(data)
-
-            mainpdf = self.main_model.logpdf(actual_data, pars)
-            constraintpdf = self.constraint_model.logpdf(aux_data, pars)
-
-            result = prob.joint_logpdf([mainpdf, constraintpdf])
+            result = self.make_pdf(pars).log_prob(data)
 
             if (
                 not self.batch_size
