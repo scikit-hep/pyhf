@@ -45,8 +45,8 @@ Making Models from PDFs
    Model
    _ModelConfig
 
-Tensor Backends
----------------
+Backends
+--------
 
 The computational backends that :code:`pyhf` provides interfacing for the vector-based calculations.
 
@@ -61,7 +61,6 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
    numpy_backend.numpy_backend
    pytorch_backend.pytorch_backend
    tensorflow_backend.tensorflow_backend
-   common.TensorViewer
 
 Optimizers
 ----------
