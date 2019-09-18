@@ -1,5 +1,5 @@
 from . import get_backend
-from .tensor.common import TensorViewer
+from .tensor.common import _TensorViewer
 
 
 class Poisson(object):
@@ -52,7 +52,7 @@ class Independent(object):
 
 class Simultaneous(object):
     def __init__(self, pdfobjs, indices):
-        self.tv = TensorViewer(indices)
+        self.tv = _TensorViewer(indices)
         self.pdfobjs = pdfobjs
 
     def log_prob(self, data):
