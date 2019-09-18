@@ -37,8 +37,7 @@ class TensorViewer(object):
         stitched = tensorlib.gather(
             data, tensorlib.astensor(self.sorted_indices, dtype='int')
         )
-        stitched = tensorlib.einsum('j...->...j', stitched)
-        return stitched
+        return tensorlib.einsum('j...->...j', stitched)
 
     def split(self, data):
         tensorlib, _ = get_backend()
