@@ -27,8 +27,7 @@ stages:
   - name: test
     if: NOT (branch =~ /^docs\//)
   - name: benchmark
-    # if: (branch = master) AND (NOT (type IN (pull_request)))
-    if: NOT (branch =~ /^docs\//)
+    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
     if: (branch = master) OR (branch =~ /^docs\//)
   - name: binder

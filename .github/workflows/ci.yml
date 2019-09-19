@@ -41,8 +41,7 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/
     - name: Run benchmarks
-      # if: github.event_name == 'schedule' && matrix.python-version == 3.7
-      if: matrix.python-version == 3.7
+      if: github.event_name == 'schedule' && matrix.python-version == 3.7
       # FIXME: numpy_minuit-200_bins excluded due to speed regression from PR #553
       run: |
         python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py -k 'not numpy_minuit-200_bins'
