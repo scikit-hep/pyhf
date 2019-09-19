@@ -39,7 +39,7 @@ def test_joint(backend):
     )
 
 
-def test_normal(backend):
+def test_independent(backend):
     tensorlib, _ = backend
     result = probability.Independent(probability.Poisson([10.0, 10])).log_prob(
         [2.0, 3.0]
