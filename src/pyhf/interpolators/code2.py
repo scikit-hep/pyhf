@@ -114,7 +114,7 @@ class _slow_code2(object):
         b = 0.5 * (up - down)
         if alpha > 1:
             delta = (b + 2 * a) * (alpha - 1)
-        elif alpha >= -1:
+        elif -1 <= alpha <= 1:
             delta = a * alpha * alpha + b * alpha
         else:
             delta = (b - 2 * a) * (alpha + 1)
