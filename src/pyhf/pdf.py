@@ -436,9 +436,16 @@ class Model(object):
 
     def constraint_logpdf(self, auxdata, pars):
         tensorlib, _ = get_backend()
+        parts = []
         normal = self.constraints_gaussian.logpdf(auxdata, pars)
+        if normal is not None:
+            parts.append(normal)
         poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        return tensorlib.sum(tensorlib.stack([normal, poisson]), axis=0)
+        if poisson is not None:
+            parts.append(poisson)
+        if not parts:
+            return None
+        return tensorlib.sum(tensorlib.stack(parts), axis=0)
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
@@ -455,10 +462,15 @@ class Model(object):
             cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
             actual_data, aux_data = data[:cut], data[cut:]
 
+            parts = []
             mainpdf = self.mainlogpdf(actual_data, pars)
-            constraint = self.constraint_logpdf(aux_data, pars)
+            parts.append(mainpdf)
 
-            result = tensorlib.sum(tensorlib.stack([mainpdf, constraint]), axis=0)
+            constraint = self.constraint_logpdf(aux_data, pars)
+            if constraint is not None:
+                parts.append(constraint)
+
+            result = tensorlib.sum(tensorlib.stack(parts), axis=0)
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy
