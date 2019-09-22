@@ -98,18 +98,11 @@ class gaussian_constraint_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1 or self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars,
-                (self.batch_size or 1,) + tensorlib.shape(pars)
-                # if batched, noop
-                # if unbatched, reshape parameters to (1, N parameters)
-            )
+        if self.batch_size is None:
+            flat_pars = pars
         else:
-            batched_pars = pars
+            flat_pars = tensorlib.reshape(pars, (-1,))
 
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
         normal_means = tensorlib.gather(flat_pars, self.access_field)
 
         # pdf pars are done, now get data and compute
@@ -235,15 +228,10 @@ class poisson_constraint_combined(object):
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
-
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1 or self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (self.batch_size or 1,) + tensorlib.shape(pars)
-            )
+        if self.batch_size is None:
+            flat_pars = pars
         else:
-            batched_pars = pars
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         nuispars = tensorlib.gather(flat_pars, self.access_field)
 
         # similar to expected_data() in constrained_by_poisson
