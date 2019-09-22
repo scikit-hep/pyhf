@@ -122,11 +122,9 @@ class staterror_combined(object):
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            flat_pars = pars
         else:
-            batched_pars = pars
-
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         statfactors = tensorlib.gather(flat_pars, self.access_field)
         results_staterr = tensorlib.einsum('mab,s->msab', statfactors, self.sample_ones)
         results_staterr = tensorlib.where(

@@ -141,11 +141,10 @@ class shapefactor_combined(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            flat_pars = pars
         else:
-            batched_pars = pars
+            flat_pars = tensorlib.reshape(pars, (-1,))
 
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
             'mab,s->msab', shapefactors, self.sample_ones

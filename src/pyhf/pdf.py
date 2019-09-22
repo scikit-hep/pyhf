@@ -445,7 +445,9 @@ class Model(object):
             parts.append(poisson)
         if not parts:
             return None
-        return tensorlib.sum(tensorlib.stack(parts), axis=0)
+        if len(parts) > 1:
+            return tensorlib.sum(tensorlib.stack(parts), axis=0)
+        return parts[0]
 
     def mainlogpdf(self, maindata, pars):
         tensorlib, _ = get_backend()
