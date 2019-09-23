@@ -66,7 +66,7 @@ def hypotest(pdf, data):
     )
 
 
-bins = [1, 10, 50, 100, 200, 500, 800, 1000]
+bins = [1, 10, 50, 100, 200]
 bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
