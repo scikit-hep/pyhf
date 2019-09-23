@@ -29,7 +29,11 @@ class normfactor_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
         normfactor_mods = [m for m, _ in normfactor_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size or 1, len(pdfconfig.suggested_init()))
+            if self.batch_size
+            else (len(pdfconfig.suggested_init()),)
+        )
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, normfactor_mods
         )
@@ -59,17 +63,15 @@ class normfactor_combined(object):
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            normfactors = self.param_viewer.get(pars)
+            results_normfactor = tensorlib.einsum(
+                'msab,m->msab', self.normfactor_mask, normfactors
+            )
         else:
-            batched_pars = pars
-
-        normfactors = self.param_viewer.get(batched_pars)
-
-        # normfactors is (nsys,batch)
-        # mask is (nsys,nsam,batch,gb)
-        results_normfactor = tensorlib.einsum(
-            'msab,ma->msab', self.normfactor_mask, normfactors
-        )
+            normfactors = self.param_viewer.get(pars)
+            results_normfactor = tensorlib.einsum(
+                'msab,ma->msab', self.normfactor_mask, normfactors
+            )
 
         results_normfactor = tensorlib.where(
             self.normfactor_mask, results_normfactor, self.normfactor_default

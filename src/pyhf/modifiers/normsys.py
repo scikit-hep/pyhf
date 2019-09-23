@@ -36,7 +36,11 @@ class normsys_combined(object):
 
         self.batch_size = batch_size
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size or 1, len(pdfconfig.suggested_init()))
+            if self.batch_size
+            else (len(pdfconfig.suggested_init()),)
+        )
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, normsys_mods)
         self._normsys_histoset = [
             [
@@ -70,6 +74,10 @@ class normsys_combined(object):
             self.normsys_mask, (1, 1, self.batch_size or 1, 1)
         )
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
+        if self.batch_size is None:
+            self.indices = tensorlib.reshape(
+                self.param_viewer.indices_concatenated, (-1, 1)
+            )
 
     def apply(self, pars):
         '''
@@ -81,10 +89,9 @@ class normsys_combined(object):
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            normsys_alphaset = self.param_viewer.get(pars, self.indices)
         else:
-            batched_pars = pars
-        normsys_alphaset = self.param_viewer.get(batched_pars)
+            normsys_alphaset = self.param_viewer.get(pars)
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below
