@@ -33,8 +33,13 @@ class lumi_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size or 1, len(pdfconfig.suggested_init()))
+            if self.batch_size
+            else (len(pdfconfig.suggested_init()),)
+        )
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
+
         self._lumi_mask = [
             [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
@@ -57,17 +62,14 @@ class lumi_combined(object):
         '''
         if not self.param_viewer.index_selection:
             return
+
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            lumis = self.param_viewer.get(pars)
+            results_lumi = tensorlib.einsum('msab,x->msab', self.lumi_mask, lumis)
         else:
-            batched_pars = pars
-
-        lumis = self.param_viewer.get(batched_pars)
-        # lumis is [(1,batch)]
-
-        # mask is (nsys, nsam, batch, globalbin)
-        results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
+            lumis = self.param_viewer.get(pars)
+            results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
 
         results_lumi = tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
         return results_lumi

@@ -93,7 +93,7 @@ class ParamViewer(object):
         """
         return self._slices
 
-    def get(self, tensor):
+    def get(self, tensor, indices=None):
         """
         Returns:
             filtered set of parameter field/array :
@@ -101,7 +101,11 @@ class ParamViewer(object):
                 type when not batched: (sum of slice sizes, ) tensors
         """
         tensorlib, _ = get_backend()
-        result = tensorlib.gather(
-            tensorlib.reshape(tensor, (-1,)), self.indices_concatenated
+        if not self.batch_shape:
+            return tensorlib.gather(
+                tensor, indices if indices is not None else self.indices_concatenated
+            )
+        return tensorlib.gather(
+            tensorlib.reshape(tensor, (-1,)),
+            indices if indices is not None else self.indices_concatenated,
         )
-        return result

@@ -472,7 +472,10 @@ class Model(object):
             if constraint is not None:
                 parts.append(constraint)
 
-            result = tensorlib.sum(tensorlib.stack(parts), axis=0)
+            if len(parts) > 1:
+                result = parts[0] + parts[1]
+            else:
+                result = parts[0]
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy

@@ -178,7 +178,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -194,7 +199,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.1] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -208,7 +218,10 @@ def test_batched_constraints(backend):
     assert result.shape == (1,)
 
     constraint = poisson_constraint_combined(config, batch_size=10)
-    result = constraint.logpdf(config.auxdata, [suggested_pars] * 10)
+    result = constraint.logpdf(
+        pyhf.tensorlib.astensor(config.auxdata),
+        pyhf.tensorlib.astensor([suggested_pars] * 10),
+    )
     assert result.shape == (10,)
 
     suggested_pars = [
@@ -218,7 +231,12 @@ def test_batched_constraints(backend):
     ]
     constraint = poisson_constraint_combined(config, batch_size=3)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.all(
         np.isclose(
@@ -253,7 +271,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = gaussian_constraint_combined(config, batch_size=1)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -271,7 +294,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [1, 2, 3, 4, 5]  # 2 pois 5 norm
     constraint = gaussian_constraint_combined(config, batch_size=1)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -293,7 +321,12 @@ def test_batched_constraints(backend):
     ]
     constraint = gaussian_constraint_combined(config, batch_size=3)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.all(
         np.isclose(
@@ -330,5 +363,8 @@ def test_batched_constraints(backend):
     assert result.shape == (3,)
 
     constraint = gaussian_constraint_combined(config, batch_size=10)
-    result = constraint.logpdf(config.auxdata, [suggested_pars] * 10)
+    result = constraint.logpdf(
+        pyhf.tensorlib.astensor(config.auxdata),
+        pyhf.tensorlib.astensor([suggested_pars] * 10),
+    )
     assert result.shape == (10,)

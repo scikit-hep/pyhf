@@ -80,9 +80,9 @@ class gaussian_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
+        tensorlib, _ = get_backend()
         if self.batch_size is None:
             flat_pars = pars
         else:
@@ -176,7 +176,6 @@ class poisson_constraint_combined(object):
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
     def logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
