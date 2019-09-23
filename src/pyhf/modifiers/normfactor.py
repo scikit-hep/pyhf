@@ -59,12 +59,7 @@ class normfactor_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
-        else:
-            batched_pars = pars
-
-        normfactors = self.param_viewer.get(batched_pars)
+        normfactors = self.param_viewer.get(pars)
 
         # normfactors is (nsys,batch)
         # mask is (nsys,nsam,batch,gb)
