@@ -86,6 +86,9 @@ class gaussian_constraint_combined(object):
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return normal_data
 
+    def has_pdf(self):
+        return bool(self.param_viewer.index_selection)
+
     def make_pdf(self, pars):
         """
         Args:
@@ -97,7 +100,6 @@ class gaussian_constraint_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
-        pars = tensorlib.astensor(pars)
         if self.batch_size is None:
             flat_pars = pars
         else:
@@ -109,7 +111,7 @@ class gaussian_constraint_combined(object):
         if self.batch_size is None:
             normal_means = normal_means[0]
 
-        result = prob.IndependentNormal(
+        result = prob.Independent(
             prob.Normal(normal_means, self.sigmas), batch_size=self.batch_size
         )
         return result
@@ -215,6 +217,9 @@ class poisson_constraint_combined(object):
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return poisson_data
 
+    def has_pdf(self):
+        return bool(self.param_viewer.index_selection)
+
     def make_pdf(self, pars):
         """
         Args:
@@ -223,12 +228,9 @@ class poisson_constraint_combined(object):
         Returns:
             pdf: the pdf object for the Poisson Constraint
         """
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
-
-        pars = tensorlib.astensor(pars)
         if self.batch_size is None:
             flat_pars = pars
         else:
@@ -244,9 +246,7 @@ class poisson_constraint_combined(object):
         if self.batch_size is None:
             pois_rates = pois_rates[0]
         # pdf pars are done, now get data and compute
-        return prob.IndependentPoisson(
-            prob.Poisson(pois_rates), batch_size=self.batch_size
-        )
+        return prob.Independent(prob.Poisson(pois_rates), batch_size=self.batch_size)
 
     def logpdf(self, auxdata, pars):
         """
