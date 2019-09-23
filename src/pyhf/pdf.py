@@ -10,6 +10,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
+from .tensor.common import TensorViewer
 
 log = logging.getLogger(__name__)
 
@@ -199,6 +200,13 @@ class _ConstraintModel(object):
         assert self.constraints_gaussian.batch_size == self.batch_size
         assert self.constraints_poisson.batch_size == self.batch_size
 
+        indices = []
+        if self.constraints_gaussian.has_pdf():
+            indices.append(self.constraints_gaussian._normal_data)
+        if self.constraints_poisson.has_pdf():
+            indices.append(self.constraints_poisson._poisson_data)
+        self.constraints_tv = TensorViewer(indices, self.batch_size)
+
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
         auxdata = None
@@ -221,6 +229,9 @@ class _ConstraintModel(object):
         cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
         return data[cut:]
 
+    def has_pdf(self):
+        return self.constraints_gaussian.has_pdf() or self.constraints_poisson.has_pdf()
+
     def make_pdf(self, pars):
         """
         Args:
@@ -231,21 +242,18 @@ class _ConstraintModel(object):
                  Either a Poissonn, a Gaussian or a joint pdf of both depending on the
                  constraints used in the specification.
         """
-        indices = []
         pdfobjs = []
 
         gaussian_pdf = self.constraints_gaussian.make_pdf(pars)
         if gaussian_pdf:
-            indices.append(self.constraints_gaussian._normal_data)
             pdfobjs.append(gaussian_pdf)
 
         poisson_pdf = self.constraints_poisson.make_pdf(pars)
         if poisson_pdf:
-            indices.append(self.constraints_poisson._poisson_data)
             pdfobjs.append(poisson_pdf)
 
         if pdfobjs:
-            simpdf = prob.Simultaneous(pdfobjs, indices)
+            simpdf = prob.Simultaneous(pdfobjs, self.constraints_tv, self.batch_size)
             return simpdf
 
     def logpdf(self, auxdata, pars):
@@ -301,6 +309,9 @@ class _MainModel(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
+
+    def has_pdf(self):
+        return True
 
     def make_pdf(self, pars):
         lambdas_data = self.expected_data(pars)
@@ -418,6 +429,16 @@ class Model(object):
         self.constraint_model = _ConstraintModel(
             config=self.config, batch_size=self.batch_size
         )
+
+        cut = self.nominal_rates.shape[-1]
+        total_size = cut + len(self.config.auxdata)
+        position = list(range(total_size))
+        indices = []
+        if self.main_model.has_pdf():
+            indices.append(position[:cut])
+        if self.constraint_model.has_pdf():
+            indices.append(position[cut:])
+        self.fullpdf_tv = TensorViewer(indices, self.batch_size)
 
     def _create_nominal_and_modifiers(self, config, spec):
         default_data_makers = {
@@ -595,23 +616,15 @@ class Model(object):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
 
-        cut = self.nominal_rates.shape[-1]
-        total_size = cut + len(self.config.auxdata)
-        position = list(range(total_size))
-
         pdfobjs = []
-        indices = []
-
         mainpdf = self.main_model.make_pdf(pars)
-        pdfobjs.append(mainpdf)
-        indices.append(position[:cut])
-
+        if mainpdf:
+            pdfobjs.append(mainpdf)
         constraintpdf = self.constraint_model.make_pdf(pars)
         if constraintpdf:
             pdfobjs.append(constraintpdf)
-            indices.append(position[cut:])
 
-        simpdf = prob.Simultaneous(pdfobjs, indices)
+        simpdf = prob.Simultaneous(pdfobjs, self.fullpdf_tv, self.batch_size)
         return simpdf
 
     def logpdf(self, pars, data):

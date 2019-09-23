@@ -83,9 +83,11 @@ class gaussian_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return normal_data
+
+    def has_pdf(self):
+        return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
@@ -212,9 +214,11 @@ class poisson_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return poisson_data
+
+    def has_pdf(self):
+        return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
@@ -224,7 +228,6 @@ class poisson_constraint_combined(object):
         Returns:
             pdf: the pdf object for the Poisson Constraint
         """
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
