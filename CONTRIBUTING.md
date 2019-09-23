@@ -25,11 +25,21 @@ If you have found a bug please report it by filling out the [bug report template
 
 ## Installing the development environment
 
-You can install the development environment (which includes a number of extra) libraries via `pip`:
+We recommend first reading the "[Developing](https://diana-hep.org/pyhf/development.html)" page on the pyhf website and the coming back here.
+
+You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 
 ```
-pip install --ignore-installed -U -e .[tensorflow,torch,mxnet,develop]
+pip install --ignore-installed -U -e .[complete]
 ```
+
+To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Black](https://github.com/psf/black) by running
+
+```
+pre-commit install
+```
+
+This will run `black` over your code each time you attempt to make a commit and warn you if there is an error, canceling the commit.
 
 ## Running the tests
 

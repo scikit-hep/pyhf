@@ -29,6 +29,50 @@ def test_pdf_inputs(backend):
     )
 
 
+@pytest.mark.fail_mxnet
+def test_pdf_basicapi_tests(backend):
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init()
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    tensorlib, _ = backend
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417118312751542], 2.5e-05
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars)) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'],
+        source['bindata']['bkg'],
+        source['bindata']['bkgerr'],
+        batch_size=2,
+    )
+
+    pars = [pdf.config.suggested_init()] * 2
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    tensorlib, _ = backend
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417118312751542] * 2, 2.5e-05
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars))
+    assert tensorlib.tolist(pdf.expected_data(pars)[0]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars)[1]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+
+
 @pytest.mark.only_numpy
 def test_core_pdf_broadcasting(backend):
     data = [10, 11, 12, 13, 14, 15]

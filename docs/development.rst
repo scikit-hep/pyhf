@@ -13,7 +13,7 @@ and install all necessary packages for development
 
     pip install --ignore-installed -U -e .[complete]
 
-Then setup the Git pre-commit hook for `Black <https://github.com/ambv/black>`__  by running
+Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__  by running
 
 .. code-block:: console
 
