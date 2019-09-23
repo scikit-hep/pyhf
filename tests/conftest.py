@@ -60,7 +60,6 @@ def reset_backend():
     ],
 )
 def backend(request):
-    param = request.param
     # a better way to get the id? all the backends we have so far for testing
     param_ids = request._fixturedef.ids
     # the backend we're using: numpy, tensorflow, etc...
