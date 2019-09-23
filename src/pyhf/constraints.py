@@ -21,7 +21,6 @@ class gaussian_constraint_combined(object):
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_normal
         )
-        self.has_selection = bool(self.param_viewer.index_selection)
 
         start_index = 0
         normal_constraint_data = []
@@ -81,9 +80,9 @@ class gaussian_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def logpdf(self, auxdata, pars):
-        if not self.has_selection:
-            return None
         tensorlib, _ = get_backend()
+        if not self.param_viewer.index_selection:
+            return None
         if self.batch_size is None:
             flat_pars = pars
         else:
@@ -119,7 +118,6 @@ class poisson_constraint_combined(object):
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_poisson
         )
-        self.has_selection = bool(self.param_viewer.index_selection)
 
         start_index = 0
         poisson_constraint_data = []
@@ -178,7 +176,8 @@ class poisson_constraint_combined(object):
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
     def logpdf(self, auxdata, pars):
-        if not self.has_selection:
+        tensorlib, _ = get_backend()
+        if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
 

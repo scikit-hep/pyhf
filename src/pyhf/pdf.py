@@ -446,7 +446,7 @@ class Model(object):
         if not parts:
             return None
         if len(parts) > 1:
-            return tensorlib.f(tensorlib.stack(parts), axis=0)
+            return tensorlib.sum(tensorlib.stack(parts), axis=0)
         return parts[0]
 
     def mainlogpdf(self, maindata, pars):
@@ -472,7 +472,7 @@ class Model(object):
             if constraint is not None:
                 parts.append(constraint)
 
-            result = parts[0] + parts[1]
+            result = tensorlib.sum(tensorlib.stack(parts), axis=0)
             return result * tensorlib.ones(
                 (1)
             )  # ensure (1,) array shape also for numpy

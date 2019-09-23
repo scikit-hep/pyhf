@@ -58,8 +58,15 @@ class lumi_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
+        if self.batch_size is None:
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+        else:
+            batched_pars = pars
 
-        lumis = self.param_viewer.get(pars)
+        lumis = self.param_viewer.get(batched_pars)
+        # lumis is [(1,batch)]
+
+        # mask is (nsys, nsam, batch, globalbin)
         results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
 
         results_lumi = tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)

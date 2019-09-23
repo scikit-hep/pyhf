@@ -36,11 +36,7 @@ class histosys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
 
-        parfield_shape = (
-            (1, len(pdfconfig.suggested_init()))
-            if self.batch_size
-            else (len(pdfconfig.suggested_init()),)
-        )
+        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, histosys_mods
         )
@@ -84,11 +80,11 @@ class histosys_combined(object):
             return
 
         tensorlib, _ = get_backend()
-        mypar = self.param_viewer.get(pars)
-        if self.batch_size:
-            histosys_alphaset = mypar
+        if self.batch_size is None:
+            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
         else:
-            histosys_alphaset = tensorlib.reshape(mypar, (-1, 1))
+            batched_pars = pars
+        histosys_alphaset = self.param_viewer.get(batched_pars)
 
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below

@@ -101,8 +101,7 @@ class ParamViewer(object):
                 type when not batched: (sum of slice sizes, ) tensors
         """
         tensorlib, _ = get_backend()
-        if not self.batch_shape:
-            flat_tensor = tensor
-        else:
-            flat_tensor = tensorlib.reshape(tensor, (-1,))
-        return tensorlib.gather(flat_tensor, self.indices_concatenated)
+        result = tensorlib.gather(
+            tensorlib.reshape(tensor, (-1,)), self.indices_concatenated
+        )
+        return result
