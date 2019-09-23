@@ -120,6 +120,8 @@ class _ModelConfig(object):
             _paramsets_requirements, _paramsets_user_configs
         )
         self.set_poi(poiname)
+        self.npars = len(self.suggested_init())
+        self.nauxdata = len(self.auxdata)
 
     def suggested_init(self):
         init = []
@@ -192,7 +194,7 @@ class _ConstraintModel(object):
         )
 
         self.viewer_aux = ParamViewer(
-            (self.batch_size or 1, len(self.config.suggested_init())),
+            (self.batch_size or 1, self.config.npars),
             self.config.par_map,
             self.config.auxdata_order,
         )
@@ -227,7 +229,7 @@ class _ConstraintModel(object):
 
     def _dataprojection(self, data):
         tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        cut = tensorlib.shape(data)[0] - self.config.nauxdata
         return data[cut:]
 
     def has_pdf(self):
@@ -331,7 +333,7 @@ class _MainModel(object):
 
     def _dataprojection(self, data):
         tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        cut = tensorlib.shape(data)[0] - self.config.nauxdata
         return data[:cut]
 
     def _modifications(self, pars):
@@ -633,10 +635,10 @@ class Model(object):
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
             # Verify parameter and data shapes
-            if pars.shape[-1] != len(self.config.suggested_init()):
+            if pars.shape[-1] != self.config.npars:
                 raise exceptions.InvalidPdfParameters(
                     'eval failed as pars has len {} but {} was expected'.format(
-                        pars.shape[-1], len(self.config.suggested_init())
+                        pars.shape[-1], self.config.npars
                     )
                 )
 
