@@ -7,9 +7,9 @@ from . import exceptions
 from . import modifiers
 from . import utils
 from . import events
+from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .paramsets import reduce_paramsets_requirements
-from .paramview import ParamViewer
+from .parameters import reduce_paramsets_requirements, ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -174,6 +174,171 @@ class _ModelConfig(object):
             self._register_paramset(param_name, paramset)
 
 
+class _ConstraintModel(object):
+    def __init__(self, config, batch_size):
+        self.batch_size = batch_size
+        self.config = config
+
+        self.constraints_gaussian = gaussian_constraint_combined(
+            config, batch_size=self.batch_size
+        )
+        self.constraints_poisson = poisson_constraint_combined(
+            config, batch_size=self.batch_size
+        )
+
+        self.viewer_aux = ParamViewer(
+            (self.batch_size or 1, len(self.config.suggested_init())),
+            self.config.par_map,
+            self.config.auxdata_order,
+        )
+
+        assert self.constraints_gaussian.batch_size == self.batch_size
+        assert self.constraints_poisson.batch_size == self.batch_size
+
+    def expected_data(self, pars):
+        tensorlib, _ = get_backend()
+        auxdata = None
+        if not self.viewer_aux.index_selection:
+            return None
+        slice_data = self.viewer_aux.get(pars)
+        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
+            # order matters! because we generated auxdata in a certain order
+            thisaux = self.config.param_set(parname).expected_data(
+                tensorlib.einsum('ij->ji', slice_data[sl])
+            )
+            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
+            auxdata = tensorlib.concatenate(tocat, axis=1)
+        if self.batch_size is None:
+            return auxdata[0]
+        return auxdata
+
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[cut:]
+
+    def logpdf(self, auxdata, pars):
+        parts = []
+        normal = self.constraints_gaussian.logpdf(auxdata, pars)
+        if normal is not None:
+            parts.append(normal)
+        poisson = self.constraints_poisson.logpdf(auxdata, pars)
+        if poisson is not None:
+            parts.append(poisson)
+        if not parts:
+            return None
+        return prob.joint_logpdf(parts, self.batch_size)
+
+
+class _MainModel(object):
+    def __init__(self, config, mega_mods, nominal_rates, batch_size):
+        self.config = config
+        self._factor_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'multiplication'
+        ]
+        self._delta_mods = [
+            modtype
+            for modtype, mod in modifiers.uncombined.items()
+            if mod.op_code == 'addition'
+        ]
+        self.batch_size = batch_size
+
+        self._nominal_rates = default_backend.tile(
+            nominal_rates, (1, 1, self.batch_size or 1, 1)
+        )
+
+        self.modifiers_appliers = {
+            k: c(
+                [x for x in config.modifiers if x[1] == k],  # x[1] is mtype
+                config,
+                mega_mods,
+                batch_size=self.batch_size,
+                **config.modifier_settings.get(k, {})
+            )
+            for k, c in modifiers.combined.items()
+        }
+
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.nominal_rates = tensorlib.astensor(self._nominal_rates)
+
+    def logpdf(self, maindata, pars):
+        tensorlib, _ = get_backend()
+        lambdas_data = self.expected_data(pars)
+        result = prob.Independent(prob.Poisson(lambdas_data)).log_prob(maindata)
+        return result
+
+    def _dataprojection(self, data):
+        tensorlib, _ = get_backend()
+        cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
+        return data[:cut]
+
+    def _modifications(self, pars):
+        deltas = list(
+            filter(
+                lambda x: x is not None,
+                [self.modifiers_appliers[k].apply(pars) for k in self._delta_mods],
+            )
+        )
+        factors = list(
+            filter(
+                lambda x: x is not None,
+                [self.modifiers_appliers[k].apply(pars) for k in self._factor_mods],
+            )
+        )
+
+        return deltas, factors
+
+    def expected_data(self, pars):
+        """
+        For a single channel single sample, we compute
+
+            Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
+
+        where:
+            - delta(pars) is the result of an apply(pars) of combined modifiers
+              with 'addition' op_code
+            - factor(pars) is the result of apply(pars) of combined modifiers
+              with 'multiplication' op_code
+            - pars[is_gaus] are the subset of parameters that are constrained by
+              gauss (with sigmas accordingly, some of which are computed by
+              modifiers)
+            - pars[is_pois] are the poissons and their rates (they come with
+              their own additional factors unrelated to factor(pars) which are
+              also computed by the finalize() of the modifier)
+
+        So in the end we only make 3 calls to pdfs
+
+            1. The main pdf of data and modified rates
+            2. All Gaussian constraint as one call
+            3. All Poisson constraints as one call
+        """
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+
+        deltas, factors = self._modifications(pars)
+
+        allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
+
+        nom_plus_delta = tensorlib.sum(allsum, axis=0)
+        nom_plus_delta = tensorlib.reshape(
+            nom_plus_delta, (1,) + tensorlib.shape(nom_plus_delta)
+        )
+
+        allfac = tensorlib.concatenate(factors + [nom_plus_delta])
+
+        newbysample = tensorlib.product(allfac, axis=0)
+        newresults = tensorlib.sum(newbysample, axis=0)
+        if self.batch_size is None:
+            return newresults[0]
+        return newresults
+
+
 class Model(object):
     def __init__(self, spec, batch_size=None, **config_kwargs):
         self.batch_size = batch_size
@@ -186,7 +351,15 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        self._create_nominal_and_modifiers()
+        mega_mods, _nominal_rates = self._create_nominal_and_modifiers(
+            self.config, self.spec
+        )
+        self.main_model = _MainModel(
+            self.config,
+            mega_mods=mega_mods,
+            nominal_rates=_nominal_rates,
+            batch_size=self.batch_size,
+        )
 
         # this is tricky, must happen before constraint
         # terms try to access auxdata but after
@@ -198,31 +371,11 @@ class Model(object):
                 self.config.auxdata += parset.auxdata
                 self.config.auxdata_order.append(k)
 
-        self.constraints_gaussian = gaussian_constraint_combined(
-            self.config, batch_size=self.batch_size
-        )
-        self.constraints_poisson = poisson_constraint_combined(
-            self.config, batch_size=self.batch_size
+        self.constraint_model = _ConstraintModel(
+            config=self.config, batch_size=self.batch_size
         )
 
-        self._factor_mods = [
-            modtype
-            for modtype, mod in modifiers.uncombined.items()
-            if mod.op_code == 'multiplication'
-        ]
-        self._delta_mods = [
-            modtype
-            for modtype, mod in modifiers.uncombined.items()
-            if mod.op_code == 'addition'
-        ]
-
-        self.viewer_aux = ParamViewer(
-            (self.batch_size or 1, len(self.config.suggested_init())),
-            self.config.par_map,
-            self.config.auxdata_order,
-        )
-
-    def _create_nominal_and_modifiers(self):
+    def _create_nominal_and_modifiers(self, config, spec):
         default_data_makers = {
             'histosys': lambda: {
                 'hi_data': [],
@@ -249,9 +402,9 @@ class Model(object):
         # We don't actually set up the modifier data here for no-ops, but we do
         # set up the entire structure
         mega_mods = {}
-        for m, mtype in self.config.modifiers:
+        for m, mtype in config.modifiers:
             key = '{}/{}'.format(mtype, m)
-            for s in self.config.samples:
+            for s in config.samples:
                 mega_mods.setdefault(s, {})[key] = {
                     'type': mtype,
                     'name': m,
@@ -260,21 +413,21 @@ class Model(object):
 
         # helper maps channel-name/sample-name to pairs of channel-sample structs
         helper = {}
-        for c in self.spec['channels']:
+        for c in spec['channels']:
             for s in c['samples']:
                 helper.setdefault(c['name'], {})[s['name']] = (c, s)
 
         mega_samples = {}
-        for s in self.config.samples:
+        for s in config.samples:
             mega_nom = []
-            for c in self.config.channels:
+            for c in config.channels:
                 defined_samp = helper.get(c, {}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
                 # set nominal to 0 for channel/sample if the pair doesn't exist
                 nom = (
                     defined_samp['data']
                     if defined_samp
-                    else [0.0] * self.config.channel_nbins[c]
+                    else [0.0] * config.channel_nbins[c]
                 )
                 mega_nom += nom
                 defined_mods = (
@@ -285,7 +438,7 @@ class Model(object):
                     if defined_samp
                     else {}
                 )
-                for m, mtype in self.config.modifiers:
+                for m, mtype in config.modifiers:
                     key = '{}/{}'.format(mtype, m)
                     # this is None if modifier doesn't affect channel/sample.
                     thismod = defined_mods.get(key)
@@ -336,122 +489,38 @@ class Model(object):
             }
             mega_samples[s] = sample_dict
 
-        self.mega_mods = mega_mods
-
         nominal_rates = default_backend.astensor(
-            [mega_samples[s]['nom'] for s in self.config.samples]
+            [mega_samples[s]['nom'] for s in config.samples]
         )
-        self._nominal_rates = default_backend.reshape(
+        _nominal_rates = default_backend.reshape(
             nominal_rates,
             (
                 1,  # modifier dimension.. nominal_rates is the base
                 len(self.config.samples),
                 1,  # alphaset dimension
-                sum(list(self.config.channel_nbins.values())),
+                sum(list(config.channel_nbins.values())),
             ),
         )
-        self._nominal_rates = default_backend.tile(
-            self._nominal_rates, (1, 1, self.batch_size or 1, 1)
-        )
 
-        self.modifiers_appliers = {
-            k: c(
-                [x for x in self.config.modifiers if x[1] == k],  # x[1] is mtype
-                self.config,
-                mega_mods,
-                batch_size=self.batch_size,
-                **self.config.modifier_settings.get(k, {})
-            )
-            for k, c in modifiers.combined.items()
-        }
-        self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
-
-    def _precompute(self):
-        tensorlib, _ = get_backend()
-        self.nominal_rates = tensorlib.astensor(self._nominal_rates)
+        return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
-        if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
+        return self.constraint_model.expected_data(pars)
 
     def _modifications(self, pars):
-        deltas = list(
-            filter(
-                lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in self._delta_mods],
-            )
-        )
-        factors = list(
-            filter(
-                lambda x: x is not None,
-                [self.modifiers_appliers[k].apply(pars) for k in self._factor_mods],
-            )
-        )
+        return self.main_model._modifications(pars)
 
-        return deltas, factors
+    @property
+    def nominal_rates(self):
+        return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        """
-        For a single channel single sample, we compute
-
-            Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
-
-        where:
-            - delta(pars) is the result of an apply(pars) of combined modifiers
-              with 'addition' op_code
-            - factor(pars) is the result of apply(pars) of combined modifiers
-              with 'multiplication' op_code
-            - pars[is_gaus] are the subset of parameters that are constrained by
-              gauss (with sigmas accordingly, some of which are computed by
-              modifiers)
-            - pars[is_pois] are the poissons and their rates (they come with
-              their own additional factors unrelated to factor(pars) which are
-              also computed by the finalize() of the modifier)
-
-        So in the end we only make 3 calls to pdfs
-
-            1. The main pdf of data and modified rates
-            2. All Gaussian constraint as one call
-            3. All Poisson constraints as one call
-        """
-        tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-
-        deltas, factors = self._modifications(pars)
-
-        allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
-
-        nom_plus_delta = tensorlib.sum(allsum, axis=0)
-        nom_plus_delta = tensorlib.reshape(
-            nom_plus_delta, (1,) + tensorlib.shape(nom_plus_delta)
-        )
-
-        allfac = tensorlib.concatenate(factors + [nom_plus_delta])
-
-        newbysample = tensorlib.product(allfac, axis=0)
-        newresults = tensorlib.sum(newbysample, axis=0)
-        if self.batch_size is None:
-            return newresults[0]
-        return newresults
+        return self.main_model.expected_data(pars)
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        expected_actual = self.expected_actualdata(pars)
+        expected_actual = self.main_model.expected_data(pars)
 
         if not include_auxdata:
             return expected_actual
@@ -466,55 +535,34 @@ class Model(object):
         return tensorlib.concatenate(tocat, axis=1)
 
     def constraint_logpdf(self, auxdata, pars):
-        tensorlib, _ = get_backend()
-        parts = []
-        normal = self.constraints_gaussian.logpdf(auxdata, pars)
-        if normal is not None:
-            parts.append(normal)
-        poisson = self.constraints_poisson.logpdf(auxdata, pars)
-        if poisson is not None:
-            parts.append(poisson)
-        if self.batch_size is None:
-            if len(parts) == 1:
-                return parts[0]
-            else:
-                return parts[0] + parts[1]
-        terms = tensorlib.stack(parts)
-        return tensorlib.sum(terms, axis=0)
+        return self.constraint_model.logpdf(auxdata, pars)
 
     def mainlogpdf(self, maindata, pars):
-        tensorlib, _ = get_backend()
-        lambdas_data = self.expected_actualdata(pars)
-        summands = tensorlib.poisson_logpdf(maindata, lambdas_data)
-        if self.batch_size is None:
-            return tensorlib.sum(summands, axis=0)
-        return tensorlib.sum(summands, axis=1)
+        return self.main_model.logpdf(maindata, pars)
 
     def logpdf(self, pars, data):
         try:
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
-            cut = tensorlib.shape(data)[0] - len(self.config.auxdata)
-            actual_data, aux_data = data[:cut], data[cut:]
+
+            actual_data = self.main_model._dataprojection(data)
+            aux_data = self.constraint_model._dataprojection(data)
 
             parts = []
-            mainpdf = self.mainlogpdf(actual_data, pars)
-            parts.append(mainpdf)
+            mainpdf = self.main_model.logpdf(actual_data, pars)
+            if mainpdf is not None:
+                parts.append(mainpdf)
+            constraintpdf = self.constraint_model.logpdf(aux_data, pars)
+            if constraintpdf is not None:
+                parts.append(constraintpdf)
 
-            constraint = self.constraint_logpdf(aux_data, pars)
-            if constraint is not None:
-                parts.append(constraint)
+            result = prob.joint_logpdf(parts, self.batch_size)
 
-            if not self.batch_size:
-                if len(parts) == 1:
-                    result = parts[0]
-                else:
-                    result = parts[0] + parts[1]
-            else:
-                result = tensorlib.sum(tensorlib.stack(parts), axis=0)
-            if not self.batch_size:
+            if (
+                not self.batch_size
+            ):  # force to be not scalar, should we changed with #522
                 return tensorlib.reshape(result, (1,))
-            return tensorlib.astensor(result)
+            return result
         except:
             log.error(
                 'eval failed for data {} pars: {}'.format(

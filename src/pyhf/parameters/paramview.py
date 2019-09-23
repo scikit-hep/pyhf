@@ -1,4 +1,4 @@
-from . import get_backend, default_backend, events
+from .. import get_backend, default_backend, events
 
 
 def index_helper(name, tensor_shape, batch_shape, par_map):
