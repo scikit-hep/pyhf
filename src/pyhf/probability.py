@@ -3,20 +3,17 @@ from . import get_backend
 
 class Poisson(object):
     def __init__(self, rate):
-        tensorlib, _ = get_backend()
-        self.lam = tensorlib.astensor(rate)
+        self.lam = rate
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        n = tensorlib.astensor(value)
-        return tensorlib.poisson_logpdf(n, self.lam)
+        return tensorlib.poisson_logpdf(value, self.lam)
 
 
 class Normal(object):
     def __init__(self, loc, scale):
-        tensorlib, _ = get_backend()
-        self.mu = tensorlib.astensor(loc)
-        self.sigma = tensorlib.astensor(scale)
+        self.mu = loc
+        self.sigma = scale
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
@@ -30,6 +27,28 @@ class Independent(object):
     numbers.
     '''
 
+    def __init__(self, batched_pdf, batch_size=None):
+        self.batch_size = batch_size
+        self._pdf = batched_pdf
+
+    def log_prob(self, value):
+        tensorlib, _ = get_backend()
+        _log_prob = self._pdf.log_prob(value)
+        return tensorlib.sum(_log_prob, axis=-1)
+
+
+class IndependentPoisson(object):
+    def __init__(self, batched_pdf, batch_size=None):
+        self.batch_size = batch_size
+        self._pdf = batched_pdf
+
+    def log_prob(self, value):
+        tensorlib, _ = get_backend()
+        _log_prob = self._pdf.log_prob(value)
+        return tensorlib.sum(_log_prob, axis=-1)
+
+
+class IndependentNormal(object):
     def __init__(self, batched_pdf, batch_size=None):
         self.batch_size = batch_size
         self._pdf = batched_pdf

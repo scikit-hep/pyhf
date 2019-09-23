@@ -83,7 +83,6 @@ class gaussian_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return normal_data
 
@@ -186,7 +185,6 @@ class poisson_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return poisson_data
 
