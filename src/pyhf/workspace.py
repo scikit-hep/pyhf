@@ -1,5 +1,6 @@
 import logging
 import jsonpatch
+from . import exceptions
 from . import utils
 from .pdf import Model
 
