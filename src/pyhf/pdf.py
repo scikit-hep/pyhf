@@ -377,8 +377,6 @@ class _MainModel(object):
             3. All Poisson constraints as one call
         """
         tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
-
         deltas, factors = self._modifications(pars)
 
         allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
@@ -617,7 +615,6 @@ class Model(object):
             pdf: A distribution object implementing the main measurement pdf of HistFactory
         """
         tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
 
         pdfobjs = []
         mainpdf = self.main_model.make_pdf(pars)

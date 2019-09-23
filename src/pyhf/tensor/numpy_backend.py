@@ -201,8 +201,6 @@ class numpy_backend(object):
         return np.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        n = np.asarray(n)
-        lam = np.asarray(lam)
         return n * np.log(lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
