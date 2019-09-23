@@ -205,7 +205,8 @@ class _ConstraintModel(object):
             indices.append(self.constraints_gaussian._normal_data)
         if self.constraints_poisson.has_pdf():
             indices.append(self.constraints_poisson._poisson_data)
-        self.constraints_tv = TensorViewer(indices, self.batch_size)
+        if self.has_pdf():
+            self.constraints_tv = TensorViewer(indices, self.batch_size)
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
