@@ -3,30 +3,44 @@ from pyhf import get_backend
 
 
 def test_poisson(backend):
-    result = probability.Poisson([10.0]).log_prob(2.0)
+    tb, _ = backend
+    result = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     assert result.shape == (1,)
 
-    result = probability.Poisson([10.0, 10.0]).log_prob(2.0)
+    result = probability.Poisson(tb.astensor([10.0, 10.0])).log_prob(tb.astensor(2.0))
     assert result.shape == (2,)
 
-    result = probability.Poisson([10.0, 10.0]).log_prob([2.0, 3.0])
+    result = probability.Poisson(tb.astensor([10.0, 10.0])).log_prob(
+        tb.astensor([2.0, 3.0])
+    )
     assert result.shape == (2,)
 
-    result = probability.Poisson([10.0, 10.0]).log_prob([[2.0, 3.0]])
+    result = probability.Poisson(tb.astensor([10.0, 10.0])).log_prob(
+        tb.astensor([[2.0, 3.0]])
+    )
     assert result.shape == (1, 2)
 
 
 def test_normal(backend):
-    result = probability.Normal([10.0], [1]).log_prob(2.0)
+    tb, _ = backend
+    result = probability.Normal(tb.astensor([10.0]), tb.astensor([1])).log_prob(
+        tb.astensor(2.0)
+    )
     assert result.shape == (1,)
 
-    result = probability.Normal([10.0, 10.0], [1, 1]).log_prob(2.0)
+    result = probability.Normal(
+        tb.astensor([10.0, 10.0]), tb.astensor([1, 1])
+    ).log_prob(tb.astensor(2.0))
     assert result.shape == (2,)
 
-    result = probability.Normal([10.0, 10.0], [10.0, 10.0]).log_prob([2.0, 3.0])
+    result = probability.Normal(
+        tb.astensor([10.0, 10.0]), tb.astensor([10.0, 10.0])
+    ).log_prob(tb.astensor([2.0, 3.0]))
     assert result.shape == (2,)
 
-    result = probability.Normal([10.0, 10.0], [10.0, 10.0]).log_prob([[2.0, 3.0]])
+    result = probability.Normal(
+        tb.astensor([10.0, 10.0]), tb.astensor([10.0, 10.0])
+    ).log_prob(tb.astensor([[2.0, 3.0]]))
     assert result.shape == (1, 2)
 
 
