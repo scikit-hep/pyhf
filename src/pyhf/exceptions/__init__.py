@@ -68,3 +68,15 @@ class InvalidOptimizer(Exception):
     """
     InvalidOptimizer is raised when trying to set using an optimizer that does not exist.
     """
+
+
+class InvalidPdfParameters(Exception):
+    """
+    InvalidPdfParameters is raised when trying to evaluate a pdf with invalid parameters.
+    """
+
+
+class InvalidPdfData(Exception):
+    """
+    InvalidPdfData is raised when trying to evaluate a pdf with invalid data.
+    """
