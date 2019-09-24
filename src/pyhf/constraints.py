@@ -87,6 +87,10 @@ class gaussian_constraint_combined(object):
         return normal_data
 
     def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a Gaussian Constraint
+        '''
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
@@ -218,6 +222,10 @@ class poisson_constraint_combined(object):
         return poisson_data
 
     def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a Gaussian Constraint
+        '''
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):

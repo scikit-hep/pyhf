@@ -36,13 +36,12 @@ class TensorViewer(object):
         if self.batch_size is None:
             data = tensorlib.concatenate(data, axis=-1)
             stitched = tensorlib.gather(data, self.sorted_indices)
-            return stitched
         else:
             data = tensorlib.concatenate(data, axis=-1)
             data = tensorlib.einsum('...j->j...', data)
             stitched = tensorlib.gather(data, self.sorted_indices)
             stitched = tensorlib.einsum('...j->j...', stitched)
-            return stitched
+        return stitched
 
     def split(self, data):
         tensorlib, _ = get_backend()

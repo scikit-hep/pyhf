@@ -232,6 +232,10 @@ class _ConstraintModel(object):
         return data[cut:]
 
     def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a constraint term
+        '''
         return self.constraints_gaussian.has_pdf() or self.constraints_poisson.has_pdf()
 
     def make_pdf(self, pars):

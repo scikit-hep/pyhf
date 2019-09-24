@@ -95,6 +95,9 @@ class ParamViewer(object):
 
     def get(self, tensor, indices=None):
         """
+        Args:
+            tensor (`tensor`): the data tensor to extract a view from
+            indices (`tensor`): an optional index selection (default behavior is to use self.indices_concatenated)
         Returns:
             filtered set of parameter field/array :
                 type when batched: (sum of slice sizes, batchsize) tensor

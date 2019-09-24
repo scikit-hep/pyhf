@@ -38,8 +38,8 @@ class Independent(object):
 
 
 class Simultaneous(object):
-    def __init__(self, pdfobjs, tv, batch_size):
-        self.tv = tv
+    def __init__(self, pdfobjs, tensorview, batch_size):
+        self.tv = tensorview
         self.pdfobjs = pdfobjs
         self.batch_size = batch_size
 
