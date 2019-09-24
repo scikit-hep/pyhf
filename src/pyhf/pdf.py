@@ -317,6 +317,10 @@ class _MainModel(object):
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
     def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a Main Model component (yes it does)
+        '''
         return True
 
     def make_pdf(self, pars):
