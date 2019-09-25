@@ -3,8 +3,6 @@ dist: xenial
 language: python
 cache: pip
 python:
-  - '2.7'
-  - '3.6'
   - '3.7'
 before_install:
   - sudo apt-get install libtcmalloc-minimal4
@@ -26,8 +24,6 @@ after_success: skip
 stages:
   - name: test
     if: NOT (branch =~ /^docs\//)
-  - name: benchmark
-    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: docs
     if: (branch = master) OR (branch =~ /^docs\//)
   - name: binder
@@ -40,25 +36,6 @@ env:
 
 jobs:
   include:
-  - name: "Python 3.6 Notebook Tests"
-    python: '3.6'
-    script:
-      - python -m pytest tests/test_notebooks.py
-  - name: "Python 3.7 Notebook Tests"
-    python: '3.7'
-    script:
-      - python -m pytest tests/test_notebooks.py
-  - stage: benchmark
-    python: '3.7'
-    before_install:
-      - sudo apt-get install libtcmalloc-minimal4
-      - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
-      - pip install --upgrade pip setuptools wheel
-    install:
-      - pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
-      - pip freeze
-    script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
-    after_success: skip
   - stage: docs
     python: '3.7'
     before_install:
