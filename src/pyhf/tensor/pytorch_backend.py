@@ -269,7 +269,7 @@ class pytorch_backend(object):
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
-    def normal_cdf(self, x, mu=[0.0], sigma=[1.0]):
+    def normal_cdf(self, x, mu=0.0, sigma=1.0):
         """
         The cumulative distribution function for the Normal distribution
 
