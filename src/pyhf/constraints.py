@@ -18,7 +18,7 @@ class gaussian_constraint_combined(object):
             if pdfconfig.param_set(constrained_parameter).pdf_type == 'normal'
         ]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_normal
         )
@@ -145,7 +145,7 @@ class poisson_constraint_combined(object):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
-        self.par_indices = list(range(len(pdfconfig.suggested_init())))
+        self.par_indices = list(range(pdfconfig.npars))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
@@ -155,7 +155,7 @@ class poisson_constraint_combined(object):
             if pdfconfig.param_set(constrained_parameter).pdf_type == 'poisson'
         ]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_poisson
         )

@@ -30,9 +30,9 @@ class normfactor_combined(object):
         normfactor_mods = [m for m, _ in normfactor_mods]
 
         parfield_shape = (
-            (self.batch_size or 1, len(pdfconfig.suggested_init()))
+            (self.batch_size, pdfconfig.npars)
             if self.batch_size
-            else (len(pdfconfig.suggested_init()),)
+            else (pdfconfig.npars,)
         )
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, normfactor_mods

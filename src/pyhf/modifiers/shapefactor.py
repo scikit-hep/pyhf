@@ -66,7 +66,7 @@ class shapefactor_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, shapefactor_mods
         )

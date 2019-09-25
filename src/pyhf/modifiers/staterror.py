@@ -30,7 +30,7 @@ class staterror_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
         self._staterr_mods = [m for m, _ in staterr_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, self._staterr_mods
         )

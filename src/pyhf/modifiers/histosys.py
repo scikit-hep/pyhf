@@ -36,9 +36,9 @@ class histosys_combined(object):
         histosys_mods = [m for m, _ in histosys_mods]
 
         parfield_shape = (
-            (self.batch_size or 1, len(pdfconfig.suggested_init()))
+            (self.batch_size, pdfconfig.npars)
             if self.batch_size
-            else (len(pdfconfig.suggested_init()),)
+            else (pdfconfig.npars,)
         )
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, histosys_mods

@@ -3,21 +3,21 @@ from . import get_backend
 
 class Poisson(object):
     def __init__(self, rate):
-        self.lam = rate
+        self.rate = rate
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        return tensorlib.poisson_logpdf(value, self.lam)
+        return tensorlib.poisson_logpdf(value, self.rate)
 
 
 class Normal(object):
     def __init__(self, loc, scale):
-        self.mu = loc
-        self.sigma = scale
+        self.loc = loc
+        self.scale = scale
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        return tensorlib.normal_logpdf(value, self.mu, self.sigma)
+        return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
 class Independent(object):
