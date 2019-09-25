@@ -285,7 +285,13 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
             ...
-            array([-1.8286943], dtype=float32)
+            -1.8286943
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson_logpdf(values, rates))
+            ...
+            array([-1.8286943, -2.086854 ], dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -314,7 +320,13 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson(5., 6.))
             ...
-            array([0.16062315], dtype=float32)
+            0.16062315
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson(values, rates))
+            ...
+            array([0.16062315, 0.12407687], dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -343,7 +355,14 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
             ...
-            array([-1.0439385], dtype=float32)
+            -1.0439385
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal_logpdf(values, means, sigmas))
+            ...
+            array([-1.0439385, -0.7661075], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -372,7 +391,14 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
             ...
-            array([0.35206532], dtype=float32)
+            0.35206532
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal(values, means, sigmas))
+            ...
+            array([0.35206532, 0.46481887], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -399,7 +425,12 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
             ...
-            array([0.7881446], dtype=float32)
+            0.7881446
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> with sess.as_default():
+            ...   sess.run(pyhf.tensorlib.normal_cdf(values))
+            ...
+            array([0.7881446 , 0.97724986], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
