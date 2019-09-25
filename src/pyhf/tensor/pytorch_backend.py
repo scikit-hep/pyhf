@@ -223,10 +223,12 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.poisson([5.], [6.])
-            tensor([0.1606])
             >>> pyhf.tensorlib.poisson(5., 6.)
-            tensor([0.1606])
+            tensor(0.1606)
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
+            tensor([0.1606, 0.1241])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -253,10 +255,13 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
-            tensor([0.3521])
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            tensor([0.3521])
+            tensor(0.3521)
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
+            tensor([0.3521, 0.4648])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -277,8 +282,11 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal_cdf([0.8])
-            tensor([0.7881])
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            tensor(0.7881)
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            tensor([0.7881, 0.9772])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
