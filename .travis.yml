@@ -3,7 +3,7 @@ dist: xenial
 language: python
 cache: pip
 python:
-  - '3.7'
+  - '2.7'
 before_install:
   - sudo apt-get install libtcmalloc-minimal4
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
@@ -15,8 +15,7 @@ script:
   - pyflakes src
   - check-manifest || travis_terminate 1
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi
-after_success: skip
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi
 
 # always test (on both 'push' and 'pr' builds in Travis)
 # test docs on 'pr' builds and 'push' builds on master and on docs branches
