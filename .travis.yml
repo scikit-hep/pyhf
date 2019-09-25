@@ -64,7 +64,8 @@ jobs:
     install:
       - pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
       - pip freeze
-    script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
+    # FIXME: numpy_minuit-200_bins excluded due to speed regression from PR #553. c.f. Issue #572
+    script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/ -k 'not numpy_minuit-200_bins'
     after_success: skip
   - stage: docs
     python: '3.7'
