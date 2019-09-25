@@ -199,7 +199,7 @@ class tensorflow_backend(object):
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         mask = tf.cast(mask, tf.bool)
-        return tf.compat.v1.where(mask, tensor_in_1, tensor_in_2)
+        return tf.compat.v2.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
