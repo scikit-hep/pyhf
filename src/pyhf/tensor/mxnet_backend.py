@@ -399,10 +399,13 @@ class mxnet_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
-            >>> pyhf.tensorlib.poisson(5., 6.)
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
             <BLANKLINE>
-            [0.16062315]
-            <NDArray 1 @cpu(0)>
+            [0.16062315 0.12407687]
+            <NDArray 2 @cpu(0)>
+
 
         Args:
             n (Number or Tensor): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -440,10 +443,13 @@ class mxnet_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.mxnet_backend())
-            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
             <BLANKLINE>
-            [0.35206532]
-            <NDArray 1 @cpu(0)>
+            [0.35206532 0.4648189 ]
+            <NDArray 2 @cpu(0)>
 
         Args:
             x (Number or Tensor): The value at which to evaluate the Normal distribution p.d.f.
@@ -470,6 +476,12 @@ class mxnet_backend(object):
             <BLANKLINE>
             [0.7881446]
             <NDArray 1 @cpu(0)>
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            <BLANKLINE>
+            [0.7881446  0.97724986]
+            <NDArray 2 @cpu(0)>
+
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -482,4 +494,7 @@ class mxnet_backend(object):
         log.warning(
             'normal_cdf currently uses SciPy stats until pure MXNet distribuiton support is available.'
         )
+        x = self.astensor(x).asnumpy()
+        mu = self.astensor(mu).asnumpy()
+        sigma = self.astensor(sigma).asnumpy()
         return self.astensor(norm.cdf(x, loc=mu, scale=sigma))
