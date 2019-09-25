@@ -76,7 +76,7 @@ class code1(object):
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
         where_alphasets_positive = tensorlib.where(
-            tensorlib.astensor(alphasets > 0), self.mask_on, self.mask_off
+            alphasets > 0, self.mask_on, self.mask_off
         )
 
         # s: set under consideration (i.e. the modifier)

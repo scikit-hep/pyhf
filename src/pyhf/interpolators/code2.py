@@ -69,12 +69,12 @@ class code2(object):
 
         # select where alpha > 1
         where_alphasets_gt1 = tensorlib.where(
-            tensorlib.astensor(alphasets > 1), self.mask_on, self.mask_off
+            alphasets > 1, self.mask_on, self.mask_off
         )
 
         # select where alpha >= -1
         where_alphasets_not_lt1 = tensorlib.where(
-            tensorlib.astensor(alphasets >= -1), self.mask_on, self.mask_off
+            alphasets >= -1, self.mask_on, self.mask_off
         )
 
         # s: set under consideration (i.e. the modifier)

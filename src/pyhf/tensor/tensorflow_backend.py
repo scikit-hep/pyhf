@@ -198,6 +198,7 @@ class tensorflow_backend(object):
         return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
+        mask = self.astensor(mask)
         return mask * tensor_in_1 + (1 - mask) * tensor_in_2
 
     def concatenate(self, sequence, axis=0):

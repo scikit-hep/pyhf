@@ -168,7 +168,7 @@ class code4(object):
 
         # select where alpha >= alpha0 and produce the mask
         where_alphasets_gtalpha0 = tensorlib.where(
-            tensorlib.astensor(alphasets >= self.__alpha0), self.mask_on, self.mask_off
+            alphasets >= self.__alpha0, self.mask_on, self.mask_off
         )
         masks_gtalpha0 = tensorlib.einsum(
             'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
@@ -176,7 +176,7 @@ class code4(object):
 
         # select where alpha > -alpha0 ["not(alpha <= -alpha0)"] and produce the mask
         where_alphasets_not_ltalpha0 = tensorlib.where(
-            tensorlib.astensor(alphasets > -self.__alpha0), self.mask_on, self.mask_off
+            alphasets > -self.__alpha0, self.mask_on, self.mask_off
         )
         masks_not_ltalpha0 = tensorlib.einsum(
             'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
@@ -192,7 +192,7 @@ class code4(object):
         # for |alpha| >= alpha0, we want to raise the bases to the exponent=alpha
         # and for |alpha| < alpha0, we want to raise the bases to the exponent=1
         masked_exponents = tensorlib.where(
-            tensorlib.astensor(exponents >= self.__alpha0), exponents, self.ones
+            exponents >= self.__alpha0, exponents, self.ones
         )
         # we need to produce the terms of alpha^i for summing up
         alphasets_powers = tensorlib.stack(
