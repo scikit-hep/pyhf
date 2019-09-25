@@ -36,7 +36,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: A clipped `tensor`
         """
-        tensor_in = self.astensor(tensor_in)
         return nd.clip(tensor_in, min_value, max_value)
 
     def tile(self, tensor_in, repeats):
@@ -91,9 +90,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The outer product.
         """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-
         tensor_1_shape = tensor_in_1.shape
         tensor_2_shape = tensor_in_2.shape
         if len(tensor_1_shape) == 1:
@@ -156,7 +152,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: ndarray of the sum over the axes.
         """
-        tensor_in = self.astensor(tensor_in)
         if axis is None or tensor_in.shape == nd.array([]).size:
             return nd.sum(tensor_in)
         return nd.sum(tensor_in, axis)
@@ -172,13 +167,11 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: ndarray of the product over the axes.
         """
-        tensor_in = self.astensor(tensor_in)
         if axis is None:
             return nd.prod(tensor_in)
         return nd.prod(tensor_in, axis)
 
     def abs(self, tensor):
-        tensor = self.astensor(tensor)
         return nd.abs(tensor)
 
     def ones(self, shape):
@@ -217,8 +210,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: First array elements raised to powers from second array.
         """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return nd.power(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
@@ -231,7 +222,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Element-wise square-root value.
         """
-        tensor_in = self.astensor(tensor_in)
         return nd.sqrt(tensor_in)
 
     def divide(self, tensor_in_1, tensor_in_2):
@@ -245,8 +235,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Element-wise division of the input arrays.
         """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return nd.divide(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
@@ -259,7 +247,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Element-wise Natural logarithmic value.
         """
-        tensor_in = self.astensor(tensor_in)
         return nd.log(tensor_in)
 
     def exp(self, tensor_in):
@@ -272,7 +259,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Element-wise exponential value.
         """
-        tensor_in = self.astensor(tensor_in)
         return nd.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
@@ -317,9 +303,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The result of the mask being applied to the tensors.
         """
-        mask = self.astensor(mask)
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return nd.add(
             nd.multiply(mask, tensor_in_1),
             nd.multiply(nd.subtract(1, mask), tensor_in_2),
@@ -362,7 +345,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The sequence broadcast together.
         """
-        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
@@ -405,8 +387,6 @@ class mxnet_backend(object):
         raise NotImplementedError("mxnet::einsum is not implemented.")
 
     def poisson_logpdf(self, n, lam):
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return n * nd.log(lam) - lam - nd.gammaln(n + 1.0)
 
     def poisson(self, n, lam):
@@ -433,9 +413,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Value of the continous approximation to Poisson(n|lam)
         """
-        n = self.astensor(n)
-        lam = self.astensor(lam)
-
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/poisson.py#L59-L63
@@ -476,10 +453,6 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: Value of Normal(x|mu, sigma).
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
-
         # This is currently copied directly from PyTorch's source until a better
         # way can be found to do this in MXNet
         # https://github.com/pytorch/pytorch/blob/39520ffec15ab7e97691fed048de1832e83785e8/torch/distributions/normal.py#L70-L76
@@ -509,7 +482,4 @@ class mxnet_backend(object):
         log.warning(
             'normal_cdf currently uses SciPy stats until pure MXNet distribuiton support is available.'
         )
-        x = self.astensor(x).asnumpy()
-        mu = self.astensor(mu).asnumpy()
-        sigma = self.astensor(sigma).asnumpy()
         return self.astensor(norm.cdf(x, loc=mu, scale=sigma))
