@@ -303,10 +303,7 @@ class mxnet_backend(object):
         Returns:
             MXNet NDArray: The result of the mask being applied to the tensors.
         """
-        return nd.add(
-            nd.multiply(mask, tensor_in_1),
-            nd.multiply(nd.subtract(1, mask), tensor_in_2),
-        )
+        return nd.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
