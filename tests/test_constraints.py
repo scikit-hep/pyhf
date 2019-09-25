@@ -16,6 +16,7 @@ class MockConfig(object):
         for name in self.par_order:
             self.auxdata = self.auxdata + self.par_map[name]['paramset'].auxdata
             self.auxdata_order.append(name)
+        self.npars = len(self.suggested_init())
 
     def suggested_init(self):
         init = []
