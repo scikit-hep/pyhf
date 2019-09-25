@@ -1,4 +1,3 @@
-from pyhf.pdf import _ModelConfig
 from pyhf.modifiers.histosys import histosys_combined
 from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
