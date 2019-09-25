@@ -93,15 +93,22 @@ class ParamViewer(object):
         """
         return self._slices
 
-    def get(self, tensor):
+    def get(self, tensor, indices=None):
         """
+        Args:
+            tensor (`tensor`): the data tensor to extract a view from
+            indices (`tensor`): an optional index selection (default behavior is to use self.indices_concatenated)
         Returns:
             filtered set of parameter field/array :
                 type when batched: (sum of slice sizes, batchsize) tensor
                 type when not batched: (sum of slice sizes, ) tensors
         """
         tensorlib, _ = get_backend()
-        result = tensorlib.gather(
-            tensorlib.reshape(tensor, (-1,)), self.indices_concatenated
+        if not self.batch_shape:
+            return tensorlib.gather(
+                tensor, indices if indices is not None else self.indices_concatenated
+            )
+        return tensorlib.gather(
+            tensorlib.reshape(tensor, (-1,)),
+            indices if indices is not None else self.indices_concatenated,
         )
-        return result

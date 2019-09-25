@@ -6,7 +6,7 @@ import os
 import jsonpatch
 
 from .utils import hypotest, EqDelimStringParamType
-from .pdf import Workspace
+from .workspace import Workspace
 from .version import __version__
 from . import tensorlib, set_backend, optimize
 

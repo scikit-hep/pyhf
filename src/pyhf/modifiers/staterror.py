@@ -30,7 +30,7 @@ class staterror_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
         self._staterr_mods = [m for m, _ in staterr_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, self._staterr_mods
         )
@@ -121,11 +121,9 @@ class staterror_combined(object):
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            flat_pars = pars
         else:
-            batched_pars = pars
-
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         statfactors = tensorlib.gather(flat_pars, self.access_field)
         results_staterr = tensorlib.einsum('mab,s->msab', statfactors, self.sample_ones)
         results_staterr = tensorlib.where(

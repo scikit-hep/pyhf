@@ -19,6 +19,7 @@ class MockConfig(object):
         self.samples = samples
         self.channels = channels
         self.channel_nbins = channel_nbins
+        self.npars = len(self.suggested_init())
 
     def suggested_init(self):
         init = []
