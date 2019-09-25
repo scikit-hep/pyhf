@@ -326,7 +326,6 @@ def test_pdf_eval(backend):
     }
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
-    data = pyhf.tensorlib.astensor(data)
     assert pytest.approx([-17.648827643136507], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
     )
