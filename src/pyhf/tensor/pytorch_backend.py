@@ -143,8 +143,8 @@ class pytorch_backend(object):
         return torch.stack(sequence, dim=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask).type(torch.FloatTensor)
-        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
+        mask = mask.type(torch.BoolTensor)
+        return torch.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
