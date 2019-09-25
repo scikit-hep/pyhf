@@ -18,13 +18,12 @@ script:
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi
 
 # test Python 2.7 on 'pr' builds and 'push' builds on master
-# test docs on 'pr' builds and 'push' builds on master and on docs branches
-# benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
+# test docs and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - name: test
     if: (branch = master) AND (NOT (branch =~ /^docs\//))
   - name: docs
-    if: (branch = master) OR (branch =~ /^docs\//)
+    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
