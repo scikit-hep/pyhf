@@ -17,12 +17,12 @@ script:
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi
 
-# always test (on both 'push' and 'pr' builds in Travis)
+# test Python 2.7 on 'pr' builds and 'push' builds on master
 # test docs on 'pr' builds and 'push' builds on master and on docs branches
 # benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - name: test
-    if: NOT (branch =~ /^docs\//)
+    if: (branch = master) AND (NOT (branch =~ /^docs\//))
   - name: docs
     if: (branch = master) OR (branch =~ /^docs\//)
   - name: binder
