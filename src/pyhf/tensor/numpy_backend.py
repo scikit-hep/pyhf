@@ -4,8 +4,6 @@ from scipy.special import gammaln
 from scipy.stats import norm, poisson
 
 
-import scipy.stats
-
 log = logging.getLogger(__name__)
 
 
