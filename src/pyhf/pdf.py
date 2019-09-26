@@ -394,8 +394,6 @@ class _MainModel(object):
 
 class Model(object):
     def __init__(self, spec, batch_size=None, **config_kwargs):
-        self._pdf = None
-        self._lastpars = None
         self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
