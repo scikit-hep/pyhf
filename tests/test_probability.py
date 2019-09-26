@@ -48,7 +48,9 @@ def test_joint(backend):
     tb, _ = backend
     p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
-    assert tb.tolist(probability.joint_logpdf([p1, p2])) == tb.tolist(p1 + p2)
+    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2])) == tb.tolist(
+        p1 + p2
+    )
 
 
 def test_independent(backend):
@@ -63,6 +65,6 @@ def test_independent(backend):
     p2 = probability.Poisson(tensorlib.astensor([10.0])).log_prob(
         tensorlib.astensor(3.0)
     )
-    assert tensorlib.tolist(probability.joint_logpdf([p1, p2]))[0] == tensorlib.tolist(
-        result
-    )
+    assert tensorlib.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[
+        0
+    ] == tensorlib.tolist(result)
