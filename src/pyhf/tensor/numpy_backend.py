@@ -1,9 +1,8 @@
 import numpy as np
 import logging
 from scipy.special import gammaln
-from scipy.stats import norm
+from scipy.stats import norm, poisson
 
-import scipy.stats
 
 log = logging.getLogger(__name__)
 
@@ -13,7 +12,7 @@ class BasicPoisson(object):
         self.rate = rate
 
     def sample(self, sample_shape):
-        return scipy.stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
 
     def log_prob(self, value):
         tensorlib = numpy_backend()
@@ -26,9 +25,7 @@ class BasicNormal(object):
         self.scale = scale
 
     def sample(self, sample_shape):
-        return scipy.stats.norm(self.loc, self.scale).rvs(
-            size=sample_shape + self.loc.shape
-        )
+        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
 
     def log_prob(self, value):
         tensorlib = numpy_backend()
