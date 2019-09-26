@@ -15,22 +15,22 @@ class ForwardMixin(object):
 class Poisson(ForwardMixin):
     def __init__(self, rate):
         tensorlib, _ = get_backend()
-        self.lam = tensorlib.astensor(rate)
+        self.rate = rate
         self._pdf = tensorlib.poisson_pdfcls(rate)
 
     def expected_data(self):
-        return self.lam
+        return self.rate
 
 
 class Normal(ForwardMixin):
     def __init__(self, loc, scale):
         tensorlib, _ = get_backend()
-        self.mu = tensorlib.astensor(loc)
-        self.sigma = tensorlib.astensor(scale)
+        self.loc = loc
+        self.scale = scale
         self._pdf = tensorlib.normal_pdfcls(loc, scale)
 
     def expected_data(self):
-        return self.mu
+        return self.loc
 
 
 class Independent(object):
