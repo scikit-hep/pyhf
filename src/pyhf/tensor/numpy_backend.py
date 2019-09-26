@@ -10,32 +10,29 @@ log = logging.getLogger(__name__)
 
 class BasicPoisson(object):
     def __init__(self, rate):
-        tensorlib = numpy_backend()
-        self.lam = tensorlib.astensor(rate)
+        self.rate = rate
 
     def sample(self, sample_shape):
-        return scipy.stats.poisson(self.lam).rvs(size=sample_shape + self.lam.shape)
+        return scipy.stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
 
     def log_prob(self, value):
         tensorlib = numpy_backend()
-        n = tensorlib.astensor(value)
-        return tensorlib.poisson_logpdf(n, self.lam)
+        return tensorlib.poisson_logpdf(value, self.rate)
 
 
 class BasicNormal(object):
     def __init__(self, loc, scale):
-        tensorlib = numpy_backend()
-        self.mu = tensorlib.astensor(loc)
-        self.sigma = tensorlib.astensor(scale)
+        self.loc = loc
+        self.scale = scale
 
     def sample(self, sample_shape):
-        return scipy.stats.norm(self.mu, self.sigma).rvs(
-            size=sample_shape + self.mu.shape
+        return scipy.stats.norm(self.loc, self.scale).rvs(
+            size=sample_shape + self.loc.shape
         )
 
     def log_prob(self, value):
         tensorlib = numpy_backend()
-        return tensorlib.normal_logpdf(value, self.mu, self.sigma)
+        return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
 class numpy_backend(object):
