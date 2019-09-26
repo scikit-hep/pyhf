@@ -34,7 +34,7 @@ class TensorViewer(object):
         assert len(self.partition_indices) == len(data)
 
         data = tensorlib.concatenate(data, axis=-1)
-        if tensorlib.shape(data) == 1 is None:
+        if len(tensorlib.shape(data)) == 1:
             stitched = tensorlib.gather(data, self.sorted_indices)
         else:
             data = tensorlib.einsum('...j->j...', data)
@@ -44,7 +44,7 @@ class TensorViewer(object):
 
     def split(self, data):
         tensorlib, _ = get_backend()
-        if tensorlib.shape(data) == 1 is None:
+        if len(tensorlib.shape(data)) == 1:
             return [tensorlib.gather(data, idx) for idx in self.partition_indices]
         data = tensorlib.einsum('...j->j...', tensorlib.astensor(data))
         return [
