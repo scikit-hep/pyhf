@@ -39,7 +39,7 @@ class TensorViewer(object):
         else:
             data = tensorlib.einsum('...j->j...', data)
             stitched = tensorlib.gather(data, self.sorted_indices)
-            stitched = tensorlib.einsum('...j->j...', stitched)
+            stitched = tensorlib.einsum('j...->...j', stitched)
         return stitched
 
     def split(self, data):
@@ -48,6 +48,6 @@ class TensorViewer(object):
             return [tensorlib.gather(data, idx) for idx in self.partition_indices]
         data = tensorlib.einsum('...j->j...', tensorlib.astensor(data))
         return [
-            tensorlib.einsum('...j->j...', tensorlib.gather(data, idx))
+            tensorlib.einsum('j...->...j', tensorlib.gather(data, idx))
             for idx in self.partition_indices
         ]
