@@ -583,6 +583,8 @@ class Model(object):
         return self.make_pdf(pars).pdfobjs[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
         if not include_auxdata:
             return self.make_pdf(pars).pdfobjs[0].expected_data()
         return self.make_pdf(pars).expected_data()
