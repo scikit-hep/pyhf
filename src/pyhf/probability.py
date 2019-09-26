@@ -1,5 +1,4 @@
 from . import get_backend
-from .tensor.common import TensorViewer
 
 
 class ForwardMixin(object):
