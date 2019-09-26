@@ -102,12 +102,12 @@ class tensorflow_backend(object):
         tensor_in_2 = self.astensor(tensor_in_2)
         tensor_in_1 = (
             tensor_in_1
-            if tensor_in_1.dtype is not tf.bool
+            if tensor_in_1.dtype != tf.bool
             else tf.cast(tensor_in_1, tf.float32)
         )
         tensor_in_1 = (
             tensor_in_1
-            if tensor_in_2.dtype is not tf.bool
+            if tensor_in_2.dtype != tf.bool
             else tf.cast(tensor_in_2, tf.float32)
         )
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
