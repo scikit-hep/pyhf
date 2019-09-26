@@ -45,12 +45,10 @@ def test_normal(backend):
 
 
 def test_joint(backend):
-    tensorlib, _ = backend
-    p1 = probability.Poisson([10.0]).log_prob(2.0)
-    p2 = probability.Poisson([10.0]).log_prob(3.0)
-    assert tensorlib.tolist(probability.joint_logpdf([p1, p2])) == tensorlib.tolist(
-        p1 + p2
-    )
+    tb, _ = backend
+    p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
+    p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
+    assert tb.tolist(probability.joint_logpdf([p1, p2])) == tb.tolist(p1 + p2)
 
 
 def test_independent(backend):
