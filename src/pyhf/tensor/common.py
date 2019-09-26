@@ -33,11 +33,10 @@ class TensorViewer(object):
         tensorlib, _ = get_backend()
         assert len(self.partition_indices) == len(data)
 
-        if self.batch_size is None:
-            data = tensorlib.concatenate(data, axis=-1)
+        data = tensorlib.concatenate(data, axis=-1)
+        if tensorlib.shape(data) == 1 is None:
             stitched = tensorlib.gather(data, self.sorted_indices)
         else:
-            data = tensorlib.concatenate(data, axis=-1)
             data = tensorlib.einsum('...j->j...', data)
             stitched = tensorlib.gather(data, self.sorted_indices)
             stitched = tensorlib.einsum('...j->j...', stitched)
@@ -45,7 +44,7 @@ class TensorViewer(object):
 
     def split(self, data):
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
+        if tensorlib.shape(data) == 1 is None:
             return [tensorlib.gather(data, idx) for idx in self.partition_indices]
         data = tensorlib.einsum('...j->j...', tensorlib.astensor(data))
         return [
