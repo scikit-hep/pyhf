@@ -7,7 +7,7 @@ from scipy.stats import norm, poisson
 log = logging.getLogger(__name__)
 
 
-class BasicPoisson(object):
+class _BasicPoisson(object):
     def __init__(self, rate):
         self.rate = rate
 
@@ -19,7 +19,7 @@ class BasicPoisson(object):
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class BasicNormal(object):
+class _BasicNormal(object):
     def __init__(self, loc, scale):
         self.loc = loc
         self.scale = scale
@@ -313,7 +313,7 @@ class numpy_backend(object):
         return norm.cdf(x, loc=mu, scale=sigma)
 
     def poisson_pdfcls(self, rate):
-        return BasicPoisson(rate)
+        return _BasicPoisson(rate)
 
     def normal_pdfcls(self, mu, sigma):
-        return BasicNormal(mu, sigma)
+        return _BasicNormal(mu, sigma)
