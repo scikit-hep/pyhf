@@ -1,27 +1,23 @@
 from . import get_backend
-from .tensor.common import TensorViewer
 
 
 class Poisson(object):
     def __init__(self, rate):
-        tensorlib, _ = get_backend()
-        self.lam = tensorlib.astensor(rate)
+        self.rate = rate
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        n = tensorlib.astensor(value)
-        return tensorlib.poisson_logpdf(n, self.lam)
+        return tensorlib.poisson_logpdf(value, self.rate)
 
 
 class Normal(object):
     def __init__(self, loc, scale):
-        tensorlib, _ = get_backend()
-        self.mu = tensorlib.astensor(loc)
-        self.sigma = tensorlib.astensor(scale)
+        self.loc = loc
+        self.scale = scale
 
     def log_prob(self, value):
         tensorlib, _ = get_backend()
-        return tensorlib.normal_logpdf(value, self.mu, self.sigma)
+        return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
 class Independent(object):
@@ -42,17 +38,22 @@ class Independent(object):
 
 
 class Simultaneous(object):
-    def __init__(self, pdfobjs, indices):
-        self.tv = TensorViewer(indices)
+    def __init__(self, pdfobjs, tensorview, batch_size):
+        self.tv = tensorview
         self.pdfobjs = pdfobjs
+        self.batch_size = batch_size
 
     def log_prob(self, data):
         constituent_data = self.tv.split(data)
         pdfvals = [p.log_prob(d) for p, d in zip(self.pdfobjs, constituent_data)]
-        return joint_logpdf(pdfvals)
+        return joint_logpdf(pdfvals, batch_size=self.batch_size)
 
 
-def joint_logpdf(terms):
+def joint_logpdf(terms, batch_size=None):
     tensorlib, _ = get_backend()
+    if len(terms) == 1:
+        return terms[0]
+    if len(terms) == 2 and batch_size is None:
+        return terms[0] + terms[1]
     terms = tensorlib.stack(terms)
     return tensorlib.sum(terms, axis=0)

@@ -18,7 +18,7 @@ class gaussian_constraint_combined(object):
             if pdfconfig.param_set(constrained_parameter).pdf_type == 'normal'
         ]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_normal
         )
@@ -83,9 +83,15 @@ class gaussian_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return normal_data
+
+    def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a Gaussian Constraint
+        '''
+        return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
@@ -98,18 +104,11 @@ class gaussian_constraint_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1 or self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars,
-                (self.batch_size or 1,) + tensorlib.shape(pars)
-                # if batched, noop
-                # if unbatched, reshape parameters to (1, N parameters)
-            )
+        if self.batch_size is None:
+            flat_pars = pars
         else:
-            batched_pars = pars
+            flat_pars = tensorlib.reshape(pars, (-1,))
 
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
         normal_means = tensorlib.gather(flat_pars, self.access_field)
 
         # pdf pars are done, now get data and compute
@@ -146,7 +145,7 @@ class poisson_constraint_combined(object):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
-        self.par_indices = list(range(len(pdfconfig.suggested_init())))
+        self.par_indices = list(range(pdfconfig.npars))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
@@ -156,7 +155,7 @@ class poisson_constraint_combined(object):
             if pdfconfig.param_set(constrained_parameter).pdf_type == 'poisson'
         ]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, pars_constrained_by_poisson
         )
@@ -219,9 +218,15 @@ class poisson_constraint_combined(object):
 
     def _dataprojection(self, auxdata):
         tensorlib, _ = get_backend()
-        auxdata = tensorlib.astensor(auxdata)
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return poisson_data
+
+    def has_pdf(self):
+        '''
+        Returns:
+            flag (`bool`): Whether the model has a Gaussian Constraint
+        '''
+        return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
@@ -231,19 +236,13 @@ class poisson_constraint_combined(object):
         Returns:
             pdf: the pdf object for the Poisson Constraint
         """
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
-
-        pars = tensorlib.astensor(pars)
-        if self.batch_size == 1 or self.batch_size is None:
-            batched_pars = tensorlib.reshape(
-                pars, (self.batch_size or 1,) + tensorlib.shape(pars)
-            )
+        if self.batch_size is None:
+            flat_pars = pars
         else:
-            batched_pars = pars
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         nuispars = tensorlib.gather(flat_pars, self.access_field)
 
         # similar to expected_data() in constrained_by_poisson

@@ -91,10 +91,9 @@ def test_import_prepHistFactory():
         )
     )
 
-    assert pdf.expected_actualdata(pdf.config.suggested_init()).tolist() == [
-        120.0,
-        110.0,
-    ]
+    assert pdf.expected_actualdata(
+        pyhf.tensorlib.astensor(pdf.config.suggested_init())
+    ).tolist() == [120.0, 110.0]
 
     assert pdf.config.auxdata_order == sorted(
         ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
