@@ -225,11 +225,6 @@ class _ConstraintModel(object):
             return auxdata[0]
         return auxdata
 
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - self.config.nauxdata
-        return data[cut:]
-
     def has_pdf(self):
         '''
         Returns:
@@ -336,11 +331,6 @@ class _MainModel(object):
             log pdf value: the log of the pdf value
         """
         return self.make_pdf(pars).log_prob(maindata)
-
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - self.config.nauxdata
-        return data[:cut]
 
     def _modifications(self, pars):
         deltas = list(
