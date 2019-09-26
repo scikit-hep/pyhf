@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        platform: [ubuntu-latest]
+        platform: [ubuntu-latest, macOS-latest]
         python-version: [3.6, 3.7]
     runs-on: ${{ matrix.platform }}
 
@@ -28,13 +28,16 @@ jobs:
         pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
         pip list
     - name: Lint with Pyflakes
+      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       run: |
         pyflakes src
         check-manifest
     - name: Lint with Black
+      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       run: |
         black --check --diff --verbose .
     - name: Check MANIFEST
+      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       run: |
         check-manifest
     - name: Test with pytest
