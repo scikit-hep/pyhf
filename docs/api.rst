@@ -29,6 +29,7 @@ Probability Distribution Functions (PDFs)
    Normal
    Poisson
    Independent
+   Simultaneous
 
 Making Models from PDFs
 -----------------------
