@@ -34,11 +34,11 @@ class Normal(_SimpleDistributionMixin):
 
 
 class Independent(_SimpleDistributionMixin):
-    '''
+    """
     A probability density corresponding to the joint
-    likelihood of a batch of identically distributed random
+    distribution of a batch of identically distributed random
     numbers.
-    '''
+    """
 
     def __init__(self, batched_pdf, batch_size=None):
         self.batch_size = batch_size
