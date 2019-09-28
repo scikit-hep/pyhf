@@ -55,7 +55,7 @@ def test_joint(backend):
 def test_independent(backend):
     tensorlib, _ = backend
     result = probability.Independent(
-        probability.Poisson(tensorlib.astensor([10.0, 10]))
+        probability.Poisson(tensorlib.astensor([10.0, 10.0]))
     ).log_prob(tensorlib.astensor([2.0, 3.0]))
 
     p1 = probability.Poisson(tensorlib.astensor([10.0])).log_prob(
