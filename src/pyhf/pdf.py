@@ -114,7 +114,6 @@ class _ModelConfig(object):
         self.samples = sorted(list(set(self.samples)))
         self.parameters = sorted(list(set(self.parameters)))
         self.modifiers = sorted(list(set(self.modifiers)))
-        self.channel_nbins = self.channel_nbins
         self._create_and_register_paramsets(
             _paramsets_requirements, _paramsets_user_configs
         )
