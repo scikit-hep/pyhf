@@ -135,6 +135,11 @@ class Independent(_SimpleDistributionMixin):
 
 
 class Simultaneous(object):
+    """
+    A probability density corresponding to the joint
+    likelihood multiple non-identical component distributions
+    """
+
     def __init__(self, pdfobjs, tensorview, batch_size):
         self.tv = tensorview
         self.pdfobjs = pdfobjs
