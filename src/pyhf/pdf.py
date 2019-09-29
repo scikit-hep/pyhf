@@ -1,3 +1,5 @@
+"""The main module of pyhf."""
+
 import copy
 import logging
 
@@ -134,7 +136,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.poi_index = s.start
 
     def _register_paramset(self, param_name, paramset):
-        """allocates n nuisance parameters and stores paramset > modifier map"""
+        """Allocates n nuisance parameters and stores paramset > modifier map."""
         log.info(
             'adding modifier %s (%s new nuisance parameters)',
             param_name,
@@ -158,9 +160,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
 
 class _ConstraintModel(object):
-    """
-    Factory class to create pdfs for the constraint terms
-    """
+    """Factory class to create pdfs for the constraint terms."""
 
     def __init__(self, config, batch_size):
         self.batch_size = batch_size
@@ -208,14 +208,19 @@ class _ConstraintModel(object):
         return auxdata
 
     def has_pdf(self):
-        '''
+        """
+        Indicate whether the model has a constraint.
+
         Returns:
             flag (`bool`): Whether the model has a constraint term
-        '''
+
+        """
         return self.constraints_gaussian.has_pdf() or self.constraints_poisson.has_pdf()
 
     def make_pdf(self, pars):
         """
+        Construct a  pdf object for a given set of parameter values.
+
         Args:
             pars (`tensor`): The model parameters
 
@@ -223,6 +228,7 @@ class _ConstraintModel(object):
             pdf: A distribution object implementing the constraint pdf of HistFactory.
                  Either a Poissonn, a Gaussian or a joint pdf of both depending on the
                  constraints used in the specification.
+
         """
         pdfobjs = []
 
@@ -240,21 +246,22 @@ class _ConstraintModel(object):
 
     def logpdf(self, auxdata, pars):
         """
+        Compute the logarithm of the value of the probability density.
+
         Args:
             auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
             pars (`tensor`): The model parameters
 
         Returns:
             log pdf value: the log of the pdf value
+
         """
         simpdf = self.make_pdf(pars)
         return simpdf.log_prob(auxdata)
 
 
 class _MainModel(object):
-    """
-    Factory class to create pdfs for the main measurement
-    """
+    """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
         self.config = config
@@ -293,10 +300,13 @@ class _MainModel(object):
         self.nominal_rates = tensorlib.astensor(self._nominal_rates)
 
     def has_pdf(self):
-        '''
+        """
+        Indicate whether the main model exists.
+
         Returns:
             flag (`bool`): Whether the model has a Main Model component (yes it does)
-        '''
+
+        """
         return True
 
     def make_pdf(self, pars):
@@ -305,12 +315,15 @@ class _MainModel(object):
 
     def logpdf(self, maindata, pars):
         """
+        Compute the logarithm of the value of the probability density.
+
         Args:
             maindata (`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
             pars (`tensor`): The model parameters
 
         Returns:
             log pdf value: the log of the pdf value
+
         """
         return self.make_pdf(pars).log_prob(maindata)
 
@@ -332,7 +345,9 @@ class _MainModel(object):
 
     def _expected_data(self, pars):
         """
-        For a single channel single sample, we compute
+        Compute the expected rates for given values of parameters.
+
+        For a single channel single sample, we compute:
 
             Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
 
@@ -353,6 +368,7 @@ class _MainModel(object):
             1. The main pdf of data and modified rates
             2. All Gaussian constraint as one call
             3. All Poisson constraints as one call
+
         """
         tensorlib, _ = get_backend()
         deltas, factors = self._modifications(pars)
@@ -374,7 +390,21 @@ class _MainModel(object):
 
 
 class Model(object):
+    """The main pyhf model class."""
+
     def __init__(self, spec, batch_size=None, **config_kwargs):
+        """
+        Construct a pyhf Model.
+
+        Args:
+            spec (`jsonable`): a json specification
+            batch_size (`None` or `int`): Number of simultaneous (batched) Models to compute.
+            config_kwargs: possible keyword arguments for the model configuration
+
+        Returns:
+            model (`Model`): the Model instance.
+
+        """
         self.batch_size = batch_size
         self.spec = copy.deepcopy(spec)  # may get modified by config
         self.schema = config_kwargs.pop('schema', 'model.json')
@@ -546,6 +576,16 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
+        """
+        Compute the expected value of the auxiliary measurements.
+
+        Args:
+            pars (`tensor`): the parameter values
+
+        Returns:
+            data (`tensor`): the expected auxiliary data
+
+        """
         return self.make_pdf(pars)[1].expected_data()
 
     def _modifications(self, pars):
@@ -553,12 +593,33 @@ class Model(object):
 
     @property
     def nominal_rates(self):
+        """Nominal value of bin rates of the main measurment."""
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
+        """
+        Compute the expected value of the main measurements.
+
+        Args:
+            pars (`tensor`): the parameter values
+
+        Returns:
+            data (`tensor`): the expected main data
+
+        """
         return self.make_pdf(pars)[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
+        """
+        Compute the expected value of the main measurements.
+
+        Args:
+            pars (`tensor`): the parameter values
+
+        Returns:
+            data (`tensor`): the expected main data
+
+        """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if not include_auxdata:
@@ -566,18 +627,43 @@ class Model(object):
         return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
+        """
+        Compute the log value of the constraint term.
+
+        Args:
+            auxdata (`tensor`): the auxiliary measurement data
+            pars (`tensor`): the parameter values
+
+        Returns:
+            value (`float` or `tensor`): the log density value
+
+        """
         return self.make_pdf(pars)[1].log_prob(auxdata)
 
     def mainlogpdf(self, maindata, pars):
+        """
+        Compute the log value of the main term.
+
+        Args:
+            maindata (`tensor`): the main measurement data
+            pars (`tensor`): the parameter values
+
+        Returns:
+            value (`float` or `tensor`): the log density value
+
+        """
         return self.make_pdf(pars)[0].log_prob(maindata)
 
     def make_pdf(self, pars):
         """
+        Construct a  pdf object for a given set of parameter values.
+
         Args:
             pars (`tensor`): The model parameters
 
         Returns:
             pdf: A distribution object implementing the main measurement pdf of HistFactory
+
         """
         tensorlib, _ = get_backend()
 
@@ -593,6 +679,17 @@ class Model(object):
         return simpdf
 
     def logpdf(self, pars, data):
+        """
+        Compute the log value of the full density.
+
+        Args:
+            pars (`tensor`): the parameter values
+            data (`tensor`): the measurement data
+
+        Returns:
+            value (`float` or `tensor`): the log density value
+
+        """
         try:
             tensorlib, _ = get_backend()
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
@@ -629,5 +726,16 @@ class Model(object):
             raise
 
     def pdf(self, pars, data):
+        """
+        Compute the value of the full density.
+
+        Args:
+            pars (`tensor`): the parameter values
+            data (`tensor`): the measurement data
+
+        Returns:
+            value (`float` or `tensor`): the density value
+
+        """
         tensorlib, _ = get_backend()
         return tensorlib.exp(self.logpdf(pars, data))
