@@ -211,7 +211,7 @@ class Simultaneous(object):
         Args:
 
             pdfobjs (`Distribution`): The constituent pdf objects
-            tensorview (`_TensorViewer`): The `_TensorViwer` defining the data composition
+            tensorview (`_TensorViewer`): The :code:`_TensorViewer` defining the data composition
             batch_size (`int`): The size of the batch
 
         """
