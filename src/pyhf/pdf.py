@@ -219,7 +219,7 @@ class _ConstraintModel(object):
 
     def make_pdf(self, pars):
         """
-        Construct a  pdf object for a given set of parameter values.
+        Construct a pdf object for a given set of parameter values.
 
         Args:
             pars (`tensor`): The model parameters
@@ -656,7 +656,7 @@ class Model(object):
 
     def make_pdf(self, pars):
         """
-        Construct a  pdf object for a given set of parameter values.
+        Construct a pdf object for a given set of parameter values.
 
         Args:
             pars (`tensor`): The model parameters
