@@ -212,7 +212,7 @@ class _ConstraintModel(object):
         Indicate whether the model has a constraint.
 
         Returns:
-            flag (`bool`): Whether the model has a constraint term
+            Bool: Whether the model has a constraint term
 
         """
         return self.constraints_gaussian.has_pdf() or self.constraints_poisson.has_pdf()
@@ -253,7 +253,7 @@ class _ConstraintModel(object):
             pars (`tensor`): The model parameters
 
         Returns:
-            log pdf value: The log of the pdf value
+            Tensor: The log of the pdf value
 
         """
         simpdf = self.make_pdf(pars)
@@ -304,7 +304,7 @@ class _MainModel(object):
         Indicate whether the main model exists.
 
         Returns:
-            flag (`bool`): Whether the model has a Main Model component (yes it does)
+            Bool: Whether the model has a Main Model component (yes it does)
 
         """
         return True
@@ -322,7 +322,7 @@ class _MainModel(object):
             pars (`tensor`): The model parameters
 
         Returns:
-            log pdf value: The log of the pdf value
+            Tensor: The log of the pdf value
 
         """
         return self.make_pdf(pars).log_prob(maindata)
@@ -583,7 +583,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): The expected auxiliary data
+            Tensor: The expected auxiliary data
 
         """
         return self.make_pdf(pars)[1].expected_data()
@@ -604,7 +604,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): The expected main data
+            Tensor: The expected main data
 
         """
         return self.make_pdf(pars)[0].expected_data()
@@ -617,7 +617,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): The expected main data
+            Tensor: The expected main data
 
         """
         tensorlib, _ = get_backend()
@@ -635,7 +635,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            value (`float` or `tensor`): The log density value
+            Tensor: The log density value
 
         """
         return self.make_pdf(pars)[1].log_prob(auxdata)
@@ -649,7 +649,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            value (`float` or `tensor`): The log density value
+            Tensor: The log density value
 
         """
         return self.make_pdf(pars)[0].log_prob(maindata)
@@ -687,7 +687,7 @@ class Model(object):
             data (`tensor`): The measurement data
 
         Returns:
-            value (`float` or `tensor`): The log density value
+            Tensor: The log density value
 
         """
         try:
@@ -734,7 +734,7 @@ class Model(object):
             data (`tensor`): The measurement data
 
         Returns:
-            value (`float` or `tensor`): The density value
+            Tensor: The density value
 
         """
         tensorlib, _ = get_backend()
