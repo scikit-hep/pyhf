@@ -328,6 +328,8 @@ class numpy_backend(object):
         Args:
             rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
 
+        Returns:
+            Poisson distribution: The Poisson distribution class
         """
         return _BasicPoisson(rate)
 
@@ -348,6 +350,9 @@ class numpy_backend(object):
         Args:
             mu (`tensor` or `float`): The mean of the Normal distribution
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            Normal distribution: The Normal distribution class
 
         """
         return _BasicNormal(mu, sigma)
