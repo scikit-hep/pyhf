@@ -97,6 +97,10 @@ jobs:
         pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
+    - name: Check docstrings
+      run: |
+        # Group 1 is related to docstrings
+        pydocstyle --select D1 src/pyhf/probability.py
     - name: Test and build docs
       run: |
         python -m doctest README.md
