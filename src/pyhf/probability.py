@@ -128,6 +128,31 @@ class Independent(_SimpleDistributionMixin):
         self._pdf = batched_pdf
 
     def log_prob(self, value):
+        r"""
+        The log of the probability density function at the given value.
+        As the distribution is a joint distribution of the same type, this is the
+        sum of the log probabilities of each of the distributions the compose the joint.
+
+        Example:
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> rates = pyhf.tensorlib.astensor([10.0, 10.0])
+            >>> poissons = pyhf.probability.Poisson(rates)
+            >>> independent = pyhf.probability.Independent(poissons)
+            >>> values = pyhf.tensorlib.astensor([8.0, 9.0])
+            >>> independent.log_prob(values)
+            -4.262483801927939
+            >>> broadcast_value = pyhf.tensorlib.astensor([11.0])
+            >>> independent.log_prob(broadcast_value)
+            -4.347743645878765
+
+        Args:
+            value (`tensor` or `float`): The value at which to evaluate the distribution
+
+        Returns:
+            Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
+        """
         tensorlib, _ = get_backend()
         result = super(Independent, self).log_prob(value)
         result = tensorlib.sum(result, axis=-1)
