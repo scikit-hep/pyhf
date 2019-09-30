@@ -92,7 +92,6 @@ class pytorch_backend(object):
         return tensor
 
     def gather(self, tensor, indices):
-        indices = self.astensor(indices, dtype='int')
         return tensor[indices.type(torch.LongTensor)]
 
     def boolean_mask(self, tensor, mask):

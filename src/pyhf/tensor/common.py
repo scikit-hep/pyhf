@@ -45,9 +45,15 @@ class _TensorViewer(object):
     def split(self, data):
         tensorlib, _ = get_backend()
         if len(tensorlib.shape(data)) == 1:
-            return [tensorlib.gather(data, idx) for idx in self.partition_indices]
+            return [
+                tensorlib.gather(data, tensorlib.astensor(idx, dtype='int'))
+                for idx in self.partition_indices
+            ]
         data = tensorlib.einsum('...j->j...', tensorlib.astensor(data))
         return [
-            tensorlib.einsum('j...->...j', tensorlib.gather(data, idx))
+            tensorlib.einsum(
+                'j...->...j',
+                tensorlib.gather(data, tensorlib.astensor(idx, dtype='int')),
+            )
             for idx in self.partition_indices
         ]
