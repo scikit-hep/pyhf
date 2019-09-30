@@ -253,7 +253,7 @@ class _ConstraintModel(object):
             pars (`tensor`): The model parameters
 
         Returns:
-            log pdf value: the log of the pdf value
+            log pdf value: The log of the pdf value
 
         """
         simpdf = self.make_pdf(pars)
@@ -322,7 +322,7 @@ class _MainModel(object):
             pars (`tensor`): The model parameters
 
         Returns:
-            log pdf value: the log of the pdf value
+            log pdf value: The log of the pdf value
 
         """
         return self.make_pdf(pars).log_prob(maindata)
@@ -397,12 +397,12 @@ class Model(object):
         Construct a pyhf Model.
 
         Args:
-            spec (`jsonable`): a json specification
+            spec (`jsonable`): The JSON specification
             batch_size (`None` or `int`): Number of simultaneous (batched) Models to compute.
-            config_kwargs: possible keyword arguments for the model configuration
+            config_kwargs: Possible keyword arguments for the model configuration
 
         Returns:
-            model (`Model`): the Model instance.
+            model (`Model`): The Model instance.
 
         """
         self.batch_size = batch_size
@@ -580,10 +580,10 @@ class Model(object):
         Compute the expected value of the auxiliary measurements.
 
         Args:
-            pars (`tensor`): the parameter values
+            pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): the expected auxiliary data
+            data (`tensor`): The expected auxiliary data
 
         """
         return self.make_pdf(pars)[1].expected_data()
@@ -601,10 +601,10 @@ class Model(object):
         Compute the expected value of the main measurements.
 
         Args:
-            pars (`tensor`): the parameter values
+            pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): the expected main data
+            data (`tensor`): The expected main data
 
         """
         return self.make_pdf(pars)[0].expected_data()
@@ -614,10 +614,10 @@ class Model(object):
         Compute the expected value of the main measurements.
 
         Args:
-            pars (`tensor`): the parameter values
+            pars (`tensor`): The parameter values
 
         Returns:
-            data (`tensor`): the expected main data
+            data (`tensor`): The expected main data
 
         """
         tensorlib, _ = get_backend()
@@ -631,11 +631,11 @@ class Model(object):
         Compute the log value of the constraint term.
 
         Args:
-            auxdata (`tensor`): the auxiliary measurement data
-            pars (`tensor`): the parameter values
+            auxdata (`tensor`): The auxiliary measurement data
+            pars (`tensor`): The parameter values
 
         Returns:
-            value (`float` or `tensor`): the log density value
+            value (`float` or `tensor`): The log density value
 
         """
         return self.make_pdf(pars)[1].log_prob(auxdata)
@@ -645,11 +645,11 @@ class Model(object):
         Compute the log value of the main term.
 
         Args:
-            maindata (`tensor`): the main measurement data
-            pars (`tensor`): the parameter values
+            maindata (`tensor`): The main measurement data
+            pars (`tensor`): The parameter values
 
         Returns:
-            value (`float` or `tensor`): the log density value
+            value (`float` or `tensor`): The log density value
 
         """
         return self.make_pdf(pars)[0].log_prob(maindata)
@@ -683,11 +683,11 @@ class Model(object):
         Compute the log value of the full density.
 
         Args:
-            pars (`tensor`): the parameter values
-            data (`tensor`): the measurement data
+            pars (`tensor`): The parameter values
+            data (`tensor`): The measurement data
 
         Returns:
-            value (`float` or `tensor`): the log density value
+            value (`float` or `tensor`): The log density value
 
         """
         try:
@@ -730,11 +730,11 @@ class Model(object):
         Compute the value of the full density.
 
         Args:
-            pars (`tensor`): the parameter values
-            data (`tensor`): the measurement data
+            pars (`tensor`): The parameter values
+            data (`tensor`): The measurement data
 
         Returns:
-            value (`float` or `tensor`): the density value
+            value (`float` or `tensor`): The density value
 
         """
         tensorlib, _ = get_backend()
