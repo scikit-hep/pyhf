@@ -195,10 +195,7 @@ class Simultaneous(object):
 
             pdfobjs (`Distribution`): The constituent pdf objects
             tensorview (`_TensorViewer`): The `_TensorViwer` defining the data composition
-
-
-        Returns:
-            data (`tensor`): The expected data
+            batch_size (`int`): The size of the batch
 
         """
         self.tv = tensorview
@@ -232,10 +229,10 @@ class Simultaneous(object):
 
     def expected_data(self):
         """
-        Compute mean data of the density
+        The expectation value of the probability density function.
 
         Returns:
-            data (`tensor`): The expected data
+            Tensor: The expectation value of the distribution :math:`\mathrm{E}\left[f(\theta)\right]`
 
         """
         tostitch = [p.expected_data() for p in self]
@@ -243,26 +240,26 @@ class Simultaneous(object):
 
     def sample(self, sample_shape=()):
         """
-        Sample data from the density.
+        The collection of values sampled from the probability density function.
 
         Args:
             sample shale (`tuple`): The desired shape of the samples.
 
         Returns:
-            samples (`tensor`): The samples
+            Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
 
         """
         return self.tv.stitch([p.sample(sample_shape) for p in self])
 
     def log_prob(self, value):
         """
-        Compute the log density value for observed data.
+        The log of the probability density function at the given value.
 
         Args:
-            data (`tensor`): The observed value
+            value (`tensor`): The observed value
 
         Returns:
-            value (`float` or `tensor`): The log density value
+            Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
 
         """
         constituent_data = self.tv.split(value)
