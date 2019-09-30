@@ -442,8 +442,8 @@ class tensorflow_backend(object):
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
 
-    def poisson_pdfcls(self, rate):
+    def poisson_dist(self, rate):
         return tfp.distributions.Poisson(rate)
 
-    def normal_pdfcls(self, mu, sigma):
+    def normal_dist(self, mu, sigma):
         return tfp.distributions.Normal(mu, sigma)

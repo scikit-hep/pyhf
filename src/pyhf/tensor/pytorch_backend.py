@@ -321,8 +321,8 @@ class pytorch_backend(object):
         normal = torch.distributions.Normal(mu, sigma)
         return normal.cdf(x)
 
-    def poisson_pdfcls(self, rate):
+    def poisson_dist(self, rate):
         return torch.distributions.Poisson(rate)
 
-    def normal_pdfcls(self, mu, sigma):
+    def normal_dist(self, mu, sigma):
         return torch.distributions.Normal(mu, sigma)

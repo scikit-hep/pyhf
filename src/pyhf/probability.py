@@ -59,7 +59,7 @@ class Poisson(_SimpleDistributionMixin):
     def __init__(self, rate):
         tensorlib, _ = get_backend()
         self.rate = rate
-        self._pdf = tensorlib.poisson_pdfcls(rate)
+        self._pdf = tensorlib.poisson_dist(rate)
 
     def expected_data(self):
         r"""
@@ -100,7 +100,7 @@ class Normal(_SimpleDistributionMixin):
         tensorlib, _ = get_backend()
         self.loc = loc
         self.scale = scale
-        self._pdf = tensorlib.normal_pdfcls(loc, scale)
+        self._pdf = tensorlib.normal_dist(loc, scale)
 
     def expected_data(self):
         r"""

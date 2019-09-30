@@ -312,8 +312,8 @@ class numpy_backend(object):
         """
         return norm.cdf(x, loc=mu, scale=sigma)
 
-    def poisson_pdfcls(self, rate):
+    def poisson_dist(self, rate):
         return _BasicPoisson(rate)
 
-    def normal_pdfcls(self, mu, sigma):
+    def normal_dist(self, mu, sigma):
         return _BasicNormal(mu, sigma)
