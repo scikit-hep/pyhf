@@ -126,12 +126,26 @@ class Normal(_SimpleDistributionMixin):
 
 class Independent(_SimpleDistributionMixin):
     """
-    A probability density corresponding to the joint
-    likelihood of a batch of identically distributed random
-    numbers.
+    A probability density corresponding to the joint distribution of a batch of
+    identically distributed random variables.
+
+    Example:
+        >>> import pyhf
+        >>> import numpy.random as random
+        >>> random.seed(0)
+        >>> rates = pyhf.tensorlib.astensor([10.0, 10.0])
+        >>> poissons = pyhf.probability.Poisson(rates)
+        >>> independent = pyhf.probability.Independent(poissons)
+        >>> independent.sample()
+        array([10, 11])
     """
 
     def __init__(self, batched_pdf, batch_size=None):
+        """
+        Args:
+            batched_pdf (`pyhf.probability` distribution): The batch of pdfs of the same type (e.g. Poisson)
+            batch_size (`int`): The size of the batch
+        """
         self.batch_size = batch_size
         self._pdf = batched_pdf
 
