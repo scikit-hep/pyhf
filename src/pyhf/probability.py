@@ -193,12 +193,12 @@ class Simultaneous(object):
 
         Args:
 
-            pdfobjs (`Distribution`): the constituent pdf objects
-            tensorview (`_TensorViweer`): the `_TensorViwer` definint the data composition
+            pdfobjs (`Distribution`): The constituent pdf objects
+            tensorview (`_TensorViweer`): The `_TensorViwer` definint the data composition
 
 
         Returns:
-            data (`tensor`): the expected data
+            data (`tensor`): The expected data
 
         """
         self.tv = tensorview
@@ -210,7 +210,7 @@ class Simultaneous(object):
         Compute mean data of the density
 
         Returns:
-            data (`tensor`): the expected data
+            data (`tensor`): The expected data
 
         """
         tostitch = [p.expected_data() for p in self.pdfobjs]
@@ -221,10 +221,10 @@ class Simultaneous(object):
         Sample data from the density.
 
         Args:
-            sample shale (`tuple`): the desired shape of the samples.
+            sample shale (`tuple`): The desired shape of the samples.
 
         Returns:
-            samples (`tensor`): the samples
+            samples (`tensor`): The samples
 
         """
         return self.tv.stitch([p.sample(sample_shape) for p in self.pdfobjs])
@@ -234,10 +234,10 @@ class Simultaneous(object):
         Compute the log density value for observed data.
 
         Args:
-            data (`tensor`): the observed value
+            data (`tensor`): The observed value
 
         Returns:
-            value (`float` or `tensor`): the log density value
+            value (`float` or `tensor`): The log density value
 
         """
         constituent_data = self.tv.split(value)
