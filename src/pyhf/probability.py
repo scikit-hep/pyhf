@@ -260,7 +260,7 @@ class Simultaneous(object):
         The collection of values sampled from the probability density function.
 
         Args:
-            sample shale (`tuple`): The desired shape of the samples.
+            sample_shape (`tuple`): The shape of the sample to be returned
 
         Returns:
             Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
