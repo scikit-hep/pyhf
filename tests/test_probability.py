@@ -1,5 +1,4 @@
 from pyhf import probability
-from pyhf import get_backend
 
 
 def test_poisson(backend):
@@ -45,10 +44,10 @@ def test_normal(backend):
 
 
 def test_joint(backend):
-    tensorlib, _ = backend
-    p1 = probability.Poisson([10.0]).log_prob(2.0)
-    p2 = probability.Poisson([10.0]).log_prob(3.0)
-    assert tensorlib.tolist(probability.joint_logpdf([p1, p2])) == tensorlib.tolist(
+    tb, _ = backend
+    p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
+    p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
+    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2])) == tb.tolist(
         p1 + p2
     )
 
@@ -56,7 +55,7 @@ def test_joint(backend):
 def test_independent(backend):
     tensorlib, _ = backend
     result = probability.Independent(
-        probability.Poisson(tensorlib.astensor([10.0, 10]))
+        probability.Poisson(tensorlib.astensor([10.0, 10.0]))
     ).log_prob(tensorlib.astensor([2.0, 3.0]))
 
     p1 = probability.Poisson(tensorlib.astensor([10.0])).log_prob(
@@ -65,6 +64,6 @@ def test_independent(backend):
     p2 = probability.Poisson(tensorlib.astensor([10.0])).log_prob(
         tensorlib.astensor(3.0)
     )
-    assert tensorlib.tolist(probability.joint_logpdf([p1, p2]))[0] == tensorlib.tolist(
-        result
-    )
+    assert tensorlib.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[
+        0
+    ] == tensorlib.tolist(result)

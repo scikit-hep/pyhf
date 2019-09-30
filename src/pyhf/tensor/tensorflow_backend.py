@@ -441,3 +441,61 @@ class tensorflow_backend(object):
         sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
+
+    def poisson_dist(self, rate):
+        r"""
+        The Poisson distribution with rate parameter :code:`rate`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> rates = pyhf.tensorlib.astensor([5, 8])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> poissons = pyhf.tensorlib.poisson_dist(rates)
+            >>> with sess.as_default():
+            ...   sess.run(poissons.log_prob(values))
+            ...
+            array([-1.7403021, -2.086854 ], dtype=float32)
+
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+
+        Returns:
+            TensorFlow Probability Poisson distribution: The Poisson distribution class
+
+        """
+        return tfp.distributions.Poisson(rate)
+
+    def normal_dist(self, mu, sigma):
+        r"""
+        The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> means = pyhf.tensorlib.astensor([5, 8])
+            >>> stds = pyhf.tensorlib.astensor([1, 0.5])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> normals = pyhf.tensorlib.normal_dist(means, stds)
+            >>> with sess.as_default():
+            ...   sess.run(normals.log_prob(values))
+            ...
+            array([-1.4189385, -2.2257915], dtype=float32)
+
+        Args:
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            TensorFlow Probability Normal distribution: The Normal distribution class
+
+        """
+        return tfp.distributions.Normal(mu, sigma)

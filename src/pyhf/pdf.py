@@ -9,7 +9,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import TensorViewer
+from .tensor.common import _TensorViewer
 
 log = logging.getLogger(__name__)
 
@@ -206,7 +206,7 @@ class _ConstraintModel(object):
         if self.constraints_poisson.has_pdf():
             indices.append(self.constraints_poisson._poisson_data)
         if self.has_pdf():
-            self.constraints_tv = TensorViewer(indices, self.batch_size)
+            self.constraints_tv = _TensorViewer(indices, self.batch_size)
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
@@ -224,11 +224,6 @@ class _ConstraintModel(object):
         if self.batch_size is None:
             return auxdata[0]
         return auxdata
-
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - self.config.nauxdata
-        return data[cut:]
 
     def has_pdf(self):
         '''
@@ -323,7 +318,7 @@ class _MainModel(object):
         return True
 
     def make_pdf(self, pars):
-        lambdas_data = self.expected_data(pars)
+        lambdas_data = self._expected_data(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
@@ -336,11 +331,6 @@ class _MainModel(object):
             log pdf value: the log of the pdf value
         """
         return self.make_pdf(pars).log_prob(maindata)
-
-    def _dataprojection(self, data):
-        tensorlib, _ = get_backend()
-        cut = tensorlib.shape(data)[0] - self.config.nauxdata
-        return data[:cut]
 
     def _modifications(self, pars):
         deltas = list(
@@ -358,7 +348,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def expected_data(self, pars):
+    def _expected_data(self, pars):
         """
         For a single channel single sample, we compute
 
@@ -445,7 +435,7 @@ class Model(object):
             indices.append(position[:cut])
         if self.constraint_model.has_pdf():
             indices.append(position[cut:])
-        self.fullpdf_tv = TensorViewer(indices, self.batch_size)
+        self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
 
     def _create_nominal_and_modifiers(self, config, spec):
         default_data_makers = {
@@ -577,7 +567,7 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        return self.constraint_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[1].expected_data()
 
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
@@ -587,30 +577,20 @@ class Model(object):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        return self.main_model.expected_data(pars)
+        return self.make_pdf(pars).pdfobjs[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        expected_actual = self.main_model.expected_data(pars)
-
         if not include_auxdata:
-            return expected_actual
-        expected_constraints = self.expected_auxdata(pars)
-        tocat = (
-            [expected_actual]
-            if expected_constraints is None
-            else [expected_actual, expected_constraints]
-        )
-        if self.batch_size is None:
-            return tensorlib.concatenate(tocat, axis=0)
-        return tensorlib.concatenate(tocat, axis=1)
+            return self.make_pdf(pars).pdfobjs[0].expected_data()
+        return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
-        return self.constraint_model.logpdf(auxdata, pars)
+        return self.make_pdf(pars).pdfobjs[1].log_prob(auxdata)
 
     def mainlogpdf(self, maindata, pars):
-        return self.main_model.logpdf(maindata, pars)
+        return self.make_pdf(pars).pdfobjs[0].log_prob(maindata)
 
     def make_pdf(self, pars):
         """
