@@ -2,9 +2,7 @@ from . import get_backend
 
 
 class _SimpleDistributionMixin(object):
-    """
-    The mixin class for distributions
-    """
+    """The mixin class for distributions."""
 
     def log_prob(self, value):
         r"""
