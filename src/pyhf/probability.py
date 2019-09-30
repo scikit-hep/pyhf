@@ -168,7 +168,7 @@ class Independent(_SimpleDistributionMixin):
 class Simultaneous(object):
     """
     A probability density corresponding to the joint
-    likelihood multiple non-identical component distributions
+    distribution of multiple non-identical component distributions
 
     Example:
         >>> import pyhf
