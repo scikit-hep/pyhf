@@ -9,7 +9,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import TensorViewer
+from .tensor.common import _TensorViewer
 
 log = logging.getLogger(__name__)
 
@@ -206,7 +206,7 @@ class _ConstraintModel(object):
         if self.constraints_poisson.has_pdf():
             indices.append(self.constraints_poisson._poisson_data)
         if self.has_pdf():
-            self.constraints_tv = TensorViewer(indices, self.batch_size)
+            self.constraints_tv = _TensorViewer(indices, self.batch_size)
 
     def expected_data(self, pars):
         tensorlib, _ = get_backend()
@@ -435,7 +435,7 @@ class Model(object):
             indices.append(position[:cut])
         if self.constraint_model.has_pdf():
             indices.append(position[cut:])
-        self.fullpdf_tv = TensorViewer(indices, self.batch_size)
+        self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
 
     def _create_nominal_and_modifiers(self, config, spec):
         default_data_makers = {

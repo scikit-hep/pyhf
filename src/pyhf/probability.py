@@ -163,6 +163,22 @@ class Simultaneous(object):
     """
     A probability density corresponding to the joint
     likelihood multiple non-identical component distributions
+
+    Example:
+        >>> import pyhf
+        >>> import numpy.random as random
+        >>> from pyhf.tensor.common import _TensorViewer
+        >>> random.seed(0)
+        >>> poissons = pyhf.probability.Poisson(pyhf.tensorlib.astensor([1.,100.]))
+        >>> normals = pyhf.probability.Normal(pyhf.tensorlib.astensor([1.,100.]), pyhf.tensorlib.astensor([1.,2.]))
+        >>> tv = _TensorViewer([[0,2],[1,3]], None)
+        >>> sim = pyhf.probability.Simultaneous([poissons,normals], tv, None)
+        >>> sim.sample((4,))
+        array([[  2.        ,   1.3130677 , 101.        ,  98.29180852],
+            [  1.        ,  -1.55298982,  97.        , 101.30723719],
+            [  1.        ,   1.8644362 , 118.        ,  98.51566996],
+            [  0.        ,   3.26975462,  99.        ,  97.09126865]])
+
     """
 
     def __init__(self, pdfobjs, tensorview, batch_size):
