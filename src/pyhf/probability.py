@@ -194,7 +194,7 @@ class Simultaneous(object):
         Args:
 
             pdfobjs (`Distribution`): The constituent pdf objects
-            tensorview (`_TensorViweer`): The `_TensorViwer` definint the data composition
+            tensorview (`_TensorViewer`): The `_TensorViwer` defining the data composition
 
 
         Returns:
