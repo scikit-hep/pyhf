@@ -245,7 +245,7 @@ class Simultaneous(object):
         return self._pdfobjs[index]
 
     def expected_data(self):
-        """
+        r"""
         The expectation value of the probability density function.
 
         Returns:
@@ -256,7 +256,7 @@ class Simultaneous(object):
         return self.tv.stitch(tostitch)
 
     def sample(self, sample_shape=()):
-        """
+        r"""
         The collection of values sampled from the probability density function.
 
         Args:
@@ -269,7 +269,7 @@ class Simultaneous(object):
         return self.tv.stitch([p.sample(sample_shape) for p in self])
 
     def log_prob(self, value):
-        """
+        r"""
         The log of the probability density function at the given value.
 
         Args:
