@@ -42,11 +42,33 @@ jobs:
         check-manifest
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/
+        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.7
       run: |
         python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
+
+  notebooks:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
+        pip list
+    - name: Test example notebooks
+      run: |
+        python -m pytest -r sx tests/test_notebooks.py
 
   docs:
 
