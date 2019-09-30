@@ -171,8 +171,8 @@ class Simultaneous(object):
         >>> random.seed(0)
         >>> poissons = pyhf.probability.Poisson(pyhf.tensorlib.astensor([1.,100.]))
         >>> normals = pyhf.probability.Normal(pyhf.tensorlib.astensor([1.,100.]), pyhf.tensorlib.astensor([1.,2.]))
-        >>> tv = _TensorViewer([[0,2],[1,3]], None)
-        >>> sim = pyhf.probability.Simultaneous([poissons,normals], tv, None)
+        >>> tv = _TensorViewer([[0,2],[1,3]])
+        >>> sim = pyhf.probability.Simultaneous([poissons,normals], tv)
         >>> sim.sample((4,))
         array([[  2.        ,   1.3130677 , 101.        ,  98.29180852],
             [  1.        ,  -1.55298982,  97.        , 101.30723719],
@@ -181,20 +181,60 @@ class Simultaneous(object):
 
     """
 
-    def __init__(self, pdfobjs, tensorview, batch_size):
+    def __init__(self, pdfobjs, tensorview, batch_size=None):
+        """
+        Construct a simultaneous pdf.
+
+        Args:
+
+            pdfobjs (`Distribution`): the constituent pdf objects
+            tensorview (`_TensorViweer`): the `_TensorViwer` definint the data composition
+
+
+        Returns:
+            data (`tensor`): the expected data
+
+        """
         self.tv = tensorview
         self.pdfobjs = pdfobjs
         self.batch_size = batch_size
 
     def expected_data(self):
+        """
+        Compute mean data of the density
+
+        Returns:
+            data (`tensor`): the expected data
+
+        """
         tostitch = [p.expected_data() for p in self.pdfobjs]
         return self.tv.stitch(tostitch)
 
     def sample(self, sample_shape=()):
+        """
+        Sample data from the density.
+
+        Args:
+            sample shale (`tuple`): the desired shape of the samples.
+
+        Returns:
+            samples (`tensor`): the samples
+
+        """
         return self.tv.stitch([p.sample(sample_shape) for p in self.pdfobjs])
 
-    def log_prob(self, data):
-        constituent_data = self.tv.split(data)
+    def log_prob(self, value):
+        """
+        Compute the log density value for observed data.
+
+        Args:
+            data (`tensor`): the observed value
+
+        Returns:
+            value (`float` or `tensor`): the log density value
+
+        """
+        constituent_data = self.tv.split(value)
         pdfvals = [p.log_prob(d) for p, d in zip(self.pdfobjs, constituent_data)]
         return Simultaneous._joint_logpdf(pdfvals, batch_size=self.batch_size)
 
