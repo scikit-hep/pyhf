@@ -1,3 +1,4 @@
+"""The probability density function module."""
 from . import get_backend
 
 
@@ -29,7 +30,7 @@ class _SimpleDistributionMixin(object):
 
     def sample(self, sample_shape=()):
         r"""
-        The collection of values sampled from the probability density function
+        The collection of values sampled from the probability density function.
 
         Args:
             sample_shape (`tuple`): The shape of the sample to be returned
@@ -51,12 +52,13 @@ class Poisson(_SimpleDistributionMixin):
         >>> pyhf.probability.Poisson(rates)
         <pyhf.probability.Poisson object at 0x...>
 
-    Args:
-        rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
-
     """
 
     def __init__(self, rate):
+        """
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+        """
         tensorlib, _ = get_backend()
         self.rate = rate
         self._pdf = tensorlib.poisson_dist(rate)
@@ -89,14 +91,15 @@ class Normal(_SimpleDistributionMixin):
         >>> stds = pyhf.tensorlib.astensor([1, 0.5])
         >>> pyhf.probability.Normal(means, stds)
         <pyhf.probability.Normal object at 0x...>
-
-    Args:
-        loc (`tensor` or `float`): The mean of the Normal distribution
-        scale (`tensor` or `float`): The standard deviation of the Normal distribution
-
     """
 
     def __init__(self, loc, scale):
+        """
+        Args:
+            loc (`tensor` or `float`): The mean of the Normal distribution
+            scale (`tensor` or `float`): The standard deviation of the Normal distribution
+        """
+
         tensorlib, _ = get_backend()
         self.loc = loc
         self.scale = scale
