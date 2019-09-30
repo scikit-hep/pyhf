@@ -15,6 +15,7 @@ class _SimpleDistributionMixin(object):
 
         Returns:
             Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
+
         """
         return self._pdf.log_prob(value)
 
@@ -24,6 +25,7 @@ class _SimpleDistributionMixin(object):
 
         Returns:
             Tensor: The expectation value of the distribution :math:`\mathrm{E}\left[f(\theta)\right]`
+
         """
         return self._pdf.expected_data()
 
@@ -36,6 +38,7 @@ class _SimpleDistributionMixin(object):
 
         Returns:
             Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
+
         """
         return self._pdf.sample(sample_shape)
 
@@ -52,6 +55,7 @@ class Poisson(_SimpleDistributionMixin):
 
     Args:
         rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+
     """
 
     def __init__(self, rate):
@@ -72,6 +76,7 @@ class Poisson(_SimpleDistributionMixin):
 
         Returns:
             Tensor: The mean of the Poisson distribution (which is the :code:`rate`)
+
         """
         return self.rate
 
@@ -90,6 +95,7 @@ class Normal(_SimpleDistributionMixin):
     Args:
         loc (`tensor` or `float`): The mean of the Normal distribution
         scale (`tensor` or `float`): The standard deviation of the Normal distribution
+
     """
 
     def __init__(self, loc, scale):
@@ -112,6 +118,7 @@ class Normal(_SimpleDistributionMixin):
 
         Returns:
             Tensor: The mean of the Normal distribution (which is the :code:`loc`)
+
         """
         return self.loc
 
@@ -152,6 +159,7 @@ class Independent(_SimpleDistributionMixin):
 
         Returns:
             Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
+
         """
         tensorlib, _ = get_backend()
         result = super(Independent, self).log_prob(value)
