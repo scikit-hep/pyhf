@@ -98,8 +98,8 @@ jobs:
         sudo apt-get -qq install pandoc
     - name: Check docstrings
       run: |
-        pydocstyle --select D1 src/pyhf/probability.py
-        pydocstyle --select D102 src/pyhf/pdf.py
+        # Group 1 is related to docstrings
+        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/probability.py
     - name: Test and build docs
       run: |
         python -m doctest README.md
