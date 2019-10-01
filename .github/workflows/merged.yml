@@ -1,6 +1,8 @@
+name: Merged PR
+
 on:
   pull_request:
-    # types: [closed]
+    types: [closed]
 
 jobs:
   binder:
@@ -8,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-      # if: github.event.pull_request.merged
+      if: github.event.pull_request.merged
     - name: Trigger Binder build
       run: |
         # Use Binder build API to trigger repo2docker to build image on GKE and OVH Binder Federation clusters
