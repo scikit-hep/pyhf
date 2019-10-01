@@ -245,7 +245,7 @@ class tensorflow_backend(object):
 
         Returns:
             TensorFlow Tensor: The result of the mask being applied to the tensors.
-            
+
         """
         return tf.where(mask, tensor_in_1, tensor_in_2)
 
@@ -472,17 +472,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
-            >>> with sess.as_default():
-            ...   sess.run(poissons.log_prob(values))
-            ...
-            array([-1.7403021, -2.086854 ], dtype=float32)
+            >>> t = poissons.log_prob(values)
+            >>> print(t)
+            tf.Tensor([-1.7403021 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
@@ -499,18 +495,14 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
-            >>> with sess.as_default():
-            ...   sess.run(normals.log_prob(values))
-            ...
-            array([-1.4189385, -2.2257915], dtype=float32)
+            >>> t = normals.log_prob(values)
+            >>> print(t)
+            tf.Tensor([-1.4189385 -2.2257915], shape=(2,), dtype=float32)
 
         Args:
             mu (`tensor` or `float`): The mean of the Normal distribution
