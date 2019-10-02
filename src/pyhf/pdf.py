@@ -394,7 +394,7 @@ class Model(object):
 
     def __init__(self, spec, batch_size=None, **config_kwargs):
         """
-        Construct a pyhf Model.
+        Construct a HistFactory Model.
 
         Args:
             spec (`jsonable`): The HistFactory JSON specification
