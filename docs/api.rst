@@ -57,7 +57,6 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
    :nosignatures:
    :template: modifierclass.rst
 
-   mxnet_backend.mxnet_backend
    numpy_backend.numpy_backend
    pytorch_backend.pytorch_backend
    tensorflow_backend.tensorflow_backend

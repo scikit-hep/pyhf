@@ -20,7 +20,6 @@ Notebooks:
 ..
    examples/notebooks/Recast.ipynb
    examples/notebooks/StatError.ipynb
-   examples/notebooks/example-mxnet.ipynb
    examples/notebooks/example-tensorflow.ipynb
    examples/notebooks/histogrammar.ipynb
    examples/notebooks/histosys-pytorch.ipynb
