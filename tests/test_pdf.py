@@ -5,7 +5,6 @@ import numpy as np
 import json
 
 
-@pytest.mark.fail_mxnet
 def test_pdf_inputs(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -61,7 +60,6 @@ def test_invalid_pdf_data():
         pdf.logpdf(pars, data)
 
 
-@pytest.mark.fail_mxnet
 def test_pdf_basicapi_tests(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -265,7 +263,6 @@ def test_pdf_integration_histosys(backend):
     ]
 
 
-@pytest.mark.skip_mxnet
 def test_pdf_integration_normsys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
