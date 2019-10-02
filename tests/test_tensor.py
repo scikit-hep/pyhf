@@ -58,7 +58,11 @@ def test_complex_tensor_ops(backend):
         1,
     ]
     assert tb.tolist(
-        tb.where(tb.astensor([1, 0, 1]), tb.astensor([1, 1, 1]), tb.astensor([2, 2, 2]))
+        tb.where(
+            tb.astensor([1, 0, 1], dtype="bool"),
+            tb.astensor([1, 1, 1]),
+            tb.astensor([2, 2, 2]),
+        )
     ) == [1, 2, 1]
 
 
