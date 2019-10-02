@@ -567,7 +567,7 @@ class Model(object):
         return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
-        return self.make_pdf(pars).pdfobjs[1].expected_data()
+        return self.make_pdf(pars)[1].expected_data()
 
     def _modifications(self, pars):
         return self.main_model._modifications(pars)
@@ -577,20 +577,20 @@ class Model(object):
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
-        return self.make_pdf(pars).pdfobjs[0].expected_data()
+        return self.make_pdf(pars)[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if not include_auxdata:
-            return self.make_pdf(pars).pdfobjs[0].expected_data()
+            return self.make_pdf(pars)[0].expected_data()
         return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
-        return self.make_pdf(pars).pdfobjs[1].log_prob(auxdata)
+        return self.make_pdf(pars)[1].log_prob(auxdata)
 
     def mainlogpdf(self, maindata, pars):
-        return self.make_pdf(pars).pdfobjs[0].log_prob(maindata)
+        return self.make_pdf(pars)[0].log_prob(maindata)
 
     def make_pdf(self, pars):
         """

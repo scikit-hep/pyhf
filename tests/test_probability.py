@@ -1,4 +1,5 @@
 from pyhf import probability
+import numpy as np
 
 
 def test_poisson(backend):
@@ -63,3 +64,14 @@ def test_independent(backend):
     assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
         result
     )
+    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[
+        0
+    ] == tb.tolist(result)
+
+
+def test_simultaneous_list_ducktype():
+    myobjs = np.random.randint(100, size=10).tolist()
+    sim = probability.Simultaneous(myobjs, None)
+    assert sim[3] == myobjs[3]
+    for simobj, myobj in zip(sim, myobjs):
+        assert simobj == myobj
