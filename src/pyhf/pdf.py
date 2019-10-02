@@ -397,7 +397,7 @@ class Model(object):
         Construct a pyhf Model.
 
         Args:
-            spec (`jsonable`): The JSON specification
+            spec (`jsonable`): The HistFactory JSON specification
             batch_size (`None` or `int`): Number of simultaneous (batched) Models to compute.
             config_kwargs: Possible keyword arguments for the model configuration
 
