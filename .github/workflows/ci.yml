@@ -43,6 +43,11 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
+    - name: Upload coverage to Codecov
+      if: github.event_name == 'pull_request' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      uses: codecov/codecov-action@master
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.7
       run: |
