@@ -45,7 +45,13 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
     - name: Upload coverage to Codecov
-      if: github.event_name == 'pull_request' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      uses: codecov/codecov-action@master
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage.xml
+    - name: Upload coverage to Codecov
+      if: github.event.pull_request.merged && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       uses: codecov/codecov-action@master
       with:
         token: ${{secrets.CODECOV_TOKEN}}
