@@ -49,6 +49,7 @@ jobs:
       uses: codecov/codecov-action@master
       with:
         token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage.xml
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.7
       run: |
