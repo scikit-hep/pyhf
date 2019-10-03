@@ -3,7 +3,6 @@ name: CI/CD
 on:
   push:
   pull_request:
-    types: [opened, synchronize, closed]
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
@@ -45,10 +44,10 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
     - name: Upload coverage to Codecov
-      if: (github.event_name == 'push' || github.event.pull_request.merged) && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       uses: codecov/codecov-action@master
       with:
-        token: ${{secrets.CODECOV_TOKEN}}
+        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.7
