@@ -28,7 +28,6 @@ extras_require = {
         'pytest-mock',
         'pytest-benchmark[histogram]',
         'pytest-console-scripts',
-        'python-coveralls',
         'coverage>=4.0',  # coveralls
         'matplotlib',
         'jupyter',
