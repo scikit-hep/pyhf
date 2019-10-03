@@ -201,7 +201,6 @@ class Simultaneous(object):
             data (`tensor`): The expected data
 
         """
-        assert isinstance(pdfobjs, list)
         self.tv = tensorview
         self._pdfobjs = pdfobjs
         self.batch_size = batch_size
