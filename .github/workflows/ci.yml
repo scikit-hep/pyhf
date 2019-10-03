@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
   pull_request:
-    types: [edited, closed]
+    types: [opened, synchronize, closed]
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
