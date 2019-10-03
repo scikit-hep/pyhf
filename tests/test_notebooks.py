@@ -40,7 +40,7 @@ def test_multichannel_coupled_histos(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/multichannel-coupled-histo.ipynb',
         parameters={'validation_datadir': 'validation/data'},
-        **common_kwargs
+        **common_kwargs,
     )
 
 
@@ -48,7 +48,7 @@ def test_multibinpois(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/multiBinPois.ipynb',
         parameters={'validation_datadir': 'validation/data'},
-        **common_kwargs
+        **common_kwargs,
     )
     nb = sb.read_notebook(common_kwargs['output_path'])
     assert nb.scraps['number_2d_successpoints'].data > 200
