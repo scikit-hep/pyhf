@@ -40,11 +40,6 @@ env:
 
 jobs:
   include:
-  - name: "Python 2.7 Notebook Tests"
-    python: '2.7'
-    script:
-      - python -m pytest tests/test_notebooks.py
-    after_success: skip
   - name: "Python 3.6 Notebook Tests"
     python: '3.6'
     script:
