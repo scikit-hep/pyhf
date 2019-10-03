@@ -216,19 +216,19 @@ class Simultaneous(object):
         for pdfobj in self._pdfobjs:
             yield pdfobj
 
-    def __getitem__(self, idx):
+    def __getitem__(self, index):
         """
         Access the constituent pdf object at the specified index
 
         Args:
 
-            idx (`int`): The index to access the constituent pdf object
+            index (`int`): The index to access the constituent pdf object
 
         Returns:
             pdfobj (`Distribution`): A constituent pdf object
 
         """
-        return self._pdfobjs[idx]
+        return self._pdfobjs[index]
 
     def expected_data(self):
         """
