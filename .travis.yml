@@ -15,7 +15,7 @@ script:
   - pyflakes src
   - check-manifest || travis_terminate 1
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
-after_success: coveralls
+after_success: skip
 
 # test Python 2.7 on 'push' builds
 # test docs and deploy to PyPI only when merged into master (those mereges are 'push' builds)
