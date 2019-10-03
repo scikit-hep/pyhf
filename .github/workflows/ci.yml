@@ -3,7 +3,6 @@ name: CI/CD
 on:
   push:
   pull_request:
-    types: [opened, synchronize, closed]
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
@@ -45,10 +44,21 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
     - name: GHA test
-      if: (github.event_name == 'push' || github.event.pull_request.merged) && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       run: |
         echo "Hello"
         echo "GitHub"
+    - name: GHA master branch test
+      if: github.event_name == 'push' && branch == 'master' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      run: |
+        echo "Hello"
+        echo "master"
+    - name: GHA master another
+      branches: master
+      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      run: |
+        echo "Hello"
+        echo "master"
     # - name: Upload coverage to Codecov
     #   if: (github.event_name == 'push' || github.event.pull_request.merged) && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
     #   uses: codecov/codecov-action@master
