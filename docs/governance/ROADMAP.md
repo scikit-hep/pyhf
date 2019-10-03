@@ -66,7 +66,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
    - [ ] Add background model support (Issue #514) [2019-Q4 → 2020-Q1]
    - [ ] Develop interface for the optimizers similar to tensor/backend [2019-Q4 → 2020-Q1]
    - [x] Migrate to TensorFlow v2.0 (PR #541) [2019-Q4]
-   - [ ] Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4 (last week of December 2019)]
+   - [x] Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4 (last week of December 2019)]
    - [ ] Finalize public API [2020-Q1]
    - [ ] Integrate pyfitcore/Statisfactory API [2020-Q1]
 4. **Research**
