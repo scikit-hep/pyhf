@@ -43,7 +43,7 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
-    - name: Upload coverage to Codecov
+    - name: Report coverage with Codecov
       if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
       uses: codecov/codecov-action@master
       with:
