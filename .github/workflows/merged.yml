@@ -1,0 +1,18 @@
+name: Merged PR
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  binder:
+    name: Trigger Binder build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      if: github.event.pull_request.merged
+    - name: Trigger Binder build
+      run: |
+        # Use Binder build API to trigger repo2docker to build image on GKE and OVH Binder Federation clusters
+        bash binder/trigger_binder.sh https://gke.mybinder.org/build/gh/diana-hep/pyhf/master
+        bash binder/trigger_binder.sh https://ovh.mybinder.org/build/gh/diana-hep/pyhf/master

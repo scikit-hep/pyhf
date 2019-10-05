@@ -4,8 +4,6 @@ language: python
 cache: pip
 python:
   - '2.7'
-  - '3.6'
-  - '3.7'
 before_install:
   - sudo apt-get install libtcmalloc-minimal4
   - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
@@ -17,20 +15,14 @@ script:
   - pyflakes src
   - check-manifest || travis_terminate 1
   - python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then black --check --diff --verbose .; fi
 after_success: skip
 
-# always test (on both 'push' and 'pr' builds in Travis)
-# test docs on 'pr' builds and 'push' builds on master and on docs branches
-# benchmark and deploy to PyPI only when merged into master (those mereges are 'push' builds)
+# test Python 2.7 on 'push' builds
+# test docs and deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - name: test
-    if: NOT (branch =~ /^docs\//)
-  - name: benchmark
-    if: (branch = master) AND (NOT (type IN (pull_request)))
+    if: NOT (type IN (pull_request))
   - name: docs
-    if: (branch = master) OR (branch =~ /^docs\//)
-  - name: binder
     if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
 
@@ -40,25 +32,7 @@ env:
 
 jobs:
   include:
-  - name: "Python 3.6 Notebook Tests"
-    python: '3.6'
-    script:
-      - python -m pytest tests/test_notebooks.py
-  - name: "Python 3.7 Notebook Tests"
-    python: '3.7'
-    script:
-      - python -m pytest tests/test_notebooks.py
-  - stage: benchmark
-    python: '3.7'
-    before_install:
-      - sudo apt-get install libtcmalloc-minimal4
-      - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
-      - pip install --upgrade pip setuptools wheel
-    install:
-      - pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
-      - pip freeze
-    script: python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/
-    after_success: skip
+  - name: "Python 2.7"
   - stage: docs
     python: '3.7'
     before_install:
@@ -82,15 +56,6 @@ jobs:
       local_dir: docs/_build/html
       on:
         branch: master
-  - stage: binder
-    python: '3.7'
-    before_install: skip
-    install: skip
-    script:
-      # Use Binder build API to trigger repo2docker to build image on GKE and OVH Binder Federation clusters
-      - bash binder/trigger_binder.sh https://gke.mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
-      - bash binder/trigger_binder.sh https://ovh.mybinder.org/build/gh/diana-hep/pyhf/"${TRAVIS_BRANCH}"
-    after_success: skip
   - stage: deploy
     # Tests deployment to PyPI for all commits to master
     name: "TestPyPI deploy"
