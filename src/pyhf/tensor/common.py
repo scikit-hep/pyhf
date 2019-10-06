@@ -16,11 +16,11 @@ class _TensorViewer(object):
 
         self.batch_size = batch_size
 
-        self.partition_indices = indices
-        a = default_backend.astensor(
-            default_backend.concatenate(self.partition_indices), dtype='int'
+        self._partition_indices = indices
+        _concat_indices = default_backend.astensor(
+            default_backend.concatenate(self._partition_indices), dtype='int'
         )
-        self._sorted_indices = default_backend.tolist(a.argsort())
+        self._sorted_indices = default_backend.tolist(_concat_indices.argsort())
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -28,6 +28,9 @@ class _TensorViewer(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.sorted_indices = tensorlib.astensor(self._sorted_indices, dtype='int')
+        self.partition_indices = [
+            tensorlib.astensor(idx, dtype='int') for idx in self._partition_indices
+        ]
 
     def stitch(self, data):
         tensorlib, _ = get_backend()

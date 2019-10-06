@@ -76,7 +76,7 @@ class staterror_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.staterror_mask = tensorlib.astensor(self._staterror_mask)
+        self.staterror_mask = tensorlib.astensor(self._staterror_mask, dtype="bool")
         self.staterror_mask = tensorlib.tile(
             self.staterror_mask, (1, 1, self.batch_size or 1, 1)
         )

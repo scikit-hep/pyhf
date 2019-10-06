@@ -170,16 +170,22 @@ class code4(object):
         where_alphasets_gtalpha0 = tensorlib.where(
             alphasets >= self.__alpha0, self.mask_on, self.mask_off
         )
-        masks_gtalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+        masks_gtalpha0 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         # select where alpha > -alpha0 ["not(alpha <= -alpha0)"] and produce the mask
         where_alphasets_not_ltalpha0 = tensorlib.where(
             alphasets > -self.__alpha0, self.mask_on, self.mask_off
         )
-        masks_not_ltalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
+        masks_not_ltalpha0 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         # s: set under consideration (i.e. the modifier)

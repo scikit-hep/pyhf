@@ -52,6 +52,7 @@ class lumi_combined(object):
         self.lumi_mask = tensorlib.tile(
             tensorlib.astensor(self._lumi_mask), (1, 1, self.batch_size or 1, 1)
         )
+        self.lumi_mask_bool = tensorlib.astensor(self.lumi_mask, dtype="bool")
         self.lumi_default = tensorlib.ones(self.lumi_mask.shape)
 
     def apply(self, pars):
@@ -69,4 +70,4 @@ class lumi_combined(object):
         else:
             results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
 
-        return tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
+        return tensorlib.where(self.lumi_mask_bool, results_lumi, self.lumi_default)

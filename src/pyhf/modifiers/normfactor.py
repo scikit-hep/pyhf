@@ -48,9 +48,11 @@ class normfactor_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return
-        self.normfactor_mask = tensorlib.astensor(self._normfactor_mask)
         self.normfactor_mask = tensorlib.tile(
-            self.normfactor_mask, (1, 1, self.batch_size or 1, 1)
+            tensorlib.astensor(self._normfactor_mask), (1, 1, self.batch_size or 1, 1)
+        )
+        self.normfactor_mask_bool = tensorlib.astensor(
+            self.normfactor_mask, dtype="bool"
         )
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
 
@@ -74,6 +76,6 @@ class normfactor_combined(object):
             )
 
         results_normfactor = tensorlib.where(
-            self.normfactor_mask, results_normfactor, self.normfactor_default
+            self.normfactor_mask_bool, results_normfactor, self.normfactor_default
         )
         return results_normfactor

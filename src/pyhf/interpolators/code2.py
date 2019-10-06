@@ -91,11 +91,17 @@ class code2(object):
             'sa,shb->shab', alphasets + self.mask_off, self.b_minus_2a
         )
 
-        masks_gt1 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_gt1, self.broadcast_helper
+        masks_gt1 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_gt1, self.broadcast_helper
+            ),
+            dtype="bool",
         )
-        masks_not_lt1 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_not_lt1, self.broadcast_helper
+        masks_not_lt1 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_not_lt1, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         # first, build a result where:

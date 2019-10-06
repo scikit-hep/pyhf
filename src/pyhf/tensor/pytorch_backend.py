@@ -31,7 +31,6 @@ class pytorch_backend(object):
         Returns:
             PyTorch tensor: A clipped `tensor`
         """
-        tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min_value, max_value)
 
     def tolist(self, tensor_in):
@@ -65,8 +64,6 @@ class pytorch_backend(object):
         return tensor_in.repeat(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.ger(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype='float'):
@@ -95,11 +92,9 @@ class pytorch_backend(object):
         return tensor
 
     def gather(self, tensor, indices):
-        indices = self.astensor(indices, dtype='int')
         return tensor[indices.type(torch.LongTensor)]
 
     def boolean_mask(self, tensor, mask):
-        mask = self.astensor(mask, dtype='bool')
         return torch.masked_select(tensor, mask)
 
     def reshape(self, tensor, newshape):
@@ -109,7 +104,6 @@ class pytorch_backend(object):
         return tuple(map(int, tensor.shape))
 
     def sum(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return (
             torch.sum(tensor_in)
             if (axis is None or tensor_in.shape == torch.Size([]))
@@ -117,11 +111,9 @@ class pytorch_backend(object):
         )
 
     def product(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
     def abs(self, tensor):
-        tensor = self.astensor(tensor)
         return torch.abs(tensor)
 
     def ones(self, shape):
@@ -131,35 +123,25 @@ class pytorch_backend(object):
         return torch.Tensor(torch.zeros(shape))
 
     def power(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.sqrt(tensor_in)
 
     def divide(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.div(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.log(tensor_in)
 
     def exp(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask).type(torch.FloatTensor)
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
+        return torch.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -199,7 +181,6 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
-        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
@@ -224,12 +205,9 @@ class pytorch_backend(object):
         Returns:
             tensor: the calculation based on the Einstein summation convention
         """
-        ops = tuple(self.astensor(op) for op in operands)
-        return torch.einsum(subscripts, ops)
+        return torch.einsum(subscripts, operands)
 
     def poisson_logpdf(self, n, lam):
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return torch.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
@@ -242,10 +220,12 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.poisson([5.], [6.])
-            tensor([0.1606])
             >>> pyhf.tensorlib.poisson(5., 6.)
-            tensor([0.1606])
+            tensor(0.1606)
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
+            tensor([0.1606, 0.1241])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -256,14 +236,9 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: Value of the continous approximation to Poisson(n|lam)
         """
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -277,10 +252,13 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
-            tensor([0.3521])
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            tensor([0.3521])
+            tensor(0.3521)
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
+            tensor([0.3521, 0.4648])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -290,13 +268,10 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
-    def normal_cdf(self, x, mu=[0.0], sigma=[1.0]):
+    def normal_cdf(self, x, mu=0.0, sigma=1.0):
         """
         The cumulative distribution function for the Normal distribution
 
@@ -304,8 +279,11 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal_cdf([0.8])
-            tensor([0.7881])
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            tensor(0.7881)
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            tensor([0.7881, 0.9772])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -315,9 +293,6 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.cdf(x)
 

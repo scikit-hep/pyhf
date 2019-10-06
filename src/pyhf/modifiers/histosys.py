@@ -71,7 +71,7 @@ class histosys_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        self.histosys_mask = tensorlib.astensor(self._histosys_mask, dtype="bool")
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
         if self.batch_size is None:
             self.indices = tensorlib.reshape(

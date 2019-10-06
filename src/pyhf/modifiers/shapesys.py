@@ -81,7 +81,7 @@ class shapesys_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return
-        self.shapesys_mask = tensorlib.astensor(self._shapesys_mask)
+        self.shapesys_mask = tensorlib.astensor(self._shapesys_mask, dtype="bool")
         self.shapesys_mask = tensorlib.tile(
             self.shapesys_mask, (1, 1, self.batch_size or 1, 1)
         )

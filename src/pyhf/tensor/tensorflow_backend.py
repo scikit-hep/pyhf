@@ -37,7 +37,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: A clipped `tensor`
         """
-        tensor_in = self.astensor(tensor_in)
         if min_value is None:
             min_value = tf.reduce_min(tensor_in)
         if max_value is None:
@@ -98,8 +97,6 @@ class tensorflow_backend(object):
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         tensor_in_1 = (
             tensor_in_1
             if tensor_in_1.dtype != tf.bool
@@ -113,7 +110,7 @@ class tensorflow_backend(object):
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
-        return tf.gather(tensor, indices)
+        return tf.compat.v2.gather(tensor, indices)
 
     def boolean_mask(self, tensor, mask):
         return tf.boolean_mask(tensor, mask)
@@ -154,7 +151,6 @@ class tensorflow_backend(object):
         return tensor
 
     def sum(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return (
             tf.reduce_sum(tensor_in)
             if (axis is None or tensor_in.shape == tf.TensorShape([]))
@@ -162,7 +158,6 @@ class tensorflow_backend(object):
         )
 
     def product(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return (
             tf.reduce_prod(tensor_in)
             if axis is None
@@ -170,7 +165,6 @@ class tensorflow_backend(object):
         )
 
     def abs(self, tensor):
-        tensor = self.astensor(tensor)
         return tf.abs(tensor)
 
     def ones(self, shape):
@@ -180,12 +174,9 @@ class tensorflow_backend(object):
         return tf.zeros(shape)
 
     def power(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return tf.pow(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return tf.sqrt(tensor_in)
 
     def shape(self, tensor):
@@ -195,26 +186,19 @@ class tensorflow_backend(object):
         return tf.reshape(tensor, newshape)
 
     def divide(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return tf.divide(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return tf.math.log(tensor_in)
 
     def exp(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return tf.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
         return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask)
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
+        return tf.compat.v2.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -251,7 +235,6 @@ class tensorflow_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(lambda arg: arg.shape[0], args))
         try:
             assert not [arg for arg in args if 1 < arg.shape[0] < max_dim]
@@ -302,7 +285,13 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
             ...
-            array([-1.8286943], dtype=float32)
+            -1.8286943
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson_logpdf(values, rates))
+            ...
+            array([-1.8286943, -2.086854 ], dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -313,8 +302,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: Value of the continous approximation to log(Poisson(n|lam))
         """
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
@@ -333,7 +320,13 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson(5., 6.))
             ...
-            array([0.16062315], dtype=float32)
+            0.16062315
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.poisson(values, rates))
+            ...
+            array([0.16062315, 0.12407687], dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -344,8 +337,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: Value of the continous approximation to Poisson(n|lam)
         """
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
@@ -364,7 +355,14 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
             ...
-            array([-1.0439385], dtype=float32)
+            -1.0439385
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal_logpdf(values, means, sigmas))
+            ...
+            array([-1.0439385, -0.7661075], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -374,9 +372,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: Value of log(Normal(x|mu, sigma))
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -396,7 +391,14 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
             ...
-            array([0.35206532], dtype=float32)
+            0.35206532
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> with sess.as_default():
+            ...     sess.run(pyhf.tensorlib.normal(values, means, sigmas))
+            ...
+            array([0.35206532, 0.46481887], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -406,9 +408,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: Value of Normal(x|mu, sigma)
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.prob(x)
 
@@ -426,7 +425,12 @@ class tensorflow_backend(object):
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
             ...
-            array([0.7881446], dtype=float32)
+            0.7881446
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> with sess.as_default():
+            ...   sess.run(pyhf.tensorlib.normal_cdf(values))
+            ...
+            array([0.7881446 , 0.97724986], dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -436,9 +440,6 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: The CDF
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.cdf(x)
 

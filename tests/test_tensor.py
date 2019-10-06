@@ -15,18 +15,30 @@ def test_astensor_dtype(backend, caplog):
 
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
-    assert tb.tolist(tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
-    assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
-    assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
-    assert tb.tolist(tb.sqrt([4, 9, 16])) == [2, 3, 4]
-    assert tb.tolist(tb.log(tb.exp([2, 3, 4]))) == [2, 3, 4]
-    assert tb.tolist(tb.abs([-1, -2])) == [1, 2]
+    assert tb.tolist(tb.sum(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [5, 7, 9]
+    assert tb.tolist(tb.product(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [
+        4,
+        10,
+        18,
+    ]
+    assert tb.tolist(tb.power(tb.astensor([1, 2, 3]), tb.astensor([1, 2, 3]))) == [
+        1,
+        4,
+        27,
+    ]
+    assert tb.tolist(tb.divide(tb.astensor([4, 9, 16]), tb.astensor([2, 3, 4]))) == [
+        2,
+        3,
+        4,
+    ]
+    assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+    assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
 
 
 def test_complex_tensor_ops(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.outer([1, 2, 3], [4, 5, 6])) == [
+    assert tb.tolist(tb.outer(tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6]))) == [
         [4, 5, 6],
         [8, 10, 12],
         [12, 15, 18],
@@ -46,7 +58,11 @@ def test_complex_tensor_ops(backend):
         1,
     ]
     assert tb.tolist(
-        tb.where(tb.astensor([1, 0, 1]), tb.astensor([1, 1, 1]), tb.astensor([2, 2, 2]))
+        tb.where(
+            tb.astensor([1, 0, 1], dtype="bool"),
+            tb.astensor([1, 1, 1]),
+            tb.astensor([2, 2, 2]),
+        )
     ) == [1, 2, 1]
 
 
@@ -78,18 +94,26 @@ def test_broadcasting(backend):
             ),
         )
     ) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
-    assert list(map(tb.tolist, tb.simple_broadcast(1, [2, 3, 4], [5, 6, 7]))) == [
-        [1, 1, 1],
-        [2, 3, 4],
-        [5, 6, 7],
-    ]
-    assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) == [
-        [1, 1, 1],
-        [2, 3, 4],
-        [5, 6, 7],
-    ]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
+        )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
+        )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
     with pytest.raises(Exception):
-        tb.simple_broadcast([1], [2, 3], [5, 6, 7])
+        tb.simple_broadcast(
+            tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
+        )
 
 
 def test_reshape(backend):
@@ -134,7 +158,9 @@ def test_pdf_calculations(backend):
         nan_ok=True,
     )
     # poisson(lambda=0) is not defined, should return NaN
-    assert tb.tolist(tb.poisson([0, 0, 1, 1], [0, 1, 0, 1])) == pytest.approx(
+    assert tb.tolist(
+        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+    ) == pytest.approx(
         [np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True
     )
     assert tb.tolist(
