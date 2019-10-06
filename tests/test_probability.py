@@ -64,9 +64,9 @@ def test_independent(backend):
     assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
         result
     )
-    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[
-        0
-    ] == tb.tolist(result)
+    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
+        result
+    )
 
 
 def test_simultaneous_list_ducktype():
