@@ -110,7 +110,7 @@ class tensorflow_backend(object):
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
-        return tf.gather(tensor, indices)
+        return tf.compat.v2.gather(tensor, indices)
 
     def boolean_mask(self, tensor, mask):
         return tf.boolean_mask(tensor, mask)
