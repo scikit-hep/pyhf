@@ -98,7 +98,7 @@ def backend(request):
     # actual execution here, after all checks is done
     pyhf.set_backend(*request.param)
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.reset_default_graph()
+        tf.compat.v1.reset_default_graph()
         pyhf.tensorlib.session = tf.Session()
 
     yield request.param
