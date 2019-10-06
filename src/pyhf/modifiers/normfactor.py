@@ -51,6 +51,9 @@ class normfactor_combined(object):
         self.normfactor_mask = tensorlib.tile(
             tensorlib.astensor(self._normfactor_mask), (1, 1, self.batch_size or 1, 1)
         )
+        self.normfactor_mask_bool = tensorlib.astensor(
+            self.normfactor_mask, dtype="bool"
+        )
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
 
     def apply(self, pars):
@@ -73,8 +76,6 @@ class normfactor_combined(object):
             )
 
         results_normfactor = tensorlib.where(
-            tensorlib.astensor(self.normfactor_mask, dtype="bool"),
-            results_normfactor,
-            self.normfactor_default,
+            self.normfactor_mask_bool, results_normfactor, self.normfactor_default
         )
         return results_normfactor
