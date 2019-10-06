@@ -17,10 +17,10 @@ class _TensorViewer(object):
         self.batch_size = batch_size
 
         self.partition_indices = indices
-        a = default_backend.astensor(
+        _concat_indices = default_backend.astensor(
             default_backend.concatenate(self.partition_indices), dtype='int'
         )
-        self._sorted_indices = default_backend.tolist(a.argsort())
+        self._sorted_indices = default_backend.tolist(_concat_indices.argsort())
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
