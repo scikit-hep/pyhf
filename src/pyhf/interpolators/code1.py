@@ -86,8 +86,11 @@ class code1(object):
         exponents = tensorlib.einsum(
             'sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper
         )
-        masks = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+        masks = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         bases = tensorlib.where(masks, self.bases_up, self.bases_dn)

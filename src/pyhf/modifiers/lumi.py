@@ -69,4 +69,8 @@ class lumi_combined(object):
         else:
             results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
 
-        return tensorlib.where(self.lumi_mask, results_lumi, self.lumi_default)
+        return tensorlib.where(
+            tensorlib.astensor(self.lumi_mask, dtype="bool"),
+            results_lumi,
+            self.lumi_default,
+        )

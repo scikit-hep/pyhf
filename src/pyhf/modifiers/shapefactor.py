@@ -118,7 +118,7 @@ class shapefactor_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
+        self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask, dtype="bool")
         self.shapefactor_mask = tensorlib.tile(
             self.shapefactor_mask, (1, 1, self.batch_size or 1, 1)
         )
