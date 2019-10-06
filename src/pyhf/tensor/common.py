@@ -16,9 +16,9 @@ class _TensorViewer(object):
 
         self.batch_size = batch_size
 
-        self.partition_indices = indices
+        self._partition_indices = indices
         _concat_indices = default_backend.astensor(
-            default_backend.concatenate(self.partition_indices), dtype='int'
+            default_backend.concatenate(self._partition_indices), dtype='int'
         )
         self._sorted_indices = default_backend.tolist(_concat_indices.argsort())
 
@@ -28,6 +28,9 @@ class _TensorViewer(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
         self.sorted_indices = tensorlib.astensor(self._sorted_indices, dtype='int')
+        self.partition_indices = [
+            tensorlib.astensor(idx, dtype='int') for idx in self._partition_indices
+        ]
 
     def stitch(self, data):
         tensorlib, _ = get_backend()
@@ -45,15 +48,9 @@ class _TensorViewer(object):
     def split(self, data):
         tensorlib, _ = get_backend()
         if len(tensorlib.shape(data)) == 1:
-            return [
-                tensorlib.gather(data, tensorlib.astensor(idx, dtype='int'))
-                for idx in self.partition_indices
-            ]
+            return [tensorlib.gather(data, idx) for idx in self.partition_indices]
         data = tensorlib.einsum('...j->j...', tensorlib.astensor(data))
         return [
-            tensorlib.einsum(
-                'j...->...j',
-                tensorlib.gather(data, tensorlib.astensor(idx, dtype='int')),
-            )
+            tensorlib.einsum('j...->...j', tensorlib.gather(data, idx))
             for idx in self.partition_indices
         ]
