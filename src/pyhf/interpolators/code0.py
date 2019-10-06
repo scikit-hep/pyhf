@@ -71,8 +71,11 @@ class code0(object):
             'sa,shb->shab', alphasets, self.deltas_dn
         )
 
-        masks = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+        masks = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         return tensorlib.where(masks, alphas_times_deltas_up, alphas_times_deltas_dn)

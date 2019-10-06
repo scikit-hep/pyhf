@@ -69,9 +69,9 @@ class normsys_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.normsys_mask = tensorlib.astensor(self._normsys_mask)
         self.normsys_mask = tensorlib.tile(
-            self.normsys_mask, (1, 1, self.batch_size or 1, 1)
+            tensorlib.astensor(self._normsys_mask, dtype="bool"),
+            (1, 1, self.batch_size or 1, 1),
         )
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
         if self.batch_size is None:

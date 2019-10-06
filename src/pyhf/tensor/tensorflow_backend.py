@@ -198,7 +198,7 @@ class tensorflow_backend(object):
         return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return tf.compat.v2.where(tf.cast(mask, tf.bool), tensor_in_1, tensor_in_2)
+        return tf.compat.v2.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """

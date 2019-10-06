@@ -141,7 +141,7 @@ class pytorch_backend(object):
         return torch.stack(sequence, dim=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return torch.where(mask.type(torch.BoolTensor), tensor_in_1, tensor_in_2)
+        return torch.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
