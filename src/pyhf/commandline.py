@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 # This is only needed for Python 2/3 compatibility
 def ensure_dirs(path):
     try:
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(path, exist_ok=True)  # lgtm [py/call/wrong-named-argument]
     except TypeError:
         if not os.path.exists(path):
             os.makedirs(path)

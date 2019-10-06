@@ -58,10 +58,10 @@ class code4(object):
                 [
                     15.0 / (16 * alpha0),
                     -15.0 / (16 * alpha0),
-                    -7.0 / 16,
-                    -7.0 / 16,
+                    -7.0 / 16.0,
+                    -7.0 / 16.0,
                     1.0 / 16 * alpha0,
-                    -1.0 / 16 * alpha0,
+                    -1.0 / 16.0 * alpha0,
                 ],
                 [
                     3.0 / (2 * math.pow(alpha0, 2)),
@@ -284,10 +284,10 @@ class _slow_code4(object):
                 [
                     15.0 / (16 * self.alpha0),
                     -15.0 / (16 * self.alpha0),
-                    -7.0 / 16,
-                    -7.0 / 16,
+                    -7.0 / 16.0,
+                    -7.0 / 16.0,
                     1.0 / 16 * self.alpha0,
-                    -1.0 / 16 * self.alpha0,
+                    -1.0 / 16.0 * self.alpha0,
                 ],
                 [
                     3.0 / (2 * math.pow(self.alpha0, 2)),
