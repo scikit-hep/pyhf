@@ -95,7 +95,7 @@ class pytorch_backend(object):
         return tensor[indices.type(torch.LongTensor)]
 
     def boolean_mask(self, tensor, mask):
-        return torch.masked_select(tensor, mask.type(torch.BoolTensor))
+        return torch.masked_select(tensor, mask)
 
     def reshape(self, tensor, newshape):
         return torch.reshape(tensor, newshape)
