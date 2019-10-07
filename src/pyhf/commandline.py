@@ -5,7 +5,7 @@ import json
 import os
 import jsonpatch
 
-from .utils import hypotest, EqDelimStringParamType
+from .utils import hypotest, EqDelimStringParamType, validate
 from .workspace import Workspace
 from .version import __version__
 from . import tensorlib, set_backend, optimize
