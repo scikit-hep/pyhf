@@ -21,6 +21,7 @@ __pycache__
 .coverage*
 !.coveragerc
 coverage*
+*,cover
 
 *.swp
 *.map

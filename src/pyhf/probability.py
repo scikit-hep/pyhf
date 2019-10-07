@@ -202,8 +202,33 @@ class Simultaneous(object):
 
         """
         self.tv = tensorview
-        self.pdfobjs = pdfobjs
+        self._pdfobjs = pdfobjs
         self.batch_size = batch_size
+
+    def __iter__(self):
+        """
+        Iterate over the constituent pdf objects
+
+        Returns:
+            pdfobj (`Distribution`): A constituent pdf object
+
+        """
+        for pdfobj in self._pdfobjs:
+            yield pdfobj
+
+    def __getitem__(self, index):
+        """
+        Access the constituent pdf object at the specified index
+
+        Args:
+
+            index (`int`): The index to access the constituent pdf object
+
+        Returns:
+            pdfobj (`Distribution`): A constituent pdf object
+
+        """
+        return self._pdfobjs[index]
 
     def expected_data(self):
         """
@@ -213,7 +238,7 @@ class Simultaneous(object):
             data (`tensor`): The expected data
 
         """
-        tostitch = [p.expected_data() for p in self.pdfobjs]
+        tostitch = [p.expected_data() for p in self]
         return self.tv.stitch(tostitch)
 
     def sample(self, sample_shape=()):
@@ -227,7 +252,7 @@ class Simultaneous(object):
             samples (`tensor`): The samples
 
         """
-        return self.tv.stitch([p.sample(sample_shape) for p in self.pdfobjs])
+        return self.tv.stitch([p.sample(sample_shape) for p in self])
 
     def log_prob(self, value):
         """
@@ -241,7 +266,7 @@ class Simultaneous(object):
 
         """
         constituent_data = self.tv.split(value)
-        pdfvals = [p.log_prob(d) for p, d in zip(self.pdfobjs, constituent_data)]
+        pdfvals = [p.log_prob(d) for p, d in zip(self, constituent_data)]
         return Simultaneous._joint_logpdf(pdfvals, batch_size=self.batch_size)
 
     @staticmethod
