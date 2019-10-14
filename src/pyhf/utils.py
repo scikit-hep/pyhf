@@ -7,6 +7,7 @@ import click
 
 from .exceptions import InvalidSpecification
 from . import get_backend
+from .infer import AsymptoticTestStatDistribution, EmpiricalTestStatDistribution
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
@@ -128,7 +129,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
-def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
+def pvals_from_teststat(teststat_sb, teststat_b, cut):
     r"""
     The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of `arXiv:1007.1727`_
 
@@ -154,26 +155,13 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     Returns:
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
-    tensorlib, _ = get_backend()
-    if not qtilde:  # qmu
-        nullval = sqrtqmu_v
-        altval = -(sqrtqmuA_v - sqrtqmu_v)
-    else:  # qtilde
-        if sqrtqmu_v < sqrtqmuA_v:
-            nullval = sqrtqmu_v
-            altval = -(sqrtqmuA_v - sqrtqmu_v)
-        else:
-            qmu = tensorlib.power(sqrtqmu_v, 2)
-            qmu_A = tensorlib.power(sqrtqmuA_v, 2)
-            nullval = (qmu + qmu_A) / (2 * sqrtqmuA_v)
-            altval = (qmu - qmu_A) / (2 * sqrtqmuA_v)
-    CLsb = 1 - tensorlib.normal_cdf(nullval)
-    CLb = 1 - tensorlib.normal_cdf(altval)
+    CLsb = teststat_sb.pvalue(cut)
+    CLb = teststat_b.pvalue(cut)
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
 
 
-def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
+def pvals_from_teststat_expected(teststats_sb, teststat_b, nsigma=0):
     r"""
     Computes the expected :math:`p`-values CLsb, CLb and CLs for data corresponding to a given percentile of the alternate hypothesis.
 
@@ -185,16 +173,8 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
     """
 
-    # NOTE:
-    # To compute the expected p-value, one would need to first compute a hypothetical
-    # observed test-statistic for a dataset whose best-fit value is mu^ = mu'-n*sigma:
-    # $q_n$, and the proceed with the normal p-value computation for whatever test-statistic
-    # was used. However, we can make a shortcut by just computing the p-values in mu^/sigma
-    # space, where the p-values are Clsb = cdf(x-sqrt(lambda)) and CLb=cdf(x)
-
-    tensorlib, _ = get_backend()
-    CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
-    CLb = tensorlib.normal_cdf(nsigma)
+    CLsb = teststats_sb.expected_value(nsigma)
+    CLb = teststat_b.expected_value(nsigma)
     CLs = CLsb / CLb
     return CLsb, CLb, CLs
 
@@ -276,20 +256,30 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    asimov_mu = 0.0
-    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
-
     qmu_v = tensorlib.clip(
         qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
     )
-    sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
+    asimov_mu = 0.0
+    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
     qmuA_v = tensorlib.clip(
         qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max_value=None
     )
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=qtilde)
+    teststat_sb = AsymptoticTestStatDistribution(
+        sqrtqmuA_v, mu_prime='mu', qtilde=qtilde
+    )
+    teststat_b = AsymptoticTestStatDistribution(
+        sqrtqmuA_v, mu_prime='zero', qtilde=qtilde
+    )
+
+    return result_from_teststats(qmu_v, teststat_sb, teststat_b, **kwargs)
+
+
+def result_from_teststats(observed, teststat_sb, teststat_b, **kwargs):
+    tensorlib, _ = get_backend()
+    CLsb, CLb, CLs = pvals_from_teststat(teststat_sb, teststat_b, observed)
 
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):
@@ -297,14 +287,78 @@ def hypotest(
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[-1])
+            CLs_exp.append(
+                pvals_from_teststat_expected(teststat_sb, teststat_b, nsigma=n_sigma)[
+                    -1
+                ]
+            )
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
+        _returns.append(
+            pvals_from_teststat_expected(teststat_sb, teststat_b, nsigma=0)[-1]
+        )
     if kwargs.get('return_test_statistics'):
-        _returns.append([qmu_v, qmuA_v])
-    # Enforce a consistent return type of the observed CLs
+        _returns.append((teststat_sb, teststat_b))
+
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
+
+
+def evaluate_teststats(toys, mu_test, m):
+    tensorlib, _ = get_backend()
+    teststats = []
+    for t in toys:
+        val = qmu(mu_test, t, m, m.config.suggested_init(), m.config.suggested_bounds())
+        teststats.append(val)
+    teststats = tensorlib.astensor(teststats)
+    return teststats
+
+
+def hypotest_toys(
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    qtilde=False,
+    ntoys=300,
+    **kwargs
+):
+    tensorlib, _ = get_backend()
+
+    init_pars = init_pars or pdf.config.suggested_init()
+    par_bounds = par_bounds or pdf.config.suggested_bounds()
+
+    if qtilde:
+        if not par_bounds[pdf.config.poi_index][0] == 0:
+            raise ValueError('lower bound of poi must be zero when qtilde')
+    else:
+        if par_bounds[pdf.config.poi_index][0] == 0:
+            raise ValueError('lower bound of poi must should not be zero for qtilde')
+
+    qmu_v = tensorlib.clip(
+        qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
+    )
+
+    bpars = pdf.config.suggested_init()
+    bpars[pdf.config.poi_index] = 0.0
+    bpars = tensorlib.astensor(bpars)
+
+    spars = pdf.config.suggested_init()
+    spars[pdf.config.poi_index] = poi_test
+    spars = tensorlib.astensor(spars)
+
+    spdf = pdf.make_pdf(spars)
+    bpdf = pdf.make_pdf(bpars)
+
+    stoys = spdf.sample((ntoys,))
+    btoys = bpdf.sample((ntoys,))
+
+    teststat_sb = EmpiricalTestStatDistribution(
+        evaluate_teststats(stoys, poi_test, pdf)
+    )
+    teststat_b = EmpiricalTestStatDistribution(evaluate_teststats(btoys, poi_test, pdf))
+
+    return result_from_teststats(qmu_v, teststat_sb, teststat_b, **kwargs)
