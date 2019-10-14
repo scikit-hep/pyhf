@@ -15,9 +15,6 @@ extras_require = {
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
     ],
     'torch': ['torch~=1.2'],
-    # 'dask': [
-    #     'dask[array]'
-    # ],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
     'develop': [
@@ -87,7 +84,7 @@ setup(
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
     license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch dask',
+    keywords='physics fitting numpy scipy tensorflow pytorch',
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
