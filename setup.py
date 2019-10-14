@@ -85,8 +85,8 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/diana-hep/pyhf',
-    author='Lukas Heinrich',
-    author_email='lukas.heinrich@cern.ch',
+    author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
+    author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
     license='Apache',
     keywords='physics fitting numpy scipy tensorflow pytorch mxnet dask',
     classifiers=[
