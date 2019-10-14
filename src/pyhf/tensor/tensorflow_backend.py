@@ -222,7 +222,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
             >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -421,7 +423,7 @@ class tensorflow_backend(object):
             >>> import tensorflow as tf
             >>> sess = tf.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
             ...
@@ -453,7 +455,7 @@ class tensorflow_backend(object):
             >>> import tensorflow as tf
             >>> sess = tf.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
@@ -481,7 +483,7 @@ class tensorflow_backend(object):
             >>> import tensorflow as tf
             >>> sess = tf.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])

@@ -1,3 +1,4 @@
+"""The probability density function module."""
 from . import get_backend
 
 
@@ -29,7 +30,7 @@ class _SimpleDistributionMixin(object):
 
     def sample(self, sample_shape=()):
         r"""
-        The collection of values sampled from the probability density function
+        The collection of values sampled from the probability density function.
 
         Args:
             sample_shape (`tuple`): The shape of the sample to be returned
@@ -51,12 +52,13 @@ class Poisson(_SimpleDistributionMixin):
         >>> pyhf.probability.Poisson(rates)
         <pyhf.probability.Poisson object at 0x...>
 
-    Args:
-        rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
-
     """
 
     def __init__(self, rate):
+        """
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+        """
         tensorlib, _ = get_backend()
         self.rate = rate
         self._pdf = tensorlib.poisson_dist(rate)
@@ -89,14 +91,15 @@ class Normal(_SimpleDistributionMixin):
         >>> stds = pyhf.tensorlib.astensor([1, 0.5])
         >>> pyhf.probability.Normal(means, stds)
         <pyhf.probability.Normal object at 0x...>
-
-    Args:
-        loc (`tensor` or `float`): The mean of the Normal distribution
-        scale (`tensor` or `float`): The standard deviation of the Normal distribution
-
     """
 
     def __init__(self, loc, scale):
+        """
+        Args:
+            loc (`tensor` or `float`): The mean of the Normal distribution
+            scale (`tensor` or `float`): The standard deviation of the Normal distribution
+        """
+
         tensorlib, _ = get_backend()
         self.loc = loc
         self.scale = scale
@@ -123,12 +126,26 @@ class Normal(_SimpleDistributionMixin):
 
 class Independent(_SimpleDistributionMixin):
     """
-    A probability density corresponding to the joint
-    likelihood of a batch of identically distributed random
-    numbers.
+    A probability density corresponding to the joint distribution of a batch of
+    identically distributed random variables.
+
+    Example:
+        >>> import pyhf
+        >>> import numpy.random as random
+        >>> random.seed(0)
+        >>> rates = pyhf.tensorlib.astensor([10.0, 10.0])
+        >>> poissons = pyhf.probability.Poisson(rates)
+        >>> independent = pyhf.probability.Independent(poissons)
+        >>> independent.sample()
+        array([10, 11])
     """
 
     def __init__(self, batched_pdf, batch_size=None):
+        """
+        Args:
+            batched_pdf (`pyhf.probability` distribution): The batch of pdfs of the same type (e.g. Poisson)
+            batch_size (`int`): The size of the batch
+        """
         self.batch_size = batch_size
         self._pdf = batched_pdf
 
@@ -194,11 +211,8 @@ class Simultaneous(object):
         Args:
 
             pdfobjs (`Distribution`): The constituent pdf objects
-            tensorview (`_TensorViewer`): The `_TensorViwer` defining the data composition
-
-
-        Returns:
-            data (`tensor`): The expected data
+            tensorview (`_TensorViewer`): The :code:`_TensorViewer` defining the data composition
+            batch_size (`int`): The size of the batch
 
         """
         self.tv = tensorview
@@ -231,38 +245,38 @@ class Simultaneous(object):
         return self._pdfobjs[index]
 
     def expected_data(self):
-        """
-        Compute mean data of the density
+        r"""
+        The expectation value of the probability density function.
 
         Returns:
-            data (`tensor`): The expected data
+            Tensor: The expectation value of the distribution :math:`\mathrm{E}\left[f(\theta)\right]`
 
         """
         tostitch = [p.expected_data() for p in self]
         return self.tv.stitch(tostitch)
 
     def sample(self, sample_shape=()):
-        """
-        Sample data from the density.
+        r"""
+        The collection of values sampled from the probability density function.
 
         Args:
-            sample shale (`tuple`): The desired shape of the samples.
+            sample_shape (`tuple`): The shape of the sample to be returned
 
         Returns:
-            samples (`tensor`): The samples
+            Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
 
         """
         return self.tv.stitch([p.sample(sample_shape) for p in self])
 
     def log_prob(self, value):
-        """
-        Compute the log density value for observed data.
+        r"""
+        The log of the probability density function at the given value.
 
         Args:
-            data (`tensor`): The observed value
+            value (`tensor`): The observed value
 
         Returns:
-            value (`float` or `tensor`): The log density value
+            Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
 
         """
         constituent_data = self.tv.split(value)
