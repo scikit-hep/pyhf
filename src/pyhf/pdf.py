@@ -209,7 +209,7 @@ class _ConstraintModel(object):
 
     def has_pdf(self):
         """
-        Indicate whether the model has a constraint.
+        Indicate whether this model has a constraint.
 
         Returns:
             Bool: Whether the model has a constraint term
