@@ -37,6 +37,28 @@ class jax_backend(object):
         """
         return np.clip(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> pyhf.tensorlib.tile(a, (1, 2))
+            array([[1., 1.],
+                   [2., 2.]])
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            NumPy ndarray: The tensor with repeated axes
+        """
+        return np.tile(tensor_in, repeats)
+
     def tolist(self, tensor_in):
         try:
             return onp.asarray(tensor_in).tolist()
