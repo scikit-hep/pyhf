@@ -37,8 +37,7 @@ def set_backend(backend, custom_optimizer=None):
         >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
 
     Args:
-        backend: One of the supported pyhf backends: NumPy,
-                 TensorFlow, PyTorch, and MXNet
+        backend: One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
 
     Returns:
         None
@@ -62,9 +61,6 @@ def set_backend(backend, custom_optimizer=None):
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
-    # TODO: Add support for mxnet_optimizer()
-    # elif tensorlib.name == 'mxnet':
-    #     new_optimizer = custom_optimizer if custom_optimizer else mxnet_optimizer()
     else:
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()

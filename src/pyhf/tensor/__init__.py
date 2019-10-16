@@ -36,19 +36,6 @@ class _BackendRetriever(object):
                     "There was a problem importing TensorFlow. The tensorflow backend cannot be used.",
                     e,
                 )
-        elif name == 'mxnet_backend':
-            try:
-                from .mxnet_backend import mxnet_backend
-
-                assert mxnet_backend
-                # for autocomplete and dir() calls
-                self.mxnet_backend = mxnet_backend
-                return mxnet_backend
-            except ImportError as e:
-                raise exceptions.ImportBackendError(
-                    "There was a problem importing MxNet. The mxnet backend cannot be used.",
-                    e,
-                )
 
 
 BackendRetriever = _BackendRetriever()

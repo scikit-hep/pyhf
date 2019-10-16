@@ -15,10 +15,6 @@ extras_require = {
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
     ],
     'torch': ['torch~=1.2'],
-    'mxnet': ['mxnet~=1.0', 'numpy<1.15.0,>=1.8.2', 'graphviz<0.9.0,>=0.8.1'],
-    # 'dask': [
-    #     'dask[array]'
-    # ],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
     'develop': [
@@ -88,7 +84,7 @@ setup(
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
     license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch mxnet dask',
+    keywords='physics fitting numpy scipy tensorflow pytorch',
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
@@ -101,7 +97,7 @@ setup(
     include_package_data=True,
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
     install_requires=[
-        'scipy',  # requires numpy, which is required by pyhf, tensorflow, and mxnet
+        'scipy',  # requires numpy, which is required by pyhf and tensorflow
         'click>=6.0',  # for console scripts,
         'tqdm',  # for readxml
         'six',  # for modifiers

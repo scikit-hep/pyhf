@@ -51,7 +51,6 @@ Computational Backends:
 - [x] NumPy
 - [x] PyTorch
 - [x] TensorFlow
-- ([x]) MXNet (MXNet support is experimental)
 
 Available Optimizers
 
@@ -96,7 +95,7 @@ pip install pyhf
 
 and to install `pyhf` with additional backends run
 ```
-pip install pyhf[tensorflow,torch,mxnet]
+pip install pyhf[tensorflow,torch]
 ```
 or a subset of the options.
 

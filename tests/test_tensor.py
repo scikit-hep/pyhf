@@ -171,7 +171,6 @@ def test_pdf_calculations(backend):
     )
 
 
-@pytest.mark.skip_mxnet
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
@@ -222,7 +221,6 @@ def test_ND_gather(backend):
     ) == [[3, 4], [1, 2]]
 
 
-@pytest.mark.fail_mxnet
 def test_isfinite(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.isfinite(tb.astensor([1.0, float("nan"), float("inf")]))) == [
@@ -236,19 +234,13 @@ def test_einsum(backend):
     tb = pyhf.tensorlib
     x = np.arange(20).reshape(5, 4).tolist()
 
-    if isinstance(pyhf.tensorlib, pyhf.tensor.mxnet_backend):
-        with pytest.raises(NotImplementedError):
-            assert tb.einsum('ij->ji', [1, 2, 3])
-    else:
-        assert np.all(
-            tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
-        )
-        assert (
-            tb.tolist(
-                tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3]))
-            )
-            == [[1, 2, 3]] * 3
-        )
+    assert np.all(
+        tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
+    )
+    assert (
+        tb.tolist(tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3])))
+        == [[1, 2, 3]] * 3
+    )
 
 
 def test_list_to_list(backend):
@@ -286,7 +278,6 @@ def test_tensorflow_tolist_nosession():
         assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
 
 
-@pytest.mark.skip_mxnet
 def test_pdf_eval(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -335,7 +326,6 @@ def test_pdf_eval(backend):
     )
 
 
-@pytest.mark.fail_mxnet
 def test_pdf_eval_2(backend):
     source = {
         "binning": [2, -0.5, 1.5],

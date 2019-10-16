@@ -8,7 +8,6 @@ from pyhf.modifiers.shapefactor import shapefactor_combined
 from pyhf.parameters import paramset
 import numpy as np
 import pyhf
-import pytest
 
 
 class MockConfig(object):
@@ -39,7 +38,6 @@ class MockConfig(object):
         return self.par_map[name]['paramset']
 
 
-@pytest.mark.skip_mxnet
 def test_histosys(backend):
     mc = MockConfig(
         par_map={
@@ -129,7 +127,6 @@ def test_histosys(backend):
     assert np.allclose(mod[0, 0, 3], [1.0, 2.0, 3.0])
 
 
-@pytest.mark.skip_mxnet
 def test_normsys(backend):
     mc = MockConfig(
         par_map={
@@ -221,7 +218,6 @@ def test_normsys(backend):
     assert np.allclose(mod[0, 0, 3], [1.1, 1.1, 1.1])
 
 
-@pytest.mark.skip_mxnet
 def test_lumi(backend):
     mc = MockConfig(
         par_map={
@@ -274,7 +270,6 @@ def test_lumi(backend):
     assert np.allclose(mod[0, 0, 3], [4.0, 4.0, 4.0])
 
 
-@pytest.mark.skip_mxnet
 def test_stat(backend):
     mc = MockConfig(
         par_map={
@@ -352,7 +347,6 @@ def test_stat(backend):
     assert np.allclose(mod[1, 0, 0], [1, 1.2, 1.3])
 
 
-@pytest.mark.skip_mxnet
 def test_shapesys(backend):
     mc = MockConfig(
         par_map={
@@ -436,7 +430,6 @@ def test_shapesys(backend):
     assert np.allclose(mod[1, 0, 0], [1, 1.2, 1.3])
 
 
-@pytest.mark.skip_mxnet
 def test_normfactor(backend):
     mc = MockConfig(
         par_map={
@@ -513,7 +506,6 @@ def test_normfactor(backend):
     assert np.allclose(mod[1, 0, 3], [1.0, 8.0, 8.0])
 
 
-@pytest.mark.skip_mxnet
 def test_shapefactor(backend):
     mc = MockConfig(
         par_map={
