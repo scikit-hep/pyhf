@@ -52,7 +52,7 @@ def reset_backend():
             pyhf.optimize.minuit_optimizer(),
         ),
     ],
-    ids=['numpy', 'pytorch', 'pytorch64', 'tensorflow', 'jax', 'numpy_minuit',],
+    ids=['numpy', 'pytorch', 'pytorch64', 'tensorflow', 'jax', 'numpy_minuit'],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
