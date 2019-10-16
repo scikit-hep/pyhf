@@ -2,7 +2,6 @@ import jax.numpy as np
 from jax.config import config
 from jax.scipy.special import gammaln
 from jax.scipy.stats import norm
-import numpy as onp
 import logging
 from scipy.stats import poisson
 
@@ -87,7 +86,7 @@ class jax_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return onp.asarray(tensor_in).tolist()
+            return np.asarray(tensor_in).tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -103,7 +102,7 @@ class jax_backend(object):
         return tensor[mask]
 
     def isfinite(self, tensor):
-        return np.ones_like(tensor, dtype=onp.bool)
+        return np.ones_like(tensor, dtype=np.bool)
         # return np.isfinite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
@@ -116,9 +115,19 @@ class jax_backend(object):
         Returns:
             `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
         """
-        dtypemap = {'float': onp.float64, 'int': onp.int64, 'bool': onp.bool_}
-        dtype = dtypemap[dtype]
-        return np.asarray(tensor_in, dtype=dtype)
+        dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
+        try:
+            dtype = dtypemap[dtype]
+        except KeyError:
+            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            raise
+        tensor = np.asarray(tensor_in, dtype=dtype)
+        # Ensure non-empty tensor shape for consistency
+        try:
+            tensor.shape[0]
+        except IndexError:
+            tensor = np.reshape(tensor, [1])
+        return np.asarray(tensor, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
