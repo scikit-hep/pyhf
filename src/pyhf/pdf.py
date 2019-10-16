@@ -628,7 +628,7 @@ class Model(object):
 
     def constraint_logpdf(self, auxdata, pars):
         """
-        Compute the log value of the constraint term.
+        Compute the log value of the constraint pdf.
 
         Args:
             auxdata (`tensor`): The auxiliary measurement data
