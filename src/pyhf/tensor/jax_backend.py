@@ -1,11 +1,37 @@
 import jax.numpy as np
 from jax.config import config
+from jax.scipy.special import gammaln
+from jax.scipy.stats import norm
 import numpy as onp
 import logging
-from scipy.special import gammaln
-from scipy.stats import norm
+from scipy.stats import poisson
 
 log = logging.getLogger(__name__)
+
+
+class _BasicPoisson(object):
+    def __init__(self, rate):
+        self.rate = rate
+
+    def sample(self, sample_shape):
+        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+
+    def log_prob(self, value):
+        tensorlib = jax_backend()
+        return tensorlib.poisson_logpdf(value, self.rate)
+
+
+class _BasicNormal(object):
+    def __init__(self, loc, scale):
+        self.loc = loc
+        self.scale = scale
+
+    def sample(self, sample_shape):
+        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
+
+    def log_prob(self, value):
+        tensorlib = jax_backend()
+        return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
 class jax_backend(object):
@@ -283,3 +309,48 @@ class jax_backend(object):
             NumPy float: The CDF
         """
         return norm.cdf(x, loc=mu, scale=sigma)
+
+    def poisson_dist(self, rate):
+        r"""
+        The Poisson distribution with rate parameter :code:`rate`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> rates = pyhf.tensorlib.astensor([5, 8])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> poissons = pyhf.tensorlib.poisson_dist(rates)
+            >>> poissons.log_prob(values)
+            array([-1.74030218, -2.0868536 ])
+
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+
+        Returns:
+            Poisson distribution: The Poisson distribution class
+        """
+        return _BasicPoisson(rate)
+
+    def normal_dist(self, mu, sigma):
+        r"""
+        The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> means = pyhf.tensorlib.astensor([5, 8])
+            >>> stds = pyhf.tensorlib.astensor([1, 0.5])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> normals = pyhf.tensorlib.normal_dist(means, stds)
+            >>> normals.log_prob(values)
+            array([-1.41893853, -2.22579135])
+
+        Args:
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            Normal distribution: The Normal distribution class
+
+        """
+        return _BasicNormal(mu, sigma)
