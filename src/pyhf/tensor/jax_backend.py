@@ -94,8 +94,6 @@ class jax_backend(object):
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return np.outer(tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
