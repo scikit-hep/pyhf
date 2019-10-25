@@ -6,23 +6,10 @@ import os
 import pyhf
 
 
-# def test_sbottom_download():
-#     # curl -sL hepdata.net/record/resourc…
-#     # | tar -O -xzv RegionA/BkgOnly.json
-#     # | pyhf cls --patch <(curl -sL hepdata.net/record/resourc…
-#     # | tar -O -xzv RegionA/patch.sbottom_1300_205_60.json)
-#     sbottom_HEPData_URL = "https://www.hepdata.net/record/resource/997020?view=true"
-#     response = requests.get(sbottom_HEPData_URL, stream=True)
-#     response.raise_for_status()
-#
-#     with open('/home/mcf/Code/GitHub/pyhf/output.gz', 'wb') as handle:
-#         for block in response.iter_content(1024):
-#             handle.write(block)
-#     # response.content is a GzipFile object
-#     # if downloaded with webbrowser is named HEPData_workspaces.tar.gz
-#     print(tarfile.is_tarfile(response.content))
-#     # tar_file = tarfile.open(name="archive", mode="r:gz", fileobj=response.content)
-#     # print(tar_file)
+# curl -sL https://www.hepdata.net/record/resource/997020?view=true
+# | tar -O -xzv RegionA/BkgOnly.json
+# | pyhf cls --patch <(curl -sL https://www.hepdata.net/record/resource/997020?view=true
+# | tar -O -xzv RegionA/patch.sbottom_1300_205_60.json)
 
 
 @pytest.fixture(scope='module')
@@ -30,10 +17,6 @@ def sbottom_likelihoods_download():
     """Download the sbottom likelihoods tarball from HEPData"""
     sbottom_HEPData_URL = "https://www.hepdata.net/record/resource/997020?view=true"
     targz_filename = "sbottom_workspaces.tar.gz"
-    # Download the tar.gz of the likelihoods
-    # file_path = os.path.join(tmp_path.strpath, sbottom_HEPData_URL)
-    # file_name = tmp_path.join(targz_filename)
-    # response = requests.get(tmp_path.join(sbottom_HEPData_URL), stream=True)
     response = requests.get(sbottom_HEPData_URL, stream=True)
     assert response.status_code == 200
     with open(targz_filename, 'wb') as file:
@@ -82,24 +65,15 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
     result = pyhf.utils.hypotest(
         1.0, workspace.data(patched), patched, qtilde=True, return_expected_set=True
     )
-    result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
-    print(json.dumps(result, indent=4, sort_keys=True))
-
-    # command line
-    # {
-    #     "CLs_exp": [
-    #         0.09022521939741368,
-    #         0.19378411715432514,
-    #         0.3843236961508878,
-    #         0.6557759457699649,
-    #         0.8910421945189615
-    #     ],
-    #     "CLs_obs": 0.24443635754482018
-    # }
-    # pytest
-    # {'CLs_obs': 0.24443635754482018, 'CLs_exp': [0.09022521939741368, 0.19378411715432514, 0.3843236961508878, 0.6557759457699649, 0.8910421945189615]}
-
-    # print(s)
-    # TODO: Patch bkg_json with signal_json to create workspace
-    # Then validate
-    # assert pyhf.utils.validate(workspace, 'workspace.json')
+    CLs_obs = result[0].tolist()[0]
+    CLs_exp = result[-1].ravel().tolist()
+    assert CLs_obs == pytest.approx(0.24443635754482018)
+    assert CLs_exp == pytest.approx(
+        [
+            0.09022521939741368,
+            0.19378411715432514,
+            0.3843236961508878,
+            0.6557759457699649,
+            0.8910421945189615,
+        ]
+    )
