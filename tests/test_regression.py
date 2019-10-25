@@ -67,8 +67,35 @@ def regionA_signal_patch_json(sbottom_likelihoods_download):
 def test_gzip_file(regionA_bkgonly_json, regionA_signal_patch_json):
     bkg_json = regionA_bkgonly_json
     signal_json = regionA_signal_patch_json
-    s = json.dumps(bkg_json, indent=4, sort_keys=True)
-    s = json.dumps(signal_json, indent=4, sort_keys=True)
+    workspace = pyhf.workspace.Workspace(bkg_json)
+    patched = workspace.model(
+        measurement_name=None,
+        patches=[signal_json],
+        modifier_settings={
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        },
+    )
+    result = pyhf.utils.hypotest(
+        1.0, workspace.data(patched), patched, qtilde=True, return_expected_set=True
+    )
+    result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
+    print(json.dumps(result, indent=4, sort_keys=True))
+
+    # command line
+    # {
+    #     "CLs_exp": [
+    #         0.09022521939741368,
+    #         0.19378411715432514,
+    #         0.3843236961508878,
+    #         0.6557759457699649,
+    #         0.8910421945189615
+    #     ],
+    #     "CLs_obs": 0.24443635754482018
+    # }
+    # pytest
+    # {'CLs_obs': 0.24443635754482018, 'CLs_exp': [0.09022521939741368, 0.19378411715432514, 0.3843236961508878, 0.6557759457699649, 0.8910421945189615]}
+
     # print(s)
     # TODO: Patch bkg_json with signal_json to create workspace
     # Then validate
