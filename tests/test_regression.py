@@ -25,24 +25,24 @@ def sbottom_likelihoods_download():
 def regionA_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region A"""
     tarfile = sbottom_likelihoods_download
-    bkgonly_json_data = (
+    bkgonly_json = (
         tarfile.extractfile(tarfile.getmember("RegionA/BkgOnly.json"))
         .read()
         .decode("utf8")
     )
-    return json.loads(bkgonly_json_data)
+    return json.loads(bkgonly_json)
 
 
 @pytest.fixture(scope='module')
 def regionA_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region A"""
     tarfile = sbottom_likelihoods_download
-    signal_patch_json_data = (
+    signal_patch_json = (
         tarfile.extractfile(tarfile.getmember("RegionA/patch.sbottom_1300_205_60.json"))
         .read()
         .decode("utf8")
     )
-    return json.loads(signal_patch_json_data)
+    return json.loads(signal_patch_json)
 
 
 def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
