@@ -1,9 +1,9 @@
-import pyhf
+import pytest
 import requests
 import tarfile
 import json
 import os
-import pytest
+import pyhf
 
 
 # def test_sbottom_download():
@@ -27,6 +27,7 @@ import pytest
 
 @pytest.fixture(scope='module')
 def sbottom_likelihoods_download():
+    """Download the sbottom likelihoods tarball from HEPData"""
     sbottom_HEPData_URL = "https://www.hepdata.net/record/resource/997020?view=true"
     targz_filename = "sbottom_workspaces.tar.gz"
     # Download the tar.gz of the likelihoods
@@ -44,6 +45,7 @@ def sbottom_likelihoods_download():
 
 @pytest.fixture(scope='module')
 def regionA_bkgonly_json(sbottom_likelihoods_download):
+    """Extract the background only model from sbottom Region A"""
     tarfile = sbottom_likelihoods_download
     bkgonly_json_data = (
         tarfile.extractfile(tarfile.getmember("RegionA/BkgOnly.json"))
@@ -55,6 +57,7 @@ def regionA_bkgonly_json(sbottom_likelihoods_download):
 
 @pytest.fixture(scope='module')
 def regionA_signal_patch_json(sbottom_likelihoods_download):
+    """Extract a signal model from sbottom Region A"""
     tarfile = sbottom_likelihoods_download
     signal_patch_json_data = (
         tarfile.extractfile(tarfile.getmember("RegionA/patch.sbottom_1300_205_60.json"))
@@ -64,7 +67,7 @@ def regionA_signal_patch_json(sbottom_likelihoods_download):
     return json.loads(signal_patch_json_data)
 
 
-def test_gzip_file(regionA_bkgonly_json, regionA_signal_patch_json):
+def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
     bkg_json = regionA_bkgonly_json
     signal_json = regionA_signal_patch_json
     workspace = pyhf.workspace.Workspace(bkg_json)
