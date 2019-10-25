@@ -62,7 +62,7 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
     )
     CLs_obs = result[0].tolist()[0]
     CLs_exp = result[-1].ravel().tolist()
-    assert CLs_obs == pytest.approx(0.2444363575448201, rel=1e-7)
+    assert CLs_obs == pytest.approx(0.2444363575448201, rel=1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -75,6 +75,6 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
                     0.8910421945189615,
                 ]
             ),
-            rtol=1e-7,
+            rtol=1e-5,
         )
     )
