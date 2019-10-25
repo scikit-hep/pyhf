@@ -7,12 +7,6 @@ import pyhf
 import numpy as np
 
 
-# curl -sL https://www.hepdata.net/record/resource/997020?view=true
-# | tar -O -xzv RegionA/BkgOnly.json
-# | pyhf cls --patch <(curl -sL https://www.hepdata.net/record/resource/997020?view=true
-# | tar -O -xzv RegionA/patch.sbottom_1300_205_60.json)
-
-
 @pytest.fixture(scope='module')
 def sbottom_likelihoods_download():
     """Download the sbottom likelihoods tarball from HEPData"""
@@ -68,19 +62,19 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
     )
     CLs_obs = result[0].tolist()[0]
     CLs_exp = result[-1].ravel().tolist()
-    assert CLs_obs == pytest.approx(0.24443635754482018, rel=1e-6)
+    assert CLs_obs == pytest.approx(0.2444363575448201, rel=1e-7)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.09022521939741368,
-                    0.19378411715432514,
+                    0.0902252193974136,
+                    0.1937841171543251,
                     0.3843236961508878,
                     0.6557759457699649,
                     0.8910421945189615,
                 ]
             ),
-            rtol=1e-6,
+            rtol=1e-7,
         )
     )
