@@ -161,20 +161,19 @@ def test_sbottom_regionC_1000_205_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.9424021663134358, rel=1e-5)
-    # TODO: Lower tolerance to 1e-5 once Python 2.7 is dropped
+    assert CLs_obs == pytest.approx(0.9424009499519606, rel=1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.8906506884676416,
-                    0.9280287127442725,
-                    0.9614301796189283,
-                    0.9857558128338463,
-                    0.9971959212073871,
+                    0.8906470732412857,
+                    0.9280262743211622,
+                    0.9614288407343238,
+                    0.9857553063165135,
+                    0.9971958190844394,
                 ]
             ),
-            rtol=1e-4,
+            rtol=1e-5,
         )
     )
