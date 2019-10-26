@@ -46,12 +46,10 @@ def regionA_signal_patch_json(sbottom_likelihoods_download):
 
 
 def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
-    bkg_only = regionA_bkgonly_json
-    signal_patch = regionA_signal_patch_json
-    workspace = pyhf.workspace.Workspace(bkg_only)
+    workspace = pyhf.workspace.Workspace(regionA_bkgonly_json)
     model = workspace.model(
         measurement_name=None,
-        patches=[signal_patch],
+        patches=[regionA_signal_patch_json],
         modifier_settings={
             'normsys': {'interpcode': 'code4'},
             'histosys': {'interpcode': 'code4p'},
