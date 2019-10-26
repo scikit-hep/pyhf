@@ -162,6 +162,7 @@ def test_sbottom_regionC_1000_205_60(
         sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
     )
     assert CLs_obs == pytest.approx(0.9424009499519606, rel=1e-5)
+    # TODO: Lower tolerance to 1e-5 once Python 2.7 is dropped
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -174,6 +175,6 @@ def test_sbottom_regionC_1000_205_60(
                     0.9971958190844394,
                 ]
             ),
-            rtol=1e-5,
+            rtol=1e-4,
         )
     )
