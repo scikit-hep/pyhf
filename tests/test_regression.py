@@ -26,57 +26,16 @@ def sbottom_likelihoods_download():
     os.remove(targz_filename)
 
 
-def extract_json_from_tarfile(tarfile, json_name):
-    json_file = tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
-    return json.loads(json_file)
+# Factory as fixture pattern
+@pytest.fixture
+def get_json_from_tarfile():
+    def _get_json_from_tarfile(tarfile, json_name):
+        json_file = (
+            tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
+        )
+        return json.loads(json_file)
 
-
-@pytest.fixture(scope='module')
-def sbottom_regionA_bkgonly_json(sbottom_likelihoods_download):
-    """Extract the background only model from sbottom Region A"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
-    )
-
-
-@pytest.fixture(scope='module')
-def sbottom_regionB_bkgonly_json(sbottom_likelihoods_download):
-    """Extract the background only model from sbottom Region B"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionB/BkgOnly.json"
-    )
-
-
-@pytest.fixture(scope='module')
-def sbottom_regionC_bkgonly_json(sbottom_likelihoods_download):
-    """Extract the background only model from sbottom Region C"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionC/BkgOnly.json"
-    )
-
-
-@pytest.fixture()
-def sbottom_regionA_1300_205_60_patch_json(sbottom_likelihoods_download):
-    """Extract a signal model from sbottom Region A"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
-    )
-
-
-@pytest.fixture()
-def sbottom_regionB_1000_205_60_patch_json(sbottom_likelihoods_download):
-    """Extract a signal model from sbottom Region B"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionB/patch.sbottom_1000_205_60.json"
-    )
-
-
-@pytest.fixture()
-def sbottom_regionC_1000_205_60_patch_json(sbottom_likelihoods_download):
-    """Extract a signal model from sbottom Region C"""
-    return extract_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionC/patch.sbottom_1000_205_60.json"
-    )
+    return _get_json_from_tarfile
 
 
 def calculate_CLs(bkgonly_json, signal_patch_json):
@@ -108,8 +67,14 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
 
 
 def test_sbottom_regionA_1300_205_60(
-    sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
+    sbottom_likelihoods_download, get_json_from_tarfile
 ):
+    sbottom_regionA_bkgonly_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+    )
+    sbottom_regionA_1300_205_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
+    )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
     )
@@ -132,8 +97,14 @@ def test_sbottom_regionA_1300_205_60(
 
 
 def test_sbottom_regionB_1000_205_60(
-    sbottom_regionB_bkgonly_json, sbottom_regionB_1000_205_60_patch_json
+    sbottom_likelihoods_download, get_json_from_tarfile
 ):
+    sbottom_regionB_bkgonly_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionB/BkgOnly.json"
+    )
+    sbottom_regionB_1000_205_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionB/patch.sbottom_1000_205_60.json"
+    )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionB_bkgonly_json, sbottom_regionB_1000_205_60_patch_json
     )
@@ -156,8 +127,14 @@ def test_sbottom_regionB_1000_205_60(
 
 
 def test_sbottom_regionC_1000_205_60(
-    sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
+    sbottom_likelihoods_download, get_json_from_tarfile
 ):
+    sbottom_regionC_bkgonly_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionC/BkgOnly.json"
+    )
+    sbottom_regionC_1000_205_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionC/patch.sbottom_1000_205_60.json"
+    )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
     )
