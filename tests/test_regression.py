@@ -21,76 +21,57 @@ def sbottom_likelihoods_download():
     os.remove(targz_filename)
 
 
+def extract_json_from_tarfile(tarfile, json_name):
+    json_file = tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
+    return json.loads(json_file)
+
+
 @pytest.fixture(scope='module')
 def regionA_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region A"""
-    tarfile = sbottom_likelihoods_download
-    bkgonly_json = (
-        tarfile.extractfile(tarfile.getmember("RegionA/BkgOnly.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
     )
-    return json.loads(bkgonly_json)
 
 
 @pytest.fixture(scope='module')
 def regionB_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region B"""
-    tarfile = sbottom_likelihoods_download
-    bkgonly_json = (
-        tarfile.extractfile(tarfile.getmember("RegionB/BkgOnly.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionB/BkgOnly.json"
     )
-    return json.loads(bkgonly_json)
 
 
 @pytest.fixture(scope='module')
 def regionC_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region C"""
-    tarfile = sbottom_likelihoods_download
-    bkgonly_json = (
-        tarfile.extractfile(tarfile.getmember("RegionC/BkgOnly.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionC/BkgOnly.json"
     )
-    return json.loads(bkgonly_json)
 
 
 @pytest.fixture()
 def regionA_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region A"""
-    tarfile = sbottom_likelihoods_download
-    signal_patch_json = (
-        tarfile.extractfile(tarfile.getmember("RegionA/patch.sbottom_1300_205_60.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
     )
-    return json.loads(signal_patch_json)
 
 
 @pytest.fixture()
 def regionB_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region B"""
-    tarfile = sbottom_likelihoods_download
-    signal_patch_json = (
-        tarfile.extractfile(tarfile.getmember("RegionB/patch.sbottom_1000_205_60.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionB/patch.sbottom_1000_205_60.json"
     )
-    return json.loads(signal_patch_json)
 
 
 @pytest.fixture()
 def regionC_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region C"""
-    tarfile = sbottom_likelihoods_download
-    signal_patch_json = (
-        tarfile.extractfile(tarfile.getmember("RegionC/patch.sbottom_1000_205_60.json"))
-        .read()
-        .decode("utf8")
+    return extract_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionC/patch.sbottom_1000_205_60.json"
     )
-    return json.loads(signal_patch_json)
 
 
 def calculate_CLs(bkgonly_json, signal_patch_json):
