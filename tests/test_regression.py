@@ -99,8 +99,8 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     and signal patch.
 
     Args:
-        bkgonly_json
-        signal_patch_json
+        bkgonly_json: The JSON for the background only model
+        signal_patch_json: The JSON Patch for the signal model
 
     Returns:
         CLs_obs: The observed CLs value
@@ -134,6 +134,46 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
                     0.3843236961508878,
                     0.6557759457699649,
                     0.8910421945189615,
+                ]
+            ),
+            rtol=1e-5,
+        )
+    )
+
+
+def test_sbottom_regionB(regionB_bkgonly_json, regionB_signal_patch_json):
+    CLs_obs, CLs_exp = calculate_CLs(regionB_bkgonly_json, regionB_signal_patch_json)
+    assert CLs_obs == pytest.approx(0.999346961987008, rel=1e-5)
+    assert np.all(
+        np.isclose(
+            np.array(CLs_exp),
+            np.array(
+                [
+                    0.998057935502826,
+                    0.998751430736146,
+                    0.999346535249686,
+                    0.999764360117854,
+                    0.999954715109718,
+                ]
+            ),
+            rtol=1e-5,
+        )
+    )
+
+
+def test_sbottom_regionC(regionC_bkgonly_json, regionC_signal_patch_json):
+    CLs_obs, CLs_exp = calculate_CLs(regionC_bkgonly_json, regionC_signal_patch_json)
+    assert CLs_obs == pytest.approx(0.9424021663134358, rel=1e-5)
+    assert np.all(
+        np.isclose(
+            np.array(CLs_exp),
+            np.array(
+                [
+                    0.8906506884676416,
+                    0.9280287127442725,
+                    0.9614301796189283,
+                    0.9857558128338463,
+                    0.9971959212073871,
                 ]
             ),
             rtol=1e-5,
