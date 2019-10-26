@@ -145,6 +145,7 @@ def test_sbottom_regionB(regionB_bkgonly_json, regionB_signal_patch_json):
 def test_sbottom_regionC(regionC_bkgonly_json, regionC_signal_patch_json):
     CLs_obs, CLs_exp = calculate_CLs(regionC_bkgonly_json, regionC_signal_patch_json)
     assert CLs_obs == pytest.approx(0.9424021663134358, rel=1e-5)
+    # TODO: Lower tolerance to 1e-5 once Python 2.7 is dropped
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -157,6 +158,6 @@ def test_sbottom_regionC(regionC_bkgonly_json, regionC_signal_patch_json):
                     0.9971959212073871,
                 ]
             ),
-            rtol=1e-5,
+            rtol=1e-4,
         )
     )
