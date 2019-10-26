@@ -57,7 +57,7 @@ def regionC_bkgonly_json(sbottom_likelihoods_download):
     return json.loads(bkgonly_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def regionA_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region A"""
     tarfile = sbottom_likelihoods_download
@@ -69,7 +69,7 @@ def regionA_signal_patch_json(sbottom_likelihoods_download):
     return json.loads(signal_patch_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def regionB_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region B"""
     tarfile = sbottom_likelihoods_download
@@ -81,7 +81,7 @@ def regionB_signal_patch_json(sbottom_likelihoods_download):
     return json.loads(signal_patch_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def regionC_signal_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region C"""
     tarfile = sbottom_likelihoods_download
