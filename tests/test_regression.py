@@ -32,7 +32,7 @@ def extract_json_from_tarfile(tarfile, json_name):
 
 
 @pytest.fixture(scope='module')
-def regionA_bkgonly_json(sbottom_likelihoods_download):
+def sbottom_regionA_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region A"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionA/BkgOnly.json"
@@ -40,7 +40,7 @@ def regionA_bkgonly_json(sbottom_likelihoods_download):
 
 
 @pytest.fixture(scope='module')
-def regionB_bkgonly_json(sbottom_likelihoods_download):
+def sbottom_regionB_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region B"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionB/BkgOnly.json"
@@ -48,7 +48,7 @@ def regionB_bkgonly_json(sbottom_likelihoods_download):
 
 
 @pytest.fixture(scope='module')
-def regionC_bkgonly_json(sbottom_likelihoods_download):
+def sbottom_regionC_bkgonly_json(sbottom_likelihoods_download):
     """Extract the background only model from sbottom Region C"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionC/BkgOnly.json"
@@ -56,7 +56,7 @@ def regionC_bkgonly_json(sbottom_likelihoods_download):
 
 
 @pytest.fixture()
-def regionA_signal_patch_json(sbottom_likelihoods_download):
+def sbottom_regionA_1300_205_60_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region A"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
@@ -64,7 +64,7 @@ def regionA_signal_patch_json(sbottom_likelihoods_download):
 
 
 @pytest.fixture()
-def regionB_signal_patch_json(sbottom_likelihoods_download):
+def sbottom_regionB_1000_205_60_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region B"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionB/patch.sbottom_1000_205_60.json"
@@ -72,7 +72,7 @@ def regionB_signal_patch_json(sbottom_likelihoods_download):
 
 
 @pytest.fixture()
-def regionC_signal_patch_json(sbottom_likelihoods_download):
+def sbottom_regionC_1000_205_60_patch_json(sbottom_likelihoods_download):
     """Extract a signal model from sbottom Region C"""
     return extract_json_from_tarfile(
         sbottom_likelihoods_download, "RegionC/patch.sbottom_1000_205_60.json"
@@ -107,8 +107,12 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     return result[0].tolist()[0], result[-1].ravel().tolist()
 
 
-def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
-    CLs_obs, CLs_exp = calculate_CLs(regionA_bkgonly_json, regionA_signal_patch_json)
+def test_sbottom_regionA_1300_205_60(
+    sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
+):
+    CLs_obs, CLs_exp = calculate_CLs(
+        sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
+    )
     assert CLs_obs == pytest.approx(0.2444363575448201, rel=1e-5)
     assert np.all(
         np.isclose(
@@ -127,8 +131,12 @@ def test_sbottom_regionA(regionA_bkgonly_json, regionA_signal_patch_json):
     )
 
 
-def test_sbottom_regionB(regionB_bkgonly_json, regionB_signal_patch_json):
-    CLs_obs, CLs_exp = calculate_CLs(regionB_bkgonly_json, regionB_signal_patch_json)
+def test_sbottom_regionB_1000_205_60(
+    sbottom_regionB_bkgonly_json, sbottom_regionB_1000_205_60_patch_json
+):
+    CLs_obs, CLs_exp = calculate_CLs(
+        sbottom_regionB_bkgonly_json, sbottom_regionB_1000_205_60_patch_json
+    )
     assert CLs_obs == pytest.approx(0.999346961987008, rel=1e-5)
     assert np.all(
         np.isclose(
@@ -147,8 +155,12 @@ def test_sbottom_regionB(regionB_bkgonly_json, regionB_signal_patch_json):
     )
 
 
-def test_sbottom_regionC(regionC_bkgonly_json, regionC_signal_patch_json):
-    CLs_obs, CLs_exp = calculate_CLs(regionC_bkgonly_json, regionC_signal_patch_json)
+def test_sbottom_regionC_1000_205_60(
+    sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
+):
+    CLs_obs, CLs_exp = calculate_CLs(
+        sbottom_regionC_bkgonly_json, sbottom_regionC_1000_205_60_patch_json
+    )
     assert CLs_obs == pytest.approx(0.9424021663134358, rel=1e-5)
     # TODO: Lower tolerance to 1e-5 once Python 2.7 is dropped
     assert np.all(
