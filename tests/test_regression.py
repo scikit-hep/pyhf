@@ -96,6 +96,66 @@ def test_sbottom_regionA_1300_205_60(
     )
 
 
+def test_sbottom_regionA_1400_950_60(
+    sbottom_likelihoods_download, get_json_from_tarfile
+):
+    sbottom_regionA_bkgonly_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+    )
+    sbottom_regionA_1400_950_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/patch.sbottom_1400_950_60.json"
+    )
+    CLs_obs, CLs_exp = calculate_CLs(
+        sbottom_regionA_bkgonly_json, sbottom_regionA_1400_950_60_patch_json
+    )
+    assert CLs_obs == pytest.approx(0.0213732548585359, rel=1e-5)
+    assert np.all(
+        np.isclose(
+            np.array(CLs_exp),
+            np.array(
+                [
+                    0.0026446861433130,
+                    0.0139766677574991,
+                    0.0649728508540893,
+                    0.2364443957087021,
+                    0.5744835529584968,
+                ]
+            ),
+            rtol=1e-5,
+        )
+    )
+
+
+def test_sbottom_regionA_1500_850_60(
+    sbottom_likelihoods_download, get_json_from_tarfile
+):
+    sbottom_regionA_bkgonly_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+    )
+    sbottom_regionA_1500_850_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionA/patch.sbottom_1500_850_60.json"
+    )
+    CLs_obs, CLs_exp = calculate_CLs(
+        sbottom_regionA_bkgonly_json, sbottom_regionA_1500_850_60_patch_json
+    )
+    assert CLs_obs == pytest.approx(0.0453677409764101, rel=1e-5)
+    assert np.all(
+        np.isclose(
+            np.array(CLs_exp),
+            np.array(
+                [
+                    0.0059847029077065,
+                    0.0261035161266011,
+                    0.1009398575261459,
+                    0.3101988586187604,
+                    0.6553686728646031,
+                ]
+            ),
+            rtol=1e-5,
+        )
+    )
+
+
 def test_sbottom_regionB_1000_205_60(
     sbottom_likelihoods_download, get_json_from_tarfile
 ):
