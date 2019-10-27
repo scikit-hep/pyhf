@@ -156,29 +156,29 @@ def test_sbottom_regionA_1500_850_60(
     )
 
 
-def test_sbottom_regionB_1500_850_60(
+def test_sbottom_regionB_1400_550_60(
     sbottom_likelihoods_download, get_json_from_tarfile
 ):
     sbottom_regionB_bkgonly_json = get_json_from_tarfile(
         sbottom_likelihoods_download, "RegionB/BkgOnly.json"
     )
-    sbottom_regionB_1500_850_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionB/patch.sbottom_1500_850_60.json"
+    sbottom_regionB_1400_550_60_patch_json = get_json_from_tarfile(
+        sbottom_likelihoods_download, "RegionB/patch.sbottom_1400_550_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
-        sbottom_regionB_bkgonly_json, sbottom_regionB_1500_850_60_patch_json
+        sbottom_regionB_bkgonly_json, sbottom_regionB_1400_550_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.9999893250416583, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.9744675266677597, rel=1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.9999682931142808,
-                    0.9999796235899027,
-                    0.9999893398756928,
-                    0.9999961574993774,
-                    0.999999261851925,
+                    0.9338879894557114,
+                    0.9569045303300702,
+                    0.9771296335437559,
+                    0.9916370124133669,
+                    0.9983701133999316,
                 ]
             ),
             rtol=1e-5,
