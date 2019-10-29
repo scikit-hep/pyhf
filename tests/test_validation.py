@@ -604,7 +604,7 @@ def source_2bin_2channel_coupledshapefactor():
 
 @pytest.fixture(scope='module')
 def spec_2bin_2channel_coupledshapefactor(
-    source=source_2bin_2channel_coupledshapefactor()
+    source=source_2bin_2channel_coupledshapefactor(),
 ):
     spec = {
         'channels': [
