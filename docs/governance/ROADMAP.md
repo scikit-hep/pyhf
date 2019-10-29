@@ -44,7 +44,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
    - [ ] Write submission to [JOSS](https://joss.theoj.org/) (Issue #502) and write submission to [pyOpenSci](https://www.pyopensci.org/) [2019-Q4 → 2020-Q2]
    - [ ] Contribute to [IRIS-HEP Analysis Systems Milestones](https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304) "[Initial roadmap for ecosystem coherency](https://github.com/iris-hep/project-milestones/issues/8)" and "[Initial roadmap for high-level cyberinfrastructure components of analysis system](https://github.com/iris-hep/project-milestones/issues/11)" [2019-Q4 → 2020-Q2]
 2. **Revision and Maintenance**
-   - [ ] Add tests using HEPData published sbottom likelihoods (Issue #518) [2019-Q3]
+   - [x] Add tests using HEPData published sbottom likelihoods (Issue #518) [2019-Q3]
    - [x] Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue #517) [2019-Q3]
    - [ ] Investigate rewrite of pytest fixtures to use modern pytest (Issue #370) [2019-Q3 → 2019-Q4]
    - [ ] Factorize out the statistical fitting portion into `pyhf/stats/__init__.py` (PR #531) [2019-Q3 → 2019-Q4]
