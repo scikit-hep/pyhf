@@ -45,6 +45,16 @@ This list will be updated with talks given on :code:`pyhf`:
    :all:
    :style: plain
 
+Tutorials
+---------
+
+This list will be updated with tutorials and schools given on :code:`pyhf`:
+
+.. bibliography:: bib/tutorials.bib
+   :list: bullet
+   :all:
+   :style: plain
+
 
 Posters
 -------
