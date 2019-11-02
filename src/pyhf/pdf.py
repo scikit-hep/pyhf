@@ -119,7 +119,7 @@ class _ModelConfig(object):
         )
         self.set_poi(poiname)
         self.npars = len(self.suggested_init())
-        self.nauxdata = len(self.auxdata)
+        self.nmaindata = sum(self.channel_nbins.values())
 
     def suggested_init(self):
         init = []
@@ -422,6 +422,7 @@ class Model(object):
             if hasattr(parset, 'pdf_type'):  # is constrained
                 self.config.auxdata += parset.auxdata
                 self.config.auxdata_order.append(k)
+        self.config.nauxdata = len(self.config.auxdata)
 
         self.constraint_model = _ConstraintModel(
             config=self.config, batch_size=self.batch_size
@@ -630,8 +631,7 @@ class Model(object):
             ):
                 raise exceptions.InvalidPdfData(
                     'eval failed as data has len {} but {} was expected'.format(
-                        data.shape[-1],
-                        self.nominal_rates.shape[-1] + len(self.config.auxdata),
+                        data.shape[-1], self.config.nmaindata + self.config.nauxdata
                     )
                 )
 
