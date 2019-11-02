@@ -1,5 +1,6 @@
 import scipy
 from .. import default_backend
+from .. import get_backend
 
 
 class AutoDiffOptimizerMixin(object):
@@ -15,7 +16,8 @@ class AutoDiffOptimizerMixin(object):
             bounds=for_unconstr[2],
         )
         unconstr_pars = fitresult.x
-        return unconstr_pars
+        tensorlib, _ = get_backend()
+        return tensorlib.astensor(unconstr_pars)
 
     def constrained_bestfit(
         self, objective, constrained_mu, data, pdf, init_pars, par_bounds
@@ -34,4 +36,5 @@ class AutoDiffOptimizerMixin(object):
                 fitresult.x[pdf.config.poi_index :],
             ]
         )
-        return constr_pars
+        tensorlib, _ = get_backend()
+        return tensorlib.astensor(constr_pars)
