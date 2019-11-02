@@ -117,7 +117,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     )
     qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
     qmu = tensorlib.where(
-        tensorlib.astensor(muhatbhat[pdf.config.poi_index] > mu, dtype='bool')
+        muhatbhat[pdf.config.poi_index] > mu, qtensorlib.astensor([0]), mu
     )
     return qmu
 
