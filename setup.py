@@ -10,8 +10,8 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
 
 extras_require = {
     'tensorflow': [
-        'tensorflow~=1.14',
-        'tensorflow-probability~=0.5,<0.8',
+        'tensorflow~=1.15',
+        'tensorflow-probability~=0.8',
         'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
     ],
     'torch': ['torch~=1.2'],
