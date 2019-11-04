@@ -44,7 +44,7 @@ def reset_backend():
     params=[
         (pyhf.tensor.numpy_backend(), None),
         (pyhf.tensor.pytorch_backend(), None),
-        (pyhf.tensor.tensorflow_backend(session=tf.Session()), None),
+        (pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()), None),
         (
             pyhf.tensor.numpy_backend(poisson_from_normal=True),
             pyhf.optimize.minuit_optimizer(),
@@ -92,7 +92,7 @@ def backend(request):
     pyhf.set_backend(*request.param)
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.compat.v1.reset_default_graph()
-        pyhf.tensorlib.session = tf.Session()
+        pyhf.tensorlib.session = tf.compat.v1.Session()
 
     yield request.param
 
