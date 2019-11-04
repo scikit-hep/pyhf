@@ -70,6 +70,36 @@ class tensorflow_backend(object):
         """
         return tf.tile(tensor_in, repeats)
 
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> import tensorflow as tf
+            >>> sess = tf.Session()
+            ...
+            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> tensorlib = pyhf.tensorlib
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> compare = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            >>> with sess.as_default():
+            ...     sess.run(compare)
+            ...
+            array([9.], dtype=float32)
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            TensorFlow Tensor: The output of the callable that was evaluated
+        """
+        return tf.cond(predicate, true_callable, false_callable)
+
     def tolist(self, tensor_in):
         try:
             return self.session.run(tensor_in).tolist()

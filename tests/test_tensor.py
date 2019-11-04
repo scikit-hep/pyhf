@@ -15,6 +15,10 @@ def test_astensor_dtype(backend, caplog):
 
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
+    assert tb.tolist(tb.astensor([1, 2, 3]) + tb.astensor([4, 5, 6])) == [5, 7, 9]
+    assert tb.tolist(tb.astensor([1]) + tb.astensor([4, 5, 6])) == [5, 6, 7]
+    assert tb.tolist(tb.astensor([1, 2, 3]) - tb.astensor([4, 5, 6])) == [-3, -3, -3]
+    assert tb.tolist(tb.astensor([4, 5, 6]) - tb.astensor([1])) == [3, 4, 5]
     assert tb.tolist(tb.sum(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [5, 7, 9]
     assert tb.tolist(tb.product(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [
         4,
@@ -34,6 +38,18 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
     assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
+    a = tb.astensor(1)
+    b = tb.astensor(2)
+    assert tb.tolist(a < b)[0] is True
+    assert tb.tolist(b < a)[0] is False
+    assert tb.tolist(a < a)[0] is False
+    assert tb.tolist(a > b)[0] is False
+    assert tb.tolist(b > a)[0] is True
+    assert tb.tolist(a > a)[0] is False
+    a = tb.astensor(4)
+    b = tb.astensor(5)
+    assert tb.tolist(tb.conditional((a < b)[0], lambda: a + b, lambda: a - b)) == [9]
+    assert tb.tolist(tb.conditional((a > b)[0], lambda: a + b, lambda: a - b)) == [-1]
 
 
 def test_complex_tensor_ops(backend):
@@ -131,6 +147,20 @@ def test_shape(backend):
     assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
+    with pytest.raises((ValueError, RuntimeError)):
+        _ = tb.astensor([1, 2]) + tb.astensor([3, 4, 5])
+    with pytest.raises((ValueError, RuntimeError)):
+        _ = tb.astensor([1, 2]) - tb.astensor([3, 4, 5])
+    with pytest.raises((ValueError, RuntimeError)):
+        _ = tb.astensor([1, 2]) < tb.astensor([3, 4, 5])
+    with pytest.raises((ValueError, RuntimeError)):
+        _ = tb.astensor([1, 2]) > tb.astensor([3, 4, 5])
+    with pytest.raises((ValueError, RuntimeError)):
+        tb.conditional(
+            (tb.astensor([1, 2]) < tb.astensor([3, 4])),
+            lambda: tb.astensor(4) + tb.astensor(5),
+            lambda: tb.astensor(4) - tb.astensor(5),
+        )
 
 
 def test_pdf_calculations(backend):
