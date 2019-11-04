@@ -1,8 +1,6 @@
 name: Current Release
 
 on:
-  # Later remove push
-  push:
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
