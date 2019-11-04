@@ -93,11 +93,7 @@ class numpy_backend(object):
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
-            >>> tensorlib.conditional(
-            ...     tensorlib.less(a, b)[0],
-            ...     lambda: tensorlib.add(a, b),
-            ...     lambda: tensorlib.subtract(a, b)
-            ... )
+            >>> tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
             array([9.])
 
         Args:

@@ -84,14 +84,9 @@ class tensorflow_backend(object):
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
+            >>> compare = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
             >>> with sess.as_default():
-            ...     sess.run(
-            ...         tensorlib.conditional(
-            ...             tensorlib.less(a, b)[0],
-            ...             lambda: tensorlib.add(a, b),
-            ...             lambda: tensorlib.subtract(a, b)
-            ...       )
-            ...   )
+            ...     sess.run(compare)
             ...
             array([9.], dtype=float32)
 
