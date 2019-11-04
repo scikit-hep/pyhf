@@ -172,7 +172,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
             return nullval, altval
 
         nullval, altval = tensorlib.conditional(
-            tensorlib.less(sqrtqmu_v, sqrtqmuA_v)[0], _true_case, _false_case
+            (sqrtqmu_v < sqrtqmuA_v)[0], _true_case, _false_case
         )
     CLsb = 1 - tensorlib.normal_cdf(nullval)
     CLb = 1 - tensorlib.normal_cdf(altval)
