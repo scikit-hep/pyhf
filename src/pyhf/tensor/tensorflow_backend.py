@@ -12,64 +12,6 @@ class tensorflow_backend(object):
         self.session = kwargs.get('session')
         self.name = 'tensorflow'
 
-    def add(self, tensor_in_1, tensor_in_2):
-        """
-        Add two tensors element-wise. Equivalent to :code:`sum([tensor_in_1, tensor_in_2], axis=0)`.
-
-        Example:
-
-            >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
-            >>> a = pyhf.tensorlib.astensor([1, 2, 3, 4])
-            >>> b = pyhf.tensorlib.astensor([5, 6, 7, 8])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.add(a, b))
-            ...
-            array([ 6.,  8., 10., 12.], dtype=float32)
-
-        Args:
-            tensor_in_1 (`Tensor`): The first tensor
-            tensor_in_2 (`Tensor`): The tensor of same type and shape as :code:`tensor_in_1`
-
-        Returns:
-            TensorFlow Tensor: The sum of the input tensors
-        """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return tf.add(tensor_in_1, tensor_in_2)
-
-    def subtract(self, tensor_in_1, tensor_in_2):
-        """
-        Subtract two tensors element-wise as :code:`(tensor_in_1 - tensor_in_2)`
-
-        Example:
-
-            >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
-            >>> a = pyhf.tensorlib.astensor([1, 2, 3, 4])
-            >>> b = pyhf.tensorlib.astensor([5, 6, 7, 8])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.subtract(b, a))
-            ...
-            array([4., 4., 4., 4.], dtype=float32)
-
-        Args:
-            tensor_in_1 (`Tensor`): The first tensor
-            tensor_in_2 (`Tensor`): The tensor of same type and shape as :code:`tensor_in_1`
-
-        Returns:
-            TensorFlow Tensor: The difference of the input tensors
-        """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return tf.subtract(tensor_in_1, tensor_in_2)
-
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
@@ -162,64 +104,6 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The output of the callable that was evaluated
         """
         return tf.cond(predicate, true_callable, false_callable)
-
-    def less(self, tensor_in_1, tensor_in_2):
-        """
-        The boolean value of :code:`(tensor_in_1 < tensor_in_2)` element-wise
-
-        Example:
-
-            >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
-            >>> a = pyhf.tensorlib.astensor([4])
-            >>> b = pyhf.tensorlib.astensor([5])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.less(a, b))
-            ...
-            array([ True])
-
-        Args:
-            tensor_in_1 (`Tensor`): The first tensor
-            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
-
-        Returns:
-            TensorFlow Tensor: The bool of the comparison
-        """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return tf.math.less(tensor_in_1, tensor_in_2)
-
-    def greater(self, tensor_in_1, tensor_in_2):
-        """
-        The boolean value of :code:`(tensor_in_1 > tensor_in_2)` element-wise
-
-        Example:
-
-            >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
-            >>> a = pyhf.tensorlib.astensor([4])
-            >>> b = pyhf.tensorlib.astensor([5])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.greater(b, a))
-            ...
-            array([ True])
-
-        Args:
-            tensor_in_1 (`Tensor`): The first tensor
-            tensor_in_2 (`Tensor`): The tensor of same type as :code:`tensor_in_1`
-
-        Returns:
-            TensorFlow Tensor: The bool of the comparison
-        """
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return tf.math.greater(tensor_in_1, tensor_in_2)
 
     def tolist(self, tensor_in):
         try:
