@@ -30,4 +30,4 @@ jobs:
         pip list
     - name: Test public API
       run: |
-        python -m pytest -r sx tests/test_init.py
+        python -m pytest -r sx tests/test_public_api.py
