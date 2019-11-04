@@ -26,6 +26,6 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install pyhf[complete]
         pip list
-    - name: Test public API
+    - name: Canary test public API
       run: |
         python -m pytest -r sx tests/test_public_api.py
