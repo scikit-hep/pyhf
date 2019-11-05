@@ -33,29 +33,6 @@ env:
 jobs:
   include:
   - name: "Python 2.7"
-  - stage: docs
-    python: '3.7'
-    before_install:
-      - sudo apt-get update
-      - sudo apt-get -qq install pandoc
-      - sudo apt-get -qq install libtcmalloc-minimal4
-      - export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
-      - pip install --upgrade pip setuptools wheel
-    install:
-      - pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
-      - pip freeze
-    script:
-      - python -m doctest README.md
-      - cd docs && make html && cd -
-      - touch docs/_build/html/.nojekyll
-    after_success: echo "Skipping after_success"
-    deploy:
-      provider: pages
-      skip_cleanup: true
-      github_token: $GITHUB_TOKEN
-      local_dir: docs/_build/html
-      on:
-        branch: master
   - stage: deploy
     # Tests deployment to PyPI for all commits to master
     name: "TestPyPI deploy"
