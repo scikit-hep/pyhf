@@ -9,11 +9,11 @@ jobs:
 
   pypi_release:
 
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]
         python-version: [3.7]
-    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@master
