@@ -107,7 +107,7 @@ jobs:
         cd docs && make html && cd -
         touch docs/_build/html/.nojekyll
     - name: Deploy docs to GitHub Pages
-      if: success()
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: crazy-max/ghaction-github-pages@v1.0.1
       with:
         target_branch: gh-pages
