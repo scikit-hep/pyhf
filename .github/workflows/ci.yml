@@ -10,11 +10,11 @@ on:
 jobs:
   test:
 
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]
         python-version: [3.6, 3.7]
-    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@master
@@ -28,23 +28,23 @@ jobs:
         pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
         pip list
     - name: Lint with Pyflakes
-      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
         pyflakes src
         check-manifest
     - name: Lint with Black
-      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
         black --check --diff --verbose .
     - name: Check MANIFEST
-      if: matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
         check-manifest
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/test_notebooks.py
     - name: Report coverage with Codecov
-      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.platform == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@master
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
