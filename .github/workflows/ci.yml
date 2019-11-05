@@ -106,3 +106,11 @@ jobs:
         python -m doctest README.md
         cd docs && make html && cd -
         touch docs/_build/html/.nojekyll
+    - name: Deploy docs to GitHub Pages
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+      uses: crazy-max/ghaction-github-pages@v1.0.1
+      with:
+        target_branch: gh-pages
+        build_dir: docs/_build/html
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
