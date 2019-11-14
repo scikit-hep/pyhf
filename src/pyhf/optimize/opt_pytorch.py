@@ -8,7 +8,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_unconstrained(self, objective, pdf, data, init_pars, par_bounds):
+    def setup_unconstrained(self, objective, data, pdf, init_pars, par_bounds):
         def func(pars):
             tensorlib, _ = get_backend()
             pars = tensorlib.astensor(pars)
@@ -19,7 +19,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
 
         return func, init_pars, par_bounds
 
-    def setup_constrained(self, objective, poival, pdf, data, init_pars, par_bounds):
+    def setup_constrained(self, objective, poival, data, pdf, init_pars, par_bounds):
         tensorlib, _ = get_backend()
         idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         init = default_backend.astensor(init_pars)

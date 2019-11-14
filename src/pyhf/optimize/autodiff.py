@@ -6,7 +6,7 @@ from .. import get_backend
 class AutoDiffOptimizerMixin(object):
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         func, init, bounds = self.setup_unconstrained(
-            objective, pdf, data, init_pars, par_bounds
+            objective, data, pdf init_pars, par_bounds
         )
         fitresult = scipy.optimize.minimize(
             func, init, method='SLSQP', jac=True, bounds=bounds
@@ -20,7 +20,7 @@ class AutoDiffOptimizerMixin(object):
     ):
         poival = constrained_mu
         func, init, bounds = self.setup_constrained(
-            objective, poival, pdf, data, init_pars, par_bounds
+            objective, poival, data, pdf, init_pars, par_bounds
         )
         fitresult = scipy.optimize.minimize(
             func, init, method='SLSQP', jac=True, bounds=bounds

@@ -21,7 +21,7 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_unconstrained(self, objective, pdf, data, init_pars, par_bounds):
+    def setup_unconstrained(self, objective, data, pdf, init_pars, par_bounds):
         pars_placeholder = tf.placeholder(tf.float32, (pdf.config.npars,))
         data_placeholder = tf.placeholder(
             tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
@@ -31,7 +31,7 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
         func = eval_func([nll, nllgrad], pars_placeholder, data_placeholder, data)
         return func, init_pars, par_bounds
 
-    def setup_constrained(self, objective, poival, pdf, data, init_pars, par_bounds):
+    def setup_constrained(self, objective, poival, data, pdf, init_pars, par_bounds):
         tensorlib, _ = get_backend()
         data_placeholder = tf.placeholder(
             tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
