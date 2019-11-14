@@ -11,7 +11,7 @@ import numpy as np
 @pytest.fixture(scope='module')
 def sbottom_likelihoods_download():
     """Download the sbottom likelihoods tarball from HEPData"""
-    sbottom_HEPData_URL = "https://www.hepdata.net/record/resource/997020?view=true"
+    sbottom_HEPData_URL = "https://doi.org/10.17182/hepdata.89408.v1/r2"
     targz_filename = "sbottom_workspaces.tar.gz"
     response = requests.get(sbottom_HEPData_URL, stream=True)
     assert response.status_code == 200
