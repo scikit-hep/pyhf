@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
     long_description = readme_md.read()
 
 extras_require = {
-    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16'],
+    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16',],
     'torch': ['torch~=1.2'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],

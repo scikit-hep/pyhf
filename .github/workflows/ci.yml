@@ -31,7 +31,6 @@ jobs:
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
         pyflakes src
-        check-manifest
     - name: Lint with Black
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
