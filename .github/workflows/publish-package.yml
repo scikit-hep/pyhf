@@ -24,6 +24,8 @@ jobs:
         python -m pep517.build --source --binary --out-dir dist/ .
     - name: Publish distribution 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
+      env:
+        IS_TESTPYPI: ${{ true }}
       with:
         password: ${{ secrets.testpypi_password }}
         repository_url: https://test.pypi.org/legacy/
