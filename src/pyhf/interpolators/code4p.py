@@ -89,12 +89,18 @@ class code4p(object):
         deltas = tmp3_times_A + alphas_times_S
         # end |a| < 1
 
-        masks_p1 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_greater_p1, self.broadcast_helper
+        masks_p1 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_greater_p1, self.broadcast_helper
+            ),
+            dtype='bool',
         )
 
-        masks_m1 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_smaller_m1, self.broadcast_helper
+        masks_m1 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_smaller_m1, self.broadcast_helper
+            ),
+            dtype='bool',
         )
 
         return tensorlib.where(
