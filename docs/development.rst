@@ -24,8 +24,14 @@ Publishing
 
 Publishing to `PyPI <https://pypi.org/project/pyhf/>`__ and `TestPyPI <https://test.pypi.org/project/pyhf/>`__
 is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__.
-To publish a release to PyPI one simply needs to run :code:`bumpversion` to update the
-release version and get a tagged commit and then push the commit and tag to :code:`master` with
+To publish a release to PyPI one simply needs to run
+
+.. code-block:: console
+
+    bumpversion [major|minor|patch]
+
+to update the release version and get a tagged commit and then push the commit
+and tag to :code:`master` with
 
 .. code-block:: console
 
