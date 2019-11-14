@@ -35,8 +35,8 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
         data = tensorlib.astensor(data)
         poivals = tensorlib.astensor([poival], dtype='float')
 
-        def func(p):
-            pars = tensorlib.astensor(p)
+        def func(pars):
+            pars = tensorlib.astensor(pars)
             pars.requires_grad = True
             constrained_pars = tv.stitch([poivals, pars])
             constr_nll = objective(constrained_pars, data, pdf)
