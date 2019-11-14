@@ -5,15 +5,11 @@ from .. import get_backend
 
 class AutoDiffOptimizerMixin(object):
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        for_unconstr = self.setup_unconstrained(
+        func, init, bounds = self.setup_unconstrained(
             objective, pdf, data, init_pars, par_bounds
         )
         fitresult = scipy.optimize.minimize(
-            for_unconstr[0],
-            for_unconstr[1],
-            method='SLSQP',
-            jac=True,
-            bounds=for_unconstr[2],
+            func, init, method='SLSQP', jac=True, bounds=bounds
         )
         unconstr_pars = fitresult.x
         tensorlib, _ = get_backend()
@@ -23,11 +19,11 @@ class AutoDiffOptimizerMixin(object):
         self, objective, constrained_mu, data, pdf, init_pars, par_bounds
     ):
         poival = constrained_mu
-        for_constr = self.setup_constrained(
+        func, init, bounds = self.setup_constrained(
             objective, poival, pdf, data, init_pars, par_bounds
         )
         fitresult = scipy.optimize.minimize(
-            for_constr[0], for_constr[1], method='SLSQP', jac=True, bounds=for_constr[2]
+            func, init, method='SLSQP', jac=True, bounds=bounds
         )
         constr_pars = default_backend.concatenate(
             [
