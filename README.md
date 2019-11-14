@@ -3,8 +3,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
 
 [![Travis Build Status](https://travis-ci.org/diana-hep/pyhf.svg?branch=master)](https://travis-ci.org/diana-hep/pyhf)
-[![GitHub Actions Status: CI](https://github.com/diana-hep/pyhf/workflows/CI/CD/badge.svg)](https://github.com/diana-hep/pyhf/actions?workflow=CI/CD)
-[![GitHub Actions Status: Publish](https://github.com/diana-hep/pyhf/workflows/Publish%20distributions/badge.svg)](https://github.com/diana-hep/pyhf/actions?workflow=Publish+distributions)
+[![GitHub Actions Status: CI](https://github.com/diana-hep/pyhf/workflows/CI/CD/badge.svg)](https://github.com/diana-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster)
+[![GitHub Actions Status: Publish](https://github.com/diana-hep/pyhf/workflows/Publish%20distributions/badge.svg)](https://github.com/diana-hep/pyhf/actions?query=workflow%3A%22Publish+distributions%22+branch%3Amaster)
 [![Docker Automated](https://img.shields.io/docker/automated/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
 [![Code Coverage](https://codecov.io/gh/diana-hep/pyhf/graph/badge.svg?branch=master)](https://codecov.io/gh/diana-hep/pyhf?branch=master)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/diana-hep/pyhf.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/diana-hep/pyhf/latest/files/)
