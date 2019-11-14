@@ -27,7 +27,7 @@ jobs:
       env:
         IS_TESTPYPI: ${{ true }}
       with:
-        password: ${{ secrets.testpypi_password }}
+        password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: startsWith(github.ref, 'refs/tags')
