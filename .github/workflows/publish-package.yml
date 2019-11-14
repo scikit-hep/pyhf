@@ -1,4 +1,4 @@
-name: Publish distributions
+name: publish distributions
 on:
   push:
     branches:
