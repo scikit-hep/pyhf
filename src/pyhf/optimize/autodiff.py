@@ -6,7 +6,7 @@ from .. import get_backend
 class AutoDiffOptimizerMixin(object):
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
         func, init, bounds = self.setup_unconstrained(
-            objective, data, pdf init_pars, par_bounds
+            objective, data, pdf, init_pars, par_bounds
         )
         fitresult = scipy.optimize.minimize(
             func, init, method='SLSQP', jac=True, bounds=bounds

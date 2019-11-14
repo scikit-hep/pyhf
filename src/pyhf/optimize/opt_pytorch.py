@@ -14,7 +14,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
             pars = tensorlib.astensor(pars)
             pars.requires_grad = True
             r = objective(pars, data, pdf)
-            grad = torch.autograd.grad(r, pars)[0]
+            grad,_ = torch.autograd.grad(r, pars)
             return r.detach().numpy(), grad
 
         return func, init_pars, par_bounds
