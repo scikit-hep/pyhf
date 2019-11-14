@@ -1,4 +1,4 @@
-# pyhf 2019 into 2020 Roadmap (Issue #561)
+# pyhf 2019 into 2020 Roadmap (Issue [#561](https://github.com/diana-hep/pyhf/issues/561))
 
 ## Overview and Goals
 
