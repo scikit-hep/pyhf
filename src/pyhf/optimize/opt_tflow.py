@@ -7,9 +7,9 @@ import tensorflow as tf
 def eval_func(op, argop, dataop, data):
     def func(pars):
         tensorlib, _ = get_backend()
-        xx = tensorlib.tolist(pars) if isinstance(pars, tf.Tensor) else pars
-        yy = tensorlib.tolist(data) if isinstance(data, tf.Tensor) else data
-        value = tensorlib.session.run(op, feed_dict={argop: xx, dataop: yy})
+        pars = tensorlib.tolist(pars) if isinstance(pars, tf.Tensor) else pars
+        data = tensorlib.tolist(data) if isinstance(data, tf.Tensor) else data
+        value = tensorlib.session.run(op, feed_dict={argop: pars, dataop: data})
         return value
 
     return func
