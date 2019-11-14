@@ -18,12 +18,10 @@ script:
 after_success: skip
 
 # test Python 2.7 on 'push' builds
-# test docs and deploy to PyPI only when merged into master (those mereges are 'push' builds)
+# deploy to PyPI only when merged into master (those mereges are 'push' builds)
 stages:
   - name: test
     if: NOT (type IN (pull_request))
-  - name: docs
-    if: (branch = master) AND (NOT (type IN (pull_request)))
   - name: deploy
 
 env:
