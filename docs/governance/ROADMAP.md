@@ -1,4 +1,4 @@
-# pyhf 2019 into 2020 Roadmap
+# pyhf 2019 into 2020 Roadmap (Issue #561)
 
 ## Overview and Goals
 
@@ -39,7 +39,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
       - [ ] Add small case studies with published sbottom likelihood from HEPData
    - [ ] Move to [scikit-hep](https://github.com/scikit-hep) GitHub organization [2019-Q3]
    - [ ] Develop a release schedule/criteria [2019-Q4]
-   - [ ] Automate deployment with Azure pipeline (talk with Henry Schreiner) (Issue #517) [2019-Q3]
+   - [x] Automate deployment with ~~Azure pipeline (talk with Henry Schreiner) (Issue #517)~~ GitHub Actions (Issue #508) [2019-Q3]
    - [ ] Finalize logo and add it to website (Issue #453) [2019-Q3 → 2019-Q4]
    - [ ] Write submission to [JOSS](https://joss.theoj.org/) (Issue #502) and write submission to [pyOpenSci](https://www.pyopensci.org/) [2019-Q4 → 2020-Q2]
    - [ ] Contribute to [IRIS-HEP Analysis Systems Milestones](https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304) "[Initial roadmap for ecosystem coherency](https://github.com/iris-hep/project-milestones/issues/8)" and "[Initial roadmap for high-level cyberinfrastructure components of analysis system](https://github.com/iris-hep/project-milestones/issues/11)" [2019-Q4 → 2020-Q2]
