@@ -24,7 +24,7 @@ jobs:
     - name: Install from PyPI
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install pyhf[complete]
+        pip install pyhf[tensorflow,torch,minuit,xmlio]
         pip list
     - name: Canary test public API
       run: |
