@@ -50,8 +50,8 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 def _is_test_pypi():
     """
-    Determine if the Travis CI environment has TESTPYPI_UPLOAD defined and
-    set to true (c.f. .travis.yml)
+    Determine if the CI environment has IS_TESTPYPI defined and
+    set to true (c.f. .github/workflows/publish-package.yml)
 
     The use_scm_version kwarg accepts a callable for the local_scheme
     configuration parameter with argument "version". This can be replaced
@@ -65,7 +65,7 @@ def _is_test_pypi():
 
     return (
         {'local_scheme': lambda version: ''}
-        if getenv('TESTPYPI_UPLOAD') == 'true'
+        if getenv('IS_TESTPYPI') == 'true'
         else False
     )
 
