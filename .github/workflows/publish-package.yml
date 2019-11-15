@@ -26,6 +26,7 @@ jobs:
       run: |
         python -m pep517.build --source --binary --out-dir dist/ .
     - name: Publish distribution 📦 to Test PyPI
+      # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: pypa/gh-action-pypi-publish@v1.0.0a0
       env:
