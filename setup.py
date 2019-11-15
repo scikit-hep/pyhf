@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
     long_description = readme_md.read()
 
 extras_require = {
-    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16',],
+    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16'],
     'torch': ['torch~=1.2'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
@@ -50,14 +50,12 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 def _is_test_pypi():
     """
-    Determine if the CI environment has IS_TESTPYPI defined and
-    set to true (c.f. .github/workflows/publish-package.yml)
-
+    Determine if the CI environment has IS_COMMIT_TAGGED defined and
+    set to true (c.f. .github/workflows/publish-package-to-pypi.yml)
     The use_scm_version kwarg accepts a callable for the local_scheme
     configuration parameter with argument "version". This can be replaced
     with a lambda as the desired version structure is {next_version}.dev{distance}
     c.f. https://github.com/pypa/setuptools_scm/#importing-in-setuppy
-
     As the scm versioning is only desired for TestPyPI, for depolyment to PyPI the version
     controlled through bumpversion is used.
     """
@@ -65,7 +63,7 @@ def _is_test_pypi():
 
     return (
         {'local_scheme': lambda version: ''}
-        if getenv('IS_TESTPYPI') == 'true'
+        if getenv('IS_COMMIT_TAGGED') == 'false'
         else False
     )
 

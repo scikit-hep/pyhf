@@ -29,7 +29,8 @@ jobs:
       if: github.event_name == 'push'
       uses: pypa/gh-action-pypi-publish@v1.0.0a0
       env:
-        IS_TESTPYPI: ${{ true }}
+        IS_COMMIT_TAGGED: >-
+          ${{ startsWith(github.ref, 'refs/tags') }}
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
