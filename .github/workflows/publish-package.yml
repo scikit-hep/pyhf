@@ -30,13 +30,13 @@ jobs:
         python -m pep517.build --source --binary --out-dir dist/ .
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == "diana-hep/pyhf"
       uses: pypa/gh-action-pypi-publish@v1.0.0a0
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      if: success() && github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == "diana-hep/pyhf"
       uses: pypa/gh-action-pypi-publish@v1.0.0a0
       with:
         password: ${{ secrets.pypi_password }}
