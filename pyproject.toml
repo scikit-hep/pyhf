@@ -1,3 +1,8 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = ["wheel", "setuptools>=30.3.0", "attrs>=17.1", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 line-length = 88
 py36 = false  # Python 2 is still supported
