@@ -37,7 +37,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
    - [ ] Add docstrings to all functions and classes (Issues #38, #349) [2019-Q3]
    - [ ] [Greatly revise and expand examples](https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs) (Issues #168, #202, #212, #325, #342, #349, #367) [2019-Q3 → 2019-Q4]
       - [ ] Add small case studies with published sbottom likelihood from HEPData
-   - [ ] Move to [scikit-hep](https://github.com/scikit-hep) GitHub organization [2019-Q3]
+   - [x] Move to [scikit-hep](https://github.com/scikit-hep) GitHub organization [2019-Q3]
    - [ ] Develop a release schedule/criteria [2019-Q4]
    - [x] Automate deployment with ~~Azure pipeline (talk with Henry Schreiner) (Issue #517)~~ GitHub Actions (Issue #508) [2019-Q3]
    - [ ] Finalize logo and add it to website (Issue #453) [2019-Q3 → 2019-Q4]
