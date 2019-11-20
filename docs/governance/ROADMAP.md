@@ -82,6 +82,6 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
 ## Presentations During Roadmap Timeline
 
 - [x] [Talk at IRIS-HEP Institute Retreat](https://indico.cern.ch/event/840472/contributions/3564386/) (September 12-13th, 2019)
-- [ ] Talk at [PyHEP 2019](https://indico.cern.ch/event/833895/) (October 16-18th, 2019)
-- [ ] [Talk at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476143/) (November 4-8th, 2019)
-- [ ] [Poster at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476180/) (November 4-8th, 2019)
+- [x] Talk at [PyHEP 2019](https://indico.cern.ch/event/833895/) (October 16-18th, 2019)
+- [x] [Talk at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476143/) (November 4-8th, 2019)
+- [x] [Poster at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476180/) (November 4-8th, 2019)
