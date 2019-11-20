@@ -53,7 +53,7 @@ extensions = [
 ]
 
 # Github repo
-issues_github_path = 'diana-hep/pyhf'
+issues_github_path = 'scikit-hep/pyhf'
 
 # Generate the API documentation when building
 autosummary_generate = True

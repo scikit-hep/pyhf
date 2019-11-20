@@ -2,17 +2,17 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
 
-[![Travis Build Status](https://travis-ci.org/diana-hep/pyhf.svg?branch=master)](https://travis-ci.org/diana-hep/pyhf)
-[![GitHub Actions Status: CI](https://github.com/diana-hep/pyhf/workflows/CI/CD/badge.svg)](https://github.com/diana-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster)
-[![GitHub Actions Status: Publish](https://github.com/diana-hep/pyhf/workflows/publish%20distributions/badge.svg)](https://github.com/diana-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster)
+[![Travis Build Status](https://travis-ci.org/scikit-hep/pyhf.svg?branch=master)](https://travis-ci.org/scikit-hep/pyhf)
+[![GitHub Actions Status: CI](https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg)](https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster)
+[![GitHub Actions Status: Publish](https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg)](https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster)
 [![Docker Automated](https://img.shields.io/docker/automated/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
-[![Code Coverage](https://codecov.io/gh/diana-hep/pyhf/graph/badge.svg?branch=master)](https://codecov.io/gh/diana-hep/pyhf?branch=master)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/diana-hep/pyhf.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/diana-hep/pyhf/latest/files/)
-[![CodeFactor](https://www.codefactor.io/repository/github/diana-hep/pyhf/badge)](https://www.codefactor.io/repository/github/diana-hep/pyhf)
+[![Code Coverage](https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master)](https://codecov.io/gh/scikit-hep/pyhf?branch=master)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scikit-hep/pyhf.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/)
+[![CodeFactor](https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge)](https://www.codefactor.io/repository/github/scikit-hep/pyhf)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 [![Docs](https://img.shields.io/badge/docs-master-blue.svg)](https://diana-hep.github.io/pyhf)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/diana-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb)
 
 [![PyPI version](https://badge.fury.io/py/pyhf.svg)](https://badge.fury.io/py/pyhf)
 [![Supported Python versionss](https://img.shields.io/pypi/pyversions/pyhf.svg)](https://pypi.org/project/pyhf/)
@@ -73,8 +73,8 @@ results obtained from this package are validated against output computed from Hi
 nobs = 55, b = 50, db = 7, nom_sig = 10.
 ```
 
-<img src="https://raw.githubusercontent.com/diana-hep/pyhf/master/docs/_static/img/manual_1bin_55_50_7.png" alt="manual" width="500"/>
-<img src="https://raw.githubusercontent.com/diana-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png" alt="manual" width="500"/>
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_1bin_55_50_7.png" alt="manual" width="500"/>
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png" alt="manual" width="500"/>
 
 
 ## A two bin example
@@ -84,8 +84,8 @@ bin 1: nobs = 100, b = 100, db = 15., nom_sig = 30.
 bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
 ```
 
-<img src="https://raw.githubusercontent.com/diana-hep/pyhf/master/docs/_static/img/manual_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png" alt="manual" width="500"/>
-<img src="https://raw.githubusercontent.com/diana-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png" alt="manual" width="500"/>
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png" alt="manual" width="500"/>
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png" alt="manual" width="500"/>
 
 ## Installation
 
@@ -107,4 +107,4 @@ pip uninstall pyhf
 
 ## Authors
 
-Please check the [contribution statistics for a list of contributors](https://github.com/diana-hep/pyhf/graphs/contributors)
+Please check the [contribution statistics for a list of contributors](https://github.com/scikit-hep/pyhf/graphs/contributors)

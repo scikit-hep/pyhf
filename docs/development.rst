@@ -5,7 +5,7 @@ To develop, we suggest using `virtual environments <https://packaging.python.org
 
 .. code-block:: console
 
-    git clone https://github.com/diana-hep/pyhf.git
+    git clone https://github.com/scikit-hep/pyhf.git
 
 and install all necessary packages for development
 

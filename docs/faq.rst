@@ -9,7 +9,7 @@ Questions
 Is it possible to set the backend from the CLI?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Not at the moment. `Pull Requests <https://github.com/diana-hep/pyhf/compare>`__ are welcome.
+Not at the moment. `Pull Requests <https://github.com/scikit-hep/pyhf/compare>`__ are welcome.
 
 See also:
   - :issue:`266`
