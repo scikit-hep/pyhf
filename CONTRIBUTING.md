@@ -21,11 +21,11 @@ If you would like to make a pull request please:
 
 ## Bug Reports
 
-If you have found a bug please report it by filling out the [bug report template](https://github.com/diana-hep/pyhf/issues/new?template=Bug-Report.md&labels=bug&title=Bug+Report+:+Title+Here).
+If you have found a bug please report it by filling out the [bug report template](https://github.com/scikit-hep/pyhf/issues/new?template=Bug-Report.md&labels=bug&title=Bug+Report+:+Title+Here).
 
 ## Installing the development environment
 
-We recommend first reading the "[Developing](https://diana-hep.org/pyhf/development.html)" page on the pyhf website and the coming back here.
+We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/development.html)" page on the pyhf website and the coming back here.
 
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 

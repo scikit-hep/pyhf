@@ -74,7 +74,7 @@ setup(
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/diana-hep/pyhf',
+    url='https://github.com/scikit-hep/pyhf',
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
     license='Apache',

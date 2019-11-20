@@ -61,7 +61,7 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
     pip install pyhf[xmlio]
 
 
-Install latest development version from `GitHub <https://github.com/diana-hep/pyhf>`__...
+Install latest development version from `GitHub <https://github.com/scikit-hep/pyhf>`__...
 -----------------------------------------------------------------------------------------
 
 ... with NumPy backend
@@ -69,28 +69,28 @@ Install latest development version from `GitHub <https://github.com/diana-hep/py
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf"
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow]"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]"
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[torch]"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow,torch]"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow,torch]"
 
 
 ... with xml import/export functionality
@@ -98,7 +98,7 @@ Install latest development version from `GitHub <https://github.com/diana-hep/py
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[xmlio]"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]"
 
 
 Updating :code:`pyhf`

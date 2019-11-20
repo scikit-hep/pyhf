@@ -1,4 +1,4 @@
-:github_url: https://github.com/diana-hep/pyhf/blob/master/{{module | replace(".", "/") }}
+:github_url: https://github.com/scikit-hep/pyhf/blob/master/{{module | replace(".", "/") }}
 
 {{ name | escape | underline}}
 
