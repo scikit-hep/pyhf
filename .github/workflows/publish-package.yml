@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish Python distro to (Test)PyPI
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
