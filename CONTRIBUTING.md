@@ -25,7 +25,7 @@ If you have found a bug please report it by filling out the [bug report template
 
 ## Installing the development environment
 
-We recommend first reading the "[Developing](https://diana-hep.org/pyhf/development.html)" page on the pyhf website and the coming back here.
+We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/development.html)" page on the pyhf website and the coming back here.
 
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 

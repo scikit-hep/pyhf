@@ -9,7 +9,7 @@ from .exceptions import InvalidSpecification
 from . import get_backend
 
 SCHEMA_CACHE = {}
-SCHEMA_BASE = "https://diana-hep.org/pyhf/schemas/"
+SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
 SCHEMA_VERSION = '1.0.0'
 
 
@@ -103,7 +103,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         par_bounds(Tensor): The bounds on the paramter values
 
     .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
-    .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
+    .. _pyhf.pdf.Model: https://scikit-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -216,7 +216,7 @@ def hypotest(
         qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of `arXiv:1007.1727`_
 
     .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
-    .. _pyhf.pdf.Model: https://diana-hep.org/pyhf/_generated/pyhf.pdf.Model.html
+    .. _pyhf.pdf.Model: https://scikit-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Keyword Args:
         return_tail_probs (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
