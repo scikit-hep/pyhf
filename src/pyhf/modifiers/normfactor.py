@@ -39,7 +39,7 @@ class normfactor_combined(object):
         )
 
         self._normfactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

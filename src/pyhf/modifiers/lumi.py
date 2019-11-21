@@ -40,7 +40,7 @@ class lumi_combined(object):
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
 
         self._lumi_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
