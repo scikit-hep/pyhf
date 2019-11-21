@@ -1,1 +1,1 @@
-pip install --upgrade .[complete]
+pip install --upgrade .[tensorflow,torch,minuit,xmlio]
