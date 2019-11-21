@@ -1,0 +1,52 @@
+name: Tag Creator
+on:
+  issues:
+    types: [opened]
+jobs:
+  tag_master:
+    if: >-
+      startsWith( github.event.issue.title, 'bumpversion:' ) &&
+      && (
+        contains( github.event.issue.title, 'major' ) ||
+        contains( github.event.issue.title, 'minor' ) ||
+        contains( github.event.issue.title, 'patch' )
+      )
+      && (
+        github.event.issue.user.login == 'lukasheinrich' ||
+        github.event.issue.user.login == 'matthewfeickert' ||
+        github.event.issue.user.login == 'kratsg'
+      )
+    env:
+      IS_MAJOR: >-
+          ${{ contains( github.event.issue.title, 'major' ) }}
+      IS_MINOR: >-
+          ${{ contains( github.event.issue.title, 'minor' ) }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: install bumpversion
+      run: |
+      python -m pip install --upgrade pip setuptools wheel
+      pip install bumpversion
+    - name: set up git user
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+    - name: run bumpversion
+      run: |
+        if [ $IS_MAJOR == 'true' ]
+        then
+          bumpversion major
+        elif [ $IS_MINOR == 'true' ]
+        then
+          bumpversion minor
+        else
+          bumpversion patch
+        fi
+    - name: push changes
+      run: |
+        git rev-parse HEAD
+        git rev-parse master
+        git describe --tags
+        git rev-list -n 1 $(git describe --tags)
+        git status
