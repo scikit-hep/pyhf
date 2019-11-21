@@ -13,7 +13,7 @@ extras_require = {
     'torch': ['torch~=1.2'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
-    'develop': [
+    'test': [
         'pyflakes',
         'pytest~=3.5',
         'pytest-cov>=2.5.1',
@@ -22,14 +22,17 @@ extras_require = {
         'pytest-console-scripts',
         'pydocstyle',
         'coverage>=4.0',  # coveralls
-        'matplotlib',
-        'jupyter',
-        'nbdime',
-        'uproot~=3.3',
         'papermill~=1.0',
         'nteract-scrapbook~=0.2',
+        'check-manifest',
+        'matplotlib',
+        'jupyter',
+        'uproot~=3.3',
         'graphviz',
-        'bumpversion',
+        'jsonpatch',
+        'black;python_version>="3.6"',  # Black is Python3 only
+    ],
+    'docs': [
         'sphinx',
         'sphinxcontrib-bibtex',
         'sphinxcontrib-napoleon',
@@ -37,14 +40,12 @@ extras_require = {
         'nbsphinx',
         'sphinx-issues',
         'm2r',
-        'jsonpatch',
-        'ipython',
-        'pre-commit',
-        'black;python_version>="3.6"',  # Black is Python3 only
-        'twine',
-        'check-manifest',
     ],
+    '_develop': ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine'],
 }
+extras_require['develop'] = sorted(
+    set(extras_require['test'] + extras_require['docs'] + extras_require['_develop'])
+)
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
