@@ -37,7 +37,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
    - [ ] Add docstrings to all functions and classes (Issues #38, #349) [2019-Q3]
    - [ ] [Greatly revise and expand examples](https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs) (Issues #168, #202, #212, #325, #342, #349, #367) [2019-Q3 → 2019-Q4]
       - [ ] Add small case studies with published sbottom likelihood from HEPData
-   - [ ] Move to [scikit-hep](https://github.com/scikit-hep) GitHub organization [2019-Q3]
+   - [x] Move to [scikit-hep](https://github.com/scikit-hep) GitHub organization [2019-Q3]
    - [ ] Develop a release schedule/criteria [2019-Q4]
    - [x] Automate deployment with ~~Azure pipeline (talk with Henry Schreiner) (Issue #517)~~ GitHub Actions (Issue #508) [2019-Q3]
    - [ ] Finalize logo and add it to website (Issue #453) [2019-Q3 → 2019-Q4]
@@ -82,6 +82,6 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
 ## Presentations During Roadmap Timeline
 
 - [x] [Talk at IRIS-HEP Institute Retreat](https://indico.cern.ch/event/840472/contributions/3564386/) (September 12-13th, 2019)
-- [ ] Talk at [PyHEP 2019](https://indico.cern.ch/event/833895/) (October 16-18th, 2019)
-- [ ] [Talk at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476143/) (November 4-8th, 2019)
-- [ ] [Poster at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476180/) (November 4-8th, 2019)
+- [x] Talk at [PyHEP 2019](https://indico.cern.ch/event/833895/) (October 16-18th, 2019)
+- [x] [Talk at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476143/) (November 4-8th, 2019)
+- [x] [Poster at CHEP 2019](https://indico.cern.ch/event/773049/contributions/3476180/) (November 4-8th, 2019)
