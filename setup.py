@@ -13,47 +13,53 @@ extras_require = {
     'torch': ['torch~=1.2'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
-    'test': [
-        'pyflakes',
-        'pytest~=3.5',
-        'pytest-cov>=2.5.1',
-        'pytest-mock',
-        'pytest-benchmark[histogram]',
-        'pytest-console-scripts',
-        'pydocstyle',
-        'coverage>=4.0',  # coveralls
-        'papermill~=1.0',
-        'nteract-scrapbook~=0.2',
-        'check-manifest',
-        'matplotlib',
-        'jupyter',
-        'uproot~=3.3',
-        'graphviz',
-        'jsonpatch',
-        'black;python_version>="3.6"',  # Black is Python3 only
-    ],
-    '_docs': [
-        'sphinx',
-        'sphinxcontrib-bibtex',
-        'sphinxcontrib-napoleon',
-        'sphinx_rtd_theme',
-        'nbsphinx',
-        'sphinx-issues',
-        'm2r',
-    ],
-    '_develop': ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine'],
 }
-extras_require['docs'] = sorted(
+extras_require['test'] = sorted(
     set(
         extras_require['tensorflow']
         + extras_require['torch']
         + extras_require['xmlio']
         + extras_require['minuit']
-        + extras_require['_docs']
+        + [
+            'pyflakes',
+            'pytest~=3.5',
+            'pytest-cov>=2.5.1',
+            'pytest-mock',
+            'pytest-benchmark[histogram]',
+            'pytest-console-scripts',
+            'pydocstyle',
+            'coverage>=4.0',  # coveralls
+            'papermill~=1.0',
+            'nteract-scrapbook~=0.2',
+            'check-manifest',
+            'matplotlib',
+            'jupyter',
+            'uproot~=3.3',
+            'graphviz',
+            'jsonpatch',
+            'black;python_version>="3.6"',  # Black is Python3 only
+        ]
+    )
+)
+extras_require['docs'] = sorted(
+    set(
+        extras_require['test']
+        + [
+            'sphinx',
+            'sphinxcontrib-bibtex',
+            'sphinxcontrib-napoleon',
+            'sphinx_rtd_theme',
+            'nbsphinx',
+            'sphinx-issues',
+            'm2r',
+        ]
     )
 )
 extras_require['develop'] = sorted(
-    set(extras_require['test'] + extras_require['docs'] + extras_require['_develop'])
+    set(
+        extras_require['docs']
+        + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine']
+    )
 )
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
