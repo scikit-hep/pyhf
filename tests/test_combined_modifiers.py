@@ -75,7 +75,7 @@ def test_histosys(backend):
                     'nom_data': [10, 10, 10],
                     'mask': [True, True, True],
                 },
-            }
+            },
         },
         'histosys/world': {
             'signal': {
@@ -241,7 +241,7 @@ def test_lumi(backend):
                 'type': 'lumi',
                 'name': 'lumi',
                 'data': {'mask': [True, True, True]},
-            }
+            },
         },
     }
 
@@ -392,7 +392,7 @@ def test_shapesys(backend):
                     'nom_data': [10, 10, 10],
                     'uncrt': [1, 0, 0],
                 },
-            }
+            },
         },
         'shapesys/shapesys2': {
             'signal': {
@@ -455,7 +455,7 @@ def test_normfactor(backend):
                 'type': 'normfactor',
                 'name': 'mu1',
                 'data': {'mask': [True, False, False]},
-            }
+            },
         },
         'normfactor/mu2': {
             'signal': {
@@ -467,8 +467,8 @@ def test_normfactor(backend):
                 'type': 'normfactor',
                 'name': 'mu2',
                 'data': {'mask': [False, True, True]},
-            }
-        }
+            },
+        },
     }
     hsc = normfactor_combined(
         [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods
@@ -532,9 +532,9 @@ def test_shapefactor(backend):
                 'data': {'mask': [True, False, False]},
             },
             'background': {
-                    'type': 'shapefactor',
-                    'name': 'shapefac1',
-                    'data': {'mask': [True, False, False]},
+                'type': 'shapefactor',
+                'name': 'shapefac1',
+                'data': {'mask': [True, False, False]},
             },
         },
         'shapefactor/shapefac2': {
@@ -544,9 +544,9 @@ def test_shapefactor(backend):
                 'data': {'mask': [False, True, True]},
             },
             'background': {
-                    'type': 'normfactor',
-                    'name': 'shapefac2',
-                    'data': {'mask': [False, True, True]},
+                'type': 'normfactor',
+                'name': 'shapefac2',
+                'data': {'mask': [False, True, True]},
             },
         },
     }
