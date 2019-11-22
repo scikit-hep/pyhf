@@ -32,7 +32,7 @@ extras_require = {
         'jsonpatch',
         'black;python_version>="3.6"',  # Black is Python3 only
     ],
-    'docs': [
+    '_docs': [
         'sphinx',
         'sphinxcontrib-bibtex',
         'sphinxcontrib-napoleon',
@@ -43,6 +43,15 @@ extras_require = {
     ],
     '_develop': ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine'],
 }
+extras_require['docs'] = sorted(
+    set(
+        extras_require['tensorflow']
+        + extras_require['torch']
+        + extras_require['xmlio']
+        + extras_require['minuit']
+        + extras_require['_docs']
+    )
+)
 extras_require['develop'] = sorted(
     set(extras_require['test'] + extras_require['docs'] + extras_require['_develop'])
 )
