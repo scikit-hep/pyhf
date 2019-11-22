@@ -15,6 +15,12 @@ def pyhf():
     pass
 
 
-pyhf.add_command(rootio.cli)
-pyhf.add_command(spec.cli)
-pyhf.add_command(stats.cli)
+# pyhf.add_command(rootio.cli)
+pyhf.add_command(rootio.json2xml)
+pyhf.add_command(rootio.xml2json)
+
+# pyhf.add_command(spec.cli)
+pyhf.add_command(spec.inspect)
+
+# pyhf.add_command(stats.cli)
+pyhf.add_command(stats.cls)
