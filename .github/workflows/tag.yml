@@ -1,52 +1,104 @@
+# NB: release notes inspired by https://blogs.sap.com/2018/06/22/generating-release-notes-from-git-commit-messages-using-basic-shell-commands-gitgrep/
 name: Tag Creator
 on:
   issues:
     types: [opened]
 jobs:
-  tag_master:
+  bumpversion:
     if: >-
-      startsWith( github.event.issue.title, 'bumpversion:' ) &&
-      && (
-        contains( github.event.issue.title, 'major' ) ||
-        contains( github.event.issue.title, 'minor' ) ||
-        contains( github.event.issue.title, 'patch' )
-      )
-      && (
+      (
+        startsWith( github.event.issue.title, '[bumpversion:major]' ) ||
+        startsWith( github.event.issue.title, '[bumpversion:minor]' ) ||
+        startsWith( github.event.issue.title, '[bumpversion:patch]' )
+      ) && (
         github.event.issue.user.login == 'lukasheinrich' ||
         github.event.issue.user.login == 'matthewfeickert' ||
         github.event.issue.user.login == 'kratsg'
       )
     env:
       IS_MAJOR: >-
-          ${{ contains( github.event.issue.title, 'major' ) }}
+          ${{ startsWith( github.event.issue.title, '[bumpversion:major]' ) }}
       IS_MINOR: >-
-          ${{ contains( github.event.issue.title, 'minor' ) }}
+          ${{ startsWith( github.event.issue.title, '[bumpversion:minor]' ) }}
+      IS_PATCH: >-
+          ${{ startsWith( github.event.issue.title, '[bumpversion:patch]' ) }}
     runs-on: ubuntu-latest
     steps:
+    - name: determine part
+      run: |
+        if [ $IS_MAJOR == 'true' ]
+        then
+          echo "::set-env name=BV_PART::major"
+        elif [ $IS_MINOR == 'true' ]
+        then
+          echo "::set-env name=BV_PART::minor"
+        else
+          echo "::set-env name=BV_PART::patch"
+        fi
+    - name: add bumpversion/${{ env['BV_PART'] }} label
+      uses: actions/github@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: label bumpversion/${{ env['BV_PART'] }}
     - uses: actions/checkout@master
+    - name: Prepare repository
+      run: git checkout "${GITHUB_REF:11}"
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
     - name: install bumpversion
       run: |
-      python -m pip install --upgrade pip setuptools wheel
-      pip install bumpversion
+        python -m pip install --upgrade pip setuptools wheel
+        pip install bumpversion
     - name: set up git user
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-    - name: run bumpversion
+    - name: run bumpversion ${{ env['BV_PART'] }}
+      env:
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        ISSUE_DESCRIPTION: ${{ github.event.issue.description }}
       run: |
-        if [ $IS_MAJOR == 'true' ]
-        then
-          bumpversion major
-        elif [ $IS_MINOR == 'true' ]
-        then
-          bumpversion minor
-        else
-          bumpversion patch
-        fi
+        echo "bumpversion $BV_PART"
+        OLD_TAG=$(git describe --tags --abbrev=0)
+        echo "::set-env name=OLD_TAG::$OLD_TAG"
+        bumpversion $BV_PART --message "Bump version: {current_version} → {new_version}
+
+        Resolves #${ISSUE_NUMBER} via GitHub Actions."
+        NEW_TAG=$(git describe --tags --abbrev=0)
+        echo "::set-env name=NEW_TAG::$NEW_TAG"
+        git tag -n99 -l $NEW_TAG
+
+        CHANGES="$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):' | sed 's/^/  - /')"
+        NUM_CHANGES=$(echo -n "$CHANGES" | grep -c '^')
+        echo "::set-env name=NUM_CHANGES::$NUM_CHANGES"
+        git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES")"
+        git tag -n99 -l $NEW_TAG
+    - name: comment on issue
+      uses: actions/github@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: |
+          comment "This is a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → [${{ env['NUM_CHANGES'] }} change(s)] → ${{ env['NEW_TAG'] }}. I'm going to attempt to push now."
     - name: push changes
-      run: |
-        git rev-parse HEAD
-        git rev-parse master
-        git describe --tags
-        git rev-list -n 1 $(git describe --tags)
-        git status
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: comment that it failed
+      if: failure()
+      uses: actions/github@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: |
+          comment ":cry: Something went wrong. I wasn't able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened."
+
+  always_job:
+    name: Always run job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Always run
+        run: echo "This job is used to prevent the workflow status from showing as failed when all other jobs are skipped. See https://github.community/t5/GitHub-Actions/Workflow-is-failing-if-no-job-can-be-ran-due-to-condition/m-p/38085 for more information."
