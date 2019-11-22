@@ -25,8 +25,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
-        pip list
+        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
+        python -m pip list
     - name: Lint with Pyflakes
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
@@ -70,8 +70,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
-        pip list
+        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[complete]
+        python -m pip list
     - name: Test example notebooks
       run: |
         python -m pytest -r sx tests/test_notebooks.py
@@ -92,8 +92,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install --ignore-installed -U -q --no-cache-dir -e .[develop]
-        pip list
+        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[docs]
+        python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
     - name: Check docstrings
