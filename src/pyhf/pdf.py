@@ -466,9 +466,9 @@ class Model(object):
         # set up the entire structure
         mega_mods = {}
         for m, mtype in config.modifiers:
-            key = '{}/{}'.format(mtype, m)
             for s in config.samples:
-                mega_mods.setdefault(s, {})[key] = {
+                key = '{}/{}'.format(mtype, m)
+                mega_mods.setdefault(key, {})[s] = {
                     'type': mtype,
                     'name': m,
                     'data': default_data_makers[mtype](),
@@ -510,35 +510,35 @@ class Model(object):
                         lo_data = thismod['data']['lo_data'] if thismod else nom
                         hi_data = thismod['data']['hi_data'] if thismod else nom
                         maskval = True if thismod else False
-                        mega_mods[s][key]['data']['lo_data'] += lo_data
-                        mega_mods[s][key]['data']['hi_data'] += hi_data
-                        mega_mods[s][key]['data']['nom_data'] += nom
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                        mega_mods[key][s]['data']['lo_data'] += lo_data
+                        mega_mods[key][s]['data']['hi_data'] += hi_data
+                        mega_mods[key][s]['data']['nom_data'] += nom
+                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                     elif mtype == 'normsys':
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[s][key]['data']['nom_data'] += [1.0] * len(nom)
-                        mega_mods[s][key]['data']['lo'] += [lo_factor] * len(
+                        mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
+                        mega_mods[key][s]['data']['lo'] += [lo_factor] * len(
                             nom
                         )  # broadcasting
-                        mega_mods[s][key]['data']['hi'] += [hi_factor] * len(nom)
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                        mega_mods[key][s]['data']['hi'] += [hi_factor] * len(nom)
+                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                     elif mtype in ['normfactor', 'shapefactor', 'lumi']:
                         maskval = True if thismod else False
-                        mega_mods[s][key]['data']['mask'] += [maskval] * len(
+                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
                             nom
                         )  # broadcasting
                     elif mtype in ['shapesys', 'staterror']:
                         uncrt = thismod['data'] if thismod else [0.0] * len(nom)
                         maskval = [True if thismod else False] * len(nom)
-                        mega_mods[s][key]['data']['mask'] += maskval
-                        mega_mods[s][key]['data']['uncrt'] += uncrt
-                        mega_mods[s][key]['data']['nom_data'] += nom
+                        mega_mods[key][s]['data']['mask'] += maskval
+                        mega_mods[key][s]['data']['uncrt'] += uncrt
+                        mega_mods[key][s]['data']['nom_data'] += nom
                     else:
                         raise RuntimeError(
                             'not sure how to combine {mtype} into the mega-channel'.format(
@@ -548,7 +548,6 @@ class Model(object):
             sample_dict = {
                 'name': 'mega_{}'.format(s),
                 'nom': mega_nom,
-                'modifiers': list(mega_mods[s].values()),
             }
             mega_samples[s] = sample_dict
 

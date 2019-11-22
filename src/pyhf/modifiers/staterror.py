@@ -36,14 +36,14 @@ class staterror_combined(object):
         )
 
         self._staterror_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__staterror_uncrt = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[s][m]['data']['uncrt'],
-                        mega_mods[s][m]['data']['nom_data'],
+                        mega_mods[m][s]['data']['uncrt'],
+                        mega_mods[m][s]['data']['nom_data'],
                     ]
                     for s in pdfconfig.samples
                 ]

@@ -47,16 +47,16 @@ class histosys_combined(object):
         self._histosys_histoset = [
             [
                 [
-                    mega_mods[s][m]['data']['lo_data'],
-                    mega_mods[s][m]['data']['nom_data'],
-                    mega_mods[s][m]['data']['hi_data'],
+                    mega_mods[m][s]['data']['lo_data'],
+                    mega_mods[m][s]['data']['nom_data'],
+                    mega_mods[m][s]['data']['hi_data'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._histosys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if histosys_mods:

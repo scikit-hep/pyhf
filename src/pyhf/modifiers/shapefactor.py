@@ -72,7 +72,7 @@ class shapefactor_combined(object):
         )
 
         self._shapefactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         global_concatenated_bin_indices = [

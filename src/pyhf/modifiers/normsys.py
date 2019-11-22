@@ -45,16 +45,16 @@ class normsys_combined(object):
         self._normsys_histoset = [
             [
                 [
-                    mega_mods[s][m]['data']['lo'],
-                    mega_mods[s][m]['data']['nom_data'],
-                    mega_mods[s][m]['data']['hi'],
+                    mega_mods[m][s]['data']['lo'],
+                    mega_mods[m][s]['data']['nom_data'],
+                    mega_mods[m][s]['data']['hi'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._normsys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if normsys_mods:
