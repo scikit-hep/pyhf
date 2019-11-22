@@ -116,7 +116,7 @@ setup(
         'pyyaml',  # for parsing CLI equal-delimited options
     ],
     extras_require=extras_require,
-    entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},
+    entry_points={'console_scripts': ['pyhf=pyhf.cli:cli']},
     dependency_links=[],
     use_scm_version=_is_test_pypi(),
 )

@@ -2,8 +2,8 @@ import logging
 
 import click
 
-from .version import __version__
-from . import cli
+from ..version import __version__
+from . import rootio, spec, stats
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -15,6 +15,6 @@ def pyhf():
     pass
 
 
-pyhf.add_command(cli.stats)
-pyhf.add_command(cli.rootio)
-pyhf.add_command(cli.spec)
+pyhf.add_command(rootio.cli)
+pyhf.add_command(spec.cli)
+pyhf.add_command(stats.cli)
