@@ -55,8 +55,8 @@ def test_histosys(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'histosys/hello': {
+        'histosys/hello': {
+            'signal': {
                 'type': 'histosys',
                 'name': 'hello',
                 'data': {
@@ -66,7 +66,19 @@ def test_histosys(backend):
                     'mask': [True, True, True],
                 },
             },
-            'histosys/world': {
+            'background': {
+                'type': 'histosys',
+                'name': 'hello',
+                'data': {
+                    'hi_data': [11, 12, 13],
+                    'lo_data': [9, 8, 7],
+                    'nom_data': [10, 10, 10],
+                    'mask': [True, True, True],
+                },
+            }
+        },
+        'histosys/world': {
+            'signal': {
                 'type': 'histosys',
                 'name': 'world',
                 'data': {
@@ -76,19 +88,7 @@ def test_histosys(backend):
                     'mask': [True, True, True],
                 },
             },
-        },
-        'background': {
-            'histosys/hello': {
-                'type': 'histosys',
-                'name': 'hello',
-                'data': {
-                    'hi_data': [11, 12, 13],
-                    'lo_data': [9, 8, 7],
-                    'nom_data': [10, 10, 10],
-                    'mask': [True, True, True],
-                },
-            },
-            'histosys/world': {
+            'background': {
                 'type': 'histosys',
                 'name': 'world',
                 'data': {
@@ -144,8 +144,8 @@ def test_normsys(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'normsys/hello': {
+        'normsys/hello': {
+            'signal': {
                 'type': 'normsys',
                 'name': 'hello',
                 'data': {
@@ -155,19 +155,7 @@ def test_normsys(backend):
                     'mask': [True, True, True],
                 },
             },
-            'normsys/world': {
-                'type': 'v',
-                'name': 'world',
-                'data': {
-                    'hi': [1.3] * 3,
-                    'lo': [0.7] * 3,
-                    'nom_data': [1, 1, 1],
-                    'mask': [True, True, True],
-                },
-            },
-        },
-        'background': {
-            'normsys/hello': {
+            'background': {
                 'type': 'normsys',
                 'name': 'hello',
                 'data': {
@@ -177,7 +165,19 @@ def test_normsys(backend):
                     'mask': [True, True, True],
                 },
             },
-            'normsys/world': {
+        },
+        'normsys/world': {
+            'signal': {
+                'type': 'v',
+                'name': 'world',
+                'data': {
+                    'hi': [1.3] * 3,
+                    'lo': [0.7] * 3,
+                    'nom_data': [1, 1, 1],
+                    'mask': [True, True, True],
+                },
+            },
+            'background': {
                 'type': 'normsys',
                 'name': 'world',
                 'data': {
@@ -231,15 +231,13 @@ def test_lumi(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'lumi/lumi': {
+        'lumi/lumi': {
+            'signal': {
                 'type': 'lumi',
                 'name': 'lumi',
                 'data': {'mask': [True, True, True]},
-            }
-        },
-        'background': {
-            'lumi/lumi': {
+            },
+            'background': {
                 'type': 'lumi',
                 'name': 'lumi',
                 'data': {'mask': [True, True, True]},
@@ -291,8 +289,8 @@ def test_stat(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'staterror/staterror_chan1': {
+        'staterror/staterror_chan1': {
+            'signal': {
                 'type': 'staterror',
                 'name': 'staterror_chan1',
                 'data': {
@@ -301,7 +299,18 @@ def test_stat(backend):
                     'uncrt': [1, 0, 0],
                 },
             },
-            'staterror/staterror_chan2': {
+            'background': {
+                'type': 'staterror',
+                'name': 'staterror_chan1',
+                'data': {
+                    'mask': [True, False, False],
+                    'nom_data': [10, 10, 10],
+                    'uncrt': [1, 0, 0],
+                },
+            },
+        },
+        'staterror/staterror_chan2': {
+            'signal': {
                 'type': 'staterror',
                 'name': 'staterror_chan2',
                 'data': {
@@ -310,18 +319,7 @@ def test_stat(backend):
                     'uncrt': [0, 1, 1],
                 },
             },
-        },
-        'background': {
-            'staterror/staterror_chan1': {
-                'type': 'staterror',
-                'name': 'staterror_chan1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
-                },
-            },
-            'staterror/staterror_chan2': {
+            'background': {
                 'type': 'staterror',
                 'name': 'staterror_chan2',
                 'data': {
@@ -376,8 +374,8 @@ def test_shapesys(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'shapesys/shapesys1': {
+        'shapesys/shapesys1': {
+            'signal': {
                 'type': 'shapesys',
                 'name': 'shapesys1',
                 'data': {
@@ -386,7 +384,18 @@ def test_shapesys(backend):
                     'uncrt': [1, 0, 0],
                 },
             },
-            'shapesys/shapesys2': {
+            'background': {
+                'type': 'shapesys',
+                'name': 'shapesys1',
+                'data': {
+                    'mask': [True, False, False],
+                    'nom_data': [10, 10, 10],
+                    'uncrt': [1, 0, 0],
+                },
+            }
+        },
+        'shapesys/shapesys2': {
+            'signal': {
                 'type': 'shapesys',
                 'name': 'shapesys1',
                 'data': {
@@ -395,18 +404,7 @@ def test_shapesys(backend):
                     'uncrt': [0, 1, 1],
                 },
             },
-        },
-        'background': {
-            'shapesys/shapesys1': {
-                'type': 'shapesys',
-                'name': 'shapesys1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
-                },
-            },
-            'shapesys/shapesys2': {
+            'background': {
                 'type': 'shapesys',
                 'name': 'shapesys1',
                 'data': {
@@ -447,30 +445,30 @@ def test_normfactor(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'normfactor/mu1': {
+        'normfactor/mu1': {
+            'signal': {
                 'type': 'normfactor',
                 'name': 'mu1',
                 'data': {'mask': [True, False, False]},
             },
-            'normfactor/mu2': {
-                'type': 'normfactor',
-                'name': 'mu2',
-                'data': {'mask': [False, True, True]},
-            },
-        },
-        'background': {
-            'normfactor/mu1': {
+            'background': {
                 'type': 'normfactor',
                 'name': 'mu1',
                 'data': {'mask': [True, False, False]},
-            },
-            'normfactor/mu2': {
+            }
+        },
+        'normfactor/mu2': {
+            'signal': {
                 'type': 'normfactor',
                 'name': 'mu2',
                 'data': {'mask': [False, True, True]},
             },
-        },
+            'background': {
+                'type': 'normfactor',
+                'name': 'mu2',
+                'data': {'mask': [False, True, True]},
+            }
+        }
     }
     hsc = normfactor_combined(
         [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods
@@ -527,31 +525,32 @@ def test_shapefactor(backend):
     )
 
     mega_mods = {
-        'signal': {
-            'shapefactor/shapefac1': {
+        'shapefactor/shapefac1': {
+            'signal': {
                 'type': 'shapefactor',
                 'name': 'shapefac1',
                 'data': {'mask': [True, False, False]},
             },
-            'shapefactor/shapefac2': {
-                'type': 'shapefactor',
-                'name': 'shapefac2',
-                'data': {'mask': [False, True, True]},
+            'background': {
+                    'type': 'shapefactor',
+                    'name': 'shapefac1',
+                    'data': {'mask': [True, False, False]},
             },
         },
-        'background': {
-            'shapefactor/shapefac1': {
+        'shapefactor/shapefac2': {
+            'signal': {
                 'type': 'shapefactor',
-                'name': 'shapefac1',
-                'data': {'mask': [True, False, False]},
-            },
-            'shapefactor/shapefac2': {
-                'type': 'normfactor',
                 'name': 'shapefac2',
                 'data': {'mask': [False, True, True]},
+            },
+            'background': {
+                    'type': 'normfactor',
+                    'name': 'shapefac2',
+                    'data': {'mask': [False, True, True]},
             },
         },
     }
+
     hsc = shapefactor_combined(
         [('shapefac1', 'shapefactor'), ('shapefac2', 'shapefactor')], mc, mega_mods
     )
