@@ -162,25 +162,17 @@ class Workspace(_ChannelSummaryMixin, dict):
             observed_data += model.config.auxdata
         return observed_data
 
-    def prune(
-        self,
-        modifiers=[],
-        modifier_types=[],
-        samples=[],
-        channels=[],
-        return_workspace=False,
-    ):
+    def prune(self, modifiers=[], modifier_types=[], samples=[], channels=[]):
         """
         Return a new, pruned workspace specification. This will not modify the original workspace.
 
-        This is not guaranteed to be a valid workspace after pruning unless `return_workspace` is flagged.
+        The pruned workspace must also be a valid workspace.
 
         Args:
           modifiers: A list of modifiers to prune.
           modifier_types: A list of modifier types to prune.
           samples: A list of samples to prune.
           channels: A list of channels to prune.
-          return_workspace: Returns a new workspace object
         """
         newspec = {
             'channels': [
@@ -212,9 +204,9 @@ class Workspace(_ChannelSummaryMixin, dict):
                             parameter
                             for parameter in measurement['config']['parameters']
                             if parameter['name'] not in modifiers
-                        ]
+                        ],
+                        'poi': measurement['config']['poi'],
                     },
-                    'poi': measurement['config']['poi'],
                 }
                 for measurement in self['measurements']
             ],
@@ -225,4 +217,4 @@ class Workspace(_ChannelSummaryMixin, dict):
             ],
             'version': self['version'],
         }
-        return Workspace(newspec) if return_workspace else newspec
+        return Workspace(newspec)
