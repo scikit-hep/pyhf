@@ -1,5 +1,8 @@
 import logging
 import jsonpatch
+from collections import (
+    UserDict,
+)  # underlying dict is accessible as an attribute (self.data)
 from . import exceptions
 from . import utils
 from .pdf import Model
@@ -20,7 +23,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self, self.schema, version=self.version)
+        utils.validate(self.data, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
@@ -161,3 +164,59 @@ class Workspace(_ChannelSummaryMixin, dict):
         if with_aux:
             observed_data += model.config.auxdata
         return observed_data
+
+    def prune(self, modifiers=[], samples=[], channels=[], return_workspace=False):
+        """
+        Return a new, pruned workspace specification. This will not modify the original workspace.
+
+        This is not guaranteed to be a valid workspace after pruning unless `return_workspace` is flagged.
+
+        Args:
+          modifiers: A list of modifiers to prune.
+          samples: A list of samples to prune.
+          channels: A list of channels to prune.
+          return_workspace: Returns a new workspace object
+        """
+        newspec = {
+            'channels': [
+                {
+                    'name': channel['name'],
+                    'samples': [
+                        {
+                            'name': sample['name'],
+                            'data': sample['data'],
+                            'modifiers': [
+                                modifier
+                                for modifier in sample['modifiers']
+                                if modifier['name'] not in modifiers
+                            ],
+                        }
+                        for sample in channel['samples']
+                        if sample['name'] not in samples
+                    ],
+                }
+                for channel in self.data['channels']
+                if channel['name'] not in channels
+            ],
+            'measurements': [
+                {
+                    'name': measurement['name'],
+                    'config': {
+                        'parameters': [
+                            parameter
+                            for parameter in measurement['config']['parameters']
+                            if parameter['name'] not in modifiers
+                        ]
+                    },
+                    'poi': measurement['config']['poi'],
+                }
+                for measurement in self.data['measurements']
+            ],
+            'observations': [
+                observation
+                for observation in self.data['observations']
+                if observation['name'] not in channels
+            ],
+            'version': self.data['version'],
+        }
+        return Workspace(newspec) if return_workspace else newspec
