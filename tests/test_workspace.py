@@ -136,3 +136,36 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog):
 
 def test_json_serializable(workspace_factory):
     assert json.dumps(workspace_factory())
+
+
+def test_prune_nothing(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.prune(
+        channels=['fake-name'],
+        samples=['fake-sample'],
+        modifiers=['fake-modifier'],
+        modifier_types=['fake-type'],
+    )
+
+
+def test_prune_channel(workspace_factory):
+    ws = workspace_factory()
+    channel = ws.channels[0]
+    if len(ws.channels) == 1:
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(channels=[channel])
+    else:
+        new_ws = ws.prune(channels=channel)
+        assert channel not in new_ws.channels
+
+
+def test_prune_sample(workspace_factory):
+    ws = workspace_factory()
+    sample = ws.samples[1]
+    assert ws.prune(samples=[sample])
+
+
+def test_prune_modifier(workspace_factory):
+    ws = workspace_factory()
+    modifier = ws.parameters[0]
+    assert ws.prune(modifiers=[modifier])
