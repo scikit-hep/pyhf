@@ -7,18 +7,19 @@ from collections import (
 from . import exceptions
 from . import utils
 from .pdf import Model
+from .mixins import _ChannelSummaryMixin
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-class Workspace(UserDict):
+class Workspace(_ChannelSummaryMixin, UserDict):
     """
     A JSON-serializable object that is built from an object that follows the `workspace.json` schema.
     """
 
     def __init__(self, spec, **config_kwargs):
-        super(Workspace, self).__init__(spec)
+        super(Workspace, self).__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema

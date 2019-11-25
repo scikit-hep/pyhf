@@ -10,12 +10,14 @@ from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
 from .tensor.common import _TensorViewer
+from .mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
 
-class _ModelConfig(object):
+class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
+        super(_ModelConfig, self).__init__(channels=spec['channels'])
         poiname = config_kwargs.get('poiname', 'mu')
 
         self.par_map = {}
@@ -43,19 +45,11 @@ class _ModelConfig(object):
                 )
             _paramsets_user_configs[parameter.pop('name')] = parameter
 
-        self.channels = []
-        self.samples = []
-        self.parameters = []
-        self.modifiers = []
-        # keep track of the width of each channel (how many bins)
-        self.channel_nbins = {}
         # bookkeep all requirements for paramsets we need to build
         _paramsets_requirements = {}
         # need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in spec['channels']:
-            self.channels.append(channel['name'])
-            self.channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
             for sample in channel['samples']:
                 if len(sample['data']) != self.channel_nbins[channel['name']]:
                     raise exceptions.InvalidModel(
@@ -66,11 +60,9 @@ class _ModelConfig(object):
                             self.channel_nbins[channel['name']],
                         )
                     )
-                self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
                     # get the paramset requirements for the given modifier. If
                     # modifier does not exist, we'll have a KeyError
-                    self.parameters.append(modifier_def['name'])
                     try:
                         paramset_requirements = modifiers.registry[
                             modifier_def['type']
@@ -82,12 +74,6 @@ class _ModelConfig(object):
                             )
                         )
                         raise exceptions.InvalidModifier()
-                    self.modifiers.append(
-                        (
-                            modifier_def['name'],  # mod name
-                            modifier_def['type'],  # mod type
-                        )
-                    )
 
                     # check the shareability (e.g. for shapesys for example)
                     is_shared = paramset_requirements['is_shared']
@@ -110,10 +96,6 @@ class _ModelConfig(object):
                         paramset_requirements
                     )
 
-        self.channels = sorted(list(set(self.channels)))
-        self.samples = sorted(list(set(self.samples)))
-        self.parameters = sorted(list(set(self.parameters)))
-        self.modifiers = sorted(list(set(self.modifiers)))
         self._create_and_register_paramsets(
             _paramsets_requirements, _paramsets_user_configs
         )
@@ -545,10 +527,7 @@ class Model(object):
                                 mtype=mtype
                             )
                         )
-            sample_dict = {
-                'name': 'mega_{}'.format(s),
-                'nom': mega_nom,
-            }
+            sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
             mega_samples[s] = sample_dict
 
         nominal_rates = default_backend.astensor(
