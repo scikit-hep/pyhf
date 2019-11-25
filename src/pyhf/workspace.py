@@ -1,8 +1,5 @@
 import logging
 import jsonpatch
-from collections import (
-    UserDict,
-)  # underlying dict is accessible as an attribute (self.data)
 from . import exceptions
 from . import utils
 from .pdf import Model
@@ -23,7 +20,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.data, self.schema, version=self.version)
+        utils.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
@@ -204,7 +201,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                         if sample['name'] not in samples
                     ],
                 }
-                for channel in self.data['channels']
+                for channel in self['channels']
                 if channel['name'] not in channels
             ],
             'measurements': [
@@ -219,13 +216,13 @@ class Workspace(_ChannelSummaryMixin, dict):
                     },
                     'poi': measurement['config']['poi'],
                 }
-                for measurement in self.data['measurements']
+                for measurement in self['measurements']
             ],
             'observations': [
                 observation
-                for observation in self.data['observations']
+                for observation in self['observations']
                 if observation['name'] not in channels
             ],
-            'version': self.data['version'],
+            'version': self['version'],
         }
         return Workspace(newspec) if return_workspace else newspec
