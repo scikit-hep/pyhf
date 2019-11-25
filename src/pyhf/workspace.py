@@ -31,6 +31,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         for obs in self['observations']:
             self.observations[obs['name']] = obs['data']
 
+    def __repr__(self):
+        return object.__repr__(self)
+
     # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
         """
