@@ -3,7 +3,7 @@
     "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/model.json",
     "type": "object",
     "properties": {
-        "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
+        "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"}, "minItems": 1 },
         "parameters": { "type": "array", "items": {"$ref": "defs.json#/definitions/parameter"} }
     },
     "additionalProperties": false,

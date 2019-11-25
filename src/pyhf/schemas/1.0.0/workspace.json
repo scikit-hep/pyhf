@@ -3,9 +3,9 @@
     "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/workspace.json",
     "type": "object",
     "properties": {
-        "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
-        "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"} },
-        "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" } },
+        "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"}, "minItems": 1 },
+        "measurements": { "type": "array", "items": {"$ref": "defs.json#/definitions/measurement"}, "minItems": 1 },
+        "observations": { "type": "array", "items": {"$ref": "defs.json#/definitions/observation" }, "minItems": 1 },
         "version": { "const": "1.0.0" }
     },
     "additionalProperties": false,
