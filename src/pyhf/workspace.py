@@ -8,26 +8,25 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-class Workspace(object):
+class Workspace(dict):
     """
-    An object that is built from a JSON spec that follows `workspace.json`.
+    A JSON-serializable object that is built from an object that follows the `workspace.json` schema.
     """
 
     def __init__(self, spec, **config_kwargs):
-        self.spec = spec
-
+        super(Workspace, self).__init__(spec)
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema, version=self.version)
+        utils.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
-        for measurement in self.spec.get('measurements', []):
+        for measurement in self.get('measurements', []):
             self.measurement_names.append(measurement['name'])
 
         self.observations = {}
-        for obs in self.spec['observations']:
+        for obs in self['observations']:
             self.observations[obs['name']] = obs['data']
 
     # NB: this is a wrapper function to validate the returned measurement object against the spec
@@ -79,19 +78,19 @@ class Workspace(object):
                             measurement_name
                         )
                     )
-                return self.spec['measurements'][
+                return self['measurements'][
                     self.measurement_names.index(measurement_name)
                 ]
 
             measurement_index = config_kwargs.get('measurement_index')
             if measurement_index:
-                return self.spec['measurements'][measurement_index]
+                return self['measurements'][measurement_index]
 
             if len(self.measurement_names) > 1:
                 log.warning(
                     'multiple measurements defined. Taking the first measurement.'
                 )
-            return self.spec['measurements'][0]
+            return self['measurements'][0]
 
         raise exceptions.InvalidMeasurement(
             "A measurement was not given to create the Model."
@@ -116,7 +115,7 @@ class Workspace(object):
         patches = config_kwargs.get('patches', [])
 
         modelspec = {
-            'channels': self.spec['channels'],
+            'channels': self['channels'],
             'parameters': measurement['config']['parameters'],
         }
         for patch in patches:

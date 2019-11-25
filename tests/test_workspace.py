@@ -121,3 +121,7 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog):
         with pytest.raises(KeyError):
             assert w.data(m)
             assert 'Invalid channel' in caplog.text
+
+
+def test_json_serializable(workspace_factory):
+    assert json.dumps(workspace_factory())
