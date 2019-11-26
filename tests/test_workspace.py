@@ -219,3 +219,29 @@ def test_rename_modifier(workspace_factory):
     new_ws = ws.rename(modifiers={modifier: renamed})
     assert modifier not in new_ws.parameters
     assert renamed in new_ws.parameters
+
+
+def test_combine_workspace(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+    )
+    combined_combine = ws.combine(new_ws)
+    assert set(combined_combine.channels) == set(ws.channels + new_ws.channels)
+    assert set(combined_combine.samples) == set(ws.samples + new_ws.samples)
+    assert set(combined_combine.parameters) == set(ws.parameters + new_ws.parameters)
+    # check adding
+    combined_add = ws + new_ws
+    assert combined_add == combined_combine
+    assert set(combined_add.channels) == set(ws.channels + new_ws.channels)
+    assert set(combined_add.samples) == set(ws.samples + new_ws.samples)
+    assert set(combined_add.parameters) == set(ws.parameters + new_ws.parameters)

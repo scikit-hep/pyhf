@@ -178,13 +178,13 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned, renamed workspace must also be a valid workspace.
 
         Args:
-          prune_modifiers: A list of modifiers to prune.
-          prune_modifier_types: A list of modifier types to prune.
-          prune_samples: A list of samples to prune.
-          prune_channels: A list of channels to prune.
-          rename_modifiers: A dictionary mapping old modifier name to new modifier name.
-          rename_samples: A dictionary mapping old sample name to new sample name.
-          rename_channels: A dictionary mapping old channel name to new channel name.
+            prune_modifiers: A list of modifiers to prune.
+            prune_modifier_types: A list of modifier types to prune.
+            prune_samples: A list of samples to prune.
+            prune_channels: A list of channels to prune.
+            rename_modifiers: A dictionary mapping old modifier name to new modifier name.
+            rename_samples: A dictionary mapping old sample name to new sample name.
+            rename_channels: A dictionary mapping old channel name to new channel name.
         """
         newspec = {
             'channels': [
@@ -251,10 +251,10 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned workspace must also be a valid workspace.
 
         Args:
-          modifiers: A list of modifiers to prune.
-          modifier_types: A list of modifier types to prune.
-          samples: A list of samples to prune.
-          channels: A list of channels to prune.
+            modifiers: A list of modifiers to prune.
+            modifier_types: A list of modifier types to prune.
+            samples: A list of samples to prune.
+            channels: A list of channels to prune.
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
@@ -270,10 +270,32 @@ class Workspace(_ChannelSummaryMixin, dict):
         The renamed workspace must also be a valid workspace.
 
         Args:
-          modifiers: A dictionary mapping old modifier name to new modifier name.
-          samples: A dictionary mapping old sample name to new sample name.
-          channels: A dictionary mapping old channel name to new channel name.
+            modifiers: A dictionary mapping old modifier name to new modifier name.
+            samples: A dictionary mapping old sample name to new sample name.
+            channels: A dictionary mapping old channel name to new channel name.
         """
         return self._prune_and_rename(
             rename_modifiers=modifiers, rename_samples=samples, rename_channels=channels
         )
+
+    def __add__(self, other):
+        """
+        Return a new workspace specification that is the combination of this workspace and other workspace.
+
+        The new workspace must also be a valid workspace.
+
+        Args:
+            other: A pyhf.Workspace object.
+        """
+        return self.combine(other)
+
+    def combine(self, other):
+        """
+        Return a new workspace specification that is the combination of this workspace and other workspace.
+
+        The new workspace must also be a valid workspace.
+
+        Args:
+            other: A pyhf.Workspace object.
+        """
+        return Workspace(self)
