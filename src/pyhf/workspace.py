@@ -219,15 +219,65 @@ class Workspace(_ChannelSummaryMixin, dict):
         }
         return Workspace(newspec)
 
-    def rename(self, modifiers=[], samples=[], channels=[]):
+    def rename(self, modifiers={}, samples={}, channels={}):
         """
         Return a new workspace specification with certain elements renamed. This will not modify the original workspace.
 
         The renamed workspace must also be a valid workspace.
 
         Args:
-          modifiers: A list of modifiers to prune.
-          samples: A list of samples to prune.
-          channels: A list of channels to prune.
+          modifiers: A dictionary mapping old modifier name to new modifier name.
+          samples: A dictionary mapping old sample name to new sample name.
+          channels: A dictionary mapping old channel name to new channel name.
         """
-        return Workspace(self)
+        newspec = {
+            'channels': [
+                {
+                    'name': channels.get(channel['name'], channel['name']),
+                    'samples': [
+                        {
+                            'name': samples.get(sample['name'], sample['name']),
+                            'data': sample['data'],
+                            'modifiers': [
+                                dict(
+                                    modifier,
+                                    name=modifiers.get(
+                                        modifier['name'], modifier['name']
+                                    ),
+                                )
+                                for modifier in sample['modifiers']
+                            ],
+                        }
+                        for sample in channel['samples']
+                    ],
+                }
+                for channel in self['channels']
+            ],
+            'measurements': [
+                {
+                    'name': measurement['name'],
+                    'config': {
+                        'parameters': [
+                            dict(
+                                parameter,
+                                name=modifiers.get(
+                                    parameter['name'], parameter['name']
+                                ),
+                            )
+                            for parameter in measurement['config']['parameters']
+                        ],
+                        'poi': measurement['config']['poi'],
+                    },
+                }
+                for measurement in self['measurements']
+            ],
+            'observations': [
+                dict(
+                    observation,
+                    name=channels.get(observation['name'], observation['name']),
+                )
+                for observation in self['observations']
+            ],
+            'version': self['version'],
+        }
+        return Workspace(newspec)
