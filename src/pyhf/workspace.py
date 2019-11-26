@@ -162,6 +162,88 @@ class Workspace(_ChannelSummaryMixin, dict):
             observed_data += model.config.auxdata
         return observed_data
 
+    def _prune_and_rename(
+        self,
+        prune_modifiers=[],
+        prune_modifier_types=[],
+        prune_samples=[],
+        prune_channels=[],
+        rename_modifiers={},
+        rename_samples={},
+        rename_channels={},
+    ):
+        """
+        Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
+
+        The pruned, renamed workspace must also be a valid workspace.
+
+        Args:
+          prune_modifiers: A list of modifiers to prune.
+          prune_modifier_types: A list of modifier types to prune.
+          prune_samples: A list of samples to prune.
+          prune_channels: A list of channels to prune.
+          rename_modifiers: A dictionary mapping old modifier name to new modifier name.
+          rename_samples: A dictionary mapping old sample name to new sample name.
+          rename_channels: A dictionary mapping old channel name to new channel name.
+        """
+        newspec = {
+            'channels': [
+                {
+                    'name': rename_channels.get(channel['name'], channel['name']),
+                    'samples': [
+                        {
+                            'name': rename_samples.get(sample['name'], sample['name']),
+                            'data': sample['data'],
+                            'modifiers': [
+                                dict(
+                                    modifier,
+                                    name=rename_modifiers.get(
+                                        modifier['name'], modifier['name']
+                                    ),
+                                )
+                                for modifier in sample['modifiers']
+                                if modifier['name'] not in prune_modifiers
+                                and modifier['type'] not in prune_modifier_types
+                            ],
+                        }
+                        for sample in channel['samples']
+                        if sample['name'] not in prune_samples
+                    ],
+                }
+                for channel in self['channels']
+                if channel['name'] not in prune_channels
+            ],
+            'measurements': [
+                {
+                    'name': measurement['name'],
+                    'config': {
+                        'parameters': [
+                            dict(
+                                parameter,
+                                name=rename_modifiers.get(
+                                    parameter['name'], parameter['name']
+                                ),
+                            )
+                            for parameter in measurement['config']['parameters']
+                            if parameter['name'] not in prune_modifiers
+                        ],
+                        'poi': measurement['config']['poi'],
+                    },
+                }
+                for measurement in self['measurements']
+            ],
+            'observations': [
+                dict(
+                    observation,
+                    name=rename_channels.get(observation['name'], observation['name']),
+                )
+                for observation in self['observations']
+                if observation['name'] not in prune_channels
+            ],
+            'version': self['version'],
+        }
+        return Workspace(newspec)
+
     def prune(self, modifiers=[], modifier_types=[], samples=[], channels=[]):
         """
         Return a new, pruned workspace specification. This will not modify the original workspace.
@@ -174,50 +256,12 @@ class Workspace(_ChannelSummaryMixin, dict):
           samples: A list of samples to prune.
           channels: A list of channels to prune.
         """
-        newspec = {
-            'channels': [
-                {
-                    'name': channel['name'],
-                    'samples': [
-                        {
-                            'name': sample['name'],
-                            'data': sample['data'],
-                            'modifiers': [
-                                modifier
-                                for modifier in sample['modifiers']
-                                if modifier['name'] not in modifiers
-                                and modifier['type'] not in modifier_types
-                            ],
-                        }
-                        for sample in channel['samples']
-                        if sample['name'] not in samples
-                    ],
-                }
-                for channel in self['channels']
-                if channel['name'] not in channels
-            ],
-            'measurements': [
-                {
-                    'name': measurement['name'],
-                    'config': {
-                        'parameters': [
-                            parameter
-                            for parameter in measurement['config']['parameters']
-                            if parameter['name'] not in modifiers
-                        ],
-                        'poi': measurement['config']['poi'],
-                    },
-                }
-                for measurement in self['measurements']
-            ],
-            'observations': [
-                observation
-                for observation in self['observations']
-                if observation['name'] not in channels
-            ],
-            'version': self['version'],
-        }
-        return Workspace(newspec)
+        return self._prune_and_rename(
+            prune_modifiers=modifiers,
+            prune_modifier_types=modifier_types,
+            prune_samples=samples,
+            prune_channels=channels,
+        )
 
     def rename(self, modifiers={}, samples={}, channels={}):
         """
@@ -230,54 +274,6 @@ class Workspace(_ChannelSummaryMixin, dict):
           samples: A dictionary mapping old sample name to new sample name.
           channels: A dictionary mapping old channel name to new channel name.
         """
-        newspec = {
-            'channels': [
-                {
-                    'name': channels.get(channel['name'], channel['name']),
-                    'samples': [
-                        {
-                            'name': samples.get(sample['name'], sample['name']),
-                            'data': sample['data'],
-                            'modifiers': [
-                                dict(
-                                    modifier,
-                                    name=modifiers.get(
-                                        modifier['name'], modifier['name']
-                                    ),
-                                )
-                                for modifier in sample['modifiers']
-                            ],
-                        }
-                        for sample in channel['samples']
-                    ],
-                }
-                for channel in self['channels']
-            ],
-            'measurements': [
-                {
-                    'name': measurement['name'],
-                    'config': {
-                        'parameters': [
-                            dict(
-                                parameter,
-                                name=modifiers.get(
-                                    parameter['name'], parameter['name']
-                                ),
-                            )
-                            for parameter in measurement['config']['parameters']
-                        ],
-                        'poi': measurement['config']['poi'],
-                    },
-                }
-                for measurement in self['measurements']
-            ],
-            'observations': [
-                dict(
-                    observation,
-                    name=channels.get(observation['name'], observation['name']),
-                )
-                for observation in self['observations']
-            ],
-            'version': self['version'],
-        }
-        return Workspace(newspec)
+        return self._prune_and_rename(
+            rename_modifiers=modifiers, rename_samples=samples, rename_channels=channels
+        )

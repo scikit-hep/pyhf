@@ -157,6 +157,7 @@ def test_prune_channel(workspace_factory):
     else:
         new_ws = ws.prune(channels=channel)
         assert channel not in new_ws.channels
+        assert channel not in [obs['name'] for obs in new_ws['observations']]
 
 
 def test_prune_sample(workspace_factory):
@@ -188,31 +189,33 @@ def test_prune_modifier_type(workspace_factory):
     assert modifier_type not in [item[1] for item in new_ws.modifiers]
 
 
-def test_rename_channel(spec):
+def test_rename_channel(workspace_factory):
     ws = workspace_factory()
     channel = ws.channels[0]
     renamed = 'renamedChannel'
     assert renamed not in ws.channels
-    new_ws = ws.prune(channels={channel: renamed})
+    new_ws = ws.rename(channels={channel: renamed})
     assert channel not in new_ws.channels
     assert renamed in new_ws.channels
+    assert channel not in [obs['name'] for obs in new_ws['observations']]
+    assert renamed in [obs['name'] for obs in new_ws['observations']]
 
 
-def test_rename_sample(spec):
+def test_rename_sample(workspace_factory):
     ws = workspace_factory()
     sample = ws.samples[1]
     renamed = 'renamedSample'
     assert renamed not in ws.samples
-    new_ws = ws.prune(samples={sample: renamed})
+    new_ws = ws.rename(samples={sample: renamed})
     assert sample not in new_ws.samples
     assert renamed in new_ws.samples
 
 
-def test_rename_modifier(spec):
+def test_rename_modifier(workspace_factory):
     ws = workspace_factory()
     modifier = ws.parameters[0]
     renamed = 'renamedModifier'
     assert renamed not in ws.parameters
-    new_ws = ws.prune(modifiers={modifier: renamed})
+    new_ws = ws.rename(modifiers={modifier: renamed})
     assert modifier not in new_ws.parameters
     assert renamed in new_ws.parameters
