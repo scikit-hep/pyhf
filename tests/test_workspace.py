@@ -221,6 +221,15 @@ def test_rename_modifier(workspace_factory):
     assert renamed in new_ws.parameters
 
 
+def test_combine_workspace_same_channels(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = ws.combine(new_ws)
+    assert 'channel1' in str(excinfo.value)
+    assert 'channel2' not in str(excinfo.value)
+
+
 def test_combine_workspace(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(

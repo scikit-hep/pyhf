@@ -280,12 +280,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def __add__(self, other):
         """
-        Return a new workspace specification that is the combination of this workspace and other workspace.
-
-        The new workspace must also be a valid workspace.
-
-        Args:
-            other: A pyhf.Workspace object.
+        See pyhf.Workspace.combine.
         """
         return self.combine(other)
 
@@ -295,7 +290,16 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         The new workspace must also be a valid workspace.
 
+        A combination of workspaces is done by joining the set of channels. If the workspaces share any channels in common, do not combine.
+
         Args:
             other: A pyhf.Workspace object.
         """
+        common_channels = set(self.channels).intersection(other.channels)
+        if common_channels:
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces cannot have any channels in common: {}".format(
+                    common_channels
+                )
+            )
         return Workspace(self)
