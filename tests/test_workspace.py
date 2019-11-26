@@ -233,6 +233,7 @@ def test_combine_workspace_same_channels(workspace_factory):
 def test_combine_workspace(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
         samples={
             'background1': 'background3',
             'background2': 'background4',
