@@ -275,6 +275,12 @@ def test_combine_workspace(workspace_factory):
             'bkg1Shape': 'bkg3Shape',
             'bkg2Shape': 'bkg4Shape',
         },
+        measurements={
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+        },
     )
     combined_combine = ws.combine(new_ws)
     assert set(combined_combine.channels) == set(ws.channels + new_ws.channels)

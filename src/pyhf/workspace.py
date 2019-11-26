@@ -317,4 +317,20 @@ class Workspace(_ChannelSummaryMixin, dict):
                     common_channels
                 )
             )
-        return Workspace(self)
+
+        common_measurements = set(self.measurement_names).intersection(
+            other.measurement_names
+        )
+        if common_measurements:
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces cannot have any measurements in common: {}".format(
+                    common_measurements
+                )
+            )
+        newspec = {
+            'channels': self['channels'] + other['channels'],
+            'measurements': self['measurements'] + other['measurements'],
+            'observations': self['observations'] + other['observations'],
+            'version': self['version'],
+        }
+        return Workspace(newspec)
