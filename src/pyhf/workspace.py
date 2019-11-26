@@ -168,9 +168,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         prune_modifier_types=[],
         prune_samples=[],
         prune_channels=[],
+        prune_measurements=[],
         rename_modifiers={},
         rename_samples={},
         rename_channels={},
+        rename_measurements={},
     ):
         """
         Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
@@ -182,9 +184,11 @@ class Workspace(_ChannelSummaryMixin, dict):
             prune_modifier_types: A list of modifier types to prune.
             prune_samples: A list of samples to prune.
             prune_channels: A list of channels to prune.
+            prune_measurements: A list of measurements to prune.
             rename_modifiers: A dictionary mapping old modifier name to new modifier name.
             rename_samples: A dictionary mapping old sample name to new sample name.
             rename_channels: A dictionary mapping old channel name to new channel name.
+            rename_measurements: A dictionary mapping old measurement name to new measurement name.
         """
         newspec = {
             'channels': [
@@ -215,7 +219,9 @@ class Workspace(_ChannelSummaryMixin, dict):
             ],
             'measurements': [
                 {
-                    'name': measurement['name'],
+                    'name': rename_measurements.get(
+                        measurement['name'], measurement['name']
+                    ),
                     'config': {
                         'parameters': [
                             dict(
@@ -231,6 +237,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                     },
                 }
                 for measurement in self['measurements']
+                if measurement['name'] not in prune_measurements
             ],
             'observations': [
                 dict(
@@ -244,7 +251,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         }
         return Workspace(newspec)
 
-    def prune(self, modifiers=[], modifier_types=[], samples=[], channels=[]):
+    def prune(
+        self, modifiers=[], modifier_types=[], samples=[], channels=[], measurements=[]
+    ):
         """
         Return a new, pruned workspace specification. This will not modify the original workspace.
 
@@ -255,15 +264,17 @@ class Workspace(_ChannelSummaryMixin, dict):
             modifier_types: A list of modifier types to prune.
             samples: A list of samples to prune.
             channels: A list of channels to prune.
+            measurements: A list of measurements to prune.
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
             prune_modifier_types=modifier_types,
             prune_samples=samples,
             prune_channels=channels,
+            prune_measurements=measurements,
         )
 
-    def rename(self, modifiers={}, samples={}, channels={}):
+    def rename(self, modifiers={}, samples={}, channels={}, measurements={}):
         """
         Return a new workspace specification with certain elements renamed. This will not modify the original workspace.
 
@@ -273,9 +284,13 @@ class Workspace(_ChannelSummaryMixin, dict):
             modifiers: A dictionary mapping old modifier name to new modifier name.
             samples: A dictionary mapping old sample name to new sample name.
             channels: A dictionary mapping old channel name to new channel name.
+            measurements: A dictionary mapping old measurement name to new measurement name.
         """
         return self._prune_and_rename(
-            rename_modifiers=modifiers, rename_samples=samples, rename_channels=channels
+            rename_modifiers=modifiers,
+            rename_samples=samples,
+            rename_channels=channels,
+            rename_measurements=measurements,
         )
 
     def __add__(self, other):
@@ -290,7 +305,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         The new workspace must also be a valid workspace.
 
-        A combination of workspaces is done by joining the set of channels. If the workspaces share any channels in common, do not combine.
+        A combination of workspaces is done by joining the set of channels. If the workspaces share any channels or measurements in common, do not combine.
 
         Args:
             other: A pyhf.Workspace object.

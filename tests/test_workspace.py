@@ -189,6 +189,14 @@ def test_prune_modifier_type(workspace_factory):
     assert modifier_type not in [item[1] for item in new_ws.modifiers]
 
 
+def test_prune_measurements(workspace_factory):
+    ws = workspace_factory()
+    measurement = 'lumi'
+    new_ws = ws.prune(measurements=[measurement])
+    assert new_ws
+    assert measurement not in new_ws.measurement_names
+
+
 def test_rename_channel(workspace_factory):
     ws = workspace_factory()
     channel = ws.channels[0]
@@ -221,6 +229,16 @@ def test_rename_modifier(workspace_factory):
     assert renamed in new_ws.parameters
 
 
+def test_rename_measurement(workspace_factory):
+    ws = workspace_factory()
+    measurement = ws.measurement_names[0]
+    renamed = 'renamedMeasurement'
+    assert renamed not in ws.measurement_names
+    new_ws = ws.rename(measurements={measurement: renamed})
+    assert measurement not in new_ws.measurement_names
+    assert renamed in new_ws.measurement_names
+
+
 def test_combine_workspace_same_channels(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel2': 'channel3'})
@@ -228,6 +246,19 @@ def test_combine_workspace_same_channels(workspace_factory):
         combined = ws.combine(new_ws)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
+
+
+def test_combine_workspace_same_measurements(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = ws.combine(new_ws)
+    assert 'GaussExample' in str(excinfo.value)
+    assert 'GammaExample' not in str(excinfo.value)
+    assert 'ConstExample' not in str(excinfo.value)
+    assert 'LogNormExample' not in str(excinfo.value)
 
 
 def test_combine_workspace(workspace_factory):
