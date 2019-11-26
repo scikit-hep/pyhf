@@ -1,6 +1,5 @@
 import logging
 import jsonpatch
-from copy import deepcopy
 from . import exceptions
 from . import utils
 from .pdf import Model
