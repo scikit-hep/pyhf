@@ -153,25 +153,47 @@ def test_prune_channel(workspace_factory):
     channel = ws.channels[0]
     if len(ws.channels) == 1:
         with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(channels=channel)
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
             new_ws = ws.prune(channels=[channel])
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws - channel
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws - [channel]
     else:
         new_ws = ws.prune(channels=channel)
         assert channel not in new_ws.channels
         assert channel not in [obs['name'] for obs in new_ws['observations']]
 
+        new_ws_list = ws.prune(channels=[channel])
+        assert new_ws_list == new_ws
+        new_ws_sub = ws - channel
+        assert new_ws_sub == new_ws
+        new_ws_isub = workspace_factory()
+        new_ws_isub -= channel
+        assert new_ws_isub == new_ws
+
 
 def test_prune_sample(workspace_factory):
     ws = workspace_factory()
     sample = ws.samples[1]
-    new_ws = ws.prune(samples=[sample])
+    new_ws = ws.prune(samples=sample)
     assert new_ws
     assert sample not in new_ws.samples
+
+    new_ws_list = ws.prune(samples=[sample])
+    assert new_ws_list == new_ws
+    new_ws_sub = ws - sample
+    assert new_ws_sub == new_ws
+    new_ws_isub = workspace_factory()
+    new_ws_isub -= sample
+    assert new_ws_isub == new_ws
 
 
 def test_prune_modifier(workspace_factory):
     ws = workspace_factory()
     modifier = 'lumi'
-    new_ws = ws.prune(modifiers=[modifier])
+    new_ws = ws.prune(modifiers=modifier)
     assert new_ws
     assert modifier not in new_ws.parameters
     assert modifier not in [
@@ -180,21 +202,46 @@ def test_prune_modifier(workspace_factory):
         for p in measurement['config']['parameters']
     ]
 
+    new_ws_list = ws.prune(modifiers=[modifier])
+    assert new_ws_list == new_ws
+
 
 def test_prune_modifier_type(workspace_factory):
     ws = workspace_factory()
     modifier_type = 'lumi'
-    new_ws = ws.prune(modifier_types=[modifier_type])
+    new_ws = ws.prune(modifier_types=modifier_type)
     assert new_ws
     assert modifier_type not in [item[1] for item in new_ws.modifiers]
+
+    new_ws_list = ws.prune(modifier_types=[modifier_type])
+    assert new_ws_list == new_ws
 
 
 def test_prune_measurements(workspace_factory):
     ws = workspace_factory()
-    measurement = 'lumi'
-    new_ws = ws.prune(measurements=[measurement])
-    assert new_ws
-    assert measurement not in new_ws.measurement_names
+    measurement = ws.measurement_names[0]
+
+    if len(ws.measurement_names) == 1:
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(measurements=measurement)
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(measurements=[measurement])
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws - measurement
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws - [measurement]
+    else:
+        new_ws = ws.prune(measurements=[measurement])
+        assert new_ws
+        assert measurement not in new_ws.measurement_names
+
+        new_ws_list = ws.prune(measurements=[measurement])
+        assert new_ws_list == new_ws
+        new_ws_sub = ws - measurement
+        assert new_ws_sub == new_ws
+        new_ws_isub = workspace_factory()
+        new_ws_isub -= measurement
+        assert new_ws_isub == new_ws
 
 
 def test_rename_channel(workspace_factory):

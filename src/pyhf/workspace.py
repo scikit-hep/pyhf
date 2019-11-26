@@ -180,11 +180,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned, renamed workspace must also be a valid workspace.
 
         Args:
-            prune_modifiers: A list of modifiers to prune.
-            prune_modifier_types: A list of modifier types to prune.
-            prune_samples: A list of samples to prune.
-            prune_channels: A list of channels to prune.
-            prune_measurements: A list of measurements to prune.
+            prune_modifiers: A string or a list of modifiers to prune.
+            prune_modifier_types: A string or a list of modifier types to prune.
+            prune_samples: A string or a list of samples to prune.
+            prune_channels: A string or a list of channels to prune.
+            prune_measurements: A string or a list of measurements to prune.
             rename_modifiers: A dictionary mapping old modifier name to new modifier name.
             rename_samples: A dictionary mapping old sample name to new sample name.
             rename_channels: A dictionary mapping old channel name to new channel name.
@@ -260,11 +260,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned workspace must also be a valid workspace.
 
         Args:
-            modifiers: A list of modifiers to prune.
-            modifier_types: A list of modifier types to prune.
-            samples: A list of samples to prune.
-            channels: A list of channels to prune.
-            measurements: A list of measurements to prune.
+            modifiers: A string or a list of modifiers to prune.
+            modifier_types: A string or a list of modifier types to prune.
+            samples: A string or a list of samples to prune.
+            channels: A string or a list of channels to prune.
+            measurements: A string or a list of measurements to prune.
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
@@ -292,18 +292,6 @@ class Workspace(_ChannelSummaryMixin, dict):
             rename_channels=channels,
             rename_measurements=measurements,
         )
-
-    def __iadd__(self, other):
-        """
-        See pyhf.Workspace.combine.
-        """
-        return self.combine(other)
-
-    def __add__(self, other):
-        """
-        See pyhf.Workspace.combine.
-        """
-        return self.combine(other)
 
     def combine(self, other):
         """
@@ -340,3 +328,39 @@ class Workspace(_ChannelSummaryMixin, dict):
             'version': self['version'],
         }
         return Workspace(newspec)
+
+    def __iadd__(self, other):
+        """
+        See pyhf.Workspace.combine.
+        """
+        return self.combine(other)
+
+    def __add__(self, other):
+        """
+        See pyhf.Workspace.combine.
+        """
+        return self.combine(other)
+
+    def __isub__(self, other):
+        """
+        See pyhf.Workspace.prune.
+        """
+        return self.prune(
+            modifiers=other,
+            modifier_types=other,
+            samples=other,
+            channels=other,
+            measurements=other,
+        )
+
+    def __sub__(self, other):
+        """
+        See pyhf.Workspace.prune.
+        """
+        return self.prune(
+            modifiers=other,
+            modifier_types=other,
+            samples=other,
+            channels=other,
+            measurements=other,
+        )
