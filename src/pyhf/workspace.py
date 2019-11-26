@@ -218,3 +218,16 @@ class Workspace(_ChannelSummaryMixin, dict):
             'version': self['version'],
         }
         return Workspace(newspec)
+
+    def rename(self, modifiers=[], samples=[], channels=[]):
+        """
+        Return a new workspace specification with certain elements renamed. This will not modify the original workspace.
+
+        The renamed workspace must also be a valid workspace.
+
+        Args:
+          modifiers: A list of modifiers to prune.
+          samples: A list of samples to prune.
+          channels: A list of channels to prune.
+        """
+        return Workspace(self)
