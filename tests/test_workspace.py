@@ -289,6 +289,7 @@ def test_combine_workspace(workspace_factory):
     # check adding
     combined_add = ws + new_ws
     assert combined_add == combined_combine
-    assert set(combined_add.channels) == set(ws.channels + new_ws.channels)
-    assert set(combined_add.samples) == set(ws.samples + new_ws.samples)
-    assert set(combined_add.parameters) == set(ws.parameters + new_ws.parameters)
+    # check "incrementing"
+    combined_increment = workspace_factory()
+    combined_increment += new_ws
+    assert combined_increment == combined_combine

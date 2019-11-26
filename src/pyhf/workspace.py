@@ -293,6 +293,12 @@ class Workspace(_ChannelSummaryMixin, dict):
             rename_measurements=measurements,
         )
 
+    def __iadd__(self, other):
+        """
+        See pyhf.Workspace.combine.
+        """
+        return self.combine(other)
+
     def __add__(self, other):
         """
         See pyhf.Workspace.combine.
