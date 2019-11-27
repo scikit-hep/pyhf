@@ -219,8 +219,8 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     )
 
     if output_file is None:
-        click.echo(json.dumps(pruned_ws, indent=4, sort_keys=True))
+        click.echo(json.dumps(renamed_ws, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
-            json.dump(pruned_ws, out_file, indent=4, sort_keys=True)
+            json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
