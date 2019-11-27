@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://iris-hep.org/assets/logos/pyhf-logo.png" alt="pyhf logo" width="320"/>
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo.png" alt="pyhf logo" width="320"/>
 </p>
 
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
