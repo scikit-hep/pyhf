@@ -35,6 +35,9 @@ class Workspace(_ChannelSummaryMixin, dict):
             return False
         return dict(self) == dict(other)
 
+    def __ne__(self, other):
+        return not self == other
+
     def __repr__(self):
         return object.__repr__(self)
 
