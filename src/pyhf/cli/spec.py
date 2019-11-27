@@ -224,3 +224,30 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
         with open(output_file, 'w+') as out_file:
             json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
+
+
+@cli.command()
+@click.argument('workspace-one', default='-')
+@click.argument('workspace-two', default='-')
+@click.option(
+    '--output-file',
+    help='The location of the output json file. If not specified, prints to screen.',
+    default=None,
+)
+def combine(workspace_one, workspace_two, output_file):
+    with click.open_file(workspace_one, 'r') as specstream:
+        spec_one = json.load(specstream)
+
+    with click.open_file(workspace_two, 'r') as specstream:
+        spec_two = json.load(specstream)
+
+    ws_one = Workspace(spec_one)
+    ws_two = Workspace(spec_two)
+    combined_ws = ws_one + ws_two
+
+    if output_file is None:
+        click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))
+    else:
+        with open(output_file, 'w+') as out_file:
+            json.dump(combined_ws, out_file, indent=4, sort_keys=True)
+        log.debug("Written to {0:s}".format(output_file))
