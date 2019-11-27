@@ -288,3 +288,41 @@ def test_inspect_outfile(tmpdir, script_runner):
     assert len(summary['parameters']) == 6
     assert len(summary['samples']) == 3
     assert len(summary['systematics']) == 6
+
+
+def test_prune(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf prune -m staterror_channel1 -e GammaExample {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_prune_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("prune_output.json")
+    command = 'pyhf prune -m staterror_channel1 -e GammaExample {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    spec = json.loads(temp.read())
+    ws = pyhf.Workspace(spec)
+    assert 'GammaExample' in ws.measurement_names
+    assert 'staterror_channel1' in ws.parameters
+    pruned_spec = json.loads(tempout.read())
+    pruned_ws = pyhf.Workspace(pruned_spec)
+    assert 'GammaExample' not in pruned_ws.measurement_names
+    assert 'staterror_channel1' not in pruned_ws.parameters
