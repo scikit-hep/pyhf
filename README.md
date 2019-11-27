@@ -1,6 +1,6 @@
-<div style="text-align:center">
+<p align="center">
 <img src="https://iris-hep.org/assets/logos/pyhf-logo.png" alt="pyhf logo" width="320"/>
-</div>
+</p>
 
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
