@@ -1,5 +1,9 @@
 import logging
 import jsonpatch
+from copy import deepcopy
+from collections import (
+    UserDict,
+)  # underlying dict is accessible as an attribute (self.data)
 from . import exceptions
 from . import utils
 from .pdf import Model
@@ -8,7 +12,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-class Workspace(dict):
+class Workspace(UserDict):
     """
     A JSON-serializable object that is built from an object that follows the `workspace.json` schema.
     """
@@ -19,7 +23,7 @@ class Workspace(dict):
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self, self.schema, version=self.version)
+        utils.validate(self.data, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
