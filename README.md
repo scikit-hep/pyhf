@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo.png" alt="pyhf logo" width="320"/>
+</p>
+
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
