@@ -65,6 +65,12 @@ def test_get_measurement_fake(workspace_factory):
     assert m
 
 
+def test_get_measurement_nonexist(workspace_factory):
+    w = workspace_factory()
+    with pytest.raises(pyhf.exceptions.InvalidMeasurement):
+        m = w.get_measurement(measurement_name='nonexistent_measurement')
+
+
 def test_get_workspace_measurement_priority(workspace_factory):
     w = workspace_factory()
 
@@ -95,6 +101,11 @@ def test_get_measurement_schema_validation(mocker, workspace_factory):
     assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
 
 
+def test_get_workspace_repr(workspace_factory):
+    w = workspace_factory()
+    assert 'pyhf.workspace.Workspace' in str(w)
+
+
 def test_get_workspace_model_default(workspace_factory):
     w = workspace_factory()
     m = w.model()
@@ -121,3 +132,7 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog):
         with pytest.raises(KeyError):
             assert w.data(m)
             assert 'Invalid channel' in caplog.text
+
+
+def test_json_serializable(workspace_factory):
+    assert json.dumps(workspace_factory())

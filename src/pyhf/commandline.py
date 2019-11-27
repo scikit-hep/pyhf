@@ -149,7 +149,7 @@ def inspect(workspace, output_file, measurement):
 
     result['measurements'] = [
         (m['name'], m['config']['poi'], [p['name'] for p in m['config']['parameters']])
-        for m in w.spec.get('measurements')
+        for m in w.get('measurements')
     ]
 
     maxlen_channels = max(map(len, default_model.config.channels))
