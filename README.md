@@ -1,3 +1,7 @@
+<div style="text-align:center">
+<img src="https://iris-hep.org/assets/logos/pyhf-logo.png" alt="pyhf logo" width="320"/>
+</div>
+
 # pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
