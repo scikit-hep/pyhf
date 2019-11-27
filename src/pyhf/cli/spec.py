@@ -3,8 +3,8 @@ import logging
 import click
 import json
 
-from ..utils import validate
 from ..workspace import Workspace
+from .. import modifiers
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -25,45 +25,44 @@ def cli():
 @click.option('--measurement', default=None)
 def inspect(workspace, output_file, measurement):
     with click.open_file(workspace, 'r') as specstream:
-        wspec = json.load(specstream)
+        spec = json.load(specstream)
 
-    w = Workspace(wspec)
-    default_measurement = w.get_measurement()
-    default_model = w.model(measurement_name=default_measurement['name'])
+    ws = Workspace(spec)
+    default_measurement = ws.get_measurement()
 
     result = {}
-    result['samples'] = default_model.config.samples
+    result['samples'] = ws.samples
     result['channels'] = [
-        (channel, default_model.config.channel_nbins[channel])
-        for channel in default_model.config.channels
+        (channel, ws.channel_nbins[channel]) for channel in ws.channels
     ]
+    result['modifiers'] = dict(ws.modifiers)
+
     result['parameters'] = sorted(
-        (parname, default_model.config.par_map[parname]['paramset'].__class__.__name__)
-        for parname in default_model.config.parameters
+        (
+            parname,
+            modifiers.registry[result['modifiers'][parname]]
+            .required_parset(0)['paramset_type']
+            .__name__,
+        )
+        for parname in ws.parameters
     )
     result['systematics'] = [
         (
             parameter[0],
             parameter[1],
-            [
-                modifier[1]
-                for modifier in default_model.config.modifiers
-                if modifier[0] == parameter[0]
-            ],
+            [modifier[1] for modifier in ws.modifiers if modifier[0] == parameter[0]],
         )
         for parameter in result['parameters']
     ]
 
-    result['modifiers'] = default_model.config.modifiers
-
     result['measurements'] = [
         (m['name'], m['config']['poi'], [p['name'] for p in m['config']['parameters']])
-        for m in w.get('measurements')
+        for m in ws.get('measurements')
     ]
 
-    maxlen_channels = max(map(len, default_model.config.channels))
-    maxlen_samples = max(map(len, default_model.config.samples))
-    maxlen_parameters = max(map(len, default_model.config.parameters))
+    maxlen_channels = max(map(len, ws.channels))
+    maxlen_samples = max(map(len, ws.samples))
+    maxlen_parameters = max(map(len, ws.parameters))
     maxlen_measurements = max(map(lambda x: len(x[0]), result['measurements']))
     maxlen = max(
         [maxlen_channels, maxlen_samples, maxlen_parameters, maxlen_measurements]
