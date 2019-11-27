@@ -65,6 +65,12 @@ def test_get_measurement_fake(workspace_factory):
     assert m
 
 
+def test_get_measurement_nonexist(workspace_factory):
+    w = workspace_factory()
+    with pytest.raises(pyhf.exceptions.InvalidMeasurement):
+        m = w.get_measurement(measurement_name='nonexistent_measurement')
+
+
 def test_get_workspace_measurement_priority(workspace_factory):
     w = workspace_factory()
 
