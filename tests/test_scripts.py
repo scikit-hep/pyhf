@@ -368,3 +368,69 @@ def test_rename_outfile(tmpdir, script_runner):
     assert 'GamEx' in renamed_ws.measurement_names
     assert 'staterror_channel1' not in renamed_ws.parameters
     assert 'staterror_channelone' in renamed_ws.parameters
+
+
+def test_combine(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(' -e ' + ' '.join(item) for item in rename_measurements.items()),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf combine {0:s} {1:s}'.format(temp_1.strpath, temp_2.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_combine_outfile(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(' -e ' + ' '.join(item) for item in rename_measurements.items()),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("combined_output.json")
+    command = 'pyhf combine {0:s} {1:s} --output-file {2:s}'.format(
+        temp_1.strpath, temp_2.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    combined_spec = json.loads(tempout.read())
+    combined_ws = pyhf.Workspace(combined_spec)
+    assert combined_ws.channels == ['channel1', 'channel2']
+    assert len(combined_ws.measurement_names) == 8
