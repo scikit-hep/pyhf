@@ -13,7 +13,7 @@ class minuit_optimizer(object):
         self.steps = steps
 
     def _make_minuit(
-        self, objective, data, pdf, init_pars, init_bounds, constrained_mu=None
+        self, objective, data, pdf, init_pars, init_bounds, constraints=None
     ):
         def f(pars):
             result = objective(pars, data, pdf)
@@ -27,9 +27,10 @@ class minuit_optimizer(object):
             'error_p{}'.format(i): (b[1] - b[0]) / float(self.steps)
             for i, b in enumerate(init_bounds)
         }
-        if constrained_mu is not None:
-            constraints = {'fix_p{}'.format(pdf.config.poi_index): True}
-            initvals['p{}'.format(pdf.config.poi_index)] = constrained_mu
+        if constraints is not None:
+            for index,value in constraints.items():
+                constraints = {'fix_p{}'.format(index): True}
+                initvals['p{}'.format(index)] = value
         else:
             constraints = {}
         kwargs = {}
