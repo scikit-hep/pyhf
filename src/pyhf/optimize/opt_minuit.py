@@ -28,7 +28,7 @@ class minuit_optimizer(object):
             for i, b in enumerate(init_bounds)
         }
         if constraints is not None:
-            for index,value in constraints.items():
+            for index, value in constraints.items():
                 constraints = {'fix_p{}'.format(index): True}
                 initvals['p{}'.format(index)] = value
         else:
