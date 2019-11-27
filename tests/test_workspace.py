@@ -101,6 +101,11 @@ def test_get_measurement_schema_validation(mocker, workspace_factory):
     assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
 
 
+def test_get_workspace_repr(workspace_factory):
+    w = workspace_factory()
+    assert 'pyhf.workspace.Workspace' in str(w)
+
+
 def test_get_workspace_model_default(workspace_factory):
     w = workspace_factory()
     m = w.model()
