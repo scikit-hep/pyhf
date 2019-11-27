@@ -211,7 +211,7 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
         spec = json.load(specstream)
 
     ws = Workspace(spec)
-    renamed_ws = ws.prune(
+    renamed_ws = ws.rename(
         channels=dict(channel),
         samples=dict(sample),
         modifiers=dict(modifier),
