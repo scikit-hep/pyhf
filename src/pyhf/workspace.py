@@ -30,6 +30,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         for obs in self['observations']:
             self.observations[obs['name']] = obs['data']
 
+    def __eq__(self, other):
+        if not isinstance(other, Workspace):
+            return False
+        return dict(self) == dict(other)
+
     def __repr__(self):
         return object.__repr__(self)
 
