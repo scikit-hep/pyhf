@@ -33,14 +33,14 @@ def cls(
     workspace, output_file, measurement, patch, testpoi, teststat, optimizer, optconf
 ):
     with click.open_file(workspace, 'r') as specstream:
-        wspec = json.load(specstream)
+        spec = json.load(specstream)
 
-    w = Workspace(wspec)
+    ws = Workspace(spec)
 
     is_qtilde = teststat == 'qtilde'
 
     patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
-    p = w.model(
+    model = ws.model(
         measurement_name=measurement,
         patches=patches,
         modifier_settings={
@@ -56,7 +56,9 @@ def cls(
         new_optimizer = getattr(optimize, optimizer)
         set_backend(tensorlib, new_optimizer(**optconf))
 
-    result = hypotest(testpoi, w.data(p), p, qtilde=is_qtilde, return_expected_set=True)
+    result = hypotest(
+        testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
+    )
     result = {'CLs_obs': result[0].tolist()[0], 'CLs_exp': result[-1].ravel().tolist()}
 
     if output_file is None:
