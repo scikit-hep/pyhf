@@ -45,16 +45,23 @@ class minuit_optimizer(object):
         )
         return mm
 
-    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals = None):
-        mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds,fixed_vals)
+    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None):
+        mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
         assert result
         return np.asarray([x[1] for x in mm.values.items()])
 
     def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        return self.minimize(objective,data,pdf,init_pars,par_bounds)
+        return self.minimize(objective, data, pdf, init_pars, par_bounds)
 
     def constrained_bestfit(
         self, objective, constrained_mu, data, pdf, init_pars, par_bounds
     ):
-        return self.minimize(objective,data,pdf,init_pars,par_bounds,[(pdf.config.poi_index,constrained_mu)])
+        return self.minimize(
+            objective,
+            data,
+            pdf,
+            init_pars,
+            par_bounds,
+            [(pdf.config.poi_index, constrained_mu)],
+        )
