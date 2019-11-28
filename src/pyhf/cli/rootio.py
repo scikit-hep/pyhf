@@ -74,7 +74,6 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         log.error(
             "json2xml requires uproot, please install pyhf using the "
             "xmlio extra: pip install pyhf[xmlio]."
-            "manually: pip install uproot"
         )
     from .. import writexml
 
