@@ -8,12 +8,6 @@ To install, we suggest first setting up a `virtual environment <https://packagin
     # Python3
     python3 -m venv pyhf
 
-
-.. code-block:: console
-
-    # Python2
-    virtualenv --python=$(which python) pyhf
-
 and activating it
 
 .. code-block:: console
