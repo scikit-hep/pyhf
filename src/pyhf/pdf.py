@@ -614,7 +614,6 @@ class Model(object):
                 )
 
             result = self.make_pdf(pars).log_prob(data)
-
             if (
                 not self.batch_size
             ):  # force to be not scalar, should we changed with #522
