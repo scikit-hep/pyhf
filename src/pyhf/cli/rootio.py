@@ -46,7 +46,6 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         log.error(
             "xml2json requires uproot, please install pyhf using the "
             "xmlio extra: pip install pyhf[xmlio] or install uproot "
-            "manually: pip install uproot"
         )
     from .. import readxml
 
