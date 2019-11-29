@@ -29,14 +29,7 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
             }
         ]
     }
-    return Model(
-        spec,
-        batch_size=batch_size,
-        modifier_settings={
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
-        },
-    )
+    return Model(spec, batch_size=batch_size)
 
 
 def overall_bkguncert(
@@ -69,11 +62,4 @@ def overall_bkguncert(
             }
         ]
     }
-    return Model(
-        spec,
-        batch_size=batch_size,
-        modifier_settings={
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
-        },
-    )
+    return Model(spec, batch_size=batch_size)
