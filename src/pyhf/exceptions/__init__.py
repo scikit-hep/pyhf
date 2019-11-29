@@ -35,9 +35,7 @@ class InvalidSpecification(Exception):
 
 
 class InvalidWorkspaceOperation(Exception):
-    """
-  InvalidWorkspaceOperation is raised when an operation on a workspace fails.
-  """
+    """InvalidWorkspaceOperation is raised when an operation on a workspace fails."""
 
 
 class InvalidModel(Exception):
