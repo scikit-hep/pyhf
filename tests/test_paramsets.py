@@ -11,7 +11,7 @@ def test_paramset_unconstrained():
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
     assert not pset.constrained
 
-
+import pytest 
 def test_paramset_constrained_custom_sigmas():
     pset = paramsets.constrained_by_normal(
         n_parameters=5,
@@ -51,3 +51,14 @@ def test_paramset_constrained_custom_factors():
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
     assert pset.constrained
     assert pset.width() == [1 / 10.0, 1 / 20.0, 1 / 30.0, 1 / 40.0, 1 / 50.0]
+
+def test_paramset_constrained_missiing_factors():
+    pset = paramsets.constrained_by_poisson(
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        auxdata=[0, 0, 0, 0, 0],
+        factors = None
+    )
+    with pytest.raises(RuntimeError):
+        pset.width()

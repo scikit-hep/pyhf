@@ -44,9 +44,9 @@ class constrained_by_poisson(constrained_paramset):
         self.factors = kwargs.pop('factors')
 
     def width(self):
-        try:
+        if self.factors:
             return default_backend.sqrt(
                 1.0 / default_backend.astensor(self.factors)
             ).tolist()
-        except AttributeError:
+        else:
             raise RuntimeError('need to know rate factor to compu')
