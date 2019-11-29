@@ -60,7 +60,7 @@ def test_pullplot(common_kwargs):
 
 
 def test_impactplot(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb ', **common_kwargs)
+    pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
 
 
 def test_learn_interpolationcodes(common_kwargs):
