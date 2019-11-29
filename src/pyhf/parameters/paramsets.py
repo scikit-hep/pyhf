@@ -48,5 +48,4 @@ class constrained_by_poisson(constrained_paramset):
             return default_backend.sqrt(
                 1.0 / default_backend.astensor(self.factors)
             ).tolist()
-        else:
-            raise RuntimeError('need to know rate factor to compu')
+        raise RuntimeError('need to know rate factor to compu')
