@@ -1,4 +1,5 @@
 from pyhf.parameters import paramsets
+import pytest
 
 
 def test_paramset_unconstrained():
@@ -10,9 +11,6 @@ def test_paramset_unconstrained():
     assert pset.suggested_init == [0, 1, 2, 3, 4]
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
     assert not pset.constrained
-
-
-import pytest
 
 
 def test_paramset_constrained_custom_sigmas():
