@@ -1,5 +1,4 @@
 import scipy
-from .. import default_backend
 from .. import get_backend
 
 
