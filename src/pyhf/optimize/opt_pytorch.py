@@ -8,23 +8,22 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals = None):
-        tensorlib,_ = get_backend()
-        all_idx  = default_backend.astensor(range(pdf.config.npars), dtype='int')
+    def setup_minimize(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+    ):
+        tensorlib, _ = get_backend()
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         all_init = default_backend.astensor(init_pars)
 
         fixed_vals = fixed_vals or []
         fixed_values = [x[1] for x in fixed_vals]
-        fixed_idx    = [x[0] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
 
-        variable_idx  = [x for x in all_idx if x not in fixed_idx]
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
         variable_init = all_init[variable_idx]
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
-        tv = _TensorViewer([
-            fixed_idx,
-            variable_idx
-        ])
+        tv = _TensorViewer([fixed_idx, variable_idx])
 
         data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
@@ -37,4 +36,4 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
             grad = torch.autograd.grad(constr_nll, pars)[0]
             return constr_nll.detach().numpy(), grad
 
-        return tv,fixed_values_tensor,func, variable_init, variable_bounds
+        return tv, fixed_values_tensor, func, variable_init, variable_bounds

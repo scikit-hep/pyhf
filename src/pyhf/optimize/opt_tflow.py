@@ -21,25 +21,28 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals = None):
+    def setup_minimize(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+    ):
         tensorlib, _ = get_backend()
 
-        all_idx  = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         all_init = default_backend.astensor(init_pars)
 
         fixed_vals = fixed_vals or []
         fixed_values = [x[1] for x in fixed_vals]
-        fixed_idx    = [x[0] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
 
-        variable_idx  = [x for x in all_idx if x not in fixed_idx]
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
         variable_init = all_init[variable_idx]
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
         data_placeholder = tf.placeholder(
             tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
         )
-        variable_pars_placeholder = tf.placeholder(tf.float32, (pdf.config.npars - len(fixed_vals),))
-
+        variable_pars_placeholder = tf.placeholder(
+            tf.float32, (pdf.config.npars - len(fixed_vals),)
+        )
 
         tv = _TensorViewer([fixed_idx, variable_idx])
 
@@ -48,17 +51,10 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
         full_pars = tv.stitch([fixed_values_tensor, variable_pars_placeholder])
 
         nll = objective(full_pars, data_placeholder, pdf)
-        nllgrad = tf.identity(
-            tf.gradients(nll, variable_pars_placeholder)[0]
-        )
+        nllgrad = tf.identity(tf.gradients(nll, variable_pars_placeholder)[0])
 
         func = eval_func(
-            [nll, nllgrad],
-            variable_pars_placeholder,
-            data_placeholder,
-            data,
+            [nll, nllgrad], variable_pars_placeholder, data_placeholder, data,
         )
 
-
-        return tv,fixed_values_tensor,func, variable_init, variable_bounds
-
+        return tv, fixed_values_tensor, func, variable_init, variable_bounds
