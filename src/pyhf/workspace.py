@@ -308,7 +308,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(left, right):
+    def combine(cls, left, right):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
