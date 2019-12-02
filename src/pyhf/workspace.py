@@ -179,7 +179,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         """
         Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
 
-        The pruned, renamed workspace must also be a valid workspace.
+        Pruning removes pieces of the workspace whose name or type matches the user-provided lists. The pruned, renamed workspace must also be a valid workspace.
 
         Args:
             prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
