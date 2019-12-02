@@ -46,7 +46,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinxcontrib.bibtex',
-    'sphinxcontrib.napoleon',
+    'sphinx.ext.napoleon',
     'nbsphinx',
     'm2r',
     'sphinx_issues',
