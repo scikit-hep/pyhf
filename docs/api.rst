@@ -121,8 +121,17 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    :nosignatures:
    :template: modifierclass.rst
 
-   InvalidInterpCode
+   InvalidMeasurement
+   InvalidNameReuse
+   InvalidSpecification
+   InvalidWorkspaceOperation
+   InvalidModel
    InvalidModifier
+   InvalidInterpCode
+   ImportBackendError
+   InvalidOptimizer
+   InvalidPdfParameters
+   InvalidPdfData
 
 Utilities
 ---------
