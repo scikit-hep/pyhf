@@ -14,6 +14,7 @@
    installation
    development
    faq
+   cli
    api
    citations
 
