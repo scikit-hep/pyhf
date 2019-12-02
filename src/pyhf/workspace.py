@@ -50,7 +50,9 @@ class Workspace(_ChannelSummaryMixin, dict):
           2. if the measurement name is given, find the measurement for the given name
           3. if the measurement index is given, return the measurement at that index
           4. if there are measurements but none of the above have been specified, return the 0th measurement
-          5. otherwise, raises :exception:`pyhf.exceptions.InvalidMeasurement`
+
+        Raises:
+          ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
             poi_name (str): The name of the parameter of interest to create a new measurement from
