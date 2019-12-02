@@ -21,44 +21,40 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_unconstrained(self, objective, data, pdf, init_pars, par_bounds):
-        pars_placeholder = tf.placeholder(tf.float32, (pdf.config.npars,))
-        data_placeholder = tf.placeholder(
-            tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
-        )
-        nll = objective(pars_placeholder, data_placeholder, pdf)
-        nllgrad = tf.identity(tf.gradients(nll, pars_placeholder)[0])
-        func = eval_func([nll, nllgrad], pars_placeholder, data_placeholder, data)
-        return func, init_pars, par_bounds
-
-    def setup_constrained(self, objective, poival, data, pdf, init_pars, par_bounds):
+    def setup_minimize(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+    ):
         tensorlib, _ = get_backend()
+
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_init = default_backend.astensor(init_pars)
+
+        fixed_vals = fixed_vals or []
+        fixed_values = [x[1] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
+
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_init = all_init[variable_idx]
+        variable_bounds = [par_bounds[i] for i in variable_idx]
+
         data_placeholder = tf.placeholder(
             tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
         )
-        idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
-        init = default_backend.astensor(init_pars)
-        nuisinit = default_backend.concatenate(
-            [init[: pdf.config.poi_index], init[pdf.config.poi_index + 1 :]]
-        ).tolist()
-        nuisidx = default_backend.concatenate(
-            [idx[: pdf.config.poi_index], idx[pdf.config.poi_index + 1 :]]
-        ).tolist()
-        nuisbounds = [par_bounds[i] for i in nuisidx]
-
-        poivals = tensorlib.astensor([poival], dtype='float')
-        free_pars_for_constrained = tf.placeholder(tf.float32, (pdf.config.npars - 1,))
-        tv = _TensorViewer([[pdf.config.poi_index], nuisidx])
-        constrained_pars = tv.stitch([poivals, free_pars_for_constrained])
-        constr_nll = objective(constrained_pars, data_placeholder, pdf)
-        constr_nllgrad = tf.identity(
-            tf.gradients(constr_nll, free_pars_for_constrained)[0]
+        variable_pars_placeholder = tf.placeholder(
+            tf.float32, (pdf.config.npars - len(fixed_vals),)
         )
+
+        tv = _TensorViewer([fixed_idx, variable_idx])
+
+        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+
+        full_pars = tv.stitch([fixed_values_tensor, variable_pars_placeholder])
+
+        nll = objective(full_pars, data_placeholder, pdf)
+        nllgrad = tf.identity(tf.gradients(nll, variable_pars_placeholder)[0])
 
         func = eval_func(
-            [constr_nll, constr_nllgrad],
-            free_pars_for_constrained,
-            data_placeholder,
-            data,
+            [nll, nllgrad], variable_pars_placeholder, data_placeholder, data,
         )
-        return func, nuisinit, nuisbounds
+
+        return tv, fixed_values_tensor, func, variable_init, variable_bounds

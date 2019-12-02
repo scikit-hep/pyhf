@@ -8,39 +8,32 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     def __init__(self, *args, **kargs):
         pass
 
-    def setup_unconstrained(self, objective, data, pdf, init_pars, par_bounds):
-        def func(pars):
-            tensorlib, _ = get_backend()
-            pars = tensorlib.astensor(pars)
-            pars.requires_grad = True
-            r = objective(pars, data, pdf)
-            grad = torch.autograd.grad(r, pars)[0]
-            return r.detach().numpy(), grad
-
-        return func, init_pars, par_bounds
-
-    def setup_constrained(self, objective, poival, data, pdf, init_pars, par_bounds):
+    def setup_minimize(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+    ):
         tensorlib, _ = get_backend()
-        idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
-        init = default_backend.astensor(init_pars)
-        nuisinit = default_backend.concatenate(
-            [init[: pdf.config.poi_index], init[pdf.config.poi_index + 1 :]]
-        ).tolist()
-        nuisidx = default_backend.concatenate(
-            [idx[: pdf.config.poi_index], idx[pdf.config.poi_index + 1 :]]
-        ).tolist()
-        nuisbounds = [par_bounds[i] for i in nuisidx]
-        tv = _TensorViewer([[pdf.config.poi_index], nuisidx])
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_init = default_backend.astensor(init_pars)
+
+        fixed_vals = fixed_vals or []
+        fixed_values = [x[1] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
+
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_init = all_init[variable_idx]
+        variable_bounds = [par_bounds[i] for i in variable_idx]
+
+        tv = _TensorViewer([fixed_idx, variable_idx])
 
         data = tensorlib.astensor(data)
-        poivals = tensorlib.astensor([poival], dtype='float')
+        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
         def func(pars):
             pars = tensorlib.astensor(pars)
             pars.requires_grad = True
-            constrained_pars = tv.stitch([poivals, pars])
+            constrained_pars = tv.stitch([fixed_values_tensor, pars])
             constr_nll = objective(constrained_pars, data, pdf)
             grad = torch.autograd.grad(constr_nll, pars)[0]
             return constr_nll.detach().numpy(), grad
 
-        return func, nuisinit, nuisbounds
+        return tv, fixed_values_tensor, func, variable_init, variable_bounds
