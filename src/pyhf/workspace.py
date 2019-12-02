@@ -50,15 +50,15 @@ class Workspace(_ChannelSummaryMixin, dict):
           2. if the measurement name is given, find the measurement for the given name
           3. if the measurement index is given, return the measurement at that index
           4. if there are measurements but none of the above have been specified, return the 0th measurement
-          5. otherwise, raises `InvalidMeasurement`
+          5. otherwise, raises :exception:`pyhf.exceptions.InvalidMeasurement`
 
         Args:
-            poi_name: The name of the parameter of interest to create a new measurement from
-            measurement_name: The name of the measurement to use
-            measurement_index: The index of the measurement to use
+            poi_name (str): The name of the parameter of interest to create a new measurement from
+            measurement_name (str): The name of the measurement to use
+            measurement_index (int): The index of the measurement to use
 
         Returns:
-            measurement: A measurement object adhering to the schema defs.json#/definitions/measurement
+            :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
 
         """
         m = self._get_measurement(**config_kwargs)
@@ -116,7 +116,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             patches: A list of JSON patches to apply to the model specification
 
         Returns:
-            model: A model object adhering to the schema model.json
+            ~pyhf.pdf.Model: A model object adhering to the schema model.json
 
         """
         measurement = self.get_measurement(**config_kwargs)
@@ -142,11 +142,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         The model is needed as the order of the data depends on the order of the channels in the model.
 
         Args:
-            model: A model object adhering to the schema model.json
-            with_aux: Whether to include auxiliary data from the model or not
+            model (~pyhf.pdf.Model): A model object adhering to the schema model.json
+            with_aux (bool): Whether to include auxiliary data from the model or not
 
         Returns:
-            data: A list of numbers
+            :obj:`list`: data
         """
 
         try:
@@ -180,18 +180,18 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned, renamed workspace must also be a valid workspace.
 
         Args:
-            prune_modifiers: A string or a list of modifiers to prune.
-            prune_modifier_types: A string or a list of modifier types to prune.
-            prune_samples: A string or a list of samples to prune.
-            prune_channels: A string or a list of channels to prune.
-            prune_measurements: A string or a list of measurements to prune.
-            rename_modifiers: A dictionary mapping old modifier name to new modifier name.
-            rename_samples: A dictionary mapping old sample name to new sample name.
-            rename_channels: A dictionary mapping old channel name to new channel name.
-            rename_measurements: A dictionary mapping old measurement name to new measurement name.
+            prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
+            prune_modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
+            prune_samples: A :obj:`str` or a :obj:`list` of samples to prune.
+            prune_channels: A :obj:`str` or a :obj:`list` of channels to prune.
+            prune_measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            rename_modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
+            rename_samples: A :obj:`dict` mapping old sample name to new sample name.
+            rename_channels: A :obj:`dict` mapping old channel name to new channel name.
+            rename_measurements: A :obj:`dict` mapping old measurement name to new measurement name.
 
         Returns:
-            pyhf.Workspace: A new workspace object with the specified components removed or renamed
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
 
         """
         newspec = {
@@ -264,14 +264,14 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned workspace must also be a valid workspace.
 
         Args:
-            modifiers: A string or a list of modifiers to prune.
-            modifier_types: A string or a list of modifier types to prune.
-            samples: A string or a list of samples to prune.
-            channels: A string or a list of channels to prune.
-            measurements: A string or a list of measurements to prune.
+            modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
+            modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
+            samples: A :obj:`str` or a :obj:`list` of samples to prune.
+            channels: A :obj:`str` or a :obj:`list` of channels to prune.
+            measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
 
         Returns:
-            pyhf.Workspace: A new workspace object with the specified components removed
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
 
         """
         return self._prune_and_rename(
@@ -289,13 +289,13 @@ class Workspace(_ChannelSummaryMixin, dict):
         The renamed workspace must also be a valid workspace.
 
         Args:
-            modifiers: A dictionary mapping old modifier name to new modifier name.
-            samples: A dictionary mapping old sample name to new sample name.
-            channels: A dictionary mapping old channel name to new channel name.
-            measurements: A dictionary mapping old measurement name to new measurement name.
+            modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
+            samples: A :obj:`dict` mapping old sample name to new sample name.
+            channels: A :obj:`dict` mapping old channel name to new channel name.
+            measurements: A :obj:`dict` mapping old measurement name to new measurement name.
 
         Returns:
-            pyhf.Workspace: A new workspace object with the specified components renamed
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
 
         """
         return self._prune_and_rename(
@@ -314,10 +314,10 @@ class Workspace(_ChannelSummaryMixin, dict):
         A combination of workspaces is done by joining the set of channels. If the workspaces share any channels or measurements in common, do not combine.
 
         Args:
-            other: A pyhf.Workspace object.
+            other: A :class:`~pyhf.workspace.Workspace` object.
 
         Returns:
-            pyhf.Workspace: A new combined workspace object
+            ~pyhf.workspace.Workspace: A new combined workspace object
 
         """
         common_channels = set(self.channels).intersection(other.channels)
