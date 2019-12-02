@@ -156,10 +156,6 @@ def test_prune_channel(workspace_factory):
             new_ws = ws.prune(channels=channel)
         with pytest.raises(pyhf.exceptions.InvalidSpecification):
             new_ws = ws.prune(channels=[channel])
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws - channel
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws - [channel]
     else:
         new_ws = ws.prune(channels=channel)
         assert channel not in new_ws.channels
@@ -167,11 +163,6 @@ def test_prune_channel(workspace_factory):
 
         new_ws_list = ws.prune(channels=[channel])
         assert new_ws_list == new_ws
-        new_ws_sub = ws - channel
-        assert new_ws_sub == new_ws
-        new_ws_isub = workspace_factory()
-        new_ws_isub -= channel
-        assert new_ws_isub == new_ws
 
 
 def test_prune_sample(workspace_factory):
@@ -183,11 +174,6 @@ def test_prune_sample(workspace_factory):
 
     new_ws_list = ws.prune(samples=[sample])
     assert new_ws_list == new_ws
-    new_ws_sub = ws - sample
-    assert new_ws_sub == new_ws
-    new_ws_isub = workspace_factory()
-    new_ws_isub -= sample
-    assert new_ws_isub == new_ws
 
 
 def test_prune_modifier(workspace_factory):
@@ -226,10 +212,6 @@ def test_prune_measurements(workspace_factory):
             new_ws = ws.prune(measurements=measurement)
         with pytest.raises(pyhf.exceptions.InvalidSpecification):
             new_ws = ws.prune(measurements=[measurement])
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws - measurement
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws - [measurement]
     else:
         new_ws = ws.prune(measurements=[measurement])
         assert new_ws
@@ -237,11 +219,6 @@ def test_prune_measurements(workspace_factory):
 
         new_ws_list = ws.prune(measurements=[measurement])
         assert new_ws_list == new_ws
-        new_ws_sub = ws - measurement
-        assert new_ws_sub == new_ws
-        new_ws_isub = workspace_factory()
-        new_ws_isub -= measurement
-        assert new_ws_isub == new_ws
 
 
 def test_rename_channel(workspace_factory):
@@ -333,10 +310,3 @@ def test_combine_workspace(workspace_factory):
     assert set(combined_combine.channels) == set(ws.channels + new_ws.channels)
     assert set(combined_combine.samples) == set(ws.samples + new_ws.samples)
     assert set(combined_combine.parameters) == set(ws.parameters + new_ws.parameters)
-    # check adding
-    combined_add = ws + new_ws
-    assert combined_add == combined_combine
-    # check "incrementing"
-    combined_increment = workspace_factory()
-    combined_increment += new_ws
-    assert combined_increment == combined_combine
