@@ -344,39 +344,3 @@ class Workspace(_ChannelSummaryMixin, dict):
             'version': self['version'],
         }
         return Workspace(newspec)
-
-    def __iadd__(self, other):
-        """
-        See pyhf.Workspace.combine.
-        """
-        return self.combine(other)
-
-    def __add__(self, other):
-        """
-        See pyhf.Workspace.combine.
-        """
-        return self.combine(other)
-
-    def __isub__(self, other):
-        """
-        See pyhf.Workspace.prune.
-        """
-        return self.prune(
-            modifiers=other,
-            modifier_types=other,
-            samples=other,
-            channels=other,
-            measurements=other,
-        )
-
-    def __sub__(self, other):
-        """
-        See pyhf.Workspace.prune.
-        """
-        return self.prune(
-            modifiers=other,
-            modifier_types=other,
-            samples=other,
-            channels=other,
-            measurements=other,
-        )
