@@ -267,7 +267,7 @@ def test_combine_workspace_same_channels(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel2': 'channel3'})
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        combined = ws.combine(new_ws)
+        combined = pyhf.Workspace.combine(ws, new_ws)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
 
@@ -278,11 +278,37 @@ def test_combine_workspace_same_measurements(workspace_factory):
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        combined = ws.combine(new_ws)
+        combined = pyhf.Workspace.combine(ws, new_ws)
     assert 'GaussExample' in str(excinfo.value)
     assert 'GammaExample' not in str(excinfo.value)
     assert 'ConstExample' not in str(excinfo.value)
     assert 'LogNormExample' not in str(excinfo.value)
+
+
+def test_combine_workspace_diff_version(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+        },
+    )
+    new_ws.version = '0.0.0'
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = pyhf.Workspace.combine(ws, new_ws)
 
 
 def test_combine_workspace(workspace_factory):
@@ -306,7 +332,7 @@ def test_combine_workspace(workspace_factory):
             'GammaExample': 'OtherGammaExample',
         },
     )
-    combined_combine = ws.combine(new_ws)
+    combined_combine = pyhf.Workspace.combine(ws, new_ws)
     assert set(combined_combine.channels) == set(ws.channels + new_ws.channels)
     assert set(combined_combine.samples) == set(ws.samples + new_ws.samples)
     assert set(combined_combine.parameters) == set(ws.parameters + new_ws.parameters)

@@ -307,22 +307,24 @@ class Workspace(_ChannelSummaryMixin, dict):
             rename_measurements=measurements,
         )
 
-    def combine(self, other):
+    @classmethod
+    def combine(left, right):
         """
-        Return a new workspace specification that is the combination of this workspace and other workspace.
+        Return a new workspace specification that is the combination of the two workspaces.
 
         The new workspace must also be a valid workspace.
 
         A combination of workspaces is done by joining the set of channels. If the workspaces share any channels or measurements in common, do not combine.
 
         Args:
-            other: A :class:`~pyhf.workspace.Workspace` object.
+            left (~pyhf.workspace.Workspace): A workspace
+            right (~pyhf.workspace.Workspace): Another workspace
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
 
         """
-        common_channels = set(self.channels).intersection(other.channels)
+        common_channels = set(left.channels).intersection(right.channels)
         if common_channels:
             raise exceptions.InvalidWorkspaceOperation(
                 "Workspaces cannot have any channels in common: {}".format(
@@ -330,8 +332,8 @@ class Workspace(_ChannelSummaryMixin, dict):
                 )
             )
 
-        common_measurements = set(self.measurement_names).intersection(
-            other.measurement_names
+        common_measurements = set(left.measurement_names).intersection(
+            right.measurement_names
         )
         if common_measurements:
             raise exceptions.InvalidWorkspaceOperation(
@@ -339,10 +341,17 @@ class Workspace(_ChannelSummaryMixin, dict):
                     common_measurements
                 )
             )
+        if left.version != right.version:
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces of different versions cannot be combined: {} != {}".format(
+                    left.version, right.version
+                )
+            )
+
         newspec = {
-            'channels': self['channels'] + other['channels'],
-            'measurements': self['measurements'] + other['measurements'],
-            'observations': self['observations'] + other['observations'],
-            'version': self['version'],
+            'channels': left['channels'] + right['channels'],
+            'measurements': left['measurements'] + right['measurements'],
+            'observations': left['observations'] + right['observations'],
+            'version': left['version'],
         }
         return Workspace(newspec)
