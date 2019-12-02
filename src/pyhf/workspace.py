@@ -189,6 +189,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             rename_samples: A dictionary mapping old sample name to new sample name.
             rename_channels: A dictionary mapping old channel name to new channel name.
             rename_measurements: A dictionary mapping old measurement name to new measurement name.
+
+        Returns:
+            pyhf.Workspace: A new workspace object with the specified components removed or renamed
+
         """
         newspec = {
             'channels': [
@@ -265,6 +269,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             samples: A string or a list of samples to prune.
             channels: A string or a list of channels to prune.
             measurements: A string or a list of measurements to prune.
+
+        Returns:
+            pyhf.Workspace: A new workspace object with the specified components removed
+
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
@@ -285,6 +293,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             samples: A dictionary mapping old sample name to new sample name.
             channels: A dictionary mapping old channel name to new channel name.
             measurements: A dictionary mapping old measurement name to new measurement name.
+
+        Returns:
+            pyhf.Workspace: A new workspace object with the specified components renamed
+
         """
         return self._prune_and_rename(
             rename_modifiers=modifiers,
@@ -303,6 +315,10 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             other: A pyhf.Workspace object.
+
+        Returns:
+            pyhf.Workspace: A new combined workspace object
+
         """
         common_channels = set(self.channels).intersection(other.channels)
         if common_channels:
