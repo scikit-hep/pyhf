@@ -22,7 +22,9 @@
    .. rubric:: Methods
 
    {% for item in methods %}
+   {% if item not in inherited_members %}
    .. automethod:: {{ name }}.{{ item }}
+   {% endif %}
    {%- endfor %}
    {% endif %}
    {% endblock %}
