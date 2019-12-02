@@ -41,11 +41,14 @@ class constrained_by_poisson(constrained_paramset):
         super(constrained_by_poisson, self).__init__(**kwargs)
         self.pdf_type = 'poisson'
         self.auxdata = kwargs.pop('auxdata')
-        self.factors = kwargs.pop('factors')
+        factors = kwargs.pop('factors')
+        if factors:
+            self.factors = factors
 
     def width(self):
-        if self.factors:
+        try:
             return default_backend.sqrt(
                 1.0 / default_backend.astensor(self.factors)
             ).tolist()
-        raise RuntimeError('need to know rate factor to compu')
+        except AttributeError:
+            raise RuntimeError('need to know rate factor to compu')
