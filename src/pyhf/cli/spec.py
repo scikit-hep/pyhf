@@ -243,7 +243,7 @@ def combine(workspace_one, workspace_two, output_file):
 
     ws_one = Workspace(spec_one)
     ws_two = Workspace(spec_two)
-    combined_ws = ws_one + ws_two
+    combined_ws = ws_one.combine(ws_two)
 
     if output_file is None:
         click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))
