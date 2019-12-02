@@ -34,16 +34,16 @@ Probability Distribution Functions (PDFs)
 Making Models from PDFs
 -----------------------
 
-.. currentmodule:: pyhf.pdf
+.. currentmodule:: pyhf
 
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
    :template: modifierclass.rst
 
-   Workspace
-   Model
-   _ModelConfig
+   ~pdf.Model
+   ~pdf._ModelConfig
+   ~workspace.Workspace
 
 Backends
 --------
