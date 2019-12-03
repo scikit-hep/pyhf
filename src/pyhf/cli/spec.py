@@ -141,9 +141,7 @@ def inspect(workspace, output_file, measurement):
     multiple=True,
     type=click.Choice(modifiers.uncombined.keys()),
 )
-@click.option(
-    '--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...'
-)
+@click.option('--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...')
 def prune(
     workspace, output_file, channel, sample, modifier, modifier_type, measurement
 ):
