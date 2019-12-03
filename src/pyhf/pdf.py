@@ -136,7 +136,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.poi_index = s.start
 
     def _register_paramset(self, param_name, paramset):
-        """Allocates n nuisance parameters and stores paramset > modifier map."""
+        """Allocates the nuisance parameters and stores paramset into a modifier map."""
         log.info(
             'adding modifier %s (%s new nuisance parameters)',
             param_name,
@@ -365,7 +365,7 @@ class _MainModel(object):
 
         So in the end we only make 3 calls to pdfs
 
-            1. The main pdf of data and modified rates
+            1. The pdf of data and modified rates
             2. All Gaussian constraint as one call
             3. All Poisson constraints as one call
 
@@ -583,7 +583,7 @@ class Model(object):
             pars (`tensor`): The parameter values
 
         Returns:
-            Tensor: The expected auxiliary data
+            Tensor: The expected data of the auxiliary pdf
 
         """
         return self.make_pdf(pars)[1].expected_data()
@@ -593,31 +593,31 @@ class Model(object):
 
     @property
     def nominal_rates(self):
-        """Nominal value of bin rates of the main measurment."""
+        """Nominal value of bin rates of the main model."""
         return self.main_model.nominal_rates
 
     def expected_actualdata(self, pars):
         """
-        Compute the expected value of the main measurements.
+        Compute the expected value of the main model.
 
         Args:
             pars (`tensor`): The parameter values
 
         Returns:
-            Tensor: The expected main data
+            Tensor: The expected data of the main model (no auxiliary data)
 
         """
         return self.make_pdf(pars)[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
         """
-        Compute the expected value of the main measurements.
+        Compute the expected value of the main model
 
         Args:
             pars (`tensor`): The parameter values
 
         Returns:
-            Tensor: The expected main data
+            Tensor: The expected data of the main and auxiliary model
 
         """
         tensorlib, _ = get_backend()
@@ -727,7 +727,7 @@ class Model(object):
 
     def pdf(self, pars, data):
         """
-        Compute the value of the full density.
+        Compute the density at a given observed point in data space of the full model.
 
         Args:
             pars (`tensor`): The parameter values
