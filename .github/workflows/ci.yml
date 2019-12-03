@@ -17,7 +17,7 @@ jobs:
         python-version: [3.6, 3.7]
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1.2.0
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
@@ -62,7 +62,7 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1.2.0
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
@@ -84,7 +84,7 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1.2.0
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
