@@ -98,12 +98,9 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
-        pdf (|pyhf.pdf.Model|_): The HistFactory statistical model used in the likelihood ratio calculation
+        pdf (:func:`pyhf.pdf.Model`): The HistFactory statistical model used in the likelihood ratio calculation
         init_pars (Tensor): The initial parameters
         par_bounds(Tensor): The bounds on the paramter values
-
-    .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
-    .. _pyhf.pdf.Model: https://scikit-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -210,13 +207,10 @@ def hypotest(
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
-        pdf (|pyhf.pdf.Model|_): The HistFactory statistical model
+        pdf (:func:`pyhf.pdf.Model`): The HistFactory statistical model
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of `arXiv:1007.1727`_
-
-    .. |pyhf.pdf.Model| replace:: ``pyhf.pdf.Model``
-    .. _pyhf.pdf.Model: https://scikit-hep.org/pyhf/_generated/pyhf.pdf.Model.html
 
     Keyword Args:
         return_tail_probs (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
