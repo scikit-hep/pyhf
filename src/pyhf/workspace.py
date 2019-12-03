@@ -340,8 +340,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         workspaces may be possible. In particular, the `lumi` modifier will be
         fully-correlated.
 
+        If the two workspaces have the same measurement (with the same POI),
+        those measurements will get merged.
+
         Raises:
-          ~pyhf.exceptions.InvalidWorkspaceOperation: The workspaces have common channel names, common measurement names, or incompatible versions.
+          ~pyhf.exceptions.InvalidWorkspaceOperation: The workspaces have common channel names, incompatible measurements, or incompatible schema versions.
 
         Args:
             left (~pyhf.workspace.Workspace): A workspace
@@ -361,10 +364,19 @@ class Workspace(_ChannelSummaryMixin, dict):
         common_measurements = set(left.measurement_names).intersection(
             right.measurement_names
         )
-        if common_measurements:
+        incompatible_poi = [
+            left.get_measurement(measurement_name=m)['config']['poi']
+            != right.get_measurement(measurement_name=m)['config']['poi']
+            for m in common_measurements
+        ]
+        if any(incompatible_poi):
             raise exceptions.InvalidWorkspaceOperation(
-                "Workspaces cannot have any measurements in common: {}".format(
-                    common_measurements
+                "Workspaces cannot have any measurements with incompatible POI: {}".format(
+                    [
+                        m
+                        for m, i in zip(common_measurements, incompatible_poi)
+                        if incompatible_poi
+                    ]
                 )
             )
         if left.version != right.version:
@@ -374,9 +386,35 @@ class Workspace(_ChannelSummaryMixin, dict):
                 )
             )
 
+        left_measurements = [
+            left.get_measurement(measurement_name=m)
+            for m in set(left.measurement_names) - set(common_measurements)
+        ]
+        right_measurements = [
+            right.get_measurement(measurement_name=m)
+            for m in set(right.measurement_names) - set(common_measurements)
+        ]
+        merged_measurements = [
+            dict(
+                name=m,
+                config=dict(
+                    poi=left.get_measurement(measurement_name=m)['config']['poi'],
+                    parameters=(
+                        left.get_measurement(measurement_name=m)['config']['parameters']
+                        + right.get_measurement(measurement_name=m)['config'][
+                            'parameters'
+                        ]
+                    ),
+                ),
+            )
+            for m in common_measurements
+        ]
+
         newspec = {
             'channels': left['channels'] + right['channels'],
-            'measurements': left['measurements'] + right['measurements'],
+            'measurements': (
+                left_measurements + right_measurements + merged_measurements
+            ),
             'observations': left['observations'] + right['observations'],
             'version': left['version'],
         }

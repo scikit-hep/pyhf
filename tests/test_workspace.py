@@ -283,17 +283,16 @@ def test_combine_workspace_same_channels(workspace_factory):
     assert 'channel2' not in str(excinfo.value)
 
 
-def test_combine_workspace_same_measurements(workspace_factory):
+def test_combine_workspace_incompatible_poi(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
+    new_ws = ws.rename(
+        modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
+    )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         combined = pyhf.Workspace.combine(ws, new_ws)
-    assert 'GaussExample' in str(excinfo.value)
-    assert 'GammaExample' not in str(excinfo.value)
-    assert 'ConstExample' not in str(excinfo.value)
-    assert 'LogNormExample' not in str(excinfo.value)
 
 
 def test_combine_workspace_diff_version(workspace_factory):
@@ -339,11 +338,15 @@ def test_combine_workspace(workspace_factory):
         measurements={
             'ConstExample': 'OtherConstExample',
             'LogNormExample': 'OtherLogNormExample',
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
         },
     )
-    combined_combine = pyhf.Workspace.combine(ws, new_ws)
-    assert set(combined_combine.channels) == set(ws.channels + new_ws.channels)
-    assert set(combined_combine.samples) == set(ws.samples + new_ws.samples)
-    assert set(combined_combine.parameters) == set(ws.parameters + new_ws.parameters)
+    combined = pyhf.Workspace.combine(ws, new_ws)
+    assert set(combined.channels) == set(ws.channels + new_ws.channels)
+    assert set(combined.samples) == set(ws.samples + new_ws.samples)
+    assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
+    combined_measurement = combined.get_measurement(measurement_name='GaussExample')
+    assert len(combined_measurement['config']['parameters']) == len(
+        ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
+    ) + len(
+        new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
+    )
