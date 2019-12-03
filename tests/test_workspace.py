@@ -253,6 +253,17 @@ def test_rename_modifier(workspace_factory):
     assert renamed in new_ws.parameters
 
 
+def test_rename_poi(workspace_factory):
+    ws = workspace_factory()
+    poi = ws.get_measurement()['config']['poi']
+    renamed = 'renamedPoi'
+    assert renamed not in ws.parameters
+    new_ws = ws.rename(modifiers={poi: renamed})
+    assert poi not in new_ws.parameters
+    assert renamed in new_ws.parameters
+    assert new_ws.get_measurement()['config']['poi'] == renamed
+
+
 def test_rename_measurement(workspace_factory):
     ws = workspace_factory()
     measurement = ws.measurement_names[0]

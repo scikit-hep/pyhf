@@ -252,7 +252,9 @@ class Workspace(_ChannelSummaryMixin, dict):
                             for parameter in measurement['config']['parameters']
                             if parameter['name'] not in prune_modifiers
                         ],
-                        'poi': measurement['config']['poi'],
+                        'poi': rename_modifiers.get(
+                            measurement['config']['poi'], measurement['config']['poi']
+                        ),
                     },
                 }
                 for measurement in self['measurements']
