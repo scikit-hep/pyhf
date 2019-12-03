@@ -202,7 +202,6 @@ def prune(
     metavar='<PATTERN> <REPLACE>...',
 )
 @click.option(
-    '-e',
     '--measurement',
     default=[],
     multiple=True,
