@@ -288,3 +288,153 @@ def test_inspect_outfile(tmpdir, script_runner):
     assert len(summary['parameters']) == 6
     assert len(summary['samples']) == 3
     assert len(summary['systematics']) == 6
+
+
+def test_prune(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_prune_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("prune_output.json")
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    spec = json.loads(temp.read())
+    ws = pyhf.Workspace(spec)
+    assert 'GammaExample' in ws.measurement_names
+    assert 'staterror_channel1' in ws.parameters
+    pruned_spec = json.loads(tempout.read())
+    pruned_ws = pyhf.Workspace(pruned_spec)
+    assert 'GammaExample' not in pruned_ws.measurement_names
+    assert 'staterror_channel1' not in pruned_ws.parameters
+
+
+def test_rename(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_rename_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("rename_output.json")
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    spec = json.loads(temp.read())
+    ws = pyhf.Workspace(spec)
+    assert 'GammaExample' in ws.measurement_names
+    assert 'GamEx' not in ws.measurement_names
+    assert 'staterror_channel1' in ws.parameters
+    assert 'staterror_channelone' not in ws.parameters
+    renamed_spec = json.loads(tempout.read())
+    renamed_ws = pyhf.Workspace(renamed_spec)
+    assert 'GammaExample' not in renamed_ws.measurement_names
+    assert 'GamEx' in renamed_ws.measurement_names
+    assert 'staterror_channel1' not in renamed_ws.parameters
+    assert 'staterror_channelone' in renamed_ws.parameters
+
+
+def test_combine(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf combine {0:s} {1:s}'.format(temp_1.strpath, temp_2.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_combine_outfile(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("combined_output.json")
+    command = 'pyhf combine {0:s} {1:s} --output-file {2:s}'.format(
+        temp_1.strpath, temp_2.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    combined_spec = json.loads(tempout.read())
+    combined_ws = pyhf.Workspace(combined_spec)
+    assert combined_ws.channels == ['channel1', 'channel2']
+    assert len(combined_ws.measurement_names) == 8

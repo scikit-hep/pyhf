@@ -50,16 +50,17 @@ class Workspace(_ChannelSummaryMixin, dict):
           2. if the measurement name is given, find the measurement for the given name
           3. if the measurement index is given, return the measurement at that index
           4. if there are measurements but none of the above have been specified, return the 0th measurement
-          5. otherwise, raises `InvalidMeasurement`
+
+        Raises:
+          ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
-            poi_name: The name of the parameter of interest to create a new measurement from
-            measurement_name: The name of the measurement to use
-            measurement_index: The index of the measurement to use
+            poi_name (str): The name of the parameter of interest to create a new measurement from
+            measurement_name (str): The name of the measurement to use
+            measurement_index (int): The index of the measurement to use
 
         Returns:
-            measurement: A measurement object adhering to the schema defs.json#/definitions/measurement
-
+            :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
         """
         m = self._get_measurement(**config_kwargs)
         utils.validate(m, 'measurement.json', self.version)
@@ -116,8 +117,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             patches: A list of JSON patches to apply to the model specification
 
         Returns:
-            model: A model object adhering to the schema model.json
-
+            ~pyhf.pdf.Model: A model object adhering to the schema model.json
         """
         measurement = self.get_measurement(**config_kwargs)
         log.debug(
@@ -141,12 +141,15 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         The model is needed as the order of the data depends on the order of the channels in the model.
 
+        Raises:
+          KeyError: Invalid or missing channel
+
         Args:
-            model: A model object adhering to the schema model.json
-            with_aux: Whether to include auxiliary data from the model or not
+            model (~pyhf.pdf.Model): A model object adhering to the schema model.json
+            with_aux (bool): Whether to include auxiliary data from the model or not
 
         Returns:
-            data: A list of numbers
+            :obj:`list`: data
         """
 
         try:
@@ -161,3 +164,258 @@ class Workspace(_ChannelSummaryMixin, dict):
         if with_aux:
             observed_data += model.config.auxdata
         return observed_data
+
+    def _prune_and_rename(
+        self,
+        prune_modifiers=[],
+        prune_modifier_types=[],
+        prune_samples=[],
+        prune_channels=[],
+        prune_measurements=[],
+        rename_modifiers={},
+        rename_samples={},
+        rename_channels={},
+        rename_measurements={},
+    ):
+        """
+        Return a new, pruned, renamed workspace specification. This will not
+        modify the original workspace.
+
+        Pruning removes pieces of the workspace whose name or type matches the
+        user-provided lists. The pruned, renamed workspace must also be a valid
+        workspace.
+
+        A workspace is composed of many named components, such as channels and
+        samples, as well as types of systematics (e.g. `histosys`). Components
+        can be removed (pruned away) filtering on name or be renamed according
+        to the provided :obj:`dict` mapping. Additionally, modifiers of
+        specific types can be removed (pruned away).
+
+        This function also handles specific peculiarities, such as
+        renaming/removing a channel which needs to rename/remove the
+        corresponding `observation`.
+
+        Args:
+            prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
+            prune_modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
+            prune_samples: A :obj:`str` or a :obj:`list` of samples to prune.
+            prune_channels: A :obj:`str` or a :obj:`list` of channels to prune.
+            prune_measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            rename_modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
+            rename_samples: A :obj:`dict` mapping old sample name to new sample name.
+            rename_channels: A :obj:`dict` mapping old channel name to new channel name.
+            rename_measurements: A :obj:`dict` mapping old measurement name to new measurement name.
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
+        """
+        newspec = {
+            'channels': [
+                {
+                    'name': rename_channels.get(channel['name'], channel['name']),
+                    'samples': [
+                        {
+                            'name': rename_samples.get(sample['name'], sample['name']),
+                            'data': sample['data'],
+                            'modifiers': [
+                                dict(
+                                    modifier,
+                                    name=rename_modifiers.get(
+                                        modifier['name'], modifier['name']
+                                    ),
+                                )
+                                for modifier in sample['modifiers']
+                                if modifier['name'] not in prune_modifiers
+                                and modifier['type'] not in prune_modifier_types
+                            ],
+                        }
+                        for sample in channel['samples']
+                        if sample['name'] not in prune_samples
+                    ],
+                }
+                for channel in self['channels']
+                if channel['name'] not in prune_channels
+            ],
+            'measurements': [
+                {
+                    'name': rename_measurements.get(
+                        measurement['name'], measurement['name']
+                    ),
+                    'config': {
+                        'parameters': [
+                            dict(
+                                parameter,
+                                name=rename_modifiers.get(
+                                    parameter['name'], parameter['name']
+                                ),
+                            )
+                            for parameter in measurement['config']['parameters']
+                            if parameter['name'] not in prune_modifiers
+                        ],
+                        'poi': rename_modifiers.get(
+                            measurement['config']['poi'], measurement['config']['poi']
+                        ),
+                    },
+                }
+                for measurement in self['measurements']
+                if measurement['name'] not in prune_measurements
+            ],
+            'observations': [
+                dict(
+                    observation,
+                    name=rename_channels.get(observation['name'], observation['name']),
+                )
+                for observation in self['observations']
+                if observation['name'] not in prune_channels
+            ],
+            'version': self['version'],
+        }
+        return Workspace(newspec)
+
+    def prune(
+        self, modifiers=[], modifier_types=[], samples=[], channels=[], measurements=[]
+    ):
+        """
+        Return a new, pruned workspace specification. This will not modify the
+        original workspace.
+
+        The pruned workspace must also be a valid workspace.
+
+        Args:
+            modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
+            modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
+            samples: A :obj:`str` or a :obj:`list` of samples to prune.
+            channels: A :obj:`str` or a :obj:`list` of channels to prune.
+            measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
+        """
+        return self._prune_and_rename(
+            prune_modifiers=modifiers,
+            prune_modifier_types=modifier_types,
+            prune_samples=samples,
+            prune_channels=channels,
+            prune_measurements=measurements,
+        )
+
+    def rename(self, modifiers={}, samples={}, channels={}, measurements={}):
+        """
+        Return a new workspace specification with certain elements renamed.
+        This will not modify the original workspace.
+
+        The renamed workspace must also be a valid workspace.
+
+        Args:
+            modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
+            samples: A :obj:`dict` mapping old sample name to new sample name.
+            channels: A :obj:`dict` mapping old channel name to new channel name.
+            measurements: A :obj:`dict` mapping old measurement name to new measurement name.
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
+        """
+        return self._prune_and_rename(
+            rename_modifiers=modifiers,
+            rename_samples=samples,
+            rename_channels=channels,
+            rename_measurements=measurements,
+        )
+
+    @classmethod
+    def combine(cls, left, right):
+        """
+        Return a new workspace specification that is the combination of the two
+        workspaces.
+
+        The new workspace must also be a valid workspace. A combination of
+        workspaces is done by combining the set of:
+
+          - channels,
+          - observations, and
+          - measurements
+
+        between the two workspaces. If the two workspaces have modifiers that
+        follow the same naming convention, then correlations across the two
+        workspaces may be possible. In particular, the `lumi` modifier will be
+        fully-correlated.
+
+        If the two workspaces have the same measurement (with the same POI),
+        those measurements will get merged.
+
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: The workspaces have common channel names, incompatible measurements, or incompatible schema versions.
+
+        Args:
+            left (~pyhf.workspace.Workspace): A workspace
+            right (~pyhf.workspace.Workspace): Another workspace
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new combined workspace object
+        """
+        common_channels = set(left.channels).intersection(right.channels)
+        if common_channels:
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces cannot have any channels in common: {}".format(
+                    common_channels
+                )
+            )
+
+        common_measurements = set(left.measurement_names).intersection(
+            right.measurement_names
+        )
+        incompatible_poi = [
+            left.get_measurement(measurement_name=m)['config']['poi']
+            != right.get_measurement(measurement_name=m)['config']['poi']
+            for m in common_measurements
+        ]
+        if any(incompatible_poi):
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces cannot have any measurements with incompatible POI: {}".format(
+                    [
+                        m
+                        for m, i in zip(common_measurements, incompatible_poi)
+                        if incompatible_poi
+                    ]
+                )
+            )
+        if left.version != right.version:
+            raise exceptions.InvalidWorkspaceOperation(
+                "Workspaces of different versions cannot be combined: {} != {}".format(
+                    left.version, right.version
+                )
+            )
+
+        left_measurements = [
+            left.get_measurement(measurement_name=m)
+            for m in set(left.measurement_names) - set(common_measurements)
+        ]
+        right_measurements = [
+            right.get_measurement(measurement_name=m)
+            for m in set(right.measurement_names) - set(common_measurements)
+        ]
+        merged_measurements = [
+            dict(
+                name=m,
+                config=dict(
+                    poi=left.get_measurement(measurement_name=m)['config']['poi'],
+                    parameters=(
+                        left.get_measurement(measurement_name=m)['config']['parameters']
+                        + right.get_measurement(measurement_name=m)['config'][
+                            'parameters'
+                        ]
+                    ),
+                ),
+            )
+            for m in common_measurements
+        ]
+
+        newspec = {
+            'channels': left['channels'] + right['channels'],
+            'measurements': (
+                left_measurements + right_measurements + merged_measurements
+            ),
+            'observations': left['observations'] + right['observations'],
+            'version': left['version'],
+        }
+        return Workspace(newspec)

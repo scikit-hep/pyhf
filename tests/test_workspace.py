@@ -136,3 +136,217 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog):
 
 def test_json_serializable(workspace_factory):
     assert json.dumps(workspace_factory())
+
+
+def test_prune_nothing(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.prune(
+        channels=['fake-name'],
+        samples=['fake-sample'],
+        modifiers=['fake-modifier'],
+        modifier_types=['fake-type'],
+    )
+
+
+def test_prune_channel(workspace_factory):
+    ws = workspace_factory()
+    channel = ws.channels[0]
+    if len(ws.channels) == 1:
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(channels=channel)
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(channels=[channel])
+    else:
+        new_ws = ws.prune(channels=channel)
+        assert channel not in new_ws.channels
+        assert channel not in [obs['name'] for obs in new_ws['observations']]
+
+        new_ws_list = ws.prune(channels=[channel])
+        assert new_ws_list == new_ws
+
+
+def test_prune_sample(workspace_factory):
+    ws = workspace_factory()
+    sample = ws.samples[1]
+    new_ws = ws.prune(samples=sample)
+    assert new_ws
+    assert sample not in new_ws.samples
+
+    new_ws_list = ws.prune(samples=[sample])
+    assert new_ws_list == new_ws
+
+
+def test_prune_modifier(workspace_factory):
+    ws = workspace_factory()
+    modifier = 'lumi'
+    new_ws = ws.prune(modifiers=modifier)
+    assert new_ws
+    assert modifier not in new_ws.parameters
+    assert modifier not in [
+        p['name']
+        for measurement in new_ws['measurements']
+        for p in measurement['config']['parameters']
+    ]
+
+    new_ws_list = ws.prune(modifiers=[modifier])
+    assert new_ws_list == new_ws
+
+
+def test_prune_modifier_type(workspace_factory):
+    ws = workspace_factory()
+    modifier_type = 'lumi'
+    new_ws = ws.prune(modifier_types=modifier_type)
+    assert new_ws
+    assert modifier_type not in [item[1] for item in new_ws.modifiers]
+
+    new_ws_list = ws.prune(modifier_types=[modifier_type])
+    assert new_ws_list == new_ws
+
+
+def test_prune_measurements(workspace_factory):
+    ws = workspace_factory()
+    measurement = ws.measurement_names[0]
+
+    if len(ws.measurement_names) == 1:
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(measurements=measurement)
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            new_ws = ws.prune(measurements=[measurement])
+    else:
+        new_ws = ws.prune(measurements=[measurement])
+        assert new_ws
+        assert measurement not in new_ws.measurement_names
+
+        new_ws_list = ws.prune(measurements=[measurement])
+        assert new_ws_list == new_ws
+
+
+def test_rename_channel(workspace_factory):
+    ws = workspace_factory()
+    channel = ws.channels[0]
+    renamed = 'renamedChannel'
+    assert renamed not in ws.channels
+    new_ws = ws.rename(channels={channel: renamed})
+    assert channel not in new_ws.channels
+    assert renamed in new_ws.channels
+    assert channel not in [obs['name'] for obs in new_ws['observations']]
+    assert renamed in [obs['name'] for obs in new_ws['observations']]
+
+
+def test_rename_sample(workspace_factory):
+    ws = workspace_factory()
+    sample = ws.samples[1]
+    renamed = 'renamedSample'
+    assert renamed not in ws.samples
+    new_ws = ws.rename(samples={sample: renamed})
+    assert sample not in new_ws.samples
+    assert renamed in new_ws.samples
+
+
+def test_rename_modifier(workspace_factory):
+    ws = workspace_factory()
+    modifier = ws.parameters[0]
+    renamed = 'renamedModifier'
+    assert renamed not in ws.parameters
+    new_ws = ws.rename(modifiers={modifier: renamed})
+    assert modifier not in new_ws.parameters
+    assert renamed in new_ws.parameters
+
+
+def test_rename_poi(workspace_factory):
+    ws = workspace_factory()
+    poi = ws.get_measurement()['config']['poi']
+    renamed = 'renamedPoi'
+    assert renamed not in ws.parameters
+    new_ws = ws.rename(modifiers={poi: renamed})
+    assert poi not in new_ws.parameters
+    assert renamed in new_ws.parameters
+    assert new_ws.get_measurement()['config']['poi'] == renamed
+
+
+def test_rename_measurement(workspace_factory):
+    ws = workspace_factory()
+    measurement = ws.measurement_names[0]
+    renamed = 'renamedMeasurement'
+    assert renamed not in ws.measurement_names
+    new_ws = ws.rename(measurements={measurement: renamed})
+    assert measurement not in new_ws.measurement_names
+    assert renamed in new_ws.measurement_names
+
+
+def test_combine_workspace_same_channels(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = pyhf.Workspace.combine(ws, new_ws)
+    assert 'channel1' in str(excinfo.value)
+    assert 'channel2' not in str(excinfo.value)
+
+
+def test_combine_workspace_incompatible_poi(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    new_ws = ws.rename(
+        modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
+    )
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = pyhf.Workspace.combine(ws, new_ws)
+
+
+def test_combine_workspace_diff_version(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+        },
+    )
+    new_ws.version = '0.0.0'
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        combined = pyhf.Workspace.combine(ws, new_ws)
+
+
+def test_combine_workspace(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+        },
+    )
+    combined = pyhf.Workspace.combine(ws, new_ws)
+    assert set(combined.channels) == set(ws.channels + new_ws.channels)
+    assert set(combined.samples) == set(ws.samples + new_ws.samples)
+    assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
+    combined_measurement = combined.get_measurement(measurement_name='GaussExample')
+    assert len(combined_measurement['config']['parameters']) == len(
+        ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
+    ) + len(
+        new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
+    )

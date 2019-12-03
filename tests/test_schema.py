@@ -2,6 +2,12 @@ import pyhf
 import pytest
 
 
+def test_no_channels():
+    spec = {'channels': []}
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+
 def test_no_samples():
     spec = {'channels': [{'name': 'channel', 'samples': []}]}
     with pytest.raises(pyhf.exceptions.InvalidSpecification):

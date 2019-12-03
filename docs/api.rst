@@ -1,5 +1,5 @@
-API
-===
+Python API
+==========
 
 Top-Level
 ---------
@@ -34,16 +34,16 @@ Probability Distribution Functions (PDFs)
 Making Models from PDFs
 -----------------------
 
-.. currentmodule:: pyhf.pdf
+.. currentmodule:: pyhf
 
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
    :template: modifierclass.rst
 
-   Workspace
-   Model
-   _ModelConfig
+   ~pdf.Model
+   ~pdf._ModelConfig
+   ~workspace.Workspace
 
 Backends
 --------
@@ -121,8 +121,17 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    :nosignatures:
    :template: modifierclass.rst
 
-   InvalidInterpCode
+   InvalidMeasurement
+   InvalidNameReuse
+   InvalidSpecification
+   InvalidWorkspaceOperation
+   InvalidModel
    InvalidModifier
+   InvalidInterpCode
+   ImportBackendError
+   InvalidOptimizer
+   InvalidPdfParameters
+   InvalidPdfData
 
 Utilities
 ---------

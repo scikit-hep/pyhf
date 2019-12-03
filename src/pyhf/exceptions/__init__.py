@@ -34,6 +34,10 @@ class InvalidSpecification(Exception):
         super(InvalidSpecification, self).__init__(message)
 
 
+class InvalidWorkspaceOperation(Exception):
+    """InvalidWorkspaceOperation is raised when an operation on a workspace fails."""
+
+
 class InvalidModel(Exception):
     """
     InvalidModel is raised when a given model does not have the right configuration, even though it validates correctly against the schema.
