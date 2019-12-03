@@ -142,11 +142,16 @@ def inspect(workspace, output_file, measurement):
     type=click.Choice(modifiers.uncombined.keys()),
 )
 @click.option(
-    '-e', '--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...'
+    '--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...'
 )
 def prune(
     workspace, output_file, channel, sample, modifier, modifier_type, measurement
 ):
+    """
+    Prune components from the workspace.
+
+    See :func:`pyhf.workspace.Workspace.prune` for more information.
+    """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
@@ -207,6 +212,11 @@ def prune(
     metavar='<PATTERN> <REPLACE>...',
 )
 def rename(workspace, output_file, channel, sample, modifier, measurement):
+    """
+    Rename components of the workspace.
+
+    See :func:`pyhf.workspace.Workspace.rename` for more information.
+    """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
@@ -235,6 +245,11 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     default=None,
 )
 def combine(workspace_one, workspace_two, output_file):
+    """
+    Combine two workspaces into a single workspace.
+
+    See :func:`pyhf.workspace.Workspace.combine` for more information.
+    """
     with click.open_file(workspace_one, 'r') as specstream:
         spec_one = json.load(specstream)
 
