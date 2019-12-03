@@ -297,7 +297,7 @@ def test_prune(tmpdir, script_runner):
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf prune -m staterror_channel1 -e GammaExample {0:s}'.format(
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s}'.format(
         temp.strpath
     )
     ret = script_runner.run(*shlex.split(command))
@@ -312,7 +312,7 @@ def test_prune_outfile(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("prune_output.json")
-    command = 'pyhf prune -m staterror_channel1 -e GammaExample {0:s} --output-file {1:s}'.format(
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s} --output-file {1:s}'.format(
         temp.strpath, tempout.strpath
     )
     ret = script_runner.run(*shlex.split(command))
@@ -335,7 +335,7 @@ def test_rename(tmpdir, script_runner):
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf rename -m staterror_channel1 staterror_channelone -e GammaExample GamEx {0:s}'.format(
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s}'.format(
         temp.strpath
     )
     ret = script_runner.run(*shlex.split(command))
@@ -350,7 +350,7 @@ def test_rename_outfile(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("rename_output.json")
-    command = 'pyhf rename -m staterror_channel1 staterror_channelone -e GammaExample GamEx {0:s} --output-file {1:s}'.format(
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s} --output-file {1:s}'.format(
         temp.strpath, tempout.strpath
     )
     ret = script_runner.run(*shlex.split(command))
@@ -389,7 +389,9 @@ def test_combine(tmpdir, script_runner):
     command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
         temp_1.strpath,
         ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
-        ''.join(' -e ' + ' '.join(item) for item in rename_measurements.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
         temp_2.strpath,
     )
     ret = script_runner.run(*shlex.split(command))
@@ -418,7 +420,9 @@ def test_combine_outfile(tmpdir, script_runner):
     command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
         temp_1.strpath,
         ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
-        ''.join(' -e ' + ' '.join(item) for item in rename_measurements.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
         temp_2.strpath,
     )
     ret = script_runner.run(*shlex.split(command))
