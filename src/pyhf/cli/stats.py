@@ -5,7 +5,7 @@ import json
 
 from ..utils import hypotest, EqDelimStringParamType
 from ..workspace import Workspace
-from . import tensor, get_backend, set_backend, optimize
+from .. import tensor, get_backend, set_backend, optimize
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
