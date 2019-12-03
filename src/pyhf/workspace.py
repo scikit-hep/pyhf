@@ -61,7 +61,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
-
         """
         m = self._get_measurement(**config_kwargs)
         utils.validate(m, 'measurement.json', self.version)
@@ -119,7 +118,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
-
         """
         measurement = self.get_measurement(**config_kwargs)
         log.debug(
@@ -142,6 +140,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         Return the data for the supplied model with or without auxiliary data from the model.
 
         The model is needed as the order of the data depends on the order of the channels in the model.
+
+        Raises:
+          KeyError: Invalid or missing channel
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
@@ -177,9 +178,22 @@ class Workspace(_ChannelSummaryMixin, dict):
         rename_measurements={},
     ):
         """
-        Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
+        Return a new, pruned, renamed workspace specification. This will not
+        modify the original workspace.
 
-        Pruning removes pieces of the workspace whose name or type matches the user-provided lists. The pruned, renamed workspace must also be a valid workspace.
+        Pruning removes pieces of the workspace whose name or type matches the
+        user-provided lists. The pruned, renamed workspace must also be a valid
+        workspace.
+
+        A workspace is composed of many named components, such as channels and
+        samples, as well as types of systematics (e.g. `histosys`). Components
+        can be removed (pruned away) filtering on name or be renamed according
+        to the provided :obj:`dict` mapping. Additionally, modifiers of
+        specific types can be removed (pruned away).
+
+        This function also handles specific peculiarities, such as
+        renaming/removing a channel which needs to rename/remove the
+        corresponding `observation`.
 
         Args:
             prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
@@ -194,7 +208,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
-
         """
         newspec = {
             'channels': [
@@ -261,7 +274,8 @@ class Workspace(_ChannelSummaryMixin, dict):
         self, modifiers=[], modifier_types=[], samples=[], channels=[], measurements=[]
     ):
         """
-        Return a new, pruned workspace specification. This will not modify the original workspace.
+        Return a new, pruned workspace specification. This will not modify the
+        original workspace.
 
         The pruned workspace must also be a valid workspace.
 
@@ -274,7 +288,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
-
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
@@ -286,7 +299,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def rename(self, modifiers={}, samples={}, channels={}, measurements={}):
         """
-        Return a new workspace specification with certain elements renamed. This will not modify the original workspace.
+        Return a new workspace specification with certain elements renamed.
+        This will not modify the original workspace.
 
         The renamed workspace must also be a valid workspace.
 
@@ -298,7 +312,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
-
         """
         return self._prune_and_rename(
             rename_modifiers=modifiers,
@@ -310,11 +323,23 @@ class Workspace(_ChannelSummaryMixin, dict):
     @classmethod
     def combine(cls, left, right):
         """
-        Return a new workspace specification that is the combination of the two workspaces.
+        Return a new workspace specification that is the combination of the two
+        workspaces.
 
-        The new workspace must also be a valid workspace.
+        The new workspace must also be a valid workspace. A combination of
+        workspaces is done by combining the set of:
 
-        A combination of workspaces is done by joining the set of channels. If the workspaces share any channels or measurements in common, do not combine.
+          - channels,
+          - observations, and
+          - measurements
+
+        between the two workspaces. If the two workspaces have modifiers that
+        follow the same naming convention, then correlations across the two
+        workspaces may be possible. In particular, the `lumi` modifier will be
+        fully-correlated.
+
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: The workspaces have common channel names, common measurement names, or incompatible versions.
 
         Args:
             left (~pyhf.workspace.Workspace): A workspace
@@ -322,7 +347,6 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
-
         """
         common_channels = set(left.channels).intersection(right.channels)
         if common_channels:
