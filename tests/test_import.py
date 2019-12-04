@@ -115,7 +115,7 @@ def test_import_measurements():
     assert 'parameters' in measurement_configs
     assert len(measurement_configs['parameters']) == 3
     pnames = [p['name'] for p in measurement_configs['parameters']]
-    assert pnames == ['lumi', 'SigXsecOverSM', 'alpha_syst1']
+    assert sorted(pnames) == sorted(['lumi', 'SigXsecOverSM', 'alpha_syst1'])
 
     lumi_param_config = measurement_configs['parameters'][0]
     assert 'auxdata' in lumi_param_config
