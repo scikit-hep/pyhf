@@ -69,6 +69,7 @@ def process_sample(
 
     data, err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
+    parameter_configs = []
     modifiers = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
@@ -101,6 +102,14 @@ def process_sample(
             modifiers.append(
                 {'name': modtag.attrib['Name'], 'type': 'normfactor', 'data': None}
             )
+            parameter_config = {
+                'name': modtag.attrib['Name'],
+                'bounds': [[float(modtag.attrib['Low']), float(modtag.attrib['High'])]],
+            }
+            if modtag.attrib.get('Const'):
+                parameter_config['fixed'] = modtag.attrib['Const'] == 'True'
+
+            parameter_configs.append(parameter_config)
         elif modtag.tag == 'HistoSys':
             lo, _ = import_root_histogram(
                 rootdir,
@@ -165,7 +174,12 @@ def process_sample(
         else:
             log.warning('not considering modifier tag %s', modtag)
 
-    return {'name': sample.attrib['Name'], 'data': data, 'modifiers': modifiers}
+    return {
+        'name': sample.attrib['Name'],
+        'data': data,
+        'modifiers': modifiers,
+        'parameter_configs': parameter_configs,
+    }
 
 
 def process_data(sample, rootdir, inputfile, histopath):
@@ -197,17 +211,19 @@ def process_channel(channelxml, rootdir, track_progress=False):
     channelname = channel.attrib['Name']
 
     results = []
+    channel_parameter_configs = []
     for sample in samples:
         samples.set_description('  - sample {}'.format(sample.attrib.get('Name')))
         result = process_sample(
             sample, rootdir, inputfile, histopath, channelname, track_progress
         )
+        channel_parameter_configs.extend(result.pop('parameter_configs'))
         results.append(result)
 
-    return channelname, parsed_data, results
+    return channelname, parsed_data, results, channel_parameter_configs
 
 
-def process_measurements(toplvl):
+def process_measurements(toplvl, other_parameters=None):
     results = []
     for x in toplvl.findall('Measurement'):
         lumi = float(x.attrib['Lumi'])
@@ -246,8 +262,30 @@ def process_measurements(toplvl):
                         param_obj = {'name': param_name}
                         param_obj.update(overall_param_obj)
                         result['config']['parameters'].append(param_obj)
+        if other_parameters:
+            result['config']['parameters'].extend(other_parameters)
         results.append(result)
     return results
+
+
+def dedupe_parameters(parameters):
+    duplicates = {}
+    for p in parameters:
+        duplicates.setdefault(p['name'], []).append(p)
+    for pname in duplicates.keys():
+        parameter_list = duplicates[pname]
+        if len(parameter_list) == 1:
+            continue
+        elif any(p != parameter_list[0] for p in parameter_list[1:]):
+            for p in parameter_list:
+                log.warning(p)
+            raise RuntimeError(
+                'cannot import workspace due to incompatible parameter configurations for {0:s}.'.format(
+                    pname
+                )
+            )
+    # no errors raised, de-dupe and return
+    return list({v['name']: v for v in parameters}.values())
 
 
 def parse(configfile, rootdir, track_progress=False):
@@ -259,20 +297,22 @@ def parse(configfile, rootdir, track_progress=False):
     )
 
     channels = {}
+    parameters = []
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
-        channel, data, samples = process_channel(
+        channel, data, samples, channel_parameter_configs = process_channel(
             ET.parse(os.path.join(rootdir, inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
+        parameters.extend(channel_parameter_configs)
 
+    parameters = dedupe_parameters(parameters)
     result = {
-        'measurements': process_measurements(toplvl),
+        'measurements': process_measurements(toplvl, other_parameters=parameters),
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'observations': [{'name': k, 'data': v['data']} for k, v in channels.items()],
         'version': utils.SCHEMA_VERSION,
     }
-
     utils.validate(result, 'workspace.json')
 
     return result
