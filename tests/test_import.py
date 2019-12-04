@@ -193,3 +193,22 @@ def test_import_shapesys():
     assert channels['channel1']['samples'][1]['modifiers'][1]['data'] == pytest.approx(
         [10.0, 1.5e-5]
     )
+
+
+def test_import_normfactor_bounds():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input2/config/example.xml', 'validation/xmlimport_input2'
+    )
+
+    ws = pyhf.Workspace(parsed_xml)
+    assert ('SigXsecOverSM', 'normfactor') in ws.modifiers
+    parameters = [
+        p
+        for p in ws.get_measurement(measurement_name='GaussExample')['config'][
+            'parameters'
+        ]
+        if p['name'] == 'SigXsecOverSM'
+    ]
+    assert len(parameters) == 1
+    parameter = parameters[0]
+    assert parameter['bounds'] == [[0, 10]]
