@@ -99,6 +99,26 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_exp' in d
 
 
+@pytest.mark.parametrize(
+    "backend", ["numpy", "tensorflow", "pytorch"],
+)
+def test_cls_backend_option(tmpdir, script_runner, backend):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls --backend {0:s} {1:s}'.format(backend, temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    d = json.loads(ret.stdout)
+    assert d
+    assert 'CLs_obs' in d
+    assert 'CLs_exp' in d
+
+
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
