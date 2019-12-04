@@ -13,6 +13,28 @@ _ROOT_DATA_FILE = None
 log = logging.getLogger(__name__)
 
 
+"""
+Dear readers of this code:
+
+  You might be wondering why 'spec' gets passed through all functions now. Once
+  upon a time, it didn't. However, it turns out that NormFactor is a unique
+  case of having parameter configurations stored at the
+  modifier-definition-spec level. This means that build_modifier() needs access
+  to the measurements. The call stack is:
+
+      writexml
+          ->build_channel
+              ->build_sample
+                  ->build_modifier
+
+  Therefore, we have to thread 'spec' through all these calls.
+
+Sincerely,
+
+  Defeated Developer
+"""
+
+
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
     return "{prefix}{middle}{suffix}".format(
         prefix=prefix,
@@ -89,7 +111,7 @@ def build_measurement(measurementspec):
     return meas
 
 
-def build_modifier(modifierspec, channelname, samplename, sampledata):
+def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
     if modifierspec['name'] == 'lumi':
         return None
     mod_map = {
@@ -115,9 +137,32 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         attrs['High'] = str(modifierspec['data']['hi'])
         attrs['Low'] = str(modifierspec['data']['lo'])
     elif modifierspec['type'] == 'normfactor':
-        attrs['Val'] = '1'
-        attrs['High'] = '10'
-        attrs['Low'] = '0'
+        # NB: only look at first measurement for normfactor configs. In order
+        # to dump as HistFactory XML, this has to be the same for all
+        # measurements or it will not work correctly. Why?
+        #
+        # Unlike other modifiers, NormFactor has the unique circumstance of
+        # defining its parameter configurations at the modifier level inside
+        # the channel specification, instead of at the measurement level, like
+        # all of the other modifiers.
+        #
+        # However, since I strive for perfection, the "Const" attribute will
+        # never be set here, but at the per-measurement configuration instead
+        # like all other parameters. This is an acceptable compromise.
+        #
+        # Lastly, if a normfactor parameter configuration doesn't exist in the
+        # first measurement parameter configuration, then set defaults.
+        val = 1
+        low = 0
+        high = 10
+        # Whatever. Let's get on with the show, shall we?
+        for p in spec['measurements'][0]['config']['parameters']:
+            if p['name'] == modifierspec['name']:
+                val = p['inits'][0]
+                low, high = p['bounds'][0]
+        attrs['Val'] = str(val)
+        attrs['Low'] = str(low)
+        attrs['High'] = str(high)
     elif modifierspec['type'] == 'staterror':
         attrs['Activate'] = 'True'
         attrs['HistoName'] = _make_hist_name(
@@ -161,7 +206,7 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
     return modifier
 
 
-def build_sample(samplespec, channelname):
+def build_sample(spec, samplespec, channelname):
     histname = _make_hist_name(channelname, samplespec['name'])
     attrs = {
         'Name': samplespec['name'],
@@ -175,7 +220,7 @@ def build_sample(samplespec, channelname):
         if modspec['type'] == 'lumi':
             sample.attrib.update({'NormalizeByTheory': 'True'})
         modifier = build_modifier(
-            modspec, channelname, samplespec['name'], samplespec['data']
+            spec, modspec, channelname, samplespec['name'], samplespec['data']
         )
         if modifier is not None:
             sample.append(modifier)
@@ -192,7 +237,7 @@ def build_data(obsspec, channelname):
     return data
 
 
-def build_channel(channelspec, obsspec):
+def build_channel(spec, channelspec, obsspec):
     channel = ET.Element(
         'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
     )
@@ -200,7 +245,7 @@ def build_channel(channelspec, obsspec):
         data = build_data(obsspec, channelspec['name'])
         channel.append(data)
     for samplespec in channelspec['samples']:
-        channel.append(build_sample(samplespec, channelspec['name']))
+        channel.append(build_sample(spec, samplespec, channelspec['name']))
     return channel
 
 
@@ -221,7 +266,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
             )
             with open(channelfilename, 'w') as channelfile:
-                channel = build_channel(channelspec, spec.get('observations'))
+                channel = build_channel(spec, channelspec, spec.get('observations'))
                 indent(channel)
                 channelfile.write(
                     "<!DOCTYPE Channel SYSTEM '../HistFactorySchema.dtd'>\n\n"
