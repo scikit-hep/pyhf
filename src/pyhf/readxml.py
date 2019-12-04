@@ -105,6 +105,7 @@ def process_sample(
             parameter_config = {
                 'name': modtag.attrib['Name'],
                 'bounds': [[float(modtag.attrib['Low']), float(modtag.attrib['High'])]],
+                'inits': [float(modtag.attrib['Val'])],
             }
             if modtag.attrib.get('Const'):
                 parameter_config['fixed'] = modtag.attrib['Const'] == 'True'
