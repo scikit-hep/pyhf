@@ -224,9 +224,12 @@ def process_channel(channelxml, rootdir, track_progress=False):
     return channelname, parsed_data, results, channel_parameter_configs
 
 
-def process_measurements(toplvl, other_parameters=None):
+def process_measurements(toplvl, other_parameter_configs=None):
     results = []
+    other_parameter_configs = other_parameter_configs if other_parameter_configs else []
+
     for x in toplvl.findall('Measurement'):
+        parameter_configs_map = {k['name']: dict(**k) for k in other_parameter_configs}
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -245,13 +248,14 @@ def process_measurements(toplvl, other_parameters=None):
                 ],
             },
         }
+
         for param in x.findall('ParamSetting'):
             # determine what all parameters in the paramsetting have in common
             overall_param_obj = {}
             if param.attrib.get('Const'):
                 overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
             if param.attrib.get('Val'):
-                overall_param_obj['value'] = param.attrib['Val']
+                overall_param_obj['inits'] = [float(param.attrib['Val'])]
 
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
@@ -260,12 +264,17 @@ def process_measurements(toplvl, other_parameters=None):
                     if param_name == 'Lumi':
                         result['config']['parameters'][0].update(overall_param_obj)
                     else:
-                        param_obj = {'name': param_name}
+                        # pop from parameter_configs_map because we don't want to duplicate
+                        param_obj = parameter_configs_map.pop(
+                            param_name, {'name': param_name}
+                        )
+                        # ParamSetting will always take precedence
                         param_obj.update(overall_param_obj)
-                        result['config']['parameters'].append(param_obj)
-        if other_parameters:
-            result['config']['parameters'].extend(other_parameters)
+                        # add it back in to the parameter_configs_map
+                        parameter_configs_map[param_name] = param_obj
+        result['config']['parameters'].extend(parameter_configs_map.values())
         results.append(result)
+
     return results
 
 
@@ -298,18 +307,20 @@ def parse(configfile, rootdir, track_progress=False):
     )
 
     channels = {}
-    parameters = []
+    parameter_configs = []
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
         channel, data, samples, channel_parameter_configs = process_channel(
             ET.parse(os.path.join(rootdir, inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
-        parameters.extend(channel_parameter_configs)
+        parameter_configs.extend(channel_parameter_configs)
 
-    parameters = dedupe_parameters(parameters)
+    parameter_configs = dedupe_parameters(parameter_configs)
     result = {
-        'measurements': process_measurements(toplvl, other_parameters=parameters),
+        'measurements': process_measurements(
+            toplvl, other_parameter_configs=parameter_configs
+        ),
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'observations': [{'name': k, 'data': v['data']} for k, v in channels.items()],
         'version': utils.SCHEMA_VERSION,

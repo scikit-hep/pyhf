@@ -4,6 +4,7 @@ import numpy as np
 import uproot
 import os
 import pytest
+import xml.etree.cElementTree as ET
 
 
 def assert_equal_dictionary(d1, d2):
@@ -28,6 +29,80 @@ def test_dedupe_parameters():
         assert 'SigXsecOverSM' in str(excinfo.value)
 
 
+def test_process_normfactor_configs():
+    # Check to see if mu_ttbar NormFactor is overridden correctly
+    # - ParamSetting has a config for it
+    # - other_parameter_configs has a config for it
+    # Make sure that when two measurements exist, we're copying things across correctly
+    toplvl = ET.Element("Combination")
+    meas = ET.Element(
+        "Measurement",
+        Name='NormalMeasurement',
+        Lumi=str(1.0),
+        LumiRelErr=str(0.017),
+        ExportOnly=str(True),
+    )
+    poiel = ET.Element('POI')
+    poiel.text = 'mu_SIG'
+    meas.append(poiel)
+
+    se = ET.Element('ParamSetting', Const='True')
+    se.text = ' '.join(['Lumi', 'mu_both', 'mu_paramSettingOnly'])
+    meas.append(se)
+
+    se = ET.Element('ParamSetting', Val='2.0')
+    se.text = ' '.join(['mu_both'])
+    meas.append(se)
+
+    toplvl.append(meas)
+
+    meas = ET.Element(
+        "Measurement",
+        Name='ParallelMeasurement',
+        Lumi=str(1.0),
+        LumiRelErr=str(0.017),
+        ExportOnly=str(True),
+    )
+    poiel = ET.Element('POI')
+    poiel.text = 'mu_BKG'
+    meas.append(poiel)
+
+    se = ET.Element('ParamSetting', Val='3.0')
+    se.text = ' '.join(['mu_both'])
+    meas.append(se)
+
+    toplvl.append(meas)
+
+    other_parameter_configs = [
+        dict(name='mu_both', inits=[1.0], bounds=[[1.0, 5.0]], fixed=False),
+        dict(name='mu_otherConfigOnly', inits=[1.0], bounds=[[0.0, 10.0]], fixed=False),
+    ]
+
+    result = pyhf.readxml.process_measurements(
+        toplvl, other_parameter_configs=other_parameter_configs
+    )
+    result = {
+        m['name']: {k['name']: k for k in m['config']['parameters']} for m in result
+    }
+    assert result
+    # make sure ParamSetting configs override NormFactor configs
+    assert result['NormalMeasurement']['mu_both']['fixed']
+    assert result['NormalMeasurement']['mu_both']['inits'] == [2.0]
+    assert result['NormalMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
+    # make sure ParamSetting is doing the right thing
+    assert result['NormalMeasurement']['mu_paramSettingOnly']['fixed']
+    assert 'inits' not in result['NormalMeasurement']['mu_paramSettingOnly']
+    assert 'bounds' not in result['NormalMeasurement']['mu_paramSettingOnly']
+    # make sure our code doesn't accidentally override other parameter configs
+    assert result['NormalMeasurement']['mu_otherConfigOnly']['fixed'] == False
+    assert result['NormalMeasurement']['mu_otherConfigOnly']['inits'] == [1.0]
+    assert result['NormalMeasurement']['mu_otherConfigOnly']['bounds'] == [[0.0, 10.0]]
+    # make sure settings from one measurement don't leak to other
+    assert result['ParallelMeasurement']['mu_both']['fixed'] == False
+    assert result['ParallelMeasurement']['mu_both']['inits'] == [3.0]
+    assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
+
+
 def test_import_measurements():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
@@ -39,8 +114,8 @@ def test_import_measurements():
 
     assert 'parameters' in measurement_configs
     assert len(measurement_configs['parameters']) == 3
-    assert measurement_configs['parameters'][0]['name'] == 'lumi'
-    assert measurement_configs['parameters'][1]['name'] == 'alpha_syst1'
+    pnames = [p['name'] for p in measurement_configs['parameters']]
+    assert pnames == ['lumi', 'SigXsecOverSM', 'alpha_syst1']
 
     lumi_param_config = measurement_configs['parameters'][0]
     assert 'auxdata' in lumi_param_config
