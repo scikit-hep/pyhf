@@ -15,13 +15,18 @@ def assert_equal_dictionary(d1, d2):
         else:
             assert d1[k] == d2[k]
 
+
 def test_dedupe_parameters():
-    parameters = [{'name': 'SigXsecOverSM', 'bounds': [[0.0, 10.0]]}, {'name': 'SigXsecOverSM', 'bounds': [[0.0, 10.0]]}]
+    parameters = [
+        {'name': 'SigXsecOverSM', 'bounds': [[0.0, 10.0]]},
+        {'name': 'SigXsecOverSM', 'bounds': [[0.0, 10.0]]},
+    ]
     assert len(pyhf.readxml.dedupe_parameters(parameters)) == 1
     parameters[1]['bounds'] = [[0.0, 2.0]]
     with pytest.raises(RuntimeError) as excinfo:
         pyhf.readxml.dedupe_parameters(parameters)
         assert 'SigXsecOverSM' in str(excinfo.value)
+
 
 def test_import_measurements():
     parsed_xml = pyhf.readxml.parse(
