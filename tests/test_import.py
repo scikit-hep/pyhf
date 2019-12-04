@@ -38,7 +38,7 @@ def test_import_measurements():
     measurement_configs = measurements[0]['config']
 
     assert 'parameters' in measurement_configs
-    assert len(measurement_configs['parameters']) == 2
+    assert len(measurement_configs['parameters']) == 3
     assert measurement_configs['parameters'][0]['name'] == 'lumi'
     assert measurement_configs['parameters'][1]['name'] == 'alpha_syst1'
 
