@@ -84,6 +84,30 @@ class jax_backend(object):
         """
         return np.tile(tensor_in, repeats)
 
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> tensorlib = pyhf.tensorlib
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            DeviceArray([9.], dtype=float64)
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            JAX ndarray: The output of the callable that was evaluated
+        """
+        return true_callable() if predicate else false_callable()
+
     def tolist(self, tensor_in):
         try:
             return np.asarray(tensor_in).tolist()
