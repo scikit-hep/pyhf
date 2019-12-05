@@ -75,7 +75,11 @@ def set_backend(backend_name, custom_optimizer=None, _session=None):
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
         )
     else:
-        raise ValueError("{} is not a supported backend".format(backend_name))
+        raise ValueError(
+            "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                backend_name
+            )
+        )
 
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend
