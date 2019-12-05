@@ -127,8 +127,7 @@ class jax_backend(object):
         return tensor[mask]
 
     def isfinite(self, tensor):
-        return np.ones_like(tensor, dtype=np.bool)
-        # return np.isfinite(tensor)
+        return np.isfinite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
         """
