@@ -69,6 +69,11 @@ def set_backend(backend_name, custom_optimizer=None, _session=None):
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
+    elif backend_name == 'numpy_minuit':
+        backend = tensor.numpy_backend(poisson_from_normal=True)
+        new_optimizer = (
+            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
+        )
     else:
         raise ValueError("{} is not a supported backend".format(backend_name))
 
