@@ -27,14 +27,14 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None):
+def set_backend(backend_name, custom_optimizer=None):
     """
     Set the backend and the associated optimizer
 
     Example:
         >>> import pyhf
         >>> import tensorflow as tf
-        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
+        >>> pyhf.set_backend("tensorflow")
 
     Args:
         backend: One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
@@ -46,25 +46,32 @@ def set_backend(backend, custom_optimizer=None):
     global optimizer
 
     # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(backend.name != tensorlib.name)
+    tensorlib_changed = bool(backend_name != tensorlib.name)
     optimizer_changed = False
 
-    if backend.name == 'tensorflow':
+    if backend_name == 'numpy':
+        backend = tensor.numpy_backend()
+        new_optimizer = (
+            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
+        )
+    elif backend_name == 'tensorflow':
+        import tensorflow as tf
+
+        backend = tensor.tensorflow_backend(session=tf.compat.v1.Session())
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
         if tensorlib.name == 'tensorflow':
             tensorlib_changed |= bool(backend.session != tensorlib.session)
-    elif backend.name == 'pytorch':
+    elif backend_name == 'pytorch':
+        backend = tensor.pytorch_backend()
         new_optimizer = (
             custom_optimizer
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
     else:
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
-        )
+        raise ValueError("{} is not a supported backend".format(backend_name))
 
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend
