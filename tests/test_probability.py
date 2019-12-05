@@ -1,9 +1,10 @@
+import pyhf
 from pyhf import probability
 import numpy as np
 
 
 def test_poisson(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     result = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     assert result.shape == (1,)
 
@@ -22,7 +23,7 @@ def test_poisson(backend):
 
 
 def test_normal(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     result = probability.Normal(tb.astensor([10.0]), tb.astensor([1])).log_prob(
         tb.astensor(2.0)
     )
@@ -45,7 +46,7 @@ def test_normal(backend):
 
 
 def test_joint(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
     assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2])) == tb.tolist(
@@ -54,7 +55,7 @@ def test_joint(backend):
 
 
 def test_independent(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     result = probability.Independent(
         probability.Poisson(tb.astensor([10.0, 10.0]))
     ).log_prob(tb.astensor([2.0, 3.0]))

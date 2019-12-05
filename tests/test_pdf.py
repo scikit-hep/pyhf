@@ -17,7 +17,7 @@ def test_pdf_inputs(backend):
     pars = pdf.config.suggested_init()
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    tensorlib, _ = backend
+    tensorlib, _ = pyhf.get_backend()
     assert tensorlib.shape(tensorlib.astensor(data)) == (2,)
     assert tensorlib.shape(tensorlib.astensor(pars)) == (2,)
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
@@ -72,7 +72,7 @@ def test_pdf_basicapi_tests(backend):
     pars = pdf.config.suggested_init()
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    tensorlib, _ = backend
+    tensorlib, _ = pyhf.get_backend()
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
         [0.002417118312751542], 2.5e-05
     )
@@ -90,7 +90,7 @@ def test_pdf_basicapi_tests(backend):
     pars = [pdf.config.suggested_init()] * 2
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    tensorlib, _ = backend
+    tensorlib, _ = pyhf.get_backend()
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
         [0.002417118312751542] * 2, 2.5e-05
     )
@@ -173,7 +173,7 @@ def test_pdf_integration_staterror(backend):
     pdf = pyhf.Model(spec)
     par = pdf.config.par_slice('stat_firstchannel')
     par_set = pdf.config.param_set('stat_firstchannel')
-    tensorlib, _ = backend
+    tensorlib, _ = pyhf.get_backend()
     uncerts = tensorlib.astensor([[12.0, 12.0], [5.0, 5.0]])
     nominal = tensorlib.astensor([[50.0, 70.0], [30.0, 20.0]])
     quad = tensorlib.sqrt(tensorlib.sum(tensorlib.power(uncerts, 2), axis=0))

@@ -34,7 +34,7 @@ def test_hypotest(backend, model_setup):
 
 
 def test_prob_models(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     pyhf.probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     pyhf.probability.Normal(tb.astensor([10.0]), tb.astensor([1])).log_prob(
         tb.astensor(2.0)
@@ -42,7 +42,7 @@ def test_prob_models(backend):
 
 
 def test_pdf_batched(backend):
-    tb, _ = backend
+    tb, _ = pyhf.get_backend()
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
