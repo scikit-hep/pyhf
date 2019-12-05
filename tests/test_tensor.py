@@ -297,7 +297,7 @@ def test_tensor_list_conversion(backend):
 
 
 def test_tensorflow_tolist_nosession():
-    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
+    pyhf.set_backend("tensorflow")
     tb = pyhf.tensorlib
 
     # this isn't covered by test_list_to_list since we need to check if it's ok

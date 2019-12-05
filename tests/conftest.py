@@ -34,9 +34,9 @@ def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
     """
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend(pyhf.default_backend.name)
     yield reset_backend
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend(pyhf.default_backend.name)
 
 
 @pytest.fixture(
@@ -89,7 +89,7 @@ def backend(request):
         pytest.xfail("expect {func} to fail as specified".format(func=func_name))
 
     # actual execution here, after all checks is done
-    pyhf.set_backend(*request.param)
+    pyhf.set_backend(*request.param.name)
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.compat.v1.reset_default_graph()
         pyhf.tensorlib.session = tf.compat.v1.Session()
