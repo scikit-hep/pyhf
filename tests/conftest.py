@@ -42,13 +42,10 @@ def reset_backend():
 @pytest.fixture(
     scope='function',
     params=[
-        (pyhf.tensor.numpy_backend(), None),
-        (pyhf.tensor.pytorch_backend(), None),
-        (pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()), None),
-        (
-            pyhf.tensor.numpy_backend(poisson_from_normal=True),
-            pyhf.optimize.minuit_optimizer(),
-        ),
+        ("numpy", None, None),
+        ("pytorch", None, None),
+        ("tensorflow", None, tf.compat.v1.Session()),
+        ("numpy_minuit", pyhf.optimize.minuit_optimizer(), None),
     ],
     ids=['numpy', 'pytorch', 'tensorflow', 'numpy_minuit'],
 )
@@ -89,7 +86,7 @@ def backend(request):
         pytest.xfail("expect {func} to fail as specified".format(func=func_name))
 
     # actual execution here, after all checks is done
-    pyhf.set_backend(*request.param.name)
+    pyhf.set_backend(*request.param)
     if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
         tf.compat.v1.reset_default_graph()
         pyhf.tensorlib.session = tf.compat.v1.Session()
