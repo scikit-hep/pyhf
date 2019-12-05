@@ -27,14 +27,15 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend_name, custom_optimizer=None):
+def set_backend(backend_name, custom_optimizer=None, _session=None):
     """
     Set the backend and the associated optimizer
 
     Example:
         >>> import pyhf
         >>> import tensorflow as tf
-        >>> pyhf.set_backend("tensorflow")
+        >>> sess = tf.compat.v1.Session()
+        >>> pyhf.set_backend("tensorflow", _session=sess)
 
     Args:
         backend: One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
@@ -55,9 +56,7 @@ def set_backend(backend_name, custom_optimizer=None):
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
         )
     elif backend_name == 'tensorflow':
-        import tensorflow as tf
-
-        backend = tensor.tensorflow_backend(session=tf.compat.v1.Session())
+        backend = tensor.tensorflow_backend(session=_session)
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
