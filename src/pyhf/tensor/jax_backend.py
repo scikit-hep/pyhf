@@ -48,10 +48,10 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
-            array([-1., -1.,  0.,  1.,  1.])
+            DeviceArray([-1., -1.,  0.,  1.,  1.], dtype=float64)
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -59,7 +59,7 @@ class jax_backend(object):
             max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
 
         Returns:
-            NumPy ndarray: A clipped `tensor`
+            JAX ndarray: A clipped `tensor`
         """
         return np.clip(tensor_in, min_value, max_value)
 
@@ -70,18 +70,18 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
             >>> pyhf.tensorlib.tile(a, (1, 2))
-            array([[1., 1.],
-                   [2., 2.]])
+            DeviceArray([[1., 1.],
+                         [2., 2.]], dtype=float64)
 
         Args:
             tensor_in (`Tensor`): The tensor to be repeated
             repeats (`Tensor`): The tuple of multipliers for each dimension
 
         Returns:
-            NumPy ndarray: The tensor with repeated axes
+            JAX ndarray: The tensor with repeated axes
         """
         return np.tile(tensor_in, repeats)
 
@@ -132,13 +132,13 @@ class jax_backend(object):
 
     def astensor(self, tensor_in, dtype='float'):
         """
-        Convert to a NumPy array.
+        Convert to a JAX ndarray.
 
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+            `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
         dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
@@ -213,12 +213,12 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            [array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.])]
+            [DeviceArray([1., 1., 1.], dtype=float64), DeviceArray([2., 3., 4.], dtype=float64), DeviceArray([5., 6., 7.], dtype=float64)]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -268,9 +268,13 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> pyhf.tensorlib.poisson(5., 6.)
-            0.16062314104797995
+            DeviceArray(0.16062314, dtype=float64)
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
+            DeviceArray([0.16062314, 0.12407692], dtype=float64)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -279,7 +283,7 @@ class jax_backend(object):
                                     (the expected number of events)
 
         Returns:
-            NumPy float: Value of the continous approximation to Poisson(n|lam)
+            JAX ndarray: Value of the continous approximation to Poisson(n|lam)
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
@@ -307,9 +311,14 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            0.3520653267642995
+            DeviceArray(0.35206533, dtype=float64)
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
+            DeviceArray([0.35206533, 0.46481887], dtype=float64)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -317,7 +326,7 @@ class jax_backend(object):
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
 
         Returns:
-            NumPy float: Value of Normal(x|mu, sigma)
+            JAX ndarray: Value of Normal(x|mu, sigma)
         """
         return norm.pdf(x, loc=mu, scale=sigma)
 
@@ -328,9 +337,12 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> pyhf.tensorlib.normal_cdf(0.8)
-            0.7881446014166034
+            DeviceArray(0.7881446, dtype=float64)
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            DeviceArray([0.7881446 , 0.97724987], dtype=float64)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -338,7 +350,7 @@ class jax_backend(object):
             sigma (`tensor` or `float`): The standard deviation of the Normal distribution
 
         Returns:
-            NumPy float: The CDF
+            JAX ndarray: The CDF
         """
         return norm.cdf(x, loc=mu, scale=sigma)
 
@@ -348,12 +360,12 @@ class jax_backend(object):
 
         Example:
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
             >>> poissons.log_prob(values)
-            array([-1.74030218, -2.0868536 ])
+            DeviceArray([-1.74030218, -2.0868536 ], dtype=float64)
 
         Args:
             rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
@@ -369,13 +381,13 @@ class jax_backend(object):
 
         Example:
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
             >>> normals.log_prob(values)
-            array([-1.41893853, -2.22579135])
+            DeviceArray([-1.41893853, -2.22579135], dtype=float64)
 
         Args:
             mu (`tensor` or `float`): The mean of the Normal distribution
