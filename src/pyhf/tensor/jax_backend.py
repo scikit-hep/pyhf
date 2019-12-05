@@ -13,7 +13,9 @@ class _BasicPoisson(object):
         self.rate = rate
 
     def sample(self, sample_shape):
-        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+        return poisson.osp_stats.poisson(self.rate).rvs(
+            size=sample_shape + self.rate.shape
+        )
 
     def log_prob(self, value):
         tensorlib = jax_backend()
@@ -26,7 +28,9 @@ class _BasicNormal(object):
         self.scale = scale
 
     def sample(self, sample_shape):
-        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
+        return norm.osp_stats.norm(self.loc, self.scale).rvs(
+            size=sample_shape + self.loc.shape
+        )
 
     def log_prob(self, value):
         tensorlib = jax_backend()
