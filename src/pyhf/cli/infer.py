@@ -30,7 +30,7 @@ def cli():
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
 @click.option(
     '--backend',
-    type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'np', 'torch', 'tf']),
+    type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'jax', 'np', 'torch', 'tf']),
     help='The tensor backend used for the calculation.',
     default='numpy',
 )
