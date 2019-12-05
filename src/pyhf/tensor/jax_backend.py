@@ -2,8 +2,8 @@ import jax.numpy as np
 from jax.config import config
 from jax.scipy.special import gammaln
 from jax.scipy.stats import norm
+from jax.scipy.stats import poisson
 import logging
-from scipy.stats import poisson
 
 log = logging.getLogger(__name__)
 
