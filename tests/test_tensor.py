@@ -147,15 +147,15 @@ def test_shape(backend):
     assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
-    with pytest.raises((ValueError, RuntimeError)):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) + tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError)):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) - tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError)):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) < tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError)):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) > tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError)):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         tb.conditional(
             (tb.astensor([1, 2]) < tb.astensor([3, 4])),
             lambda: tb.astensor(4) + tb.astensor(5),
