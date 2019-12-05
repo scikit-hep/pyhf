@@ -85,18 +85,22 @@ def test_process_normfactor_configs():
         m['name']: {k['name']: k for k in m['config']['parameters']} for m in result
     }
     assert result
+
     # make sure ParamSetting configs override NormFactor configs
     assert result['NormalMeasurement']['mu_both']['fixed']
     assert result['NormalMeasurement']['mu_both']['inits'] == [2.0]
     assert result['NormalMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
+
     # make sure ParamSetting is doing the right thing
     assert result['NormalMeasurement']['mu_paramSettingOnly']['fixed']
     assert 'inits' not in result['NormalMeasurement']['mu_paramSettingOnly']
     assert 'bounds' not in result['NormalMeasurement']['mu_paramSettingOnly']
+
     # make sure our code doesn't accidentally override other parameter configs
     assert not result['NormalMeasurement']['mu_otherConfigOnly']['fixed']
     assert result['NormalMeasurement']['mu_otherConfigOnly']['inits'] == [1.0]
     assert result['NormalMeasurement']['mu_otherConfigOnly']['bounds'] == [[0.0, 10.0]]
+
     # make sure settings from one measurement don't leak to other
     assert not result['ParallelMeasurement']['mu_both']['fixed']
     assert result['ParallelMeasurement']['mu_both']['inits'] == [3.0]
