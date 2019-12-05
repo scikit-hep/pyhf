@@ -104,18 +104,15 @@ def test_hypotest_q_mu(
 
     data = source['bindata']['data'] + pdf.config.auxdata
 
-    backends = [
-        pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()),
-        pyhf.tensor.pytorch_backend(),
-    ]
+    backends = ["numpy", "tensorflow", "pytorch"]
 
     test_statistic = []
     for backend in backends:
-        if backend.name == 'tensorflow':
+        if backend == "tensorflow":
             tf.reset_default_graph()
-            backend.session = tf.compat.v1.Session()
-        pyhf.set_backend(backend.name)
+            pyhf.set_backend(backend, _session=tf.compat.v1.Session())
+        else:
+            pyhf.set_backend(backend)
 
         q_mu = pyhf.infer.hypotest(
             1.0,
