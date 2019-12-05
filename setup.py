@@ -19,6 +19,7 @@ extras_require['backends'] = sorted(
     set(
         extras_require['tensorflow']
         + extras_require['torch']
+        + extras_require['jax']
         + extras_require['minuit']
     )
 )
