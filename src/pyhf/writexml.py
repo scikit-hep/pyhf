@@ -12,27 +12,16 @@ _ROOT_DATA_FILE = None
 
 log = logging.getLogger(__name__)
 
-
-"""
-Dear readers of this code:
-
-  You might be wondering why 'spec' gets passed through all functions now. Once
-  upon a time, it didn't. However, it turns out that NormFactor is a unique
-  case of having parameter configurations stored at the
-  modifier-definition-spec level. This means that build_modifier() needs access
-  to the measurements. The call stack is:
-
-      writexml
-          ->build_channel
-              ->build_sample
-                  ->build_modifier
-
-  Therefore, we have to thread 'spec' through all these calls.
-
-Sincerely,
-
-  Defeated Developer
-"""
+# 'spec' gets passed through all functions as NormFactor is a unique case of having
+# parameter configurations stored at the modifier-definition-spec level. This means
+# that build_modifier() needs access to the measurements. The call stack is:
+#
+#      writexml
+#          ->build_channel
+#              ->build_sample
+#                  ->build_modifier
+#
+#  Therefore, 'spec' needs to be threaded through all these calls.
 
 
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
@@ -155,7 +144,6 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         val = 1
         low = 0
         high = 10
-        # Whatever. Let's get on with the show, shall we?
         for p in spec['measurements'][0]['config']['parameters']:
             if p['name'] == modifierspec['name']:
                 val = p['inits'][0]

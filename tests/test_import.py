@@ -46,13 +46,13 @@ def test_process_normfactor_configs():
     poiel.text = 'mu_SIG'
     meas.append(poiel)
 
-    se = ET.Element('ParamSetting', Const='True')
-    se.text = ' '.join(['Lumi', 'mu_both', 'mu_paramSettingOnly'])
-    meas.append(se)
+    setting = ET.Element('ParamSetting', Const='True')
+    setting.text = ' '.join(['Lumi', 'mu_both', 'mu_paramSettingOnly'])
+    meas.append(setting)
 
-    se = ET.Element('ParamSetting', Val='2.0')
-    se.text = ' '.join(['mu_both'])
-    meas.append(se)
+    setting = ET.Element('ParamSetting', Val='2.0')
+    setting.text = ' '.join(['mu_both'])
+    meas.append(setting)
 
     toplvl.append(meas)
 
@@ -67,9 +67,9 @@ def test_process_normfactor_configs():
     poiel.text = 'mu_BKG'
     meas.append(poiel)
 
-    se = ET.Element('ParamSetting', Val='3.0')
-    se.text = ' '.join(['mu_both'])
-    meas.append(se)
+    setting = ET.Element('ParamSetting', Val='3.0')
+    setting.text = ' '.join(['mu_both'])
+    meas.append(setting)
 
     toplvl.append(meas)
 
@@ -118,8 +118,8 @@ def test_import_measurements():
 
     assert 'parameters' in measurement_configs
     assert len(measurement_configs['parameters']) == 3
-    pnames = [p['name'] for p in measurement_configs['parameters']]
-    assert sorted(pnames) == sorted(['lumi', 'SigXsecOverSM', 'alpha_syst1'])
+    parnames = [p['name'] for p in measurement_configs['parameters']]
+    assert sorted(parnames) == sorted(['lumi', 'SigXsecOverSM', 'alpha_syst1'])
 
     lumi_param_config = measurement_configs['parameters'][0]
     assert 'auxdata' in lumi_param_config

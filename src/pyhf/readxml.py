@@ -282,8 +282,8 @@ def dedupe_parameters(parameters):
     duplicates = {}
     for p in parameters:
         duplicates.setdefault(p['name'], []).append(p)
-    for pname in duplicates.keys():
-        parameter_list = duplicates[pname]
+    for parname in duplicates.keys():
+        parameter_list = duplicates[parname]
         if len(parameter_list) == 1:
             continue
         elif any(p != parameter_list[0] for p in parameter_list[1:]):
@@ -291,7 +291,7 @@ def dedupe_parameters(parameters):
                 log.warning(p)
             raise RuntimeError(
                 'cannot import workspace due to incompatible parameter configurations for {0:s}.'.format(
-                    pname
+                    parname
                 )
             )
     # no errors raised, de-dupe and return
