@@ -3,6 +3,7 @@ from jax.config import config
 from jax.scipy.special import gammaln
 from jax.scipy.stats import norm
 from jax.scipy.stats import poisson
+import numpy as onp
 import logging
 
 log = logging.getLogger(__name__)
@@ -110,7 +111,7 @@ class jax_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return np.asarray(tensor_in).tolist()
+            return onp.asarray(tensor_in).tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
