@@ -71,6 +71,8 @@ def cls(
         from tensorflow.compat.v1 import Session
 
         set_backend(tensor.tensorflow_backend(session=Session(), float='float64'))
+    elif backend in ['jax']:
+        set_backend(tensor.jax_backend())
     tensorlib, _ = get_backend()
 
     optconf = {k: v for item in optconf for k, v in item.items()}
