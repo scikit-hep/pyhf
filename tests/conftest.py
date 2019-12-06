@@ -34,18 +34,21 @@ def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
     """
-    pyhf.set_backend(pyhf.default_backend.name)
+    pyhf.set_backend(pyhf.default_backend)
     yield reset_backend
-    pyhf.set_backend(pyhf.default_backend.name)
+    pyhf.set_backend(pyhf.default_backend)
 
 
 @pytest.fixture(
     scope='function',
     params=[
-        ("numpy", None, None),
-        ("pytorch", None, None),
-        ("tensorflow", None, tf.compat.v1.Session()),
-        ("numpy_minuit", pyhf.optimize.minuit_optimizer(), None),
+        (pyhf.tensor.numpy_backend(), None),
+        (pyhf.tensor.pytorch_backend(), None),
+        (pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()), None),
+        (
+            pyhf.tensor.numpy_backend(poisson_from_normal=True),
+            pyhf.optimize.minuit_optimizer(),
+        ),
     ],
     ids=['numpy', 'pytorch', 'tensorflow', 'numpy_minuit'],
 )
