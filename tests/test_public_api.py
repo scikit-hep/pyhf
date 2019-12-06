@@ -22,7 +22,7 @@ def test_logpprob(backend, model_setup):
 def test_hypotest(backend, model_setup):
     model, data, init_pars = model_setup
     mu = 1.0
-    pyhf.utils.hypotest(
+    pyhf.stats.hypotest(
         mu,
         data,
         model,
