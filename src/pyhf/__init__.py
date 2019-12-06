@@ -72,7 +72,7 @@ def set_backend(backend, custom_optimizer=None, custom_backend=False, _session=N
             backend = tensor.numpy_backend(poisson_from_normal=True)
     elif not isinstance(backend, supported_backend_types) and not custom_backend:
         raise ValueError(
-            "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+            "'{0:s}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
                 backend
             )
         )
