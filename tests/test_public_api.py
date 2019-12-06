@@ -1,7 +1,7 @@
 import pytest
 import pyhf
+import pyhf.stats
 import numpy as np
-
 
 @pytest.fixture(scope='function')
 def model_setup(backend):
