@@ -27,7 +27,7 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, _session=None):
+def set_backend(backend, custom_optimizer=None, custom_backend=False, _session=None):
     """
     Set the backend and the associated optimizer
 
@@ -64,7 +64,7 @@ def set_backend(backend, custom_optimizer=None, _session=None):
             backend = tensor.pytorch_backend()
         elif backend == "numpy_minuit":
             backend = tensor.numpy_backend(poisson_from_normal=True)
-    elif not isinstance(backend, supported_backend_types):
+    elif not isinstance(backend, supported_backend_types) and not custom_backend:
         raise ValueError(
             "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
                 backend
