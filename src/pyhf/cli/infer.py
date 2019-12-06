@@ -6,7 +6,7 @@ import json
 from ..utils import EqDelimStringParamType
 from ..infer import hypotest
 from ..workspace import Workspace
-from .. import get_backend, set_backend, optimize
+from .. import tensor, get_backend, set_backend, optimize
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -66,11 +66,11 @@ def cls(
 
     # set the backend if not NumPy
     if backend in ['pytorch', 'torch']:
-        set_backend("pytorch")
+        set_backend(tensor.pytorch_backend())
     elif backend in ['tensorflow', 'tf']:
         from tensorflow.compat.v1 import Session
 
-        set_backend("tensorflow", _session=Session())
+        set_backend(tensor.tensorflow_backend(session=Session()))
     tensorlib, _ = get_backend()
 
     optconf = {k: v for item in optconf for k, v in item.items()}
@@ -78,7 +78,7 @@ def cls(
     # set the new optimizer
     if optimizer:
         new_optimizer = getattr(optimize, optimizer)
-        set_backend(tensorlib.name, new_optimizer(**optconf))
+        set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(
         testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
