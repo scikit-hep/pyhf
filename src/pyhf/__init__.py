@@ -92,12 +92,6 @@ def set_backend(backend, custom_optimizer=None, _session=None):
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
-    else:
-        raise ValueError(
-            "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                backend.name
-            )
-        )
 
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend
