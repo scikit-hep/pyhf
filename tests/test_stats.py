@@ -1,5 +1,6 @@
 import os
 import pytest
+import pyhf
 
 
 @pytest.fixture(scope='module')
