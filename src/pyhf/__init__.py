@@ -27,7 +27,7 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend_name, custom_optimizer=None, _session=None):
+def set_backend(backend, custom_optimizer=None, _session=None):
     """
     Set the backend and the associated optimizer
 
@@ -46,38 +46,56 @@ def set_backend(backend_name, custom_optimizer=None, _session=None):
     global tensorlib
     global optimizer
 
+    supported_backend_types = (
+        tensor.numpy_backend,
+        tensor.tensorflow_backend,
+        tensor.pytorch_backend,
+    )
+    supported_backend_names = (backend().name for backend in supported_backend_types)
+
+    if isinstance(backend, str) and (
+        backend in supported_backend_names or backend == "numpy_minuit"
+    ):
+        if backend == "numpy":
+            backend = tensor.numpy_backend()
+        elif backend == "tensorflow":
+            backend = tensor.tensorflow_backend(session=_session)
+        elif backend == "pytorch":
+            backend = tensor.pytorch_backend()
+        elif backend == "numpy_minuit":
+            backend = tensor.numpy_backend(poisson_from_normal=True)
+    elif not isinstance(backend, supported_backend_types):
+        raise ValueError(
+            "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                backend
+            )
+        )
+
     # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(backend_name != tensorlib.name)
+    tensorlib_changed = bool(backend.name != tensorlib.name)
     optimizer_changed = False
 
-    if backend_name == 'numpy':
-        backend = tensor.numpy_backend()
+    # Check on instance of type instead of name to prevent custom name conflicts
+    if isinstance(backend, tensor.numpy_backend):
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
         )
-    elif backend_name == 'tensorflow':
-        backend = tensor.tensorflow_backend(session=_session)
+    elif isinstance(backend, tensor.tensorflow_backend):
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
         if tensorlib.name == 'tensorflow':
             tensorlib_changed |= bool(backend.session != tensorlib.session)
-    elif backend_name == 'pytorch':
-        backend = tensor.pytorch_backend()
+    elif isinstance(backend, tensor.pytorch_backend):
         new_optimizer = (
             custom_optimizer
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
-    elif backend_name == 'numpy_minuit':
-        backend = tensor.numpy_backend(poisson_from_normal=True)
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
-        )
     else:
         raise ValueError(
             "'{}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                backend_name
+                backend.name
             )
         )
 
