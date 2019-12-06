@@ -1,6 +1,5 @@
 import pytest
 import pyhf
-import pyhf.stats
 import numpy as np
 
 

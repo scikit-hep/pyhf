@@ -1,8 +1,6 @@
 import os
 import pytest
 
-import pyhf.stats
-
 
 @pytest.fixture(scope='module')
 def hypotest_args():
