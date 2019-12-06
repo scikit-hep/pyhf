@@ -1,5 +1,10 @@
 from .test_statistics import qmu
-from .utils import generate_asimov_data
+from .utils import (
+    generate_asimov_data,
+    pvals_from_teststat,
+    pvals_from_teststat_expected,
+)
+from .. import get_backend
 
 
 def hypotest(
