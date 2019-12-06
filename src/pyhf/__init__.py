@@ -41,7 +41,10 @@ def set_backend(backend, custom_optimizer=None, custom_backend=False, _session=N
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
         custom_backend (`bool`): If :code:`True` the :code:`backend` argument is allowed to be a custom user defined backend outside of the supported backends
-        _session (TensorFlow v1 `Session`): TensorFlow v1 compatible Session to use when the :code:`"tensorflow"` backend API is used
+        _session (|tf.compat.v1.Session|_): TensorFlow v1 compatible Session to use when the :code:`"tensorflow"` backend API is used
+
+    .. |tf.compat.v1.Session| replace:: ``tf.compat.v1.Session``
+    .. _tf.compat.v1.Session: https://www.tensorflow.org/api_docs/python/tf/compat/v1/Session
 
     Returns:
         None
