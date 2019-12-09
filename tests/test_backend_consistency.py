@@ -117,7 +117,7 @@ def test_hypotest_q_mu(
             backend.session = tf.Session()
         pyhf.set_backend(backend)
 
-        q_mu = pyhf.utils.hypotest(
+        q_mu = pyhf.infer.hypotest(
             1.0,
             data,
             pdf,
