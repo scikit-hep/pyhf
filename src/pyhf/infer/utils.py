@@ -15,9 +15,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     r"""
-    The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of `arXiv:1007.1727`_
-
-    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
+    The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`
 
     .. math::
 
@@ -34,7 +32,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     Args:
         sqrtqmu_v (Number or Tensor): The root of the calculated test statistic, :math:`\sqrt{q_{\mu}}`
         sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
-        qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of `arXiv:1007.1727`_
+        qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
 
     Returns:
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley

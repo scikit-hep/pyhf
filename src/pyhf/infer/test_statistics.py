@@ -6,9 +6,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, as defiend in
-    Equation (14) in `arXiv:1007.1727`_ .
-
-    .. _`arXiv:1007.1727`: https://arxiv.org/abs/1007.1727
+    Equation (14) in :xref:`arXiv:1007.1727`.
 
     .. math::
        :nowrap:
