@@ -62,7 +62,7 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 
 Install latest development version from `GitHub <https://github.com/scikit-hep/pyhf>`__...
------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
 ... with NumPy backend
 ++++++++++++++++++++++
