@@ -47,7 +47,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
    - [x] Add tests using HEPData published sbottom likelihoods (Issue #518) [2019-Q3]
    - [x] Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue #517) [2019-Q3]
    - [ ] Investigate rewrite of pytest fixtures to use modern pytest (Issue #370) [2019-Q3 → 2019-Q4]
-   - [ ] Factorize out the statistical fitting portion into `pyhf/stats/__init__.py` (PR #531) [2019-Q3 → 2019-Q4]
+   - [x] Factorize out the statistical fitting portion into `pyhf.infer/__init__.py` (PR #531) [2019-Q3 → 2019-Q4]
    - [ ] Bug squashing at large [2019-Q3 → 2020-Q2]
       - [ ] Unexpected use cases (Issues #324, #325, #529)
       - [ ] Computational edge cases (Issues #332, #445)

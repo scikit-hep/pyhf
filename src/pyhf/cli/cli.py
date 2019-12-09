@@ -3,7 +3,7 @@ import logging
 import click
 
 from ..version import __version__
-from . import rootio, spec, stats
+from . import rootio, spec, infer
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -25,5 +25,5 @@ pyhf.add_command(spec.prune)
 pyhf.add_command(spec.rename)
 pyhf.add_command(spec.combine)
 
-# pyhf.add_command(stats.cli)
-pyhf.add_command(stats.cls)
+# pyhf.add_command(infer.cli)
+pyhf.add_command(infer.cls)

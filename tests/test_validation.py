@@ -691,7 +691,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    CLs_obs, CLs_exp_set = pyhf.stats.hypotest(
+    CLs_obs, CLs_exp_set = pyhf.infer.hypotest(
         mu_test,
         data,
         pdf,
@@ -825,7 +825,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     par_bounds_after = pdf_after.config.suggested_bounds()
     assert par_bounds_before == par_bounds_after
 
-    CLs_obs_before, CLs_exp_set_before = pyhf.stats.hypotest(
+    CLs_obs_before, CLs_exp_set_before = pyhf.infer.hypotest(
         1,
         data_before,
         pdf_before,
@@ -833,7 +833,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         par_bounds_before,
         return_expected_set=True,
     )
-    CLs_obs_after, CLs_exp_set_after = pyhf.stats.hypotest(
+    CLs_obs_after, CLs_exp_set_after = pyhf.infer.hypotest(
         1,
         data_after,
         pdf_after,

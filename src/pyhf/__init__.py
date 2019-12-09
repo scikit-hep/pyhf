@@ -80,12 +80,12 @@ def set_backend(backend, custom_optimizer=None):
 from .pdf import Model
 from .workspace import Workspace
 from . import simplemodels
-from . import stats
+from . import infer
 
 __all__ = [
     'Model',
     'Workspace',
-    'stats',
+    'infer',
     'utils',
     'modifiers',
     'simplemodels',

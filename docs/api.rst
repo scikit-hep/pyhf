@@ -112,7 +112,7 @@ Interpolators
 Statistics
 ----------
 
-.. currentmodule:: pyhf.stats
+.. currentmodule:: pyhf.infer
 
 .. autosummary::
    :toctree: _generated/

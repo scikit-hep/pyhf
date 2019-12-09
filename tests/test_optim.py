@@ -68,11 +68,11 @@ def test_optim(backend, source, spec, mu):
     optim = pyhf.optimizer
 
     result = optim.unconstrained_bestfit(
-        pyhf.stats.utils.loglambdav, data, pdf, init_pars, par_bounds
+        pyhf.infer.utils.loglambdav, data, pdf, init_pars, par_bounds
     )
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.constrained_bestfit(
-        pyhf.stats.utils.loglambdav, mu, data, pdf, init_pars, par_bounds
+        pyhf.infer.utils.loglambdav, mu, data, pdf, init_pars, par_bounds
     )
     assert pyhf.tensorlib.tolist(result)

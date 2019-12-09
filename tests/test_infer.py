@@ -21,12 +21,12 @@ def check_uniform_type(in_list):
 
 def test_hypotest_default(tmpdir, hypotest_args):
     """
-    Check that the default return structure of pyhf.stats.hypotest is as expected
+    Check that the default return structure of pyhf.infer.hypotest is as expected
     """
     tb = pyhf.tensorlib
 
     kwargs = {}
-    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs
     assert len(list(result)) == 1
     assert isinstance(result, type(tb.astensor(result)))
@@ -34,13 +34,13 @@ def test_hypotest_default(tmpdir, hypotest_args):
 
 def test_hypotest_return_tail_probs(tmpdir, hypotest_args):
     """
-    Check that the return structure of pyhf.stats.hypotest with the
+    Check that the return structure of pyhf.infer.hypotest with the
     return_tail_probs keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
     kwargs = {'return_tail_probs': True}
-    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CL_sb, CL_b]
     assert len(list(result)) == 2
     assert isinstance(result[0], type(tb.astensor(result[0])))
@@ -50,13 +50,13 @@ def test_hypotest_return_tail_probs(tmpdir, hypotest_args):
 
 def test_hypotest_return_expected(tmpdir, hypotest_args):
     """
-    Check that the return structure of pyhf.stats.hypotest with the
+    Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_expected keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
     kwargs = {'return_tail_probs': True, 'return_expected': True}
-    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp
     assert len(list(result)) == 3
     assert isinstance(result[0], type(tb.astensor(result[0])))
@@ -67,7 +67,7 @@ def test_hypotest_return_expected(tmpdir, hypotest_args):
 
 def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     """
-    Check that the return structure of pyhf.stats.hypotest with the
+    Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_expected_set keyword arg is as expected
     """
     tb = pyhf.tensorlib
@@ -77,7 +77,7 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
         'return_expected': True,
         'return_expected_set': True,
     }
-    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma
     assert len(list(result)) == 4
     assert isinstance(result[0], type(tb.astensor(result[0])))
@@ -90,7 +90,7 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
 
 def test_hypotest_return_test_statistics(tmpdir, hypotest_args):
     """
-    Check that the return structure of pyhf.stats.hypotest with the
+    Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_test_statistics keyword arg is as expected
     """
     tb = pyhf.tensorlib
@@ -101,7 +101,7 @@ def test_hypotest_return_test_statistics(tmpdir, hypotest_args):
         'return_expected_set': True,
         'return_test_statistics': True,
     }
-    result = pyhf.stats.hypotest(*hypotest_args, **kwargs)
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma, [q_mu, q_mu_Asimov]
     assert len(list(result)) == 5
     assert isinstance(result[0], type(tb.astensor(result[0])))
