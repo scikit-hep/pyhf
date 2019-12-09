@@ -4,7 +4,7 @@ import click
 import json
 
 from ..utils import EqDelimStringParamType
-from ..stats import hypotest
+from ..infer import hypotest
 from ..workspace import Workspace
 from .. import tensor, get_backend, set_backend, optimize
 
@@ -12,7 +12,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-@click.group(name='stats')
+@click.group(name='infer')
 def cli():
     pass
 
