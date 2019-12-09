@@ -117,7 +117,7 @@ Inference
 .. autosummary::
    :toctree: _generated/
 
-   test_statistics.hypotest
+   hypotest
    test_statistics.qmu
    utils.loglambdav
    utils.generate_asimov_data
