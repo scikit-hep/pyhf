@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 def setup(app):
     app.add_stylesheet(
-        'https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.3.0/gh-fork-ribbon.min.css'
+        'https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css'
     )
 
 
