@@ -21,7 +21,7 @@ import sys
 from pkg_resources import get_distribution
 
 sys.path.insert(0, os.path.abspath('../src'))
-
+sys.path.insert(1, os.path.abspath('./exts'))
 
 def setup(app):
     app.add_stylesheet(
@@ -52,7 +52,11 @@ extensions = [
     'nbsphinx',
     'm2r',
     'sphinx_issues',
+    'xref',
 ]
+
+# external links
+xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
 # Github repo
 issues_github_path = 'scikit-hep/pyhf'
