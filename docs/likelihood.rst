@@ -4,7 +4,7 @@ Likelihood Specification
 ========================
 
 The structure of the JSON specification of models follows closely the
-original XML-based specification :cite:`Cranmer:1456844`.
+original XML-based specification :cite:`likelihood-Cranmer:1456844`.
 
 Workspace
 ---------
@@ -39,7 +39,7 @@ check that it conforms to the provided workspace specification as follows:
 Channel
 -------
 
-A channel is defined by a channel name and a list of samples :cite:`schema_defs`.
+A channel is defined by a channel name and a list of samples :cite:`likelihood-schema_defs`.
 
 .. code:: json
 
@@ -68,7 +68,7 @@ modifiers for the sample.
 Sample
 ------
 
-A sample is defined by a sample name, the sample event rate, and a list of modifiers :cite:`schema_defs`.
+A sample is defined by a sample name, the sample event rate, and a list of modifiers :cite:`likelihood-schema_defs`.
 
 .. _lst:schema:sample:
 
@@ -173,7 +173,7 @@ MC Statistical Uncertainty (staterror)
 
 As the sample counts are often derived from Monte Carlo (MC) datasets, they
 necessarily carry an uncertainty due to the finite sample size of the datasets.
-As explained in detail in :cite:`Cranmer:1456844`, adding uncertainties for
+As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
 each sample would yield a very large number of nuisance parameters with limited
 utility. Therefore a set of bin-wise scale factors :math:`\gamma_b` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
@@ -359,3 +359,5 @@ Bibliography
 .. bibliography:: bib/docs.bib
    :filter: docname in docnames
    :style: plain
+   :keyprefix: likelihood-
+   :labelprefix: likelihood-
