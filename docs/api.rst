@@ -109,18 +109,20 @@ Interpolators
    code4
    code4p
 
-Statistics
-----------
+Inference
+---------
 
 .. currentmodule:: pyhf.infer
 
 .. autosummary::
    :toctree: _generated/
 
-   test_statistics.hypotest
+   hypotest
    test_statistics.qmu
    utils.loglambdav
    utils.generate_asimov_data
+   utils.pvals_from_teststat
+   utils.pvals_from_teststat_expected
 
 Exceptions
 ----------
@@ -154,5 +156,6 @@ Utilities
 .. autosummary::
    :toctree: _generated/
 
-   pvals_from_teststat
-   pvals_from_teststat_expected
+   load_schema
+   validate
+   options_from_eqdelimstring
