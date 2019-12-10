@@ -81,22 +81,21 @@ def set_backend(backend, custom_optimizer=None, custom_backend=False, _session=N
     tensorlib_changed = bool(backend.name != tensorlib.name)
     optimizer_changed = False
 
-    # Check on instance of type instead of name to prevent custom name conflicts
-    if isinstance(backend, tensor.numpy_backend):
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
-        )
-    elif isinstance(backend, tensor.tensorflow_backend):
+    if backend.name == 'tensorflow':
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
         if tensorlib.name == 'tensorflow':
             tensorlib_changed |= bool(backend.session != tensorlib.session)
-    elif isinstance(backend, tensor.pytorch_backend):
+    elif backend.name == 'pytorch':
         new_optimizer = (
             custom_optimizer
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
+        )
+    else:
+        new_optimizer = (
+            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
         )
 
     optimizer_changed = bool(optimizer != new_optimizer)
