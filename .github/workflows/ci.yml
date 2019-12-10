@@ -103,7 +103,7 @@ jobs:
     - name: Test and build docs
       run: |
         python -m doctest README.md
-        cd docs && make html && cd -
+        python setup.py build_sphinx
         touch docs/_build/html/.nojekyll
     - name: Deploy docs to GitHub Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
