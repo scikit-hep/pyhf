@@ -119,7 +119,6 @@ exclude_patterns = [
     '**.ipynb_checkpoints',
     'examples/experiments/edwardpyhf.ipynb',
     'examples/notebooks/ImpactPlot.ipynb',
-    'examples/notebooks/ImpactPlot.ipynb',
     'examples/notebooks/Recast.ipynb',
     'examples/notebooks/StatError.ipynb',
     'examples/notebooks/binderexample/Untitled.ipynb',
