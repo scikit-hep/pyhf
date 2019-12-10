@@ -57,7 +57,7 @@ The roadmap will be executed over mostly Quarter 3 of 2019 through Quarter 1 of 
 3. **Development**
    - [x] Batch support (PR #503) [2019-Q3]
    - [x] Add ParamViewer support (PR #519) [2019-Q3]
-   - [ ] Add setting of NPs constant/fixed [2019-Q3]
+   - [x] Add setting of NPs constant/fixed (PR #653) [2019-Q3]
    - [x] Implement pdf as subclass of distributions (PR #551) [2019-Q3]
    - [x] Add sampling with toys (PR #558) [2019-Q3]
    - [ ] Make general modeling choices (e.g., Issue #293) [2019-Q4 → 2020-Q1]
