@@ -4,7 +4,8 @@ from docutils import nodes
 
 from sphinx.util import caption_ref_re
 
-def xref( typ, rawtext, text, lineno, inliner, options={}, content=[] ):
+
+def xref(typ, rawtext, text, lineno, inliner, options={}, content=[]):
 
     title = target = text
     titleistarget = True
@@ -18,7 +19,7 @@ def xref( typ, rawtext, text, lineno, inliner, options={}, content=[] ):
             title = m.group(1)
         else:
             # fallback: everything after '<' is the target
-            target = text[brace+1:]
+            target = text[brace + 1 :]
             title = text[:brace]
 
     link = xref.links[target]
@@ -30,9 +31,11 @@ def xref( typ, rawtext, text, lineno, inliner, options={}, content=[] ):
 
     return [pnode], []
 
+
 def get_refs(app):
 
     xref.links = app.config.xref_links
+
 
 def setup(app):
 

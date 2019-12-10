@@ -23,6 +23,7 @@ from pkg_resources import get_distribution
 sys.path.insert(0, os.path.abspath('../src'))
 sys.path.insert(1, os.path.abspath('./exts'))
 
+
 def setup(app):
     app.add_stylesheet(
         'https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css'
@@ -132,7 +133,7 @@ exclude_patterns = [
     'examples/notebooks/normsys.ipynb',
     'examples/notebooks/pullplot.ipynb',
     'examples/notebooks/pytorch_tests_onoff.ipynb',
-    'examples/notebooks/tensorflow-limit.ipynb'
+    'examples/notebooks/tensorflow-limit.ipynb',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
