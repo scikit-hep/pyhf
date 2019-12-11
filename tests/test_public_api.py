@@ -31,11 +31,10 @@ def test_set_backend_by_bytestring(backend_name):
     )
 
 
-def test_supported_backends():
+@pytest.mark.parametrize("backend_name", ["fail", b"fail"])
+def test_supported_backends(backend_name):
     with pytest.raises(pyhf.exceptions.InvalidBackend):
-        pyhf.set_backend("fail")
-    with pytest.raises(pyhf.exceptions.InvalidBackend):
-        pyhf.set_backend(b"fail")
+        pyhf.set_backend(backend_name)
 
 
 def test_custom_backend_name_supported():
