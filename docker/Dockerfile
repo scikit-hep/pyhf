@@ -1,3 +1,6 @@
 FROM alectolytic/scipy
-ADD . /code
-RUN cd /code;pip install -e .
+COPY . /code
+RUN cd /code && \
+    rm -rf .git && \
+    python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
+    python -m pip install --no-cache-dir -e .
