@@ -31,6 +31,8 @@ Typically, ``prefix = 'FitConfig'`` and ``measurementName = 'NormalMeasurement'`
 
 .. code:: python
 
+  from configManager import configMgr
+  # ...
   configMgr.analysisName = '3b_tag21.2.27-1_RW_ExpSyst_36100_multibin_bkg'
   configMgr.histCacheFile = 'cache/{0:s}.root'.format(configMgr.analysisName)
   # ...
