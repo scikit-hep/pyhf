@@ -14,6 +14,7 @@
    installation
    development
    faq
+   babel
    cli
    api
    citations
