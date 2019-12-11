@@ -46,6 +46,26 @@ def test_supported_backends():
         pyhf.set_backend(b"fail")
 
 
+def test_custom_backend_name_supported():
+    class custom_backend(object):
+        def __init__(self, **kwargs):
+            self.name = "pytorch"
+
+    with pytest.raises(AttributeError):
+        pyhf.set_backend(custom_backend())
+
+
+def test_custom_backend_name_notsupported():
+    class custom_backend(object):
+        def __init__(self, **kwargs):
+            self.name = "notsupported"
+
+    backend = custom_backend()
+    assert pyhf.tensorlib.name != backend.name
+    pyhf.set_backend(backend)
+    assert pyhf.tensorlib.name == backend.name
+
+
 def test_logpprob(backend, model_setup):
     model, data, init_pars = model_setup
     model.logpdf(init_pars, data)
