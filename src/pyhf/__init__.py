@@ -37,6 +37,14 @@ def set_backend(backend, custom_optimizer=None, _session=None):
         >>> import tensorflow as tf
         >>> sess = tf.compat.v1.Session()
         >>> pyhf.set_backend("tensorflow", _session=sess)
+        >>> pyhf.tensorlib.name
+        'tensorflow'
+        >>> pyhf.set_backend(b"pytorch")
+        >>> pyhf.tensorlib.name
+        'pytorch'
+        >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+        >>> pyhf.tensorlib.name
+        'numpy'
 
     Args:
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
