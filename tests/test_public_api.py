@@ -14,14 +14,6 @@ def model_setup(backend):
     return model, data, init_pars
 
 
-def test_set_backend_by_name(backend):
-    backend_name = backend[0].name
-    pyhf.set_backend(backend_name)
-    assert isinstance(
-        pyhf.tensorlib, getattr(pyhf.tensor, "{0:s}_backend".format(backend_name))
-    )
-
-
 @pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch"])
 def test_set_backend_by_string(backend_name):
     pyhf.set_backend(backend_name)
