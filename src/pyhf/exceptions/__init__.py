@@ -70,13 +70,13 @@ class ImportBackendError(Exception):
 
 class InvalidBackend(Exception):
     """
-    InvalidBackend is raised when trying to set using a backend that does not exist.
+    InvalidBackend is raised when trying to set a backend that does not exist.
     """
 
 
 class InvalidOptimizer(Exception):
     """
-    InvalidOptimizer is raised when trying to set using an optimizer that does not exist.
+    InvalidOptimizer is raised when trying to set an optimizer that does not exist.
     """
 
 
