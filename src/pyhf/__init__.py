@@ -1,6 +1,7 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
 from .version import __version__
+from .exceptions import InvalidBackend
 from . import events
 
 tensorlib = tensor.numpy_backend()
@@ -61,7 +62,7 @@ def set_backend(backend, custom_optimizer=None, _session=None):
             try:
                 backend = getattr(tensor, "{0:s}_backend".format(backend))()
             except TypeError:
-                raise exceptions.InvalidBackend(
+                raise InvalidBackend(
                     "\"{0:s}\" is not a supported backend. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
                         backend
                     )
