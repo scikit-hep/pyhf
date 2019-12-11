@@ -52,30 +52,30 @@ def set_backend(backend, custom_optimizer=None, custom_backend=False, _session=N
     global tensorlib
     global optimizer
 
-    supported_backend_types = (
-        tensor.numpy_backend,
-        tensor.tensorflow_backend,
-        tensor.pytorch_backend,
-    )
-    supported_backend_names = (backend().name for backend in supported_backend_types)
-
-    if isinstance(backend, str) and (
-        backend in supported_backend_names or backend == "numpy_minuit"
-    ):
-        if backend == "numpy":
-            backend = tensor.numpy_backend()
-        elif backend == "tensorflow":
+    if isinstance(backend, (str, bytes)):
+        if isinstance(backend, bytes):
+            backend = backend.decode("utf-8")
+        # Needed while still using TF v1.0 API
+        if backend == "tensorflow":
             backend = tensor.tensorflow_backend(session=_session)
-        elif backend == "pytorch":
-            backend = tensor.pytorch_backend()
-        elif backend == "numpy_minuit":
-            backend = tensor.numpy_backend(poisson_from_normal=True)
-    elif not isinstance(backend, supported_backend_types) and not custom_backend:
-        raise ValueError(
-            "'{0:s}' is not a supported backend.\n             Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                backend
+        else:
+            try:
+                backend = getattr(tensor, "{0:s}_backend".format(backend))()
+            except TypeError:
+                raise exceptions.InvalidBackend(
+                    "\"{0:s}\" is not a supported backend. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                        backend
+                    )
+                )
+
+    supported_backend_type = getattr(tensor, "{0:s}_backend".format(backend.name))
+    if not isinstance(backend, supported_backend_type):
+        if backend.name.lower() == supported_backend_type().name:
+            raise AttributeError(
+                "'{0:s}' is not a valid name attribute for backend type {1}\n                 Custom backends must have names unique from supported backends".format(
+                    backend.name, type(backend)
+                )
             )
-        )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(backend.name != tensorlib.name)
