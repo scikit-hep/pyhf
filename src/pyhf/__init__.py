@@ -63,6 +63,7 @@ def set_backend(backend, custom_optimizer=None, _session=None):
     if isinstance(backend, (str, bytes)):
         if isinstance(backend, bytes):
             backend = backend.decode("utf-8")
+        backend = backend.lower()
         # Needed while still using TF v1.0 API
         if backend == "tensorflow":
             backend = tensor.tensorflow_backend(session=_session)
