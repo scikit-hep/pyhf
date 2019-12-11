@@ -71,7 +71,7 @@ def set_backend(backend, custom_optimizer=None, _session=None):
                 backend = getattr(tensor, "{0:s}_backend".format(backend))()
             except TypeError:
                 raise InvalidBackend(
-                    "\"{0:s}\" is not a supported backend. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                    "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
                         backend
                     )
                 )
