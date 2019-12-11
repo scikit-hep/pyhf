@@ -15,10 +15,10 @@ def model_setup(backend):
 
 
 def test_set_backend_by_name(backend):
-    tb, _ = pyhf.get_backend()
-    pyhf.set_backend(tb.name)
+    backend_name = backend[0].name
+    pyhf.set_backend(backend_name)
     assert isinstance(
-        pyhf.tensorlib, getattr(pyhf.tensor, "{0:s}_backend".format(tb.name))
+        pyhf.tensorlib, getattr(pyhf.tensor, "{0:s}_backend".format(backend_name))
     )
 
 
