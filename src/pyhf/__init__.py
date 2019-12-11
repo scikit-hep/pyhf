@@ -68,9 +68,9 @@ def set_backend(backend, custom_optimizer=None, _session=None):
                     )
                 )
 
-    supported_backend_type = getattr(tensor, "{0:s}_backend".format(backend.name))
-    if not isinstance(backend, supported_backend_type):
-        if backend.name.lower() == supported_backend_type().name:
+    is_name_supported = getattr(tensor, "{0:s}_backend".format(backend.name))
+    if is_name_supported:
+        if not isinstance(backend, is_name_supported):
             raise AttributeError(
                 "'{0:s}' is not a valid name attribute for backend type {1}\n                 Custom backends must have names unique from supported backends".format(
                     backend.name, type(backend)
