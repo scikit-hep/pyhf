@@ -17,6 +17,7 @@
    cli
    api
    citations
+   governance/ROADMAP
 
 .. raw:: html
 

@@ -72,7 +72,7 @@ results obtained from this package are validated against output computed from Hi
 
 ## A one bin example
 
-```
+```python
 nobs = 55, b = 50, db = 7, nom_sig = 10.
 ```
 
@@ -82,7 +82,7 @@ nobs = 55, b = 50, db = 7, nom_sig = 10.
 
 ## A two bin example
 
-```
+```python
 bin 1: nobs = 100, b = 100, db = 15., nom_sig = 30.
 bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
 ```
@@ -93,12 +93,12 @@ bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
 ## Installation
 
 To install `pyhf` from PyPI with the NumPy backend run
-```
+```bash
 pip install pyhf
 ```
 
 and to install `pyhf` with additional backends run
-```
+```bash
 pip install pyhf[tensorflow,torch]
 ```
 or a subset of the options.

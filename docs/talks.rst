@@ -13,7 +13,7 @@ Abstract
     pure-python implementation of that statistical model for multi-bin
     histogram-based analysis and its interval estimation is based on the
     asymptotic formulas of "Asymptotic formulae for likelihood-based tests of
-    new physics" `[arXiv:1007.1727] <https://arxiv.org/abs/1007.1727>`_.  pyhf
+    new physics" :xref:`arXiv:1007.1727`.  pyhf
     supports modern computational graph libraries such as TensorFlow and
     PyTorch in order to make use of features such as auto-differentiation and
     GPU acceleration.
