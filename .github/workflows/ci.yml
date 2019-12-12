@@ -113,3 +113,13 @@ jobs:
         build_dir: docs/_build/html
       env:
         GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+
+  docker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1.2.0
+    - name: Build Docker image
+      run: |
+        docker build . --file docker/Dockerfile --tag pyhf:${{ GITHUB_SHA }}
