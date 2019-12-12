@@ -29,7 +29,8 @@ To dump the HistFactory workspace, you will modify the above to skip the fit ``-
 
   HistFitter.py -wx -F excl config.py
 
-The ``-x`` flag tells `HistFitter` to dump the XML files into ``config/{analysisName}/``, with the top-level file being ``{prefix}.xml`` and all other files being ``{prefix}_{channelName}_cuts.xml``. The ``-w`` flag tells `HistFitter` to (re)create the `HistFactory` workspace stored in ``results/{analysisName}/{prefix}_combined_{measurementName}.root``.
+The ``-w`` flag tells `HistFitter` to (re)create the `HistFactory` workspace stored in ``results/{analysisName}/{prefix}_combined_{measurementName}.root``.
+The ``-x`` flag tells `HistFitter` to dump the XML files into ``config/{analysisName}/``, with the top-level file being ``{prefix}.xml`` and all other files being ``{prefix}_{channelName}_cuts.xml``.
 
 Typically, ``prefix = 'FitConfig'`` and ``measurementName = 'NormalMeasurement'``. For example, if the following exists in your ``config.py``
 
