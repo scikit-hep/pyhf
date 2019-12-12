@@ -50,7 +50,7 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 .. code-block:: console
 
-    pip install pyhf[tensorflow,torch]
+    pip install pyhf[backends]
 
 
 ... with xml import/export functionality
@@ -90,7 +90,7 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow,torch]"
+    pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]"
 
 
 ... with xml import/export functionality
