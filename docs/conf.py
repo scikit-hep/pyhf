@@ -111,11 +111,7 @@ language = None
 #
 # today_fmt = '%B %d, %Y'
 
-autodoc_mock_imports = [
-    'tensorflow',
-    'torch',
-    'iminuit',
-    'tensorflow_probability']
+autodoc_mock_imports = ['tensorflow', 'torch', 'iminuit', 'tensorflow_probability']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
