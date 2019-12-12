@@ -1,6 +1,10 @@
 Translations
 ============
-One key goal of `pyhf` is to provide seamless translations from one statistical framework to us. This page details the various ways to translate from a tool you might already be using as part of an existing analysis to `pyhf`. Many of these solutions involve extracting out the `HistFactory` workspace and then running `pyhf xml2json <cli.html#pyhf-xml2json>`_ which provides a single JSON workspace that can be loaded directly into `pyhf`.
+One key goal of ``pyhf`` is to provide seamless translations between other statistical frameworks and ``pyhf``.
+This page details the various ways to translate from a tool you might already be using as part of an existing analysis to ``pyhf``.
+Many of these solutions involve extracting out the ``HistFactory`` workspace and then running |pyhf xml2json|_ which provides a single JSON workspace that can be loaded directly into ``pyhf``.
+
+.. |pyhf xml2json| replace:: ``pyhf xml2json``
 
 HistFitter
 ----------
