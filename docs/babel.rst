@@ -17,7 +17,7 @@ In order to go from `HistFitter` to `pyhf`, the first step is to extract out the
 
 The name of output workspace files depends on four parameters you define in your ``config.py``:
 
-- ``analysisName`` is from ``configMgr.analysisName``,
+- ``analysisName`` is from ``configMgr.analysisName``
 - ``prefix`` is defined in ``configMgr.addFitConfig({prefix})``, and
 - ``measurementName`` is the first measurement you define via ``fitConfig.addMeasurement(name={measurementName},...)``
 - ``channelName`` are the names of channels you define via ``fitConfig.addChannel("cuts", [{channelName}], ...)``
