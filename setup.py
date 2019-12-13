@@ -14,12 +14,18 @@ extras_require = {
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
 }
-extras_require['test'] = sorted(
+extras_require['backends'] = sorted(
     set(
         extras_require['tensorflow']
         + extras_require['torch']
-        + extras_require['xmlio']
         + extras_require['minuit']
+    )
+)
+
+extras_require['test'] = sorted(
+    set(
+        extras_require['backends']
+        + extras_require['xmlio']
         + [
             'pyflakes',
             'pytest~=3.5',
@@ -43,13 +49,13 @@ extras_require['test'] = sorted(
 )
 extras_require['docs'] = sorted(
     set(
-        extras_require['test']
-        + [
+        [
             'sphinx',
             'sphinxcontrib-bibtex',
             'sphinx-click',
             'sphinx_rtd_theme',
             'nbsphinx',
+            'ipywidgets',
             'sphinx-issues',
             'm2r',
         ]
@@ -58,6 +64,7 @@ extras_require['docs'] = sorted(
 extras_require['develop'] = sorted(
     set(
         extras_require['docs']
+        + extras_require['test']
         + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine']
     )
 )
