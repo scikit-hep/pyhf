@@ -1,5 +1,5 @@
 from .. import get_backend
-from .mle import fixed_poi_mle,floating_poi_mle
+from .mle import fixed_poi_fit,fit
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
@@ -29,10 +29,10 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     tensorlib, optimizer = get_backend()
-    mubhathat, fixed_val = fixed_poi_mle(
+    mubhathat, fixed_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds,return_fval = True
     )
-    muhatbhat, float_val = floating_poi_mle(
+    muhatbhat, float_val = fit(
         data, pdf, init_pars, par_bounds, return_fval = True
     )
     qmu = fixed_val - float_val
