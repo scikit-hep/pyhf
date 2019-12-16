@@ -20,9 +20,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.clip(a, -1, 1))
@@ -51,9 +51,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.tile(a, (1, 2)))
@@ -78,9 +78,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
@@ -252,9 +252,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -311,8 +311,8 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> sess = tf.compat.v1.Session()
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             ...
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
@@ -346,8 +346,8 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> sess = tf.compat.v1.Session()
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             ...
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.poisson(5., 6.))
@@ -381,8 +381,8 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> sess = tf.compat.v1.Session()
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             ...
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
@@ -417,8 +417,8 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> sess = tf.compat.v1.Session()
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             ...
             >>> with sess.as_default():
             ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
@@ -451,9 +451,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> with sess.as_default():
             ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
             ...
@@ -483,9 +483,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
@@ -511,9 +511,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> import tensorflow as tf
-            >>> sess = tf.Session()
+            >>> sess = tf.compat.v1.Session()
             ...
-            >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=sess))
+            >>> pyhf.set_backend("tensorflow", _session=sess)
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])
