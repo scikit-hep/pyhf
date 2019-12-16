@@ -67,13 +67,15 @@ def test_optim(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(
-        pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds
-    )
+    result = optim.minimize(pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.minimize(
-        pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds,
-        [(pdf.config.poi_index,mu)]
+        pyhf.infer.mle.loglambdav,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
     )
     assert pyhf.tensorlib.tolist(result)
