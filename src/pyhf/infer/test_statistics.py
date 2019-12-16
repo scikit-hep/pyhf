@@ -1,6 +1,5 @@
 from .. import get_backend
-from .utils import loglambdav
-
+from .mle import fixed_poi_mle,floating_poi_mle
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
@@ -30,13 +29,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     tensorlib, optimizer = get_backend()
-    mubhathat = optimizer.constrained_bestfit(
-        loglambdav, mu, data, pdf, init_pars, par_bounds
+    mubhathat, fixed_val = fixed_poi_mle(
+        mu, data, pdf, init_pars, par_bounds,return_fval = True
     )
-    muhatbhat = optimizer.unconstrained_bestfit(
-        loglambdav, data, pdf, init_pars, par_bounds
+    muhatbhat, float_val = floating_poi_mle(
+        data, pdf, init_pars, par_bounds, return_fval = True
     )
-    qmu = loglambdav(mubhathat, data, pdf) - loglambdav(muhatbhat, data, pdf)
+    qmu = fixed_val - float_val
     qmu = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor([0]), qmu
     )

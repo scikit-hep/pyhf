@@ -8,7 +8,7 @@ class scipy_optimizer(object):
     def __init__(self, **kwargs):
         self.maxiter = kwargs.get('maxiter', 100000)
 
-    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None):
+    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None, return_fval = False):
         fixed_vals = fixed_vals or []
         indices = [i for i, _ in fixed_vals]
         values = [v for _, v in fixed_vals]
@@ -27,19 +27,7 @@ class scipy_optimizer(object):
         except AssertionError:
             log.error(result)
             raise
+        if return_fval:
+            return result.x, result.fun
         return result.x
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        return self.minimize(objective, data, pdf, init_pars, par_bounds)
-
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
-    ):
-        return self.minimize(
-            objective,
-            data,
-            pdf,
-            init_pars,
-            par_bounds,
-            [(pdf.config.poi_index, constrained_mu)],
-        )
