@@ -45,16 +45,25 @@ class minuit_optimizer(object):
         )
         return mm
 
-    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None, return_fval = False, return_uncertainties = False):
+    def minimize(
+        self,
+        objective,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_vals=None,
+        return_fval=False,
+        return_uncertainties=False,
+    ):
         mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
         assert result
         if return_uncertainties:
-            bestfit_pars =  np.asarray([(v,mm.errors[k]) for k,v in mm.values.items()])
+            bestfit_pars = np.asarray([(v, mm.errors[k]) for k, v in mm.values.items()])
         else:
-            bestfit_pars =  np.asarray([v for k,v in mm.values.items()])
+            bestfit_pars = np.asarray([v for k, v in mm.values.items()])
         bestfit_value = mm.fval
         if return_fval:
-            return bestfit_pars,bestfit_value
+            return bestfit_pars, bestfit_value
         return bestfit_pars
-

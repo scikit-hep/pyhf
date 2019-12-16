@@ -2,10 +2,9 @@
 from .. import get_backend
 from .mle import fixed_poi_fit
 
+
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    bestfit_nuisance_asimov = fixed_poi_fit(
-        asimov_mu, data, pdf, init_pars, par_bounds
-    )
+    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
