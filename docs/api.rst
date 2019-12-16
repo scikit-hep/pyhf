@@ -119,7 +119,7 @@ Inference
 
    hypotest
    test_statistics.qmu
-   utils.loglambdav
+   mle.loglambdav
    utils.generate_asimov_data
    utils.pvals_from_teststat
    utils.pvals_from_teststat_expected
