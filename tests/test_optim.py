@@ -80,6 +80,7 @@ def test_optim(backend, source, spec, mu):
     )
     assert pyhf.tensorlib.tolist(result)
 
+
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 def test_optim_with_value(backend, source, spec, mu):
     pdf = pyhf.Model(spec)
@@ -93,16 +94,17 @@ def test_optim_with_value(backend, source, spec, mu):
     result = optim.minimize(pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
-    result,fval = optim.minimize(
+    result, fval = optim.minimize(
         pyhf.infer.mle.loglambdav,
         data,
         pdf,
         init_pars,
         par_bounds,
         [(pdf.config.poi_index, mu)],
-        return_fval=True
+        return_fval=True,
     )
     assert pyhf.tensorlib.tolist(result)
+
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.only_numpy_minuit
@@ -125,7 +127,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         init_pars,
         par_bounds,
         [(pdf.config.poi_index, mu)],
-        return_uncertainties = True
+        return_uncertainties=True,
     )
-    assert result.shape[1] == 2 
+    assert result.shape[1] == 2
     assert pyhf.tensorlib.tolist(result)
