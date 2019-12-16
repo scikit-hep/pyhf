@@ -323,7 +323,7 @@ Toy Example
 -----------
 
 .. # N.B. If the following literalinclude is changed test_examples.py must be changed accordingly
-.. literalinclude:: ../examples/2-bin_1-channel.json
+.. literalinclude:: ./examples/json/2-bin_1-channel.json
    :language: json
 
 In the above example, we demonstrate a simple measurement of a
