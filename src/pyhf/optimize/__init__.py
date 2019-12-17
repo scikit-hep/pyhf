@@ -1,3 +1,5 @@
+"""Optimizers for Tensor Functions."""
+
 from .. import exceptions
 
 
