@@ -1,4 +1,4 @@
-FROM alectolytic/scipy
+FROM matthewfeickert/python3-scipy-alpine:latest
 COPY . /code
 RUN cd /code && \
     apk add --no-cache git && \
