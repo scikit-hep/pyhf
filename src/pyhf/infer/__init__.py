@@ -1,3 +1,5 @@
+"""Inference for Statistical Models."""
+
 from .test_statistics import qmu
 from .utils import (
     generate_asimov_data,
@@ -11,7 +13,7 @@ def hypotest(
     poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
 ):
     r"""
-    Computes :math:`p`-values and test statistics for a single value of the parameter of interest
+    Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
@@ -75,7 +77,6 @@ def hypotest(
             - :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when ``return_test_statistics`` is ``True``.
 
     """
-
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
