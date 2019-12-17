@@ -1,3 +1,5 @@
+"""PyTorch Optimizer Backend."""
+
 from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
 from .autodiff import AutoDiffOptimizerMixin
@@ -5,12 +7,23 @@ import torch
 
 
 class pytorch_optimizer(AutoDiffOptimizerMixin):
-    def __init__(self, *args, **kargs):
-        pass
+    """PyTorch Optimizer Backend."""
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
+        """
+        Prepare Minimization for AutoDiff-Optimizer.
+
+        Args:
+            objective: objective function
+            data: observed data
+            pdf: model
+            init_pars: initial parameters
+            par_bounds: parameter boundaries
+            fixed_vals: fixed parameter values
+
+        """
         tensorlib, _ = get_backend()
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         all_init = default_backend.astensor(init_pars)

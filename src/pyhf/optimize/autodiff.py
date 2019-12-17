@@ -1,8 +1,11 @@
+"""Helper Classes for use of automatic differentiation."""
 import scipy
 from .. import get_backend
 
 
 class AutoDiffOptimizerMixin(object):
+    """Mixin Class to build optimizers that use automatic differentiation."""
+
     def minimize(
         self,
         objective,
@@ -13,6 +16,13 @@ class AutoDiffOptimizerMixin(object):
         fixed_vals=None,
         return_fval=False,
     ):
+        """
+        Find Function Parameters that minimize the Objective.
+
+        Returns:
+            bestfit parameters
+        
+        """
         tensorlib, _ = get_backend()
         tv, fixed_values_tensor, func, init, bounds = self.setup_minimize(
             objective, data, pdf, init_pars, par_bounds, fixed_vals
