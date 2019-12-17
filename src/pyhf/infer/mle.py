@@ -25,6 +25,6 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, poi_index
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, constrained_mu)],
+        [(pdf.config.poi_index, poi_val)],
         **kwargs
     )
