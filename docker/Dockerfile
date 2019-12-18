@@ -6,3 +6,4 @@ RUN cd /code && \
     python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python -m pip install --no-cache-dir -e .[xmlio] && \
     python -m pip list
+ENTRYPOINT ["/usr/local/bin/pyhf"]
