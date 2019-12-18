@@ -38,10 +38,10 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
         data_placeholder = tf.placeholder(
-            tf.float32, (pdf.config.nmaindata + pdf.config.nauxdata,)
+            tensorlib.dtypemap['float'], (pdf.config.nmaindata + pdf.config.nauxdata,)
         )
         variable_pars_placeholder = tf.placeholder(
-            tf.float32, (pdf.config.npars - len(fixed_vals),)
+            tensorlib.dtypemap['float'], (pdf.config.npars - len(fixed_vals),)
         )
 
         tv = _TensorViewer([fixed_idx, variable_idx])
