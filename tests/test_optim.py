@@ -67,11 +67,11 @@ def test_optim(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.minimize(
-        pyhf.infer.mle.loglambdav,
+        pyhf.infer.mle.twice_nll,
         data,
         pdf,
         init_pars,
@@ -91,11 +91,11 @@ def test_optim_with_value(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result, fval = optim.minimize(
-        pyhf.infer.mle.loglambdav,
+        pyhf.infer.mle.twice_nll,
         data,
         pdf,
         init_pars,
@@ -117,11 +117,11 @@ def test_optim_uncerts(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.loglambdav, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.minimize(
-        pyhf.infer.mle.loglambdav,
+        pyhf.infer.mle.twice_nll,
         data,
         pdf,
         init_pars,
