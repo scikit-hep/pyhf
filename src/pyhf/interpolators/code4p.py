@@ -1,3 +1,4 @@
+"""Piecewise-Linear + Polynomial Interpolation (Code 4p)."""
 import logging
 from .. import get_backend, default_backend
 from .. import events
@@ -8,7 +9,7 @@ log = logging.getLogger(__name__)
 
 class code4p(object):
     r"""
-    The piecewise-linear interpolation strategy, with polynomial at :math:`\left|a\right| < 1`
+    The piecewise-linear interpolation strategy, with polynomial at :math:`\left|a\right| < 1`.
 
     .. math::
         \sigma_{sb} (\vec{\alpha}) = \sigma_{sb}^0(\vec{\alpha}) + \underbrace{\sum_{p \in \text{Syst}} I_\text{lin.} (\alpha_p; \sigma_{sb}^0, \sigma_{psb}^+, \sigma_{psb}^-)}_\text{deltas to calculate}
@@ -16,6 +17,7 @@ class code4p(object):
     """
 
     def __init__(self, histogramssets, subscribe=True):
+        """Piecewise-Linear  + Polynomial Interpolation."""
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
@@ -51,6 +53,7 @@ class code4p(object):
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
     def __call__(self, alphasets):
+        """Compute Interpolated Values."""
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
         where_alphasets_greater_p1 = tensorlib.where(
