@@ -44,14 +44,14 @@ def reset_backend():
     params=[
         (pyhf.tensor.numpy_backend(), None),
         (pyhf.tensor.pytorch_backend(), None),
-        (pyhf.tensor.pytorch_backend(float = 'float64', int = 'int64'), None),
+        (pyhf.tensor.pytorch_backend(float='float64', int='int64'), None),
         (pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()), None),
         (
             pyhf.tensor.numpy_backend(poisson_from_normal=True),
             pyhf.optimize.minuit_optimizer(),
         ),
     ],
-    ids=['numpy', 'pytorch','pytorch64','tensorflow', 'numpy_minuit'],
+    ids=['numpy', 'pytorch', 'pytorch64', 'tensorflow', 'numpy_minuit'],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
