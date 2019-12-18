@@ -12,9 +12,9 @@ class pytorch_backend(object):
     def __init__(self, **kwargs):
         self.name = 'pytorch'
         self.dtypemap = {
-            'float': getattr(torch,kwargs.get('float','float32')),
-            'int': getattr(torch,kwargs.get('float','int32')),
-            'bool': torch.bool
+            'float': getattr(torch, kwargs.get('float', 'float32')),
+            'int': getattr(torch, kwargs.get('float', 'int32')),
+            'bool': torch.bool,
         }
 
     def clip(self, tensor_in, min_value, max_value):
@@ -146,10 +146,10 @@ class pytorch_backend(object):
         return torch.abs(tensor)
 
     def ones(self, shape):
-        return torch.ones(shape,dtype = self.dtypemap['float'])
+        return torch.ones(shape, dtype=self.dtypemap['float'])
 
     def zeros(self, shape):
-        return torch.zeros(shape,dtype = self.dtypemap['float'])
+        return torch.zeros(shape, dtype=self.dtypemap['float'])
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
