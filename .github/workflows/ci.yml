@@ -99,7 +99,7 @@ jobs:
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
-        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/probability.py src/pyhf/infer/mle.py src/pyhf/optimize
+        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/probability.py src/pyhf/infer src/pyhf/optimize
     - name: Test and build docs
       run: |
         python -m doctest README.md
