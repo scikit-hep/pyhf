@@ -20,7 +20,7 @@ def _eval_func(op, argop, dataop, data):
 
 class tflow_optimizer(AutoDiffOptimizerMixin):
     """Tensorflow Optimizer Backend."""
-    
+
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
