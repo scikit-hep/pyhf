@@ -6,6 +6,10 @@ from .. import get_backend
 class AutoDiffOptimizerMixin(object):
     """Mixin Class to build optimizers that use automatic differentiation."""
 
+    def __init__(*args,**kwargs):
+        """Create Mixin for autodiff-based optimizers."""
+        pass
+
     def minimize(
         self,
         objective,
