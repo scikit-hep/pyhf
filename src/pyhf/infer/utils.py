@@ -1,3 +1,4 @@
+"""Utility Functions for model inference."""
 from .. import get_backend
 from .mle import fixed_poi_fit
 
@@ -9,6 +10,8 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     r"""
+    Compute p-values from test-statistic values.
+
     The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`
 
     .. math::
@@ -30,6 +33,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
 
     Returns:
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
+
     """
     tensorlib, _ = get_backend()
     if not qtilde:  # qmu
@@ -60,7 +64,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
 
 def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     r"""
-    Computes the expected :math:`p`-values CLsb, CLb and CLs for data corresponding to a given percentile of the alternate hypothesis.
+    Compute the expected :math:`p`-values CLsb, CLb and CLs for data corresponding to a given percentile of the alternate hypothesis.
 
     Args:
         sqrtqmuA_v (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
@@ -68,8 +72,8 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
 
     Returns:
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
-    """
 
+    """
     # NOTE:
     # To compute the expected p-value, one would need to first compute a hypothetical
     # observed test-statistic for a dataset whose best-fit value is mu^ = mu'-n*sigma:
