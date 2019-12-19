@@ -21,7 +21,9 @@ jobs:
         contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) ||
         contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' )
       ) && (
-        contains( ['lukasheinrich', 'matthewfeickert', 'kratsg'], github.event.sender.login )
+        github.event.sender.login == 'lukasheinrich' ||
+        github.event.sender.login == 'matthewfeickert' ||
+        github.event.sender.login == 'kratsg'
       )
     runs-on: ubuntu-latest
     steps:
