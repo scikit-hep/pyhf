@@ -64,7 +64,7 @@ class minuit_optimizer(object):
         init_pars,
         par_bounds,
         fixed_vals=None,
-        return_fval=False,
+        return_fitted_val=False,
         return_uncertainties=False,
     ):
         """
@@ -82,6 +82,6 @@ class minuit_optimizer(object):
         else:
             bestfit_pars = np.asarray([v for k, v in mm.values.items()])
         bestfit_value = mm.fval
-        if return_fval:
+        if return_fitted_val:
             return bestfit_pars, bestfit_value
         return bestfit_pars

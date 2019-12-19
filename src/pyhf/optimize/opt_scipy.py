@@ -21,7 +21,7 @@ class scipy_optimizer(object):
         init_pars,
         par_bounds,
         fixed_vals=None,
-        return_fval=False,
+        return_fitted_val=False,
     ):
         """
         Find Function Parameters that minimize the Objective.
@@ -48,6 +48,6 @@ class scipy_optimizer(object):
         except AssertionError:
             log.error(result)
             raise
-        if return_fval:
+        if return_fitted_val:
             return result.x, result.fun
         return result.x

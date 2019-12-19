@@ -94,14 +94,14 @@ def test_optim_with_value(backend, source, spec, mu):
     result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
-    result, fval = optim.minimize(
+    result, fitted_val = optim.minimize(
         pyhf.infer.mle.twice_nll,
         data,
         pdf,
         init_pars,
         par_bounds,
         [(pdf.config.poi_index, mu)],
-        return_fval=True,
+        return_fitted_val=True,
     )
     assert pyhf.tensorlib.tolist(result)
 

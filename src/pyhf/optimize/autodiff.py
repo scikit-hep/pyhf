@@ -18,7 +18,7 @@ class AutoDiffOptimizerMixin(object):
         init_pars,
         par_bounds,
         fixed_vals=None,
-        return_fval=False,
+        return_fitted_val=False,
     ):
         """
         Find Function Parameters that minimize the Objective.
@@ -35,10 +35,10 @@ class AutoDiffOptimizerMixin(object):
             func, init, method='SLSQP', jac=True, bounds=bounds
         )
         nonfixed_vals = fitresult.x
-        fitted_fval = fitresult.fun
+        fitted_val = fitresult.fun
         fitted_pars = tv.stitch(
             [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
         )
-        if return_fval:
-            return fitted_pars, tensorlib.astensor(fitted_fval)
+        if return_fitted_val:
+            return fitted_pars, tensorlib.astensor(fitted_val)
         return fitted_pars
