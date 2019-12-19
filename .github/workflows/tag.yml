@@ -20,6 +20,8 @@ jobs:
         contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) ||
         contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) ||
         contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' )
+      ) && (
+        contains( ['lukasheinrich', 'matthewfeickert', 'kratsg'], github.event.sender.login )
       )
     runs-on: ubuntu-latest
     steps:
