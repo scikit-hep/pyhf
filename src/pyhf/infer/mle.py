@@ -37,7 +37,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
 
 def fixed_poi_fit(
-    poi_val, data, pdf, init_pars=None, par_bounds=None, poi_index=None, **kwargs
+    poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs
 ):
     """
     Run a maximum likelihood fit with the POI value fixzed.
