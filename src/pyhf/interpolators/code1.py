@@ -25,7 +25,7 @@ class code1(object):
     """
 
     def __init__(self, histogramssets, subscribe=True):
-        """Piecewise-Exponential Interpolation (Code 1)."""
+        """Piecewise-Exponential Interpolation."""
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)

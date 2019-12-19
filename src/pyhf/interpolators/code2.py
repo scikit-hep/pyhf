@@ -1,4 +1,4 @@
-"""Quadratic Interpolation (Interpolation Code 2)."""
+"""Quadratic Interpolation (Code 2)."""
 import logging
 from .. import get_backend, default_backend
 from .. import events
@@ -28,7 +28,7 @@ class code2(object):
     """
 
     def __init__(self, histogramssets, subscribe=True):
-        """Quadratic Interpolation (Interpolation Code 2)."""
+        """Quadratic Interpolation."""
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
