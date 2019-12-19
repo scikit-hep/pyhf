@@ -85,7 +85,7 @@ jobs:
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
-      uses: actions/github-script@v0.3.0
+      uses: actions/github-script@0.3.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
@@ -98,7 +98,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_PAT }}
     - name: Comment that something failed
       if: failure()
-      uses: actions/github-script@v0.3.0
+      uses: actions/github-script@0.3.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
