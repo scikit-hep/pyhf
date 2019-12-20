@@ -30,11 +30,11 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     tensorlib, optimizer = get_backend()
-    mubhathat, fixed_val = fixed_poi_fit(
+    mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    muhatbhat, float_val = fit(data, pdf, init_pars, par_bounds, return_fitted_val=True)
-    qmu = fixed_val - float_val
+    muhatbhat, unconstrained_fit_lhood_val = fit(data, pdf, init_pars, par_bounds, return_fitted_val=True)
+    qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     qmu = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor([0]), qmu
     )
