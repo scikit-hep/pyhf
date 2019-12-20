@@ -1,3 +1,4 @@
+"""Polynomial Interpolation (Code 4)."""
 import logging
 import math
 from .. import get_backend, default_backend
@@ -30,6 +31,7 @@ class code4(object):
     """
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
+        """Polynomial Interpolation."""
         # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
         # we cannot calculate the coefficients (e.g. determinant == 0)
         assert alpha0 > 0
@@ -163,6 +165,7 @@ class code4(object):
         return
 
     def __call__(self, alphasets):
+        """Compute Interpolated Values."""
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
 
@@ -233,6 +236,8 @@ class code4(object):
 
 class _slow_code4(object):
     """
+    Reference Implementation of Code 4.
+
     delta_up^alpha0 = 1 + a1 alpha0 + a2 alpha0^2 + a3 alpha0^3 + a4 alpha0^4 + a5 alpha0^5 + a6 alpha0^6
     delta_down^alpha0 = 1 - a1 alpha0 + a2 alpha0^2 - a3 alpha0^3 + a4 alpha0^4 - a5 alpha0^5 + a6 alpha0^6
 
