@@ -13,9 +13,9 @@ class tensorflow_backend(object):
         self.session = kwargs.get('session')
         self.name = 'tensorflow'
         self.dtypemap = {
-            'float': getattr(tf,kwargs.get('float','float32')),
-            'int': getattr(tf,kwargs.get('int','int32')),
-            'bool': tf.bool
+            'float': getattr(tf, kwargs.get('float', 'float32')),
+            'int': getattr(tf, kwargs.get('int', 'int32')),
+            'bool': tf.bool,
         }
 
     def clip(self, tensor_in, min_value, max_value):
@@ -203,10 +203,10 @@ class tensorflow_backend(object):
         return tf.abs(tensor)
 
     def ones(self, shape):
-        return tf.ones(shape,dtype = self.dtypemap['float'])
+        return tf.ones(shape, dtype=self.dtypemap['float'])
 
     def zeros(self, shape):
-        return tf.zeros(shape,dtype = self.dtypemap['float'])
+        return tf.zeros(shape, dtype=self.dtypemap['float'])
 
     def power(self, tensor_in_1, tensor_in_2):
         return tf.pow(tensor_in_1, tensor_in_2)
@@ -478,8 +478,7 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The CDF
         """
         normal = tfp.distributions.Normal(
-            self.astensor(mu,dtype='float'), 
-            self.astensor(sigma,dtype='float'), 
+            self.astensor(mu, dtype='float'), self.astensor(sigma, dtype='float'),
         )
         return normal.cdf(x)
 

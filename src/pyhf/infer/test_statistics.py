@@ -33,7 +33,9 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    muhatbhat, unconstrained_fit_lhood_val = fit(data, pdf, init_pars, par_bounds, return_fitted_val=True)
+    muhatbhat, unconstrained_fit_lhood_val = fit(
+        data, pdf, init_pars, par_bounds, return_fitted_val=True
+    )
     qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     qmu = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor([0]), qmu
