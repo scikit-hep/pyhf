@@ -33,6 +33,7 @@ extras_require['test'] = sorted(
             'pytest-mock',
             'pytest-benchmark[histogram]',
             'pytest-console-scripts',
+            'pytest-mpl',
             'pydocstyle',
             'coverage>=4.0',  # coveralls
             'papermill~=1.0',
