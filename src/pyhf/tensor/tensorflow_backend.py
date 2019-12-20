@@ -478,7 +478,7 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The CDF
         """
         normal = tfp.distributions.Normal(
-            self.astensor(mu, dtype='float'), self.astensor(sigma, dtype='float'),
+            self.astensor(mu, dtype='float')[0], self.astensor(sigma, dtype='float')[0],
         )
         return normal.cdf(x)
 
