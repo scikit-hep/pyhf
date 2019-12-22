@@ -1,3 +1,6 @@
+"""Histogram Interpolation."""
+
+
 def _slow_interpolator_looper(histogramssets, alphasets, func):
     all_results = []
     for histoset, alphaset in zip(histogramssets, alphasets):
