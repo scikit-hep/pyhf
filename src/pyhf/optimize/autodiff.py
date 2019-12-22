@@ -8,7 +8,6 @@ class AutoDiffOptimizerMixin(object):
 
     def __init__(*args, **kwargs):
         """Create Mixin for autodiff-based optimizers."""
-        pass
 
     def minimize(
         self,
