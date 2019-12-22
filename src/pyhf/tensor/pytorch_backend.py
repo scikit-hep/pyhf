@@ -1,3 +1,4 @@
+"""PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
 import logging
@@ -10,6 +11,11 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self.dtypemap = {
+            'float': getattr(torch, kwargs.get('float', 'float32')),
+            'int': getattr(torch, kwargs.get('float', 'int32')),
+            'bool': torch.bool,
+        }
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -100,9 +106,8 @@ class pytorch_backend(object):
         Returns:
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
-        dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.bool}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
@@ -141,10 +146,10 @@ class pytorch_backend(object):
         return torch.abs(tensor)
 
     def ones(self, shape):
-        return torch.Tensor(torch.ones(shape))
+        return torch.ones(shape, dtype=self.dtypemap['float'])
 
     def zeros(self, shape):
-        return torch.Tensor(torch.zeros(shape))
+        return torch.zeros(shape, dtype=self.dtypemap['float'])
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
