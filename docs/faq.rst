@@ -14,6 +14,13 @@ Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backen
 The default backend is NumPy.
 For more information see :code:`pyhf cls --help`.
 
+Does ``pyhf`` support Python 2?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+No.
+Like the rest of the Python community, as of January 2020 ``pyhf`` no longer supports Python 2.
+The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.2 <https://pypi.org/project/pyhf/0.3.2/>`__.
+
+
 Troubleshooting
 ---------------
 
