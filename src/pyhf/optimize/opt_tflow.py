@@ -1,10 +1,11 @@
+"""Tensorflow Optimizer Backend."""
 from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
 from .autodiff import AutoDiffOptimizerMixin
 import tensorflow as tf
 
 
-def eval_func(op, argop, dataop, data):
+def _eval_func(op, argop, dataop, data):
     def func(pars):
         tensorlib, _ = get_backend()
         pars_as_list = tensorlib.tolist(pars) if isinstance(pars, tf.Tensor) else pars
@@ -18,12 +19,23 @@ def eval_func(op, argop, dataop, data):
 
 
 class tflow_optimizer(AutoDiffOptimizerMixin):
-    def __init__(self, *args, **kargs):
-        pass
+    """Tensorflow Optimizer Backend."""
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
+        """
+        Prepare Minimization for AutoDiff-Optimizer.
+
+        Args:
+            objective: objective function
+            data: observed data
+            pdf: model
+            init_pars: initial parameters
+            par_bounds: parameter boundaries
+            fixed_vals: fixed parameter values
+
+        """
         tensorlib, _ = get_backend()
 
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
@@ -53,7 +65,7 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
         nll = objective(full_pars, data_placeholder, pdf)
         nllgrad = tf.identity(tf.gradients(nll, variable_pars_placeholder)[0])
 
-        func = eval_func(
+        func = _eval_func(
             [nll, nllgrad], variable_pars_placeholder, data_placeholder, data,
         )
 

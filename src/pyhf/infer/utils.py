@@ -1,16 +1,11 @@
 """Utility Functions for model inference."""
 from .. import get_backend
-
-
-def loglambdav(pars, data, pdf):
-    return -2 * pdf.logpdf(pars, data)
+from .mle import fixed_poi_fit
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    _, optimizer = get_backend()
-    bestfit_nuisance_asimov = optimizer.constrained_bestfit(
-        loglambdav, asimov_mu, data, pdf, init_pars, par_bounds
-    )
+    """Compute Asimov Dataset (expected yields at best-fit values) for a given POI value."""
+    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 

@@ -119,7 +119,9 @@ Inference
 
    hypotest
    test_statistics.qmu
-   utils.loglambdav
+   mle.twice_nll
+   mle.fit
+   mle.fixed_poi_fit
    utils.generate_asimov_data
    utils.pvals_from_teststat
    utils.pvals_from_teststat_expected

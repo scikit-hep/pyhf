@@ -1,3 +1,5 @@
+"""MINUIT Optimizer Backend."""
+
 import iminuit
 import logging
 import numpy as np
@@ -6,7 +8,16 @@ log = logging.getLogger(__name__)
 
 
 class minuit_optimizer(object):
+    """MINUIT Optimizer Backend."""
+
     def __init__(self, verbose=False, ncall=10000, errordef=1, steps=1000):
+        """
+        Create MINUIT Optimizer.
+
+        Args:
+            verbose (`bool`): print verbose output during minimization
+        
+        """
         self.verbose = 0
         self.ncall = ncall
         self.errordef = errordef
@@ -45,23 +56,32 @@ class minuit_optimizer(object):
         )
         return mm
 
-    def minimize(self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None):
+    def minimize(
+        self,
+        objective,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_vals=None,
+        return_fitted_val=False,
+        return_uncertainties=False,
+    ):
+        """
+        Find Function Parameters that minimize the Objective.
+
+        Returns:
+            bestfit parameters
+        
+        """
         mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
         assert result
-        return np.asarray([x[1] for x in mm.values.items()])
-
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        return self.minimize(objective, data, pdf, init_pars, par_bounds)
-
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
-    ):
-        return self.minimize(
-            objective,
-            data,
-            pdf,
-            init_pars,
-            par_bounds,
-            [(pdf.config.poi_index, constrained_mu)],
-        )
+        if return_uncertainties:
+            bestfit_pars = np.asarray([(v, mm.errors[k]) for k, v in mm.values.items()])
+        else:
+            bestfit_pars = np.asarray([v for k, v in mm.values.items()])
+        bestfit_value = mm.fval
+        if return_fitted_val:
+            return bestfit_pars, bestfit_value
+        return bestfit_pars
