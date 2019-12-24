@@ -1,0 +1,113 @@
+# NB: release notes inspired by https://blogs.sap.com/2018/06/22/generating-release-notes-from-git-commit-messages-using-basic-shell-commands-gitgrep/
+name: Tag Creator
+on:
+  pull_request:
+    types: [labeled, closed]
+env:
+  IS_MAJOR: >-
+      ${{ contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) }}
+  IS_MINOR: >-
+      ${{ contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) }}
+  IS_PATCH: >-
+      ${{ contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' ) }}
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  PR_TITLE: ${{ github.event.pull_request.title }}
+  GITHUB_HEAD_REF: ${{ github.head_ref }}
+jobs:
+  bumpversion:
+    if: >-
+      (
+        contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) ||
+        contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) ||
+        contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' )
+      ) && (
+        github.event.sender.login == 'lukasheinrich' ||
+        github.event.sender.login == 'matthewfeickert' ||
+        github.event.sender.login == 'kratsg'
+      )
+    runs-on: ubuntu-latest
+    steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    - name: Determine version part
+      run: |
+        if [ $IS_MAJOR == 'true' ]
+        then
+          echo "::set-env name=BV_PART::major"
+        elif [ $IS_MINOR == 'true' ]
+        then
+          echo "::set-env name=BV_PART::minor"
+        else
+          echo "::set-env name=BV_PART::patch"
+        fi
+    - name: Checkout repository
+      uses: actions/checkout@v1.2.0
+    - name: Set up git user
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+    - name: Checkout master
+      run: git checkout master
+    - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
+      if: github.event.action == 'labeled'
+      run: |
+        git merge --squash "origin/${GITHUB_HEAD_REF}"
+        git commit -m "${PR_TITLE} (#${PR_NUMBER})"
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install bumpversion
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install bumpversion
+    - name: Run bumpversion ${{ env['BV_PART'] }}
+      run: |
+        OLD_TAG=$(git describe --tags --abbrev=0)
+        echo "::set-env name=OLD_TAG::${OLD_TAG}"
+        bumpversion $BV_PART --message "Bump version: {current_version} → {new_version}
+
+        Triggered by #${PR_NUMBER} via GitHub Actions."
+        NEW_TAG=$(git describe --tags --abbrev=0)
+        echo "::set-env name=NEW_TAG::${NEW_TAG}"
+        git tag -n99 -l $NEW_TAG
+
+        CHANGES=$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):')
+        CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
+        SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' )
+        echo "::set-env name=CHANGES::${SANITIZED_CHANGES//$'\n'/}"
+        NUM_CHANGES=$(echo -n "$CHANGES" | grep -c '^')
+        echo "::set-env name=NUM_CHANGES::${NUM_CHANGES}"
+        git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES_NEWLINE")"
+        git tag -n99 -l $NEW_TAG
+    - name: Comment on issue
+      if: >-
+        github.event.action == 'labeled'
+      uses: actions/github-script@0.3.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.issues.createComment({...context.issue, body: "I've queued this up. When it gets merged, I'll create a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → ${{ env['NEW_TAG'] }} which includes the following ${{ env['NUM_CHANGES'] }} change(s) [including this PR]:<br />${{ env['CHANGES'] }}<br />If you make any more changes, you probably want to re-trigger me again by removing the `bumpversion/${{ env['BV_PART'] }}` label and then adding it back again."})
+    - name: Push changes
+      if: >-
+        github.event.action == 'closed' && github.event.pull_request.merged
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        github_token: ${{ secrets.GITHUB_PAT }}
+    - name: Comment that something failed
+      if: failure()
+      uses: actions/github-script@0.3.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.issues.createComment({...context.issue, body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."})
+          github.issues.removeLabels({...context.issue, "bumpversion/${{ env['BV_PART'] }}" })
+
+  always_job:
+    name: Always run job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Always run
+        run: echo "This job is used to prevent the workflow status from showing as failed when all other jobs are skipped. See https://github.community/t5/GitHub-Actions/Workflow-is-failing-if-no-job-can-be-ran-due-to-condition/m-p/38085 for more information."
