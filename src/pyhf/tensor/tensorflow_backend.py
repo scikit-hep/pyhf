@@ -1,3 +1,4 @@
+"""Tensorflow Tensor Library Module."""
 import logging
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -11,13 +12,17 @@ class tensorflow_backend(object):
     def __init__(self, **kwargs):
         self.session = kwargs.get('session')
         self.name = 'tensorflow'
+        self.dtypemap = {
+            'float': getattr(tf, kwargs.get('float', 'float32')),
+            'int': getattr(tf, kwargs.get('int', 'int32')),
+            'bool': tf.bool,
+        }
 
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -36,6 +41,7 @@ class tensorflow_backend(object):
 
         Returns:
             TensorFlow Tensor: A clipped `tensor`
+
         """
         if min_value is None:
             min_value = tf.reduce_min(tensor_in)
@@ -48,7 +54,6 @@ class tensorflow_backend(object):
         Repeat tensor data along a specific dimension
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -67,6 +72,7 @@ class tensorflow_backend(object):
 
         Returns:
             TensorFlow Tensor: The tensor with repeated axes
+
         """
         return tf.tile(tensor_in, repeats)
 
@@ -75,7 +81,6 @@ class tensorflow_backend(object):
         Runs a callable conditional on the boolean value of the evaulation of a predicate
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -97,6 +102,7 @@ class tensorflow_backend(object):
 
         Returns:
             TensorFlow Tensor: The output of the callable that was evaluated
+
         """
         return tf.cond(predicate, true_callable, false_callable)
 
@@ -157,10 +163,10 @@ class tensorflow_backend(object):
 
         Returns:
             `tf.Tensor`: A symbolic handle to one of the outputs of a `tf.Operation`.
+
         """
-        dtypemap = {'float': tf.float32, 'int': tf.int32, 'bool': tf.bool}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
@@ -198,10 +204,10 @@ class tensorflow_backend(object):
         return tf.abs(tensor)
 
     def ones(self, shape):
-        return tf.ones(shape)
+        return tf.ones(shape, dtype=self.dtypemap['float'])
 
     def zeros(self, shape):
-        return tf.zeros(shape)
+        return tf.zeros(shape, dtype=self.dtypemap['float'])
 
     def power(self, tensor_in_1, tensor_in_2):
         return tf.pow(tensor_in_1, tensor_in_2)
@@ -249,7 +255,6 @@ class tensorflow_backend(object):
         Broadcast a sequence of 1 dimensional arrays.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -266,6 +271,7 @@ class tensorflow_backend(object):
 
         Returns:
             list of Tensors: The sequence broadcast together.
+
         """
         max_dim = max(map(lambda arg: arg.shape[0], args))
         try:
@@ -308,7 +314,6 @@ class tensorflow_backend(object):
         at :code:`n` given the parameter :code:`lam`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -343,7 +348,6 @@ class tensorflow_backend(object):
         at :code:`n` given the parameter :code:`lam`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -378,7 +382,6 @@ class tensorflow_backend(object):
         of :code:`sigma`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -414,7 +417,6 @@ class tensorflow_backend(object):
         of :code:`sigma`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -443,12 +445,11 @@ class tensorflow_backend(object):
         normal = tfp.distributions.Normal(mu, sigma)
         return normal.prob(x)
 
-    def normal_cdf(self, x, mu=0, sigma=1):
+    def normal_cdf(self, x, mu=0.0, sigma=1):
         """
-        The cumulative distribution function for the Normal distribution
+        Compute the value of cumulative distribution function for the Normal distribution at x.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -472,15 +473,16 @@ class tensorflow_backend(object):
         Returns:
             TensorFlow Tensor: The CDF
         """
-        normal = tfp.distributions.Normal(mu, sigma)
+        normal = tfp.distributions.Normal(
+            self.astensor(mu, dtype='float')[0], self.astensor(sigma, dtype='float')[0],
+        )
         return normal.cdf(x)
 
     def poisson_dist(self, rate):
         r"""
-        The Poisson distribution with rate parameter :code:`rate`.
+        Construct a Poisson distribution with rate parameter :code:`rate`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
@@ -505,10 +507,9 @@ class tensorflow_backend(object):
 
     def normal_dist(self, mu, sigma):
         r"""
-        The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
+        Construct a Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
 
         Example:
-
             >>> import pyhf
             >>> import tensorflow as tf
             >>> sess = tf.compat.v1.Session()
