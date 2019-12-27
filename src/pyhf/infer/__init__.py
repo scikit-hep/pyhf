@@ -1,16 +1,21 @@
 """Inference for Statistical Models."""
 
 from .test_statistics import qmu
-from .utils import (
-    generate_asimov_data,
-    pvals_from_teststat,
-    pvals_from_teststat_expected,
-)
+from .utils import pvals_from_distributions
 from .. import get_backend
-
+from .asymptotics import AsymptoticCalculator
+from .toybased import ToyCalculator
+assert ToyCalculator
 
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    qtilde=False,
+    calc=None,
+    **kwargs
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
@@ -74,34 +79,43 @@ def hypotest(
             for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when ``return_expected_set`` is ``True``.
 
     """
-    init_pars = init_pars or pdf.config.suggested_init()
-    par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    asimov_mu = 0.0
-    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
-
+    # TODO:
+    # depending on what the parameter bounds on the POI are
+    # this needs to be compared to qtilde or q distribution
     qmu_v = qmu(poi_test, data, pdf, init_pars, par_bounds)
-    sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-    qmuA_v = qmu(poi_test, asimov_data, pdf, init_pars, par_bounds)
-    sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
+    if not calc:
+        calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde)
 
-    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=qtilde)
+    dists = calc.distributions(poi_test)
+    transformed_teststat = calc.testvalue(qmu_v)
+
+    return summarize_hypotest(transformed_teststat, dists, **kwargs)
+
+
+def summarize_hypotest(teststat_value, dists, **kwargs):
+    tensorlib, _ = get_backend()
+
+    s_plus_b, b_only = dists
+    CLsb, CLb, CLs = pvals_from_distributions(teststat_value, dists)
 
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
-        for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[-1])
+        for n_sigma in [2, 1, 0, -1, -2]:
+            expval = b_only.expected_value(n_sigma)
+            CLs_exp.append(pvals_from_distributions(expval, dists)[-1])
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
+        expval = b_only.expected_value(nsigma = 0)
+        _returns.append(pvals_from_distributions(expval, dists)[-1])
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 

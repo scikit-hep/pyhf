@@ -1,12 +1,12 @@
 """Utility Functions for model inference."""
 from .. import get_backend
-from .mle import fixed_poi_fit
 
-
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    """Compute Asimov Dataset (expected yields at best-fit values) for a given POI value."""
-    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
-    return pdf.expected_data(bestfit_nuisance_asimov)
+def pvals_from_distributions(value, dists):
+    splusb_distr, bonly = dists
+    tensorlib, _ = get_backend()
+    p_sb = tensorlib.reshape(splusb_distr.pvalue(value), (1,))
+    p_b = tensorlib.reshape(bonly.pvalue(value), (1,))
+    return p_sb, p_b, p_sb / p_b
 
 
 def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
@@ -36,35 +36,8 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
 
     """
-    tensorlib, _ = get_backend()
-    if not qtilde:  # qmu
-        nullval = sqrtqmu_v
-        altval = -(sqrtqmuA_v - sqrtqmu_v)
-    else:  # qtilde
 
-        def _true_case():
-            nullval = sqrtqmu_v
-            altval = -(sqrtqmuA_v - sqrtqmu_v)
-            return nullval, altval
-
-        def _false_case():
-            qmu = tensorlib.power(sqrtqmu_v, 2)
-            qmu_A = tensorlib.power(sqrtqmuA_v, 2)
-            nullval = (qmu + qmu_A) / (2 * sqrtqmuA_v)
-            altval = (qmu - qmu_A) / (2 * sqrtqmuA_v)
-            return nullval, altval
-
-        nullval, altval = tensorlib.conditional(
-            (sqrtqmu_v < sqrtqmuA_v), _true_case, _false_case
-        )
-    CLsb = 1 - tensorlib.normal_cdf(nullval)
-    CLb = 1 - tensorlib.normal_cdf(altval)
-    CLs = CLsb / CLb
-    return (
-        tensorlib.reshape(CLsb, (1,)),
-        tensorlib.reshape(CLb, (1,)),
-        tensorlib.reshape(CLs, (1,)),
-    )
+    raise NotImplementedError()
 
 
 def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
@@ -86,12 +59,4 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     # was used. However, we can make a shortcut by just computing the p-values in mu^/sigma
     # space, where the p-values are Clsb = cdf(x-sqrt(lambda)) and CLb=cdf(x)
 
-    tensorlib, _ = get_backend()
-    CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
-    CLb = tensorlib.normal_cdf(nsigma)
-    CLs = CLsb / CLb
-    return (
-        tensorlib.reshape(CLsb, (1,)),
-        tensorlib.reshape(CLb, (1,)),
-        tensorlib.reshape(CLs, (1,)),
-    )
+    raise NotImplementedError()
