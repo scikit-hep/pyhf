@@ -106,7 +106,7 @@ def test_hypotest_q_mu(
 
     backends = [
         pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session(),float='float64'),
+        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session(), float='float64'),
         pyhf.tensor.pytorch_backend(float='float64'),
     ]
 
