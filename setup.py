@@ -21,11 +21,13 @@ extras_require['backends'] = sorted(
         + extras_require['minuit']
     )
 )
+extras_require['contrib'] = sorted(set(['matplotlib']))
 
 extras_require['test'] = sorted(
     set(
         extras_require['backends']
         + extras_require['xmlio']
+        + extras_require['contrib']
         + [
             'pyflakes',
             'pytest~=3.5',
@@ -33,6 +35,7 @@ extras_require['test'] = sorted(
             'pytest-mock',
             'pytest-benchmark[histogram]',
             'pytest-console-scripts',
+            'pytest-mpl',
             'pydocstyle',
             'coverage>=4.0',  # coveralls
             'papermill~=1.0',

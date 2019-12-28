@@ -30,7 +30,7 @@ We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/develop
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 
 ```
-pip install --ignore-installed -U -e .[complete]
+python -m pip install --ignore-installed -U -e .[complete]
 ```
 
 To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Black](https://github.com/psf/black) by running
@@ -46,16 +46,24 @@ This will run `black` over your code each time you attempt to make a commit and 
 You can run the unit tests (which should be fast!) via the following command.
 
 ```
-pytest --ignore=tests/test_notebooks.py
+python -m pytest --ignore=tests/test_notebooks.py
 ```
 
 Note: This ignores the notebook tests (which are run via [papermill](https://github.com/nteract/papermill) which run somewhat slow.
 Make sure to run the complete suite before submitting a PR
 
 ```
-pytest
+python -m pytest
 ```
 
 ## Making a pull request
 
 We try to follow [Conventional Commit](https://www.conventionalcommits.org/) for commit messages and PR titles. Since we merge PR's using squash commits, it's fine if the final commit messages (proposed in the PR body) follow this convention.
+
+## Generating Reference Visuals
+
+New baseline visuals can be generated using this command:
+
+```
+python -m pytest tests/contrib/test_viz.py --mpl-generate-path=tests/contrib/baseline
+```
