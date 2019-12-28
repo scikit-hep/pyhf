@@ -1,6 +1,7 @@
 """Utility Functions for model inference."""
 from .. import get_backend
 
+
 def pvals_from_distributions(value, dists):
     splusb_distr, bonly = dists
     tensorlib, _ = get_backend()

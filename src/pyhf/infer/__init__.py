@@ -5,7 +5,9 @@ from .utils import pvals_from_distributions
 from .. import get_backend
 from .asymptotics import AsymptoticCalculator
 from .toybased import ToyCalculator
+
 assert ToyCalculator
+
 
 def hypotest(
     poi_test,
@@ -114,7 +116,7 @@ def summarize_hypotest(teststat_value, dists, **kwargs):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        expval = b_only.expected_value(nsigma = 0)
+        expval = b_only.expected_value(nsigma=0)
         _returns.append(pvals_from_distributions(expval, dists)[-1])
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
