@@ -53,14 +53,14 @@ def generate_source_poisson(n_bins):
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
-bins = [50, 500]
+bins = [50, 100, 150]
 bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
 def test_hypotest_q_mu(
-    n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
+    n_bins, invert_order, tolerance={'numpy': 1e-4, 'tensors': 1e-04}
 ):
     """
     Check that the different backends all compute a test statistic
@@ -106,8 +106,8 @@ def test_hypotest_q_mu(
 
     backends = [
         pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()),
-        pyhf.tensor.pytorch_backend(),
+        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session(),float='float64'),
+        pyhf.tensor.pytorch_backend(float='float64'),
     ]
 
     test_statistic = []
@@ -139,7 +139,7 @@ def test_hypotest_q_mu(
                 tolerance['numpy'], numpy_ratio_delta_unity.tolist()
             )
         )
-        assert False
+        raise
     try:
         assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
     except AssertionError:
@@ -148,4 +148,4 @@ def test_hypotest_q_mu(
                 tolerance['tensors'], tensors_ratio_delta_unity.tolist()
             )
         )
-        assert False
+        raise

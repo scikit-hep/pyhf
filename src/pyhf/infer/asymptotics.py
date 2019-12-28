@@ -8,13 +8,6 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
     return pdf.expected_data(bestfit_nuisance_asimov)
 
-
-def distributions_from_asymptocics(sqrtqmuA_v):
-    splusb = AsymptoticTestStatDistribution(shift=-sqrtqmuA_v)
-    bonly = AsymptoticTestStatDistribution(shift=0.0)
-    return splusb, bonly
-
-
 class AsymptoticTestStatDistribution(object):
     def __init__(self, shift):
         self.shift = shift
@@ -47,7 +40,8 @@ class AsymptoticCalculator(object):
             poi_test, self.asimov_data, self.pdf, self.init_pars, self.par_bounds
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-        s_plus_b, b_only = distributions_from_asymptocics(self.sqrtqmuA_v)
+        s_plus_b = AsymptoticTestStatDistribution(shift=-self.sqrtqmuA_v)
+        b_only = AsymptoticTestStatDistribution(shift=0.0)
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):

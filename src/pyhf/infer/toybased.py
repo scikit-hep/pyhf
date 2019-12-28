@@ -22,7 +22,8 @@ class EmpiricalDistribution(object):
 
 
 class ToyCalculator(object):
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False):
+    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False, ntoys = 1000):
+        self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
@@ -30,7 +31,7 @@ class ToyCalculator(object):
 
     def distributions(self, poi_test):
         tensorlib, _ = get_backend()
-        sample_shape = (1000,)
+        sample_shape = (self.ntoys,)
 
         signal_pars = self.pdf.config.suggested_init()
         signal_pars[self.pdf.config.poi_index] = poi_test
@@ -44,13 +45,13 @@ class ToyCalculator(object):
 
         signal_qtilde = tensorlib.astensor(
             [
-                qmu(1.0, sample, self.pdf, signal_pars, self.par_bounds)
+                qmu(poi_test, sample, self.pdf, signal_pars, self.par_bounds)
                 for sample in signal_sample
             ]
         )
         bkg_qtilde = tensorlib.astensor(
             [
-                qmu(1.0, sample, self.pdf, bkg_pars, self.par_bounds)
+                qmu(poi_test, sample, self.pdf, bkg_pars, self.par_bounds)
                 for sample in bkg_sample
             ]
         )
