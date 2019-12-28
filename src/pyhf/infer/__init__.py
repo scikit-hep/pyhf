@@ -86,15 +86,14 @@ def hypotest(
     # TODO:
     # depending on what the parameter bounds on the POI are
     # this needs to be compared to qtilde or q distribution
-    qmu_v = qmu(poi_test, data, pdf, init_pars, par_bounds)
 
     if not calc:
         calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde)
 
-    dists = calc.distributions(poi_test)
-    transformed_teststat = calc.testvalue(qmu_v)
+    dists    = calc.distributions(poi_test)
+    teststat = calc.teststatistic(poi_test)
 
-    return summarize_hypotest(transformed_teststat, dists, **kwargs)
+    return summarize_hypotest(teststat, dists, **kwargs)
 
 
 def summarize_hypotest(teststat_value, dists, **kwargs):

@@ -50,7 +50,8 @@ class AsymptoticCalculator(object):
         s_plus_b, b_only = distributions_from_asymptocics(self.sqrtqmuA_v)
         return s_plus_b, b_only
 
-    def testvalue(self, qmu_v):
+    def teststatistic(self, poi_test):
+        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
         tensorlib, _ = get_backend()
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
         if self.qtilde:
