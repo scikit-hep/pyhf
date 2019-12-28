@@ -1,8 +1,8 @@
 """
-pyhf workspaces hold the three data items.
+pyhf workspaces hold the three data items:
 
 * the statistical model p(data|parameters)
-* the observed data (optional) 
+* the observed data (optional)
 * fit configurations ("measurements")
 """
 import logging
@@ -54,7 +54,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     def get_measurement(self, **config_kwargs):
         """
         Get (or create) a measurement object.
-        
+
         The following logic is used:
 
           1. if the poi name is given, create a measurement object for that poi
@@ -314,7 +314,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         """
         Return a new workspace specification with certain elements renamed.
 
-        This will not modify the original workspace. 
+        This will not modify the original workspace.
         The renamed workspace must also be a valid workspace.
 
         Args:
