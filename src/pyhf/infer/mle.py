@@ -59,5 +59,5 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
         init_pars,
         par_bounds,
         [(pdf.config.poi_index, poi_val)],
-        **kwargs
+        **kwargs,
     )
