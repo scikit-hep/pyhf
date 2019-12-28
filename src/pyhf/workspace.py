@@ -17,7 +17,11 @@ log = logging.getLogger(__name__)
 
 
 class Workspace(_ChannelSummaryMixin, dict):
-    """A JSON-serializable object that is built from an object that follows the `workspace.json` schema."""
+    """
+    A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` schema_.
+
+    .. _schema: https://scikit-hep.org/pyhf/likelihood.html#workspace
+    """
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
