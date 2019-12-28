@@ -53,7 +53,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
         """
-        Get (or create) a measurement objec.
+        Get (or create) a measurement object.
         
         The following logic is used:
 
