@@ -90,7 +90,7 @@ def hypotest(
     if not calc:
         calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde)
 
-    dists    = calc.distributions(poi_test)
+    dists = calc.distributions(poi_test)
     teststat = calc.teststatistic(poi_test)
 
     return summarize_hypotest(teststat, dists, **kwargs)
