@@ -22,7 +22,9 @@ class EmpiricalDistribution(object):
 
 
 class ToyCalculator(object):
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False, ntoys = 1000):
+    def __init__(
+        self, data, pdf, init_pars=None, par_bounds=None, qtilde=False, ntoys=1000
+    ):
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
