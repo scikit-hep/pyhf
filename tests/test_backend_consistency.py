@@ -118,11 +118,7 @@ def test_hypotest_q_mu(
         pyhf.set_backend(backend)
 
         q_mu = pyhf.infer.test_statistics.qmu(
-            1.0,
-            data,
-            pdf,
-            pdf.config.suggested_init(),
-            pdf.config.suggested_bounds(),
+            1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds(),
         )
         test_statistic.append(pyhf.tensorlib.tolist(q_mu))
 

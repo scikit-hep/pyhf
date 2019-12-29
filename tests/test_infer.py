@@ -86,4 +86,3 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     assert isinstance(result[2], type(tb.astensor(result[2])))
     assert len(result[3]) == 5
     assert check_uniform_type(result[3])
-

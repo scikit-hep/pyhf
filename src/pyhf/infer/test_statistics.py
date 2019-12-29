@@ -40,4 +40,4 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     qmu = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), qmu
     )[0]
-    return tensorlib.clip(qmu,0,max_value = None)
+    return tensorlib.clip(qmu, 0, max_value=None)
