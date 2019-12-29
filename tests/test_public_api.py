@@ -73,7 +73,6 @@ def test_hypotest(backend, model_setup):
         init_pars,
         model.config.suggested_bounds(),
         return_expected_set=True,
-        return_test_statistics=True,
     )
 
 

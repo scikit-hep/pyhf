@@ -60,7 +60,7 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     CLsb = 1 - tensorlib.normal_cdf(nullval)
     CLb = 1 - tensorlib.normal_cdf(altval)
     CLs = CLsb / CLb
-    return CLsb, CLb, CLs
+    return tensorlib.reshape(CLsb,(1,)), tensorlib.reshape(CLb,(1,)), tensorlib.reshape(CLs,(1,))
 
 
 def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
@@ -86,4 +86,4 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
     CLb = tensorlib.normal_cdf(nsigma)
     CLs = CLsb / CLb
-    return CLsb, CLb, CLs
+    return tensorlib.reshape(CLsb,(1,)), tensorlib.reshape(CLb,(1,)), tensorlib.reshape(CLs,(1,))

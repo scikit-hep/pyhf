@@ -87,28 +87,3 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     assert len(result[3]) == 5
     assert check_uniform_type(result[3])
 
-
-def test_hypotest_return_test_statistics(tmpdir, hypotest_args):
-    """
-    Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_test_statistics keyword arg is as expected
-    """
-    tb = pyhf.tensorlib
-
-    kwargs = {
-        'return_tail_probs': True,
-        'return_expected': True,
-        'return_expected_set': True,
-        'return_test_statistics': True,
-    }
-    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-    # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma, [q_mu, q_mu_Asimov]
-    assert len(list(result)) == 5
-    assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
-    assert check_uniform_type(result[1])
-    assert isinstance(result[2], type(tb.astensor(result[2])))
-    assert len(result[3]) == 5
-    assert check_uniform_type(result[3])
-    assert len(result[4]) == 2
-    assert check_uniform_type(result[4])

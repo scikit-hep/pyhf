@@ -62,7 +62,6 @@ def hypotest(pdf, data):
         return_tail_probs=True,
         return_expected=True,
         return_expected_set=True,
-        return_test_statistics=True,
     )
 
 
