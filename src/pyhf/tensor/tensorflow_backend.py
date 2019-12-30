@@ -74,18 +74,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
-            >>> compare = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
-            >>> with sess.as_default():
-            ...     sess.run(compare)
-            ...
-            array([9.], dtype=float32)
+            >>> t = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            >>> print(t)
+            tf.Tensor([9.], shape=(1,), dtype=float32)
 
         Args:
             predicate (`scalar`): The logical condition that determines which callable to evaluate
