@@ -126,4 +126,5 @@ jobs:
     - uses: actions/checkout@v1.2.0
     - name: Build Docker image
       run: |
-        docker build . --file docker/Dockerfile --tag pyhf:$GITHUB_SHA
+        docker build . --file docker/Dockerfile --tag pyhf/pyhf:$GITHUB_SHA
+        docker images
