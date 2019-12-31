@@ -1,7 +1,7 @@
 # Ignore everything
 **
 
-# Allow the following
+# Except the following
 !/.git
 !/docker/**
 !/src/**
