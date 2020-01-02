@@ -68,7 +68,7 @@ def test_get_measurement_fake(workspace_factory):
 def test_get_measurement_nonexist(workspace_factory):
     w = workspace_factory()
     with pytest.raises(pyhf.exceptions.InvalidMeasurement):
-        m = w.get_measurement(measurement_name='nonexistent_measurement')
+        w.get_measurement(measurement_name='nonexistent_measurement')
 
 
 def test_get_workspace_measurement_priority(workspace_factory):
@@ -96,7 +96,7 @@ def test_get_measurement_schema_validation(mocker, workspace_factory):
     w = workspace_factory()
     assert pyhf.utils.validate.call_count == 1
     assert pyhf.utils.validate.call_args[0][1] == 'workspace.json'
-    m = w.get_measurement()
+    w.get_measurement()
     assert pyhf.utils.validate.call_count == 2
     assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
 
@@ -146,6 +146,7 @@ def test_prune_nothing(workspace_factory):
         modifiers=['fake-modifier'],
         modifier_types=['fake-type'],
     )
+    assert new_ws
 
 
 def test_prune_channel(workspace_factory):
@@ -278,7 +279,7 @@ def test_combine_workspace_same_channels(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel2': 'channel3'})
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        combined = pyhf.Workspace.combine(ws, new_ws)
+        pyhf.Workspace.combine(ws, new_ws)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
 
@@ -291,8 +292,8 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
     new_ws = ws.rename(
         modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
     )
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        combined = pyhf.Workspace.combine(ws, new_ws)
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        pyhf.Workspace.combine(ws, new_ws)
 
 
 def test_combine_workspace_diff_version(workspace_factory):
@@ -317,8 +318,8 @@ def test_combine_workspace_diff_version(workspace_factory):
         },
     )
     new_ws.version = '0.0.0'
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        combined = pyhf.Workspace.combine(ws, new_ws)
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        pyhf.Workspace.combine(ws, new_ws)
 
 
 def test_combine_workspace(workspace_factory):
