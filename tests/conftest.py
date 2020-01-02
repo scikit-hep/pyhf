@@ -1,4 +1,3 @@
-import torch  # Solves "cannot load any more object with static TLS" (thread local storage) error
 import pytest
 import pyhf
 import tensorflow as tf
@@ -74,7 +73,9 @@ def backend(request):
 
     if skip_backend and (param_id in only_backends):
         raise ValueError(
-            "Must specify skip_{param} or only_{param} but not both!".format(param=pid)
+            "Must specify skip_{param} or only_{param} but not both!".format(
+                param=param_id
+            )
         )
 
     if skip_backend:
