@@ -1,3 +1,10 @@
+"""
+pyhf workspaces hold the three data items:
+
+* the statistical model p(data|parameters)
+* the observed data (optional)
+* fit configurations ("measurements")
+"""
 import logging
 import jsonpatch
 from . import exceptions
@@ -11,10 +18,11 @@ log = logging.getLogger(__name__)
 
 class Workspace(_ChannelSummaryMixin, dict):
     """
-    A JSON-serializable object that is built from an object that follows the `workspace.json` schema.
+    A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
     def __init__(self, spec, **config_kwargs):
+        """Workspaces hold the model, data and measurements."""
         super(Workspace, self).__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', None)
@@ -31,20 +39,25 @@ class Workspace(_ChannelSummaryMixin, dict):
             self.observations[obs['name']] = obs['data']
 
     def __eq__(self, other):
+        """Equality is defined as equal dict representations."""
         if not isinstance(other, Workspace):
             return False
         return dict(self) == dict(other)
 
     def __ne__(self, other):
+        """Negation of equality."""
         return not self == other
 
     def __repr__(self):
+        """Representation of the Workspace."""
         return object.__repr__(self)
 
     # NB: this is a wrapper function to validate the returned measurement object against the spec
     def get_measurement(self, **config_kwargs):
         """
-        Get (or create) a measurement object using the following logic:
+        Get (or create) a measurement object.
+
+        The following logic is used:
 
           1. if the poi name is given, create a measurement object for that poi
           2. if the measurement name is given, find the measurement for the given name
@@ -61,15 +74,14 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
+
         """
         m = self._get_measurement(**config_kwargs)
         utils.validate(m, 'measurement.json', self.version)
         return m
 
     def _get_measurement(self, **config_kwargs):
-        """
-        See `Workspace::get_measurement`.
-        """
+        """See `Workspace::get_measurement`."""
         poi_name = config_kwargs.get('poi_name')
         if poi_name:
             return {
@@ -118,6 +130,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
+
         """
         measurement = self.get_measurement(**config_kwargs)
         log.debug(
@@ -150,8 +163,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             :obj:`list`: data
-        """
 
+        """
         try:
             observed_data = sum(
                 (self.observations[c] for c in model.config.channels), []
@@ -178,8 +191,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         rename_measurements={},
     ):
         """
-        Return a new, pruned, renamed workspace specification. This will not
-        modify the original workspace.
+        Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
 
         Pruning removes pieces of the workspace whose name or type matches the
         user-provided lists. The pruned, renamed workspace must also be a valid
@@ -208,6 +220,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
+
         """
         newspec = {
             'channels': [
@@ -276,8 +289,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         self, modifiers=[], modifier_types=[], samples=[], channels=[], measurements=[]
     ):
         """
-        Return a new, pruned workspace specification. This will not modify the
-        original workspace.
+        Return a new, pruned workspace specification. This will not modify the original workspace.
 
         The pruned workspace must also be a valid workspace.
 
@@ -290,6 +302,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
+
         """
         return self._prune_and_rename(
             prune_modifiers=modifiers,
@@ -302,8 +315,8 @@ class Workspace(_ChannelSummaryMixin, dict):
     def rename(self, modifiers={}, samples={}, channels={}, measurements={}):
         """
         Return a new workspace specification with certain elements renamed.
-        This will not modify the original workspace.
 
+        This will not modify the original workspace.
         The renamed workspace must also be a valid workspace.
 
         Args:
@@ -314,6 +327,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
+
         """
         return self._prune_and_rename(
             rename_modifiers=modifiers,
@@ -325,8 +339,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     @classmethod
     def combine(cls, left, right):
         """
-        Return a new workspace specification that is the combination of the two
-        workspaces.
+        Return a new workspace specification that is the combination of the two workspaces.
 
         The new workspace must also be a valid workspace. A combination of
         workspaces is done by combining the set of:
@@ -352,6 +365,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
+
         """
         common_channels = set(left.channels).intersection(right.channels)
         if common_channels:
