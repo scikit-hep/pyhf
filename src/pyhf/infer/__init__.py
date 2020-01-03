@@ -27,7 +27,6 @@ def hypotest(
         return_tail_probs (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
         return_expected (bool): Bool for returning :math:`\textrm{CL}_{\textrm{exp}}`
         return_expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\textrm{CL}_{\textrm{exp}}` --- the "Brazil band"
-        return_test_statistics (bool): Bool for returning :math:`q_{\mu}` and :math:`q_{\mu,A}`
 
     Returns:
         Tuple of Floats and lists of Floats:
@@ -74,8 +73,6 @@ def hypotest(
 
             for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when ``return_expected_set`` is ``True``.
 
-            - :math:`\left[q_{\mu}, q_{\mu,A}\right]`: The test statistics for the observed and Asimov datasets respectively. Only returned when ``return_test_statistics`` is ``True``.
-
     """
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
@@ -84,14 +81,10 @@ def hypotest(
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-    qmu_v = tensorlib.clip(
-        qmu(poi_test, data, pdf, init_pars, par_bounds), 0, max_value=None
-    )
+    qmu_v = qmu(poi_test, data, pdf, init_pars, par_bounds)
     sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-    qmuA_v = tensorlib.clip(
-        qmu(poi_test, asimov_data, pdf, init_pars, par_bounds), 0, max_value=None
-    )
+    qmuA_v = qmu(poi_test, asimov_data, pdf, init_pars, par_bounds)
     sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
     CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=qtilde)
@@ -109,8 +102,6 @@ def hypotest(
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
-    if kwargs.get('return_test_statistics'):
-        _returns.append([qmu_v, qmuA_v])
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
