@@ -53,6 +53,7 @@ extensions = [
     'nbsphinx',
     'm2r',
     'sphinx_issues',
+    'sphinx_copybutton',
     'xref',
 ]
 
