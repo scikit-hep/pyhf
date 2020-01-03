@@ -18,9 +18,7 @@ log = logging.getLogger(__name__)
 
 class Workspace(_ChannelSummaryMixin, dict):
     """
-    A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` schema_.
-
-    .. _schema: https://scikit-hep.org/pyhf/likelihood.html#workspace
+    A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
     def __init__(self, spec, **config_kwargs):
