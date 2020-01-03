@@ -22,7 +22,7 @@
 
 .. raw:: html
 
-   <a class="github-fork-ribbon right-top fixed" href="https://github.com/scikit-hep/pyhf/fork" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+   <a class="github-fork-ribbon right-top fixed" href="https://github.com/scikit-hep/pyhf/" data-ribbon="Check us out on GitHub" title="Check us out on GitHub">Check us out on GitHub</a>
 
 .. mdinclude:: ../README.md
 
