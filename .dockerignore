@@ -2,6 +2,7 @@
 **
 
 # Except the following
+!/.git/**
 !/docker/**
 !/src/**
 !/LICENSE
