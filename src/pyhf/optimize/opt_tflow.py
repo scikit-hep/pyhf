@@ -5,19 +5,6 @@ from .autodiff import AutoDiffOptimizerMixin
 import tensorflow as tf
 
 
-def _eval_func(op, argop, dataop, data):
-    def func(pars):
-        tensorlib, _ = get_backend()
-        pars_as_list = tensorlib.tolist(pars) if isinstance(pars, tf.Tensor) else pars
-        data_as_list = tensorlib.tolist(data) if isinstance(data, tf.Tensor) else data
-        value = tensorlib.session.run(
-            op, feed_dict={argop: pars_as_list, dataop: data_as_list}
-        )
-        return value
-
-    return func
-
-
 class tflow_optimizer(AutoDiffOptimizerMixin):
     """Tensorflow Optimizer Backend."""
 
@@ -49,24 +36,18 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
         variable_init = all_init[variable_idx]
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
-        data_placeholder = tf.placeholder(
-            tensorlib.dtypemap['float'], (pdf.config.nmaindata + pdf.config.nauxdata,)
-        )
-        variable_pars_placeholder = tf.placeholder(
-            tensorlib.dtypemap['float'], (pdf.config.npars - len(fixed_vals),)
-        )
-
         tv = _TensorViewer([fixed_idx, variable_idx])
 
+        data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
-        full_pars = tv.stitch([fixed_values_tensor, variable_pars_placeholder])
-
-        nll = objective(full_pars, data_placeholder, pdf)
-        nllgrad = tf.identity(tf.gradients(nll, variable_pars_placeholder)[0])
-
-        func = _eval_func(
-            [nll, nllgrad], variable_pars_placeholder, data_placeholder, data,
-        )
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            with tf.GradientTape() as tape:
+                tape.watch(pars)
+                constrained_pars = tv.stitch([fixed_values_tensor, pars])
+                constr_nll = objective(constrained_pars, data, pdf)
+            grad = tape.gradient(constr_nll, pars).values
+            return constr_nll.numpy(), grad
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds
