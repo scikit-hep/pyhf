@@ -15,6 +15,7 @@ class _OptimizerRetriever(object):
         elif name == 'jax_optimizer':
             try:
                 from .opt_jax import jax_optimizer
+
                 assert jax_optimizer
                 self.jax_optimizer = jax_optimizer
                 return jax_optimizer
