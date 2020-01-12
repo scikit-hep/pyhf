@@ -715,7 +715,6 @@ class Model(object):
             if (
                 not self.batch_size
             ):  # force to be not scalar, should we changed with #522
-                # print(result)
                 return tensorlib.reshape(result, (1,))
             return result
         except:

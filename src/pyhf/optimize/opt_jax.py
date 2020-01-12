@@ -40,17 +40,13 @@ class jax_optimizer(AutoDiffOptimizerMixin):
 
         data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
-
         def final_objective(pars):
             pars = tensorlib.astensor(pars)
             constrained_pars = tv.stitch([fixed_values_tensor, pars])
             return objective(constrained_pars, data, pdf)[0]
-
         jitted_objective_and_grad = jax.jit(jax.value_and_grad(final_objective))
         jitted_objective_and_grad(pdf.config.suggested_init())
-
         def func(pars):
-            a, b = jitted_objective_and_grad(pars)
-            return a.reshape((1,)), tensorlib.stack(b)
-
+            a,b = jitted_objective_and_grad(pars)
+            return a.reshape((1,)),b
         return tv, fixed_values_tensor, func, variable_init, variable_bounds
