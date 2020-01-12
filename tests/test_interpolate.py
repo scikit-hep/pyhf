@@ -73,14 +73,14 @@ def test_interpolator_subscription(interpcode, random_histosets_alphasets_pair):
     # inject into our interpolator class
     interpolator_cls = pyhf.interpolators.get(interpcode)
     with mock.patch('{0:s}._precompute'.format(interpolator_cls.__module__)) as m:
-        interpolator = interpolator_cls(histogramssets.tolist(), subscribe=False)
+        interpolator_cls(histogramssets.tolist(), subscribe=False)
         assert m.call_count == 1
         assert m not in pyhf.events.__events.get(ename, [])
         pyhf.events.trigger(ename)()
         assert m.call_count == 1
 
     with mock.patch('{0:s}._precompute'.format(interpolator_cls.__module__)) as m:
-        interpolator = interpolator_cls(histogramssets.tolist(), subscribe=True)
+        interpolator_cls(histogramssets.tolist(), subscribe=True)
         assert m.call_count == 1
         assert m in pyhf.events.__events.get(ename, [])
         pyhf.events.trigger(ename)()
