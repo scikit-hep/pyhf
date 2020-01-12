@@ -60,6 +60,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
             a, b = jitted_objective_and_grad(
                 pars, data, fixed_values_tensor, pdf, objective, tuple(fixed_idx),tuple(variable_idx)
             )
-            return a.reshape((1,)), b
+            return a,b
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds
