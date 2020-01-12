@@ -1,4 +1,4 @@
-"""PyTorch Optimizer Backend."""
+"""JAX Optimizer Backend."""
 
 from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
