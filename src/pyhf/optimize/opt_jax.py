@@ -51,7 +51,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
             pars = tensorlib.astensor(pars)
             constrained_pars = tv.stitch([fixed_values_tensor, pars])
             return scalar_objective(constrained_pars,data)
-        jitted_objective_and_grad = jax.value_and_grad(jax.jit(final_objective))
+        jitted_objective_and_grad = jax.jit(jax.value_and_grad(final_objective))
         def func(pars):
             a,b = jitted_objective_and_grad(pars)
             return a.reshape((1,)),b
