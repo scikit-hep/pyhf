@@ -1,5 +1,4 @@
 import pyhf
-import tensorflow as tf
 import numpy as np
 import pytest
 
@@ -106,16 +105,13 @@ def test_hypotest_q_mu(
 
     backends = [
         pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()),
+        pyhf.tensor.tensorflow_backend(),
         pyhf.tensor.pytorch_backend(),
         pyhf.tensor.jax_backend(),
     ]
 
     test_statistic = []
     for backend in backends:
-        if backend.name == 'tensorflow':
-            tf.reset_default_graph()
-            backend.session = tf.compat.v1.Session()
         pyhf.set_backend(backend)
 
         q_mu = pyhf.infer.test_statistics.qmu(

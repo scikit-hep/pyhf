@@ -68,9 +68,7 @@ def cls(
     if backend in ['pytorch', 'torch']:
         set_backend(tensor.pytorch_backend(float='float64'))
     elif backend in ['tensorflow', 'tf']:
-        from tensorflow.compat.v1 import Session
-
-        set_backend(tensor.tensorflow_backend(session=Session(), float='float64'))
+        set_backend(tensor.tensorflow_backend(float='float64'))
     elif backend in ['jax']:
         set_backend(tensor.jax_backend())
     tensorlib, _ = get_backend()

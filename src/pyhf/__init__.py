@@ -28,15 +28,13 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, _session=None):
+def set_backend(backend, custom_optimizer=None):
     """
     Set the backend and the associated optimizer
 
     Example:
         >>> import pyhf
-        >>> import tensorflow as tf
-        >>> sess = tf.compat.v1.Session()
-        >>> pyhf.set_backend("tensorflow", _session=sess)
+        >>> pyhf.set_backend("tensorflow")
         >>> pyhf.tensorlib.name
         'tensorflow'
         >>> pyhf.set_backend(b"pytorch")
@@ -49,10 +47,6 @@ def set_backend(backend, custom_optimizer=None, _session=None):
     Args:
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
-        _session (|tf.compat.v1.Session|_): TensorFlow v1 compatible Session to use when the :code:`"tensorflow"` backend API is used
-
-    .. |tf.compat.v1.Session| replace:: ``tf.compat.v1.Session``
-    .. _tf.compat.v1.Session: https://www.tensorflow.org/api_docs/python/tf/compat/v1/Session
 
     Returns:
         None
@@ -64,18 +58,14 @@ def set_backend(backend, custom_optimizer=None, _session=None):
         if isinstance(backend, bytes):
             backend = backend.decode("utf-8")
         backend = backend.lower()
-        # Needed while still using TF v1.0 API
-        if backend == "tensorflow":
-            backend = tensor.tensorflow_backend(session=_session)
-        else:
-            try:
-                backend = getattr(tensor, "{0:s}_backend".format(backend))()
-            except TypeError:
-                raise InvalidBackend(
-                    "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                        backend
-                    )
+        try:
+            backend = getattr(tensor, "{0:s}_backend".format(backend))()
+        except TypeError:
+            raise InvalidBackend(
+                "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                    backend
                 )
+            )
 
     _name_supported = getattr(tensor, "{0:s}_backend".format(backend.name))
     if _name_supported:
@@ -94,8 +84,6 @@ def set_backend(backend, custom_optimizer=None, _session=None):
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
-        if tensorlib.name == 'tensorflow':
-            tensorlib_changed |= bool(backend.session != tensorlib.session)
     elif backend.name == 'pytorch':
         new_optimizer = (
             custom_optimizer

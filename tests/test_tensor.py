@@ -1,6 +1,7 @@
 import pytest
 import logging
 import numpy as np
+import tensorflow as tf
 import pyhf
 from pyhf.simplemodels import hepdata_like
 
@@ -147,13 +148,13 @@ def test_shape(backend):
     assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
-    with pytest.raises((ValueError, RuntimeError, TypeError)):
+    with pytest.raises((ValueError, RuntimeError, tf.errors.InvalidArgumentError)):
         _ = tb.astensor([1, 2]) + tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError, TypeError)):
+    with pytest.raises((ValueError, RuntimeError, tf.errors.InvalidArgumentError)):
         _ = tb.astensor([1, 2]) - tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError, TypeError)):
+    with pytest.raises((ValueError, RuntimeError, tf.errors.InvalidArgumentError)):
         _ = tb.astensor([1, 2]) < tb.astensor([3, 4, 5])
-    with pytest.raises((ValueError, RuntimeError, TypeError)):
+    with pytest.raises((ValueError, RuntimeError, tf.errors.InvalidArgumentError)):
         _ = tb.astensor([1, 2]) > tb.astensor([3, 4, 5])
     with pytest.raises((ValueError, RuntimeError, TypeError)):
         tb.conditional(
@@ -294,18 +295,6 @@ def test_tensor_list_conversion(backend):
     # doesn't break in session.run
     assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
     assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
-
-
-def test_tensorflow_tolist_nosession():
-    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
-    tb = pyhf.tensorlib
-
-    # this isn't covered by test_list_to_list since we need to check if it's ok
-    # without a session explicitly
-    assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
-    with pytest.raises(RuntimeError):
-        # but a tensor shouldn't
-        assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
 
 
 def test_pdf_eval(backend):
