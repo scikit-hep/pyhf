@@ -18,7 +18,7 @@ Does ``pyhf`` support Python 2?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 No.
 Like the rest of the Python community, as of January 2020 ``pyhf`` no longer supports Python 2.
-The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.2 <https://pypi.org/project/pyhf/0.3.2/>`__.
+The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.3 <https://pypi.org/project/pyhf/0.3.3/>`__.
 
 I only have access to Python 2. How can I use ``pyhf``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
