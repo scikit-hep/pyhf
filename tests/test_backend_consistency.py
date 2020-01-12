@@ -1,5 +1,4 @@
 import pyhf
-import tensorflow as tf
 import numpy as np
 import pytest
 

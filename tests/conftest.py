@@ -1,6 +1,5 @@
 import pytest
 import pyhf
-import tensorflow as tf
 import sys
 
 
