@@ -6,7 +6,7 @@ from .autodiff import AutoDiffOptimizerMixin
 import jax
 
 
-def final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
+def _final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
     tensorlib, _ = get_backend()
     tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
@@ -14,8 +14,8 @@ def final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variabl
     return objective(constrained_pars, data, model)[0]
 
 
-jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(final_objective), static_argnums=(3, 4, 5, 6)
+_jitted_objective_and_grad = jax.jit(
+    jax.value_and_grad(_final_objective), static_argnums=(3, 4, 5, 6)
 )
 
 
@@ -57,7 +57,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return jitted_objective_and_grad(
+            return _jitted_objective_and_grad(
                 pars,
                 data,
                 fixed_values_tensor,
