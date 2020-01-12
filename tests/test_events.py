@@ -1,4 +1,3 @@
-import pytest
 import pyhf.events as events
 import mock
 

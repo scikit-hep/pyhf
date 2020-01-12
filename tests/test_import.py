@@ -209,19 +209,7 @@ def test_import_histosys():
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
-    data = [
-        binvalue
-        for k in pdf.spec['channels']
-        for binvalue in next(
-            obs for obs in parsed_xml['observations'] if obs['name'] == k['name']
-        )['data']
-    ] + pdf.config.auxdata
-
     channels = {channel['name']: channel for channel in pdf.spec['channels']}
-    samples = {
-        channel['name']: [sample['name'] for sample in channel['samples']]
-        for channel in pdf.spec['channels']
-    }
 
     assert channels['channel2']['samples'][0]['modifiers'][0]['type'] == 'lumi'
     assert channels['channel2']['samples'][0]['modifiers'][1]['type'] == 'histosys'
@@ -263,19 +251,7 @@ def test_import_shapesys():
     }
     pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
 
-    data = [
-        binvalue
-        for k in pdf.spec['channels']
-        for binvalue in next(
-            obs for obs in parsed_xml['observations'] if obs['name'] == k['name']
-        )['data']
-    ] + pdf.config.auxdata
-
     channels = {channel['name']: channel for channel in pdf.spec['channels']}
-    samples = {
-        channel['name']: [sample['name'] for sample in channel['samples']]
-        for channel in pdf.spec['channels']
-    }
 
     assert channels['channel1']['samples'][1]['modifiers'][0]['type'] == 'lumi'
     assert channels['channel1']['samples'][1]['modifiers'][1]['type'] == 'shapesys'

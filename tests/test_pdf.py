@@ -171,7 +171,6 @@ def test_pdf_integration_staterror(backend):
         ]
     }
     pdf = pyhf.Model(spec)
-    par = pdf.config.par_slice('stat_firstchannel')
     par_set = pdf.config.param_set('stat_firstchannel')
     tensorlib, _ = backend
     uncerts = tensorlib.astensor([[12.0, 12.0], [5.0, 5.0]])
@@ -600,4 +599,4 @@ def test_sample_wrong_bins():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pdf = pyhf.Model(spec)
+        pyhf.Model(spec)
