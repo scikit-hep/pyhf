@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
     long_description = readme_md.read()
 
 extras_require = {
-    'tensorflow': ['tensorflow~=1.15', 'tensorflow-probability~=0.8', 'numpy~=1.16'],
+    'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
     'xmlio': ['uproot'],
@@ -78,7 +78,7 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 setup(
     name='pyhf',
-    version='0.3.2',
+    version='0.3.3',
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
     long_description_content_type='text/markdown',
