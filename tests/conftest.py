@@ -1,7 +1,5 @@
-import torch  # Solves "cannot load any more object with static TLS" (thread local storage) error
 import pytest
 import pyhf
-import tensorflow as tf
 import sys
 
 
@@ -45,7 +43,7 @@ def reset_backend():
         (pyhf.tensor.numpy_backend(), None),
         (pyhf.tensor.pytorch_backend(), None),
         (pyhf.tensor.pytorch_backend(float='float64', int='int64'), None),
-        (pyhf.tensor.tensorflow_backend(session=tf.compat.v1.Session()), None),
+        (pyhf.tensor.tensorflow_backend(), None),
         (
             pyhf.tensor.numpy_backend(poisson_from_normal=True),
             pyhf.optimize.minuit_optimizer(),
@@ -74,7 +72,9 @@ def backend(request):
 
     if skip_backend and (param_id in only_backends):
         raise ValueError(
-            "Must specify skip_{param} or only_{param} but not both!".format(param=pid)
+            "Must specify skip_{param} or only_{param} but not both!".format(
+                param=param_id
+            )
         )
 
     if skip_backend:
@@ -91,9 +91,6 @@ def backend(request):
 
     # actual execution here, after all checks is done
     pyhf.set_backend(*request.param)
-    if isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        tf.compat.v1.reset_default_graph()
-        pyhf.tensorlib.session = tf.compat.v1.Session()
 
     yield request.param
 

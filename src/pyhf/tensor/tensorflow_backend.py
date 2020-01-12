@@ -10,7 +10,6 @@ class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
 
     def __init__(self, **kwargs):
-        self.session = kwargs.get('session')
         self.name = 'tensorflow'
         self.dtypemap = {
             'float': getattr(tf, kwargs.get('float', 'float32')),
@@ -24,15 +23,11 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.clip(a, -1, 1))
-            ...
-            array([-1., -1.,  0.,  1.,  1.], dtype=float32)
+            >>> t = pyhf.tensorlib.clip(a, -1, 1)
+            >>> print(t)
+            tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float32)
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -55,16 +50,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.tile(a, (1, 2)))
-            ...
-            array([[1., 1.],
-                   [2., 2.]], dtype=float32)
+            >>> t = pyhf.tensorlib.tile(a, (1, 2))
+            >>> print(t)
+            tf.Tensor(
+            [[1. 1.]
+             [2. 2.]], shape=(2, 2), dtype=float32)
 
         Args:
             tensor_in (`Tensor`): The tensor to be repeated
@@ -82,18 +74,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
-            >>> compare = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
-            >>> with sess.as_default():
-            ...     sess.run(compare)
-            ...
-            array([9.], dtype=float32)
+            >>> t = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            >>> print(t)
+            tf.Tensor([9.], shape=(1,), dtype=float32)
 
         Args:
             predicate (`scalar`): The logical condition that determines which callable to evaluate
@@ -108,26 +95,8 @@ class tensorflow_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return self.session.run(tensor_in).tolist()
-        except AttributeError as err:
-            if isinstance(tensor_in, list):
-                return tensor_in
-            if "no attribute 'run'" in str(err):
-                raise RuntimeError(
-                    'evaluation of tensor requested via .tolist() but no session defined'
-                )
-            raise
-        except RuntimeError as err:
-            # if no tensor operations have been added to the graph, but we want
-            # to pass-through a list, then we need to catch the runtime error
-            # First, see if the input tensor is just a vanilla python list and
-            # return it instead
-            if "graph is empty" in str(err) and isinstance(tensor_in, list):
-                return tensor_in
-            raise
-        except TypeError:
-            # if a tensor operation has been added to the graph, but we want to
-            # pass-through a list, we need to catch the type error
+            return tensor_in.numpy().tolist()
+        except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
@@ -174,7 +143,8 @@ class tensorflow_backend(object):
         tensor = tensor_in
         # If already a tensor then done
         try:
-            tensor.op
+            # Use a tensor attribute that isn't meaningless when eager execution is enabled
+            tensor.device
         except AttributeError:
             tensor = tf.convert_to_tensor(tensor_in)
             # Ensure non-empty tensor shape for consistency
@@ -234,7 +204,31 @@ class tensorflow_backend(object):
         return tf.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return tf.compat.v2.where(mask, tensor_in_1, tensor_in_2)
+        """
+        Apply a boolean selection mask to the elements of the input tensors.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.where(
+            ...     pyhf.tensorlib.astensor([1, 0, 1], dtype='bool'),
+            ...     pyhf.tensorlib.astensor([1, 1, 1]),
+            ...     pyhf.tensorlib.astensor([2, 2, 2]),
+            ... )
+            >>> print(t)
+            tf.Tensor([1. 2. 1.], shape=(3,), dtype=float32)
+
+        Args:
+            mask (bool): Boolean mask (boolean or tensor object of booleans)
+            tensor_in_1 (Tensor): Tensor object
+            tensor_in_2 (Tensor): Tensor object
+
+        Returns:
+            TensorFlow Tensor: The result of the mask being applied to the tensors.
+
+        """
+        return tf.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -256,15 +250,15 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            >>> tf.Session().run(pyhf.tensorlib.simple_broadcast(
+            >>> pyhf.set_backend("tensorflow")
+            >>> b = pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
-            ...   pyhf.tensorlib.astensor([5, 6, 7])))
-            [array([1., 1., 1.], dtype=float32), array([2., 3., 4.], dtype=float32), array([5., 6., 7.], dtype=float32)]
+            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            >>> print([str(t) for t in b]) # doctest: +NORMALIZE_WHITESPACE
+            ['tf.Tensor([1. 1. 1.], shape=(3,), dtype=float32)',
+             'tf.Tensor([2. 3. 4.], shape=(3,), dtype=float32)',
+             'tf.Tensor([5. 6. 7.], shape=(3,), dtype=float32)']
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -315,20 +309,15 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson_logpdf(5., 6.))
-            ...
-            -1.8286943
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
+            >>> print(t)
+            tf.Tensor(-1.8286943, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson_logpdf(values, rates))
-            ...
-            array([-1.8286943, -2.086854 ], dtype=float32)
+            >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
+            >>> print(t)
+            tf.Tensor([-1.8286943 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -349,20 +338,15 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson(5., 6.))
-            ...
-            0.16062315
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.poisson(5., 6.)
+            >>> print(t)
+            tf.Tensor(0.16062315, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.poisson(values, rates))
-            ...
-            array([0.16062315, 0.12407687], dtype=float32)
+            >>> t = pyhf.tensorlib.poisson(values, rates)
+            >>> print(t)
+            tf.Tensor([0.16062315 0.12407687], shape=(2,), dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -383,21 +367,16 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal_logpdf(0.5, 0., 1.))
-            ...
-            -1.0439385
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.normal_logpdf(0.5, 0., 1.)
+            >>> print(t)
+            tf.Tensor(-1.0439385, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal_logpdf(values, means, sigmas))
-            ...
-            array([-1.0439385, -0.7661075], dtype=float32)
+            >>> t = pyhf.tensorlib.normal_logpdf(values, means, sigmas)
+            >>> print(t)
+            tf.Tensor([-1.0439385 -0.7661075], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -418,21 +397,16 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            ...
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal(0.5, 0., 1.))
-            ...
-            0.35206532
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.normal(0.5, 0., 1.)
+            >>> print(t)
+            tf.Tensor(0.35206532, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
-            >>> with sess.as_default():
-            ...     sess.run(pyhf.tensorlib.normal(values, means, sigmas))
-            ...
-            array([0.35206532, 0.46481887], dtype=float32)
+            >>> t = pyhf.tensorlib.normal(values, means, sigmas)
+            >>> print(t)
+            tf.Tensor([0.35206532 0.46481887], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -451,19 +425,14 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.normal_cdf(0.8))
-            ...
-            0.7881446
+            >>> pyhf.set_backend("tensorflow")
+            >>> t = pyhf.tensorlib.normal_cdf(0.8)
+            >>> print(t)
+            tf.Tensor(0.7881446, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
-            >>> with sess.as_default():
-            ...   sess.run(pyhf.tensorlib.normal_cdf(values))
-            ...
-            array([0.7881446 , 0.97724986], dtype=float32)
+            >>> t = pyhf.tensorlib.normal_cdf(values)
+            >>> print(t)
+            tf.Tensor([0.7881446  0.97724986], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -484,17 +453,13 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
-            >>> with sess.as_default():
-            ...   sess.run(poissons.log_prob(values))
-            ...
-            array([-1.7403021, -2.086854 ], dtype=float32)
+            >>> t = poissons.log_prob(values)
+            >>> print(t)
+            tf.Tensor([-1.7403021 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
@@ -511,18 +476,14 @@ class tensorflow_backend(object):
 
         Example:
             >>> import pyhf
-            >>> import tensorflow as tf
-            >>> sess = tf.compat.v1.Session()
-            ...
-            >>> pyhf.set_backend("tensorflow", _session=sess)
+            >>> pyhf.set_backend("tensorflow")
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
-            >>> with sess.as_default():
-            ...   sess.run(normals.log_prob(values))
-            ...
-            array([-1.4189385, -2.2257915], dtype=float32)
+            >>> t = normals.log_prob(values)
+            >>> print(t)
+            tf.Tensor([-1.4189385 -2.2257915], shape=(2,), dtype=float32)
 
         Args:
             mu (`tensor` or `float`): The mean of the Normal distribution

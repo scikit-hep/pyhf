@@ -68,9 +68,7 @@ def cls(
     if backend in ['pytorch', 'torch']:
         set_backend(tensor.pytorch_backend(float='float64'))
     elif backend in ['tensorflow', 'tf']:
-        from tensorflow.compat.v1 import Session
-
-        set_backend(tensor.tensorflow_backend(session=Session(), float='float64'))
+        set_backend(tensor.tensorflow_backend(float='float64'))
     tensorlib, _ = get_backend()
 
     optconf = {k: v for item in optconf for k, v in item.items()}
