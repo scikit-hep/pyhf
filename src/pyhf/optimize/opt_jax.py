@@ -7,7 +7,7 @@ import jax
 
 
 class jax_optimizer(AutoDiffOptimizerMixin):
-    """PyTorch Optimizer Backend."""
+    """JAX Optimizer Backend."""
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
