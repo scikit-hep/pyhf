@@ -264,8 +264,6 @@ def test_export_sample(mocker, spec):
     channelspec = spec['channels'][0]
     channelname = channelspec['name']
     samplespec = channelspec['samples'][1]
-    samplename = samplespec['name']
-    sampledata = samplespec['data']
 
     mocker.patch('pyhf.writexml.build_modifier', return_value=ET.Element("Modifier"))
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
@@ -292,7 +290,7 @@ def test_export_sample_zerodata(mocker, spec):
     # make sure no RuntimeWarning, https://stackoverflow.com/a/45671804
     with pytest.warns(None) as record:
         for modifierspec in samplespec['modifiers']:
-            modifier = pyhf.writexml.build_modifier(
+            pyhf.writexml.build_modifier(
                 {'measurements': [{'config': {'parameters': []}}]},
                 modifierspec,
                 channelname,
@@ -309,7 +307,6 @@ def test_export_sample_zerodata(mocker, spec):
 )
 def test_export_channel(mocker, spec):
     channelspec = spec['channels'][0]
-    channelname = channelspec['name']
 
     mocker.patch('pyhf.writexml.build_data', return_value=ET.Element("Data"))
     mocker.patch('pyhf.writexml.build_sample', return_value=ET.Element("Sample"))
