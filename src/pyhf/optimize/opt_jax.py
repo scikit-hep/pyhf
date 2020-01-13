@@ -66,7 +66,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            a, b = _jitted_objective_and_grad(
+            objective, grad = _jitted_objective_and_grad(
                 pars,
                 data,
                 fixed_values_tensor,
