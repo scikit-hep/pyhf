@@ -16,7 +16,6 @@ log = logging.getLogger(__name__)
 @click.group(name='infer')
 def cli():
     """Infererence CLI group."""
-    pass
 
 
 @cli.command()

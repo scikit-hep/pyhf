@@ -21,7 +21,6 @@ def _ensure_dirs(path):
 @click.group(name='rootio')
 def cli():
     """ROOT I/O CLI group."""
-    pass
 
 
 @cli.command()

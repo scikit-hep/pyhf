@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 @click.group(name='spec')
 def cli():
     """Spec CLI group."""
-    pass
 
 
 @cli.command()
