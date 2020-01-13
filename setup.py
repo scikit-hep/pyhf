@@ -75,7 +75,7 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 setup(
     name='pyhf',
-    version='0.3.4',
+    version='0.4.0',
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
     long_description_content_type='text/markdown',
