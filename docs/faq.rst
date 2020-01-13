@@ -17,8 +17,12 @@ For more information see :code:`pyhf cls --help`.
 Does ``pyhf`` support Python 2?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 No.
-Like the rest of the Python community, as of January 2020 ``pyhf`` no longer supports Python 2.
-The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.4 <https://pypi.org/project/pyhf/0.3.4/>`__.
+Like the rest of the Python community, as of January 2020 the latest releases of ``pyhf`` no longer support Python 2.
+The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.4 <https://pypi.org/project/pyhf/0.3.4/>`__, which can be installed with
+
+    .. code-block:: console
+
+        python -m pip install pyhf~=0.3
 
 I only have access to Python 2. How can I use ``pyhf``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
