@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 @click.version_option(version=__version__)
 def pyhf():
     """Top-level CLI entrypoint."""
-    pass
 
 
 # pyhf.add_command(rootio.cli)
