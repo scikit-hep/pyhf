@@ -90,6 +90,10 @@ def set_backend(backend, custom_optimizer=None):
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
+    elif backend.name == 'jax':
+        new_optimizer = (
+            custom_optimizer if custom_optimizer else optimize.jax_optimizer()
+        )
     else:
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
