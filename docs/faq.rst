@@ -32,7 +32,7 @@ As Python 2 is not supported it is suggested that you setup a Python 3 runtime o
 If you're using a cluster, talk with your system administrators to get their help in doing so.
 If you are unable to get a Python 3 runtime, versioned Docker images of ``pyhf`` are distributed through `Docker Hub <https://hub.docker.com/r/pyhf/pyhf>`__.
 
-Once you have Python 3 installed, see the `installation <installation.html>`__ page to get started.
+Once you have Python 3 installed, see the :ref:`installation` page to get started.
 
 Troubleshooting
 ---------------
