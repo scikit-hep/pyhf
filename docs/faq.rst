@@ -23,7 +23,7 @@ The last release of ``pyhf`` that was compatible with Python 2.7 is `v0.3.4 <htt
 I only have access to Python 2. How can I use ``pyhf``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``pyhf`` should be able to be used as a standalone step in any analysis, and its environment need not be the same as the rest of the analysis.
+It is recommended that ``pyhf`` is used as a standalone step in any analysis, and its environment need not be the same as the rest of the analysis.
 As Python 2 is not supported it is suggested that you setup a Python 3 runtime on whatever machine you're using.
 If you're using a cluster, talk with your system administrators to get their help in doing so.
 If you are unable to get a Python 3 runtime, versioned Docker images of ``pyhf`` are distributed through `Docker Hub <https://hub.docker.com/r/pyhf/pyhf>`__.
