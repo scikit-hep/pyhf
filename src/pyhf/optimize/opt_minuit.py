@@ -18,7 +18,7 @@ class minuit_optimizer(object):
             verbose (`bool`): print verbose output during minimization
         
         """
-        self.verbose = 0
+        self.verbose = verbose
         self.ncall = ncall
         self.errordef = errordef
         self.steps = steps
