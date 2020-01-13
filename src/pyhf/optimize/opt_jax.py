@@ -75,6 +75,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
                 tuple(fixed_idx),
                 tuple(variable_idx),
             )
-            return onp.asarray(a), onp.asarray(b)
+            return onp.asarray(objective), onp.asarray(grad)
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds
