@@ -11,6 +11,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md
 extras_require = {
     'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
     'torch': ['torch~=1.2'],
+    'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
     'xmlio': ['uproot'],
     'minuit': ['iminuit'],
 }
@@ -18,6 +19,7 @@ extras_require['backends'] = sorted(
     set(
         extras_require['tensorflow']
         + extras_require['torch']
+        + extras_require['jax']
         + extras_require['minuit']
     )
 )

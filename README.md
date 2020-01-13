@@ -56,6 +56,7 @@ Computational Backends:
 - [x] NumPy
 - [x] PyTorch
 - [x] TensorFlow
+- [x] JAX
 
 Available Optimizers
 
