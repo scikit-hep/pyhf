@@ -89,13 +89,22 @@ def test_pdf_expected_data_by_sample(backend):
     pdf = pyhf.simplemodels.hepdata_like(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
-    assert tb.tolist(pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()))) == [60]
-    d = dict(zip(
-        pdf.config.samples,
-        tb.tolist(pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()),return_by_sample = True))
-    ))
+    assert tb.tolist(
+        pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()))
+    ) == [60]
+    d = dict(
+        zip(
+            pdf.config.samples,
+            tb.tolist(
+                pdf.main_model.expected_data(
+                    tb.astensor(pdf.config.suggested_init()), return_by_sample=True
+                )
+            ),
+        )
+    )
     assert d['background'] == [50.0]
     assert d['signal'] == [10.0]
+
 
 def test_pdf_basicapi_tests(backend):
     source = {

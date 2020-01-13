@@ -486,7 +486,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def expected_data(self, pars, return_by_sample = False):
+    def expected_data(self, pars, return_by_sample=False):
         """
         Compute the expected rates for given values of parameters.
 
@@ -527,7 +527,7 @@ class _MainModel(object):
 
         newbysample = tensorlib.product(allfac, axis=0)
         if return_by_sample:
-            batchfirst = tensorlib.swapaxes(newbysample,0,1)
+            batchfirst = tensorlib.swapaxes(newbysample, 0, 1)
             if self.batch_size is None:
                 return batchfirst[0]
             else:

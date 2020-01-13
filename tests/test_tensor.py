@@ -143,9 +143,14 @@ def test_reshape(backend):
 
 def test_swap(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.swapaxes(tb.astensor([[1,2,3]]),0,1)) == [[1],[2],[3]]
-    assert tb.tolist(tb.swapaxes(tb.astensor([[[1,2,3]]]),0,1)) == [[[1,2,3]]]
-    assert tb.tolist(tb.swapaxes(tb.astensor([[[1,2,3]]]),0,2)) == [[[1]],[[2]],[[3]]]
+    assert tb.tolist(tb.swapaxes(tb.astensor([[1, 2, 3]]), 0, 1)) == [[1], [2], [3]]
+    assert tb.tolist(tb.swapaxes(tb.astensor([[[1, 2, 3]]]), 0, 1)) == [[[1, 2, 3]]]
+    assert tb.tolist(tb.swapaxes(tb.astensor([[[1, 2, 3]]]), 0, 2)) == [
+        [[1]],
+        [[2]],
+        [[3]],
+    ]
+
 
 def test_shape(backend):
     tb = pyhf.tensorlib
