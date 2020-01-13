@@ -287,7 +287,7 @@ class _MainModel(object):
                 config,
                 mega_mods,
                 batch_size=self.batch_size,
-                **config.modifier_settings.get(k, {})
+                **config.modifier_settings.get(k, {}),
             )
             for k, c in modifiers.combined.items()
         }
