@@ -80,6 +80,23 @@ def test_invalid_pdf_data():
         pdf.logpdf(pars, data)
 
 
+def test_pdf_expected_data_by_sample(backend):
+    tb, _ = backend
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+    assert tb.tolist(pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()))) == [60]
+    d = dict(zip(
+        pdf.config.samples,
+        tb.tolist(pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()),return_by_sample = True))
+    ))
+    assert d['background'] == [50.0]
+    assert d['signal'] == [10.0]
+
 def test_pdf_basicapi_tests(backend):
     source = {
         "binning": [2, -0.5, 1.5],

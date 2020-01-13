@@ -453,7 +453,7 @@ class _MainModel(object):
         return True
 
     def make_pdf(self, pars):
-        lambdas_data = self._expected_data(pars)
+        lambdas_data = self.expected_data(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
@@ -486,7 +486,7 @@ class _MainModel(object):
 
         return deltas, factors
 
-    def _expected_data(self, pars):
+    def expected_data(self, pars, return_by_sample = False):
         """
         Compute the expected rates for given values of parameters.
 
@@ -526,6 +526,13 @@ class _MainModel(object):
         allfac = tensorlib.concatenate(factors + [nom_plus_delta])
 
         newbysample = tensorlib.product(allfac, axis=0)
+        if return_by_sample:
+            batchfirst = tensorlib.swapaxes(newbysample,0,1)
+            if self.batch_size is None:
+                return batchfirst[0]
+            else:
+                return batchfirst
+
         newresults = tensorlib.sum(newbysample, axis=0)
         if self.batch_size is None:
             return newresults[0]

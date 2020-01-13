@@ -109,6 +109,12 @@ class tensorflow_backend(object):
         """
         return tf.cond(predicate, true_callable, false_callable)
 
+    def swapaxes(self,tensor,ax1,ax2):
+        p = list(range(len(tensor.shape)))
+        p[ax1] = ax2
+        p[ax2] = ax1
+        return tf.transpose(tensor,p)
+
     def tolist(self, tensor_in):
         try:
             return tensor_in.numpy().tolist()
