@@ -12,7 +12,6 @@ def test_get_invalid_optimizer():
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
 @pytest.mark.skip_tensorflow
-@pytest.mark.skip_mxnet
 @pytest.mark.skip_numpy_minuit
 def test_scipy_minimize(backend, capsys):
     tensorlib, _ = backend
