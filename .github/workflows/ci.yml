@@ -42,7 +42,7 @@ jobs:
         check-manifest
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py --ignore tests/test_backend_consistency.py
+        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
     - name: Report coverage with Codecov
       if: github.event_name == 'push' && matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1.0.5
