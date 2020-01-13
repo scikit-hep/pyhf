@@ -1,3 +1,4 @@
+"""CLI subapps to handle conversion from ROOT."""
 import logging
 
 import click
@@ -9,7 +10,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 # This is only needed for Python 2/3 compatibility
-def ensure_dirs(path):
+def _ensure_dirs(path):
     try:
         os.makedirs(path, exist_ok=True)  # lgtm [py/call/wrong-named-argument]
     except TypeError:
@@ -19,6 +20,7 @@ def ensure_dirs(path):
 
 @click.group(name='rootio')
 def cli():
+    """ROOT I/O CLI group."""
     pass
 
 
@@ -37,7 +39,7 @@ def cli():
 )
 @click.option('--track-progress/--hide-progress', default=True)
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
-    """ Entrypoint XML: The top-level XML file for the PDF definition. """
+    """Entrypoint XML: The top-level XML file for the PDF definition."""
     try:
         import uproot
 
@@ -66,6 +68,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--resultprefix', default='FitConfig')
 @click.option('-p', '--patch', multiple=True)
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
+    """Convert pyhf JSON back to XML + ROOT files."""
     try:
         import uproot
 
@@ -77,14 +80,14 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         )
     from .. import writexml
 
-    ensure_dirs(output_dir)
+    _ensure_dirs(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
         for pfile in patch:
             patch = json.loads(click.open_file(pfile, 'r').read())
             spec = jsonpatch.JsonPatch(patch).apply(spec)
-        ensure_dirs(os.path.join(output_dir, specroot))
-        ensure_dirs(os.path.join(output_dir, dataroot))
+        _ensure_dirs(os.path.join(output_dir, specroot))
+        _ensure_dirs(os.path.join(output_dir, dataroot))
         with click.open_file(
             os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
         ) as outstream:

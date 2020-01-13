@@ -1,3 +1,4 @@
+"""The pyhf spec CLI subcommand."""
 import logging
 
 import click
@@ -12,6 +13,7 @@ log = logging.getLogger(__name__)
 
 @click.group(name='spec')
 def cli():
+    """Spec CLI group."""
     pass
 
 
@@ -24,6 +26,7 @@ def cli():
 )
 @click.option('--measurement', default=None)
 def inspect(workspace, output_file, measurement):
+    """Inspect a pyhf JSON document."""
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
