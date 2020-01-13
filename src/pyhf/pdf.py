@@ -530,8 +530,7 @@ class _MainModel(object):
             batchfirst = tensorlib.swapaxes(newbysample, 0, 1)
             if self.batch_size is None:
                 return batchfirst[0]
-            else:
-                return batchfirst
+            return batchfirst
 
         newresults = tensorlib.sum(newbysample, axis=0)
         if self.batch_size is None:
