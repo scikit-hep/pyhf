@@ -12,7 +12,7 @@ sphinx:
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: all
 
-# pip install .[docs]
+# python -m pip install .[docs]
 python:
   version: 3.7
   install:
