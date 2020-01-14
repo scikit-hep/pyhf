@@ -30,8 +30,7 @@ jobs:
     - name: Lint with Pyflakes
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
-        python -m pyflakes src/
-        python -m pyflakes tests/
+        python -m pyflakes .
     - name: Lint with Black
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
