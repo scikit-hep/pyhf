@@ -77,8 +77,8 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         for pfile in patch:
             patch = json.loads(click.open_file(pfile, 'r').read())
             spec = jsonpatch.JsonPatch(patch).apply(spec)
-        os.makedirs(path, exist_ok=True)(os.path.join(output_dir, specroot))
-        os.makedirs(path, exist_ok=True)(os.path.join(output_dir, dataroot))
+        os.makedirs(os.path.join(output_dir, specroot), exist_ok=True)
+        os.makedirs(os.path.join(output_dir, dataroot), exist_ok=True)
         with click.open_file(
             os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
         ) as outstream:
