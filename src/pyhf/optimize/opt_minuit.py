@@ -52,7 +52,7 @@ class minuit_optimizer(object):
             errordef=1,
             use_array_call=True,
             forced_parameters=parnames,
-            **kwargs
+            **kwargs,
         )
         return mm
 

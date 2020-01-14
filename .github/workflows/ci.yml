@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [2.7, 3.6, 3.7]
+        python-version: [3.6, 3.7]
 
     steps:
     - uses: actions/checkout@v1.2.0
@@ -51,7 +51,6 @@ jobs:
         file: ./coverage.xml
         flags: unittests
     - name: Test Contrib module with pytest
-      if: matrix.python-version != 2.7
       run: |
         python -m pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
     - name: Run benchmarks
