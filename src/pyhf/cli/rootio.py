@@ -9,14 +9,6 @@ import jsonpatch
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
-# This is only needed for Python 2/3 compatibility
-def _ensure_dirs(path):
-    try:
-        os.makedirs(path, exist_ok=True)  # lgtm [py/call/wrong-named-argument]
-    except TypeError:
-        if not os.path.exists(path):
-            os.makedirs(path)
-
 
 @click.group(name='rootio')
 def cli():
@@ -79,14 +71,14 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         )
     from .. import writexml
 
-    _ensure_dirs(output_dir)
+    os.makedirs(path, exist_ok=True)(output_dir)
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
         for pfile in patch:
             patch = json.loads(click.open_file(pfile, 'r').read())
             spec = jsonpatch.JsonPatch(patch).apply(spec)
-        _ensure_dirs(os.path.join(output_dir, specroot))
-        _ensure_dirs(os.path.join(output_dir, dataroot))
+        os.makedirs(path, exist_ok=True)(os.path.join(output_dir, specroot))
+        os.makedirs(path, exist_ok=True)(os.path.join(output_dir, dataroot))
         with click.open_file(
             os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
         ) as outstream:
