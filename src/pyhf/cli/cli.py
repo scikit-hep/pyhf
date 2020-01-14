@@ -1,3 +1,4 @@
+"""The pyhf Command Line Interface."""
 import logging
 
 import click
@@ -12,7 +13,7 @@ log = logging.getLogger(__name__)
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(version=__version__)
 def pyhf():
-    pass
+    """Top-level CLI entrypoint."""
 
 
 # pyhf.add_command(rootio.cli)

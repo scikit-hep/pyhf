@@ -1,3 +1,4 @@
+"""The inference CLI group."""
 import logging
 
 import click
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 
 @click.group(name='infer')
 def cli():
-    pass
+    """Infererence CLI group."""
 
 
 @cli.command()
@@ -47,6 +48,7 @@ def cls(
     optimizer,
     optconf,
 ):
+    """Compute CLs value(s) for a given pyhf workspace."""
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
