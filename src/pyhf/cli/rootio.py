@@ -80,6 +80,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     from .. import writexml
 
     _ensure_dirs(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
         for pfile in patch:
