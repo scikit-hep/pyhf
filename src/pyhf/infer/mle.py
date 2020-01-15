@@ -2,7 +2,7 @@
 from .. import get_backend
 
 
-def twice_nll(pars, data, pdf):
+def mle_fit_objective(data, pdf):
     """
     Twice the negative Log-Likelihood.
 
@@ -14,8 +14,9 @@ def twice_nll(pars, data, pdf):
         Twice the negative log likelihood.
 
     """
-    return -2 * pdf.logpdf(pars, data)
-
+    def func(pars):
+        return - 2 * pdf.logpdf(pars,data)[0]
+    return func
 
 def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
     """
@@ -33,7 +34,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
-    return opt.minimize(twice_nll, data, pdf, init_pars, par_bounds, **kwargs)
+    return opt.minimize(mle_fit_objective(data,pdf), init_pars, par_bounds, **kwargs)
 
 
 def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs):
@@ -53,9 +54,7 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     return opt.minimize(
-        twice_nll,
-        data,
-        pdf,
+        mle_fit_objective(data,pdf),
         init_pars,
         par_bounds,
         [(pdf.config.poi_index, poi_val)],

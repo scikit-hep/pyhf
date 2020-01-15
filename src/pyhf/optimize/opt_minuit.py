@@ -24,12 +24,8 @@ class minuit_optimizer(object):
         self.steps = steps
 
     def _make_minuit(
-        self, objective, data, pdf, init_pars, init_bounds, fixed_vals=None
+        self, objective, init_pars, init_bounds, fixed_vals=None
     ):
-        def f(pars):
-            result = objective(pars, data, pdf)
-            logpdf = result[0]
-            return logpdf
 
         parnames = ['p{}'.format(i) for i in range(len(init_pars))]
         kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
@@ -47,7 +43,7 @@ class minuit_optimizer(object):
         for d in [kw, constraints, initvals, step_sizes]:
             kwargs.update(**d)
         mm = iminuit.Minuit(
-            f,
+            objective,
             print_level=1 if self.verbose else 0,
             errordef=1,
             use_array_call=True,
@@ -59,8 +55,6 @@ class minuit_optimizer(object):
     def minimize(
         self,
         objective,
-        data,
-        pdf,
         init_pars,
         par_bounds,
         fixed_vals=None,
@@ -74,7 +68,7 @@ class minuit_optimizer(object):
             bestfit parameters
         
         """
-        mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
+        mm = self._make_minuit(objective, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
         assert result
         if return_uncertainties:

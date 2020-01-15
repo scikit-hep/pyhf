@@ -6,16 +6,16 @@ from .autodiff import AutoDiffOptimizerMixin
 import jax
 
 
-def _final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
+def _final_objective(pars, fixed_vals, objective, fixed_idx, variable_idx):
     tensorlib, _ = get_backend()
     tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
     constrained_pars = tv.stitch([fixed_vals, pars])
-    return objective(constrained_pars, data, model)[0]
+    return objective(constrained_pars)
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective), static_argnums=(3, 4, 5, 6)
+    jax.value_and_grad(_final_objective), static_argnums=(2,3,4)
 )
 
 
@@ -23,7 +23,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
     """JAX Optimizer Backend."""
 
     def setup_minimize(
-        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+        self, objective, init_pars, par_bounds, fixed_vals=None
     ):
         """
         Prepare Minimization for AutoDiff-Optimizer.
@@ -39,7 +39,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
         """
 
         tensorlib, _ = get_backend()
-        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_idx = default_backend.astensor(range(len(init_pars)), dtype='int')
         all_init = default_backend.astensor(init_pars)
 
         fixed_vals = fixed_vals or []
@@ -52,16 +52,13 @@ class jax_optimizer(AutoDiffOptimizerMixin):
 
         tv = _TensorViewer([fixed_idx, variable_idx])
 
-        data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
         def func(pars):
             # need to conver to tuple to make args hashable
             return _jitted_objective_and_grad(
                 pars,
-                data,
                 fixed_values_tensor,
-                pdf,
                 objective,
                 tuple(fixed_idx),
                 tuple(variable_idx),

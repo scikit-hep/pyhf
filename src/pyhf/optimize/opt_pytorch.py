@@ -10,7 +10,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     """PyTorch Optimizer Backend."""
 
     def setup_minimize(
-        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
+        self, objective, init_pars, par_bounds, fixed_vals=None
     ):
         """
         Prepare Minimization for AutoDiff-Optimizer.
@@ -25,7 +25,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
 
         """
         tensorlib, _ = get_backend()
-        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_idx = default_backend.astensor(range(len(init_pars)), dtype='int')
         all_init = default_backend.astensor(init_pars)
 
         fixed_vals = fixed_vals or []
@@ -38,14 +38,13 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
 
         tv = _TensorViewer([fixed_idx, variable_idx])
 
-        data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
         def func(pars):
             pars = tensorlib.astensor(pars)
             pars.requires_grad = True
             constrained_pars = tv.stitch([fixed_values_tensor, pars])
-            constr_nll = objective(constrained_pars, data, pdf)
+            constr_nll = objective(constrained_pars)
             grad = torch.autograd.grad(constr_nll, pars)[0]
             return constr_nll.detach().numpy(), grad
 

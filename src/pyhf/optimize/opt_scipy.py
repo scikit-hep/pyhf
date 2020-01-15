@@ -16,8 +16,6 @@ class scipy_optimizer(object):
     def minimize(
         self,
         objective,
-        data,
-        pdf,
         init_pars,
         par_bounds,
         fixed_vals=None,
@@ -39,7 +37,6 @@ class scipy_optimizer(object):
             init_pars,
             constraints=constraints,
             method='SLSQP',
-            args=(data, pdf),
             bounds=par_bounds,
             options=dict(maxiter=self.maxiter),
         )
