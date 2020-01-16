@@ -30,8 +30,7 @@ jobs:
     - name: Lint with Pyflakes
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
-        python -m pyflakes src/
-        python -m pyflakes tests/
+        python -m pyflakes .
     - name: Lint with Black
       if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
       run: |
@@ -103,7 +102,7 @@ jobs:
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
-        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/workspace.py src/pyhf/probability.py src/pyhf/interpolators src/pyhf/infer src/pyhf/optimize
+        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/workspace.py src/pyhf/probability.py src/pyhf/interpolators src/pyhf/infer src/pyhf/optimize src/pyhf/contrib src/pyhf/cli
     - name: Test and build docs
       run: |
         python -m doctest README.md

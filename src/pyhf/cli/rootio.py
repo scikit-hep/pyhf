@@ -1,3 +1,4 @@
+"""CLI subapps to handle conversion from ROOT."""
 import logging
 
 import click
@@ -11,7 +12,7 @@ log = logging.getLogger(__name__)
 
 @click.group(name='rootio')
 def cli():
-    pass
+    """ROOT I/O CLI group."""
 
 
 @cli.command()
@@ -29,7 +30,7 @@ def cli():
 )
 @click.option('--track-progress/--hide-progress', default=True)
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
-    """ Entrypoint XML: The top-level XML file for the PDF definition. """
+    """Entrypoint XML: The top-level XML file for the PDF definition."""
     try:
         import uproot
 
@@ -58,6 +59,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 @click.option('--resultprefix', default='FitConfig')
 @click.option('-p', '--patch', multiple=True)
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
+    """Convert pyhf JSON back to XML + ROOT files."""
     try:
         import uproot
 
