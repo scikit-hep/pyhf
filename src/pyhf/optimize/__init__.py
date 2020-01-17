@@ -12,6 +12,13 @@ class _OptimizerRetriever(object):
             # for autocomplete and dir() calls
             self.scipy_optimizer = scipy_optimizer
             return scipy_optimizer
+        elif name == 'autodiff':
+            from . import autodiff
+
+            assert autodiff
+            # for autocomplete and dir() calls
+            self.autodiff = autodiff
+            return autodiff
         elif name == 'jax_optimizer':
             try:
                 from .opt_jax import jax_optimizer

@@ -1,6 +1,7 @@
 import pyhf
 import pytest
 from scipy.optimize import minimize
+import mock
 
 
 def test_get_invalid_optimizer():
@@ -151,3 +152,20 @@ def test_optim_uncerts(backend, source, spec, mu):
     )
     assert result.shape[1] == 2
     assert pyhf.tensorlib.tolist(result)
+
+
+@pytest.mark.skip_numpy
+@pytest.mark.skip_numpy_minuit
+def test_autodiff_minimize_failure(backend, source, spec):
+    pdf = pyhf.Model(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+    with mock.patch('pyhf.optimize.autodiff.minimize') as mocked_minimize:
+        mocked_minimize.return_value = mock.MagicMock()
+        mocked_minimize.return_value.success = False
+        with pytest.raises(AssertionError):
+            optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)

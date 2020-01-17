@@ -28,7 +28,7 @@ class AutoDiffOptimizerMixin(object):
 
         Returns:
             bestfit parameters
-        
+
         """
         tensorlib, _ = get_backend()
         tv, fixed_values_tensor, func, init, bounds = self.setup_minimize(
