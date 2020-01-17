@@ -10,7 +10,7 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
 
     def __init__(self, *args, **kwargs):
         """Tensorflow based optimizer based on autograd."""
-        self.tv_cache = {}
+        self.lr = kwargs.get('lr', 1.0)
         super(tflow_optimizer, self).__init__(*args, **kwargs)
 
     def setup_minimize(
@@ -53,6 +53,6 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
                 constrained_pars = tv.stitch([fixed_values_tensor, pars])
                 constr_nll = objective(constrained_pars, data, pdf)
             grad = tape.gradient(constr_nll, pars).values
-            return constr_nll.numpy(), grad
+            return constr_nll.numpy(), grad * self.lr
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds

@@ -10,7 +10,8 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     """PyTorch Optimizer Backend."""
 
     def __init__(self, *args, **kwargs):
-        """pytorch based optimizer based on autograd."""
+        """PyTorch based optimizer based on autograd."""
+        self.lr = kwargs.get('lr', 1.0)
         super(pytorch_optimizer, self).__init__(*args, **kwargs)
 
     def setup_minimize(
@@ -51,6 +52,6 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
             constrained_pars = tv.stitch([fixed_values_tensor, pars])
             constr_nll = objective(constrained_pars, data, pdf)
             grad = torch.autograd.grad(constr_nll, pars)[0]
-            return constr_nll.detach().numpy(), grad
+            return constr_nll.detach().numpy(), grad * self.lr
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds

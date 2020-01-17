@@ -25,6 +25,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
 
     def __init__(self, *args, **kwargs):
         """JAX based optimizer based on autograd."""
+        self.lr = kwargs.get('lr', 1.0)
         self.tv_cache = {}
         super(jax_optimizer, self).__init__(*args, **kwargs)
 
@@ -76,6 +77,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
                 tuple(fixed_idx),
                 tuple(variable_idx),
             )
-            return onp.asarray(obj), onp.asarray(grad)
+            return onp.asarray(obj), onp.asarray(grad) * self.lr
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds
