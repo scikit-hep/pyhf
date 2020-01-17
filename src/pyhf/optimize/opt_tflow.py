@@ -8,9 +8,9 @@ import tensorflow as tf
 class tflow_optimizer(AutoDiffOptimizerMixin):
     """Tensorflow Optimizer Backend."""
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
         self.tv_cache = {}
-        super(tflow_optimizer,self).__init__(*args,**kwargs)
+        super(tflow_optimizer, self).__init__(*args, **kwargs)
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None

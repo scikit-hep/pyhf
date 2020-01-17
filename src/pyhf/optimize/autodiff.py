@@ -34,13 +34,7 @@ class AutoDiffOptimizerMixin(object):
         tv, fixed_values_tensor, func, init, bounds = self.setup_minimize(
             objective, data, pdf, init_pars, par_bounds, fixed_vals
         )
-        result = minimize(
-            func,
-            init,
-            method='SLSQP',
-            bounds=bounds,
-            jac=True,
-        )
+        result = minimize(func, init, method='SLSQP', bounds=bounds, jac=True,)
         try:
             assert result.success
         except AssertionError:

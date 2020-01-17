@@ -23,9 +23,9 @@ _jitted_objective_and_grad = jax.jit(
 class jax_optimizer(AutoDiffOptimizerMixin):
     """JAX Optimizer Backend."""
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
         self.tv_cache = {}
-        super(jax_optimizer,self).__init__(*args,**kwargs)
+        super(jax_optimizer, self).__init__(*args, **kwargs)
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
@@ -62,7 +62,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
             ] = _TensorViewer([fixed_idx, variable_idx])
             tv = self.tv_cache[tuple(fixed_idx)][tuple(variable_idx)]
 
-        
         data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
