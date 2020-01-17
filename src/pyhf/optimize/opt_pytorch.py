@@ -10,6 +10,7 @@ class pytorch_optimizer(AutoDiffOptimizerMixin):
     """PyTorch Optimizer Backend."""
 
     def __init__(self, *args, **kwargs):
+        """pytorch based optimizer based on autograd."""
         super(pytorch_optimizer, self).__init__(*args, **kwargs)
 
     def setup_minimize(

@@ -24,6 +24,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
     """JAX Optimizer Backend."""
 
     def __init__(self, *args, **kwargs):
+        """JAX based optimizer based on autograd."""
         self.tv_cache = {}
         super(jax_optimizer, self).__init__(*args, **kwargs)
 
@@ -42,7 +43,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
             fixed_vals: fixed parameter values
 
         """
-
         tensorlib, _ = get_backend()
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         all_init = default_backend.astensor(init_pars)

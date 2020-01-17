@@ -9,6 +9,7 @@ class tflow_optimizer(AutoDiffOptimizerMixin):
     """Tensorflow Optimizer Backend."""
 
     def __init__(self, *args, **kwargs):
+        """Tensorflow based optimizer based on autograd."""
         self.tv_cache = {}
         super(tflow_optimizer, self).__init__(*args, **kwargs)
 
