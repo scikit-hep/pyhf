@@ -517,7 +517,6 @@ class Model(object):
                     key = '{}/{}'.format(mtype, m)
                     # this is None if modifier doesn't affect channel/sample.
                     thismod = defined_mods.get(key)
-                    # print('key',key,thismod['data'] if thismod else None)
                     if mtype == 'histosys':
                         lo_data = thismod['data']['lo_data'] if thismod else nom
                         hi_data = thismod['data']['hi_data'] if thismod else nom
@@ -711,7 +710,6 @@ class Model(object):
                 )
 
             result = self.make_pdf(pars).log_prob(data)
-
             if (
                 not self.batch_size
             ):  # force to be not scalar, should we changed with #522

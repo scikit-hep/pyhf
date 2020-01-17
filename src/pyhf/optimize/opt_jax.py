@@ -4,6 +4,7 @@ from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
 from .autodiff import AutoDiffOptimizerMixin
 import jax
+import numpy as onp
 
 
 def _final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
@@ -21,6 +22,10 @@ _jitted_objective_and_grad = jax.jit(
 
 class jax_optimizer(AutoDiffOptimizerMixin):
     """JAX Optimizer Backend."""
+
+    def __init__(self,*args,**kwargs):
+        self.tv_cache = {}
+        super(jax_optimizer,self).__init__(*args,**kwargs)
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
@@ -50,14 +55,20 @@ class jax_optimizer(AutoDiffOptimizerMixin):
         variable_init = all_init[variable_idx]
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
-        tv = _TensorViewer([fixed_idx, variable_idx])
+        tv = self.tv_cache.get(tuple(fixed_idx), {}).get(tuple(variable_idx))
+        if not tv:
+            self.tv_cache.setdefault(tuple(fixed_idx), {})[
+                tuple(variable_idx)
+            ] = _TensorViewer([fixed_idx, variable_idx])
+            tv = self.tv_cache[tuple(fixed_idx)][tuple(variable_idx)]
 
+        
         data = tensorlib.astensor(data)
         fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective_and_grad(
+            obj, grad = _jitted_objective_and_grad(
                 pars,
                 data,
                 fixed_values_tensor,
@@ -66,5 +77,6 @@ class jax_optimizer(AutoDiffOptimizerMixin):
                 tuple(fixed_idx),
                 tuple(variable_idx),
             )
+            return onp.asarray(obj), onp.asarray(grad)
 
         return tv, fixed_values_tensor, func, variable_init, variable_bounds

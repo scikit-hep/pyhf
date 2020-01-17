@@ -1,13 +1,17 @@
 """Helper Classes for use of automatic differentiation."""
-import scipy
+from scipy.optimize import minimize
 from .. import get_backend
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class AutoDiffOptimizerMixin(object):
     """Mixin Class to build optimizers that use automatic differentiation."""
 
-    def __init__(*args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Create Mixin for autodiff-based optimizers."""
+        self.maxiter = kwargs.get('maxiter', 100000)
 
     def minimize(
         self,
@@ -30,11 +34,20 @@ class AutoDiffOptimizerMixin(object):
         tv, fixed_values_tensor, func, init, bounds = self.setup_minimize(
             objective, data, pdf, init_pars, par_bounds, fixed_vals
         )
-        fitresult = scipy.optimize.minimize(
-            func, init, method='SLSQP', jac=True, bounds=bounds
+        result = minimize(
+            func,
+            init,
+            method='SLSQP',
+            bounds=bounds,
+            jac=True,
         )
-        nonfixed_vals = fitresult.x
-        fitted_val = fitresult.fun
+        try:
+            assert result.success
+        except AssertionError:
+            log.error(result)
+            raise
+        nonfixed_vals = result.x
+        fitted_val = result.fun
         fitted_pars = tv.stitch(
             [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
         )

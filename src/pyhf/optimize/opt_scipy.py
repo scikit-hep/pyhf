@@ -37,11 +37,11 @@ class scipy_optimizer(object):
         result = minimize(
             objective,
             init_pars,
-            constraints=constraints,
             method='SLSQP',
-            args=(data, pdf),
             bounds=par_bounds,
             options=dict(maxiter=self.maxiter),
+            constraints=constraints,
+            args=(data, pdf),
         )
         try:
             assert result.success

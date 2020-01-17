@@ -9,6 +9,9 @@ import torch
 class pytorch_optimizer(AutoDiffOptimizerMixin):
     """PyTorch Optimizer Backend."""
 
+    def __init__(self, *args, **kwargs):
+        super(pytorch_optimizer, self).__init__(*args, **kwargs)
+
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
