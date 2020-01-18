@@ -277,7 +277,8 @@ class _MainModel(object):
         ]
         self.batch_size = batch_size
 
-        self._nominal_rates = default_backend.tile(
+        tensorlib, _ = get_backend()
+        self._nominal_rates = tensorlib.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 
@@ -411,7 +412,7 @@ class Model(object):
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema, version=self.version)
+        # utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
@@ -451,6 +452,7 @@ class Model(object):
         self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
 
     def _create_nominal_and_modifiers(self, config, spec):
+        tensorlib, _ = get_backend()
         default_data_makers = {
             'histosys': lambda: {
                 'hi_data': [],
@@ -477,14 +479,22 @@ class Model(object):
         # We don't actually set up the modifier data here for no-ops, but we do
         # set up the entire structure
         mega_mods = {}
-        for m, mtype in config.modifiers:
-            for s in config.samples:
+        mega_noms = {}
+        what_mods = {}
+        for s in config.samples:
+            for m, mtype in config.modifiers:
                 key = '{}/{}'.format(mtype, m)
                 mega_mods.setdefault(key, {})[s] = {
                     'type': mtype,
                     'name': m,
                     'data': default_data_makers[mtype](),
                 }
+                what_mods.setdefault(key, {})[s] = {
+                    'type': mtype,
+                    'name': m,
+                    'data': default_data_makers[mtype](),
+                }
+            mega_noms[s] = []
 
         # helper maps channel-name/sample-name to pairs of channel-sample structs
         helper = {}
@@ -492,9 +502,9 @@ class Model(object):
             for s in c['samples']:
                 helper.setdefault(c['name'], {})[s['name']] = (c, s)
 
-        mega_samples = {}
+        ## Prepare Nominal Rates
+        keys = [(mtype, '{}/{}'.format(mtype, m)) for m, mtype in config.modifiers]
         for s in config.samples:
-            mega_nom = []
             for c in config.channels:
                 defined_samp = helper.get(c, {}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
@@ -504,17 +514,26 @@ class Model(object):
                     if defined_samp
                     else [0.0] * config.channel_nbins[c]
                 )
-                mega_nom += nom
-                defined_mods = (
-                    {
-                        '{}/{}'.format(x['type'], x['name']): x
-                        for x in defined_samp['modifiers']
-                    }
-                    if defined_samp
-                    else {}
-                )
-                for m, mtype in config.modifiers:
-                    key = '{}/{}'.format(mtype, m)
+                mega_noms[s].append(nom)
+        nominal_rates = tensorlib.astensor(
+            [tensorlib.concatenate(mega_noms[s]) for s in config.samples]
+        )
+        ## End Prepare Nominal Rates
+
+        for mtype, key in keys:
+            for s in config.samples:
+                for ic, c in enumerate(config.channels):
+                    defined_samp = helper.get(c, {}).get(s)
+                    defined_samp = None if not defined_samp else defined_samp[1]
+                    defined_mods = (
+                        {
+                            '{}/{}'.format(x['type'], x['name']): x
+                            for x in defined_samp['modifiers']
+                        }
+                        if defined_samp
+                        else {}
+                    )
+                    nom = mega_noms[s][ic]
                     # this is None if modifier doesn't affect channel/sample.
                     thismod = defined_mods.get(key)
                     # print('key',key,thismod['data'] if thismod else None)
@@ -522,47 +541,94 @@ class Model(object):
                         lo_data = thismod['data']['lo_data'] if thismod else nom
                         hi_data = thismod['data']['hi_data'] if thismod else nom
                         maskval = True if thismod else False
-                        mega_mods[key][s]['data']['lo_data'] += lo_data
-                        mega_mods[key][s]['data']['hi_data'] += hi_data
-                        mega_mods[key][s]['data']['nom_data'] += nom
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
+                        mask = [maskval] * len(nom)  # broadcasting
+
+                        mega_mods[key][s]['data']['lo_data'].append(lo_data)
+                        mega_mods[key][s]['data']['hi_data'].append(hi_data)
+                        mega_mods[key][s]['data']['nom_data'].append(nom)
+                        mega_mods[key][s]['data']['mask'].append(mask)
                     elif mtype == 'normsys':
                         maskval = True if thismod else False
                         lo_factor = thismod['data']['lo'] if thismod else 1.0
                         hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
-                        mega_mods[key][s]['data']['lo'] += [lo_factor] * len(
-                            nom
-                        )  # broadcasting
-                        mega_mods[key][s]['data']['hi'] += [hi_factor] * len(nom)
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
+
+                        nom_data = [1.0] * len(nom)
+                        lo_data = [lo_factor] * len(nom)  # broadcasting
+                        hi_data = [hi_factor] * len(nom)
+                        mask = [maskval] * len(nom)  # broadcasting
+
+                        mega_mods[key][s]['data']['nom_data'].append(nom_data)
+                        mega_mods[key][s]['data']['lo'].append(lo_data)
+                        mega_mods[key][s]['data']['hi'].append(hi_data)
+                        mega_mods[key][s]['data']['mask'].append(mask)
                     elif mtype in ['normfactor', 'shapefactor', 'lumi']:
                         maskval = True if thismod else False
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
+                        mask = [maskval] * len(nom)  # broadcasting
+
+                        mega_mods[key][s]['data']['mask'].append(mask)
                     elif mtype in ['shapesys', 'staterror']:
                         uncrt = thismod['data'] if thismod else [0.0] * len(nom)
                         maskval = [True if thismod else False] * len(nom)
-                        mega_mods[key][s]['data']['mask'] += maskval
-                        mega_mods[key][s]['data']['uncrt'] += uncrt
-                        mega_mods[key][s]['data']['nom_data'] += nom
+
+                        mega_mods[key][s]['data']['mask'].append(maskval)
+                        mega_mods[key][s]['data']['uncrt'].append(uncrt)
+                        mega_mods[key][s]['data']['nom_data'].append(nom)
                     else:
                         raise RuntimeError(
                             'not sure how to combine {mtype} into the mega-channel'.format(
                                 mtype=mtype
                             )
                         )
-            sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
-            mega_samples[s] = sample_dict
 
-        nominal_rates = default_backend.astensor(
-            [mega_samples[s]['nom'] for s in config.samples]
-        )
+        for mtype, key in keys:
+            for s in config.samples:
+                if mtype == 'histosys':
+                    what_mods[key][s]['data']['lo_data'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['lo_data']
+                    )
+                    what_mods[key][s]['data']['hi_data'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['hi_data']
+                    )
+                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['nom_data']
+                    )
+                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['mask']
+                    )
+                elif mtype == 'normsys':
+                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['mask']
+                    )
+                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['mask']
+                    )
+                    what_mods[key][s]['data']['hi'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['hi']
+                    )
+                    what_mods[key][s]['data']['lo'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['lo']
+                    )
+                elif mtype in ['normfactor', 'shapefactor', 'lumi']:
+                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['mask']
+                    )
+                elif mtype in ['shapesys', 'staterror']:
+                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['mask']
+                    )
+                    what_mods[key][s]['data']['uncrt'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['uncrt']
+                    )
+                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                        mega_mods[key][s]['data']['nom_data']
+                    )
+                else:
+                    raise RuntimeError(
+                        'not sure how to combine {mtype} into the mega-channel'.format(
+                            mtype=mtype
+                        )
+                    )
+
         _nominal_rates = default_backend.reshape(
             nominal_rates,
             (
@@ -573,7 +639,7 @@ class Model(object):
             ),
         )
 
-        return mega_mods, _nominal_rates
+        return what_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
         """
