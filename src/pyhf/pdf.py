@@ -479,18 +479,21 @@ class Model(object):
         #
         # We don't actually set up the modifier data here for no-ops, but we do
         # set up the entire structure
+
+        keys = [(m,mtype, '{}/{}'.format(mtype, m)) for m, mtype in config.modifiers]
+
+
         mega_mods = {}
         mega_noms = {}
-        what_mods = {}
+        final_mods = {}
         for s in config.samples:
-            for m, mtype in config.modifiers:
-                key = '{}/{}'.format(mtype, m)
+            for m,mtype,key in keys:
                 mega_mods.setdefault(key, {})[s] = {
                     'type': mtype,
                     'name': m,
                     'data': default_data_makers[mtype](),
                 }
-                what_mods.setdefault(key, {})[s] = {
+                final_mods.setdefault(key, {})[s] = {
                     'type': mtype,
                     'name': m,
                     'data': default_data_makers[mtype](),
@@ -504,16 +507,16 @@ class Model(object):
                 helper.setdefault(c['name'], {})[s['name']] = (c, s)
 
         ## Prepare Nominal Rates
-        keys = [(mtype, '{}/{}'.format(mtype, m)) for m, mtype in config.modifiers]
         for s in config.samples:
             for c in config.channels:
                 defined_samp = helper.get(c, {}).get(s)
                 defined_samp = None if not defined_samp else defined_samp[1]
                 # set nominal to 0 for channel/sample if the pair doesn't exist
+                default_nom = [0.0] * config.channel_nbins[c]
                 nom = (
                     defined_samp['data']
                     if defined_samp
-                    else [0.0] * config.channel_nbins[c]
+                    else default_nom
                 )
                 mega_noms[s].append(nom)
         nominal_rates = tensorlib.astensor(
@@ -521,7 +524,7 @@ class Model(object):
         )
         ## End Prepare Nominal Rates
 
-        for mtype, key in keys:
+        for m, mtype, key in keys:
             for s in config.samples:
                 for ic, c in enumerate(config.channels):
                     defined_samp = helper.get(c, {}).get(s)
@@ -581,46 +584,46 @@ class Model(object):
                             )
                         )
 
-        for mtype, key in keys:
+        for m, mtype, key in keys:
             for s in config.samples:
                 if mtype == 'histosys':
-                    what_mods[key][s]['data']['lo_data'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['lo_data'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['lo_data']
                     )
-                    what_mods[key][s]['data']['hi_data'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['hi_data'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['hi_data']
                     )
-                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['nom_data']
                     )
-                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['mask']
                     )
                 elif mtype == 'normsys':
-                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['mask']
                     )
-                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['mask']
                     )
-                    what_mods[key][s]['data']['hi'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['hi'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['hi']
                     )
-                    what_mods[key][s]['data']['lo'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['lo'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['lo']
                     )
                 elif mtype in ['normfactor', 'shapefactor', 'lumi']:
-                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['mask']
                     )
                 elif mtype in ['shapesys', 'staterror']:
-                    what_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['mask']
                     )
-                    what_mods[key][s]['data']['uncrt'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['uncrt'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['uncrt']
                     )
-                    what_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
                         mega_mods[key][s]['data']['nom_data']
                     )
                 else:
@@ -640,7 +643,7 @@ class Model(object):
             ),
         )
 
-        return what_mods, _nominal_rates
+        return final_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
         """
