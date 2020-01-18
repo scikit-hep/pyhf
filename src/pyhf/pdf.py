@@ -6,7 +6,8 @@ import logging
 from . import get_backend, default_backend
 from . import exceptions
 from . import modifiers
-from . import utils
+
+# from . import utils
 from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
