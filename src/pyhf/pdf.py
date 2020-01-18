@@ -118,10 +118,16 @@ def _nominal_and_modifiers_from_spec(config, spec):
     # We don't actually set up the modifier data here for no-ops, but we do
     # set up the entire structure
     mega_mods = {}
+    final_mods = {}
     for m, mtype in config.modifiers:
         for s in config.samples:
             key = '{}/{}'.format(mtype, m)
             mega_mods.setdefault(key, {})[s] = {
+                'type': mtype,
+                'name': m,
+                'data': default_data_makers[mtype](),
+            }
+            final_mods.setdefault(key, {})[s] = {
                 'type': mtype,
                 'name': m,
                 'data': default_data_makers[mtype](),
@@ -199,10 +205,59 @@ def _nominal_and_modifiers_from_spec(config, spec):
         sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
         mega_samples[s] = sample_dict
 
-    nominal_rates = default_backend.astensor(
-        [mega_samples[s]['nom'] for s in config.samples]
-    )
-    _nominal_rates = default_backend.reshape(
+    tensorlib, _ = get_backend()
+    for m, mtype in config.modifiers:
+        key = '{}/{}'.format(mtype, m)
+        for s in config.samples:
+            if mtype == 'histosys':
+                final_mods[key][s]['data']['lo_data'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['lo_data']
+                )
+                final_mods[key][s]['data']['hi_data'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['hi_data']
+                )
+                final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['nom_data']
+                )
+                final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['mask']
+                )
+            elif mtype == 'normsys':
+                final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['mask']
+                )
+                final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['mask']
+                )
+                final_mods[key][s]['data']['hi'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['hi']
+                )
+                final_mods[key][s]['data']['lo'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['lo']
+                )
+            elif mtype in ['normfactor', 'shapefactor', 'lumi']:
+                final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['mask']
+                )
+            elif mtype in ['shapesys', 'staterror']:
+                final_mods[key][s]['data']['mask'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['mask']
+                )
+                final_mods[key][s]['data']['uncrt'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['uncrt']
+                )
+                final_mods[key][s]['data']['nom_data'] = tensorlib.concatenate(
+                    mega_mods[key][s]['data']['nom_data']
+                )
+            else:
+                raise RuntimeError(
+                    'not sure how to combine {mtype} into the mega-channel'.format(
+                        mtype=mtype
+                    )
+                )
+
+    nominal_rates = tensorlib.astensor([mega_samples[s]['nom'] for s in config.samples])
+    _nominal_rates = tensorlib.reshape(
         nominal_rates,
         (
             1,  # modifier dimension.. nominal_rates is the base
@@ -212,7 +267,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
         ),
     )
 
-    return mega_mods, _nominal_rates
+    return final_mods, _nominal_rates
 
 
 class _ModelConfig(_ChannelSummaryMixin):
@@ -394,7 +449,8 @@ class _MainModel(object):
         ]
         self.batch_size = batch_size
 
-        self._nominal_rates = default_backend.tile(
+        tensorlib, _ = get_backend()
+        self._nominal_rates = tensorlib.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 
@@ -528,7 +584,7 @@ class Model(object):
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info("Validating spec against schema: {0:s}".format(self.schema))
-        utils.validate(self.spec, self.schema, version=self.version)
+        # utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
