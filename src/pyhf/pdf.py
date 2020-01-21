@@ -17,6 +17,70 @@ from .mixins import _ChannelSummaryMixin
 log = logging.getLogger(__name__)
 
 
+def _paramset_requirements_from_spec(spec, channel_nbins):
+    # bookkeep all requirements for paramsets we need to build
+    _paramsets_requirements = {}
+    # need to keep track in which order we added the constraints
+    # so that we can generate correctly-ordered data
+    for channel in spec['channels']:
+        for sample in channel['samples']:
+            if len(sample['data']) != channel_nbins[channel['name']]:
+                raise exceptions.InvalidModel(
+                    'The sample {0:s} has {1:d} bins, but the channel it belongs to ({2:s}) has {3:d} bins.'.format(
+                        sample['name'],
+                        len(sample['data']),
+                        channel['name'],
+                        channel_nbins[channel['name']],
+                    )
+                )
+            for modifier_def in sample['modifiers']:
+                # get the paramset requirements for the given modifier. If
+                # modifier does not exist, we'll have a KeyError
+                try:
+                    paramset_requirements = modifiers.registry[
+                        modifier_def['type']
+                    ].required_parset(len(sample['data']))
+                except KeyError:
+                    log.exception(
+                        'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
+                            modifier_def['type'], modifiers.registry.keys()
+                        )
+                    )
+                    raise exceptions.InvalidModifier()
+
+                # check the shareability (e.g. for shapesys for example)
+                is_shared = paramset_requirements['is_shared']
+                if not (is_shared) and modifier_def['name'] in _paramsets_requirements:
+                    raise ValueError(
+                        "Trying to add unshared-paramset but other paramsets exist with the same name."
+                    )
+                if is_shared and not (
+                    _paramsets_requirements.get(
+                        modifier_def['name'], [{'is_shared': True}]
+                    )[0]['is_shared']
+                ):
+                    raise ValueError(
+                        "Trying to add shared-paramset but other paramset of same name is indicated to be unshared."
+                    )
+                _paramsets_requirements.setdefault(modifier_def['name'], []).append(
+                    paramset_requirements
+                )
+    # build up a dictionary of the parameter configurations provided by the user
+    _paramsets_user_configs = {}
+    for parameter in spec.get('parameters', []):
+        if parameter['name'] in _paramsets_user_configs:
+            raise exceptions.InvalidModel(
+                'Multiple parameter configurations for {} were found.'.format(
+                    parameter['name']
+                )
+            )
+        _paramsets_user_configs[parameter.pop('name')] = parameter
+
+    return reduce_paramsets_requirements(
+        _paramsets_requirements, _paramsets_user_configs
+    )
+
+
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
@@ -36,71 +100,9 @@ class _ModelConfig(_ChannelSummaryMixin):
             config_kwargs.get('modifier_settings') or default_modifier_settings
         )
 
-        # build up a dictionary of the parameter configurations provided by the user
-        _paramsets_user_configs = {}
-        for parameter in spec.get('parameters', []):
-            if parameter['name'] in _paramsets_user_configs:
-                raise exceptions.InvalidModel(
-                    'Multiple parameter configurations for {} were found.'.format(
-                        parameter['name']
-                    )
-                )
-            _paramsets_user_configs[parameter.pop('name')] = parameter
+        _required_paramsets = _paramset_requirements_from_spec(spec, self.channel_nbins)
 
-        # bookkeep all requirements for paramsets we need to build
-        _paramsets_requirements = {}
-        # need to keep track in which order we added the constraints
-        # so that we can generate correctly-ordered data
-        for channel in spec['channels']:
-            for sample in channel['samples']:
-                if len(sample['data']) != self.channel_nbins[channel['name']]:
-                    raise exceptions.InvalidModel(
-                        'The sample {0:s} has {1:d} bins, but the channel it belongs to ({2:s}) has {3:d} bins.'.format(
-                            sample['name'],
-                            len(sample['data']),
-                            channel['name'],
-                            self.channel_nbins[channel['name']],
-                        )
-                    )
-                for modifier_def in sample['modifiers']:
-                    # get the paramset requirements for the given modifier. If
-                    # modifier does not exist, we'll have a KeyError
-                    try:
-                        paramset_requirements = modifiers.registry[
-                            modifier_def['type']
-                        ].required_parset(len(sample['data']))
-                    except KeyError:
-                        log.exception(
-                            'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
-                                modifier_def['type'], modifiers.registry.keys()
-                            )
-                        )
-                        raise exceptions.InvalidModifier()
-
-                    # check the shareability (e.g. for shapesys for example)
-                    is_shared = paramset_requirements['is_shared']
-                    if (
-                        not (is_shared)
-                        and modifier_def['name'] in _paramsets_requirements
-                    ):
-                        raise ValueError(
-                            "Trying to add unshared-paramset but other paramsets exist with the same name."
-                        )
-                    if is_shared and not (
-                        _paramsets_requirements.get(
-                            modifier_def['name'], [{'is_shared': True}]
-                        )[0]['is_shared']
-                    ):
-                        raise ValueError(
-                            "Trying to add shared-paramset but other paramset of same name is indicated to be unshared."
-                        )
-                    _paramsets_requirements.setdefault(modifier_def['name'], []).append(
-                        paramset_requirements
-                    )
-
-        self._create_and_register_paramsets(
-            _paramsets_requirements, _paramsets_user_configs
-        )
+        self._create_and_register_paramsets(_required_paramsets)
         self.set_poi(poiname)
         self.npars = len(self.suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
@@ -148,12 +150,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.par_order.append(param_name)
         self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
-    def _create_and_register_paramsets(
-        self, paramsets_requirements, paramsets_user_configs
-    ):
-        for param_name, paramset_requirements in reduce_paramsets_requirements(
-            paramsets_requirements, paramsets_user_configs
-        ).items():
+    def _create_and_register_paramsets(self, required_paramsets):
+        for param_name, paramset_requirements in required_paramsets.items():
             paramset_type = paramset_requirements.get('paramset_type')
             paramset = paramset_type(**paramset_requirements)
             self._register_paramset(param_name, paramset)
