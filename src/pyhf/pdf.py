@@ -93,21 +93,19 @@ class _ModelConfig(_ChannelSummaryMixin):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
         poiname = config_kwargs.get('poiname', 'mu')
 
-        self.par_map = {}
-        self.par_order = []
-        self.next_index = 0
-        self.poi_name = None
-        self.poi_index = None
-        self.auxdata = []
-        self.auxdata_order = []
+        _required_paramsets = _paramset_requirements_from_spec(spec, self.channel_nbins)
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
-
         self.modifier_settings = (
             config_kwargs.get('modifier_settings') or default_modifier_settings
         )
 
-        _required_paramsets = _paramset_requirements_from_spec(spec, self.channel_nbins)
+        self.par_map = {}
+        self.par_order = []
+        self.poi_name = None
+        self.poi_index = None
+        self.auxdata = []
+        self.auxdata_order = []
 
         self._create_and_register_paramsets(_required_paramsets)
         self.set_poi(poiname)
@@ -144,22 +142,20 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.poi_name = name
         self.poi_index = s.start
 
-    def _register_paramset(self, param_name, paramset):
-        """Allocates the nuisance parameters and stores paramset into a modifier map."""
-        log.info(
-            'adding modifier %s (%s new nuisance parameters)',
-            param_name,
-            paramset.n_parameters,
-        )
-
-        sl = slice(self.next_index, self.next_index + paramset.n_parameters)
-        self.next_index = self.next_index + paramset.n_parameters
-        self.par_order.append(param_name)
-        self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
-
     def _create_and_register_paramsets(self, required_paramsets):
+        next_index = 0
         for param_name, paramset in required_paramsets.items():
-            self._register_paramset(param_name, paramset)
+            log.info(
+                'adding modifier %s (%s new nuisance parameters)',
+                param_name,
+                paramset.n_parameters,
+            )
+
+            sl = slice(next_index, next_index + paramset.n_parameters)
+            next_index = next_index + paramset.n_parameters
+
+            self.par_order.append(param_name)
+            self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
 
 class _ConstraintModel(object):
