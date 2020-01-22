@@ -5,7 +5,7 @@ ENV PYTHON_VERSION=cp36
 ENV CUDA_VERSION=cuda101
 ENV PLATFORM=linux_x86_64
 ENV BASE_URL="https://storage.googleapis.com/jax-releases"
-ENV WHEEL_URL="${BASE_URL}/${CUDA_VERSION}/jaxlib-0.1.37-${PYTHON_VERSION}-none-${PLATFORM}.whl"
+ENV JAXLIB_GPU_WHEEL="${BASE_URL}/${CUDA_VERSION}/jaxlib-0.1.37-${PYTHON_VERSION}-none-${PLATFORM}.whl"
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -18,9 +18,9 @@ RUN apt-get update -y && \
 COPY . /code
 RUN cd /code && \
     python3 -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
-    python3 -m pip install --no-cache-dir .[xmlio,jax] && \
-    python3 -m pip install --upgrade $WHEEL_URL && \
-    python3 -m pip install --upgrade jax && \
+    python3 -m pip install --no-cache-dir .[xmlio] && \
+    python3 -m pip install --no-cache-dir $JAXLIB_GPU_WHEEL && \
+    python3 -m pip install --no-cache-dir jax && \
     python3 -m pip list
 
 FROM base
