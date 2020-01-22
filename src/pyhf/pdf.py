@@ -91,10 +91,9 @@ def _paramset_requirements_from_spec(spec, channel_nbins):
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
-        poiname = config_kwargs.get('poiname', 'mu')
-
         _required_paramsets = _paramset_requirements_from_spec(spec, self.channel_nbins)
 
+        poiname = config_kwargs.get('poiname', 'mu')
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
         self.modifier_settings = (
             config_kwargs.get('modifier_settings') or default_modifier_settings
