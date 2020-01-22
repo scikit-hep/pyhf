@@ -88,7 +88,7 @@ def _paramset_requirements_from_spec(spec, channel_nbins):
     return _sets
 
 
-def _create_nominal_and_modifiers_from_spec(config, spec):
+def _nominal_and_modifiers_from_spec(config, spec):
     default_data_makers = {
         'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': [],},
         'lumi': lambda: {'mask': []},
@@ -534,7 +534,7 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        mega_mods, _nominal_rates = _create_nominal_and_modifiers_from_spec(
+        mega_mods, _nominal_rates = _nominal_and_modifiers_from_spec(
             self.config, self.spec
         )
         self.main_model = _MainModel(
