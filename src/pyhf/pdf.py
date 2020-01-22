@@ -88,6 +88,127 @@ def _paramset_requirements_from_spec(spec, channel_nbins):
     return _sets
 
 
+def _create_nominal_and_modifiers_from_spec(config, spec):
+    default_data_makers = {
+        'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': [],},
+        'lumi': lambda: {'mask': []},
+        'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
+        'normfactor': lambda: {'mask': []},
+        'shapefactor': lambda: {'mask': []},
+        'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
+        'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
+    }
+
+    # the mega-channel will consist of mega-samples that subscribe to
+    # mega-modifiers. i.e. while in normal histfactory, each sample might
+    # be affected by some modifiers and some not, here we change it so that
+    # samples are affected by all modifiers, but we set up the modifier
+    # data such that the application of the modifier does not actually
+    # change the bin value for bins that are not originally affected by
+    # that modifier
+    #
+    # We don't actually set up the modifier data here for no-ops, but we do
+    # set up the entire structure
+    mega_mods = {}
+    for m, mtype in config.modifiers:
+        for s in config.samples:
+            key = '{}/{}'.format(mtype, m)
+            mega_mods.setdefault(key, {})[s] = {
+                'type': mtype,
+                'name': m,
+                'data': default_data_makers[mtype](),
+            }
+
+    # helper maps channel-name/sample-name to pairs of channel-sample structs
+    helper = {}
+    for c in spec['channels']:
+        for s in c['samples']:
+            helper.setdefault(c['name'], {})[s['name']] = (c, s)
+
+    mega_samples = {}
+    for s in config.samples:
+        mega_nom = []
+        for c in config.channels:
+            defined_samp = helper.get(c, {}).get(s)
+            defined_samp = None if not defined_samp else defined_samp[1]
+            # set nominal to 0 for channel/sample if the pair doesn't exist
+            nom = (
+                defined_samp['data']
+                if defined_samp
+                else [0.0] * config.channel_nbins[c]
+            )
+            mega_nom += nom
+            defined_mods = (
+                {
+                    '{}/{}'.format(x['type'], x['name']): x
+                    for x in defined_samp['modifiers']
+                }
+                if defined_samp
+                else {}
+            )
+            for m, mtype in config.modifiers:
+                key = '{}/{}'.format(mtype, m)
+                # this is None if modifier doesn't affect channel/sample.
+                thismod = defined_mods.get(key)
+                # print('key',key,thismod['data'] if thismod else None)
+                if mtype == 'histosys':
+                    lo_data = thismod['data']['lo_data'] if thismod else nom
+                    hi_data = thismod['data']['hi_data'] if thismod else nom
+                    maskval = True if thismod else False
+                    mega_mods[key][s]['data']['lo_data'] += lo_data
+                    mega_mods[key][s]['data']['hi_data'] += hi_data
+                    mega_mods[key][s]['data']['nom_data'] += nom
+                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
+                        nom
+                    )  # broadcasting
+                elif mtype == 'normsys':
+                    maskval = True if thismod else False
+                    lo_factor = thismod['data']['lo'] if thismod else 1.0
+                    hi_factor = thismod['data']['hi'] if thismod else 1.0
+                    mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
+                    mega_mods[key][s]['data']['lo'] += [lo_factor] * len(
+                        nom
+                    )  # broadcasting
+                    mega_mods[key][s]['data']['hi'] += [hi_factor] * len(nom)
+                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
+                        nom
+                    )  # broadcasting
+                elif mtype in ['normfactor', 'shapefactor', 'lumi']:
+                    maskval = True if thismod else False
+                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
+                        nom
+                    )  # broadcasting
+                elif mtype in ['shapesys', 'staterror']:
+                    uncrt = thismod['data'] if thismod else [0.0] * len(nom)
+                    maskval = [True if thismod else False] * len(nom)
+                    mega_mods[key][s]['data']['mask'] += maskval
+                    mega_mods[key][s]['data']['uncrt'] += uncrt
+                    mega_mods[key][s]['data']['nom_data'] += nom
+                else:
+                    raise RuntimeError(
+                        'not sure how to combine {mtype} into the mega-channel'.format(
+                            mtype=mtype
+                        )
+                    )
+        sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
+        mega_samples[s] = sample_dict
+
+    nominal_rates = default_backend.astensor(
+        [mega_samples[s]['nom'] for s in config.samples]
+    )
+    _nominal_rates = default_backend.reshape(
+        nominal_rates,
+        (
+            1,  # modifier dimension.. nominal_rates is the base
+            len(config.samples),
+            1,  # alphaset dimension
+            sum(list(config.channel_nbins.values())),
+        ),
+    )
+
+    return mega_mods, _nominal_rates
+
+
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
@@ -413,7 +534,7 @@ class Model(object):
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 
-        mega_mods, _nominal_rates = self._create_nominal_and_modifiers(
+        mega_mods, _nominal_rates = _create_nominal_and_modifiers_from_spec(
             self.config, self.spec
         )
         self.main_model = _MainModel(
@@ -447,131 +568,6 @@ class Model(object):
         if self.constraint_model.has_pdf():
             indices.append(position[cut:])
         self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
-
-    def _create_nominal_and_modifiers(self, config, spec):
-        default_data_makers = {
-            'histosys': lambda: {
-                'hi_data': [],
-                'lo_data': [],
-                'nom_data': [],
-                'mask': [],
-            },
-            'lumi': lambda: {'mask': []},
-            'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
-            'normfactor': lambda: {'mask': []},
-            'shapefactor': lambda: {'mask': []},
-            'shapesys': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
-            'staterror': lambda: {'mask': [], 'uncrt': [], 'nom_data': []},
-        }
-
-        # the mega-channel will consist of mega-samples that subscribe to
-        # mega-modifiers. i.e. while in normal histfactory, each sample might
-        # be affected by some modifiers and some not, here we change it so that
-        # samples are affected by all modifiers, but we set up the modifier
-        # data such that the application of the modifier does not actually
-        # change the bin value for bins that are not originally affected by
-        # that modifier
-        #
-        # We don't actually set up the modifier data here for no-ops, but we do
-        # set up the entire structure
-        mega_mods = {}
-        for m, mtype in config.modifiers:
-            for s in config.samples:
-                key = '{}/{}'.format(mtype, m)
-                mega_mods.setdefault(key, {})[s] = {
-                    'type': mtype,
-                    'name': m,
-                    'data': default_data_makers[mtype](),
-                }
-
-        # helper maps channel-name/sample-name to pairs of channel-sample structs
-        helper = {}
-        for c in spec['channels']:
-            for s in c['samples']:
-                helper.setdefault(c['name'], {})[s['name']] = (c, s)
-
-        mega_samples = {}
-        for s in config.samples:
-            mega_nom = []
-            for c in config.channels:
-                defined_samp = helper.get(c, {}).get(s)
-                defined_samp = None if not defined_samp else defined_samp[1]
-                # set nominal to 0 for channel/sample if the pair doesn't exist
-                nom = (
-                    defined_samp['data']
-                    if defined_samp
-                    else [0.0] * config.channel_nbins[c]
-                )
-                mega_nom += nom
-                defined_mods = (
-                    {
-                        '{}/{}'.format(x['type'], x['name']): x
-                        for x in defined_samp['modifiers']
-                    }
-                    if defined_samp
-                    else {}
-                )
-                for m, mtype in config.modifiers:
-                    key = '{}/{}'.format(mtype, m)
-                    # this is None if modifier doesn't affect channel/sample.
-                    thismod = defined_mods.get(key)
-                    # print('key',key,thismod['data'] if thismod else None)
-                    if mtype == 'histosys':
-                        lo_data = thismod['data']['lo_data'] if thismod else nom
-                        hi_data = thismod['data']['hi_data'] if thismod else nom
-                        maskval = True if thismod else False
-                        mega_mods[key][s]['data']['lo_data'] += lo_data
-                        mega_mods[key][s]['data']['hi_data'] += hi_data
-                        mega_mods[key][s]['data']['nom_data'] += nom
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype == 'normsys':
-                        maskval = True if thismod else False
-                        lo_factor = thismod['data']['lo'] if thismod else 1.0
-                        hi_factor = thismod['data']['hi'] if thismod else 1.0
-                        mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
-                        mega_mods[key][s]['data']['lo'] += [lo_factor] * len(
-                            nom
-                        )  # broadcasting
-                        mega_mods[key][s]['data']['hi'] += [hi_factor] * len(nom)
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype in ['normfactor', 'shapefactor', 'lumi']:
-                        maskval = True if thismod else False
-                        mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                            nom
-                        )  # broadcasting
-                    elif mtype in ['shapesys', 'staterror']:
-                        uncrt = thismod['data'] if thismod else [0.0] * len(nom)
-                        maskval = [True if thismod else False] * len(nom)
-                        mega_mods[key][s]['data']['mask'] += maskval
-                        mega_mods[key][s]['data']['uncrt'] += uncrt
-                        mega_mods[key][s]['data']['nom_data'] += nom
-                    else:
-                        raise RuntimeError(
-                            'not sure how to combine {mtype} into the mega-channel'.format(
-                                mtype=mtype
-                            )
-                        )
-            sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
-            mega_samples[s] = sample_dict
-
-        nominal_rates = default_backend.astensor(
-            [mega_samples[s]['nom'] for s in config.samples]
-        )
-        _nominal_rates = default_backend.reshape(
-            nominal_rates,
-            (
-                1,  # modifier dimension.. nominal_rates is the base
-                len(self.config.samples),
-                1,  # alphaset dimension
-                sum(list(config.channel_nbins.values())),
-            ),
-        )
-
-        return mega_mods, _nominal_rates
 
     def expected_auxdata(self, pars):
         """
