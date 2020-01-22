@@ -76,9 +76,16 @@ def _paramset_requirements_from_spec(spec, channel_nbins):
             )
         _paramsets_user_configs[parameter.pop('name')] = parameter
 
-    return reduce_paramsets_requirements(
+    _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
     )
+
+    _sets = {}
+    for param_name, paramset_requirements in _reqs.items():
+        paramset_type = paramset_requirements.get('paramset_type')
+        paramset = paramset_type(**paramset_requirements)
+        _sets[param_name] = paramset
+    return _sets
 
 
 class _ModelConfig(_ChannelSummaryMixin):
@@ -151,9 +158,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
     def _create_and_register_paramsets(self, required_paramsets):
-        for param_name, paramset_requirements in required_paramsets.items():
-            paramset_type = paramset_requirements.get('paramset_type')
-            paramset = paramset_type(**paramset_requirements)
+        for param_name, paramset in required_paramsets.items():
             self._register_paramset(param_name, paramset)
 
 
