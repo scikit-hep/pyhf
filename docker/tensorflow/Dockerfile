@@ -2,7 +2,6 @@ FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 as base
 
 FROM base as builder
 RUN apt-get update -y && \
-    apt-get upgrade -y && \
     apt-get install -y \
       git \
       python3 \

@@ -7,7 +7,6 @@ ENV PLATFORM=linux_x86_64
 ENV BASE_URL="https://storage.googleapis.com/jax-releases"
 ENV JAXLIB_GPU_WHEEL="${BASE_URL}/${CUDA_VERSION}/jaxlib-0.1.37-${PYTHON_VERSION}-none-${PLATFORM}.whl"
 RUN apt-get update -y && \
-    apt-get upgrade -y && \
     apt-get install -y \
       git \
       python3 \
