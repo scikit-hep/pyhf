@@ -358,7 +358,7 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
     assert len(combined_parameter_configs) == len(set(combined_parameter_configs))
 
 
-def test_combine_workspace_ordering(workspace_factory):
+def test_combine_workspace_parameter_configs_ordering(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
