@@ -2,11 +2,7 @@
 
 from .test_statistics import qmu
 from .. import get_backend
-from .calculators import (
-    AsymptoticTestStatDistribution,
-    AsymptoticCalculator,
-    generate_asimov_data,
-)
+from .calculators import AsymptoticCalculator
 
 
 def hypotest(
@@ -77,9 +73,6 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
-
-    asimov_mu = 0.0
-    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
     calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
     sb_dist, b_dist = calc.distributions(poi_test)
