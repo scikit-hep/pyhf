@@ -23,7 +23,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
-    valid_joins = ['outer', 'left outer', 'right outer']
+    valid_joins = ['none', 'outer', 'left outer', 'right outer']
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
@@ -341,7 +341,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right, join='outer'):
+    def combine(cls, left, right, join='none'):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -366,7 +366,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         Args:
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
-            join (:obj:`str`): How to join the two workspaces. Pick from "outer", "left outer", or "right outer".
+            join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object

@@ -239,7 +239,11 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
 @click.argument('workspace-one', default='-')
 @click.argument('workspace-two', default='-')
 @click.option(
-    '-j', '--join', default='outer', type=click.Choice(Workspace.valid_joins),
+    '-j',
+    '--join',
+    default='none',
+    type=click.Choice(Workspace.valid_joins),
+    help='The join operation to apply when combining the two workspaces.',
 )
 @click.option(
     '--output-file',
