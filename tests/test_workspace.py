@@ -275,13 +275,21 @@ def test_rename_measurement(workspace_factory):
     assert renamed in new_ws.measurement_names
 
 
-def test_combine_workspace_same_channels(workspace_factory):
+def test_combine_workspace_same_channels_outer_join(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel2': 'channel3'})
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
+
+
+@pytest.mark.parametrize("join", ['left outer', 'right outer'])
+def test_combine_workspace_same_channels_leftright_outer_join(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    combined = pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert 'channel1' in combined.channels
 
 
 def test_combine_workspace_incompatible_poi(workspace_factory):
