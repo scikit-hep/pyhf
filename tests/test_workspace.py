@@ -358,6 +358,19 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
     assert len(combined_parameter_configs) == len(set(combined_parameter_configs))
 
 
+def test_combine_workspace_ordering(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    assert (
+        ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
+        == new_ws.get_measurement(measurement_name='GaussExample')['config'][
+            'parameters'
+        ]
+    )
+
+
 def test_combine_workspace_deepcopied(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
