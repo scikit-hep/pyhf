@@ -85,8 +85,6 @@ def hypotest(
     sb_dist, b_dist = calc.distributions(poi_test)
     teststat = calc.teststatistic(poi_test)
 
-    sqrtqmuA_v = calc.sqrtqmuA_v
-
     CLsb = sb_dist.pvalue(teststat)
     CLb = b_dist.pvalue(teststat)
     CLs = CLsb / CLb
