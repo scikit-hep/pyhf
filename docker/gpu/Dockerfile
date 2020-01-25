@@ -1,6 +1,7 @@
 FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 as base
 
 FROM base as builder
+# hadolint ignore=DL3015
 RUN apt-get update -y && \
     apt-get install -y \
       git \
