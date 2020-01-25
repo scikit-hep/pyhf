@@ -7,7 +7,7 @@ function get_JAXLIB_GPU_WHEEL {
   local PYTHON_VERSION # alternatives: cp35, cp36, cp37, cp38
   PYTHON_VERSION="cp"$(python3 --version | awk '{print $NF}' | awk '{split($0, rel, "."); print rel[1]rel[2]}')
   local CUDA_VERSION # alternatives: cuda90, cuda92, cuda100, cuda101
-  CUDA_VERSION="cuda"$(cat /usr/local/cuda/version.txt | awk '{print $NF}' | awk '{split($0, rel, "."); print rel[1]rel[2]}')
+  CUDA_VERSION="cuda"$(< /usr/local/cuda/version.txt awk '{print $NF}' | awk '{split($0, rel, "."); print rel[1]rel[2]}')
   local PLATFORM=linux_x86_64
   local JAXLIB_VERSION=0.1.37
   local BASE_URL="https://storage.googleapis.com/jax-releases"
