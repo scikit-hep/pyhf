@@ -81,14 +81,6 @@ def hypotest(
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-
-
-    qmu_v = qmu(poi_test, data, pdf, init_pars, par_bounds)
-    sqrtqmu_v = tensorlib.sqrt(qmu_v)
-
-    qmuA_v = qmu(poi_test, asimov_data, pdf, init_pars, par_bounds)
-    sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-
     calc = AsymptoticCalculator(data,pdf,init_pars,par_bounds,qtilde=qtilde)
     sb_dist, b_dist = calc.distributions(poi_test)
     teststat = calc.teststatistic(poi_test)
@@ -119,7 +111,10 @@ def hypotest(
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
+        n_sigma = 0
+        CLs = sb_dist.pvalue(n_sigma)/b_dist.pvalue(n_sigma)
+        v = tensorlib.reshape(CLs,(1,))
+        _returns.append(v)
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
