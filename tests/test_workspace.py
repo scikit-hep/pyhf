@@ -322,6 +322,42 @@ def test_combine_workspace_diff_version(workspace_factory):
         pyhf.Workspace.combine(ws, new_ws)
 
 
+def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    combined = pyhf.Workspace.combine(ws, new_ws)
+
+    poi = ws.get_measurement(measurement_name='GaussExample')['config']['poi']
+    ws_parameter_configs = [
+        parameter['name']
+        for parameter in ws.get_measurement(measurement_name='GaussExample')['config'][
+            'parameters'
+        ]
+    ]
+    new_ws_parameter_configs = [
+        parameter['name']
+        for parameter in new_ws.get_measurement(measurement_name='GaussExample')[
+            'config'
+        ]['parameters']
+    ]
+    combined_parameter_configs = [
+        parameter['name']
+        for parameter in combined.get_measurement(measurement_name='GaussExample')[
+            'config'
+        ]['parameters']
+    ]
+
+    assert poi in ws_parameter_configs
+    assert poi in new_ws_parameter_configs
+    assert poi in combined_parameter_configs
+    assert 'lumi' in ws_parameter_configs
+    assert 'lumi' in new_ws_parameter_configs
+    assert 'lumi' in combined_parameter_configs
+    assert len(combined_parameter_configs) == len(set(combined_parameter_configs))
+
+
 def test_combine_workspace(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
