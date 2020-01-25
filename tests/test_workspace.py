@@ -411,9 +411,3 @@ def test_combine_workspace(workspace_factory):
     assert set(combined.channels) == set(ws.channels + new_ws.channels)
     assert set(combined.samples) == set(ws.samples + new_ws.samples)
     assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
-    combined_measurement = combined.get_measurement(measurement_name='GaussExample')
-    assert len(combined_measurement['config']['parameters']) == len(
-        ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
-    ) + len(
-        new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
-    )
