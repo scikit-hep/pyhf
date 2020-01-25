@@ -6,7 +6,11 @@ from .utils import (
     pvals_from_teststat_expected,
 )
 from .. import get_backend
-from .calculators import AsymptoticTestStatDistribution, AsymptoticCalculator, generate_asimov_data
+from .calculators import (
+    AsymptoticTestStatDistribution,
+    AsymptoticCalculator,
+    generate_asimov_data,
+)
 
 
 def hypotest(
@@ -81,13 +85,12 @@ def hypotest(
     asimov_mu = 0.0
     asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
 
-    calc = AsymptoticCalculator(data,pdf,init_pars,par_bounds,qtilde=qtilde)
+    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
     sb_dist, b_dist = calc.distributions(poi_test)
     teststat = calc.teststatistic(poi_test)
 
     sqrtqmuA_v = calc.sqrtqmuA_v
 
-    
     CLsb = sb_dist.pvalue(teststat)
     CLb = b_dist.pvalue(teststat)
     CLs = CLsb / CLb
@@ -102,9 +105,9 @@ def hypotest(
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
-        for n_sigma in [2,1,0,-1,-2]:
-            CLs = sb_dist.pvalue(n_sigma)/b_dist.pvalue(n_sigma)
-            v = tensorlib.reshape(CLs,(1,))
+        for n_sigma in [2, 1, 0, -1, -2]:
+            CLs = sb_dist.pvalue(n_sigma) / b_dist.pvalue(n_sigma)
+            v = tensorlib.reshape(CLs, (1,))
             CLs_exp.append(v)
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
@@ -112,8 +115,8 @@ def hypotest(
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
-        CLs = sb_dist.pvalue(n_sigma)/b_dist.pvalue(n_sigma)
-        v = tensorlib.reshape(CLs,(1,))
+        CLs = sb_dist.pvalue(n_sigma) / b_dist.pvalue(n_sigma)
+        v = tensorlib.reshape(CLs, (1,))
         _returns.append(v)
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]

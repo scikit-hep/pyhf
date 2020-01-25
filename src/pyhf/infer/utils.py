@@ -5,9 +5,8 @@ from .test_statistics import qmu
 
 
 def pvals_from_teststat(
-    sqrtqmu_v,
-    poi_test, data, pdf, init_pars, par_bounds, 
-    qtilde=False):
+    sqrtqmu_v, poi_test, data, pdf, init_pars, par_bounds, qtilde=False
+):
     r"""
     Compute p-values from test-statistic values.
 
@@ -36,7 +35,10 @@ def pvals_from_teststat(
     """
     raise RuntimeError()
 
+
 from .calculators import AsymptoticTestStatDistribution, AsymptoticCalculator
+
+
 def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     r"""
     Compute the expected :math:`p`-values CLsb, CLb and CLs for data corresponding to a given percentile of the alternate hypothesis.
