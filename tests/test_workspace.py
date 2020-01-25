@@ -358,7 +358,7 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
     assert len(combined_parameter_configs) == len(set(combined_parameter_configs))
 
 
-def test_combine_workspace_incompatible_parameter_configs(workspace_factory):
+def test_combine_workspace_deepcopied(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
@@ -374,6 +374,16 @@ def test_combine_workspace_incompatible_parameter_configs(workspace_factory):
             'parameters'
         ][0]['bounds']
     )
+
+
+def test_combine_workspace_incompatible_parameter_configs(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
+        'bounds'
+    ] = [[0.0, 1.0]]
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
         pyhf.Workspace.combine(ws, new_ws)
 
