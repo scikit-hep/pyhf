@@ -1,15 +1,13 @@
 """Utility Functions for model inference."""
 from .. import get_backend
 from .mle import fixed_poi_fit
+from .test_statistics import qmu
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    """Compute Asimov Dataset (expected yields at best-fit values) for a given POI value."""
-    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
-    return pdf.expected_data(bestfit_nuisance_asimov)
-
-
-def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
+def pvals_from_teststat(
+    sqrtqmu_v,
+    poi_test, data, pdf, init_pars, par_bounds, 
+    qtilde=False):
     r"""
     Compute p-values from test-statistic values.
 
@@ -36,38 +34,9 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
         Tuple of Floats: The :math:`p`-values for the signal + background, background only, and signal only hypotheses respectivley
 
     """
-    tensorlib, _ = get_backend()
-    if not qtilde:  # qmu
-        teststat = sqrtqmu_v - sqrtqmuA_v
-    else:  # qtilde
+    raise RuntimeError()
 
-        def _true_case():
-            teststat = sqrtqmu_v - sqrtqmuA_v
-            return teststat
-
-        def _false_case():
-            qmu = tensorlib.power(sqrtqmu_v, 2)
-            qmu_A = tensorlib.power(sqrtqmuA_v, 2)
-            teststat = (qmu - qmu_A) / (2 * sqrtqmuA_v)
-            return teststat
-
-        teststat = tensorlib.conditional(
-            (sqrtqmu_v < sqrtqmuA_v), _true_case, _false_case
-        )
-
-    nullval = teststat + sqrtqmuA_v
-    altval = teststat
-
-    CLsb = 1 - tensorlib.normal_cdf(nullval)
-    CLb = 1 - tensorlib.normal_cdf(altval)
-    CLs = CLsb / CLb
-    return (
-        tensorlib.reshape(CLsb, (1,)),
-        tensorlib.reshape(CLb, (1,)),
-        tensorlib.reshape(CLs, (1,)),
-    )
-
-
+from .calculators import AsymptoticTestStatDistribution, AsymptoticCalculator
 def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     r"""
     Compute the expected :math:`p`-values CLsb, CLb and CLs for data corresponding to a given percentile of the alternate hypothesis.
@@ -87,12 +56,4 @@ def pvals_from_teststat_expected(sqrtqmuA_v, nsigma=0):
     # was used. However, we can make a shortcut by just computing the p-values in mu^/sigma
     # space, where the p-values are Clsb = cdf(x-sqrt(lambda)) and CLb=cdf(x)
 
-    tensorlib, _ = get_backend()
-    CLsb = tensorlib.normal_cdf(nsigma - sqrtqmuA_v)
-    CLb = tensorlib.normal_cdf(nsigma)
-    CLs = CLsb / CLb
-    return (
-        tensorlib.reshape(CLsb, (1,)),
-        tensorlib.reshape(CLb, (1,)),
-        tensorlib.reshape(CLs, (1,)),
-    )
+    raise RuntimeError()
