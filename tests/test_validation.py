@@ -701,12 +701,6 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         return_expected_set=True,
         qtilde=False,
     )
-    import numpy as np
-
-    for x in CLs_exp_set:
-        for y in x:
-            print(y)
-
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected) / expected < tolerance
