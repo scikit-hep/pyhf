@@ -38,7 +38,10 @@ class AsymptoticTestStatDistribution(object):
         Asymptotic test statistic distribution.
 
         Args:
-            shift: the displacement of the test statistic distribus
+            shift: the displacement of the test statistic distribution
+
+        Returns:
+            distribution
         
         """
         self.shift = shift
@@ -80,8 +83,14 @@ class AsymptoticCalculator(object):
         Asymptotic Calculator.
 
         Args:
-            data: data
-        
+            data: the observed data
+            pdf: the statistical model
+            init_pars: the initial parameters to be used for fitting
+            par_bounds: the parameter bounds used for fitting
+
+        Returns:
+            calculator
+             
         """
         self.data = data
         self.pdf = pdf
