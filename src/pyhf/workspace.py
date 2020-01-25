@@ -366,7 +366,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         Args:
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
-            join (:obj:`str`): How to join the two workspaces. Pick from "outer", "left_outer", or "right_outer".
+            join (:obj:`str`): How to join the two workspaces. Pick from "outer", "left outer", or "right outer".
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
