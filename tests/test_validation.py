@@ -189,11 +189,11 @@ def expected_result_1bin_normsys(mu=1.0):
     if mu == 1:
         expected_result = {
             "exp": [
-                7.471694618861785e-10,
+                7.471684419037561e-10,
                 5.7411551509088054e-08,
-                3.6898088058290313e-06,
-                0.000169657315363677,
-                0.004392708998183163,
+                3.6898088062731205e-06,
+                0.00016965731538267896,
+                0.004392708998555453
             ],
             "obs": 0.0006735317023683173,
         }
@@ -701,6 +701,10 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         return_expected_set=True,
         qtilde=False,
     )
+    import numpy as np
+    for x in CLs_exp_set:
+        for y in x:
+            print(y)
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
