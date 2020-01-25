@@ -75,8 +75,8 @@ def hypotest(
     tensorlib, _ = get_backend()
 
     calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
-    sb_dist, b_dist = calc.distributions(poi_test)
     teststat = calc.teststatistic(poi_test)
+    sb_dist, b_dist = calc.distributions(poi_test)
 
     CLsb = sb_dist.pvalue(teststat)
     CLb = b_dist.pvalue(teststat)
