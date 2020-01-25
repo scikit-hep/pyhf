@@ -23,6 +23,8 @@ class Workspace(_ChannelSummaryMixin, dict):
     A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
+    valid_joins = ['outer', 'left outer', 'right outer']
+
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
         super(Workspace, self).__init__(spec, channels=spec['channels'])
@@ -339,7 +341,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right):
+    def combine(cls, left, right, join='outer'):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -364,11 +366,17 @@ class Workspace(_ChannelSummaryMixin, dict):
         Args:
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
+            join (:obj:`str`): How to join the two workspaces. Pick from "outer", "left_outer", or "right_outer".
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
 
         """
+        if join not in Workspace.valid_joins:
+            raise ValueError(
+                f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}): {join}"
+            )
+
         common_channels = set(left.channels).intersection(right.channels)
         if common_channels:
             raise exceptions.InvalidWorkspaceOperation(
@@ -412,25 +420,37 @@ class Workspace(_ChannelSummaryMixin, dict):
         ]
 
         def _merge_parameter_configs(
-            measurement_name, left_parameters, right_parameters
+            measurement_name, join, left_parameters, right_parameters
         ):
+            if join == 'right outer':
+                left_parameters, right_parameters = right_parameters, left_parameters
+
             merged_parameter_configs = copy.deepcopy(left_parameters)
             for right_parameter in right_parameters:
-                if right_parameter in left_parameters:
+                # outer join: merge left and right, matching where possible
+                if join == 'outer' and right_parameter in left_parameters:
+                    continue
+                # left(right) outer join: only add right(left) if existing parameter config's name is not in left(right)
+                # NB: we switch left/right if using a right outer join so we only ever check the "right"
+                # NB: this will be slow for large numbers of parameter configs
+                elif join in ['left outer', 'right outer'] and right_parameter[
+                    'name'
+                ] in [parameter['name'] for parameter in merged_parameter_configs]:
                     continue
                 merged_parameter_configs.append(right_parameter)
-            counted_parameter_configs = collections.Counter(
-                parameter['name'] for parameter in merged_parameter_configs
-            )
-            incompatible_parameter_configs = [
-                parameter
-                for parameter, count in counted_parameter_configs.items()
-                if count > 1
-            ]
-            if incompatible_parameter_configs:
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}"
+            if join == 'outer':
+                counted_parameter_configs = collections.Counter(
+                    parameter['name'] for parameter in merged_parameter_configs
                 )
+                incompatible_parameter_configs = [
+                    parameter
+                    for parameter, count in counted_parameter_configs.items()
+                    if count > 1
+                ]
+                if incompatible_parameter_configs:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
             return merged_parameter_configs
 
         merged_measurements = [
@@ -440,6 +460,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                     poi=left.get_measurement(measurement_name=m)['config']['poi'],
                     parameters=_merge_parameter_configs(
                         m,
+                        join,
                         left.get_measurement(measurement_name=m)['config'][
                             'parameters'
                         ],
