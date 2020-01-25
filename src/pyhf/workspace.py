@@ -377,6 +377,24 @@ class Workspace(_ChannelSummaryMixin, dict):
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}): {join}"
             )
 
+        def _join_items(join, left_items, right_items):
+            if join == 'right outer':
+                left_items, right_items = right_items, left_items
+            joined_items = copy.deepcopy(left_items)
+            for right_item in right_items:
+                # outer join: merge left and right, matching where possible
+                if join == 'outer' and right_item in left_items:
+                    continue
+                # left(right) outer join: only add right(left) if existing item (by name) is not in left(right)
+                # NB: we switch left/right if using a right outer join so we only ever check the "right"
+                # NB: this will be slow for large numbers of items
+                elif join in ['left outer', 'right outer'] and right_item['name'] in [
+                    item['name'] for item in joined_items
+                ]:
+                    continue
+                joined_items.append(right_item)
+            return joined_items
+
         common_channels = set(left.channels).intersection(right.channels)
         if common_channels:
             raise exceptions.InvalidWorkspaceOperation(
@@ -419,28 +437,15 @@ class Workspace(_ChannelSummaryMixin, dict):
             for m in set(right.measurement_names) - set(common_measurements)
         ]
 
-        def _merge_parameter_configs(
+        def _join_parameter_configs(
             measurement_name, join, left_parameters, right_parameters
         ):
-            if join == 'right outer':
-                left_parameters, right_parameters = right_parameters, left_parameters
-
-            merged_parameter_configs = copy.deepcopy(left_parameters)
-            for right_parameter in right_parameters:
-                # outer join: merge left and right, matching where possible
-                if join == 'outer' and right_parameter in left_parameters:
-                    continue
-                # left(right) outer join: only add right(left) if existing parameter config's name is not in left(right)
-                # NB: we switch left/right if using a right outer join so we only ever check the "right"
-                # NB: this will be slow for large numbers of parameter configs
-                elif join in ['left outer', 'right outer'] and right_parameter[
-                    'name'
-                ] in [parameter['name'] for parameter in merged_parameter_configs]:
-                    continue
-                merged_parameter_configs.append(right_parameter)
+            joined_parameter_configs = _join_items(
+                join, left_parameters, right_parameters
+            )
             if join == 'outer':
                 counted_parameter_configs = collections.Counter(
-                    parameter['name'] for parameter in merged_parameter_configs
+                    parameter['name'] for parameter in joined_parameter_configs
                 )
                 incompatible_parameter_configs = [
                     parameter
@@ -451,14 +456,14 @@ class Workspace(_ChannelSummaryMixin, dict):
                     raise exceptions.InvalidWorkspaceOperation(
                         f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
                     )
-            return merged_parameter_configs
+            return joined_parameter_configs
 
         merged_measurements = [
             dict(
                 name=m,
                 config=dict(
                     poi=left.get_measurement(measurement_name=m)['config']['poi'],
-                    parameters=_merge_parameter_configs(
+                    parameters=_join_parameter_configs(
                         m,
                         join,
                         left.get_measurement(measurement_name=m)['config'][
