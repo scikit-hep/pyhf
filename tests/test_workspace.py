@@ -389,6 +389,15 @@ def test_combine_workspace_deepcopied(workspace_factory):
     )
 
 
+def test_combine_workspace_invalid_join_operation(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    with pytest.raises(ValueError):
+        pyhf.Workspace.combine(ws, new_ws, join='fake join operation')
+
+
 def test_combine_workspace_incompatible_parameter_configs_outer_join(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
