@@ -1,10 +1,6 @@
 """Inference for Statistical Models."""
 
 from .test_statistics import qmu
-from .utils import (
-    pvals_from_teststat,
-    pvals_from_teststat_expected,
-)
 from .. import get_backend
 from .calculators import (
     AsymptoticTestStatDistribution,
