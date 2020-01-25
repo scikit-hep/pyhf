@@ -395,13 +395,29 @@ class Workspace(_ChannelSummaryMixin, dict):
                 joined_items.append(right_item)
             return joined_items
 
-        common_channels = set(left.channels).intersection(right.channels)
-        if common_channels:
-            raise exceptions.InvalidWorkspaceOperation(
-                "Workspaces cannot have any channels in common: {}".format(
-                    common_channels
+        def _join_channels(join, left_channels, right_channels):
+            joined_channels = _join_items(join, left_channels, right_channels)
+            if join == 'none':
+                common_channels = set(c['name'] for c in left_channels).intersection(
+                    c['name'] for c in right_channels
                 )
-            )
+                if common_channels:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have any channels in common with the same name: {common_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+
+            elif join == 'outer':
+                counted_channels = collections.Counter(
+                    channel['name'] for channel in joined_channels
+                )
+                incompatible_channels = [
+                    channel for channel, count in counted_channels.items() if count > 1
+                ]
+                if incompatible_channels:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have channels in common with incompatible structure: {incompatible_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+            return joined_channels
 
         common_measurements = set(left.measurement_names).intersection(
             right.measurement_names
@@ -479,7 +495,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         ]
 
         newspec = {
-            'channels': left['channels'] + right['channels'],
+            'channels': _join_channels(join, left['channels'], right['channels']),
             'measurements': (
                 left_measurements + right_measurements + merged_measurements
             ),
