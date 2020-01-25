@@ -275,26 +275,22 @@ def test_rename_measurement(workspace_factory):
     assert renamed in new_ws.measurement_names
 
 
-def test_combine_workspace_same_channels(workspace_factory):
+@pytest.mark.parametrize("join", ['none', 'outer'])
+def test_combine_workspace_same_channels_incompatible_structure(
+    workspace_factory, join
+):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    new_ws = ws.rename(
+        channels={'channel2': 'channel3'}, samples={'signal': 'signal_other'}
+    )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
 
 
-def test_combine_workspace_same_channels_outer_join(workspace_factory):
-    ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel2': 'channel3'})
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws, join='outer')
-    assert 'channel1' in str(excinfo.value)
-    assert 'channel2' not in str(excinfo.value)
-
-
-@pytest.mark.parametrize("join", ['left outer', 'right outer'])
-def test_combine_workspace_same_channels_leftright_outer_join(workspace_factory, join):
+@pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
+def test_combine_workspace_same_channels_outer_join(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel2': 'channel3'})
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
@@ -344,7 +340,19 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
-    combined = pyhf.Workspace.combine(ws, new_ws)
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        pyhf.Workspace.combine(ws, new_ws)
+
+
+@pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
+def test_combine_workspace_duplicate_parameter_configs_outer_join(
+    workspace_factory, join
+):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    combined = pyhf.Workspace.combine(ws, new_ws, join=join)
 
     poi = ws.get_measurement(measurement_name='GaussExample')['config']['poi']
     ws_parameter_configs = [
@@ -415,7 +423,8 @@ def test_combine_workspace_invalid_join_operation(workspace_factory):
         pyhf.Workspace.combine(ws, new_ws, join='fake join operation')
 
 
-def test_combine_workspace_incompatible_parameter_configs(workspace_factory):
+@pytest.mark.parametrize("join", ['none', 'outer'])
+def test_combine_workspace_incompatible_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
@@ -424,19 +433,7 @@ def test_combine_workspace_incompatible_parameter_configs(workspace_factory):
         'bounds'
     ] = [[0.0, 1.0]]
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
-        pyhf.Workspace.combine(ws, new_ws)
-
-
-def test_combine_workspace_incompatible_parameter_configs_outer_join(workspace_factory):
-    ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
-    )
-    new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
-        'bounds'
-    ] = [[0.0, 1.0]]
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
-        pyhf.Workspace.combine(ws, new_ws, join='outer')
+        pyhf.Workspace.combine(ws, new_ws, join=join)
 
 
 def test_combine_workspace_incompatible_parameter_configs_left_outer_join(
