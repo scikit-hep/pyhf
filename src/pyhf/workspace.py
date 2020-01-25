@@ -7,6 +7,8 @@ pyhf workspaces hold the three data items:
 """
 import logging
 import jsonpatch
+import copy
+import collections
 from . import exceptions
 from . import utils
 from .pdf import Model
@@ -408,16 +410,42 @@ class Workspace(_ChannelSummaryMixin, dict):
             right.get_measurement(measurement_name=m)
             for m in set(right.measurement_names) - set(common_measurements)
         ]
+
+        def _merge_parameter_configs(
+            measurement_name, left_parameters, right_parameters
+        ):
+            merged_parameter_configs = copy.deepcopy(left_parameters)
+            for right_parameter in right_parameters:
+                if right_parameter in left_parameters:
+                    continue
+                merged_parameter_configs.append(right_parameter)
+            counted_parameter_configs = collections.Counter(
+                parameter['name'] for parameter in merged_parameter_configs
+            )
+            incompatible_parameter_configs = [
+                parameter
+                for parameter, count in counted_parameter_configs.items()
+                if count > 1
+            ]
+            if incompatible_parameter_configs:
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}"
+                )
+            return merged_parameter_configs
+
         merged_measurements = [
             dict(
                 name=m,
                 config=dict(
                     poi=left.get_measurement(measurement_name=m)['config']['poi'],
-                    parameters=(
-                        left.get_measurement(measurement_name=m)['config']['parameters']
-                        + right.get_measurement(measurement_name=m)['config'][
+                    parameters=_merge_parameter_configs(
+                        m,
+                        left.get_measurement(measurement_name=m)['config'][
                             'parameters'
-                        ]
+                        ],
+                        right.get_measurement(measurement_name=m)['config'][
+                            'parameters'
+                        ],
                     ),
                 ),
             )
