@@ -67,8 +67,9 @@ def test_get_measurement_fake(workspace_factory):
 
 def test_get_measurement_nonexist(workspace_factory):
     w = workspace_factory()
-    with pytest.raises(pyhf.exceptions.InvalidMeasurement):
+    with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
         w.get_measurement(measurement_name='nonexistent_measurement')
+    assert 'nonexistent_measurement' in str(excinfo.value)
 
 
 def test_get_workspace_measurement_priority(workspace_factory):
@@ -307,12 +308,14 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
     new_ws = ws.rename(
         modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
     )
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
+    assert 'GaussExample' in str(excinfo.value)
 
 
 def test_combine_workspace_diff_version(workspace_factory):
     ws = workspace_factory()
+    ws.version = '1.0.0'
     new_ws = ws.rename(
         channels={'channel1': 'channel3', 'channel2': 'channel4'},
         samples={
@@ -332,9 +335,11 @@ def test_combine_workspace_diff_version(workspace_factory):
             'GammaExample': 'OtherGammaExample',
         },
     )
-    new_ws.version = '0.0.0'
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+    new_ws.version = '1.2.0'
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
+    assert '1.0.0' in str(excinfo.value)
+    assert '1.2.0' in str(excinfo.value)
 
 
 def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
@@ -423,8 +428,9 @@ def test_combine_workspace_invalid_join_operation(workspace_factory):
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join='fake join operation')
+    assert 'fake join operation' in str(excinfo.value)
 
 
 @pytest.mark.parametrize("join", ['none', 'outer'])
@@ -436,8 +442,15 @@ def test_combine_workspace_incompatible_parameter_configs(workspace_factory, joi
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
     ] = [[0.0, 1.0]]
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert 'GaussExample' in str(excinfo.value)
+    assert ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][
+        0
+    ]['name'] in str(excinfo.value)
+    assert new_ws.get_measurement(measurement_name='GaussExample')['config'][
+        'parameters'
+    ][0]['name'] in str(excinfo.value)
 
 
 def test_combine_workspace_incompatible_parameter_configs_left_outer_join(
