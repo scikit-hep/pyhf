@@ -281,8 +281,10 @@ def test_combine_workspace_same_channels_incompatible_structure(
 ):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel2': 'channel3'}, samples={'signal': 'signal_other'}
-    )
+        channels={'channel2': 'channel3'},
+        samples={'signal': 'signal_other'},
+        measurements={'GaussExample': 'GaussExample2'},
+    ).prune(measurements=['GammaExample', 'ConstExample', 'LogNormExample'])
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
     assert 'channel1' in str(excinfo.value)
@@ -340,8 +342,10 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws)
+    assert 'GaussExample' in str(excinfo.value)
+    assert 'lumi' in str(excinfo.value)
 
 
 @pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
@@ -478,7 +482,8 @@ def test_combine_workspace_incompatible_parameter_configs_right_outer_join(
     )
 
 
-def test_combine_workspace(workspace_factory):
+@pytest.mark.parametrize("join", pyhf.Workspace.valid_joins)
+def test_combine_workspace(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(
         channels={'channel1': 'channel3', 'channel2': 'channel4'},
@@ -493,6 +498,8 @@ def test_combine_workspace(workspace_factory):
             'bkg2Shape': 'bkg4Shape',
         },
         measurements={
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
             'ConstExample': 'OtherConstExample',
             'LogNormExample': 'OtherLogNormExample',
         },
