@@ -38,25 +38,26 @@ def pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=False):
     """
     tensorlib, _ = get_backend()
     if not qtilde:  # qmu
-        nullval = sqrtqmu_v
-        altval = -(sqrtqmuA_v - sqrtqmu_v)
+        teststat = sqrtqmu_v - sqrtqmuA_v
     else:  # qtilde
 
         def _true_case():
-            nullval = sqrtqmu_v
-            altval = -(sqrtqmuA_v - sqrtqmu_v)
-            return nullval, altval
+            teststat = sqrtqmu_v - sqrtqmuA_v
+            return teststat
 
         def _false_case():
             qmu = tensorlib.power(sqrtqmu_v, 2)
             qmu_A = tensorlib.power(sqrtqmuA_v, 2)
-            nullval = (qmu + qmu_A) / (2 * sqrtqmuA_v)
-            altval = (qmu - qmu_A) / (2 * sqrtqmuA_v)
-            return nullval, altval
+            teststat = (qmu - qmu_A) / (2 * sqrtqmuA_v)
+            return teststat
 
-        nullval, altval = tensorlib.conditional(
+        teststat = tensorlib.conditional(
             (sqrtqmu_v < sqrtqmuA_v), _true_case, _false_case
         )
+
+    nullval = teststat + sqrtqmuA_v
+    altval = teststat
+
     CLsb = 1 - tensorlib.normal_cdf(nullval)
     CLb = 1 - tensorlib.normal_cdf(altval)
     CLs = CLsb / CLb
