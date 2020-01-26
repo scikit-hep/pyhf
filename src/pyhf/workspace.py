@@ -459,7 +459,16 @@ class Workspace(_ChannelSummaryMixin, dict):
             joined_parameter_configs = _join_items(
                 join, left_parameters, right_parameters
             )
-            if join == 'outer':
+            if join == 'none':
+                common_parameter_configs = set(
+                    p['name'] for p in left_parameters
+                ).intersection(p['name'] for p in right_parameters)
+                if common_parameter_configs:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have a measurement ({measurement_name}) specifying different configs for the same parameter: {common_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+
+            elif join == 'outer':
                 counted_parameter_configs = collections.Counter(
                     parameter['name'] for parameter in joined_parameter_configs
                 )
