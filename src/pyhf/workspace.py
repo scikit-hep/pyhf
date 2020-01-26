@@ -374,7 +374,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         """
         if join not in Workspace.valid_joins:
             raise ValueError(
-                f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}): {join}"
+                f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
 
         def _join_items(join, left_items, right_items):
@@ -429,7 +429,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         ]
         if any(incompatible_poi):
             raise exceptions.InvalidWorkspaceOperation(
-                "Workspaces cannot have any measurements with incompatible POI: {}".format(
+                "Workspaces cannot have the same measurements with incompatible POI: {}".format(
                     [
                         m
                         for m, i in zip(common_measurements, incompatible_poi)
