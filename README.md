@@ -6,7 +6,7 @@
 
 [![GitHub Project](https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub)](https://github.com/scikit-hep/pyhf)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg)](https://doi.org/10.5281/zenodo.1169739)
-[![Scikit-HEP][sk-badge]](https://scikit-hep.org/)
+[![Scikit-HEP](https://img.shields.io/badge/Scikit--HEP-Project-blue?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAAACXBIWXMAAAEZAAABGQHyCY1sAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA6dJREFUSImdlktonFUUx/930kQ0nYo2JX5NUqSghSq2oIgvcCFaC0EEH2AXUh9FEV1UUaGIC924qY8igo+FQi26sWp8gDS24qOgCOIiKCVomLlnZpxk7Dh2GjMz389F7tgv4zfNJGdzh/M/5/zuud/ch9MKDFgnaUjSnHOu2kuOmb0h6brMMoVHgceBY8ApSVVJ05JOAnXga+BJ4OK0fO/9PZL2AL91AwwBLwLz9GYLwKvAcLtGLpcbMbM5MyuXy+UoDXI14BNFcsABYBy4DLgojDvDZH5PxJaAG4CM937SzCgUCnemQcaB0yFpDngMGFhmefuBh4E/Qt4/tVrtoJlhZq+nJWwHaiH4F2DL2QAp+SPA9wBxHDM7O5svl8vZzqBzgOkAOQGsXwmkbbVabUOj0Wh/1xIw+J+Yy+UuBJ4O4jywdTUQSSoUCgdKpRJxHC+Ees8mxVKr1WoGYf9qId77m80sNrNvgedDvb+A8yQpMzg4OJHJZPoAVavVQ6uBmNmQc+4dSfVWq7Vb0n5JC5KyknZIUiabzdYlqdFoqF6vTxSLxctXwXpNUuSce3RsbOyEc+6kpKNBG5ekjKRLguMTSUNxHE/m8/ntvRK89w9IukvS4SiK3k5Ix8N4aRu0UZIGBgaOAHdIWpfJZI56769fDlIqlTY7515yzlkcx3s65xDGjW1Qf3A0R0ZGJpxzOyX1Oee+MLMd3SDAmjiOD0paK+nB0dHRuY6QhTD2t0EWHJEkRVF0zDl3k6TTkj5OPUIkmdkzwLWSXomi6POUkNFkZxlJM8GxrR0RRdEPzrkbnXOzwHve+/s7IFc55/ZJmmq1Wvu6NH1FGGfaS3B3YrMuOTJKpdJmM5sO+2OvJBWLxUEz+9XM5vP5/DalWDhpqqHu7rYzmzhI96Ys0aZQmEKh8IKZvRV+P9GlEwEPhXoNYCgpvByE2SXCmc6GzeyncCLjvZ8EUi9N4HygEOq92SmuB/4M4pdAf2eBmZmZC7z3lQDb1AXSB3wW6vwNpF54twOtEPQBsLYzplgsfmhmpHUDnAscCvkxsCttMu3gpzhjPwNLNq2ZHU4DsXgr/5jIfa4rJJF0H0vfCp8C9wLDSRCwAdgFfBQ6gMW3wyPLQhKwK4Gv+L81m80mwKkU7Tvgmp4hHcBbgXcTf5ROqwLvA7cBblWQDmA/sLVSqXxTqVQAbmHxJXTWh0vS1vQS5JxrSJoys3JwHXHOxSuZbE+ghE1J2rJSiCT9CxJT5EBIY81lAAAAAElFTkSuQmCC)](https://scikit-hep.org/)
 
 [![GitHub Actions Status: CI](https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg)](https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster)
 [![GitHub Actions Status: Publish](https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg)](https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster)
@@ -24,8 +24,8 @@
 [![Docker Stars](https://img.shields.io/docker/stars/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pyhf/pyhf.svg)](https://hub.docker.com/r/pyhf/pyhf/)
 
-The HistFactory p.d.f. template [[CERN-OPEN-2012-016](https://cds.cern.ch/record/1456844)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside
-of ROOT, RooFit, RooStats framework.
+The HistFactory p.d.f. template [[CERN-OPEN-2012-016](https://cds.cern.ch/record/1456844)] is per-se independent of its implementation in ROOT and sometimes, it's useful to be able to run statistical analysis outside of ROOT, RooFit, RooStats framework.
+
 
 This repo is a pure-python implementation of that statistical model for multi-bin histogram-based analysis and its interval estimation is based on the asymptotic formulas of "Asymptotic formulae for likelihood-based tests of new physics" [[arXiv:1007.1727](https://arxiv.org/abs/1007.1727)]. The aim is also to support modern computational graph libraries such as PyTorch and TensorFlow in order to make use of features such as autodifferentiation and GPU acceleration.
 
@@ -114,5 +114,3 @@ python -m pip uninstall pyhf
 ## Authors
 
 Please check the [contribution statistics for a list of contributors](https://github.com/scikit-hep/pyhf/graphs/contributors)
-
-[sk-badge]: https://img.shields.io/badge/Scikit--HEP-Project-blue?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAAACXBIWXMAAAEZAAABGQHyCY1sAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA6dJREFUSImdlktonFUUx/930kQ0nYo2JX5NUqSghSq2oIgvcCFaC0EEH2AXUh9FEV1UUaGIC924qY8igo+FQi26sWp8gDS24qOgCOIiKCVomLlnZpxk7Dh2GjMz389F7tgv4zfNJGdzh/M/5/zuud/ch9MKDFgnaUjSnHOu2kuOmb0h6brMMoVHgceBY8ApSVVJ05JOAnXga+BJ4OK0fO/9PZL2AL91AwwBLwLz9GYLwKvAcLtGLpcbMbM5MyuXy+UoDXI14BNFcsABYBy4DLgojDvDZH5PxJaAG4CM937SzCgUCnemQcaB0yFpDngMGFhmefuBh4E/Qt4/tVrtoJlhZq+nJWwHaiH4F2DL2QAp+SPA9wBxHDM7O5svl8vZzqBzgOkAOQGsXwmkbbVabUOj0Wh/1xIw+J+Yy+UuBJ4O4jywdTUQSSoUCgdKpRJxHC+Ees8mxVKr1WoGYf9qId77m80sNrNvgedDvb+A8yQpMzg4OJHJZPoAVavVQ6uBmNmQc+4dSfVWq7Vb0n5JC5KyknZIUiabzdYlqdFoqF6vTxSLxctXwXpNUuSce3RsbOyEc+6kpKNBG5ekjKRLguMTSUNxHE/m8/ntvRK89w9IukvS4SiK3k5Ix8N4aRu0UZIGBgaOAHdIWpfJZI56769fDlIqlTY7515yzlkcx3s65xDGjW1Qf3A0R0ZGJpxzOyX1Oee+MLMd3SDAmjiOD0paK+nB0dHRuY6QhTD2t0EWHJEkRVF0zDl3k6TTkj5OPUIkmdkzwLWSXomi6POUkNFkZxlJM8GxrR0RRdEPzrkbnXOzwHve+/s7IFc55/ZJmmq1Wvu6NH1FGGfaS3B3YrMuOTJKpdJmM5sO+2OvJBWLxUEz+9XM5vP5/DalWDhpqqHu7rYzmzhI96Ys0aZQmEKh8IKZvRV+P9GlEwEPhXoNYCgpvByE2SXCmc6GzeyncCLjvZ8EUi9N4HygEOq92SmuB/4M4pdAf2eBmZmZC7z3lQDb1AXSB3wW6vwNpF54twOtEPQBsLYzplgsfmhmpHUDnAscCvkxsCttMu3gpzhjPwNLNq2ZHU4DsXgr/5jIfa4rJJF0H0vfCp8C9wLDSRCwAdgFfBQ6gMW3wyPLQhKwK4Gv+L81m80mwKkU7Tvgmp4hHcBbgXcTf5ROqwLvA7cBblWQDmA/sLVSqXxTqVQAbmHxJXTWh0vS1vQS5JxrSJoys3JwHXHOxSuZbE+ghE1J2rJSiCT9CxJT5EBIY81lAAAAAElFTkSuQmCC
