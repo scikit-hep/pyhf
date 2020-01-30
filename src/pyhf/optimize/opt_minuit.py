@@ -10,15 +10,15 @@ log = logging.getLogger(__name__)
 class minuit_optimizer(object):
     """MINUIT Optimizer Backend."""
 
-    def __init__(self, verbose=False, ncall=10000, errordef=1, steps=1000):
+    def __init__(self, print_level=0, ncall=10000, errordef=1, steps=1000):
         """
         Create MINUIT Optimizer.
 
         Args:
-            verbose (`bool`): print verbose output during minimization
-        
+            print_level (`int`): print verbose output during minimization of different level (0 disabled)
+
         """
-        self.verbose = verbose
+        self.print_level = print_level
         self.ncall = ncall
         self.errordef = errordef
         self.steps = steps
@@ -48,8 +48,8 @@ class minuit_optimizer(object):
             kwargs.update(**d)
         mm = iminuit.Minuit(
             f,
-            print_level=1 if self.verbose else 0,
-            errordef=1,
+            print_level=self.print_level,
+            errordef=self.errordef,
             use_array_call=True,
             forced_parameters=parnames,
             **kwargs,
