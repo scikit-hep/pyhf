@@ -17,7 +17,7 @@ from .mixins import _ChannelSummaryMixin
 log = logging.getLogger(__name__)
 
 
-def _paramset_requirements_from_spec(spec, channel_nbins):
+def _paramset_requirements_from_channelspec(spec, channel_nbins):
     # bookkeep all requirements for paramsets we need to build
     _paramsets_requirements = {}
     # need to keep track in which order we added the constraints
@@ -65,6 +65,14 @@ def _paramset_requirements_from_spec(spec, channel_nbins):
                 _paramsets_requirements.setdefault(modifier_def['name'], []).append(
                     paramset_requirements
                 )
+    return _paramsets_requirements
+
+
+def _paramset_requirements_from_modelspec(spec, channel_nbins):
+    _paramsets_requirements = _paramset_requirements_from_channelspec(
+        spec, channel_nbins
+    )
+
     # build up a dictionary of the parameter configurations provided by the user
     _paramsets_user_configs = {}
     for parameter in spec.get('parameters', []):
@@ -212,7 +220,9 @@ def _nominal_and_modifiers_from_spec(config, spec):
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
-        _required_paramsets = _paramset_requirements_from_spec(spec, self.channel_nbins)
+        _required_paramsets = _paramset_requirements_from_modelspec(
+            spec, self.channel_nbins
+        )
 
         poiname = config_kwargs.get('poiname', 'mu')
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
