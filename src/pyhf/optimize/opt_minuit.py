@@ -77,6 +77,12 @@ class minuit_optimizer(object):
         mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
         assert result
+        try:
+            assert mm.migrad_ok()
+        except AssertionError:
+            log.error(result)
+            raise
+
         if return_uncertainties:
             bestfit_pars = np.asarray([(v, mm.errors[k]) for k, v in mm.values.items()])
         else:
