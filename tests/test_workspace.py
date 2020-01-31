@@ -413,7 +413,7 @@ def test_combine_workspace_observation_ordering(workspace_factory):
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
-    assert ws['observations'][0] == new_ws['observations'][0]
+    assert ws['observations'][0]['data'] == new_ws['observations'][0]['data']
 
 
 def test_combine_workspace_deepcopied(workspace_factory):
