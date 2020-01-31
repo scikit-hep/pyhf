@@ -454,6 +454,36 @@ class Workspace(_ChannelSummaryMixin, dict):
                     )
             return joined_observations
 
+        def _join_parameter_configs(
+            measurement_name, join, left_parameters, right_parameters
+        ):
+            joined_parameter_configs = _join_items(
+                join, left_parameters, right_parameters
+            )
+            if join == 'none':
+                common_parameter_configs = set(
+                    p['name'] for p in left_parameters
+                ).intersection(p['name'] for p in right_parameters)
+                if common_parameter_configs:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have a measurement ({measurement_name}) specifying different configs for the same parameter: {common_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+
+            elif join == 'outer':
+                counted_parameter_configs = collections.Counter(
+                    parameter['name'] for parameter in joined_parameter_configs
+                )
+                incompatible_parameter_configs = [
+                    parameter
+                    for parameter, count in counted_parameter_configs.items()
+                    if count > 1
+                ]
+                if incompatible_parameter_configs:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+            return joined_parameter_configs
+
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(join, left['channels'], right['channels'])
         new_observations = _join_observations(
@@ -487,36 +517,6 @@ class Workspace(_ChannelSummaryMixin, dict):
             right.get_measurement(measurement_name=m)
             for m in set(right.measurement_names) - set(common_measurements)
         ]
-
-        def _join_parameter_configs(
-            measurement_name, join, left_parameters, right_parameters
-        ):
-            joined_parameter_configs = _join_items(
-                join, left_parameters, right_parameters
-            )
-            if join == 'none':
-                common_parameter_configs = set(
-                    p['name'] for p in left_parameters
-                ).intersection(p['name'] for p in right_parameters)
-                if common_parameter_configs:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have a measurement ({measurement_name}) specifying different configs for the same parameter: {common_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-
-            elif join == 'outer':
-                counted_parameter_configs = collections.Counter(
-                    parameter['name'] for parameter in joined_parameter_configs
-                )
-                incompatible_parameter_configs = [
-                    parameter
-                    for parameter, count in counted_parameter_configs.items()
-                    if count > 1
-                ]
-                if incompatible_parameter_configs:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-            return joined_parameter_configs
 
         merged_measurements = [
             dict(
