@@ -111,6 +111,18 @@ To uninstall run
 python -m pip uninstall pyhf
 ```
 
+## Questions
+
+If you have a question about the use of `pyhf` not covered in [the documentation](https://scikit-hep.org/pyhf/), please ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/pyhf) with the `[pyhf]` and `[scikit-hep]` tags, which the `pyhf` dev team watches.
+
+<p align="center">
+<a href="https://stackoverflow.com/questions/tagged/pyhf">
+<img src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png" alt="Stack Overflow pyhf tag" width="50%"/>
+</a>
+</p>
+
+If you believe you have found a bug in `pyhf`, please report it in the [GitHub Issues](https://github.com/scikit-hep/pyhf/issues/new?template=Bug-Report.md&labels=bug&title=Bug+Report+:+Title+Here).
+
 ## Citation
 
 As noted in [Use and Citations](https://scikit-hep.org/pyhf/citations.html), the preferred BibTeX entry for citation of `pyhf` is
