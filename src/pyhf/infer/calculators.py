@@ -2,7 +2,7 @@
 Calculators for Hypothesis Testing.
 
 The role of the calculators is to compute test statistic and
-provide distributions of said test statistic under various 
+provide distributions of said test statistic under various
 hypotheses.
 
 Using the calculators hypothesis tests can then be performed.
@@ -22,15 +22,14 @@ class AsymptoticTestStatDistribution(object):
     """
     The distribution the test statistic in the asymptotic case.
 
-    Note: These distributions are in -µ^/sigma space. In the ROOT
-    implementation the same sigma is assumed for both hypotheses
-    and p-values etc are computed in that space. This assumption
-    is necessarily valid, but we keep this for compatibility
-    reasons.
+    Note: These distributions are in :math:`-\hat{\mu}/\sigma` space.
+    In the ROOT implementation the same sigma is assumed for both hypotheses
+    and :math:`p`-values etc are computed in that space.
+    This assumption is necessarily valid, but we keep this for compatibility reasons.
 
-    In the -µ^/sigma space, the test statistic (i.e. µ^/sigma) is
-    normally distributed with unit variance and its mean at 
-    the -µ', where µ' is the true poi value of the hypothesis.
+    In the :math:`-\hat{\mu}/\sigma` space, the test statistic (i.e. :math:`\hat{\mu}/\sigma`) is
+    normally distributed with unit variance and its mean at
+    the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
     def __init__(self, shift):
@@ -42,14 +41,14 @@ class AsymptoticTestStatDistribution(object):
 
         Returns:
             distribution
-        
+
         """
         self.shift = shift
 
     def pvalue(self, value):
         """
         Compute the p-value for a given value of the test statistic.
-        
+
         Args:
             value: the test statistic value.
 
@@ -70,7 +69,7 @@ class AsymptoticTestStatDistribution(object):
 
         Returns:
             expected value (float): the expected value of the test statistic.
-        
+
         """
         return nsigma
 
@@ -90,7 +89,7 @@ class AsymptoticCalculator(object):
 
         Returns:
             calculator
-             
+
         """
         self.data = data
         self.pdf = pdf
@@ -107,7 +106,7 @@ class AsymptoticCalculator(object):
 
         Returns
             distributions (Tuple of ~pyhf.infer.calculators.AsymptoticTestStatDistribution): the distributions under the hypotheses.
-        
+
         """
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
         b_dist = AsymptoticTestStatDistribution(0.0)
@@ -122,7 +121,7 @@ class AsymptoticCalculator(object):
 
         Returns:
             test statistic (Float): the value of the test statistic.
-        
+
         """
         tensorlib, _ = get_backend()
         qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
