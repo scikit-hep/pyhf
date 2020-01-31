@@ -287,7 +287,7 @@ def test_combine_workspace_same_channels_incompatible_structure(
         measurements={'GaussExample': 'GaussExample2'},
     ).prune(measurements=['GammaExample', 'ConstExample', 'LogNormExample'])
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws)
+        pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'channel1' in str(excinfo.value)
     assert 'channel2' not in str(excinfo.value)
 
@@ -309,7 +309,7 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
         modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws)
+        pyhf.Workspace.combine(ws, new_ws, join='none')
     assert 'GaussExample' in str(excinfo.value)
 
 
@@ -349,7 +349,7 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws)
+        pyhf.Workspace.combine(ws, new_ws, join='none')
     assert 'GaussExample' in str(excinfo.value)
     assert 'lumi' in str(excinfo.value)
 
@@ -518,7 +518,7 @@ def test_combine_workspace(workspace_factory, join):
             'LogNormExample': 'OtherLogNormExample',
         },
     )
-    combined = pyhf.Workspace.combine(ws, new_ws)
+    combined = pyhf.Workspace.combine(ws, new_ws, join=join)
     assert set(combined.channels) == set(ws.channels + new_ws.channels)
     assert set(combined.samples) == set(ws.samples + new_ws.samples)
     assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
