@@ -313,7 +313,8 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
     assert 'GaussExample' in str(excinfo.value)
 
 
-def test_combine_workspace_diff_version(workspace_factory):
+@pytest.mark.parametrize("join", ['none', 'outer', 'left outer', 'right outer'])
+def test_combine_workspace_diff_version(workspace_factory, join):
     ws = workspace_factory()
     ws.version = '1.0.0'
     new_ws = ws.rename(
@@ -337,7 +338,7 @@ def test_combine_workspace_diff_version(workspace_factory):
     )
     new_ws.version = '1.2.0'
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws)
+        pyhf.Workspace.combine(ws, new_ws, join=join)
     assert '1.0.0' in str(excinfo.value)
     assert '1.2.0' in str(excinfo.value)
 
