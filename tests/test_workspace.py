@@ -300,7 +300,8 @@ def test_combine_workspace_same_channels_outer_join(workspace_factory, join):
     assert 'channel1' in combined.channels
 
 
-def test_combine_workspace_incompatible_poi(workspace_factory):
+@pytest.mark.parametrize("join", ['none', 'outer'])
+def test_combine_workspace_incompatible_poi(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
@@ -309,7 +310,7 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
         modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws, join='none')
+        pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'GaussExample' in str(excinfo.value)
 
 
@@ -343,13 +344,14 @@ def test_combine_workspace_diff_version(workspace_factory, join):
     assert '1.2.0' in str(excinfo.value)
 
 
-def test_combine_workspace_duplicate_parameter_configs(workspace_factory):
+@pytest.mark.parametrize("join", ['none'])
+def test_combine_workspace_duplicate_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws, join='none')
+        pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'GaussExample' in str(excinfo.value)
     assert 'lumi' in str(excinfo.value)
 
@@ -424,14 +426,15 @@ def test_combine_workspace_deepcopied(workspace_factory):
     )
 
 
-def test_combine_workspace_invalid_join_operation(workspace_factory):
+@pytest.mark.parametrize("join", ['fake join operation'])
+def test_combine_workspace_invalid_join_operation(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
     with pytest.raises(ValueError) as excinfo:
-        pyhf.Workspace.combine(ws, new_ws, join='fake join operation')
-    assert 'fake join operation' in str(excinfo.value)
+        pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert join in str(excinfo.value)
 
 
 @pytest.mark.parametrize("join", ['none', 'outer'])
