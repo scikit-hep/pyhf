@@ -427,6 +427,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             return joined_channels
 
         new_version = _join_versions(join, left['version'], right['version'])
+        new_channels = _join_channels(join, left['channels'], right['channels'])
 
         common_measurements = set(left.measurement_names).intersection(
             right.measurement_names
@@ -507,7 +508,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         ]
 
         newspec = {
-            'channels': _join_channels(join, left['channels'], right['channels']),
+            'channels': new_channels,
             'measurements': (
                 left_measurements + right_measurements + merged_measurements
             ),

@@ -305,7 +305,7 @@ def test_combine_workspace_incompatible_poi(workspace_factory):
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
     )
-    new_ws = ws.rename(
+    new_ws = new_ws.rename(
         modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
