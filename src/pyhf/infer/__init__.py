@@ -94,8 +94,7 @@ def hypotest(
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
             CLs = sb_dist.pvalue(n_sigma) / b_dist.pvalue(n_sigma)
-            v = tensorlib.reshape(CLs, (1,))
-            CLs_exp.append(v)
+            CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
@@ -103,8 +102,7 @@ def hypotest(
     elif kwargs.get('return_expected'):
         n_sigma = 0
         CLs = sb_dist.pvalue(n_sigma) / b_dist.pvalue(n_sigma)
-        v = tensorlib.reshape(CLs, (1,))
-        _returns.append(v)
+        _returns.append(tensorlib.reshape(CLs, (1,)))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
