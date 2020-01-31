@@ -533,7 +533,7 @@ def test_combine_workspace_incompatible_observations(workspace_factory, join):
     )
     new_ws['observations'][0]['name'] = ws['observations'][0]['name']
     new_ws['observations'][0]['data'][0] = -10.0
-    with pytest.raises(pyhf.exceptions.InvalidSpecification) as excinfo:
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert ws['observations'][0]['name'] in str(excinfo.value)
     assert 'observations' in str(excinfo.value)
