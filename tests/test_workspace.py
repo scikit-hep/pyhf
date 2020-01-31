@@ -499,6 +499,96 @@ def test_combine_workspace_incompatible_parameter_configs_right_outer_join(
     )
 
 
+@pytest.mark.parametrize("join", ['none', 'outer'])
+def test_combine_workspace_incompatible_observations(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+        },
+    )
+    new_ws['observations'][0]['name'] = ws['observations'][0]['name']
+    new_ws['observations'][0]['data'][0] = -10.0
+    with pytest.raises(pyhf.exceptions.InvalidSpecification) as excinfo:
+        pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert ws['observations'][0]['name'] in str(excinfo.value)
+    assert 'observations' in str(excinfo.value)
+
+
+def test_combine_workspace_incompatible_observations_left_outer(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+        },
+    )
+    new_ws['observations'][0]['name'] = ws['observations'][0]['name']
+    new_ws['observations'][0]['data'][0] = -10.0
+    combined = pyhf.Workspace.combine(ws, new_ws, join='left outer')
+    assert (
+        combined.observations[ws['observations'][0]['name']]
+        == ws['observations'][0]['data']
+    )
+
+
+def test_combine_workspace_incompatible_observations_right_outer(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+        },
+    )
+    new_ws['observations'][0]['name'] = ws['observations'][0]['name']
+    new_ws['observations'][0]['data'][0] = -10.0
+    combined = pyhf.Workspace.combine(ws, new_ws, join='right outer')
+    assert (
+        combined.observations[ws['observations'][0]['name']]
+        == new_ws['observations'][0]['data']
+    )
+
+
 @pytest.mark.parametrize("join", pyhf.Workspace.valid_joins)
 def test_combine_workspace(workspace_factory, join):
     ws = workspace_factory()
