@@ -121,7 +121,7 @@ As noted in [Use and Citations](https://scikit-hep.org/pyhf/citations.html), the
   title = "{pyhf: v0.4.0}",
   version = {0.4.0},
   doi = {10.5281/zenodo.1169739},
-  url = {https://github.com/iris-hep/pyhf},
+  url = {https://github.com/scikit-hep/pyhf},
 }
 ```
 
