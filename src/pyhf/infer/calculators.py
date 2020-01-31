@@ -53,7 +53,7 @@ class AsymptoticTestStatDistribution(object):
         Args:
             value: the test statistic value.
 
-        Returns;
+        Returns:
             pvalue (float): the integrated probability to observe
             a value at least as large as the observed one.
 
@@ -68,7 +68,7 @@ class AsymptoticTestStatDistribution(object):
         Args:
             nsigma: number of standard deviations.
 
-        Returns;
+        Returns:
             expected value (float): the expected value of the test statistic.
         
         """
@@ -106,7 +106,7 @@ class AsymptoticCalculator(object):
             poi_test: the value for the parameter of interest.
 
         Returns
-            distributions (Tuple of `AsymptoticTestStatDistribution`): the distributions under the hypotheses.
+            distributions (Tuple of ~pyhf.infer.calculators.AsymptoticTestStatDistribution): the distributions under the hypotheses.
         
         """
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
