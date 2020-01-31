@@ -392,7 +392,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                     item['name'] for item in joined_items
                 ]:
                     continue
-                joined_items.append(right_item)
+                joined_items.append(copy.deepcopy(right_item))
             return joined_items
 
         def _join_versions(join, left_version, right_version):
@@ -426,8 +426,39 @@ class Workspace(_ChannelSummaryMixin, dict):
                     )
             return joined_channels
 
+        def _join_observations(join, left_observations, right_observations):
+            joined_observations = _join_items(
+                join, left_observations, right_observations
+            )
+            if join == 'none':
+                common_observations = set(
+                    c['name'] for c in left_observations
+                ).intersection(c['name'] for c in right_observations)
+                if common_observations:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+
+            elif join == 'outer':
+                counted_observations = collections.Counter(
+                    observation['name'] for observation in joined_observations
+                )
+                incompatible_observations = [
+                    observation
+                    for observation, count in counted_observations.items()
+                    if count > 1
+                ]
+                if incompatible_observations:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have observations in common with incompatible structure: {incompatible_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+            return joined_observations
+
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(join, left['channels'], right['channels'])
+        new_observations = _join_observations(
+            join, left['observations'], right['observations']
+        )
 
         common_measurements = set(left.measurement_names).intersection(
             right.measurement_names
@@ -512,7 +543,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             'measurements': (
                 left_measurements + right_measurements + merged_measurements
             ),
-            'observations': left['observations'] + right['observations'],
+            'observations': new_observations,
             'version': new_version,
         }
         return Workspace(newspec)
