@@ -73,6 +73,11 @@ Available Optimizers
 
 results obtained from this package are validated against output computed from HistFactory workspaces
 
+## Citing pyhf
+
+If you'd like to cite `pyhf` please use the citation in [CITATION.md](CITATION.md)
+
+
 ## A one bin example
 
 ```python
