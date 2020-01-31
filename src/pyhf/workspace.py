@@ -279,7 +279,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             ],
             'observations': [
                 dict(
-                    observation,
+                    copy.deepcopy(observation),
                     name=rename_channels.get(observation['name'], observation['name']),
                 )
                 for observation in self['observations']
