@@ -336,7 +336,7 @@ def test_combine_workspace_diff_version(workspace_factory, join):
             'GammaExample': 'OtherGammaExample',
         },
     )
-    new_ws.version = '1.2.0'
+    new_ws['version'] = '1.2.0'
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert '1.0.0' in str(excinfo.value)

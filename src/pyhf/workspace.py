@@ -395,6 +395,13 @@ class Workspace(_ChannelSummaryMixin, dict):
                 joined_items.append(right_item)
             return joined_items
 
+        def _join_versions(join, left_version, right_version):
+            if left_version != right_version:
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"Workspaces of different versions cannot be combined: {left_version} != {right_version}"
+                )
+            return left_version
+
         def _join_channels(join, left_channels, right_channels):
             joined_channels = _join_items(join, left_channels, right_channels)
             if join == 'none':
@@ -419,6 +426,8 @@ class Workspace(_ChannelSummaryMixin, dict):
                     )
             return joined_channels
 
+        new_version = _join_versions(join, left['version'], right['version'])
+
         common_measurements = set(left.measurement_names).intersection(
             right.measurement_names
         )
@@ -435,12 +444,6 @@ class Workspace(_ChannelSummaryMixin, dict):
                         for m, i in zip(common_measurements, incompatible_poi)
                         if incompatible_poi
                     ]
-                )
-            )
-        if left.version != right.version:
-            raise exceptions.InvalidWorkspaceOperation(
-                "Workspaces of different versions cannot be combined: {} != {}".format(
-                    left.version, right.version
                 )
             )
 
@@ -509,6 +512,6 @@ class Workspace(_ChannelSummaryMixin, dict):
                 left_measurements + right_measurements + merged_measurements
             ),
             'observations': left['observations'] + right['observations'],
-            'version': left['version'],
+            'version': new_version,
         }
         return Workspace(newspec)
