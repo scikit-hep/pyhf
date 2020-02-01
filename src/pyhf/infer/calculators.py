@@ -13,7 +13,20 @@ from .test_statistics import qmu
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
-    """Compute Asimov Dataset (expected yields at best-fit values) for a given POI value."""
+    """
+    Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
+
+    Args:
+        asimov_mu (`float`): asimov_mu temp
+        data (`tensor`): data temp
+        pdf (~pyhf.pdf.Model): pdf temp
+        init_pars (`tensor`): init_pars temp
+        par_bounds (`tensor`): par_bounds temp
+
+    Returns:
+        Tensor: The Asimov dataset.
+
+    """
     bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
     return pdf.expected_data(bestfit_nuisance_asimov)
 
@@ -37,7 +50,7 @@ class AsymptoticTestStatDistribution(object):
         Asymptotic test statistic distribution.
 
         Args:
-            shift: the displacement of the test statistic distribution
+            shift (`float`): The displacement of the test statistic distribution
 
         Returns:
             distribution
@@ -47,14 +60,13 @@ class AsymptoticTestStatDistribution(object):
 
     def pvalue(self, value):
         """
-        Compute the p-value for a given value of the test statistic.
+        Compute the :math:`p`-value for a given value of the test statistic.
 
         Args:
-            value: the test statistic value.
+            value (`float`): The test statistic value.
 
         Returns:
-            pvalue (float): the integrated probability to observe
-            a value at least as large as the observed one.
+            Float: The integrated probability to observe a value at least as large as the observed one.
 
         """
         tensorlib, _ = get_backend()
@@ -68,8 +80,7 @@ class AsymptoticTestStatDistribution(object):
             nsigma: number of standard deviations.
 
         Returns:
-            expected value (float): the expected value of the test statistic.
-
+            Float: The expected value of the test statistic.
         """
         return nsigma
 
@@ -102,10 +113,10 @@ class AsymptoticCalculator(object):
         Probability Distributions of the test statistic value under the signal + background and and background-only hypothesis.
 
         Args:
-            poi_test: the value for the parameter of interest.
+            poi_test: The value for the parameter of interest.
 
-        Returns
-            distributions (Tuple of ~pyhf.infer.calculators.AsymptoticTestStatDistribution): the distributions under the hypotheses.
+        Returns:
+            Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
 
         """
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
@@ -120,7 +131,7 @@ class AsymptoticCalculator(object):
             poi_test: the value for the parameter of interest.
 
         Returns:
-            test statistic (Float): the value of the test statistic.
+            Float: the value of the test statistic.
 
         """
         tensorlib, _ = get_backend()
