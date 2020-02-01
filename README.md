@@ -111,6 +111,20 @@ To uninstall run
 python -m pip uninstall pyhf
 ```
 
+## Citation
+
+As noted in [Use and Citations](https://scikit-hep.org/pyhf/citations.html), the preferred BibTeX entry for citation of `pyhf` is
+
+```bibtex
+@software{pyhf,
+  author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
+  title = "{pyhf: v0.4.0}",
+  version = {0.4.0},
+  doi = {10.5281/zenodo.1169739},
+  url = {https://github.com/scikit-hep/pyhf},
+}
+```
+
 ## Authors
 
 Please check the [contribution statistics for a list of contributors](https://github.com/scikit-hep/pyhf/graphs/contributors)
