@@ -116,6 +116,8 @@ Inference
 
 .. autosummary::
    :toctree: _generated/
+   :nosignatures:
+   :template: modifierclass.rst
 
    hypotest
    test_statistics.qmu
