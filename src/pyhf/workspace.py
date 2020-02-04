@@ -34,20 +34,21 @@ def _join_items(join, left_items, right_items, key='name'):
 
     """
     if join == 'right outer':
-        left_items, right_items = right_items, left_items
-    joined_items = copy.deepcopy(left_items)
-    for right_item in right_items:
-        # outer join: merge left and right, matching where possible
-        if join == 'outer' and right_item in left_items:
+        primary_items, secondary_items = right_items, left_items
+    else:
+        primary_items, secondary_items = left_items, right_items
+    joined_items = copy.deepcopy(primary_items)
+    for secondary_item in secondary_items:
+        # outer join: merge primary and secondary, matching where possible
+        if join == 'outer' and secondary_item in primary_items:
             continue
-        # left(right) outer join: only add right(left) if existing item (by name) is not in left(right)
-        # NB: we switch left/right if using a right outer join so we only ever check the "right"
+        # left/right outer join: only add secondary if existing item (by key value) is not in primary
         # NB: this will be slow for large numbers of items
-        elif join in ['left outer', 'right outer'] and right_item[key] in [
+        elif join in ['left outer', 'right outer'] and secondary_item[key] in [
             item[key] for item in joined_items
         ]:
             continue
-        joined_items.append(copy.deepcopy(right_item))
+        joined_items.append(copy.deepcopy(secondary_item))
     return joined_items
 
 
