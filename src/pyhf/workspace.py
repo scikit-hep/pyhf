@@ -625,6 +625,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             raise ValueError(
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
+        if join in ['left outer', 'right outer']:
+            log.warning(
+                "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation."
+            )
 
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(join, left['channels'], right['channels'])
