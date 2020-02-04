@@ -353,7 +353,6 @@ def test_combine_workspace_duplicate_parameter_configs(workspace_factory, join):
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'GaussExample' in str(excinfo.value)
-    assert 'lumi' in str(excinfo.value)
 
 
 @pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
@@ -447,8 +446,24 @@ def test_combine_workspace_invalid_join_operation(workspace_factory, join):
     assert join in str(excinfo.value)
 
 
-@pytest.mark.parametrize("join", ['none', 'outer'])
+@pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_incompatible_parameter_configs(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
+        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    )
+    new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
+        'bounds'
+    ] = [[0.0, 1.0]]
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
+        pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert 'GaussExample' in str(excinfo.value)
+
+
+@pytest.mark.parametrize("join", ['outer'])
+def test_combine_workspace_incompatible_parameter_configs_outer_join(
+    workspace_factory, join
+):
     ws = workspace_factory()
     new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
         measurements=['GammaExample', 'ConstExample', 'LogNormExample']
