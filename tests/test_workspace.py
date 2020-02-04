@@ -300,6 +300,16 @@ def test_combine_workspace_same_channels_outer_join(workspace_factory, join):
     assert 'channel1' in combined.channels
 
 
+@pytest.mark.parametrize("join", ['left outer', 'right outer'])
+def test_combine_workspace_same_channels_outer_join_unsafe(
+    workspace_factory, join, caplog
+):
+    ws = workspace_factory()
+    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    pyhf.Workspace.combine(ws, new_ws, join=join)
+    assert 'using an unsafe join operation' in caplog.text
+
+
 @pytest.mark.parametrize("join", ['none', 'outer'])
 def test_combine_workspace_incompatible_poi(workspace_factory, join):
     ws = workspace_factory()
