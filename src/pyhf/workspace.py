@@ -18,6 +18,255 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
+def _join_items(join, left_items, right_items, key='name'):
+    """
+    Join two lists of dictionaries along the given key.
+
+    This is meant to be as generic as possible for any pairs of lists of dictionaries for many join operations.
+
+    Args:
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_items (list): A list of dictionaries to join on the left
+        right_items (list): A list of dictionaries to join on the right
+
+    Returns:
+        :obj:`list`: A joined list of dictionaries.
+
+    """
+    if join == 'right outer':
+        left_items, right_items = right_items, left_items
+    joined_items = copy.deepcopy(left_items)
+    for right_item in right_items:
+        # outer join: merge left and right, matching where possible
+        if join == 'outer' and right_item in left_items:
+            continue
+        # left(right) outer join: only add right(left) if existing item (by name) is not in left(right)
+        # NB: we switch left/right if using a right outer join so we only ever check the "right"
+        # NB: this will be slow for large numbers of items
+        elif join in ['left outer', 'right outer'] and right_item[key] in [
+            item[key] for item in joined_items
+        ]:
+            continue
+        joined_items.append(copy.deepcopy(right_item))
+    return joined_items
+
+
+def _join_versions(join, left_version, right_version):
+    """
+    Join two workspace versions.
+
+    Raises:
+      ~pyhf.exceptions.InvalidWorkspaceOperation: Versions are incompatible.
+
+    Args:
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_version (str): The left workspace version.
+        right_version (str): The right workspace version.
+
+    Returns:
+        :obj:`str`: The workspace version.
+
+    """
+    if left_version != right_version:
+        raise exceptions.InvalidWorkspaceOperation(
+            f"Workspaces of different versions cannot be combined: {left_version} != {right_version}"
+        )
+    return left_version
+
+
+def _join_channels(join, left_channels, right_channels):
+    """
+    Join two workspace channel specifications.
+
+    Raises:
+      ~pyhf.exceptions.InvalidWorkspaceOperation: Channel specifications are incompatible.
+
+    Args:
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_channels (list): The left channel specification.
+        right_channels (list): The right channel specification.
+
+    Returns:
+        :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
+
+    """
+
+    joined_channels = _join_items(join, left_channels, right_channels)
+    if join == 'none':
+        common_channels = set(c['name'] for c in left_channels).intersection(
+            c['name'] for c in right_channels
+        )
+        if common_channels:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have any channels in common with the same name: {common_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+
+    elif join == 'outer':
+        counted_channels = collections.Counter(
+            channel['name'] for channel in joined_channels
+        )
+        incompatible_channels = [
+            channel for channel, count in counted_channels.items() if count > 1
+        ]
+        if incompatible_channels:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have channels in common with incompatible structure: {incompatible_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+    return joined_channels
+
+
+def _join_observations(join, left_observations, right_observations):
+    """
+    Join two workspace observation specifications.
+
+    Raises:
+      ~pyhf.exceptions.InvalidWorkspaceOperation: Observation specifications are incompatible.
+
+    Args:
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_observations (list): The left observation specification.
+        right_observations (list): The right observation specification.
+
+    Returns:
+        :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#observation` `schema <https://scikit-hep.org/pyhf/likelihood.html#observations>`__
+
+    """
+    joined_observations = _join_items(join, left_observations, right_observations)
+    if join == 'none':
+        common_observations = set(c['name'] for c in left_observations).intersection(
+            c['name'] for c in right_observations
+        )
+        if common_observations:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+
+    elif join == 'outer':
+        counted_observations = collections.Counter(
+            observation['name'] for observation in joined_observations
+        )
+        incompatible_observations = [
+            observation
+            for observation, count in counted_observations.items()
+            if count > 1
+        ]
+        if incompatible_observations:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have observations in common with incompatible structure: {incompatible_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+    return joined_observations
+
+
+def _join_parameter_configs(measurement_name, join, left_parameters, right_parameters):
+    """
+    Join two measurement parameter config specifications.
+
+    Raises:
+      ~pyhf.exceptions.InvalidWorkspaceOperation: Parameter configuration specifications are incompatible.
+
+    Args:
+        measurement_name (str): The name of the measurement being joined (a detail for raising exceptions correctly)
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_parameters (list): The left parameter configuration specification.
+        right_parameters (list): The right parameter configuration specification.
+
+    Returns:
+        :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#config` schema
+
+    """
+    joined_parameter_configs = _join_items(join, left_parameters, right_parameters)
+    if join == 'none':
+        common_parameter_configs = set(p['name'] for p in left_parameters).intersection(
+            p['name'] for p in right_parameters
+        )
+        if common_parameter_configs:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have a measurement ({measurement_name}) specifying different configs for the same parameter: {common_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+
+    elif join == 'outer':
+        counted_parameter_configs = collections.Counter(
+            parameter['name'] for parameter in joined_parameter_configs
+        )
+        incompatible_parameter_configs = [
+            parameter
+            for parameter, count in counted_parameter_configs.items()
+            if count > 1
+        ]
+        if incompatible_parameter_configs:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+    return joined_parameter_configs
+
+
+def _join_measurements(join, left_measurements, right_measurements):
+    """
+    Join two workspace measurement specifications.
+
+    Raises:
+      ~pyhf.exceptions.InvalidWorkspaceOperation: Measurement specifications are incompatible.
+
+    Args:
+        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_measurements (list): The left measurement specification.
+        right_measurements (list): The right measurement specification.
+
+    Returns:
+        :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#measurement` `schema <https://scikit-hep.org/pyhf/likelihood.html#measurements>`__
+
+    """
+    joined_measurements = _join_items(join, left_measurements, right_measurements)
+    if join == 'none':
+        common_measurements = set(c['name'] for c in left_measurements).intersection(
+            c['name'] for c in right_measurements
+        )
+        if common_measurements:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
+            )
+
+    elif join == 'outer':
+        # need to store a mapping of measurement name to all measurement objects with that name
+        _measurement_mapping = {}
+        for measurement in joined_measurements:
+            _measurement_mapping.setdefault(measurement['name'], []).append(measurement)
+        # first check for incompatible POI
+        # then merge parameter configs
+        incompatible_poi = [
+            measurement_name
+            for measurement_name, measurements in _measurement_mapping.items()
+            if len(set(measurement['config']['poi'] for measurement in measurements))
+            > 1
+        ]
+        if incompatible_poi:
+            raise exceptions.InvalidWorkspaceOperation(
+                f"Workspaces cannot have the same measurements with incompatible POI: {incompatible_poi}."
+            )
+
+        joined_measurements = []
+        for measurement_name, measurements in _measurement_mapping.items():
+            if len(measurements) != 1:
+                new_measurement = {
+                    'name': measurement_name,
+                    'config': {
+                        'poi': measurements[0]['config']['poi'],
+                        'parameters': _join_parameter_configs(
+                            measurement_name,
+                            join,
+                            *[
+                                measurement['config']['parameters']
+                                for measurement in measurements
+                            ],
+                        ),
+                    },
+                }
+            else:
+                new_measurement = measurements[0]
+            joined_measurements.append(new_measurement)
+    return joined_measurements
+
+
 class Workspace(_ChannelSummaryMixin, dict):
     """
     A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
@@ -376,172 +625,6 @@ class Workspace(_ChannelSummaryMixin, dict):
             raise ValueError(
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
-
-        def _join_items(join, left_items, right_items):
-            if join == 'right outer':
-                left_items, right_items = right_items, left_items
-            joined_items = copy.deepcopy(left_items)
-            for right_item in right_items:
-                # outer join: merge left and right, matching where possible
-                if join == 'outer' and right_item in left_items:
-                    continue
-                # left(right) outer join: only add right(left) if existing item (by name) is not in left(right)
-                # NB: we switch left/right if using a right outer join so we only ever check the "right"
-                # NB: this will be slow for large numbers of items
-                elif join in ['left outer', 'right outer'] and right_item['name'] in [
-                    item['name'] for item in joined_items
-                ]:
-                    continue
-                joined_items.append(copy.deepcopy(right_item))
-            return joined_items
-
-        def _join_versions(join, left_version, right_version):
-            if left_version != right_version:
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"Workspaces of different versions cannot be combined: {left_version} != {right_version}"
-                )
-            return left_version
-
-        def _join_channels(join, left_channels, right_channels):
-            joined_channels = _join_items(join, left_channels, right_channels)
-            if join == 'none':
-                common_channels = set(c['name'] for c in left_channels).intersection(
-                    c['name'] for c in right_channels
-                )
-                if common_channels:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have any channels in common with the same name: {common_channels}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-
-            elif join == 'outer':
-                counted_channels = collections.Counter(
-                    channel['name'] for channel in joined_channels
-                )
-                incompatible_channels = [
-                    channel for channel, count in counted_channels.items() if count > 1
-                ]
-                if incompatible_channels:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have channels in common with incompatible structure: {incompatible_channels}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-            return joined_channels
-
-        def _join_observations(join, left_observations, right_observations):
-            joined_observations = _join_items(
-                join, left_observations, right_observations
-            )
-            if join == 'none':
-                common_observations = set(
-                    c['name'] for c in left_observations
-                ).intersection(c['name'] for c in right_observations)
-                if common_observations:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-
-            elif join == 'outer':
-                counted_observations = collections.Counter(
-                    observation['name'] for observation in joined_observations
-                )
-                incompatible_observations = [
-                    observation
-                    for observation, count in counted_observations.items()
-                    if count > 1
-                ]
-                if incompatible_observations:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have observations in common with incompatible structure: {incompatible_observations}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-            return joined_observations
-
-        def _join_parameter_configs(
-            measurement_name, join, left_parameters, right_parameters
-        ):
-            joined_parameter_configs = _join_items(
-                join, left_parameters, right_parameters
-            )
-            if join == 'none':
-                common_parameter_configs = set(
-                    p['name'] for p in left_parameters
-                ).intersection(p['name'] for p in right_parameters)
-                if common_parameter_configs:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have a measurement ({measurement_name}) specifying different configs for the same parameter: {common_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-
-            elif join == 'outer':
-                counted_parameter_configs = collections.Counter(
-                    parameter['name'] for parameter in joined_parameter_configs
-                )
-                incompatible_parameter_configs = [
-                    parameter
-                    for parameter, count in counted_parameter_configs.items()
-                    if count > 1
-                ]
-                if incompatible_parameter_configs:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-            return joined_parameter_configs
-
-        def _join_measurements(join, left_measurements, right_measurements):
-            joined_measurements = _join_items(
-                join, left_measurements, right_measurements
-            )
-            if join == 'none':
-                common_measurements = set(
-                    c['name'] for c in left_measurements
-                ).intersection(c['name'] for c in right_measurements)
-                if common_measurements:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
-                    )
-
-            elif join == 'outer':
-                # need to store a mapping of measurement name to all measurement objects with that name
-                _measurement_mapping = {}
-                for measurement in joined_measurements:
-                    _measurement_mapping.setdefault(measurement['name'], []).append(
-                        measurement
-                    )
-                # first check for incompatible POI
-                # then merge parameter configs
-                incompatible_poi = [
-                    measurement_name
-                    for measurement_name, measurements in _measurement_mapping.items()
-                    if len(
-                        set(
-                            measurement['config']['poi'] for measurement in measurements
-                        )
-                    )
-                    > 1
-                ]
-                if incompatible_poi:
-                    raise exceptions.InvalidWorkspaceOperation(
-                        f"Workspaces cannot have the same measurements with incompatible POI: {incompatible_poi}."
-                    )
-
-                joined_measurements = []
-                for measurement_name, measurements in _measurement_mapping.items():
-                    if len(measurements) != 1:
-                        new_measurement = {
-                            'name': measurement_name,
-                            'config': {
-                                'poi': measurements[0]['config']['poi'],
-                                'parameters': _join_parameter_configs(
-                                    measurement_name,
-                                    join,
-                                    *[
-                                        measurement['config']['parameters']
-                                        for measurement in measurements
-                                    ],
-                                ),
-                            },
-                        }
-                    else:
-                        new_measurement = measurements[0]
-                    joined_measurements.append(new_measurement)
-            return joined_measurements
 
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(join, left['channels'], right['channels'])
