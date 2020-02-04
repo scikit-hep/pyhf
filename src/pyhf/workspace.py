@@ -484,65 +484,77 @@ class Workspace(_ChannelSummaryMixin, dict):
                     )
             return joined_parameter_configs
 
+        def _join_measurements(join, left_measurements, right_measurements):
+            joined_measurements = _join_items(
+                join, left_measurements, right_measurements
+            )
+            if join == 'none':
+                common_measurements = set(
+                    c['name'] for c in left_measurements
+                ).intersection(c['name'] for c in right_measurements)
+                if common_measurements:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
+                    )
+
+            elif join == 'outer':
+                # need to store a mapping of measurement name to all measurement objects with that name
+                _measurement_mapping = {}
+                for measurement in joined_measurements:
+                    _measurement_mapping.setdefault(measurement['name'], []).append(
+                        measurement
+                    )
+                # first check for incompatible POI
+                # then merge parameter configs
+                incompatible_poi = [
+                    measurement_name
+                    for measurement_name, measurements in _measurement_mapping.items()
+                    if len(
+                        set(
+                            measurement['config']['poi'] for measurement in measurements
+                        )
+                    )
+                    > 1
+                ]
+                if incompatible_poi:
+                    raise exceptions.InvalidWorkspaceOperation(
+                        f"Workspaces cannot have the same measurements with incompatible POI: {incompatible_poi}."
+                    )
+
+                joined_measurements = []
+                for measurement_name, measurements in _measurement_mapping.items():
+                    if len(measurements) != 1:
+                        new_measurement = {
+                            'name': measurement_name,
+                            'config': {
+                                'poi': measurements[0]['config']['poi'],
+                                'parameters': _join_parameter_configs(
+                                    measurement_name,
+                                    join,
+                                    *[
+                                        measurement['config']['parameters']
+                                        for measurement in measurements
+                                    ],
+                                ),
+                            },
+                        }
+                    else:
+                        new_measurement = measurements[0]
+                    joined_measurements.append(new_measurement)
+            return joined_measurements
+
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(join, left['channels'], right['channels'])
         new_observations = _join_observations(
             join, left['observations'], right['observations']
         )
-
-        common_measurements = set(left.measurement_names).intersection(
-            right.measurement_names
+        new_measurements = _join_measurements(
+            join, left['measurements'], right['measurements']
         )
-        incompatible_poi = [
-            left.get_measurement(measurement_name=m)['config']['poi']
-            != right.get_measurement(measurement_name=m)['config']['poi']
-            for m in common_measurements
-        ]
-        if any(incompatible_poi):
-            raise exceptions.InvalidWorkspaceOperation(
-                "Workspaces cannot have the same measurements with incompatible POI: {}".format(
-                    [
-                        m
-                        for m, i in zip(common_measurements, incompatible_poi)
-                        if incompatible_poi
-                    ]
-                )
-            )
-
-        left_measurements = [
-            left.get_measurement(measurement_name=m)
-            for m in set(left.measurement_names) - set(common_measurements)
-        ]
-        right_measurements = [
-            right.get_measurement(measurement_name=m)
-            for m in set(right.measurement_names) - set(common_measurements)
-        ]
-
-        merged_measurements = [
-            dict(
-                name=m,
-                config=dict(
-                    poi=left.get_measurement(measurement_name=m)['config']['poi'],
-                    parameters=_join_parameter_configs(
-                        m,
-                        join,
-                        left.get_measurement(measurement_name=m)['config'][
-                            'parameters'
-                        ],
-                        right.get_measurement(measurement_name=m)['config'][
-                            'parameters'
-                        ],
-                    ),
-                ),
-            )
-            for m in common_measurements
-        ]
 
         newspec = {
             'channels': new_channels,
-            'measurements': (
-                left_measurements + right_measurements + merged_measurements
-            ),
+            'measurements': new_measurements,
             'observations': new_observations,
             'version': new_version,
         }
