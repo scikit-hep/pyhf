@@ -25,9 +25,9 @@ def _join_items(join, left_items, right_items, key='name'):
     This is meant to be as generic as possible for any pairs of lists of dictionaries for many join operations.
 
     Args:
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_items (list): A list of dictionaries to join on the left
-        right_items (list): A list of dictionaries to join on the right
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_items (`list`): A list of dictionaries to join on the left
+        right_items (`list`): A list of dictionaries to join on the right
 
     Returns:
         :obj:`list`: A joined list of dictionaries.
@@ -60,9 +60,9 @@ def _join_versions(join, left_version, right_version):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Versions are incompatible.
 
     Args:
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_version (str): The left workspace version.
-        right_version (str): The right workspace version.
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_version (`str`): The left workspace version.
+        right_version (`str`): The right workspace version.
 
     Returns:
         :obj:`str`: The workspace version.
@@ -83,9 +83,9 @@ def _join_channels(join, left_channels, right_channels):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Channel specifications are incompatible.
 
     Args:
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_channels (list): The left channel specification.
-        right_channels (list): The right channel specification.
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_channels (`list`): The left channel specification.
+        right_channels (`list`): The right channel specification.
 
     Returns:
         :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
@@ -124,9 +124,9 @@ def _join_observations(join, left_observations, right_observations):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Observation specifications are incompatible.
 
     Args:
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_observations (list): The left observation specification.
-        right_observations (list): The right observation specification.
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_observations (`list`): The left observation specification.
+        right_observations (`list`): The right observation specification.
 
     Returns:
         :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#observation` `schema <https://scikit-hep.org/pyhf/likelihood.html#observations>`__
@@ -166,10 +166,10 @@ def _join_parameter_configs(measurement_name, join, left_parameters, right_param
       ~pyhf.exceptions.InvalidWorkspaceOperation: Parameter configuration specifications are incompatible.
 
     Args:
-        measurement_name (str): The name of the measurement being joined (a detail for raising exceptions correctly)
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_parameters (list): The left parameter configuration specification.
-        right_parameters (list): The right parameter configuration specification.
+        measurement_name (`str`): The name of the measurement being joined (a detail for raising exceptions correctly)
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_parameters (`list`): The left parameter configuration specification.
+        right_parameters (`list`): The right parameter configuration specification.
 
     Returns:
         :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#config` schema
@@ -209,9 +209,9 @@ def _join_measurements(join, left_measurements, right_measurements):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Measurement specifications are incompatible.
 
     Args:
-        join (str): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_measurements (list): The left measurement specification.
-        right_measurements (list): The right measurement specification.
+        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_measurements (`list`): The left measurement specification.
+        right_measurements (`list`): The right measurement specification.
 
     Returns:
         :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#measurement` `schema <https://scikit-hep.org/pyhf/likelihood.html#measurements>`__
@@ -322,9 +322,9 @@ class Workspace(_ChannelSummaryMixin, dict):
           ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
-            poi_name (str): The name of the parameter of interest to create a new measurement from
-            measurement_name (str): The name of the measurement to use
-            measurement_index (int): The index of the measurement to use
+            poi_name (`str`): The name of the parameter of interest to create a new measurement from
+            measurement_name (`str`): The name of the measurement to use
+            measurement_index (`int`): The index of the measurement to use
 
         Returns:
             :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
