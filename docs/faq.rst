@@ -8,7 +8,7 @@ Questions
 
 Where can I ask questions about ``pyhf`` use?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you have a question about the use of ``pyhf`` not covered in the `documentation <https://scikit-hep.org/pyhf/>`__, please ask a question on `Stack Overflow <https://stackoverflow.com/questions/tagged/pyhf>`__ with the ``[pyhf]`` and ``[scikit-hep]`` tags, which the ``pyhf`` dev team watches.
+If you have a question about the use of ``pyhf`` not covered in the `documentation <https://scikit-hep.org/pyhf/>`__, please ask a question on `Stack Overflow <https://stackoverflow.com/questions/tagged/pyhf>`__ with the ``[pyhf]`` and ``[scikit-hep]`` tags, which the ``pyhf`` dev team `watches <https://stackoverflow.com/questions/tagged/pyhf?sort=Newest&filters=NoAcceptedAnswer&edited=true>`__.
 
 .. raw:: html
 
