@@ -113,7 +113,7 @@ python -m pip uninstall pyhf
 
 ## Questions
 
-If you have a question about the use of `pyhf` not covered in [the documentation](https://scikit-hep.org/pyhf/), please ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/pyhf) with the `[pyhf]` and `[scikit-hep]` tags, which the `pyhf` dev team watches.
+If you have a question about the use of `pyhf` not covered in [the documentation](https://scikit-hep.org/pyhf/), please ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/pyhf) with the `[pyhf]` and `[scikit-hep]` tags, which the `pyhf` dev team [watches](https://stackoverflow.com/questions/tagged/pyhf?sort=Newest&filters=NoAcceptedAnswer&edited=true).
 
 <p align="center">
 <a href="https://stackoverflow.com/questions/tagged/pyhf">
