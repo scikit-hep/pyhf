@@ -276,6 +276,45 @@ def test_rename_measurement(workspace_factory):
     assert renamed in new_ws.measurement_names
 
 
+@pytest.fixture(scope='session')
+def join_items():
+    left = [{'name': 'left', 'key': 'value'}, {'name': 'common', 'key': 'left'}]
+    right = [{'name': 'right', 'key': 'value'}, {'name': 'common', 'key': 'right'}]
+    return (left, right)
+
+
+def test_join_items_none(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items('none', left_items, right_items, key='name')
+    assert all(left in joined for left in left_items)
+    assert all(right in joined for right in right_items)
+
+
+def test_join_items_outer(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items('outer', left_items, right_items, key='name')
+    assert all(left in joined for left in left_items)
+    assert all(right in joined for right in right_items)
+
+
+def test_join_items_left_outer(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'left outer', left_items, right_items, key='name'
+    )
+    assert all(left in joined for left in left_items)
+    assert not all(right in joined for right in right_items)
+
+
+def test_join_items_right_outer(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'right outer', left_items, right_items, key='name'
+    )
+    assert not all(left in joined for left in left_items)
+    assert all(right in joined for right in right_items)
+
+
 @pytest.mark.parametrize("join", ['none', 'outer'])
 def test_combine_workspace_same_channels_incompatible_structure(
     workspace_factory, join
