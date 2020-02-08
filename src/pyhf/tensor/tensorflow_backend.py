@@ -156,7 +156,8 @@ class tensorflow_backend(object):
             tensor = tf.cast(tensor, dtype)
         return tensor
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in, axis=None, dtype=None):
+        # TODO: implement dtype cast conversion??
         return (
             tf.reduce_sum(tensor_in)
             if (axis is None or tensor_in.shape == tf.TensorShape([]))

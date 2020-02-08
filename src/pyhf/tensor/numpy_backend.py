@@ -152,8 +152,8 @@ class numpy_backend(object):
             tensor = tensor.reshape(1)
         return tensor
 
-    def sum(self, tensor_in, axis=None):
-        return np.sum(tensor_in, axis=axis)
+    def sum(self, tensor_in, axis=None, dtype=None):
+        return np.sum(tensor_in, axis=axis, dtype=dtype)
 
     def product(self, tensor_in, axis=None):
         return np.product(tensor_in, axis=axis)

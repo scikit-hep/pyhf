@@ -156,8 +156,8 @@ class jax_backend(object):
             tensor = np.reshape(tensor, [1])
         return np.asarray(tensor, dtype=dtype)
 
-    def sum(self, tensor_in, axis=None):
-        return np.sum(tensor_in, axis=axis)
+    def sum(self, tensor_in, axis=None, dtype=None):
+        return np.sum(tensor_in, axis=axis, dtype=dtype)
 
     def product(self, tensor_in, axis=None):
         return np.prod(tensor_in, axis=axis)
