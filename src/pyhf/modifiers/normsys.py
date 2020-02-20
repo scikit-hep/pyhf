@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normsys', constrained=True, op_code='multiplication')
 class normsys(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
