@@ -39,7 +39,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                 try:
                     paramset_requirements = modifiers.registry[
                         modifier_def['type']
-                    ].required_parset(len(sample['data']))
+                    ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
                         'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
