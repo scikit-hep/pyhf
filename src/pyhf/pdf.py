@@ -188,7 +188,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     )  # broadcasting
                 elif mtype in ['shapesys', 'staterror']:
                     uncrts = (
-                        [data if data > 0.0 else -1.0 for data in thismod['data']]
+                        thismod['data']
                         if thismod
                         else [-1.0 if mtype == 'shapesys' else 0.0] * len(nom)
                     )
