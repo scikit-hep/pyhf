@@ -187,17 +187,17 @@ def _nominal_and_modifiers_from_spec(config, spec):
                         nom
                     )  # broadcasting
                 elif mtype in ['shapesys', 'staterror']:
-                    uncrt = (
-                        thismod['data']
+                    uncrts = (
+                        [data if data > 0.0 else -1.0 for data in thismod['data']]
                         if thismod
                         else [-1.0 if mtype == 'shapesys' else 0.0] * len(nom)
                     )
                     if mtype == 'shapesys':
-                        maskval = [(x > 0 and y > 0) for x, y in zip(uncrt, nom)]
+                        maskval = [(x > 0 and y > 0) for x, y in zip(uncrts, nom)]
                     else:
                         maskval = [True if thismod else False] * len(nom)
                     mega_mods[key][s]['data']['mask'] += maskval
-                    mega_mods[key][s]['data']['uncrt'] += uncrt
+                    mega_mods[key][s]['data']['uncrt'] += uncrts
                     mega_mods[key][s]['data']['nom_data'] += nom
                 else:
                     raise RuntimeError(
