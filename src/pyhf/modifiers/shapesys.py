@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 class shapesys(object):
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
-
-        npars = sum([1 for x, y in zip(modifier_data, sample_data) if x > 0 and y > 0])
+        what = [(x > 0 and y > 0) for x, y in zip(modifier_data, sample_data)]
+        npars = sum(what)
         return {
             'paramset_type': constrained_by_poisson,
             'n_parameters': npars,
@@ -43,7 +43,10 @@ class shapesys_combined(object):
         )
 
         self._shapesys_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [
+                [mega_mods[m][s]['data']['mask']
+            ] for s in pdfconfig.samples]
+            for m in keys
         ]
         self.__shapesys_uncrt = default_backend.astensor(
             [
@@ -60,7 +63,9 @@ class shapesys_combined(object):
         self.finalize(pdfconfig)
 
         global_concatenated_bin_indices = [
-            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+            [
+                [j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]
+            ]
         ]
 
         self._access_field = default_backend.tile(
@@ -68,14 +73,20 @@ class shapesys_combined(object):
             (len(shapesys_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
+
+        #here access field maps to bin index
+        #now overwrite with right index in parameter
+
+        import numpy as np
+
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
-                for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
-                    )
-
+                what = default_backend.astensor([-1]*len(batch_access))
+                singular_sample_index = np.argsort(np.any(self._shapesys_mask[s][0],axis=1))[-1]
+                this_sample_mask = self._shapesys_mask[s][0][singular_sample_index]
+                what[this_sample_mask] = selection
+                self._access_field[s,t] = what
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
@@ -113,6 +124,7 @@ class shapesys_combined(object):
 
             factors = numerator / denominator
             factors = factors[factors > 0]
+            self.factors = factors
             assert len(factors) == pdfconfig.param_set(pname).n_parameters
             pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
             pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
@@ -131,9 +143,11 @@ class shapesys_combined(object):
         else:
             flat_pars = tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
+
         results_shapesys = tensorlib.einsum(
             'mab,s->msab', shapefactors, self.sample_ones
         )
+
 
         results_shapesys = tensorlib.where(
             self.shapesys_mask, results_shapesys, self.shapesys_default
