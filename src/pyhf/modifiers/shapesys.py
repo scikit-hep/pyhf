@@ -79,9 +79,13 @@ class shapesys_combined(object):
                     [-1] * len(batch_access)
                 )
                 singular_sample_index = [
-                    i for i, x in enumerate(self._shapesys_mask[s][0]) if any(x)
+                    i
+                    for i, x in enumerate(
+                        default_backend.astensor(self._shapesys_mask)[s, :, 0]
+                    )
+                    if any(x)
                 ][-1]
-                this_sample_mask = self._shapesys_mask[s][0][singular_sample_index]
+                this_sample_mask = self._shapesys_mask[s][singular_sample_index][0]
                 access_field_for_syst_and_batch[this_sample_mask] = selection
                 self._access_field[s, t] = access_field_for_syst_and_batch
         self._precompute()
