@@ -77,13 +77,11 @@ class shapesys_combined(object):
         #here access field maps to bin index
         #now overwrite with right index in parameter
 
-        import numpy as np
-
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
                 what = default_backend.astensor([-1]*len(batch_access))
-                singular_sample_index = np.argsort(np.any(self._shapesys_mask[s][0],axis=1))[-1]
+                singular_sample_index = [i for i,x in enumerate(self._shapesys_mask[s][0]) if any(x)][-1]
                 this_sample_mask = self._shapesys_mask[s][0][singular_sample_index]
                 what[this_sample_mask] = selection
                 self._access_field[s,t] = what
