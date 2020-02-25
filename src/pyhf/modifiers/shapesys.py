@@ -78,7 +78,7 @@ class shapesys_combined(object):
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
                 access_field_for_syst_and_batch = default_backend.astensor(
-                    [-1] * len(batch_access)
+                    [0] * len(batch_access)
                 )
                 singular_sample_index = [
                     i
