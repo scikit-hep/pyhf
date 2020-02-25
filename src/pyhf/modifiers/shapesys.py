@@ -121,7 +121,6 @@ class shapesys_combined(object):
 
             factors = numerator / denominator
             factors = factors[factors > 0]
-            self.factors = factors
             assert len(factors) == pdfconfig.param_set(pname).n_parameters
             pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
             pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
