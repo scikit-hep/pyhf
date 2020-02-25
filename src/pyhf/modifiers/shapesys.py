@@ -73,6 +73,8 @@ class shapesys_combined(object):
         # now overwrite with right index in parameter
 
         for s, syst_access in enumerate(self._access_field):
+            if not pdfconfig.param_set(self._shapesys_mods[s]).n_parameters:
+                continue
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
                 access_field_for_syst_and_batch = default_backend.astensor(
@@ -105,6 +107,8 @@ class shapesys_combined(object):
 
     def finalize(self, pdfconfig):
         for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._shapesys_mods):
+            if not pdfconfig.param_set(pname).n_parameters:
+                continue
             unc_nom = default_backend.astensor(
                 [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
             )
