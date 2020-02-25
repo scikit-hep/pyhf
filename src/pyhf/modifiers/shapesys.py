@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 class shapesys(object):
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
-        what = [(x > 0 and y > 0) for x, y in zip(modifier_data, sample_data)]
-        npars = sum(what)
+        valid_bins = [(x > 0 and y > 0) for x, y in zip(modifier_data, sample_data)]
+        npars = sum(valid_bins)
         return {
             'paramset_type': constrained_by_poisson,
             'n_parameters': npars,
@@ -75,13 +75,15 @@ class shapesys_combined(object):
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
-                what = default_backend.astensor([-1] * len(batch_access))
+                access_field_for_syst_and_batch = default_backend.astensor(
+                    [-1] * len(batch_access)
+                )
                 singular_sample_index = [
                     i for i, x in enumerate(self._shapesys_mask[s][0]) if any(x)
                 ][-1]
                 this_sample_mask = self._shapesys_mask[s][0][singular_sample_index]
-                what[this_sample_mask] = selection
-                self._access_field[s, t] = what
+                access_field_for_syst_and_batch[this_sample_mask] = selection
+                self._access_field[s, t] = access_field_for_syst_and_batch
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
