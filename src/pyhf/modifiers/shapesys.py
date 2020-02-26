@@ -74,12 +74,12 @@ class shapesys_combined(object):
         # access field is shape (sys, batch, globalbin)
 
         # reindex it based on current masking
-        self._reindex_access_field()
+        self._reindex_access_field(pdfconfig)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
-    def _reindex_access_field(self):
+    def _reindex_access_field(self, pdfconfig):
         # access field maps to bin index, but needs to map to right index in
         # the parameter set
         for s, syst_access in enumerate(self._access_field):
