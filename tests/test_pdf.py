@@ -229,7 +229,7 @@ def test_pdf_integration_shapesys_zeros(backend):
     assert pytest.approx(tensorlib.tolist(par_set_syst.factors)) == tensorlib.tolist(
         tensorlib.gather(factors, indices)
     )
-    assert getattr(par_set_syst_lowstats, 'factors', None) == None
+    assert getattr(par_set_syst_lowstats, 'factors', None) is None
 
 
 @pytest.mark.only_numpy
