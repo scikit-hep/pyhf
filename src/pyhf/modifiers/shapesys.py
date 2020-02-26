@@ -82,26 +82,28 @@ class shapesys_combined(object):
     def _reindex_access_field(self, pdfconfig):
         # access field maps to bin index, but needs to map to right index in
         # the parameter set
-        for s, syst_access in enumerate(self._access_field):
+        for syst_index, syst_access in enumerate(self._access_field):
             # if the associated shapesys modifier has no parameters (no valid
             # bins), skip it
-            if not pdfconfig.param_set(self._shapesys_mods[s]).n_parameters:
+            if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
                 continue
-            for t, batch_access in enumerate(syst_access):
-                selection = self.param_viewer.index_selection[s][t]
+            for batch_index, batch_access in enumerate(syst_access):
+                selection = self.param_viewer.index_selection[syst_index][batch_index]
                 access_field_for_syst_and_batch = default_backend.zeros(
                     len(batch_access)
                 )
                 singular_sample_index = [
                     idx
                     for idx, syst in enumerate(
-                        default_backend.astensor(self._shapesys_mask)[s, :, 0]
+                        default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
                     )
                     if any(syst)
                 ][-1]
-                sample_mask = self._shapesys_mask[s][singular_sample_index][0]
+                sample_mask = self._shapesys_mask[syst_index][singular_sample_index][0]
                 access_field_for_syst_and_batch[sample_mask] = selection
-                self._access_field[s, t] = access_field_for_syst_and_batch
+                self._access_field[
+                    syst_index, batch_index
+                ] = access_field_for_syst_and_batch
 
     def _precompute(self):
         tensorlib, _ = get_backend()
