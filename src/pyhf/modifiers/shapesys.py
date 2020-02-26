@@ -73,16 +73,24 @@ class shapesys_combined(object):
         )
         # access field is shape (sys, batch, globalbin)
 
-        # here access field maps to bin index
-        # now overwrite with right index in parameter
+        # reindex it based on current masking
+        self._reindex_access_field()
 
+        self._precompute()
+        events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _reindex_access_field(self):
+        # access field maps to bin index, but needs to map to right index in
+        # the parameter set
         for s, syst_access in enumerate(self._access_field):
+            # if the associated shapesys modifier has no parameters (no valid
+            # bins), skip it
             if not pdfconfig.param_set(self._shapesys_mods[s]).n_parameters:
                 continue
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
-                access_field_for_syst_and_batch = default_backend.astensor(
-                    [0] * len(batch_access)
+                access_field_for_syst_and_batch = default_backend.zeros(
+                    len(batch_access)
                 )
                 singular_sample_index = [
                     i
@@ -94,8 +102,6 @@ class shapesys_combined(object):
                 this_sample_mask = self._shapesys_mask[s][singular_sample_index][0]
                 access_field_for_syst_and_batch[this_sample_mask] = selection
                 self._access_field[s, t] = access_field_for_syst_and_batch
-        self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
