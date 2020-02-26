@@ -79,13 +79,9 @@ class shapesys_combined(object):
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
-    def _reindex_access_field(self, pdfconfig):
-        # access field maps to bin index, but needs to map to right index in
-        # the parameter set
-        for syst_index, syst_access in enumerate(self._access_field):
-            # if the associated shapesys modifier has no parameters (no valid
-            # bins), skip it
-            if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
+        for s, syst_access in enumerate(self._access_field):
+            if not pdfconfig.param_set(self._shapesys_mods[s]).n_parameters:
+                self._access_field[s] = 0
                 continue
             for batch_index, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[syst_index][batch_index]
@@ -159,7 +155,6 @@ class shapesys_combined(object):
         else:
             flat_pars = tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
-
         results_shapesys = tensorlib.einsum(
             'mab,s->msab', shapefactors, self.sample_ones
         )
