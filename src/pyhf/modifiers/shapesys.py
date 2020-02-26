@@ -79,9 +79,10 @@ class shapesys_combined(object):
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
-        for s, syst_access in enumerate(self._access_field):
-            if not pdfconfig.param_set(self._shapesys_mods[s]).n_parameters:
-                self._access_field[s] = 0
+    def _reindex_access_field(self, pdfconfig):
+        for syst_index, syst_access in enumerate(self._access_field):
+            if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
+                self._access_field[syst_index] = 0
                 continue
             for batch_index, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[syst_index][batch_index]
