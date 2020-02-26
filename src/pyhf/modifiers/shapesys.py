@@ -13,20 +13,24 @@ log = logging.getLogger(__name__)
 class shapesys(object):
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
-        valid_bins = [(x > 0 and y > 0) for x, y in zip(modifier_data, sample_data)]
-        npars = sum(valid_bins)
+        # count the number of bins with nonzero, positive yields
+        valid_bins = [
+            (sample_bin > 0 and modifier_bin > 0)
+            for sample_bin, modifier_bin in zip(modifier_data, sample_data)
+        ]
+        n_parameters = sum(valid_bins)
         return {
             'paramset_type': constrained_by_poisson,
-            'n_parameters': npars,
+            'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': False,
-            'inits': (1.0,) * npars,
-            'bounds': ((1e-10, 10.0),) * npars,
+            'inits': (1.0,) * n_parameters,
+            'bounds': ((1e-10, 10.0),) * n_parameters,
             # nb: auxdata/factors set by finalize. Set to non-numeric to crash
             # if we fail to set auxdata/factors correctly
-            'auxdata': (None,) * npars,
-            'factors': (None,) * npars,
+            'auxdata': (None,) * n_parameters,
+            'factors': (None,) * n_parameters,
         }
 
 
