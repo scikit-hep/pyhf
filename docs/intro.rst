@@ -91,7 +91,7 @@ equally.  For constrained modifiers, the implied constraint term is given as
 well as the necessary input data required to construct it.  :math:`\sigma_b`
 corresponds to the relative uncertainty of the event rate, whereas
 :math:`\delta_b` is the event rate uncertainty of the sample relative to the
-total event rate :math:`\nu_b = \sum_s = \nu^0_{sb}`.
+total event rate :math:`\nu_b = \sum_s \nu^0_{sb}`.
 
 Modifiers implementing uncertainties are paired with
 a corresponding default constraint term on the parameter limiting the
