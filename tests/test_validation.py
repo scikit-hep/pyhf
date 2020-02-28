@@ -918,7 +918,6 @@ def test_shapesys_nuisparfilter_validation():
     obs, exp = pyhf.infer.hypotest(1.0, d, m, return_expected_set=True)
     pyhf_results = {'CLs_obs': obs[0], 'CLs_exp': [e[0] for e in exp]}
 
-
     assert np.allclose(
         reference_root_results['CLs_obs'], pyhf_results['CLs_obs'], atol=1e-4, rtol=1e-5
     )
