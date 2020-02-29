@@ -128,11 +128,12 @@ class shapesys_combined(object):
             ]
 
             # if empty: a case where given shapesys modifier affects zero samples
-            if default_backend.shape(sample_uncert_info)[0] == 0: continue
+            if default_backend.shape(sample_uncert_info)[0] == 0:
+                continue
 
             # sample_uncert_info = (bin_mask, nominal rate, uncertainty)
             bin_mask = default_backend.astensor(sample_uncert_info[0][0], dtype='bool')
-            nom_unc = sample_uncert_info[0,1:]
+            nom_unc = sample_uncert_info[0, 1:]
 
             # TODO: understand why this works??? what the fuck though -- must
             # be something with setting the default (not affects sample == -1,
