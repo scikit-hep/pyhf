@@ -13,18 +13,24 @@ log = logging.getLogger(__name__)
 class shapesys(object):
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
+        # count the number of bins with nonzero, positive yields
+        valid_bins = [
+            (sample_bin > 0 and modifier_bin > 0)
+            for sample_bin, modifier_bin in zip(modifier_data, sample_data)
+        ]
+        n_parameters = sum(valid_bins)
         return {
             'paramset_type': constrained_by_poisson,
-            'n_parameters': len(sample_data),
+            'n_parameters': n_parameters,
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': False,
-            'inits': (1.0,) * len(sample_data),
-            'bounds': ((1e-10, 10.0),) * len(sample_data),
+            'inits': (1.0,) * n_parameters,
+            'bounds': ((1e-10, 10.0),) * n_parameters,
             # nb: auxdata/factors set by finalize. Set to non-numeric to crash
             # if we fail to set auxdata/factors correctly
-            'auxdata': (None,) * len(sample_data),
-            'factors': (None,) * len(sample_data),
+            'auxdata': (None,) * n_parameters,
+            'factors': (None,) * n_parameters,
         }
 
 
@@ -66,16 +72,35 @@ class shapesys_combined(object):
             (len(shapesys_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
-        for s, syst_access in enumerate(self._access_field):
-            for t, batch_access in enumerate(syst_access):
-                selection = self.param_viewer.index_selection[s][t]
-                for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
-                    )
+
+        # reindex it based on current masking
+        self._reindex_access_field(pdfconfig)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _reindex_access_field(self, pdfconfig):
+        for syst_index, syst_access in enumerate(self._access_field):
+            if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
+                self._access_field[syst_index] = 0
+                continue
+            for batch_index, batch_access in enumerate(syst_access):
+                selection = self.param_viewer.index_selection[syst_index][batch_index]
+                access_field_for_syst_and_batch = default_backend.zeros(
+                    len(batch_access)
+                )
+                singular_sample_index = [
+                    idx
+                    for idx, syst in enumerate(
+                        default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
+                    )
+                    if any(syst)
+                ][-1]
+                sample_mask = self._shapesys_mask[syst_index][singular_sample_index][0]
+                access_field_for_syst_and_batch[sample_mask] = selection
+                self._access_field[
+                    syst_index, batch_index
+                ] = access_field_for_syst_and_batch
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -91,6 +116,8 @@ class shapesys_combined(object):
 
     def finalize(self, pdfconfig):
         for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._shapesys_mods):
+            if not pdfconfig.param_set(pname).n_parameters:
+                continue
             unc_nom = default_backend.astensor(
                 [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
             )

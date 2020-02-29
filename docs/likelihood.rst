@@ -132,7 +132,27 @@ shown below:
 
    { "name": "mod_name", "type": "shapesys", "data": [1.0, 1.5, 2.0] }
 
-An example of an uncorrelated shape modifier with three absolute uncertainty terms for a 3-bin channel.
+An example of an uncorrelated shape modifier with three absolute uncertainty
+terms for a 3-bin channel.
+
+.. warning::
+
+   Nuisance parameters will not be allocated for any bins where either
+
+     * the samples nominal expected rate is zero, or
+     * the absolute uncertainty is zero.
+
+   These values are, in the context of uncorrelated shape uncertainties,
+   unphysical. If this situation occurs, one needs to go back and understand
+   the inputs as this is undefined behavior in HistFactory.
+
+The previous example will allocate three nuisance parameters for ``mod_name``.
+The following example will allocate only two nuisance parameters for a 3-bin
+channel:
+
+.. code:: json
+
+   { "name": "mod_name", "type": "shapesys", "data": [1.0, 0.0, 2.0] }
 
 Correlated Shape (histosys)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

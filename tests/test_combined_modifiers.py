@@ -504,6 +504,88 @@ def test_normfactor(backend):
     assert np.allclose(mod[1, 0, 3], [1.0, 8.0, 8.0])
 
 
+def test_shapesys_zero(backend):
+    mc = MockConfig(
+        par_map={
+            'SigXsecOverSM': {
+                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'slice': slice(0, 1),
+            },
+            'syst': {
+                'paramset': paramset(
+                    n_parameters=5, inits=[0] * 5, bounds=[[0, 10]] * 5
+                ),
+                'slice': slice(1, 6),
+            },
+            'syst_lowstats': {
+                'paramset': paramset(
+                    n_parameters=0, inits=[0] * 0, bounds=[[0, 10]] * 0
+                ),
+                'slice': slice(6, 6),
+            },
+        },
+        channels=['channel1'],
+        channel_nbins={'channel1': 6},
+        par_order=['SigXsecOverSM', 'syst', 'syst_lowstats'],
+        samples=['signal', 'background'],
+    )
+
+    mega_mods = {
+        'shapesys/syst': {
+            'background': {
+                'type': 'shapesys',
+                'name': 'syst',
+                'data': {
+                    'mask': [True, True, False, True, True, True],
+                    'nom_data': [100.0, 90.0, 0.0, 70, 0.1, 50],
+                    'uncrt': [10, 9, 1, 0.0, 0.1, 5],
+                },
+            },
+            'signal': {
+                'type': 'shapesys',
+                'name': 'syst',
+                'data': {
+                    'mask': [False, False, False, False, False, False],
+                    'nom_data': [20.0, 10.0, 5.0, 3.0, 2.0, 1.0],
+                    'uncrt': [10, 9, 1, 0.0, 0.1, 5],
+                },
+            },
+        },
+        'shapesys/syst_lowstats': {
+            'background': {
+                'type': 'shapesys',
+                'name': 'syst_lowstats',
+                'data': {
+                    'mask': [False, False, False, False, False, False],
+                    'nom_data': [100.0, 90.0, 0.0, 70, 0.1, 50],
+                    'uncrt': [0, 0, 0, 0, 0, 0],
+                },
+            },
+            'signal': {
+                'type': 'shapesys',
+                'name': 'syst',
+                'data': {
+                    'mask': [False, False, False, False, False, False],
+                    'nom_data': [20.0, 10.0, 5.0, 3.0, 2.0, 1.0],
+                    'uncrt': [10, 9, 1, 0.0, 0.1, 5],
+                },
+            },
+        },
+    }
+    hsc = shapesys_combined(
+        [('syst', 'shapesys'), ('syst_lowstats', 'shapesys')], mc, mega_mods
+    )
+
+    mod = hsc.apply(pyhf.tensorlib.astensor([-10, 1.1, 1.2, 1.3, -20, -30]))
+    shape = pyhf.tensorlib.shape(mod)
+    assert shape == (2, 2, 1, 6)
+
+    # expect the 'background' sample to have a single masked bin for 'syst'
+    assert mod[0, 1, 0, 2] == 1.0
+    # expect the 'background' sample to have all bins masked for 'syst_lowstats'
+    assert np.all(kappa == 1 for kappa in mod[1, 1, 0])
+
+
 def test_shapefactor(backend):
     mc = MockConfig(
         par_map={
