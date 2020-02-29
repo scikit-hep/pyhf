@@ -135,9 +135,8 @@ class shapesys_combined(object):
             bin_mask = default_backend.astensor(sample_uncert_info[0][0], dtype='bool')
             nom_unc = sample_uncert_info[0, 1:]
 
-            # TODO: understand why this works??? what the fuck though -- must
-            # be something with setting the default (not affects sample == -1,
-            # so squaring it gives +1 by default)
+            # Why this works: setting the default/not-affecting-sample == -1
+            # means that squaring it gives +1 by default)
 
             # compute gamma**2 and sigma**2
             nom_unc_sq = default_backend.power(nom_unc, 2)
