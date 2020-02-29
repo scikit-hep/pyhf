@@ -36,7 +36,7 @@ def test_modifiers_structure():
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -48,7 +48,7 @@ def test_modifiers_structure():
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -65,7 +65,7 @@ def test_modifier_name_auto():
     @modifier
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -81,7 +81,7 @@ def test_modifier_name_auto_withkwargs():
     @modifier(name=None, constrained=False)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -97,7 +97,7 @@ def test_modifier_name_custom():
     @modifier(name='myCustomName')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -144,7 +144,7 @@ def test_registry_name_clash():
 
         class myCustomModifier(object):
             @classmethod
-            def required_parset(cls, n_parameters):
+            def required_parset(cls, sample_data, modifier_data):
                 pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')

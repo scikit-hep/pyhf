@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normfactor', op_code='multiplication')
 class normfactor(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
             'n_parameters': 1,

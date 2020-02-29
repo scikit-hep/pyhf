@@ -43,7 +43,7 @@ def inspect(workspace, output_file, measurement):
         (
             parname,
             modifiers.registry[result['modifiers'][parname]]
-            .required_parset(0)['paramset_type']
+            .required_parset([], [])['paramset_type']
             .__name__,
         )
         for parname in ws.parameters

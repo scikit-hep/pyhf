@@ -90,17 +90,17 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(name='myCustomNamer')
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(constrained=False)
     #   >>> ... class myUnconstrainedModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myUnconstrainedModifier.pdf_type
     #   None
@@ -108,7 +108,7 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
     #   >>> ... class myConstrainedCustomPoissonModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myConstrainedCustomGaussianModifier.pdf_type
     #   'poisson'
@@ -116,12 +116,12 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier(constrained=True)
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(op_code='multiplication')
     #   >>> ... class myMultiplierModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myMultiplierModifier.op_code
     #   'multiplication'

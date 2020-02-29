@@ -10,15 +10,15 @@ log = logging.getLogger(__name__)
 @modifier(name='shapefactor', op_code='multiplication')
 class shapefactor(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
-            'n_parameters': n_parameters,
+            'n_parameters': len(sample_data),
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((0.0, 10.0),) * n_parameters,
+            'inits': (1.0,) * len(sample_data),
+            'bounds': ((0.0, 10.0),) * len(sample_data),
         }
 
 
