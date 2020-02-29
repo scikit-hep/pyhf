@@ -141,5 +141,5 @@ def test_inferapi_pyhf_independence():
             constraint = self._make_constraint_pdf(pars).log_prob(auxdata)
             return tensorlib.astensor([main + constraint])
 
-    m = NonPyhfModel([5, 50, 7])
-    print(pyhf.infer.hypotest(1.0, m.expected_data(m.config.suggested_init()), m))
+    model = NonPyhfModel([5, 50, 7])
+    print(pyhf.infer.hypotest(1.0, model.expected_data(model.config.suggested_init()), model))
