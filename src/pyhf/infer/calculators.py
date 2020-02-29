@@ -18,10 +18,10 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
 
     Args:
         asimov_mu (`float`): The value for the parameter of interest to be used.
-        data (`tensor`): The measurement data.
+        data (`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        init_pars (`tensor`): The initial parameter values to be used for minimization.
-        par_bounds (`tensor`): The parameter value bounds to be used for minimization.
+        init_pars (`tensor`): The initial parameter values to be used for fitting.
+        par_bounds (`tensor`): The parameter value bounds to be used for fitting.
 
     Returns:
         Tensor: The Asimov dataset.
@@ -93,13 +93,13 @@ class AsymptoticCalculator(object):
         Asymptotic Calculator.
 
         Args:
-            data: the observed data
-            pdf: the statistical model
-            init_pars: the initial parameters to be used for fitting
-            par_bounds: the parameter bounds used for fitting
+            data (`tensor`): The observed data.
+            pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+            init_pars (`tensor`): The initial parameter values to be used for fitting.
+            par_bounds (`tensor`): The parameter value bounds to be used for fitting.
 
         Returns:
-            calculator
+            ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
 
         """
         self.data = data
@@ -128,7 +128,7 @@ class AsymptoticCalculator(object):
         Compute the test statistic for the observed data under the studied model.
 
         Args:
-            poi_test: the value for the parameter of interest.
+            poi_test: The value for the parameter of interest.
 
         Returns:
             Float: the value of the test statistic.
