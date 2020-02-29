@@ -50,10 +50,10 @@ class AsymptoticTestStatDistribution(object):
         Asymptotic test statistic distribution.
 
         Args:
-            shift (`float`): The displacement of the test statistic distribution
+            shift (`float`): The displacement of the test statistic distribution.
 
         Returns:
-            distribution
+            ~pyhf.infer.calculators.AsymptoticTestStatDistribution: The asymptotic distribution of test statistic.
 
         """
         self.shift = shift
@@ -77,7 +77,7 @@ class AsymptoticTestStatDistribution(object):
         Return the expected value of the test statistic.
 
         Args:
-            nsigma: number of standard deviations.
+            nsigma (`int` or `tensor`): The number of standard deviations.
 
         Returns:
             Float: The expected value of the test statistic.
