@@ -17,11 +17,11 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
     Args:
-        asimov_mu (`float`): asimov_mu temp
-        data (`tensor`): data temp
-        pdf (~pyhf.pdf.Model): pdf temp
-        init_pars (`tensor`): init_pars temp
-        par_bounds (`tensor`): par_bounds temp
+        asimov_mu (`float`): The value for the parameter of interest to be used.
+        data (`tensor`): The measurement data.
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+        init_pars (`tensor`): The initial parameter values to be used for minimization.
+        par_bounds (`tensor`): The parameter value bounds to be used for minimization.
 
     Returns:
         Tensor: The Asimov dataset.
