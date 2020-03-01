@@ -66,8 +66,8 @@ This list will be updated with posters presented on :code:`pyhf`:
    :all:
    :style: plain
 
-In the News
------------
+In the Media
+------------
 
 This list will be updated with media publications featuring :code:`pyhf`:
 
