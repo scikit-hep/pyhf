@@ -65,3 +65,13 @@ This list will be updated with posters presented on :code:`pyhf`:
    :list: bullet
    :all:
    :style: plain
+
+In the News
+-----------
+
+This list will be updated with media publications featuring :code:`pyhf`:
+
+.. bibliography:: bib/media.bib
+   :list: bullet
+   :all:
+   :style: plain
