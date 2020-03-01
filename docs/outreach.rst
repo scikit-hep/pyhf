@@ -1,5 +1,5 @@
-Talks
-=====
+Outreach
+========
 
 We are always interested in talking about :code:`pyhf`. See the abstract and a list of previously given presentations and feel free to invite us to your next conference/workshop/meeting!
 
