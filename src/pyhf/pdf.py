@@ -39,7 +39,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                 try:
                     paramset_requirements = modifiers.registry[
                         modifier_def['type']
-                    ].required_parset(len(sample['data']))
+                    ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
                         'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
@@ -188,7 +188,10 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     )  # broadcasting
                 elif mtype in ['shapesys', 'staterror']:
                     uncrt = thismod['data'] if thismod else [0.0] * len(nom)
-                    maskval = [True if thismod else False] * len(nom)
+                    if mtype == 'shapesys':
+                        maskval = [(x > 0 and y > 0) for x, y in zip(uncrt, nom)]
+                    else:
+                        maskval = [True if thismod else False] * len(nom)
                     mega_mods[key][s]['data']['mask'] += maskval
                     mega_mods[key][s]['data']['uncrt'] += uncrt
                     mega_mods[key][s]['data']['nom_data'] += nom

@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(name='lumi', constrained=True, pdf_type='normal', op_code='multiplication')
 class lumi(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,

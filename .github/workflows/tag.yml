@@ -103,7 +103,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           github.issues.createComment({...context.issue, body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."})
-          github.issues.removeLabels({...context.issue, "bumpversion/${{ env['BV_PART'] }}" })
+          github.issues.removeLabel({...context.issue, labels: "bumpversion/${{ env['BV_PART'] }}" })
 
   always_job:
     name: Always run job

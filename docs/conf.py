@@ -123,7 +123,6 @@ exclude_patterns = [
     'examples/notebooks/ImpactPlot.ipynb',
     'examples/notebooks/Recast.ipynb',
     'examples/notebooks/StatError.ipynb',
-    'examples/notebooks/binderexample/Untitled.ipynb',
     'examples/notebooks/example-tensorflow.ipynb',
     'examples/notebooks/histogrammar.ipynb',
     'examples/notebooks/histosys.ipynb',
