@@ -22,6 +22,17 @@
         }
     ],
     "access_right": "open",
+    "keywords": [
+      "physics",
+      "statistics",
+      "fitting",
+      "scipy",
+      "numpy",
+      "tensorflow",
+      "pytorch",
+      "jax",
+      "auto-differentiation"
+    ],
     "related_identifiers": [
         {
             "scheme": "url",
