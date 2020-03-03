@@ -439,7 +439,7 @@ def test_pdf_integration_shapesys(backend):
     ]
 
 
-def test_invalid_modifier_modelconfig():
+def test_invalid_modifier():
     spec = {
         'channels': [
             {
@@ -462,30 +462,6 @@ def test_invalid_modifier_modelconfig():
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         pyhf.pdf._ModelConfig(spec)
-
-
-def test_invalid_modifier_megamods():
-    spec = {
-        'channels': [
-            {
-                'name': 'channel',
-                'samples': [
-                    {
-                        'name': 'ttbar',
-                        'data': [1],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None},
-                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [1]},
-                        ],
-                    }
-                ],
-            }
-        ]
-    }
-    mc = pyhf.pdf._ModelConfig(spec)
-    mc.modifiers = [('mu', 'normfactor'), ('a_name', 'this_should_not_exist')]
-    with pytest.raises(RuntimeError):
-        pyhf.pdf._nominal_and_modifiers_from_spec(mc, spec)
 
 
 def test_invalid_modifier_name_resuse():
