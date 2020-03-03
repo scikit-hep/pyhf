@@ -118,6 +118,7 @@ class shapesys_combined(object):
     def finalize(self, pdfconfig):
         # self.__shapesys_info: (parameter, sample, (mask, nominal rate, uncertainty), bin)
         for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
+            # a case where given shapesys modifier affects zero samples
             if not pdfconfig.param_set(pname).n_parameters:
                 continue
 
@@ -127,16 +128,13 @@ class shapesys_combined(object):
                 default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1, dtype='bool')
             ]
 
-            # if empty: a case where given shapesys modifier affects zero samples
-            if default_backend.shape(sample_uncert_info)[0] == 0:
-                continue
-
-            # sample_uncert_info = (bin_mask, nominal rate, uncertainty)
+            # sample_uncert_info: (bin_mask, nominal rate, uncertainty)
             bin_mask = default_backend.astensor(sample_uncert_info[0][0], dtype='bool')
             nom_unc = sample_uncert_info[0, 1:]
 
             # Why this works: setting the default/not-affecting-sample == -1
-            # means that squaring it gives +1 by default)
+            # means that squaring it gives +1 by default
+            # (done in _nominal_and_modifiers_from_spec)
 
             # compute gamma**2 and sigma**2
             nom_unc_sq = default_backend.power(nom_unc, 2)
