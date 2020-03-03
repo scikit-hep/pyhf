@@ -1,10 +1,16 @@
 Use and Citations
 =================
 
+Citation
+--------
+
 The preferred BibTeX entry for citation of ``pyhf`` is
 
 .. literalinclude:: bib/preferred.bib
    :language: bibtex
+
+Use in Publications
+-------------------
 
 Updating list of citations and use cases of :code:`pyhf`:
 
