@@ -132,11 +132,11 @@ class pytorch_backend(object):
     def shape(self, tensor):
         return tuple(map(int, tensor.shape))
 
-    def sum(self, tensor_in, axis=None, dtype=None):
+    def sum(self, tensor_in, axis=None):
         return (
-            torch.sum(tensor_in, dtype=dtype)
+            torch.sum(tensor_in)
             if (axis is None or tensor_in.shape == torch.Size([]))
-            else torch.sum(tensor_in, axis, dtype=dtype)
+            else torch.sum(tensor_in, axis)
         )
 
     def product(self, tensor_in, axis=None):

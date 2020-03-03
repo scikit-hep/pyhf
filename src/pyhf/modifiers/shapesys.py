@@ -125,7 +125,9 @@ class shapesys_combined(object):
             # identify the sample that the given parameter affects
             # shapesys is not shared, so there should only ever be at most one sample
             sample_uncert_info = mod_uncert_info[
-                default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1, dtype='bool')
+                default_backend.astensor(
+                    default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
+                )
             ]
 
             # sample_uncert_info: (bin_mask, nominal rate, uncertainty)
