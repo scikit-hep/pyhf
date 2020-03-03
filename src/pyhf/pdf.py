@@ -119,6 +119,12 @@ def _nominal_and_modifiers_from_spec(config, spec):
     # set up the entire structure
     mega_mods = {}
     for m, mtype in config.modifiers:
+        if mtype not in default_data_makers:
+            raise RuntimeError(
+                'not sure how to combine {mtype} into the mega-channel'.format(
+                    mtype=mtype
+                )
+            )
         for s in config.samples:
             key = '{}/{}'.format(mtype, m)
             mega_mods.setdefault(key, {})[s] = {
@@ -198,12 +204,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     mega_mods[key][s]['data']['mask'] += maskval
                     mega_mods[key][s]['data']['uncrt'] += uncrts
                     mega_mods[key][s]['data']['nom_data'] += nom
-                else:
-                    raise RuntimeError(
-                        'not sure how to combine {mtype} into the mega-channel'.format(
-                            mtype=mtype
-                        )
-                    )
+
         sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
         mega_samples[s] = sample_dict
 
