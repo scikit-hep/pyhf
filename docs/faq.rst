@@ -48,6 +48,23 @@ If you are unable to get a Python 3 runtime, versioned Docker images of ``pyhf``
 
 Once you have Python 3 installed, see the :ref:`installation` page to get started.
 
+How is ``pyhf`` typeset?
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+As you may have guessed from this page, ``pyhf`` is typeset in all lowercase.
+This is largely historical, as the core developers had just always typed it that way and it seemed a bit too short of a library name to write as ``PyHF``.
+When typesetting in LaTeX the developers recommend introducing the command
+
+    .. code-block:: latex
+
+        \newcommand{\pyhf}{\texttt{pyhf}}
+
+If the journal you are publishing in requires you to use ``textsc`` for software names it is okay to instead use
+
+    .. code-block:: latex
+
+        \newcommand{\pyhf}{\textsc{pyhf}}
+
 Troubleshooting
 ---------------
 
