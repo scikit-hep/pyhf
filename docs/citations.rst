@@ -12,3 +12,13 @@ Updating list of citations and use cases of :code:`pyhf`:
    :list: bullet
    :all:
    :style: plain
+
+Published Likelihoods
+---------------------
+
+Updating list of HEPData entries for publications using ``HistFactory`` JSON likelihoods:
+
+.. bibliography:: bib/HEPData_likelihoods.bib
+   :list: bullet
+   :all:
+   :style: plain
