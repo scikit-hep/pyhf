@@ -126,16 +126,16 @@ class shapesys_combined(object):
                 continue
 
             # identify the sample that the given parameter affects
-            # shapesys is not shared, so there should only ever be at most one sample
+            # shapesys is not shared, so there should only ever be one sample
             sample_uncert_info = mod_uncert_info[
                 default_backend.astensor(
                     default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
                 )
-            ]
+            ][0]
 
             # sample_uncert_info: (bin_mask, nominal rate, uncertainty)
-            bin_mask = default_backend.astensor(sample_uncert_info[0][0], dtype='bool')
-            nom_unc = sample_uncert_info[0, 1:]
+            bin_mask = default_backend.astensor(sample_uncert_info[0], dtype='bool')
+            nom_unc = sample_uncert_info[1:]
 
             # Why this works: setting the default/not-affecting-sample == -1
             # means that squaring it gives +1 by default
