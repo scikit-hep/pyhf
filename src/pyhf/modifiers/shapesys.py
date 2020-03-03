@@ -85,18 +85,21 @@ class shapesys_combined(object):
             if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
                 self._access_field[syst_index] = 0
                 continue
+
+            singular_sample_index = [
+                idx
+                for idx, syst in enumerate(
+                    default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
+                )
+                if any(syst)
+            ][-1]
+
             for batch_index, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[syst_index][batch_index]
                 access_field_for_syst_and_batch = default_backend.zeros(
                     len(batch_access)
                 )
-                singular_sample_index = [
-                    idx
-                    for idx, syst in enumerate(
-                        default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
-                    )
-                    if any(syst)
-                ][-1]
+
                 sample_mask = self._shapesys_mask[syst_index][singular_sample_index][0]
                 access_field_for_syst_and_batch[sample_mask] = selection
                 self._access_field[
