@@ -119,33 +119,33 @@ class shapesys_combined(object):
         self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
 
     def finalize(self, pdfconfig):
-        # self.__shapesys_info: (parameter, sample, (mask, nominal rate, uncertainty), bin)
+        # self.__shapesys_info: (parameter, sample, [mask, nominal rate, uncertainty], bin)
         for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
-            # a case where given shapesys modifier affects zero samples
+            # skip cases where given shapesys modifier affects zero samples
             if not pdfconfig.param_set(pname).n_parameters:
                 continue
 
-            # identify the sample that the given parameter affects
-            # shapesys is not shared, so there should only ever be one sample
+            # identify the information for the sample that the given parameter
+            # affects. shapesys is not shared, so there should only ever be at
+            # most one sample
+            # sample_uncert_info: ([mask, nominal rate, uncertainty], bin)
             sample_uncert_info = mod_uncert_info[
                 default_backend.astensor(
                     default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
                 )
             ][0]
 
-            # sample_uncert_info: (bin_mask, nominal rate, uncertainty)
+            # bin_mask: ([mask], bin)
             bin_mask = default_backend.astensor(sample_uncert_info[0], dtype='bool')
+            # nom_unc: ([nominal, uncertainty], bin)
             nom_unc = sample_uncert_info[1:]
-
-            # Why this works: setting the default/not-affecting-sample == -1
-            # means that squaring it gives +1 by default
-            # (done in _nominal_and_modifiers_from_spec)
 
             # compute gamma**2 and sigma**2
             nom_unc_sq = default_backend.power(nom_unc, 2)
             # when the nominal rate = 0 OR uncertainty = 0, set = 1
             nom_unc_sq[nom_unc_sq == 0] = 1
-            # gamma**2 / sigma**2
+            # divide (gamma**2 / sigma**2) and mask to set factors for only the
+            # parameters we have allocated
             factors = (nom_unc_sq[0] / nom_unc_sq[1])[bin_mask]
             assert len(factors) == pdfconfig.param_set(pname).n_parameters
 
