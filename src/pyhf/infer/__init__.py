@@ -1,7 +1,7 @@
 """Inference for Statistical Models."""
 
 from .. import get_backend
-from .calculators import AsymptoticCalculator
+from .calculators import create_calculator
 
 
 def hypotest(
@@ -12,6 +12,7 @@ def hypotest(
     par_bounds=None,
     fixed_params=None,
     qtilde=True,
+    calctype='asymptotics',
     **kwargs,
 ):
     r"""
@@ -127,8 +128,8 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-    calc = AsymptoticCalculator(
-        data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
+    calc = create_calculator(
+        calctype, data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
     )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)

@@ -139,6 +139,9 @@ def fit(
 @click.option('--testpoi', default=1.0)
 @click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
 @click.option(
+    '--calctype', type=click.Choice(['asymptotics', 'toybased']), default='asymptotics'
+)
+@click.option(
     '--backend',
     type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'jax', 'np', 'torch', 'tf']),
     help='The tensor backend used for the calculation.',
@@ -160,6 +163,7 @@ def cls(
     teststat,
     backend,
     optimizer,
+    calctype,
     optconf,
 ):
     """
@@ -219,7 +223,12 @@ def cls(
         set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(
-        testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
+        testpoi,
+        ws.data(model),
+        model,
+        qtilde=is_qtilde,
+        calctype=calctype,
+        return_expected_set=True,
     )
     result = {
         'CLs_obs': tensorlib.tolist(result[0]),
