@@ -109,6 +109,7 @@ class AsymptoticCalculator(object):
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.qtilde = qtilde
+        self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
         """
