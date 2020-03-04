@@ -4,8 +4,16 @@ from .test_statistics import qmu
 from .. import get_backend
 from .calculators import create_calculator
 
+
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, calctype = 'asymptotics', **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    qtilde=False,
+    calctype='asymptotics',
+    **kwargs,
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
@@ -73,7 +81,7 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    calc = create_calculator(calctype,data,pdf,init_pars,par_bounds,qtilde=True)
+    calc = create_calculator(calctype, data, pdf, init_pars, par_bounds, qtilde=True)
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 

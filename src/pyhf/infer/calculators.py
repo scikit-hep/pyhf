@@ -12,11 +12,11 @@ from .. import get_backend
 from .test_statistics import qmu
 
 
-def create_calculator(calctype,*args,**kwargs):
-    return {
-        'asymptotics': AsymptoticCalculator,
-        'toybased': ToyCalculator,
-    }[calctype](*args,**kwargs)
+def create_calculator(calctype, *args, **kwargs):
+    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[calctype](
+        *args, **kwargs
+    )
+
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
     """
@@ -176,8 +176,6 @@ class AsymptoticCalculator(object):
         return teststat
 
 
-
-
 class EmpiricalDistribution(object):
     def __init__(self, samples):
         self.samples = samples.ravel()
@@ -223,18 +221,22 @@ class ToyCalculator(object):
 
         print('signal!')
         signal_qtilde = []
-        for i,sample in enumerate(signal_sample):
+        for i, sample in enumerate(signal_sample):
             if i % 100 == 0:
                 print(i)
-            signal_qtilde.append(qmu(poi_test, sample, self.pdf, signal_pars, self.par_bounds))
+            signal_qtilde.append(
+                qmu(poi_test, sample, self.pdf, signal_pars, self.par_bounds)
+            )
         signal_qtilde = tensorlib.astensor(signal_qtilde)
 
         print('bkgd!')
         bkg_qtilde = []
-        for i,sample in enumerate(bkg_sample):
+        for i, sample in enumerate(bkg_sample):
             if i % 100 == 0:
                 print(i)
-            bkg_qtilde.append(qmu(poi_test, sample, self.pdf, bkg_pars, self.par_bounds))
+            bkg_qtilde.append(
+                qmu(poi_test, sample, self.pdf, bkg_pars, self.par_bounds)
+            )
         bkg_qtilde = tensorlib.astensor(bkg_qtilde)
 
         s_plus_b = EmpiricalDistribution(signal_qtilde)
