@@ -120,7 +120,7 @@ class AsymptoticCalculator(object):
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
 
         """
-        if self.sqrtqmuA_v is None;
+        if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
         b_dist = AsymptoticTestStatDistribution(0.0)
