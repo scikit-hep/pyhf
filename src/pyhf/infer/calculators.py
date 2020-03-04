@@ -57,6 +57,7 @@ class AsymptoticTestStatDistribution(object):
 
         """
         self.shift = shift
+        self.sqrtqmuA_v = None
 
     def pvalue(self, value):
         """
@@ -119,6 +120,8 @@ class AsymptoticCalculator(object):
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
 
         """
+        if self.sqrtqmuA_v is None;
+            raise RuntimeError('need to call .teststatistic(poi_test) first')
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
         b_dist = AsymptoticTestStatDistribution(0.0)
         return sb_dist, b_dist
