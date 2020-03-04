@@ -54,6 +54,7 @@ extras_require['docs'] = sorted(
         [
             'sphinx',
             'sphinxcontrib-bibtex',
+            'sphinxcontrib-rawfiles',
             'sphinx-click',
             'sphinx_rtd_theme',
             'nbsphinx',

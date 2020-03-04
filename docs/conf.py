@@ -48,6 +48,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinxcontrib.bibtex',
+    'sphinxcontrib.rawfiles',
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
     'nbsphinx',
@@ -214,6 +215,9 @@ html_static_path = ['_static']
 # directly to the root of the documentation.
 #
 html_extra_path = []
+
+# Files/directories you want to copy
+rawfiles = ['schemas']
 
 # If not None, a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
