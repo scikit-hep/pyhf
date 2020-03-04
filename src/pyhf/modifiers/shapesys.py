@@ -62,6 +62,16 @@ class shapesys_combined(object):
                 for m in keys
             ]
         )
+        self.__singular_sample_index = default_backend.astensor(
+            [
+                [
+                    True if any(mega_mods[m][s]['data']['mask']) else False
+                    for s in pdfconfig.samples
+                ]
+                for m in keys
+            ],
+            dtype='bool',
+        )
         self.finalize(pdfconfig)
 
         global_concatenated_bin_indices = [
@@ -120,37 +130,26 @@ class shapesys_combined(object):
 
     def finalize(self, pdfconfig):
         # self.__shapesys_info: (parameter, sample, (mask, nominal rate, uncertainty), bin)
-        for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
-            # a case where given shapesys modifier affects zero samples
-            if not pdfconfig.param_set(pname).n_parameters:
-                continue
 
-            # identify the sample that the given parameter affects
-            # shapesys is not shared, so there should only ever be one sample
-            sample_uncert_info = mod_uncert_info[
-                default_backend.astensor(
-                    default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
-                )
-            ][0]
+        bin_mask = default_backend.astensor(self.__shapesys_info[self.__singular_sample_index][:, 0], dtype='bool')
+        # compute gamma**2 and sigma**2
+        nom_unc = self.__shapesys_info[self.__singular_sample_index][:, 1:]
+        nom_unc_sq = default_backend.power(nom_unc, 2)
+        # when the nominal rate = 0 OR uncertainty = 0, set = 1
+        nom_unc_sq[nom_unc_sq == 0] = 1
+        # gamma**2 / sigma**2
+        allfactors = (nom_unc_sq[:, 0] / nom_unc_sq[:, 1])
 
-            # sample_uncert_info: (bin_mask, nominal rate, uncertainty)
-            bin_mask = default_backend.astensor(sample_uncert_info[0], dtype='bool')
-            nom_unc = sample_uncert_info[1:]
-
-            # Why this works: setting the default/not-affecting-sample == -1
-            # means that squaring it gives +1 by default
-            # (done in _nominal_and_modifiers_from_spec)
-
-            # compute gamma**2 and sigma**2
-            nom_unc_sq = default_backend.power(nom_unc, 2)
-            # when the nominal rate = 0 OR uncertainty = 0, set = 1
-            nom_unc_sq[nom_unc_sq == 0] = 1
-            # gamma**2 / sigma**2
-            factors = (nom_unc_sq[0] / nom_unc_sq[1])[bin_mask]
-            assert len(factors) == pdfconfig.param_set(pname).n_parameters
-
-            pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
-            pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
+        parameters = [
+            pname
+            for pname in self._shapesys_mods
+            if pdfconfig.param_set(pname).n_parameters
+        ]
+        for pname, pfactors, pmask in zip(parameters, allfactors, bin_mask):
+            pfactors = pfactors[pmask]
+            assert len(pfactors) == pdfconfig.param_set(pname).n_parameters
+            pdfconfig.param_set(pname).factors = default_backend.tolist(pfactors)
+            pdfconfig.param_set(pname).auxdata = default_backend.tolist(pfactors)
 
     def apply(self, pars):
         '''
