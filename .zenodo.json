@@ -38,11 +38,6 @@
             "scheme": "url",
             "identifier": "https://github.com/scikit-hep/pyhf/tree/v0.4.1",
             "relation": "isSupplementTo"
-        },
-        {
-            "scheme": "doi",
-            "identifier": "10.5281/zenodo.1169739",
-            "relation": "isVersionOf"
         }
     ]
 }
