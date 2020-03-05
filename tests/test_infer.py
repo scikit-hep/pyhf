@@ -152,7 +152,7 @@ def test_inferapi_pyhf_independence():
 
 @pytest.mark.parametrize("qtilde", [True, False])
 def test_calculator_distributions_without_teststatistic(qtilde):
-    calc = pyhf.infer.AsymptoticCalculator(
+    calc = pyhf.infer.calculators.AsymptoticCalculator(
         [0.0], {}, [1.0], [(0.0, 10.0)], qtilde=qtilde
     )
     with pytest.raises(RuntimeError):
