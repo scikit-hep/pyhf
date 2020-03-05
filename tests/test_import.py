@@ -2,7 +2,7 @@ import pyhf
 import pyhf.readxml
 import numpy as np
 import uproot
-import os
+from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
 
@@ -232,7 +232,7 @@ def test_import_filecache(mocker):
 
     # check if uproot.open was only called once with the expected root file
     pyhf.readxml.uproot.open.assert_called_once_with(
-        os.path.join("validation/xmlimport_input", "./data/example.root")
+        Path().joinpath("validation/xmlimport_input", "./data/example.root")
     )
 
     assert_equal_dictionary(parsed_xml, parsed_xml2)

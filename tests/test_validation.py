@@ -3,7 +3,7 @@ import pyhf.writexml
 import pyhf.readxml
 import json
 import pytest
-import os
+from pathlib import Path
 import numpy as np
 
 
@@ -790,7 +790,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
             parsed_xml_before,
             tmpconfig.strpath,
             tmpdata.strpath,
-            os.path.join(tmpdir.strpath, 'FitConfig'),
+            Path().joinpath(tmpdir.strpath, 'FitConfig'),
         ).decode('utf-8')
     )
     parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)

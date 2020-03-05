@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
-from os import path
+from pathlib import Path
 
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
+this_directory = Path(__file__).parent.resolve()
+with open(Path().joinpath(this_directory, 'README.md'), encoding='utf-8') as readme_md:
     long_description = readme_md.read()
 
 extras_require = {

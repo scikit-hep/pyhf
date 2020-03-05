@@ -2,7 +2,7 @@ from . import utils
 
 import logging
 
-import os
+from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
@@ -38,7 +38,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    fullpath = os.path.join(rootdir, filename)
+    fullpath = Path().joinpath(rootdir, filename)
     if not fullpath in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
@@ -48,13 +48,12 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
         h = f[name]
     except KeyError:
         try:
-            h = f[os.path.join(path, name)]
+            h = f[Path().joinpath(path, name)]
         except KeyError:
             raise KeyError(
-                'Both {0:s} and {1:s} were tried and not found in {2:s}'.format(
-                    name, os.path.join(path, name), os.path.join(rootdir, filename)
+                f'Both {name} and {Path().joinpath(path, name)} were tried and not found' \
+                f' in {Path().joinpath(rootdir, filename)}'
                 )
-            )
     return h.numpy()[0].tolist(), extract_error(h)
 
 
@@ -311,7 +310,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(os.path.join(rootdir, inp)), rootdir, track_progress
+            ET.parse(Path().joinpath(rootdir, inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)

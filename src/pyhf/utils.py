@@ -1,7 +1,7 @@
 import json
 import jsonschema
 import pkg_resources
-import os
+from pathlib import Path
 import yaml
 import click
 
@@ -18,13 +18,13 @@ def load_schema(schema_id, version=None):
         version = SCHEMA_VERSION
     try:
         return SCHEMA_CACHE[
-            "{0:s}{1:s}".format(SCHEMA_BASE, os.path.join(version, schema_id))
+            f'{SCHEMA_BASE}{Path().joinpath(version, schema_id)}'
         ]
     except KeyError:
         pass
 
     path = pkg_resources.resource_filename(
-        __name__, os.path.join('schemas', version, schema_id)
+        __name__, Path().joinpath('schemas', version, schema_id)
     )
     with open(path) as json_schema:
         schema = json.load(json_schema)

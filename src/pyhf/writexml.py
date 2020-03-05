@@ -1,6 +1,7 @@
 import logging
 
 import os
+from pathlib import Path
 import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
@@ -242,17 +243,15 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
 
     shutil.copyfile(
         pkg_resources.resource_filename(__name__, 'schemas/HistFactorySchema.dtd'),
-        os.path.join(os.path.dirname(specdir), 'HistFactorySchema.dtd'),
+        Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
-    combination = ET.Element(
+    combination = ET.Element(  
         "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
     )
 
-    with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
+    with uproot.recreate(Path(data_rootdir).joinpath('data.root')) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
-            channelfilename = os.path.join(
-                specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
-            )
+            channelfilename = Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
             with open(channelfilename, 'w') as channelfile:
                 channel = build_channel(spec, channelspec, spec.get('observations'))
                 indent(channel)
