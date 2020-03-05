@@ -108,6 +108,14 @@ jobs:
         python -m doctest README.md
         python setup.py build_sphinx
         touch docs/_build/html/.nojekyll
+    - name: Check schemas are copied over
+      run: |
+        # is a directory
+        [ -d "docs/_build/html/schemas" ]
+        # is not a symlink
+        [ ! -L "docs/_build/html/schemas" ]
+        # is not empty
+        [ "$(ls -A docs/_build/html/schemas)" ]
     - name: Deploy docs to GitHub Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: crazy-max/ghaction-github-pages@v1.0.1
