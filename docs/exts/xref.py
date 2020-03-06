@@ -5,7 +5,9 @@ from docutils import nodes
 from sphinx.util import caption_ref_re
 
 
-def xref(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+def xref(typ, rawtext, text, lineno, inliner, options={}, content=None):
+    # avoid mutable defaults
+    content = [] if content is None else content
 
     title = target = text
     # titleistarget = True
