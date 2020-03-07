@@ -133,17 +133,17 @@ def inspect(workspace, output_file, measurement):
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-@click.option('-c', '--channel', default=None, multiple=True, metavar='<CHANNEL>...')
-@click.option('-s', '--sample', default=None, multiple=True, metavar='<SAMPLE>...')
-@click.option('-m', '--modifier', default=None, multiple=True, metavar='<MODIFIER>...')
+@click.option('-c', '--channel', default=[], multiple=True, metavar='<CHANNEL>...')
+@click.option('-s', '--sample', default=[], multiple=True, metavar='<SAMPLE>...')
+@click.option('-m', '--modifier', default=[], multiple=True, metavar='<MODIFIER>...')
 @click.option(
     '-t',
     '--modifier-type',
-    default=None,
+    default=[],
     multiple=True,
     type=click.Choice(modifiers.uncombined.keys()),
 )
-@click.option('--measurement', default=None, multiple=True, metavar='<MEASUREMENT>...')
+@click.option('--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...')
 def prune(
     workspace, output_file, channel, sample, modifier, modifier_type, measurement
 ):
@@ -154,13 +154,6 @@ def prune(
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
-
-    # avoid mutable defaults
-    channel = [] if channel is None else channel
-    sample = [] if sample is None else sample
-    modifier = [] if modifier is None else modifier
-    modifier_type = [] if modifier_type is None else modifier_type
-    measurement = [] if measurement is None else measurement
 
     ws = Workspace(spec)
     pruned_ws = ws.prune(
@@ -189,7 +182,7 @@ def prune(
 @click.option(
     '-c',
     '--channel',
-    default=None,
+    default=[],
     multiple=True,
     type=click.Tuple([str, str]),
     metavar='<PATTERN> <REPLACE>...',
@@ -197,7 +190,7 @@ def prune(
 @click.option(
     '-s',
     '--sample',
-    default=None,
+    default=[],
     multiple=True,
     type=click.Tuple([str, str]),
     metavar='<PATTERN> <REPLACE>...',
@@ -205,14 +198,14 @@ def prune(
 @click.option(
     '-m',
     '--modifier',
-    default=None,
+    default=[],
     multiple=True,
     type=click.Tuple([str, str]),
     metavar='<PATTERN> <REPLACE>...',
 )
 @click.option(
     '--measurement',
-    default=None,
+    default=[],
     multiple=True,
     type=click.Tuple([str, str]),
     metavar='<PATTERN> <REPLACE>...',
@@ -225,12 +218,6 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
-
-    # avoid mutable defaults
-    channel = [] if channel is None else channel
-    sample = [] if sample is None else sample
-    modifier = [] if modifier is None else modifier
-    measurement = [] if measurement is None else measurement
 
     ws = Workspace(spec)
     renamed_ws = ws.rename(
