@@ -14,14 +14,14 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 #
-import os
+import pathlib as Path
 import sys
 from pkg_resources import get_distribution
 
-sys.path.insert(0, os.path.abspath('../src'))
-sys.path.insert(1, os.path.abspath('./exts'))
+sys.path.insert(0, Path('../src').resolve().as_posix())
+sys.path.insert(1, Path('../exts').resolve().as_posix())
 
 
 def setup(app):

@@ -1,6 +1,5 @@
 import logging
 
-import os
 from pathlib import Path
 import shutil
 import pkg_resources
@@ -245,13 +244,20 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         pkg_resources.resource_filename(__name__, 'schemas/HistFactorySchema.dtd'),
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
-    combination = ET.Element(  
-        "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
+    combination = ET.Element(
+        "Combination",
+        OutputFilePrefix=Path().joinpath('.', specdir, resultprefix).as_posix(),
     )
 
-    with uproot.recreate(Path(data_rootdir).joinpath('data.root')) as _ROOT_DATA_FILE:
+    with uproot.recreate(
+        Path(data_rootdir).joinpath('data.root').as_posix()
+    ) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
-            channelfilename = Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
+            channelfilename = (
+                Path(specdir)
+                .joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
+                .as_posix()
+            )
             with open(channelfilename, 'w') as channelfile:
                 channel = build_channel(spec, channelspec, spec.get('observations'))
                 indent(channel)

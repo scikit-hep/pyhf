@@ -38,7 +38,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    fullpath = Path().joinpath(rootdir, filename)
+    fullpath = Path().joinpath(rootdir, filename).as_posix()
     if not fullpath in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
@@ -51,9 +51,9 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
             h = f[Path().joinpath(path, name)]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {Path().joinpath(path, name)} were tried and not found' \
+                f'Both {name} and {Path().joinpath(path, name)} were tried and not found'
                 f' in {Path().joinpath(rootdir, filename)}'
-                )
+            )
     return h.numpy()[0].tolist(), extract_error(h)
 
 

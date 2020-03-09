@@ -232,7 +232,7 @@ def test_import_filecache(mocker):
 
     # check if uproot.open was only called once with the expected root file
     pyhf.readxml.uproot.open.assert_called_once_with(
-        Path().joinpath("validation/xmlimport_input", "./data/example.root")
+        Path().joinpath("validation/xmlimport_input", "./data/example.root").as_posix()
     )
 
     assert_equal_dictionary(parsed_xml, parsed_xml2)
