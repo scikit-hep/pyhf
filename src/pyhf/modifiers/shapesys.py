@@ -49,12 +49,13 @@ class shapesys_combined(object):
         self._shapesys_mask = [
             [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
-        self.__shapesys_uncrt = default_backend.astensor(
+        self.__shapesys_info = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[m][s]['data']['uncrt'],
+                        mega_mods[m][s]['data']['mask'],
                         mega_mods[m][s]['data']['nom_data'],
+                        mega_mods[m][s]['data']['uncrt'],
                     ]
                     for s in pdfconfig.samples
                 ]
@@ -84,18 +85,21 @@ class shapesys_combined(object):
             if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
                 self._access_field[syst_index] = 0
                 continue
+
+            singular_sample_index = [
+                idx
+                for idx, syst in enumerate(
+                    default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
+                )
+                if any(syst)
+            ][-1]
+
             for batch_index, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[syst_index][batch_index]
                 access_field_for_syst_and_batch = default_backend.zeros(
                     len(batch_access)
                 )
-                singular_sample_index = [
-                    idx
-                    for idx, syst in enumerate(
-                        default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
-                    )
-                    if any(syst)
-                ][-1]
+
                 sample_mask = self._shapesys_mask[syst_index][singular_sample_index][0]
                 access_field_for_syst_and_batch[sample_mask] = selection
                 self._access_field[
@@ -115,30 +119,36 @@ class shapesys_combined(object):
         self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
 
     def finalize(self, pdfconfig):
-        for uncert_this_mod, pname in zip(self.__shapesys_uncrt, self._shapesys_mods):
+        # self.__shapesys_info: (parameter, sample, [mask, nominal rate, uncertainty], bin)
+        for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
+            # skip cases where given shapesys modifier affects zero samples
             if not pdfconfig.param_set(pname).n_parameters:
                 continue
-            unc_nom = default_backend.astensor(
-                [x for x in uncert_this_mod[:, :, :] if any(x[0][x[0] > 0])]
-            )
-            unc = unc_nom[0, 0]
-            nom = unc_nom[0, 1]
-            unc_sq = default_backend.power(unc, 2)
-            nom_sq = default_backend.power(nom, 2)
 
-            # the below tries to filter cases in which
-            # this modifier is not used by checking non
-            # zeroness.. shoudl probably use mask
-            numerator = default_backend.where(
-                unc_sq > 0, nom_sq, default_backend.zeros(unc_sq.shape)
-            )
-            denominator = default_backend.where(
-                unc_sq > 0, unc_sq, default_backend.ones(unc_sq.shape)
-            )
+            # identify the information for the sample that the given parameter
+            # affects. shapesys is not shared, so there should only ever be at
+            # most one sample
+            # sample_uncert_info: ([mask, nominal rate, uncertainty], bin)
+            sample_uncert_info = mod_uncert_info[
+                default_backend.astensor(
+                    default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
+                )
+            ][0]
 
-            factors = numerator / denominator
-            factors = factors[factors > 0]
+            # bin_mask: ([mask], bin)
+            bin_mask = default_backend.astensor(sample_uncert_info[0], dtype='bool')
+            # nom_unc: ([nominal, uncertainty], bin)
+            nom_unc = sample_uncert_info[1:]
+
+            # compute gamma**2 and sigma**2
+            nom_unc_sq = default_backend.power(nom_unc, 2)
+            # when the nominal rate = 0 OR uncertainty = 0, set = 1
+            nom_unc_sq[nom_unc_sq == 0] = 1
+            # divide (gamma**2 / sigma**2) and mask to set factors for only the
+            # parameters we have allocated
+            factors = (nom_unc_sq[0] / nom_unc_sq[1])[bin_mask]
             assert len(factors) == pdfconfig.param_set(pname).n_parameters
+
             pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
             pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
 

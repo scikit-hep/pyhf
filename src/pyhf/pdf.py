@@ -195,12 +195,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     mega_mods[key][s]['data']['mask'] += maskval
                     mega_mods[key][s]['data']['uncrt'] += uncrt
                     mega_mods[key][s]['data']['nom_data'] += nom
-                else:
-                    raise RuntimeError(
-                        'not sure how to combine {mtype} into the mega-channel'.format(
-                            mtype=mtype
-                        )
-                    )
+
         sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
         mega_samples[s] = sample_dict
 

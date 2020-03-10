@@ -2,6 +2,26 @@
     "$schema": "http://json-schema.org/draft-06/schema#",
     "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/defs.json",
     "definitions": {
+        "workspace": {
+          "type": "object",
+          "properties": {
+              "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
+              "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
+              "observations": { "type": "array", "items": {"$ref": "#/definitions/observation" }, "minItems": 1 },
+              "version": { "const": "1.0.0" }
+          },
+          "additionalProperties": false,
+          "required": ["channels", "measurements", "observations", "version"]
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+              "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
+              "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+          },
+          "additionalProperties": false,
+          "required": ["channels"]
+        },
         "observation": {
             "type": "object",
             "properties": {

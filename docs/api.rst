@@ -122,9 +122,9 @@ Inference
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit
-   utils.generate_asimov_data
-   utils.pvals_from_teststat
-   utils.pvals_from_teststat_expected
+   calculators.generate_asimov_data
+   calculators.AsymptoticTestStatDistribution
+   calculators.AsymptoticCalculator
 
 Exceptions
 ----------
