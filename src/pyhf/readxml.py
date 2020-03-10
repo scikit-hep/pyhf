@@ -48,7 +48,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
         h = f[name]
     except KeyError:
         try:
-            h = f[Path().joinpath(path, name)]
+            h = f[Path().joinpath(path, name).as_posix()]
         except KeyError:
             raise KeyError(
                 f'Both {name} and {Path().joinpath(path, name)} were tried and not found'
@@ -310,7 +310,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(Path().joinpath(rootdir, inp)), rootdir, track_progress
+            ET.parse(Path().joinpath(rootdir, inp).as_posix()), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)

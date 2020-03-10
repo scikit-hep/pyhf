@@ -21,7 +21,7 @@ import sys
 from pkg_resources import get_distribution
 
 sys.path.insert(0, Path('../src').resolve().as_posix())
-sys.path.insert(1, Path('../exts').resolve().as_posix())
+sys.path.insert(1, Path('./exts').resolve().as_posix())
 
 
 def setup(app):
