@@ -16,7 +16,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 #
-import pathlib as Path
+from pathlib import Path
 import sys
 from pkg_resources import get_distribution
 

@@ -81,7 +81,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         os.makedirs(Path().joinpath(output_dir, specroot), exist_ok=True)
         os.makedirs(Path().joinpath(output_dir, dataroot), exist_ok=True)
         with click.open_file(
-            Path.joinpath(output_dir, f'{resultprefix}.xml'), 'w'
+            Path().joinpath(output_dir, f'{resultprefix}.xml'), 'w'
         ) as outstream:
             outstream.write(
                 writexml.writexml(
