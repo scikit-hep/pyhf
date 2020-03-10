@@ -38,7 +38,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    fullpath = Path().joinpath(rootdir, filename).as_posix()
+    fullpath = str(Path(rootdir).joinpath(filename))
     if not fullpath in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
@@ -48,11 +48,11 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
         h = f[name]
     except KeyError:
         try:
-            h = f[Path().joinpath(path, name).as_posix()]
+            h = f[str(Path(path).joinpath(name))]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {Path().joinpath(path, name)} were tried and not found'
-                f' in {Path().joinpath(rootdir, filename)}'
+                f'Both {name} and {Path(path).joinpath(name)} were tried and not found'
+                f' in {Path(rootdir).joinpath(filename)}'
             )
     return h.numpy()[0].tolist(), extract_error(h)
 
@@ -310,7 +310,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(Path().joinpath(rootdir, inp).as_posix()), rootdir, track_progress
+            ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)

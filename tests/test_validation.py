@@ -789,7 +789,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
             parsed_xml_before,
             tmpconfig.strpath,
             tmpdata.strpath,
-            Path().joinpath(tmpdir.strpath, 'FitConfig'),
+            Path(tmpdir.strpath).joinpath('FitConfig'),
         ).decode('utf-8')
     )
     parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)

@@ -245,18 +245,15 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
-        "Combination",
-        OutputFilePrefix=Path().joinpath('.', specdir, resultprefix).as_posix(),
+        "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix)),
     )
 
     with uproot.recreate(
-        Path(data_rootdir).joinpath('data.root').as_posix()
+        str(Path(data_rootdir).joinpath('data.root'))
     ) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
-            channelfilename = (
-                Path(specdir)
-                .joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
-                .as_posix()
+            channelfilename = str(
+                Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
             )
             with open(channelfilename, 'w') as channelfile:
                 channel = build_channel(spec, channelspec, spec.get('observations'))

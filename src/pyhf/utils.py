@@ -17,12 +17,12 @@ def load_schema(schema_id, version=None):
     if not version:
         version = SCHEMA_VERSION
     try:
-        return SCHEMA_CACHE[f'{SCHEMA_BASE}{Path().joinpath(version, schema_id)}']
+        return SCHEMA_CACHE[f'{SCHEMA_BASE}{Path(version).joinpath(schema_id)}']
     except KeyError:
         pass
 
     path = pkg_resources.resource_filename(
-        __name__, Path().joinpath('schemas', version, schema_id).as_posix()
+        __name__, str(Path().joinpath('schemas', version, schema_id))
     )
     with open(path) as json_schema:
         schema = json.load(json_schema)
