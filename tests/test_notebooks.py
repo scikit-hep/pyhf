@@ -1,6 +1,5 @@
 import sys
 import os
-from pathlib import Path
 import papermill as pm
 import scrapbook as sb
 import pytest
@@ -27,9 +26,10 @@ def test_xml_importexport(common_kwargs):
 
 def test_statisticalanalysis(common_kwargs):
     # The Binder example uses specific relative paths
-    os.chdir(Path.cwd().joinpath('docs/examples/notebooks/binderexample'))
+    cwd = os.getcwd()
+    os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
     pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
-    os.chdir(Path.cwd())
+    os.chdir(cwd)
 
 
 def test_shapefactor(common_kwargs):
