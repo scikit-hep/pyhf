@@ -22,7 +22,7 @@ def load_schema(schema_id, version=None):
         pass
 
     path = pkg_resources.resource_filename(
-        __name__, str(Path().joinpath('schemas', version, schema_id))
+        __name__, str(Path('schemas').joinpath(version, schema_id))
     )
     with open(path) as json_schema:
         schema = json.load(json_schema)
