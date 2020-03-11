@@ -51,8 +51,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
             h = f[str(Path(path).joinpath(name))]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {Path(path).joinpath(name)} were tried and not found'
-                f' in {Path(rootdir).joinpath(filename)}'
+                f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
             )
     return h.numpy()[0].tolist(), extract_error(h)
 
