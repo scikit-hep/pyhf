@@ -88,7 +88,7 @@ def _join_channels(join, left_channels, right_channels):
         right_channels (`list`): The right channel specification.
 
     Returns:
-        :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
+        :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#/definitions/channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
 
     """
 
@@ -129,7 +129,7 @@ def _join_observations(join, left_observations, right_observations):
         right_observations (`list`): The right observation specification.
 
     Returns:
-        :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#observation` `schema <https://scikit-hep.org/pyhf/likelihood.html#observations>`__
+        :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#/definitions/observation` `schema <https://scikit-hep.org/pyhf/likelihood.html#observations>`__
 
     """
     joined_observations = _join_items(join, left_observations, right_observations)
@@ -173,7 +173,7 @@ def _join_parameter_configs(measurement_name, left_parameters, right_parameters)
         right_parameters (`list`): The right parameter configuration specification.
 
     Returns:
-        :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#config` schema
+        :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#/definitions/config` schema
 
     """
     joined_parameter_configs = _join_items('outer', left_parameters, right_parameters)
@@ -203,7 +203,7 @@ def _join_measurements(join, left_measurements, right_measurements):
         right_measurements (`list`): The right measurement specification.
 
     Returns:
-        :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#measurement` `schema <https://scikit-hep.org/pyhf/likelihood.html#measurements>`__
+        :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#/definitions/measurement` `schema <https://scikit-hep.org/pyhf/likelihood.html#measurements>`__
 
     """
     joined_measurements = _join_items(join, left_measurements, right_measurements)

@@ -1,5 +1,5 @@
-Talks
-=====
+Outreach
+========
 
 We are always interested in talking about :code:`pyhf`. See the abstract and a list of previously given presentations and feel free to invite us to your next conference/workshop/meeting!
 
@@ -62,6 +62,16 @@ Posters
 This list will be updated with posters presented on :code:`pyhf`:
 
 .. bibliography:: bib/posters.bib
+   :list: bullet
+   :all:
+   :style: plain
+
+In the Media
+------------
+
+This list will be updated with media publications featuring :code:`pyhf`:
+
+.. bibliography:: bib/media.bib
    :list: bullet
    :all:
    :style: plain

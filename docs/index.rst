@@ -10,7 +10,7 @@
    likelihood
    learn
    examples
-   talks
+   outreach
    installation
    development
    faq
