@@ -272,10 +272,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         log.info(f"Validating spec against schema: {self.schema}")
         utils.validate(self, self.schema)
 
-        if 'version' in spec:
-            self.version = spec['version']
-        else:
-            self.version = config_kwargs.pop('version', None)
+        self.version = config_kwargs.pop('version', spec['version'])
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
