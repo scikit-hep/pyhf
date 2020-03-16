@@ -1,15 +1,11 @@
 from .. import get_backend, default_backend, events
 from ..tensor.common import (
-    _TensorViewer,
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
 )
 
 
 def _tensorviewer_from_parmap(par_map, batch_size):
-    db = default_backend
-    # prepares names and per-parset ranges
-    # in the order of the parameters
     names, slices, _ = list(
         zip(
             *sorted(
