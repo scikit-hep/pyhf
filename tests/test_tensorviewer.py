@@ -1,8 +1,4 @@
-import pyhf
 from pyhf.tensor.common import _TensorViewer
-from pyhf.parameters import ParamViewer
-from pyhf import default_backend, get_backend
-from pyhf import events
 
 
 def test_tensorviewer(backend):

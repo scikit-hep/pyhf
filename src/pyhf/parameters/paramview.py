@@ -47,7 +47,6 @@ class ParamViewer(object):
     """
 
     def __init__(self, shape, par_map, selection):
-        db = default_backend
         self.shape = shape
         self.selection = selection
 
