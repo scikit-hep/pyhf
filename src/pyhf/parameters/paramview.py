@@ -69,20 +69,19 @@ class ParamViewer(object):
     """
 
     def __init__(self, shape, par_map, selection):
-        self.selection = selection
 
-        self.batch = shape[0] if len(shape) > 1 else None
+        sbatch = shape[0] if len(shape) > 1 else None
 
         fullsize = default_backend.product(default_backend.astensor(shape))
         flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
         self._all_indices = default_backend.reshape(flat_indices, shape)
 
         # a tensor viewer that can split and stitch parameters
-        self.allpar_viewer = _tensorviewer_from_parmap(par_map, self.batch)
+        self.allpar_viewer = _tensorviewer_from_parmap(par_map, batch)
 
         # a tensor viewer that can split and stitch the selected parameters
         self.selected_viewer = _tensorviewer_from_slices(
-            [par_map[s]['slice'] for s in self.selection], self.selection, self.batch
+            [par_map[s]['slice'] for s in selection], selection, batch
         )
 
         self._precompute()
