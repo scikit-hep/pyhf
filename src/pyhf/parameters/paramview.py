@@ -1,17 +1,27 @@
 from .. import get_backend, default_backend, events
-from ..tensor.common import _tensorviewer_from_slices
+from ..tensor.common import _TensorViewer, _tensorviewer_from_slices
 
 
 def _tensorviewer_from_parmap(par_map, batch_size):
-    names, slices, _ = list(
+    db = default_backend
+    # prepares names and per-parset ranges
+    # in the order of the parameters
+    names, indices, _ = list(
         zip(
             *sorted(
-                [(k, v['slice'], v['slice'].start,) for k, v in par_map.items()],
+                [
+                    (
+                        k,
+                        list(range(v['slice'].start,v['slice'].stop)),
+                        v['slice'].start,
+                    )
+                    for k, v in par_map.items()
+                ],
                 key=lambda x: x[2],
             )
         )
     )
-    return _tensorviewer_from_slices(slices, names=names, batch_size=batch_size)
+    return _TensorViewer(indices, names=names, batch_size=batch_size)
 
 
 def extract_index_access(
