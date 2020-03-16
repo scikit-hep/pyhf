@@ -26,14 +26,18 @@ class ParamViewer(object):
 
         # prepares names and per-parset ranges
         # in the order or the parameters
-        names, indices = list(
+        names, indices, starts = list(
             zip(
                 *sorted(
                     [
-                        (k, db.astensor(range(v['slice'].start, v['slice'].stop)))
+                        (
+                            k,
+                            db.astensor(range(v['slice'].start, v['slice'].stop)),
+                            v['slice'].start,
+                        )
                         for k, v in par_map.items()
                     ],
-                    key=lambda x: x[1][0],
+                    key=lambda x: x[2],
                 )
             )
         )
