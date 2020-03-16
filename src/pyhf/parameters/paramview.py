@@ -24,10 +24,10 @@ def _tensorviewer_from_parmap(par_map, batch_size):
     return _TensorViewer(indices, names=names, batch_size=batch_size)
 
 
-def _tensorviewer_from_slices(start_slices, batch_size):
+def _tensorviewer_from_slices(slices, batch_size):
     target_slices = []
     start = 0
-    for sl in start_slices:
+    for sl in slices:
         stop = start + (sl.stop - sl.start)
         target_slices.append(slice(start, stop))
         start = stop
@@ -56,15 +56,9 @@ class ParamViewer(object):
         # a tensor viewer that can split and stitch parameters
         self.allpar_viewer = _tensorviewer_from_parmap(par_map, self.batch)
 
-        # to combine the selected
-        # parameters into a overall tensor
-        # we need to prep some ranges
-
-        start_slices = [par_map[s]['slice'] for s in selection]
-
         # a tensor viewer that can split and stitch the selected parameters
         self.slices, self.selected_viewer = _tensorviewer_from_slices(
-            start_slices, self.batch
+            [par_map[s]['slice'] for s in selection] , self.batch
         )
 
         self._precompute()
