@@ -73,9 +73,10 @@ class ParamViewer(object):
         self.selected = self.allpar_viewer.split(all_indices, selection=self.selection)
 
         # LH: just self.selected but as python lists
-        self.index_selection = [
-            tensorlib.tolist(tensorlib.astensor(x, dtype='int')) for x in self.selected
-        ]
+        self.index_selection =  self.selected
+        # [
+        #     tensorlib.tolist(tensorlib.astensor(x, dtype='int')) for x in self.selected
+        # ]
 
         if self.selection:
             stitched = self.selected_viewer.stitch(self.selected)
