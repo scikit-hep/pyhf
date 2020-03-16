@@ -2,16 +2,43 @@ from .. import get_backend, default_backend, events
 from ..tensor.common import _TensorViewer
 
 
-def index_helper(name, tensor_shape, batch_shape, par_map):
-    if isinstance(name, list):
-        return [index_helper(x, tensor_shape, batch_shape, par_map) for x in name]
-    x = list(range(int(default_backend.product(tensor_shape))))
-    indices = default_backend.reshape(x, tensor_shape)
-    parfield_slice = tuple(slice(None, None) for x in batch_shape) + (
-        par_map[name]['slice'],
+def _tensorviewer_from_parmap(par_map, batch_size):
+    db = default_backend
+    # prepares names and per-parset ranges
+    # in the order or the parameters
+    names, indices, starts = list(
+        zip(
+            *sorted(
+                [
+                    (
+                        k,
+                        db.astensor(range(v['slice'].start, v['slice'].stop)),
+                        v['slice'].start,
+                    )
+                    for k, v in par_map.items()
+                ],
+                key=lambda x: x[2],
+            )
+        )
     )
-    indices = indices[parfield_slice]
-    return default_backend.tolist(indices)
+    return _TensorViewer(indices, names=names, batch_size=batch_size)
+
+
+def _tensorviewer_from_slices(start_slices, batch_size):
+    target_slices = []
+    start = 0
+    for sl in start_slices:
+        stop = start + (sl.stop - sl.start)
+        target_slices.append(slice(start, stop))
+        start = stop
+
+    db = default_backend
+    ranges = []
+    for sl in target_slices:
+        ranges.append(db.astensor(range(sl.start, sl.stop)))
+    if not ranges:
+        return (target_slices, None)
+    return target_slices, _TensorViewer(ranges, batch_size=batch_size)
 
 
 class ParamViewer(object):
@@ -24,48 +51,21 @@ class ParamViewer(object):
         self.shape = shape
         self.selection = selection
 
-        # prepares names and per-parset ranges
-        # in the order or the parameters
-        names, indices, starts = list(
-            zip(
-                *sorted(
-                    [
-                        (
-                            k,
-                            db.astensor(range(v['slice'].start, v['slice'].stop)),
-                            v['slice'].start,
-                        )
-                        for k, v in par_map.items()
-                    ],
-                    key=lambda x: x[2],
-                )
-            )
-        )
-
         self.batch = shape[0] if len(shape) > 1 else None
 
         # a tensor viewer that can split and stitch parameters
-        self.allpar_viewer = _TensorViewer(indices, names=names, batch_size=self.batch)
+        self.allpar_viewer = _tensorviewer_from_parmap(par_map, self.batch)
 
         # to combine the selected
         # parameters into a overall tensor
         # we need to prep some ranges
-        slices = []
-        ranges = []
-        start = 0
-        for s in selection:
-            sl = par_map[s]['slice']
-            stop = start + (sl.stop - sl.start)
-            ranges.append(db.astensor(range(start, stop)))
-            slices.append(slice(start, stop))
-            start = stop
 
-        # used in tests
-        self.slices = slices
+        start_slices = [par_map[s]['slice'] for s in selection]
 
-        if self.selection:
-            # a tensor viewer that can split and stitch the selected parameters
-            self.selected_viewer = _TensorViewer(ranges, batch_size=self.batch)
+        # a tensor viewer that can split and stitch the selected parameters
+        self.slices, self.selected_viewer = _tensorviewer_from_slices(
+            start_slices, self.batch
+        )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
