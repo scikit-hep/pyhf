@@ -1,27 +1,24 @@
 from .. import get_backend, default_backend, events
-from ..tensor.common import _TensorViewer, _tensorviewer_from_slices
+from ..tensor.common import (
+    _TensorViewer,
+    _tensorviewer_from_slices,
+    _tensorviewer_from_sizes,
+)
 
 
 def _tensorviewer_from_parmap(par_map, batch_size):
     db = default_backend
     # prepares names and per-parset ranges
     # in the order of the parameters
-    names, indices, _ = list(
+    names, slices, _ = list(
         zip(
             *sorted(
-                [
-                    (
-                        k,
-                        list(range(v['slice'].start,v['slice'].stop)),
-                        v['slice'].start,
-                    )
-                    for k, v in par_map.items()
-                ],
+                [(k, v['slice'], v['slice'].start,) for k, v in par_map.items()],
                 key=lambda x: x[2],
             )
         )
     )
-    return _TensorViewer(indices, names=names, batch_size=batch_size)
+    return _tensorviewer_from_slices(slices, names, batch_size)
 
 
 def extract_index_access(
@@ -63,8 +60,13 @@ class ParamViewer(object):
         self.allpar_viewer = _tensorviewer_from_parmap(par_map, batch_size)
 
         # a tensor viewer that can split and stitch the selected parameters
-        self.selected_viewer = _tensorviewer_from_slices(
-            [par_map[s]['slice'] for s in par_selection], par_selection, batch_size
+        self.selected_viewer = _tensorviewer_from_sizes(
+            [
+                par_map[s]['slice'].stop - par_map[s]['slice'].start
+                for s in par_selection
+            ],
+            par_selection,
+            batch_size,
         )
 
         self._precompute()
