@@ -73,9 +73,10 @@ class ParamViewer(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
 
-        theshape = tensorlib.product(tensorlib.astensor(self.shape, dtype='int'))
-        flat_indices = tensorlib.astensor(list(range(int(theshape))), dtype='int')
+        fullsize = tensorlib.product(tensorlib.astensor(self.shape, dtype='int'))
+        flat_indices = tensorlib.astensor(list(range(int(fullsize))), dtype='int')
         all_indices = tensorlib.reshape(flat_indices, self.shape)
+
         self.selected = self.allpar_viewer.split(all_indices, selection=self.selection)
 
         # LH: just self.selected but as python lists
