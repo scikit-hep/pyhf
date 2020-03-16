@@ -1,5 +1,5 @@
 from .. import get_backend, default_backend, events
-from ..tensor.common import _TensorViewer
+from ..tensor.common import _TensorViewer, _tensorviewer_from_slices
 
 
 def _tensorviewer_from_parmap(par_map, batch_size):
@@ -22,23 +22,6 @@ def _tensorviewer_from_parmap(par_map, batch_size):
         )
     )
     return _TensorViewer(indices, names=names, batch_size=batch_size)
-
-
-def _tensorviewer_from_slices(slices, names, batch_size):
-    target_slices = []
-    start = 0
-    for sl in slices:
-        stop = start + (sl.stop - sl.start)
-        target_slices.append(slice(start, stop))
-        start = stop
-
-    db = default_backend
-    ranges = []
-    for sl in target_slices:
-        ranges.append(db.astensor(range(sl.start, sl.stop)))
-    if not ranges:
-        return None
-    return _TensorViewer(ranges, names=names, batch_size=batch_size)
 
 
 def extract_index_access(

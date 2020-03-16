@@ -11,7 +11,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import _TensorViewer
+from .tensor.common import _TensorViewer, _tensorviewer_from_slices
 from .mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
@@ -550,15 +550,15 @@ class Model(object):
             config=self.config, batch_size=self.batch_size
         )
 
-        cut = self.nominal_rates.shape[-1]
-        total_size = cut + len(self.config.auxdata)
-        position = list(range(total_size))
-        indices = []
+        slices = []
+        total_size = self.config.nmaindata + self.config.nauxdata
         if self.main_model.has_pdf():
-            indices.append(position[:cut])
+            slices.append(slice(0, self.config.nmaindata))
         if self.constraint_model.has_pdf():
-            indices.append(position[cut:])
-        self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
+            slices.append(slice(self.config.nmaindata, total_size))
+        self.fullpdf_tv = _tensorviewer_from_slices(
+            slices, ['main', 'aux'], self.batch_size
+        )
 
     def expected_auxdata(self, pars):
         """
