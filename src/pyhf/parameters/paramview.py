@@ -57,7 +57,7 @@ class ParamViewer(object):
 
         # a tensor viewer that can split and stitch the selected parameters
         self.selected_viewer = _tensorviewer_from_slices(
-            [par_map[s]['slice'] for s in selection], self.batch
+            [par_map[s]['slice'] for s in self.selection], self.batch
         )
 
         self._precompute()
