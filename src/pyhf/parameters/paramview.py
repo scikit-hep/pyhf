@@ -70,16 +70,12 @@ class ParamViewer(object):
         flat_indices = tensorlib.astensor(list(range(int(fullsize))), dtype='int')
         all_indices = tensorlib.reshape(flat_indices, self.shape)
 
-        self.selected = self.allpar_viewer.split(all_indices, selection=self.selection)
-
-        # LH: just self.selected but as python lists
-        self.index_selection = self.selected
-        # [
-        #     tensorlib.tolist(tensorlib.astensor(x, dtype='int')) for x in self.selected
-        # ]
+        self.index_selection = self.allpar_viewer.split(
+            all_indices, selection=self.selection
+        )
 
         if self.selection:
-            stitched = self.selected_viewer.stitch(self.selected)
+            stitched = self.selected_viewer.stitch(self.index_selection)
 
             # LH: the transpose is here so that modifier code doesn't have to do it
             self.indices_concatenated = tensorlib.astensor(
