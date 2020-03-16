@@ -317,23 +317,6 @@ class _ConstraintModel(object):
         if self.has_pdf():
             self.constraints_tv = _TensorViewer(indices, self.batch_size)
 
-    def expected_data(self, pars):
-        tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
-        if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
-
     def has_pdf(self):
         """
         Indicate whether this model has a constraint.

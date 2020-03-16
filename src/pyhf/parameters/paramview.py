@@ -37,8 +37,8 @@ def _tensorviewer_from_slices(slices, batch_size):
     for sl in target_slices:
         ranges.append(db.astensor(range(sl.start, sl.stop)))
     if not ranges:
-        return (target_slices, None)
-    return target_slices, _TensorViewer(ranges, batch_size=batch_size)
+        return None
+    return _TensorViewer(ranges, batch_size=batch_size)
 
 
 class ParamViewer(object):
@@ -57,7 +57,7 @@ class ParamViewer(object):
         self.allpar_viewer = _tensorviewer_from_parmap(par_map, self.batch)
 
         # a tensor viewer that can split and stitch the selected parameters
-        self.slices, self.selected_viewer = _tensorviewer_from_slices(
+        self.selected_viewer = _tensorviewer_from_slices(
             [par_map[s]['slice'] for s in selection], self.batch
         )
 
