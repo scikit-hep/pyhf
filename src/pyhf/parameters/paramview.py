@@ -51,7 +51,7 @@ class ParamViewer(object):
     Helper class to extract parameter data from possibly batched input
     """
 
-    def __init__(self, shape, par_map, selection):
+    def __init__(self, shape, par_map, par_selection):
 
         batch = shape[0] if len(shape) > 1 else None
 
@@ -64,7 +64,7 @@ class ParamViewer(object):
 
         # a tensor viewer that can split and stitch the selected parameters
         self.selected_viewer = _tensorviewer_from_slices(
-            [par_map[s]['slice'] for s in selection], selection, batch
+            [par_map[s]['slice'] for s in par_selection], par_selection, batch
         )
 
         self._precompute()
