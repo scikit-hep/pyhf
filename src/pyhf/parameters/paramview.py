@@ -5,8 +5,8 @@ from ..tensor.common import _TensorViewer, _tensorviewer_from_slices
 def _tensorviewer_from_parmap(par_map, batch_size):
     db = default_backend
     # prepares names and per-parset ranges
-    # in the order or the parameters
-    names, indices, starts = list(
+    # in the order of the parameters
+    names, indices, _ = list(
         zip(
             *sorted(
                 [
