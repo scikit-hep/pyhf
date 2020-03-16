@@ -1,4 +1,3 @@
-from six import string_types
 import logging
 
 from .. import exceptions
@@ -147,7 +146,7 @@ def modifier(*args, **kwargs):
     if kwargs:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
     # check to make sure the given name is a string, if passed in one
-    if not isinstance(name, string_types) and name is not None:
+    if not isinstance(name, str) and name is not None:
         raise TypeError(
             '@modifier must be given a string. You gave it {}'.format(type(name))
         )
