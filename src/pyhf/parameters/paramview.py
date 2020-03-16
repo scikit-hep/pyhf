@@ -73,7 +73,7 @@ class ParamViewer(object):
         self.selected = self.allpar_viewer.split(all_indices, selection=self.selection)
 
         # LH: just self.selected but as python lists
-        self.index_selection =  self.selected
+        self.index_selection = self.selected
         # [
         #     tensorlib.tolist(tensorlib.astensor(x, dtype='int')) for x in self.selected
         # ]
