@@ -75,11 +75,13 @@ class ParamViewer(object):
         )
 
         if self.selection:
-            stitched = self.selected_viewer.stitch(self.index_selection)
+            self.stitched = self.selected_viewer.stitch(self.index_selection)
 
             # LH: the transpose is here so that modifier code doesn't have to do it
             self.indices_concatenated = tensorlib.astensor(
-                tensorlib.einsum('ij->ji', stitched) if self.batch else stitched,
+                tensorlib.einsum('ij->ji', self.stitched)
+                if self.batch
+                else self.stitched,
                 dtype='int',
             )
 
