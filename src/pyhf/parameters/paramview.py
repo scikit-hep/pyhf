@@ -70,7 +70,7 @@ class ParamViewer(object):
 
     def __init__(self, shape, par_map, selection):
 
-        sbatch = shape[0] if len(shape) > 1 else None
+        batch = shape[0] if len(shape) > 1 else None
 
         fullsize = default_backend.product(default_backend.astensor(shape))
         flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
