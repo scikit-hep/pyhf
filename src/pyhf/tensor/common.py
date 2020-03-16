@@ -64,6 +64,18 @@ class _TensorViewer(object):
 
 
 def _tensorviewer_from_slices(slices, names, batch_size):
+    '''
+    Creates a _Tensorviewer based on slice sizes.
+
+    (the actual slice start and stops are not relevant)
+
+    the TV will be able to stitch together data with
+    matching sizes (e.g. extracted using the slices)
+
+    tv.stitch([foo[slice1],foo[slice2],foo[slice3])
+
+    and split them again accordingly.
+    '''
     target_slices = []
     start = 0
     for sl in slices:
