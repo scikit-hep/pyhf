@@ -24,7 +24,7 @@ def _tensorviewer_from_parmap(par_map, batch_size):
     return _TensorViewer(indices, names=names, batch_size=batch_size)
 
 
-def _tensorviewer_from_slices(slices, batch_size):
+def _tensorviewer_from_slices(slices, names, batch_size):
     target_slices = []
     start = 0
     for sl in slices:
@@ -38,7 +38,29 @@ def _tensorviewer_from_slices(slices, batch_size):
         ranges.append(db.astensor(range(sl.start, sl.stop)))
     if not ranges:
         return None
-    return _TensorViewer(ranges, batch_size=batch_size)
+    return _TensorViewer(ranges, names=names, batch_size=batch_size)
+
+
+def extract_index_access(
+    baseviewer, subviewer, indices,
+):
+    tensorlib, _ = get_backend()
+
+    index_selection = []
+    stitched = None
+    indices_concatenated = None
+    if subviewer:
+        index_selection = baseviewer.split(indices, selection=subviewer.names)
+        stitched = subviewer.stitch(index_selection)
+
+        # LH: the transpose is here so that modifier code doesn't have to do it
+        indices_concatenated = tensorlib.astensor(
+            tensorlib.einsum('ij->ji', stitched)
+            if len(tensorlib.shape(stitched)) > 1
+            else stitched,
+            dtype='int',
+        )
+    return index_selection, stitched, indices_concatenated
 
 
 class ParamViewer(object):
@@ -47,17 +69,20 @@ class ParamViewer(object):
     """
 
     def __init__(self, shape, par_map, selection):
-        self.shape = shape
         self.selection = selection
 
         self.batch = shape[0] if len(shape) > 1 else None
+
+        fullsize = default_backend.product(default_backend.astensor(shape))
+        flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
+        self._all_indices = default_backend.reshape(flat_indices, shape)
 
         # a tensor viewer that can split and stitch parameters
         self.allpar_viewer = _tensorviewer_from_parmap(par_map, self.batch)
 
         # a tensor viewer that can split and stitch the selected parameters
         self.selected_viewer = _tensorviewer_from_slices(
-            [par_map[s]['slice'] for s in self.selection], self.batch
+            [par_map[s]['slice'] for s in self.selection], self.selection, self.batch
         )
 
         self._precompute()
@@ -66,24 +91,14 @@ class ParamViewer(object):
     def _precompute(self):
         tensorlib, _ = get_backend()
 
-        fullsize = tensorlib.product(tensorlib.astensor(self.shape, dtype='int'))
-        flat_indices = tensorlib.astensor(list(range(int(fullsize))), dtype='int')
-        all_indices = tensorlib.reshape(flat_indices, self.shape)
-
-        self.index_selection = self.allpar_viewer.split(
-            all_indices, selection=self.selection
+        self.all_indices = tensorlib.astensor(self._all_indices)
+        (
+            self.index_selection,
+            self.stitched,
+            self.indices_concatenated,
+        ) = extract_index_access(
+            self.allpar_viewer, self.selected_viewer, self.all_indices
         )
-
-        if self.selection:
-            self.stitched = self.selected_viewer.stitch(self.index_selection)
-
-            # LH: the transpose is here so that modifier code doesn't have to do it
-            self.indices_concatenated = tensorlib.astensor(
-                tensorlib.einsum('ij->ji', self.stitched)
-                if self.batch
-                else self.stitched,
-                dtype='int',
-            )
 
     def get(self, data, indices=None):
         if not self.index_selection:
