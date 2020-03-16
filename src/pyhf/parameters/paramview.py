@@ -6,13 +6,13 @@ def _tensorviewer_from_parmap(par_map, batch_size):
     db = default_backend
     # prepares names and per-parset ranges
     # in the order of the parameters
-    names, indices, _ = list(
+    names, slices, _ = list(
         zip(
             *sorted(
                 [
                     (
                         k,
-                        db.astensor(range(v['slice'].start, v['slice'].stop)),
+                        v['slice'],
                         v['slice'].start,
                     )
                     for k, v in par_map.items()
@@ -21,7 +21,7 @@ def _tensorviewer_from_parmap(par_map, batch_size):
             )
         )
     )
-    return _TensorViewer(indices, names=names, batch_size=batch_size)
+    return _tensorviewer_from_slices(slices, names=names, batch_size=batch_size)
 
 
 def extract_index_access(
