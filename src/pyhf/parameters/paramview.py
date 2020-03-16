@@ -53,7 +53,7 @@ def extract_index_access(
         index_selection = baseviewer.split(indices, selection=subviewer.names)
         stitched = subviewer.stitch(index_selection)
 
-        # LH: the transpose is here so that modifier code doesn't have to do it
+        # the transpose is here so that modifier code doesn't have to do it
         indices_concatenated = tensorlib.astensor(
             tensorlib.einsum('ij->ji', stitched)
             if len(tensorlib.shape(stitched)) > 1
