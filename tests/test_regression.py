@@ -2,6 +2,7 @@ import pytest
 import pyhf
 import numpy as np
 
+
 def calculate_CLs(bkgonly_json, signal_patch_json):
     """
     Calculate the observed CLs and the expected CLs band from a background only

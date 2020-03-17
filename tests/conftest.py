@@ -7,6 +7,7 @@ import tarfile
 import json
 import os
 
+
 @pytest.fixture(scope='module')
 def sbottom_likelihoods_download():
     """Download the sbottom likelihoods tarball from HEPData"""
@@ -35,7 +36,8 @@ def get_json_from_tarfile():
         return json.loads(json_file)
 
     return _get_json_from_tarfile
-    
+
+
 @pytest.fixture(scope='function')
 def isolate_modules():
     """
