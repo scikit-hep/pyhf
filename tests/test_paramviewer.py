@@ -1,6 +1,5 @@
 import pyhf
 from pyhf.parameters import ParamViewer
-from .test_regression import sbottom_likelihoods_download, get_json_from_tarfile
 
 
 def test_paramviewer_simple_nonbatched(backend):
