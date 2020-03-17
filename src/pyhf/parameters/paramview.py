@@ -1,16 +1,42 @@
 from .. import get_backend, default_backend, events
+from ..tensor.common import (
+    _tensorviewer_from_slices,
+    _tensorviewer_from_sizes,
+)
 
 
-def index_helper(name, tensor_shape, batch_shape, par_map):
-    if isinstance(name, list):
-        return [index_helper(x, tensor_shape, batch_shape, par_map) for x in name]
-    x = list(range(int(default_backend.product(tensor_shape))))
-    indices = default_backend.reshape(x, tensor_shape)
-    parfield_slice = tuple(slice(None, None) for x in batch_shape) + (
-        par_map[name]['slice'],
+def _tensorviewer_from_parmap(par_map, batch_size):
+    names, slices, _ = list(
+        zip(
+            *sorted(
+                [(k, v['slice'], v['slice'].start,) for k, v in par_map.items()],
+                key=lambda x: x[2],
+            )
+        )
     )
-    indices = indices[parfield_slice]
-    return default_backend.tolist(indices)
+    return _tensorviewer_from_slices(slices, names, batch_size)
+
+
+def extract_index_access(
+    baseviewer, subviewer, indices,
+):
+    tensorlib, _ = get_backend()
+
+    index_selection = []
+    stitched = None
+    indices_concatenated = None
+    if subviewer:
+        index_selection = baseviewer.split(indices, selection=subviewer.names)
+        stitched = subviewer.stitch(index_selection)
+
+        # the transpose is here so that modifier code doesn't have to do it
+        indices_concatenated = tensorlib.astensor(
+            tensorlib.einsum('ij->ji', stitched)
+            if len(tensorlib.shape(stitched)) > 1
+            else stitched,
+            dtype='int',
+        )
+    return index_selection, stitched, indices_concatenated
 
 
 class ParamViewer(object):
@@ -18,97 +44,45 @@ class ParamViewer(object):
     Helper class to extract parameter data from possibly batched input
     """
 
-    def __init__(self, tensor_shape, par_map, name):
-        self.tensor_shape = tensor_shape
-        self.batch_shape = tensor_shape[:-1]
-        # for more general batch shapes we need to revisit
-        assert len(self.batch_shape) <= 1
-        self._par_map = par_map
-        self._index_selection = index_helper(
-            name, tensor_shape, self.batch_shape, self._par_map
+    def __init__(self, shape, par_map, par_selection):
+
+        batch_size = shape[0] if len(shape) > 1 else None
+
+        fullsize = default_backend.product(default_backend.astensor(shape))
+        flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
+        self._all_indices = default_backend.reshape(flat_indices, shape)
+
+        # a tensor viewer that can split and stitch parameters
+        self.allpar_viewer = _tensorviewer_from_parmap(par_map, batch_size)
+
+        # a tensor viewer that can split and stitch the selected parameters
+        self.selected_viewer = _tensorviewer_from_sizes(
+            [
+                par_map[s]['slice'].stop - par_map[s]['slice'].start
+                for s in par_selection
+            ],
+            par_selection,
+            batch_size,
         )
-
-        if self._index_selection:
-            cat = default_backend.astensor(
-                default_backend.concatenate(self._index_selection, axis=-1), dtype='int'
-            )
-            # index_selection is
-            #   batched:   list of (batch_dim, slice size) tensors
-            #   unbatched: list of (slice size,) tensors
-            # concatenated is
-            #   batched: (batch_dim, sum of slice sizes)
-            #   unbatched: (sum of slice sizes, )
-            # indices_concatenated  is
-            #   batched: (sum of slice size, batch dim)
-            #   unbatched: (sum of slice size, )
-            if self.batch_shape:
-                self._indices_concatenated = default_backend.einsum('ij->ji', cat)
-            else:
-                self._indices_concatenated = cat
-
-        else:
-            self._indices_concatenated = None
-
-        last = 0
-        sl = []
-        for s in [
-            self._par_map[x]['slice'].stop - self._par_map[x]['slice'].start
-            for x in (name if isinstance(name, list) else [name])
-        ]:
-            sl.append(slice(last, last + s))
-            last += s
-        self._slices = sl
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
-        if self._indices_concatenated is not None:
-            self.indices_concatenated = tensorlib.astensor(
-                self._indices_concatenated, dtype='int'
-            )
 
-    def __repr__(self):
-        return '({} with [{}] batched: {})'.format(
-            self.tensor_shape,
-            ' '.join(list(self._par_map.keys())),
-            bool(self.batch_shape),
+        self.all_indices = tensorlib.astensor(self._all_indices)
+        (
+            self.index_selection,
+            self.stitched,
+            self.indices_concatenated,
+        ) = extract_index_access(
+            self.allpar_viewer, self.selected_viewer, self.all_indices
         )
 
-    @property
-    def index_selection(self):
-        """
-        Returns:
-            indices into parameter field accordig to requested subset of parameters
-            list of (batch_size, parset_size) tensors
-        """
-        return self._index_selection
-
-    @property
-    def slices(self):
-        """
-        Returns:
-            list index slices to retrieve a subset of the requested parameters
-        """
-        return self._slices
-
-    def get(self, tensor, indices=None):
-        """
-        Args:
-            tensor (`tensor`): the data tensor to extract a view from
-            indices (`tensor`): an optional index selection (default behavior is to use self.indices_concatenated)
-        Returns:
-            filtered set of parameter field/array :
-                type when batched: (sum of slice sizes, batchsize) tensor
-                type when not batched: (sum of slice sizes, ) tensors
-        """
+    def get(self, data, indices=None):
+        if not self.index_selection:
+            return None
         tensorlib, _ = get_backend()
-        if not self.batch_shape:
-            return tensorlib.gather(
-                tensor, indices if indices is not None else self.indices_concatenated
-            )
-        return tensorlib.gather(
-            tensorlib.reshape(tensor, (-1,)),
-            indices if indices is not None else self.indices_concatenated,
-        )
+        indices = indices if indices is not None else self.indices_concatenated
+        return tensorlib.gather(tensorlib.reshape(data, (-1,)), indices)

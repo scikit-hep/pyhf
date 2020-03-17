@@ -11,7 +11,7 @@ from . import events
 from . import probability as prob
 from .constraints import gaussian_constraint_combined, poisson_constraint_combined
 from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import _TensorViewer
+from .tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from .mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
@@ -317,23 +317,6 @@ class _ConstraintModel(object):
         if self.has_pdf():
             self.constraints_tv = _TensorViewer(indices, self.batch_size)
 
-    def expected_data(self, pars):
-        tensorlib, _ = get_backend()
-        auxdata = None
-        if not self.viewer_aux.index_selection:
-            return None
-        slice_data = self.viewer_aux.get(pars)
-        for parname, sl in zip(self.config.auxdata_order, self.viewer_aux.slices):
-            # order matters! because we generated auxdata in a certain order
-            thisaux = self.config.param_set(parname).expected_data(
-                tensorlib.einsum('ij->ji', slice_data[sl])
-            )
-            tocat = [thisaux] if auxdata is None else [auxdata, thisaux]
-            auxdata = tensorlib.concatenate(tocat, axis=1)
-        if self.batch_size is None:
-            return auxdata[0]
-        return auxdata
-
     def has_pdf(self):
         """
         Indicate whether this model has a constraint.
@@ -567,15 +550,14 @@ class Model(object):
             config=self.config, batch_size=self.batch_size
         )
 
-        cut = self.nominal_rates.shape[-1]
-        total_size = cut + len(self.config.auxdata)
-        position = list(range(total_size))
-        indices = []
+        sizes = []
         if self.main_model.has_pdf():
-            indices.append(position[:cut])
+            sizes.append(self.config.nmaindata)
         if self.constraint_model.has_pdf():
-            indices.append(position[cut:])
-        self.fullpdf_tv = _TensorViewer(indices, self.batch_size)
+            sizes.append(self.config.nauxdata)
+        self.fullpdf_tv = _tensorviewer_from_sizes(
+            sizes, ['main', 'aux'], self.batch_size
+        )
 
     def expected_auxdata(self, pars):
         """
