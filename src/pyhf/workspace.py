@@ -423,15 +423,15 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def _prune_and_rename(
         self,
-        prune_modifiers=[],
-        prune_modifier_types=[],
-        prune_samples=[],
-        prune_channels=[],
-        prune_measurements=[],
-        rename_modifiers={},
-        rename_samples={},
-        rename_channels={},
-        rename_measurements={},
+        prune_modifiers=None,
+        prune_modifier_types=None,
+        prune_samples=None,
+        prune_channels=None,
+        prune_measurements=None,
+        rename_modifiers=None,
+        rename_samples=None,
+        rename_channels=None,
+        rename_measurements=None,
     ):
         """
         Return a new, pruned, renamed workspace specification. This will not modify the original workspace.
@@ -465,6 +465,19 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
 
         """
+        # avoid mutable defaults
+        prune_modifiers = [] if prune_modifiers is None else prune_modifiers
+        prune_modifier_types = (
+            [] if prune_modifier_types is None else prune_modifier_types
+        )
+        prune_samples = [] if prune_samples is None else prune_samples
+        prune_channels = [] if prune_channels is None else prune_channels
+        prune_measurements = [] if prune_measurements is None else prune_measurements
+        rename_modifiers = {} if rename_modifiers is None else rename_modifiers
+        rename_samples = {} if rename_samples is None else rename_samples
+        rename_channels = {} if rename_channels is None else rename_channels
+        rename_measurements = {} if rename_measurements is None else rename_measurements
+
         newspec = {
             'channels': [
                 {
@@ -529,7 +542,12 @@ class Workspace(_ChannelSummaryMixin, dict):
         return Workspace(newspec)
 
     def prune(
-        self, modifiers=[], modifier_types=[], samples=[], channels=[], measurements=[]
+        self,
+        modifiers=None,
+        modifier_types=None,
+        samples=None,
+        channels=None,
+        measurements=None,
     ):
         """
         Return a new, pruned workspace specification. This will not modify the original workspace.
@@ -547,6 +565,13 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
 
         """
+        # avoid mutable defaults
+        modifiers = [] if modifiers is None else modifiers
+        modifier_types = [] if modifier_types is None else modifier_types
+        samples = [] if samples is None else samples
+        channels = [] if channels is None else channels
+        measurements = [] if measurements is None else measurements
+
         return self._prune_and_rename(
             prune_modifiers=modifiers,
             prune_modifier_types=modifier_types,
@@ -555,7 +580,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             prune_measurements=measurements,
         )
 
-    def rename(self, modifiers={}, samples={}, channels={}, measurements={}):
+    def rename(self, modifiers=None, samples=None, channels=None, measurements=None):
         """
         Return a new workspace specification with certain elements renamed.
 
@@ -572,6 +597,12 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
 
         """
+        # avoid mutable defaults
+        modifiers = {} if modifiers is None else modifiers
+        samples = {} if samples is None else samples
+        channels = {} if channels is None else channels
+        measurements = {} if measurements is None else measurements
+
         return self._prune_and_rename(
             rename_modifiers=modifiers,
             rename_samples=samples,
