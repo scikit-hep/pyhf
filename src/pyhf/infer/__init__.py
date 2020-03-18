@@ -81,7 +81,7 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    calc = create_calculator(calctype, data, pdf, init_pars, par_bounds, qtilde=True)
+    calc = create_calculator(calctype, data, pdf, init_pars, par_bounds, qtilde=qtilde)
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
