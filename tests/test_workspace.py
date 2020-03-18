@@ -38,6 +38,11 @@ def test_build_workspace(workspace_factory):
     assert w
 
 
+def test_version_workspace(workspace_factory):
+    ws = workspace_factory()
+    assert ws.version is not None
+
+
 def test_build_model(workspace_factory):
     w = workspace_factory()
     assert w.model()
