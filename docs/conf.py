@@ -290,6 +290,9 @@ html_extra_path = ['_extras']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyhfdoc'
 
+# sphinx-copybutton configuration
+copybutton_prompt_text = ">>> "
+
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {

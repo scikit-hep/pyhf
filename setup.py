@@ -59,7 +59,7 @@ extras_require['docs'] = sorted(
             'nbsphinx',
             'ipywidgets',
             'sphinx-issues',
-            'sphinx-copybutton',
+            'sphinx-copybutton>0.2.8',
             'm2r',
         ]
     )
