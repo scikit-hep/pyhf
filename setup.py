@@ -97,7 +97,7 @@ setup(
     install_requires=[
         'scipy',  # requires numpy, which is required by pyhf and tensorflow
         'click>=6.0',  # for console scripts,
-        'tqdm',  # for readxml
+        'tqdm',
         'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
         'jsonpatch',
         'pyyaml',  # for parsing CLI equal-delimited options

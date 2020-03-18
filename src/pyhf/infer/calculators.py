@@ -10,6 +10,7 @@ Using the calculators hypothesis tests can then be performed.
 from .mle import fixed_poi_fit
 from .. import get_backend
 from .test_statistics import qmu
+import tqdm
 
 
 def create_calculator(calctype, *args, **kwargs):
@@ -197,15 +198,23 @@ class EmpiricalDistribution(object):
 
 class ToyCalculator(object):
     def __init__(
-        self, data, pdf, init_pars=None, par_bounds=None, qtilde=False, ntoys=2000
+        self,
+        data,
+        pdf,
+        init_pars=None,
+        par_bounds=None,
+        qtilde=False,
+        ntoys=2000,
+        track_progress=True,
     ):
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.track_progress = track_progress
 
-    def distributions(self, poi_test):
+    def distributions(self, poi_test, track_progress=None):
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
@@ -219,21 +228,24 @@ class ToyCalculator(object):
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
-        print('signal!')
+        tqdm_options = dict(
+            total=self.ntoys,
+            leave=False,
+            disable=not (
+                track_progress if track_progress is not None else self.track_progress
+            ),
+            unit='toy',
+        )
+
         signal_qtilde = []
-        for i, sample in enumerate(signal_sample):
-            if i % 100 == 0:
-                print(i)
+        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
             signal_qtilde.append(
                 qmu(poi_test, sample, self.pdf, signal_pars, self.par_bounds)
             )
         signal_qtilde = tensorlib.astensor(signal_qtilde)
 
-        print('bkgd!')
         bkg_qtilde = []
-        for i, sample in enumerate(bkg_sample):
-            if i % 100 == 0:
-                print(i)
+        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
             bkg_qtilde.append(
                 qmu(poi_test, sample, self.pdf, bkg_pars, self.par_bounds)
             )
