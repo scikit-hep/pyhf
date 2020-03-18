@@ -107,6 +107,21 @@ def test_process_normfactor_configs():
     assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
 
 
+def test_import_histogram():
+    data, uncert = pyhf.readxml.import_root_histogram(
+        "validation/xmlimport_input/data", "example.root", "", "data"
+    )
+    assert data == [122.0, 112.0]
+    assert uncert == [11.045361017187261, 10.583005244258363]
+
+
+def test_import_histogram_KeyError():
+    with pytest.raises(KeyError):
+        pyhf.readxml.import_root_histogram(
+            "validation/xmlimport_input/data", "example.root", "", "invalid_key"
+        )
+
+
 def test_import_measurements():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
