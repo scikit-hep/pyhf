@@ -53,6 +53,7 @@ extensions = [
     'nbsphinx',
     'm2r',
     'sphinx_issues',
+    'sphinx_copybutton',
     'xref',
 ]
 
@@ -288,6 +289,9 @@ html_extra_path = ['_extras']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyhfdoc'
+
+# sphinx-copybutton configuration
+copybutton_prompt_text = ">>> "
 
 # -- Options for LaTeX output ---------------------------------------------
 
