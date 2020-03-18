@@ -4,6 +4,7 @@ import logging
 import click
 import json
 import os
+from pathlib import Path
 import jsonpatch
 
 logging.basicConfig()
@@ -21,7 +22,7 @@ def cli():
     '--basedir',
     help='The base directory for the XML files to point relative to.',
     type=click.Path(exists=True),
-    default=os.getcwd(),
+    default=Path.cwd(),
 )
 @click.option(
     '--output-file',
@@ -77,16 +78,16 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
         for pfile in patch:
             patch = json.loads(click.open_file(pfile, 'r').read())
             spec = jsonpatch.JsonPatch(patch).apply(spec)
-        os.makedirs(os.path.join(output_dir, specroot), exist_ok=True)
-        os.makedirs(os.path.join(output_dir, dataroot), exist_ok=True)
+        os.makedirs(Path(output_dir).joinpath(specroot), exist_ok=True)
+        os.makedirs(Path(output_dir).joinpath(dataroot), exist_ok=True)
         with click.open_file(
-            os.path.join(output_dir, '{0:s}.xml'.format(resultprefix)), 'w'
+            Path(output_dir).joinpath(f'{resultprefix}.xml'), 'w'
         ) as outstream:
             outstream.write(
                 writexml.writexml(
                     spec,
-                    os.path.join(output_dir, specroot),
-                    os.path.join(output_dir, dataroot),
+                    Path(output_dir).joinpath(specroot),
+                    Path(output_dir).joinpath(dataroot),
                     resultprefix,
                 ).decode('utf-8')
             )

@@ -2,7 +2,7 @@ import pyhf
 import pyhf.readxml
 import numpy as np
 import uproot
-import os
+from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
 
@@ -105,6 +105,21 @@ def test_process_normfactor_configs():
     assert not result['ParallelMeasurement']['mu_both']['fixed']
     assert result['ParallelMeasurement']['mu_both']['inits'] == [3.0]
     assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
+
+
+def test_import_histogram():
+    data, uncert = pyhf.readxml.import_root_histogram(
+        "validation/xmlimport_input/data", "example.root", "", "data"
+    )
+    assert data == [122.0, 112.0]
+    assert uncert == [11.045361017187261, 10.583005244258363]
+
+
+def test_import_histogram_KeyError():
+    with pytest.raises(KeyError):
+        pyhf.readxml.import_root_histogram(
+            "validation/xmlimport_input/data", "example.root", "", "invalid_key"
+        )
 
 
 def test_import_measurements():
@@ -232,7 +247,7 @@ def test_import_filecache(mocker):
 
     # check if uproot.open was only called once with the expected root file
     pyhf.readxml.uproot.open.assert_called_once_with(
-        os.path.join("validation/xmlimport_input", "./data/example.root")
+        str(Path("validation/xmlimport_input").joinpath("./data/example.root"))
     )
 
     assert_equal_dictionary(parsed_xml, parsed_xml2)
