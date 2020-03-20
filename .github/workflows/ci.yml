@@ -130,12 +130,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Build Docker image
-      run: |
-        docker build . \
-          --file docker/Dockerfile \
-          --build-arg BASE_IMAGE=python:3.7-slim \
-          --tag pyhf/pyhf:$GITHUB_SHA \
-          --compress
-        docker images
+      if: "!(startsWith(github.ref, 'refs/tags/'))"
+      uses: docker/build-push-action@v1
+      with:
+        repository: pyhf/pyhf
+        dockerfile: docker/Dockerfile
+        tag_with_sha: true
+        tag_with_ref: true
+        push: false
+    - name: List built images
+      run: docker images
