@@ -224,8 +224,8 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         poiname = config_kwargs.pop('poiname', 'mu')
 
-        # remove measurement_name in case model is created using poiname
-        if poiname and 'measurement_name' in config_kwargs:
+        # remove measurement_name in case model is created using poi_name
+        if 'measurement_name' in config_kwargs:
             del config_kwargs['measurement_name']
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
