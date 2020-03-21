@@ -324,7 +324,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def _get_measurement(self, **config_kwargs):
         """See `Workspace::get_measurement`."""
-        poi_name = config_kwargs.get('poi_name')
+        poi_name = config_kwargs.pop('poi_name', None)
         if poi_name:
             return {
                 'name': 'NormalMeasurement',
@@ -332,7 +332,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             }
 
         if self.measurement_names:
-            measurement_name = config_kwargs.get('measurement_name')
+            measurement_name = config_kwargs.pop('measurement_name', None)
             if measurement_name:
                 if measurement_name not in self.measurement_names:
                     log.debug(
@@ -349,7 +349,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                     self.measurement_names.index(measurement_name)
                 ]
 
-            measurement_index = config_kwargs.get('measurement_index')
+            measurement_index = config_kwargs.pop('measurement_index', None)
             if measurement_index:
                 return self['measurements'][measurement_index]
 
@@ -379,7 +379,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             'model being created for measurement {0:s}'.format(measurement['name'])
         )
 
-        patches = config_kwargs.get('patches', [])
+        patches = config_kwargs.pop('patches', [])
 
         modelspec = {
             'channels': self['channels'],
