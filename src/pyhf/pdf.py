@@ -222,11 +222,18 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        poiname = config_kwargs.get('poiname', 'mu')
+        poiname = config_kwargs.pop('poiname', 'mu')
+
+        # remove measurement_name in case model is created using poiname
+        if poiname and 'measurement_name' in config_kwargs:
+            del config_kwargs['measurement_name']
+
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
-        self.modifier_settings = (
-            config_kwargs.get('modifier_settings') or default_modifier_settings
+        self.modifier_settings = config_kwargs.pop(
+            'modifier_settings', default_modifier_settings
         )
+
+        assert not config_kwargs, f"No argument named {config_kwargs.keys()}"
 
         self.par_map = {}
         self.par_order = []
