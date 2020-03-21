@@ -108,6 +108,14 @@ jobs:
         python -m doctest README.md
         python setup.py build_sphinx
         touch docs/_build/html/.nojekyll
+    - name: Check schemas are copied over
+      run: |
+        # is a directory
+        [ -d "docs/_build/html/schemas" ]
+        # is not a symlink
+        [ ! -L "docs/_build/html/schemas" ]
+        # is not empty
+        [ "$(ls -A docs/_build/html/schemas)" ]
     - name: Deploy docs to GitHub Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: crazy-max/ghaction-github-pages@v1.0.1
@@ -122,8 +130,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Build Docker image
-      run: |
-        docker build . --file docker/Dockerfile --tag pyhf/pyhf:$GITHUB_SHA
-        docker images
+      if: "!(startsWith(github.ref, 'refs/tags/'))"
+      uses: docker/build-push-action@v1
+      with:
+        repository: pyhf/pyhf
+        dockerfile: docker/Dockerfile
+        tag_with_sha: true
+        tag_with_ref: true
+        push: false
+    - name: List built images
+      run: docker images

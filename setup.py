@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
-from os import path
+from pathlib import Path
 
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
+this_directory = Path(__file__).parent.resolve()
+with open(Path(this_directory).joinpath('README.md'), encoding='utf-8') as readme_md:
     long_description = readme_md.read()
 
 extras_require = {
@@ -59,6 +59,7 @@ extras_require['docs'] = sorted(
             'nbsphinx',
             'ipywidgets',
             'sphinx-issues',
+            'sphinx-copybutton>0.2.9',
             'm2r',
         ]
     )
@@ -75,7 +76,7 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 setup(
     name='pyhf',
-    version='0.4.0',
+    version='0.4.1',
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -97,7 +98,6 @@ setup(
         'scipy',  # requires numpy, which is required by pyhf and tensorflow
         'click>=6.0',  # for console scripts,
         'tqdm',  # for readxml
-        'six',  # for modifiers
         'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
         'jsonpatch',
         'pyyaml',  # for parsing CLI equal-delimited options

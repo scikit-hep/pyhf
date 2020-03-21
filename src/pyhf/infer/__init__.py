@@ -1,12 +1,8 @@
 """Inference for Statistical Models."""
 
 from .test_statistics import qmu
-from .utils import (
-    generate_asimov_data,
-    pvals_from_teststat,
-    pvals_from_teststat_expected,
-)
 from .. import get_backend
+from .calculators import AsymptoticCalculator
 
 
 def hypotest(
@@ -78,30 +74,39 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    asimov_mu = 0.0
-    asimov_data = generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds)
+    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
+    teststat = calc.teststatistic(poi_test)
+    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
-    qmu_v = qmu(poi_test, data, pdf, init_pars, par_bounds)
-    sqrtqmu_v = tensorlib.sqrt(qmu_v)
-
-    qmuA_v = qmu(poi_test, asimov_data, pdf, init_pars, par_bounds)
-    sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-
-    CLsb, CLb, CLs = pvals_from_teststat(sqrtqmu_v, sqrtqmuA_v, qtilde=qtilde)
+    CLsb = sig_plus_bkg_distribution.pvalue(teststat)
+    CLb = b_only_distribution.pvalue(teststat)
+    CLs = CLsb / CLb
+    CLsb, CLb, CLs = (
+        tensorlib.reshape(CLsb, (1,)),
+        tensorlib.reshape(CLb, (1,)),
+        tensorlib.reshape(CLs, (1,)),
+    )
 
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
-        for n_sigma in [-2, -1, 0, 1, 2]:
-            CLs_exp.append(pvals_from_teststat_expected(sqrtqmuA_v, nsigma=n_sigma)[-1])
+        for n_sigma in [2, 1, 0, -1, -2]:
+            CLs = sig_plus_bkg_distribution.pvalue(
+                n_sigma
+            ) / b_only_distribution.pvalue(n_sigma)
+            CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
-        _returns.append(pvals_from_teststat_expected(sqrtqmuA_v)[-1])
+        n_sigma = 0
+        CLs = sig_plus_bkg_distribution.pvalue(n_sigma) / b_only_distribution.pvalue(
+            n_sigma
+        )
+        _returns.append(tensorlib.reshape(CLs, (1,)))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 

@@ -14,14 +14,14 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-import os
+# documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
+
+from pathlib import Path
 import sys
 from pkg_resources import get_distribution
 
-sys.path.insert(0, os.path.abspath('../src'))
-sys.path.insert(1, os.path.abspath('./exts'))
+sys.path.insert(0, str(Path('../src').resolve()))
+sys.path.insert(1, str(Path('./exts').resolve()))
 
 
 def setup(app):
@@ -53,6 +53,7 @@ extensions = [
     'nbsphinx',
     'm2r',
     'sphinx_issues',
+    'sphinx_copybutton',
     'xref',
 ]
 
@@ -213,7 +214,7 @@ html_static_path = ['_static']
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
 #
-html_extra_path = []
+html_extra_path = ['_extras']
 
 # If not None, a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
@@ -288,6 +289,9 @@ html_extra_path = []
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyhfdoc'
+
+# sphinx-copybutton configuration
+copybutton_prompt_text = ">>> "
 
 # -- Options for LaTeX output ---------------------------------------------
 
