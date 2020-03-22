@@ -234,7 +234,9 @@ class _ModelConfig(_ChannelSummaryMixin):
             'modifier_settings', default_modifier_settings
         )
 
-        assert not config_kwargs, f"No argument named {config_kwargs.keys()}"
+        assert (
+            not config_kwargs
+        ), f"""Unexpected keyword argument(s) '{"', '".join(config_kwargs.keys())}'"""
 
         self.par_map = {}
         self.par_order = []
