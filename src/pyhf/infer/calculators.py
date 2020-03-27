@@ -14,6 +14,17 @@ import tqdm
 
 
 def create_calculator(calctype, *args, **kwargs):
+    """
+    Creates a calculator object of the specified `calctype`.
+
+    See ~pyhf.infer.calculators.AsymptoticCalculator and ~pyhf.infer.calculators.ToyCalculator on additional arguments to be specified.
+
+    Args:
+        calctype (`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
+
+    Returns:
+        calculator (`object`): A calculator.
+    """
     return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[calctype](
         *args, **kwargs
     )
@@ -120,7 +131,7 @@ class AsymptoticCalculator(object):
 
     def distributions(self, poi_test):
         """
-        Probability Distributions of the test statistic value under the signal + background and and background-only hypothesis.
+        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
 
         Args:
             poi_test: The value for the parameter of interest.
@@ -178,10 +189,38 @@ class AsymptoticCalculator(object):
 
 
 class EmpiricalDistribution(object):
+    """
+    The empirical distribution of the test statistic.
+
+    Unlike ~pyhf.infer.calculators.AsymptoticTestStatDistribution where the
+    distribution for the test statistic is normally distributed, the
+    :math:`p`-values etc are computed from the sampled distribution.
+    """
+
     def __init__(self, samples):
+        """
+        Empirical distribution.
+
+        Args:
+            samples (Tensor): The test statistics sampled from the distribution.
+
+        Returns:
+            ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of test statistic.
+
+        """
         self.samples = samples.ravel()
 
     def pvalue(self, value):
+        """
+        Compute the :math:`p`-value for a given value of the test statistic.
+
+        Args:
+            value (`float`): The test statistic value.
+
+        Returns:
+            Float: The integrated probability to observe a value at least as large as the observed one.
+
+        """
         tensorlib, _ = get_backend()
         return (
             tensorlib.where(self.samples >= value, 1, 0).sum()
@@ -189,6 +228,15 @@ class EmpiricalDistribution(object):
         )
 
     def expected_value(self, nsigma):
+        """
+        Return the expected value of the test statistic.
+
+        Args:
+            nsigma (`int` or `tensor`): The number of standard deviations.
+
+        Returns:
+            Float: The expected value of the test statistic.
+        """
         tensorlib, _ = get_backend()
         import numpy as np
 
@@ -197,6 +245,8 @@ class EmpiricalDistribution(object):
 
 
 class ToyCalculator(object):
+    """The Toy-based Calculator."""
+
     def __init__(
         self,
         data,
@@ -207,6 +257,22 @@ class ToyCalculator(object):
         ntoys=2000,
         track_progress=True,
     ):
+        """
+        Toy-based Calculator.
+
+        Args:
+            data (`tensor`): The observed data.
+            pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+            init_pars (`tensor`): The initial parameter values to be used for fitting.
+            par_bounds (`tensor`): The parameter value bounds to be used for fitting.
+            qtilde (`bool`): Whether to use qtilde as the test statistic.
+            ntoys (`int`): Number of toys to use (how many times to sample the underlying distributions)
+            track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+
+        Returns:
+            ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
+
+        """
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
@@ -215,6 +281,17 @@ class ToyCalculator(object):
         self.track_progress = track_progress
 
     def distributions(self, poi_test, track_progress=None):
+        """
+        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
+
+        Args:
+            poi_test: The value for the parameter of interest.
+            track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+
+        Returns:
+            Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
+
+        """
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
@@ -256,5 +333,15 @@ class ToyCalculator(object):
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):
+        """
+        Compute the test statistic for the observed data under the studied model.
+
+        Args:
+            poi_test: The value for the parameter of interest.
+
+        Returns:
+            Float: the value of the test statistic.
+
+        """
         qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
         return qmu_v
