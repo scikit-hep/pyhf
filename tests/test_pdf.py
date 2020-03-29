@@ -650,3 +650,46 @@ def test_sample_wrong_bins():
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec)
+
+
+@pytest.mark.parametrize(
+    'measurements, msettings',
+    [
+        (
+            None,
+            {'normsys': {'interpcode': 'code4'}, 'histosys': {'interpcode': 'code4p'},},
+        )
+    ],
+)
+def test_unexpected_keyword_argument(measurements, msettings):
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [5.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": [50.0, 60.0],
+                        "modifiers": [
+                            {
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": [5.0, 12.0],
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    with pytest.raises(KeyError):
+        pyhf.pdf._ModelConfig(
+            spec, measurement_name=measurements, modifiers_settings=msettings
+        )
