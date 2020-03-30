@@ -322,6 +322,7 @@ class ToyCalculator(object):
         pdf,
         init_pars=None,
         par_bounds=None,
+        fixed_params=None,
         qtilde=False,
         ntoys=2000,
         track_progress=True,
@@ -334,6 +335,7 @@ class ToyCalculator(object):
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (`tensor`): The initial parameter values to be used for fitting.
             par_bounds (`tensor`): The parameter value bounds to be used for fitting.
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
             qtilde (`bool`): Whether to use qtilde as the test statistic.
             ntoys (`int`): Number of toys to use (how many times to sample the underlying distributions)
             track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
@@ -347,6 +349,8 @@ class ToyCalculator(object):
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.fixed_params = fixed_params or pdf.config.suggested_fixed()
+        self.qtilde = qtilde
         self.track_progress = track_progress
 
     def distributions(self, poi_test, track_progress=None):
@@ -374,6 +378,8 @@ class ToyCalculator(object):
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
+        teststat_func = qmu_tilde if self.qtilde else qmu
+
         tqdm_options = dict(
             total=self.ntoys,
             leave=False,
@@ -383,22 +389,36 @@ class ToyCalculator(object):
             unit='toy',
         )
 
-        signal_qtilde = []
+        signal_teststat = []
         for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
-            signal_qtilde.append(
-                qmu(poi_test, sample, self.pdf, signal_pars, self.par_bounds)
+            signal_teststat.append(
+                teststat_func(
+                    poi_test,
+                    sample,
+                    self.pdf,
+                    signal_pars,
+                    self.par_bounds,
+                    self.fixed_params,
+                )
             )
-        signal_qtilde = tensorlib.astensor(signal_qtilde)
+        signal_teststat = tensorlib.astensor(signal_teststat)
 
-        bkg_qtilde = []
+        bkg_teststat = []
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
-            bkg_qtilde.append(
-                qmu(poi_test, sample, self.pdf, bkg_pars, self.par_bounds)
+            bkg_teststat.append(
+                teststat_func(
+                    poi_test,
+                    sample,
+                    self.pdf,
+                    bkg_pars,
+                    self.par_bounds,
+                    self.fixed_params,
+                )
             )
-        bkg_qtilde = tensorlib.astensor(bkg_qtilde)
+        bkg_teststat = tensorlib.astensor(bkg_teststat)
 
-        s_plus_b = EmpiricalDistribution(signal_qtilde)
-        b_only = EmpiricalDistribution(bkg_qtilde)
+        s_plus_b = EmpiricalDistribution(signal_teststat)
+        b_only = EmpiricalDistribution(bkg_teststat)
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):
@@ -412,5 +432,13 @@ class ToyCalculator(object):
             Float: the value of the test statistic.
 
         """
-        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
-        return qmu_v
+        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat = teststat_func(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        return teststat

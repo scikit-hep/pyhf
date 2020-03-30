@@ -131,8 +131,16 @@ def hypotest(
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
     calc = create_calculator(
-        calctype, data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
+        calctype,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        qtilde=qtilde,
+        **kwargs,
     )
+
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
