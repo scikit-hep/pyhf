@@ -1,7 +1,24 @@
 """Inference for Statistical Models."""
 
 from .. import get_backend
-from .calculators import create_calculator
+from .calculators import AsymptoticCalculator, ToyCalculator
+
+
+def create_calculator(calctype, *args, **kwargs):
+    """
+    Creates a calculator object of the specified `calctype`.
+
+    See ~pyhf.infer.calculators.AsymptoticCalculator and ~pyhf.infer.calculators.ToyCalculator on additional arguments to be specified.
+
+    Args:
+        calctype (`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
+
+    Returns:
+        calculator (`object`): A calculator.
+    """
+    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[
+        calctype
+    ](*args, **kwargs)
 
 
 def hypotest(
@@ -11,7 +28,7 @@ def hypotest(
     init_pars=None,
     par_bounds=None,
     fixed_params=None,
-    qtilde=True,
+    qtilde=False,
     calctype='asymptotics',
     **kwargs,
 ):
@@ -46,8 +63,7 @@ def hypotest(
         fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
         qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
          test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-         approximation in Equation (62) of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
-         When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
+         approximation in Equation (62) of :xref:`arXiv:1007.1727`.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
 
     Keyword Args:
@@ -184,10 +200,3 @@ def hypotest(
         _returns.append(tensorlib.astensor(CLs))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
-
-
-from . import intervals
-from .utils import hypotest
-
-# TODO: Can remove intervals when switch to flake8 (Issue #863)
-__all__ = ["hypotest", "intervals"]
