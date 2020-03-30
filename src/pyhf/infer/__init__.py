@@ -18,6 +18,8 @@ def hypotest(
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
 
+    See ~pyhf.infer.calculators.AsymptoticCalculator and ~pyhf.infer.calculators.ToyCalculator on additional keyword arguments to be specified.
+
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
