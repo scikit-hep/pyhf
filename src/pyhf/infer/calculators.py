@@ -13,23 +13,6 @@ from .test_statistics import qmu, qmu_tilde
 import tqdm
 
 
-def create_calculator(calctype, *args, **kwargs):
-    """
-    Creates a calculator object of the specified `calctype`.
-
-    See ~pyhf.infer.calculators.AsymptoticCalculator and ~pyhf.infer.calculators.ToyCalculator on additional arguments to be specified.
-
-    Args:
-        calctype (`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
-
-    Returns:
-        calculator (`object`): A calculator.
-    """
-    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[
-        calctype
-    ](*args, **kwargs)
-
-
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
