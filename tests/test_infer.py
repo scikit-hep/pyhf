@@ -252,3 +252,73 @@ def test_significance_to_pvalue_roundtrip(backend):
     pvalue = dist.pvalue(pyhf.tensorlib.astensor(sigma))
     back_to_sigma = -scipy.stats.norm.ppf(np.array(pvalue))
     assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)
+
+
+def test_emperical_distribution(tmpdir, hypotest_args):
+    """
+    Check that the empirical distribution of the test statistic gives
+    expected results
+    """
+    tb = pyhf.tensorlib
+    np.random.seed(0)
+
+    mu_test, data, model = hypotest_args
+    pdf = model.make_pdf(tb.astensor(model.config.suggested_init()))
+    samples = pdf.sample((10,))
+    test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
+        tb.astensor(
+            [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+        )
+    )
+
+    assert test_stat_dist.samples.tolist() == [
+        0.0,
+        0.13298492825293806,
+        0.0,
+        0.7718560148925349,
+        1.814884694401428,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.06586643485326249,
+    ]
+    assert test_stat_dist.pvalue(test_stat_dist.samples[4]) == 0.1
+    assert test_stat_dist.expected_value(nsigma=2) == 1.6013233336403654
+
+
+def test_toy_calculator(tmpdir, hypotest_args):
+    """
+    Check that the toy calculator is peforming as expected
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    toy_calculator_qtilde_mu = pyhf.infer.calculators.ToyCalculator(
+        data, model, None, None, ntoys=10, track_progress=False
+    )
+    qtilde_mu_sig, qtilde_mu_bkg = toy_calculator_qtilde_mu.distributions(mu_test)
+    assert qtilde_mu_sig.samples.tolist() == [
+        0.0,
+        0.13298492825293806,
+        0.0,
+        0.7718560148925349,
+        1.814884694401428,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.06586643485326249,
+    ]
+    assert qtilde_mu_bkg.samples.tolist() == [
+        2.266462524102735,
+        1.0816608839427886,
+        2.75702209716826,
+        1.3835689306813492,
+        0.4707465263496715,
+        0.0,
+        3.7166483729429274,
+        3.8021899113241773,
+        5.114135683200743,
+        1.3511153851299014,
+    ]
+    assert toy_calculator_qtilde_mu.teststatistic(mu_test) == 3.938244920380498
