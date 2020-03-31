@@ -62,6 +62,10 @@ def test_impactplot(common_kwargs):
     pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
 
 
+def test_toys(common_kwargs):
+    pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
+
+
 def test_learn_interpolationcodes(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs
