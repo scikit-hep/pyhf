@@ -384,7 +384,6 @@ class ToyCalculator(object):
                     self.fixed_params,
                 )
             )
-        signal_teststat = tensorlib.astensor(signal_teststat)
 
         bkg_teststat = []
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
@@ -398,10 +397,9 @@ class ToyCalculator(object):
                     self.fixed_params,
                 )
             )
-        bkg_teststat = tensorlib.astensor(bkg_teststat)
 
-        s_plus_b = EmpiricalDistribution(signal_teststat)
-        b_only = EmpiricalDistribution(bkg_teststat)
+        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
+        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):
