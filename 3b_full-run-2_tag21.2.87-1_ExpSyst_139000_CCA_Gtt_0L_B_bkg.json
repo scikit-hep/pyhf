@@ -1,0 +1,3761 @@
+{
+    "channels": [
+        {
+            "name": "CR_Gtt_0L_B_cuts",
+            "samples": [
+                {
+                    "data": [
+                        258.5609436035156
+                    ],
+                    "modifiers": [
+                        {
+                            "data": [
+                                1.209407936234081
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00647,
+                                "lo": 0.993126
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": null,
+                            "name": "mu_ttbar_Gtt_0L_B",
+                            "type": "normfactor"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "bTag_B",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "bTag_C",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "bTag_L",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "kin_RW",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    258.5609436035156
+                                ],
+                                "lo_data": [
+                                    258.5609436035156
+                                ]
+                            },
+                            "name": "JES6",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "ttbar"
+                },
+                {
+                    "data": [
+                        14.209582328796387
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.4025910690302659
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00643,
+                                "lo": 0.992863
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02839,
+                                "lo": 0.971506
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02384,
+                                "lo": 0.976242
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03746,
+                                "lo": 0.962868
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01255,
+                                "lo": 0.987513
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00357,
+                                "lo": 0.996439
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.858117,
+                                "lo": 1.14103
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02753,
+                                "lo": 0.942721
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02338,
+                                "lo": 0.952712
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01817,
+                                "lo": 0.972061
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0001,
+                                "lo": 0.999893
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.998765,
+                                "lo": 0.99988
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.975455,
+                                "lo": 1.0188
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.995295524597168
+                                ],
+                                "lo_data": [
+                                    14.423869132995605
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.975749015808105
+                                ],
+                                "lo_data": [
+                                    14.443415641784668
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.941108703613281
+                                ],
+                                "lo_data": [
+                                    14.478055953979492
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    14.005200386047363
+                                ],
+                                "lo_data": [
+                                    14.41396427154541
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.967964172363281
+                                ],
+                                "lo_data": [
+                                    14.451200485229492
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.996670722961426
+                                ],
+                                "lo_data": [
+                                    14.422493934631348
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    13.95594596862793
+                                ],
+                                "lo_data": [
+                                    14.463218688964844
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    14.062431335449219
+                                ],
+                                "lo_data": [
+                                    14.356733322143555
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "topEW"
+                },
+                {
+                    "data": [
+                        10.842391967773438
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.4504489958859565
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00685,
+                                "lo": 0.992788
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.971893,
+                                "lo": 1.02794
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05047,
+                                "lo": 0.933101
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05071,
+                                "lo": 0.934723
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01128,
+                                "lo": 0.975721
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00076,
+                                "lo": 1.00001
+                            },
+                            "name": "JES3",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.99999,
+                                "lo": 1.00001
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999995,
+                                "lo": 1.00001
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.966976,
+                                "lo": 1.03492
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.733759880065918
+                                ],
+                                "lo_data": [
+                                    10.951024055480957
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.732621192932129
+                                ],
+                                "lo_data": [
+                                    10.952162742614746
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.892600059509277
+                                ],
+                                "lo_data": [
+                                    10.792183876037598
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.748422622680664
+                                ],
+                                "lo_data": [
+                                    10.936361312866211
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.713732719421387
+                                ],
+                                "lo_data": [
+                                    10.971051216125488
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.72128677368164
+                                ],
+                                "lo_data": [
+                                    10.963497161865234
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.774582862854004
+                                ],
+                                "lo_data": [
+                                    10.910201072692871
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.744714736938477
+                                ],
+                                "lo_data": [
+                                    10.940069198608398
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "W_jets"
+                },
+                {
+                    "data": [
+                        2.6571288108825684
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.8274109055239218
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00692,
+                                "lo": 0.992996
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.993024,
+                                "lo": 1.01826
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.997789,
+                                "lo": 0.76998
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.99923,
+                                "lo": 0.769483
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.997935,
+                                "lo": 0.9773
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.769089,
+                                "lo": 0.999007
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.6017849445343018
+                                ],
+                                "lo_data": [
+                                    2.712472677230835
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.600285053253174
+                                ],
+                                "lo_data": [
+                                    2.713972568511963
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.6018571853637695
+                                ],
+                                "lo_data": [
+                                    2.712400436401367
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.605217695236206
+                                ],
+                                "lo_data": [
+                                    2.7090399265289307
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.604421377182007
+                                ],
+                                "lo_data": [
+                                    2.70983624458313
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.605314016342163
+                                ],
+                                "lo_data": [
+                                    2.7089436054229736
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.6047732830047607
+                                ],
+                                "lo_data": [
+                                    2.709484338760376
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    2.657991647720337
+                                ],
+                                "lo_data": [
+                                    2.6562659740448
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "diboson"
+                },
+                {
+                    "data": [
+                        25.902414321899414
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                1.1288035653965691
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00448,
+                                "lo": 0.994099
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04091,
+                                "lo": 0.959674
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04532,
+                                "lo": 0.954904
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.06122,
+                                "lo": 0.940011
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02692,
+                                "lo": 0.973251
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00465,
+                                "lo": 0.995347
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.859412,
+                                "lo": 1.13878
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04376,
+                                "lo": 0.933002
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03996,
+                                "lo": 0.934678
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02326,
+                                "lo": 0.967441
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999989,
+                                "lo": 0.99767
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.953739,
+                                "lo": 1.0203
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.241098403930664
+                                ],
+                                "lo_data": [
+                                    26.563730239868164
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.077190399169922
+                                ],
+                                "lo_data": [
+                                    26.727638244628906
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.486112594604492
+                                ],
+                                "lo_data": [
+                                    26.318716049194336
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.16571044921875
+                                ],
+                                "lo_data": [
+                                    26.639118194580078
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.287944793701172
+                                ],
+                                "lo_data": [
+                                    26.516883850097656
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.336639404296875
+                                ],
+                                "lo_data": [
+                                    26.468189239501953
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.269899368286133
+                                ],
+                                "lo_data": [
+                                    26.534929275512695
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    25.48801612854004
+                                ],
+                                "lo_data": [
+                                    26.31681251525879
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "singletop"
+                },
+                {
+                    "data": [
+                        0.4181613624095917
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.0582259194015541
+                            ],
+                            "name": "staterror_CR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00662,
+                                "lo": 0.992827
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.993486,
+                                "lo": 1.02092
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.08587,
+                                "lo": 0.892684
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.09554,
+                                "lo": 0.904111
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01867,
+                                "lo": 0.929442
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999984,
+                                "lo": 1.00001
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.916259,
+                                "lo": 1.07343
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.36043885350227356
+                                ],
+                                "lo_data": [
+                                    0.4758838713169098
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3679012656211853
+                                ],
+                                "lo_data": [
+                                    0.46842145919799805
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3914244472980499
+                                ],
+                                "lo_data": [
+                                    0.4448982775211334
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3839384913444519
+                                ],
+                                "lo_data": [
+                                    0.45238423347473145
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3902442157268524
+                                ],
+                                "lo_data": [
+                                    0.44607850909233093
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3836899995803833
+                                ],
+                                "lo_data": [
+                                    0.45263272523880005
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.38310906291007996
+                                ],
+                                "lo_data": [
+                                    0.4532136619091034
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.38846150040626526
+                                ],
+                                "lo_data": [
+                                    0.4478612244129181
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "Z_jets"
+                }
+            ]
+        },
+        {
+            "name": "SR_Gtt_0L_B_cuts",
+            "samples": [
+                {
+                    "data": [
+                        0.3959730863571167
+                    ],
+                    "modifiers": [
+                        {
+                            "data": [
+                                0.05284773018383169
+                            ],
+                            "name": "staterror_SR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0056,
+                                "lo": 0.993526
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.989855,
+                                "lo": 1.01006
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01665,
+                                "lo": 0.981616
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03137,
+                                "lo": 0.970417
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03529,
+                                "lo": 0.9634
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01618,
+                                "lo": 0.983556
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.753234,
+                                "lo": 0.9757
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0273,
+                                "lo": 1.04038
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03205,
+                                "lo": 1.01539
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05575,
+                                "lo": 1.05286
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999981,
+                                "lo": 0.999998
+                            },
+                            "name": "JES3",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999929,
+                                "lo": 1.00027
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999998,
+                                "lo": 1.00008
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04589,
+                                "lo": 1.02563
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": null,
+                            "name": "mu_ttbar_Gtt_0L_B",
+                            "type": "normfactor"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "bTag_B",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "bTag_C",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "bTag_L",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "kin_RW",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.41342130303382874
+                                ],
+                                "lo_data": [
+                                    0.37900400161743164
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.42288738489151
+                                ],
+                                "lo_data": [
+                                    0.36975595355033875
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.41992324590682983
+                                ],
+                                "lo_data": [
+                                    0.3725986182689667
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.4118950068950653
+                                ],
+                                "lo_data": [
+                                    0.38038235902786255
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.4153529107570648
+                                ],
+                                "lo_data": [
+                                    0.3770601749420166
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.41117894649505615
+                                ],
+                                "lo_data": [
+                                    0.3810414671897888
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.42730075120925903
+                                ],
+                                "lo_data": [
+                                    0.3654055893421173
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3982887268066406
+                                ],
+                                "lo_data": [
+                                    0.39368370175361633
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.3959730863571167
+                                ],
+                                "lo_data": [
+                                    0.3959730863571167
+                                ]
+                            },
+                            "name": "JES6",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "ttbar"
+                },
+                {
+                    "data": [
+                        0.037932347506284714
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.044926249314043175
+                            ],
+                            "name": "staterror_SR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00771,
+                                "lo": 0.991638
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00033,
+                                "lo": 0.998306
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.12619,
+                                "lo": 0.87086
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.609037,
+                                "lo": 1.33397
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.84965,
+                                "lo": 1.14903
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.15787,
+                                "lo": 0.842146
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.2017,
+                                "lo": 0.424773
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.96722,
+                                "lo": 0.424067
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.732781,
+                                "lo": 0.800106
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0,
+                                "lo": 0.954138
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.589841,
+                                "lo": 1.59604
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.037443287670612335
+                                ],
+                                "lo_data": [
+                                    0.03842140734195709
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.030639654025435448
+                                ],
+                                "lo_data": [
+                                    0.04522503912448883
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.03885124251246452
+                                ],
+                                "lo_data": [
+                                    0.037013452500104904
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.04552195966243744
+                                ],
+                                "lo_data": [
+                                    0.03034273535013199
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.03809903562068939
+                                ],
+                                "lo_data": [
+                                    0.037765659391880035
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.0468590222299099
+                                ],
+                                "lo_data": [
+                                    0.02900567278265953
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.03937000036239624
+                                ],
+                                "lo_data": [
+                                    0.03649469465017319
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.03362543508410454
+                                ],
+                                "lo_data": [
+                                    0.04223925992846489
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "topEW"
+                },
+                {
+                    "data": [
+                        0.168112650513649
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.06225329723463401
+                            ],
+                            "name": "staterror_SR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00325,
+                                "lo": 0.996254
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999852,
+                                "lo": 0.919492
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999747,
+                                "lo": 0.919158
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00044,
+                                "lo": 1.00012
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999965,
+                                "lo": 0.999746
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999279,
+                                "lo": 1.00124
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16838040947914124
+                                ],
+                                "lo_data": [
+                                    0.16784489154815674
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16860151290893555
+                                ],
+                                "lo_data": [
+                                    0.16762378811836243
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16821566224098206
+                                ],
+                                "lo_data": [
+                                    0.16800963878631592
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16800224781036377
+                                ],
+                                "lo_data": [
+                                    0.1682230532169342
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.1679973006248474
+                                ],
+                                "lo_data": [
+                                    0.16822800040245056
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16803447902202606
+                                ],
+                                "lo_data": [
+                                    0.1681908220052719
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.1683783084154129
+                                ],
+                                "lo_data": [
+                                    0.16784699261188507
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.1679096519947052
+                                ],
+                                "lo_data": [
+                                    0.16831564903259277
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "W_jets"
+                },
+                {
+                    "data": [
+                        0.11449509859085083
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.04293175755986131
+                            ],
+                            "name": "staterror_SR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0088,
+                                "lo": 0.991275
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00763,
+                                "lo": 0.991683
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03786,
+                                "lo": 0.961924
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.08406,
+                                "lo": 0.913708
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.982576,
+                                "lo": 1.01814
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.992221,
+                                "lo": 1.00778
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.11504,
+                                "lo": 0.769254
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.11562,
+                                "lo": 1.00256
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999999,
+                                "lo": 1.00259
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0026,
+                                "lo": 1.1142
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.08788757026195526
+                                ],
+                                "lo_data": [
+                                    0.1411026269197464
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.08788749575614929
+                                ],
+                                "lo_data": [
+                                    0.14110270142555237
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.11461534351110458
+                                ],
+                                "lo_data": [
+                                    0.11437485367059708
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.11464698612689972
+                                ],
+                                "lo_data": [
+                                    0.11434321105480194
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.08775506913661957
+                                ],
+                                "lo_data": [
+                                    0.1412351280450821
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.08767431974411011
+                                ],
+                                "lo_data": [
+                                    0.14131587743759155
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.08782653510570526
+                                ],
+                                "lo_data": [
+                                    0.1411636620759964
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.11448471248149872
+                                ],
+                                "lo_data": [
+                                    0.11450548470020294
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "singletop"
+                },
+                {
+                    "data": [
+                        0.1417117565870285
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.05017146104620243
+                            ],
+                            "name": "staterror_SR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01024,
+                                "lo": 0.989779
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01059,
+                                "lo": 0.944538
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01119,
+                                "lo": 0.953643
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00433,
+                                "lo": 0.948547
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.947749,
+                                "lo": 1.00484
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.15404227375984192
+                                ],
+                                "lo_data": [
+                                    0.1293812394142151
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.16783812642097473
+                                ],
+                                "lo_data": [
+                                    0.11558538675308228
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.1678609400987625
+                                ],
+                                "lo_data": [
+                                    0.1155625730752945
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.1588251143693924
+                                ],
+                                "lo_data": [
+                                    0.12459839880466461
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.15853095054626465
+                                ],
+                                "lo_data": [
+                                    0.12489256262779236
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.15873390436172485
+                                ],
+                                "lo_data": [
+                                    0.12468960881233215
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.15337124466896057
+                                ],
+                                "lo_data": [
+                                    0.13005226850509644
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    0.15590766072273254
+                                ],
+                                "lo_data": [
+                                    0.12751585245132446
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "Z_jets"
+                }
+            ]
+        },
+        {
+            "name": "VR_Gtt_0L_B_cuts",
+            "samples": [
+                {
+                    "data": [
+                        51.54728317260742
+                    ],
+                    "modifiers": [
+                        {
+                            "data": [
+                                0.6400977629874322
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00599,
+                                "lo": 0.992965
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.99801,
+                                "lo": 1.00209
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01375,
+                                "lo": 0.985326
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.996773,
+                                "lo": 1.0034
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.996023,
+                                "lo": 1.00435
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01407,
+                                "lo": 0.985816
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.753234,
+                                "lo": 0.9757
+                            },
+                            "name": "kin_RW",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00235,
+                                "lo": 1.01165
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.994124,
+                                "lo": 1.01986
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02007,
+                                "lo": 1.00597
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999794,
+                                "lo": 0.999998
+                            },
+                            "name": "JES3",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00108,
+                                "lo": 1.00022
+                            },
+                            "name": "JES4",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00096,
+                                "lo": 0.999786
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01552,
+                                "lo": 0.998998
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": null,
+                            "name": "mu_ttbar_Gtt_0L_B",
+                            "type": "normfactor"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "bTag_B",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "bTag_C",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "bTag_L",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "kin_RW",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    53.59056854248047
+                                ],
+                                "lo_data": [
+                                    49.56010437011719
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    53.45125198364258
+                                ],
+                                "lo_data": [
+                                    49.69263458251953
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    53.20769500732422
+                                ],
+                                "lo_data": [
+                                    49.92678451538086
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    52.873634338378906
+                                ],
+                                "lo_data": [
+                                    50.24851989746094
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    53.169254302978516
+                                ],
+                                "lo_data": [
+                                    49.96438980102539
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    52.64230728149414
+                                ],
+                                "lo_data": [
+                                    50.47201156616211
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    52.910491943359375
+                                ],
+                                "lo_data": [
+                                    50.21715545654297
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.90665817260742
+                                ],
+                                "lo_data": [
+                                    51.19198226928711
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    51.54728317260742
+                                ],
+                                "lo_data": [
+                                    51.54728317260742
+                                ]
+                            },
+                            "name": "JES6",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "ttbar"
+                },
+                {
+                    "data": [
+                        3.120972156524658
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.2978093254114316
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0046,
+                                "lo": 0.994354
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03178,
+                                "lo": 0.968908
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03237,
+                                "lo": 0.967485
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.07132,
+                                "lo": 0.930941
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0342,
+                                "lo": 0.965937
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00852,
+                                "lo": 0.991532
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03526,
+                                "lo": 0.932891
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03954,
+                                "lo": 0.962263
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04985,
+                                "lo": 0.984899
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.954857,
+                                "lo": 1.02524
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.1367204189300537
+                                ],
+                                "lo_data": [
+                                    3.1052238941192627
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.1221303939819336
+                                ],
+                                "lo_data": [
+                                    3.119813919067383
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.104013442993164
+                                ],
+                                "lo_data": [
+                                    3.1379308700561523
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.1946229934692383
+                                ],
+                                "lo_data": [
+                                    3.047321319580078
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.154676675796509
+                                ],
+                                "lo_data": [
+                                    3.0872676372528076
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.1443347930908203
+                                ],
+                                "lo_data": [
+                                    3.097609519958496
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.1878340244293213
+                                ],
+                                "lo_data": [
+                                    3.054110288619995
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    3.180410385131836
+                                ],
+                                "lo_data": [
+                                    3.0615339279174805
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "topEW"
+                },
+                {
+                    "data": [
+                        5.539055824279785
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.39986273976652376
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00793,
+                                "lo": 0.991837
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03956,
+                                "lo": 0.955872
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02949,
+                                "lo": 0.955588
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01826,
+                                "lo": 0.985952
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.997495,
+                                "lo": 1.0
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.973253,
+                                "lo": 1.02162
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.565957069396973
+                                ],
+                                "lo_data": [
+                                    5.512154579162598
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.429037094116211
+                                ],
+                                "lo_data": [
+                                    5.649074554443359
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.366243839263916
+                                ],
+                                "lo_data": [
+                                    5.711867809295654
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.491161346435547
+                                ],
+                                "lo_data": [
+                                    5.586950302124023
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.549398422241211
+                                ],
+                                "lo_data": [
+                                    5.528713226318359
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.561689853668213
+                                ],
+                                "lo_data": [
+                                    5.516421794891357
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.567603588104248
+                                ],
+                                "lo_data": [
+                                    5.510508060455322
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.510409832000732
+                                ],
+                                "lo_data": [
+                                    5.567701816558838
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "W_jets"
+                },
+                {
+                    "data": [
+                        1.9335907697677612
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.5811019889531618
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00559,
+                                "lo": 0.994209
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00111,
+                                "lo": 0.841828
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00124,
+                                "lo": 0.904118
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999872,
+                                "lo": 0.954403
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.95443,
+                                "lo": 1.00092
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.8779921531677246
+                                ],
+                                "lo_data": [
+                                    1.9891893863677979
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.9272416830062866
+                                ],
+                                "lo_data": [
+                                    1.9399398565292358
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.98508882522583
+                                ],
+                                "lo_data": [
+                                    1.8820927143096924
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.8777109384536743
+                                ],
+                                "lo_data": [
+                                    1.9894706010818481
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.9503583908081055
+                                ],
+                                "lo_data": [
+                                    1.916823148727417
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.8767073154449463
+                                ],
+                                "lo_data": [
+                                    1.9904742240905762
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.9513115882873535
+                                ],
+                                "lo_data": [
+                                    1.915869951248169
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    1.934949278831482
+                                ],
+                                "lo_data": [
+                                    1.9322322607040405
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "diboson"
+                },
+                {
+                    "data": [
+                        10.210124015808105
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.8239302155614294
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00583,
+                                "lo": 0.993641
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.03946,
+                                "lo": 0.961004
+                            },
+                            "name": "bTag_B",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0575,
+                                "lo": 0.942295
+                            },
+                            "name": "bTag_C",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05422,
+                                "lo": 0.945788
+                            },
+                            "name": "bTag_L",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02278,
+                                "lo": 0.977354
+                            },
+                            "name": "bTag_extrapol",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02433,
+                                "lo": 0.975637
+                            },
+                            "name": "bTag_extrapol_charm",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00905,
+                                "lo": 0.945458
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.987629,
+                                "lo": 0.957922
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.01822,
+                                "lo": 0.947415
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.999009,
+                                "lo": 1.00099
+                            },
+                            "name": "JES3",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00086,
+                                "lo": 1.0
+                            },
+                            "name": "JES5",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.975954,
+                                "lo": 0.979883
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.453612327575684
+                                ],
+                                "lo_data": [
+                                    9.966635704040527
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.39314079284668
+                                ],
+                                "lo_data": [
+                                    10.027107238769531
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.449706077575684
+                                ],
+                                "lo_data": [
+                                    9.970541954040527
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.259320259094238
+                                ],
+                                "lo_data": [
+                                    10.160927772521973
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.210553169250488
+                                ],
+                                "lo_data": [
+                                    10.209694862365723
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.413286209106445
+                                ],
+                                "lo_data": [
+                                    10.006961822509766
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.314995765686035
+                                ],
+                                "lo_data": [
+                                    10.105252265930176
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    10.149347305297852
+                                ],
+                                "lo_data": [
+                                    10.27090072631836
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "singletop"
+                },
+                {
+                    "data": [
+                        6.033587455749512
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.4509757640751978
+                            ],
+                            "name": "staterror_VR_Gtt_0L_B_cuts",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.0076,
+                                "lo": 0.992101
+                            },
+                            "name": "JVT",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05448,
+                                "lo": 0.906859
+                            },
+                            "name": "JES0",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.04976,
+                                "lo": 0.912101
+                            },
+                            "name": "JES1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.02046,
+                                "lo": 0.990014
+                            },
+                            "name": "JES2",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.00002,
+                                "lo": 0.999977
+                            },
+                            "name": "JES3",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 0.981539,
+                                "lo": 1.01877
+                            },
+                            "name": "JES6",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.4,
+                                "lo": 0.6
+                            },
+                            "name": "MCMCHack",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.960744380950928
+                                ],
+                                "lo_data": [
+                                    6.106430530548096
+                                ]
+                            },
+                            "name": "JER0",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.996545314788818
+                                ],
+                                "lo_data": [
+                                    6.070629596710205
+                                ]
+                            },
+                            "name": "JER1",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.9577250480651855
+                                ],
+                                "lo_data": [
+                                    6.109449863433838
+                                ]
+                            },
+                            "name": "JER2",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.901093006134033
+                                ],
+                                "lo_data": [
+                                    6.16608190536499
+                                ]
+                            },
+                            "name": "JER3",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.948263645172119
+                                ],
+                                "lo_data": [
+                                    6.118911266326904
+                                ]
+                            },
+                            "name": "JER4",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.96511697769165
+                                ],
+                                "lo_data": [
+                                    6.102057933807373
+                                ]
+                            },
+                            "name": "JER5",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    5.91784143447876
+                                ],
+                                "lo_data": [
+                                    6.149333477020264
+                                ]
+                            },
+                            "name": "JER6",
+                            "type": "histosys"
+                        },
+                        {
+                            "data": {
+                                "hi_data": [
+                                    6.0371222496032715
+                                ],
+                                "lo_data": [
+                                    6.030052661895752
+                                ]
+                            },
+                            "name": "JER7",
+                            "type": "histosys"
+                        }
+                    ],
+                    "name": "Z_jets"
+                }
+            ]
+        }
+    ],
+    "measurements": [
+        {
+            "config": {
+                "parameters": [
+                    {
+                        "auxdata": [
+                            1.0
+                        ],
+                        "bounds": [
+                            [
+                                0.855,
+                                1.145
+                            ]
+                        ],
+                        "inits": [
+                            1.0
+                        ],
+                        "name": "lumi",
+                        "sigmas": [
+                            0.029
+                        ]
+                    },
+                    {
+                        "bounds": [
+                            [
+                                0.0,
+                                5.0
+                            ]
+                        ],
+                        "fixed": false,
+                        "inits": [
+                            1.0
+                        ],
+                        "name": "mu_ttbar_Gtt_0L_B"
+                    }
+                ],
+                "poi": "mu_SIG"
+            },
+            "name": "NormalMeasurement"
+        }
+    ],
+    "observations": [
+        {
+            "data": [
+                278.0
+            ],
+            "name": "CR_Gtt_0L_B_cuts"
+        },
+        {
+            "data": [
+                0.8582249283790588
+            ],
+            "name": "SR_Gtt_0L_B_cuts"
+        },
+        {
+            "data": [
+                68.0
+            ],
+            "name": "VR_Gtt_0L_B_cuts"
+        }
+    ],
+    "version": "1.0.0"
+}
