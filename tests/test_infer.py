@@ -271,20 +271,25 @@ def test_emperical_distribution(tmpdir, hypotest_args):
         )
     )
 
-    assert test_stat_dist.samples.tolist() == [
-        0.0,
-        0.13298492825293806,
-        0.0,
-        0.7718560148925349,
-        1.814884694401428,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.06586643485326249,
-    ]
+    assert test_stat_dist.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.13298492825293806,
+            0.0,
+            0.7718560148925349,
+            1.814884694401428,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.06586643485326249,
+        ],
+        1e-07,
+    )
     assert test_stat_dist.pvalue(test_stat_dist.samples[4]) == 0.1
-    assert test_stat_dist.expected_value(nsigma=2) == 1.6013233336403654
+    assert test_stat_dist.expected_value(nsigma=2) == pytest.approx(
+        1.6013233336403654, 1e-07
+    )
 
 
 def test_toy_calculator(tmpdir, hypotest_args):
@@ -297,28 +302,36 @@ def test_toy_calculator(tmpdir, hypotest_args):
         data, model, None, None, ntoys=10, track_progress=False
     )
     qtilde_mu_sig, qtilde_mu_bkg = toy_calculator_qtilde_mu.distributions(mu_test)
-    assert qtilde_mu_sig.samples.tolist() == [
-        0.0,
-        0.13298492825293806,
-        0.0,
-        0.7718560148925349,
-        1.814884694401428,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.06586643485326249,
-    ]
-    assert qtilde_mu_bkg.samples.tolist() == [
-        2.266462524102735,
-        1.0816608839427886,
-        2.75702209716826,
-        1.3835689306813492,
-        0.4707465263496715,
-        0.0,
-        3.7166483729429274,
-        3.8021899113241773,
-        5.114135683200743,
-        1.3511153851299014,
-    ]
-    assert toy_calculator_qtilde_mu.teststatistic(mu_test) == 3.938244920380498
+    assert qtilde_mu_sig.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.13298492825293806,
+            0.0,
+            0.7718560148925349,
+            1.814884694401428,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.06586643485326249,
+        ],
+        1e-07,
+    )
+    assert qtilde_mu_bkg.samples.tolist() == pytest.approx(
+        [
+            2.266462524102735,
+            1.0816608839427886,
+            2.75702209716826,
+            1.3835689306813492,
+            0.4707465263496715,
+            0.0,
+            3.7166483729429274,
+            3.8021899113241773,
+            5.114135683200743,
+            1.3511153851299014,
+        ],
+        1e-07,
+    )
+    assert toy_calculator_qtilde_mu.teststatistic(mu_test) == pytest.approx(
+        3.938244920380498, 1e-07
+    )
