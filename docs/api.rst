@@ -128,10 +128,13 @@ Inference
    mle.fit
    mle.fixed_poi_fit
    hypotest
+   intervals.upperlimit
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
+   calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator
-   intervals.upperlimit
+   calculators.ToyCalculator
+   utils.create_calculator
 
 Exceptions
 ----------

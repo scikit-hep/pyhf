@@ -244,7 +244,7 @@ class EmpiricalDistribution(object):
     """
     The empirical distribution of the test statistic.
 
-    Unlike ~pyhf.infer.calculators.AsymptoticTestStatDistribution where the
+    Unlike :py:class:`~pyhf.infer.calculators.AsymptoticTestStatDistribution` where the
     distribution for the test statistic is normally distributed, the
     :math:`p`-values etc are computed from the sampled distribution.
     """
