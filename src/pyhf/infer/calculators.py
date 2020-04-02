@@ -17,6 +17,18 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
+    Example:
+
+        >>> import pyhf
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> mu_test = 1.0
+        >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None)
+        array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
+
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
