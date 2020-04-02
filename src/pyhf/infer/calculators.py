@@ -79,6 +79,13 @@ class AsymptoticTestStatDistribution(object):
         """
         Compute the value of the cumulative distribution function for a given value of the test statistic.
 
+        Example:
+
+            >>> import pyhf
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> bkg_dist.pvalue(0)
+            0.5
+
         Args:
             value (:obj:`float`): The test statistic value.
 
@@ -121,6 +128,14 @@ class AsymptoticTestStatDistribution(object):
     def expected_value(self, nsigma):
         """
         Return the expected value of the test statistic.
+
+        Example:
+
+            >>> import pyhf
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
+            >>> bkg_dist.expected_value(n_sigma)
+            array([-2., -1.,  0.,  1.,  2.])
 
         Args:
             nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
