@@ -342,7 +342,8 @@ class EmpiricalDistribution(object):
             ... )
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> dist.expected_value(n_sigma)
-            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01, 2.99592664e+00])
+            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01,
+                   2.99592664e+00])
 
         Args:
             nsigma (`int` or `tensor`): The number of standard deviations.
