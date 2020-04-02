@@ -257,7 +257,7 @@ class EmpiricalDistribution(object):
             samples (Tensor): The test statistics sampled from the distribution.
 
         Returns:
-            ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of test statistic.
+            ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of the test statistic.
 
         """
         self.samples = samples.ravel()
@@ -265,6 +265,36 @@ class EmpiricalDistribution(object):
     def pvalue(self, value):
         """
         Compute the :math:`p`-value for a given value of the test statistic.
+
+        Examples:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> mean = pyhf.tensorlib.astensor([5])
+            >>> std = pyhf.tensorlib.astensor([1])
+            >>> normal = pyhf.probability.Normal(mean, std)
+            >>> samples = normal.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
+            >>> dist.pvalue(7)
+            0.02
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> mu_test = 1.0
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(model.config.suggested_init()))
+            >>> samples = pdf.sample((100,))
+            >>> test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
+            ...     pyhf.tensorlib.astensor(
+            ...         [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+            ...     )
+            ... )
+            >>> test_stat_dist.pvalue(test_stat_dist.samples[9])
+            0.3
 
         Args:
             value (`float`): The test statistic value.
@@ -282,6 +312,37 @@ class EmpiricalDistribution(object):
     def expected_value(self, nsigma):
         """
         Return the expected value of the test statistic.
+
+        Examples:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> mean = pyhf.tensorlib.astensor([5])
+            >>> std = pyhf.tensorlib.astensor([1])
+            >>> normal = pyhf.probability.Normal(mean, std)
+            >>> samples = normal.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
+            >>> dist.expected_value(nsigma=1)
+            6.15094381209505
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> mu_test = 1.0
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(model.config.suggested_init()))
+            >>> samples = pdf.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(
+            ...     pyhf.tensorlib.astensor(
+            ...         [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+            ...     )
+            ... )
+            >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
+            >>> dist.expected_value(n_sigma)
+            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01, 2.99592664e+00])
 
         Args:
             nsigma (`int` or `tensor`): The number of standard deviations.
