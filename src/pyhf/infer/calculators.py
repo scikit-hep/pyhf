@@ -190,8 +190,23 @@ class AsymptoticCalculator(object):
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
         under the signal + background and background-only hypotheses.
 
+        Example:
+
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model)
+            >>> _ = asymptotic_calculator.teststatistic(mu_test)
+            >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
+            >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
+            (0.0021927199297028244, 0.15865525393145707)
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (`float` or `tensor`): The value for the parameter of interest.
 
         Returns:
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
@@ -207,11 +222,24 @@ class AsymptoticCalculator(object):
         """
         Compute the test statistic for the observed data under the studied model.
 
+        Example:
+
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model)
+            >>> asymptotic_calculator.teststatistic(mu_test)
+            0.13548317176320857
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (`float` or `tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: the value of the test statistic.
+            Float: The value of the test statistic.
 
         """
         tensorlib, _ = get_backend()
