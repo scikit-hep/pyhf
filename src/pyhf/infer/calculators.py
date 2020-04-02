@@ -457,8 +457,26 @@ class ToyCalculator(object):
         """
         Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
 
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
+            >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
+            (0.14, 0.76)
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (`float` or `tensor`): The value for the parameter of interest.
             track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
         Returns:
@@ -523,11 +541,28 @@ class ToyCalculator(object):
         """
         Compute the test statistic for the observed data under the studied model.
 
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> toy_calculator.teststatistic(mu_test)
+            3.938244920380498
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (`float` or `tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: the value of the test statistic.
+            Float: The value of the test statistic.
 
         """
         teststat_func = qmu_tilde if self.qtilde else qmu
