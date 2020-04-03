@@ -303,6 +303,38 @@ class tensorflow_backend:
     def exp(self, tensor_in):
         return tf.exp(tensor_in)
 
+    def percentile(self, tensor_in, percentile, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> t = pyhf.tensorlib.percentile(a, 50)
+            >>> print(t)
+            tf.Tensor(3.5, shape=(), dtype=float32)
+            >>> t = pyhf.tensorlib.percentile(a, 50, axis=1)
+            >>> print(t)
+            tf.Tensor([7. 2.], shape=(2,), dtype=float32)
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            percentile (`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (`str`): The interpolation method to use when the desired
+                                   percentile lies between two data points:
+                                   {‘linear’, ‘lower’, ‘higher’, ‘midpoint’, ‘nearest’}
+
+        Returns:
+            TensorFlow Tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return tfp.stats.percentile(
+            tensor_in, percentile, axis=axis, interpolation=interpolation
+        )
+
     def stack(self, sequence, axis=0):
         return tf.stack(sequence, axis=axis)
 
