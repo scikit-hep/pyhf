@@ -310,9 +310,7 @@ class pytorch_backend:
             PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        # k = 1 + round(0.01 * float(percentile) * (tensor_in.numel() - 1))
-        # # return tensor_in.view(-1).kthvalue(k, dim=axis).values.item()
-        # return tensor_in.view(-1).kthvalue(k).values.item()
+        # TODO: Adopt PyTorch native implimentation when available
         import numpy as np
 
         ndarray = tensor_in.data.numpy()
