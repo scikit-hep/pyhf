@@ -38,7 +38,7 @@ class _BasicNormal(object):
 
 
 class jax_backend(object):
-    """jax backend for pyhf"""
+    """JAX backend for pyhf"""
 
     def __init__(self, **kwargs):
         self.name = 'jax'
