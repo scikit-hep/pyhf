@@ -38,7 +38,7 @@ class _BasicNormal(object):
 
 
 class jax_backend(object):
-    """jax backend for pyhf"""
+    """JAX backend for pyhf"""
 
     def __init__(self, **kwargs):
         self.name = 'jax'
@@ -51,7 +51,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
             DeviceArray([-1., -1.,  0.,  1.,  1.], dtype=float64)
@@ -73,7 +73,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
             >>> pyhf.tensorlib.tile(a, (1, 2))
             DeviceArray([[1., 1.],
@@ -95,7 +95,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> tensorlib = pyhf.tensorlib
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
@@ -215,7 +215,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -270,7 +270,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.poisson(5., 6.)
             DeviceArray(0.16062314, dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
@@ -313,7 +313,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
             DeviceArray(0.35206533, dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
@@ -339,7 +339,7 @@ class jax_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal_cdf(0.8)
             DeviceArray(0.7881446, dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
@@ -362,7 +362,7 @@ class jax_backend(object):
 
         Example:
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> rates = pyhf.tensorlib.astensor([5, 8])
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
@@ -383,7 +383,7 @@ class jax_backend(object):
 
         Example:
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.jax_backend())
+            >>> pyhf.set_backend("jax")
             >>> means = pyhf.tensorlib.astensor([5, 8])
             >>> stds = pyhf.tensorlib.astensor([1, 0.5])
             >>> values = pyhf.tensorlib.astensor([4, 9])

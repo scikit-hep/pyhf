@@ -60,6 +60,7 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
    numpy_backend.numpy_backend
    pytorch_backend.pytorch_backend
    tensorflow_backend.tensorflow_backend
+   jax_backend.jax_backend
 
 Optimizers
 ----------
@@ -74,6 +75,7 @@ Optimizers
    opt_pytorch.pytorch_optimizer
    opt_scipy.scipy_optimizer
    opt_tflow.tflow_optimizer
+   opt_jax.jax_optimizer
    opt_minuit.minuit_optimizer
 
 Modifiers
