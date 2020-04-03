@@ -313,9 +313,8 @@ class pytorch_backend:
         # TODO: Adopt PyTorch native implimentation when available
         import numpy as np
 
-        ndarray = tensor_in.data.numpy()
         np_result = np.percentile(
-            ndarray, percentile, axis=axis, interpolation=interpolation
+            tensor_in.data.numpy(), percentile, axis=axis, interpolation=interpolation
         )
         return self.astensor(np_result)
 
