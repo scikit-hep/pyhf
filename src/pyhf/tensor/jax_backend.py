@@ -277,6 +277,36 @@ class jax_backend:
     def exp(self, tensor_in):
         return jnp.exp(tensor_in)
 
+    def percentile(self, tensor_in, percentile, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            DeviceArray(3.5, dtype=float64)
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            DeviceArray([7., 2.], dtype=float64)
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            percentile (`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (`str`): The interpolation method to use when the desired
+                                   percentile lies between two data points:
+                                   {‘linear’, ‘lower’, ‘higher’, ‘midpoint’, ‘nearest’}
+
+        Returns:
+            JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return np.percentile(
+            tensor_in, percentile, axis=axis, interpolation=interpolation
+        )
+
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)
 
