@@ -310,11 +310,16 @@ class pytorch_backend:
             PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        dim = tensor_in.shape[-1] if axis is None else axis
-        k = 1 + round(0.01 * float(percentile) * (tensor_in.numel() - 1))
-        # return tensor_in.view(-1).kthvalue(k, dim=axis).values.item()
-        return tensor_in.view(-1).kthvalue(k).values.item()
-        # return dist.icdf(tensor_in, percentile, axis=axis, interpolation=interpolation)
+        # k = 1 + round(0.01 * float(percentile) * (tensor_in.numel() - 1))
+        # # return tensor_in.view(-1).kthvalue(k, dim=axis).values.item()
+        # return tensor_in.view(-1).kthvalue(k).values.item()
+        import numpy as np
+
+        ndarray = tensor_in.data.numpy()
+        np_result = np.percentile(
+            ndarray, percentile, axis=axis, interpolation=interpolation
+        )
+        return self.astensor(np_result)
 
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
