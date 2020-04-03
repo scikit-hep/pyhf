@@ -170,6 +170,10 @@ class AsymptoticCalculator(object):
             qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
              as the test statistic.
              When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic,
+             :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
+             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
+             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
@@ -436,7 +440,7 @@ class ToyCalculator(object):
             init_pars (`tensor`): The initial parameter values to be used for fitting.
             par_bounds (`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (`bool`): Whether to use qtilde as the test statistic.
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic, :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`.
             ntoys (`int`): Number of toys to use (how many times to sample the underlying distributions)
             track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
