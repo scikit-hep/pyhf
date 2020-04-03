@@ -284,6 +284,38 @@ class pytorch_backend:
     def exp(self, tensor_in):
         return torch.exp(tensor_in)
 
+    def percentile(self, tensor_in, percentile, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            3.5
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            array([7., 2.])
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            percentile (`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (`str`): The interpolation method to use when the desired
+                                   percentile lies between two data points:
+                                   {‘linear’, ‘lower’, ‘higher’, ‘midpoint’, ‘nearest’}
+
+        Returns:
+            PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        dim = tensor_in.shape[-1] if axis is None else axis
+        k = 1 + round(0.01 * float(percentile) * (tensor_in.numel() - 1))
+        # return tensor_in.view(-1).kthvalue(k, dim=axis).values.item()
+        return tensor_in.view(-1).kthvalue(k).values.item()
+        # return dist.icdf(tensor_in, percentile, axis=axis, interpolation=interpolation)
+
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
 
