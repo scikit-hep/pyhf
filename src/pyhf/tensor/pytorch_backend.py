@@ -316,7 +316,15 @@ class pytorch_backend:
         np_result = np.percentile(
             tensor_in.data.numpy(), percentile, axis=axis, interpolation=interpolation
         )
-        return self.astensor(np_result)
+        # Ensure consistent return structure as other backends
+        # Only needed given #TODO above
+        result_tensor = self.astensor(np_result)
+        result = (
+            result_tensor[0]
+            if result_tensor.shape == torch.Size([1])
+            else result_tensor
+        )
+        return result
 
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
