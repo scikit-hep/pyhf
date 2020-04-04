@@ -370,6 +370,23 @@ def test_boolean_mask(backend):
     )
 
 
+def test_percentile(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+    assert tb.tolist(tb.percentile(a, 50)) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
+    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+
+
+# JAX doesn't yet support "nearest" as an interpolation scheme
+@pytest.mark.fail_jax
+def test_percentile_interpolation(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
+
+
 def test_tensor_tile(backend):
     a = [[1], [2], [3]]
     tb = pyhf.tensorlib
