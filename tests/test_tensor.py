@@ -378,7 +378,9 @@ def test_percentile(backend):
 
 
 # JAX doesn't yet support "nearest" as an interpolation scheme
+# TensorFlow Probability uses a descending ordering causing nearest error
 @pytest.mark.fail_jax
+@pytest.mark.fail_tensorflow
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
