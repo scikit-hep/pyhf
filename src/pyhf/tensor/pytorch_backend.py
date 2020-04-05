@@ -294,7 +294,7 @@ class pytorch_backend:
             >>> pyhf.set_backend("pytorch")
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
             >>> pyhf.tensorlib.percentile(a, 50)
-            tensor([3.5000])
+            tensor(3.5000)
             >>> pyhf.tensorlib.percentile(a, 50, axis=1)
             tensor([7., 2.])
 
