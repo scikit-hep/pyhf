@@ -414,7 +414,9 @@ class EmpiricalDistribution(object):
         import numpy as np
 
         # TODO: tensorlib.percentile function
-        return np.percentile(self.samples, (tensorlib.normal_cdf(nsigma)) * 100)
+        return np.percentile(
+            self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
+        )
 
 
 class ToyCalculator(object):
