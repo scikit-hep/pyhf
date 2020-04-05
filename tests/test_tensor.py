@@ -373,7 +373,9 @@ def test_boolean_mask(backend):
 def test_percentile(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+    assert tb.tolist(tb.percentile(a, 0)) == 1
     assert tb.tolist(tb.percentile(a, 50)) == 3.5
+    assert tb.tolist(tb.percentile(a, 100)) == 10
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
