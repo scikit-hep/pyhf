@@ -142,7 +142,6 @@ Roadmap as Gantt Chart
 .. figure:: https://user-images.githubusercontent.com/5142394/64583069-53049180-d355-11e9-8b39-8b2a4599e21e.png
    :alt: pyhf_AS_gantt
 
-   pyhf_AS_gantt
 
 Presentations During Roadmap Timeline
 -------------------------------------
@@ -160,4 +159,3 @@ Presentations During Roadmap Timeline
    (November 4-8th, 2019)
 
 .. |Seibert Heirarchy of Needs SciPy 2019| image:: https://pbs.twimg.com/media/EBYojw8XUAERJhZ?format=png
-

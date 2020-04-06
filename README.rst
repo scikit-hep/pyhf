@@ -47,21 +47,21 @@ What does it support
 --------------------
 
 Implemented variations:
-  - [x] HistoSys
-  - [x] OverallSys
-  - [x] ShapeSys
-  - [x] NormFactor
-  - [x] Multiple Channels
-  - [x] Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
-  - [x] ShapeFactor
-  - [x] StatError
-  - [x] Lumi Uncertainty
+  - ☒ HistoSys
+  - ☒ OverallSys
+  - ☒ ShapeSys
+  - ☒ NormFactor
+  - ☒ Multiple Channels
+  - ☒ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☒ ShapeFactor
+  - ☒ StatError
+  - ☒ Lumi Uncertainty
 
 Computational Backends:
-  - [x] NumPy
-  - [x] PyTorch
-  - [x] TensorFlow
-  - [x] JAX
+  - ☒ NumPy
+  - ☒ PyTorch
+  - ☒ TensorFlow
+  - ☒ JAX
 
 Available Optimizers
 
@@ -94,12 +94,13 @@ A one bin example
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_1bin_55_50_7.png
    :alt: manual
-   :width: 40 %
+   :width: 70 %
+   :align: center
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png
    :alt: manual
-   :width: 40 %
-   :align: right
+   :width: 70 %
+   :align: center
 
 A two bin example
 -----------------
@@ -111,12 +112,13 @@ A two bin example
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
-   :width: 40 %
+   :width: 70 %
+   :align: center
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
-   :width: 40 %
-   :align: right
+   :width: 70 %
+   :align: center
 
 Installation
 ------------
