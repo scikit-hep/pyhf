@@ -340,6 +340,7 @@ class tensorflow_backend:
             TensorFlow Tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
+        # TODO: https://github.com/tensorflow/probability/issues/864
         return tfp.stats.percentile(
             tensor_in, q, axis=axis, interpolation=interpolation
         )
