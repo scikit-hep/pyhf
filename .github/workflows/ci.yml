@@ -105,7 +105,7 @@ jobs:
         pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/workspace.py src/pyhf/probability.py src/pyhf/interpolators src/pyhf/infer src/pyhf/optimize src/pyhf/contrib src/pyhf/cli
     - name: Test and build docs
       run: |
-        python -m doctest README.md
+        python -m doctest README.rst
         python setup.py build_sphinx
         touch docs/_build/html/.nojekyll
     - name: Check schemas are copied over

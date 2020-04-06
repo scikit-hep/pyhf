@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 from pathlib import Path
 
 this_directory = Path(__file__).parent.resolve()
-with open(Path(this_directory).joinpath('README.md'), encoding='utf-8') as readme_md:
-    long_description = readme_md.read()
+with open(Path(this_directory).joinpath('README.rst'), encoding='utf-8') as readme_rst:
+    long_description = readme_rst.read()
 
 extras_require = {
     'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
@@ -79,7 +79,7 @@ setup(
     version='0.4.1',
     description='(partial) pure python histfactory implementation',
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     url='https://github.com/scikit-hep/pyhf',
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
