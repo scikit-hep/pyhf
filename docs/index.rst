@@ -24,7 +24,7 @@
 
    <a class="github-fork-ribbon right-top fixed" href="https://github.com/scikit-hep/pyhf/fork" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
-.. include:: ../README
+.. include:: ../README.rst
 
 Indices and tables
 ==================
