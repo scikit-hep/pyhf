@@ -303,7 +303,7 @@ class tensorflow_backend:
     def exp(self, tensor_in):
         return tf.exp(tensor_in)
 
-    def percentile(self, tensor_in, percentile, axis=None, interpolation="linear"):
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
 
@@ -321,7 +321,7 @@ class tensorflow_backend:
 
         Args:
             tensor_in (`tensor`): The tensor containing the data
-            percentile (`float` or `tensor`): The :math:`q`-th percentile to compute
+            q (`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
             interpolation (`str`): The interpolation method to use when the desired
                 percentile lies between two data points ``i < j``:
@@ -341,7 +341,7 @@ class tensorflow_backend:
 
         """
         return tfp.stats.percentile(
-            tensor_in, percentile, axis=axis, interpolation=interpolation
+            tensor_in, q, axis=axis, interpolation=interpolation
         )
 
     def stack(self, sequence, axis=0):
