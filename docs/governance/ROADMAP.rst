@@ -48,28 +48,28 @@ Roadmap
 
 1. **Documentation and Deployment**
 
-   -  ☐ Add docstrings to all functions and classes (Issues #38, #349)
+   -  |uncheck| Add docstrings to all functions and classes (Issues #38, #349)
       [2019-Q3]
-   -  ☐ `Greatly revise and expand
+   -  |uncheck| `Greatly revise and expand
       examples <https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs>`__
       (Issues #168, #202, #212, #325, #342, #349, #367) [2019-Q3 →
       2019-Q4]
 
-      -  ☐ Add small case studies with published sbottom likelihood from
+      -  |uncheck| Add small case studies with published sbottom likelihood from
          HEPData
 
-   -  ☒ Move to `scikit-hep <https://github.com/scikit-hep>`__ GitHub
+   -  |check| Move to `scikit-hep <https://github.com/scikit-hep>`__ GitHub
       organization [2019-Q3]
-   -  ☐ Develop a release schedule/criteria [2019-Q4]
-   -  ☒ Automate deployment with [STRIKEOUT:Azure pipeline (talk with
+   -  |uncheck| Develop a release schedule/criteria [2019-Q4]
+   -  |check| Automate deployment with [STRIKEOUT:Azure pipeline (talk with
       Henry Schreiner) (Issue #517)] GitHub Actions (Issue #508)
       [2019-Q3]
-   -  ☐ Finalize logo and add it to website (Issue #453) [2019-Q3 →
+   -  |uncheck| Finalize logo and add it to website (Issue #453) [2019-Q3 →
       2019-Q4]
-   -  ☐ Write submission to `JOSS <https://joss.theoj.org/>`__ (Issue
+   -  |uncheck| Write submission to `JOSS <https://joss.theoj.org/>`__ (Issue
       #502) and write submission to
       `pyOpenSci <https://www.pyopensci.org/>`__ [2019-Q4 → 2020-Q2]
-   -  ☐ Contribute to `IRIS-HEP Analysis Systems
+   -  |uncheck| Contribute to `IRIS-HEP Analysis Systems
       Milestones <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
       “`Initial roadmap for ecosystem
       coherency <https://github.com/iris-hep/project-milestones/issues/8>`__”
@@ -80,53 +80,53 @@ Roadmap
 
 2. **Revision and Maintenance**
 
-   -  ☒ Add tests using HEPData published sbottom likelihoods (Issue
+   -  |check| Add tests using HEPData published sbottom likelihoods (Issue
       #518) [2019-Q3]
-   -  ☒ Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue
+   -  |check| Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue
       #517) [2019-Q3]
-   -  ☐ Investigate rewrite of pytest fixtures to use modern pytest
+   -  |uncheck| Investigate rewrite of pytest fixtures to use modern pytest
       (Issue #370) [2019-Q3 → 2019-Q4]
-   -  ☒ Factorize out the statistical fitting portion into
+   -  |check| Factorize out the statistical fitting portion into
       ``pyhf.infer`` (PR #531) [2019-Q3 → 2019-Q4]
-   -  ☐ Bug squashing at large [2019-Q3 → 2020-Q2]
+   -  |uncheck| Bug squashing at large [2019-Q3 → 2020-Q2]
 
-      -  ☐ Unexpected use cases (Issues #324, #325, #529)
-      -  ☐ Computational edge cases (Issues #332, #445)
+      -  |uncheck| Unexpected use cases (Issues #324, #325, #529)
+      -  |uncheck| Computational edge cases (Issues #332, #445)
 
-   -  ☐ Make sure that all backends reproduce sbottom results [2019-Q4 →
+   -  |uncheck| Make sure that all backends reproduce sbottom results [2019-Q4 →
       2020-Q2]
 
 3. **Development**
 
-   -  ☒ Batch support (PR #503) [2019-Q3]
-   -  ☒ Add ParamViewer support (PR #519) [2019-Q3]
-   -  ☒ Add setting of NPs constant/fixed (PR #653) [2019-Q3]
-   -  ☒ Implement pdf as subclass of distributions (PR #551) [2019-Q3]
-   -  ☒ Add sampling with toys (PR #558) [2019-Q3]
-   -  ☐ Make general modeling choices (e.g., Issue #293) [2019-Q4 →
+   -  |check| Batch support (PR #503) [2019-Q3]
+   -  |check| Add ParamViewer support (PR #519) [2019-Q3]
+   -  |check| Add setting of NPs constant/fixed (PR #653) [2019-Q3]
+   -  |check| Implement pdf as subclass of distributions (PR #551) [2019-Q3]
+   -  |check| Add sampling with toys (PR #558) [2019-Q3]
+   -  |uncheck| Make general modeling choices (e.g., Issue #293) [2019-Q4 →
       2020-Q1]
-   -  ☐ Add “discovery” test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
-   -  ☐ Add better Model creation [2019-Q4 → 2020-Q1]
-   -  ☐ Add background model support (Issue #514) [2019-Q4 → 2020-Q1]
-   -  ☐ Develop interface for the optimizers similar to tensor/backend
+   -  |uncheck| Add “discovery” test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
+   -  |uncheck| Add better Model creation [2019-Q4 → 2020-Q1]
+   -  |uncheck| Add background model support (Issue #514) [2019-Q4 → 2020-Q1]
+   -  |uncheck| Develop interface for the optimizers similar to tensor/backend
       [2019-Q4 → 2020-Q1]
-   -  ☒ Migrate to TensorFlow v2.0 (PR #541) [2019-Q4]
-   -  ☒ Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4
+   -  |check| Migrate to TensorFlow v2.0 (PR #541) [2019-Q4]
+   -  |check| Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4
       (last week of December 2019)]
-   -  ☐ Finalize public API [2020-Q1]
-   -  ☐ Integrate pyfitcore/Statisfactory API [2020-Q1]
+   -  |uncheck| Finalize public API [2020-Q1]
+   -  |uncheck| Integrate pyfitcore/Statisfactory API [2020-Q1]
 
 4. **Research**
 
-   -  ☐ Add pyfitcore/Statisfactory integrations (Issue #344, `zfit
+   -  |uncheck| Add pyfitcore/Statisfactory integrations (Issue #344, `zfit
       Issue 120 <https://github.com/zfit/zfit/issues/120>`__) [2019-Q4]
-   -  ☐ Hardware acceleration scaling studies (Issues #93, #301)
+   -  |uncheck| Hardware acceleration scaling studies (Issues #93, #301)
       [2019-Q4 → 2020-Q1]
-   -  ☐ Speedup through Numba (Issue #364) [2019-Q3 → 2019-Q4]
-   -  ☐ Dask backend (Issue #259) [2019-Q3 → 2020-Q1]
-   -  ☐ Attempt to use pyhf as fitting tool for full Analysis Systems
+   -  |uncheck| Speedup through Numba (Issue #364) [2019-Q3 → 2019-Q4]
+   -  |uncheck| Dask backend (Issue #259) [2019-Q3 → 2020-Q1]
+   -  |uncheck| Attempt to use pyhf as fitting tool for full Analysis Systems
       pipeline test in early 2020 [2019-Q4 → 2020-Q1]
-   -  ☐ pyhf should satisfy `IRIS-HEP Analysis Systems
+   -  |uncheck| pyhf should satisfy `IRIS-HEP Analysis Systems
       Milestone <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
       “`GPU/accelerator-based implementation of statistical and other
       appropriate
@@ -146,16 +146,24 @@ Roadmap as Gantt Chart
 Presentations During Roadmap Timeline
 -------------------------------------
 
--  ☒ `Talk at IRIS-HEP Institute
+-  |check| `Talk at IRIS-HEP Institute
    Retreat <https://indico.cern.ch/event/840472/contributions/3564386/>`__
    (September 12-13th, 2019)
--  ☒ Talk at `PyHEP 2019 <https://indico.cern.ch/event/833895/>`__
+-  |check| Talk at `PyHEP 2019 <https://indico.cern.ch/event/833895/>`__
    (October 16-18th, 2019)
--  ☒ `Talk at CHEP
+-  |check| `Talk at CHEP
    2019 <https://indico.cern.ch/event/773049/contributions/3476143/>`__
    (November 4-8th, 2019)
--  ☒ `Poster at CHEP
+-  |check| `Poster at CHEP
    2019 <https://indico.cern.ch/event/773049/contributions/3476180/>`__
    (November 4-8th, 2019)
 
 .. |Seibert Heirarchy of Needs SciPy 2019| image:: https://pbs.twimg.com/media/EBYojw8XUAERJhZ?format=png
+
+.. |check| raw:: html
+
+    <input checked=""  type="checkbox">
+
+.. |uncheck| raw:: html
+
+    <input type="checkbox">
