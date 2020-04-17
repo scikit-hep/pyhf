@@ -384,26 +384,16 @@ def test_percentile(backend):
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+
     assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
     # TODO: Unify this with NumPy through TFP team fixing difference
     if tb.name == "tensorflow":
         assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 4.0
-    # TODO: Unify this with NumPy thorugh JAX team implimenting
-    elif tb.name == "jax":
-        with pytest.raises(NotImplementedError):
-            assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
     else:
         assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
-    # TODO: Unify this with NumPy thorugh JAX team implimenting
-    if tb.name == "jax":
-        with pytest.raises(NotImplementedError):
-            assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
-            assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
-            assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
-    else:
-        assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
-        assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
-        assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
 
 
 def test_tensor_tile(backend):
