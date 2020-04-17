@@ -22,7 +22,7 @@ As a general overview that will include:
 
 -  Issue cleanup
 -  Adding core feature support
--  “pyhf evolution”: integration with columnar data analysis systems
+-  "pyhf evolution": integration with columnar data analysis systems
 -  GPU support and testing
 -  Publications
 
@@ -71,11 +71,11 @@ Roadmap
       `pyOpenSci <https://www.pyopensci.org/>`__ [2019-Q4 → 2020-Q2]
    -  |uncheck| Contribute to `IRIS-HEP Analysis Systems
       Milestones <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
-      “`Initial roadmap for ecosystem
-      coherency <https://github.com/iris-hep/project-milestones/issues/8>`__”
-      and “`Initial roadmap for high-level cyberinfrastructure
+      "`Initial roadmap for ecosystem
+      coherency <https://github.com/iris-hep/project-milestones/issues/8>`__"
+      and "`Initial roadmap for high-level cyberinfrastructure
       components of analysis
-      system <https://github.com/iris-hep/project-milestones/issues/11>`__”
+      system <https://github.com/iris-hep/project-milestones/issues/11>`__"
       [2019-Q4 → 2020-Q2]
 
 2. **Revision and Maintenance**
@@ -105,7 +105,7 @@ Roadmap
    -  |check| Add sampling with toys (PR #558) [2019-Q3]
    -  |uncheck| Make general modeling choices (e.g., Issue #293) [2019-Q4 →
       2020-Q1]
-   -  |uncheck| Add “discovery” test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
+   -  |uncheck| Add "discovery" test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
    -  |uncheck| Add better Model creation [2019-Q4 → 2020-Q1]
    -  |uncheck| Add background model support (Issue #514) [2019-Q4 → 2020-Q1]
    -  |uncheck| Develop interface for the optimizers similar to tensor/backend
@@ -128,12 +128,12 @@ Roadmap
       pipeline test in early 2020 [2019-Q4 → 2020-Q1]
    -  |uncheck| pyhf should satisfy `IRIS-HEP Analysis Systems
       Milestone <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
-      “`GPU/accelerator-based implementation of statistical and other
+      "`GPU/accelerator-based implementation of statistical and other
       appropriate
-      components <https://github.com/iris-hep/project-milestones/issues/15>`__”
-      [2020-Q1 → 2020-Q2] and contributes to “`Benchmarking and
+      components <https://github.com/iris-hep/project-milestones/issues/15>`__"
+      [2020-Q1 → 2020-Q2] and contributes to "`Benchmarking and
       assessment of prototype analysis system
-      components <https://github.com/iris-hep/project-milestones/issues/17>`__”
+      components <https://github.com/iris-hep/project-milestones/issues/17>`__"
       [2020-Q3 → 2020-Q4]
 
 Roadmap as Gantt Chart
