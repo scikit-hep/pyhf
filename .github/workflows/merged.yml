@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Trigger Binder build
       run: |
         # Use Binder build API to trigger repo2docker to build image on GKE and OVH Binder Federation clusters
