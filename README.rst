@@ -217,8 +217,8 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__
 
 .. |check| raw:: html
 
-    <input checked=""  type="checkbox">
+    <input checked=""  type="checkbox" disabled="true">
 
 .. |uncheck| raw:: html
 
-    <input type="checkbox">
+    <input type="checkbox" disabled="true">
