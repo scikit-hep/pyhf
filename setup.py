@@ -40,7 +40,6 @@ extras_require['test'] = sorted(
             'papermill~=1.0',
             'nteract-scrapbook~=0.2',
             'check-manifest',
-            'matplotlib',
             'jupyter',
             'uproot~=3.3',
             'graphviz',
