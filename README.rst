@@ -47,21 +47,21 @@ What does it support
 --------------------
 
 Implemented variations:
-  - |check| HistoSys
-  - |check| OverallSys
-  - |check| ShapeSys
-  - |check| NormFactor
-  - |check| Multiple Channels
-  - |check| Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
-  - |check| ShapeFactor
-  - |check| StatError
-  - |check| Lumi Uncertainty
+  - ☑ HistoSys
+  - ☑ OverallSys
+  - ☑ ShapeSys
+  - ☑ NormFactor
+  - ☑ Multiple Channels
+  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☑ ShapeFactor
+  - ☑ StatError
+  - ☑ Lumi Uncertainty
 
 Computational Backends:
-  - |check| NumPy
-  - |check| PyTorch
-  - |check| TensorFlow
-  - |check| JAX
+  - ☑ NumPy
+  - ☑ PyTorch
+  - ☑ TensorFlow
+  - ☑ JAX
 
 Available Optimizers
 
@@ -79,8 +79,8 @@ Available Optimizers
 Todo
 ----
 
--  |uncheck| StatConfig
--  |uncheck| Non-asymptotic calculators
+-  ☐ StatConfig
+-  ☐ Non-asymptotic calculators
 
 results obtained from this package are validated against output computed
 from HistFactory workspaces
@@ -218,11 +218,3 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Docker Pulls| image:: https://img.shields.io/docker/pulls/pyhf/pyhf.svg
    :target: https://hub.docker.com/r/pyhf/pyhf/
-
-.. |check| raw:: html
-
-    <input checked=""  type="checkbox" disabled="true">
-
-.. |uncheck| raw:: html
-
-    <input type="checkbox" disabled="true">
