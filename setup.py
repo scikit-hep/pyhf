@@ -44,7 +44,7 @@ extras_require['test'] = sorted(
             'uproot~=3.3',
             'graphviz',
             'jsonpatch',
-            'black;python_version>="3.6"',  # Black is Python3 only
+            'black',
         ]
     )
 )
