@@ -51,7 +51,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
     'nbsphinx',
-    'm2r',
     'sphinx_issues',
     'sphinx_copybutton',
     'xref',
