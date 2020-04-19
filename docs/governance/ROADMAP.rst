@@ -162,8 +162,8 @@ Presentations During Roadmap Timeline
 
 .. |check| raw:: html
 
-    <input checked=""  type="checkbox">
+    <input checked=""  type="checkbox" disabled="true">
 
 .. |uncheck| raw:: html
 
-    <input type="checkbox">
+    <input type="checkbox" disabled="true">
