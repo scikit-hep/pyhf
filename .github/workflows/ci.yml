@@ -161,8 +161,11 @@ jobs:
       run: docker images
     - name: Run CLI API check
       run: |
+        echo "pyhf"
         docker run --rm pyhf/pyhf:test
+        echo "pyhf --version"
         docker run --rm pyhf/pyhf:test --version
+        echo "pyhf --help"
         docker run --rm pyhf/pyhf:test --help
     - name: Check for curl
       run: docker run --rm --entrypoint /bin/bash pyhf/pyhf:test -c "which curl"
