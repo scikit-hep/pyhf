@@ -46,10 +46,7 @@ def test_import_prepHistFactory_withProgress(tmpdir, script_runner):
 
 
 def test_import_prepHistFactory_stdout(tmpdir, script_runner):
-    temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/'.format(
-        temp.strpath
-    )
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert ret.stdout != ''
@@ -158,14 +155,12 @@ def test_patch(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = 'pyhf cls {0:s} --patch -'.format(temp.strpath, patch.strpath)
+    command = f'pyhf cls {temp.strpath:s} --patch -'
 
     ret = script_runner.run(*shlex.split(command), stdin=patch)
     assert ret.success
 
-    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch -'.format(
-        temp.strpath, tmpdir.mkdir('output_2').strpath, patch.strpath
-    )
+    command = f"pyhf json2xml {temp.strpath:s} --output-dir {tmpdir.mkdir('output_2').strpath:s} --patch -"
     ret = script_runner.run(*shlex.split(command), stdin=patch)
     assert ret.success
 
