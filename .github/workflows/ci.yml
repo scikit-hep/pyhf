@@ -167,5 +167,9 @@ jobs:
         docker run --rm pyhf/pyhf:test --version
         printf "\npyhf --help\n"
         docker run --rm pyhf/pyhf:test --help
-    - name: Check for curl
-      run: docker run --rm --entrypoint /bin/bash pyhf/pyhf:test -c "which curl"
+    - name: Check for curl and tar
+      run: >-
+        docker run --rm
+        --entrypoint /bin/bash
+        pyhf/pyhf:test
+        -c "which curl; which tar"
