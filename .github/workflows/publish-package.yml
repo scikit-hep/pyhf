@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      # Get full history and all tags for dev versioning to work
-      with:
-        fetch-depth: 0
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      # Get history and tags for dev versioning to work
+    - run: |
+        git fetch --prune --unshallow
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
@@ -30,6 +30,15 @@ jobs:
     - name: Build a binary wheel and a source tarball
       run: |
         python -m pep517.build --source --binary --out-dir dist/ .
+    - name: Verify versioning is working
+      run: |
+        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        echo "pep517.build named built distribution: ${wheel_name}"
+        if [[ "${wheel_name}" == *"pyhf-0.1.dev"* ]]; then
+          echo "pep517 is lacking the history and tags required to determine version number"
+          echo "intentionally erroring with 'return 1' now"
+          return 1
+        fi
     - name: Verify the distribution
       run: twine check dist/*
     - name: Publish distribution 📦 to Test PyPI
