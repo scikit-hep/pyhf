@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo-small.png
    :alt: pyhf logo
    :width: 320
    :align: center
