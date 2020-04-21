@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      # Get full history and all tags for dev versioning to work
       with:
         fetch-depth: 0
-    # Fetch all tags
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
