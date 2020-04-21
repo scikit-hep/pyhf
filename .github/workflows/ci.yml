@@ -22,11 +22,10 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Free disk space
+    - name: Check disk space
       # WARNING: Needed due to GitHub Actions disk space regression on Linux runners
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt-get clean
         df -h
     - name: Install dependencies
       run: |
@@ -76,10 +75,9 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Free disk space
+    - name: Check disk space
       # WARNING: Needed due to GitHub Actions disk space regression on Linux runners
       run: |
-        sudo apt-get clean
         df -h
     - name: Install dependencies
       run: |
@@ -103,10 +101,9 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Free disk space
+    - name: Check disk space
       # WARNING: Needed due to GitHub Actions disk space regression on Linux runners
       run: |
-        sudo apt-get clean
         df -h
     - name: Install dependencies
       run: |
