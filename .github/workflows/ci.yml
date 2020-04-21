@@ -153,8 +153,23 @@ jobs:
       with:
         repository: pyhf/pyhf
         dockerfile: docker/Dockerfile
+        tags: test
         tag_with_sha: true
         tag_with_ref: true
         push: false
     - name: List built images
       run: docker images
+    - name: Run CLI API check
+      run: |
+        printf "\npyhf\n"
+        docker run --rm pyhf/pyhf:test
+        printf "\npyhf --version\n"
+        docker run --rm pyhf/pyhf:test --version
+        printf "\npyhf --help\n"
+        docker run --rm pyhf/pyhf:test --help
+    - name: Check for curl and tar
+      run: >-
+        docker run --rm
+        --entrypoint /bin/bash
+        pyhf/pyhf:test
+        -c "which curl; which tar"
