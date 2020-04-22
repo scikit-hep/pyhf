@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      # Get history and tags for dev versioning to work
+    - run: |
+        git fetch --prune --unshallow
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
@@ -26,17 +30,39 @@ jobs:
     - name: Build a binary wheel and a source tarball
       run: |
         python -m pep517.build --source --binary --out-dir dist/ .
+    - name: Verify untagged commits have dev versions
+      if: "!startsWith(github.ref, 'refs/tags/')"
+      run: |
+        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
+          echo "pep517.build incorrectly named built distribution: ${wheel_name}"
+          echo "pep517 is lacking the history and tags required to determine version number"
+          echo "intentionally erroring with 'return 1' now"
+          return 1
+        fi
+        echo "pep517.build named built distribution: ${wheel_name}"
+    - name: Verify tagged commits don't have dev versions
+      if: startsWith(github.ref, 'refs/tags')
+      run: |
+        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        if [[ "${wheel_name}" == *"dev"* ]]; then
+          echo "pep517.build incorrectly named built distribution: ${wheel_name}"
+          echo "this is incorrrectly being treated as a dev release"
+          echo "intentionally erroring with 'return 1' now"
+          return 1
+        fi
+        echo "pep517.build named built distribution: ${wheel_name}"
     - name: Verify the distribution
       run: twine check dist/*
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
-      uses: pypa/gh-action-pypi-publish@v1.0.0a0
+      uses: pypa/gh-action-pypi-publish@v1.1.0
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/pyhf'
-      uses: pypa/gh-action-pypi-publish@v1.0.0a0
+      uses: pypa/gh-action-pypi-publish@v1.1.0
       with:
         password: ${{ secrets.pypi_password }}
