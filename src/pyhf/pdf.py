@@ -222,10 +222,6 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        # measurement_name is passed in via Workspace::model and this is a bug. We'll remove it here for now
-        # but needs to be fixed upstream. #836 is filed to keep track.
-        config_kwargs.pop('measurement_name', None)
-
         poiname = config_kwargs.pop('poiname', 'mu')
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}

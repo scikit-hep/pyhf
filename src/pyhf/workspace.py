@@ -368,14 +368,25 @@ class Workspace(_ChannelSummaryMixin, dict):
         """
         Create a model object with/without patches applied.
 
+        See :func:`pyhf.workspace.Workspace.get_measurement` and :class:`pyhf.pdf.Model` for possible keyword arguments.
+
         Args:
             patches: A list of JSON patches to apply to the model specification
+            config_kwargs: Possible keyword arguments for the measurement and model configuration
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
 
         """
-        measurement = self.get_measurement(**config_kwargs)
+
+        poi_name = config_kwargs.pop('poi_name', None)
+        measurement_name = config_kwargs.pop('measurement_name', None)
+        measurement_index = config_kwargs.pop('measurement_index', None)
+        measurement = self.get_measurement(
+            poi_name=poi_name,
+            measurement_name=measurement_name,
+            measurement_index=measurement_index,
+        )
         log.debug(
             'model being created for measurement {0:s}'.format(measurement['name'])
         )
