@@ -358,7 +358,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                         f"The measurement index {measurement_index} is out of bounds as only {len(self.measurement_names)} measurement(s) have been defined."
                     )
         else:
-            raise exceptions.InvalidMeasurment("No measurements have been defined.")
+            raise exceptions.InvalidMeasurement("No measurements have been defined.")
 
         utils.validate(measurement, 'measurement.json', self.version)
         return measurement
