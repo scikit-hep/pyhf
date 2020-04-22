@@ -222,8 +222,8 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        # measurement_name is explicitly removed in cases where the model is created using poi_name, multiple
-        # measurements are there but the first one is taken or if measurement is defined as None in the argument
+        # measurement_name is passed in via Workspace::model and this is a bug. We'll remove it here for now
+        # but needs to be fixed upstream. #836 is filed to keep track.
         config_kwargs.pop('measurement_name', None)
 
         poiname = config_kwargs.pop('poiname', 'mu')
