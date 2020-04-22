@@ -701,3 +701,11 @@ def test_combine_workspace(workspace_factory, join):
     assert set(combined.channels) == set(ws.channels + new_ws.channels)
     assert set(combined.samples) == set(ws.samples + new_ws.samples)
     assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
+
+
+def test_workspace_equality(workspace_factory):
+    ws = workspace_factory()
+    ws_other = workspace_factory()
+    assert ws == ws
+    assert ws == ws_other
+    assert ws != 'not a workspace'
