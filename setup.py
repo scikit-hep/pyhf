@@ -96,7 +96,7 @@ setup(
         'scipy',  # requires numpy, which is required by pyhf and tensorflow
         'click>=6.0',  # for console scripts,
         'tqdm',  # for readxml
-        'jsonschema>=v3.2.0',  # for utils
+        'jsonschema>=3.2.0',  # for utils
         'jsonpatch',
         'pyyaml',  # for parsing CLI equal-delimited options
     ],
