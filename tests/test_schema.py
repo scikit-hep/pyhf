@@ -66,7 +66,7 @@ def test_one_sample_missing_modifiers():
             }
         ]
     }
-    pyhf.Model(spec, poiname='mypoi')
+    pyhf.Model(spec, poi_name='mypoi')
 
 
 def test_add_unknown_modifier():
@@ -207,7 +207,7 @@ def test_parameters_definition():
         ],
         'parameters': [{'name': 'mypoi'}],
     }
-    pyhf.Model(spec, poiname='mypoi')
+    pyhf.Model(spec, poi_name='mypoi')
 
 
 def test_parameters_incorrect_format():
@@ -230,7 +230,7 @@ def test_parameters_incorrect_format():
         'parameters': {'a': 'fake', 'object': 2},
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Model(spec, poiname='mypoi')
+        pyhf.Model(spec, poi_name='mypoi')
 
 
 def test_parameters_duplicated():
@@ -253,7 +253,7 @@ def test_parameters_duplicated():
         'parameters': [{'name': 'mypoi'}, {'name': 'mypoi'}],
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.Model(spec, poiname='mypoi')
+        pyhf.Model(spec, poi_name='mypoi')
 
 
 def test_parameters_all_props():
@@ -275,7 +275,7 @@ def test_parameters_all_props():
         ],
         'parameters': [{'name': 'mypoi', 'inits': [1], 'bounds': [[0, 1]]}],
     }
-    pyhf.Model(spec, poiname='mypoi')
+    pyhf.Model(spec, poi_name='mypoi')
 
 
 @pytest.mark.parametrize(
@@ -319,7 +319,7 @@ def test_parameters_bad_parameter(bad_parameter):
         'parameters': [bad_parameter],
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Model(spec, poiname='mypoi')
+        pyhf.Model(spec, poi_name='mypoi')
 
 
 @pytest.mark.parametrize(
@@ -345,4 +345,4 @@ def test_parameters_normfactor_bad_attribute(bad_parameter):
         'parameters': [bad_parameter],
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.Model(spec, poiname='mypoi')
+        pyhf.Model(spec, poi_name='mypoi')

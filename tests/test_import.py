@@ -157,7 +157,7 @@ def test_import_prepHistFactory():
         'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
-    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     data = [
         binvalue
@@ -222,7 +222,7 @@ def test_import_histosys():
         'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
-    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     channels = {channel['name']: channel for channel in pdf.spec['channels']}
 
@@ -264,7 +264,7 @@ def test_import_shapesys():
         'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
-    pdf = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     channels = {channel['name']: channel for channel in pdf.spec['channels']}
 

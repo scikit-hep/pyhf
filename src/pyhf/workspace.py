@@ -400,7 +400,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poiname=measurement['config']['poi'], **config_kwargs)
+        return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
 
     def data(self, model, with_aux=True):
         """
