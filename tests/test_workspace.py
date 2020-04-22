@@ -77,6 +77,13 @@ def test_get_measurement_nonexist(workspace_factory):
     assert 'nonexistent_measurement' in str(excinfo.value)
 
 
+def test_get_measurement_index_outofbounds(workspace_factory):
+    w = workspace_factory()
+    with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
+        w.get_measurement(measurement_index=9999)
+    assert 'out of bounds' in str(excinfo.value)
+
+
 def test_get_workspace_measurement_priority(workspace_factory):
     w = workspace_factory()
 
