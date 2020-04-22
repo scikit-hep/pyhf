@@ -78,17 +78,17 @@ def test_get_measurement_nonexist(workspace_factory):
 
 
 def test_get_measurement_index_outofbounds(workspace_factory):
-    w = workspace_factory()
+    ws = workspace_factory()
     with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
-        w.get_measurement(measurement_index=9999)
+        ws.get_measurement(measurement_index=9999)
     assert 'out of bounds' in str(excinfo.value)
 
 
 def test_get_measurement_no_measurements_defined(workspace_factory):
-    w = workspace_factory()
-    w.measurement_names = []
+    ws = workspace_factory()
+    ws.measurement_names = []
     with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
-        w.get_measurement()
+        ws.get_measurement()
     assert 'No measurements have been defined' in str(excinfo.value)
 
 
