@@ -224,7 +224,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         # measurement_name is explicitly removed in cases where the model is created using poi_name, multiple
         # measurements are there but the first one is taken or if measurement is defined as None in the argument
-        _unwanted_measurement_name = config_kwargs.pop('measurement_name', None)
+        config_kwargs.pop('measurement_name', None)
 
         poiname = config_kwargs.pop('poiname', 'mu')
 
