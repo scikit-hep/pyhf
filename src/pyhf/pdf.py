@@ -222,11 +222,21 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        poiname = config_kwargs.get('poiname', 'mu')
+        # measurement_name is passed in via Workspace::model and this is a bug. We'll remove it here for now
+        # but needs to be fixed upstream. #836 is filed to keep track.
+        config_kwargs.pop('measurement_name', None)
+
+        poiname = config_kwargs.pop('poiname', 'mu')
+
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
-        self.modifier_settings = (
-            config_kwargs.get('modifier_settings') or default_modifier_settings
+        self.modifier_settings = config_kwargs.pop(
+            'modifier_settings', default_modifier_settings
         )
+
+        if config_kwargs:
+            raise KeyError(
+                f"""Unexpected keyword argument(s): '{"', '".join(config_kwargs.keys())}'"""
+            )
 
         self.par_map = {}
         self.par_order = []
