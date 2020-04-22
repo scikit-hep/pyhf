@@ -16,5 +16,11 @@ RUN apt-get -qq -y update && \
     python -m pip list
 
 FROM base
+RUN apt-get -qq -y update && \
+    apt-get -qq -y install --no-install-recommends \
+        curl && \
+    apt-get -y autoclean && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt-get/lists/*
 COPY --from=builder /usr/local /usr/local
 ENTRYPOINT ["/usr/local/bin/pyhf"]

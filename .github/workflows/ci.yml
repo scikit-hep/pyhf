@@ -17,7 +17,7 @@ jobs:
         python-version: [3.6, 3.7]
 
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
@@ -65,7 +65,7 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
@@ -87,7 +87,7 @@ jobs:
         python-version: [3.7]
 
     steps:
-    - uses: actions/checkout@v1.2.0
+    - uses: actions/checkout@v2
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
@@ -105,7 +105,7 @@ jobs:
         pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/workspace.py src/pyhf/probability.py src/pyhf/interpolators src/pyhf/infer src/pyhf/optimize src/pyhf/contrib src/pyhf/cli
     - name: Test and build docs
       run: |
-        python -m doctest README.md
+        python -m doctest README.rst
         python setup.py build_sphinx
         touch docs/_build/html/.nojekyll
     - name: Check schemas are copied over
@@ -137,8 +137,23 @@ jobs:
       with:
         repository: pyhf/pyhf
         dockerfile: docker/Dockerfile
+        tags: test
         tag_with_sha: true
         tag_with_ref: true
         push: false
     - name: List built images
       run: docker images
+    - name: Run CLI API check
+      run: |
+        printf "\npyhf\n"
+        docker run --rm pyhf/pyhf:test
+        printf "\npyhf --version\n"
+        docker run --rm pyhf/pyhf:test --version
+        printf "\npyhf --help\n"
+        docker run --rm pyhf/pyhf:test --help
+    - name: Check for curl and tar
+      run: >-
+        docker run --rm
+        --entrypoint /bin/bash
+        pyhf/pyhf:test
+        -c "which curl; which tar"

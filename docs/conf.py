@@ -51,7 +51,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
     'nbsphinx',
-    'm2r',
     'sphinx_issues',
     'sphinx_copybutton',
     'xref',
@@ -112,7 +111,13 @@ language = None
 #
 # today_fmt = '%B %d, %Y'
 
-autodoc_mock_imports = ['tensorflow', 'torch', 'iminuit', 'tensorflow_probability']
+autodoc_mock_imports = [
+    'tensorflow',
+    'torch',
+    'jax',
+    'iminuit',
+    'tensorflow_probability',
+]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -318,7 +323,7 @@ latex_documents = [
         master_doc,
         'pyhf.tex',
         u'pyhf Documentation',
-        u'Lukas Heinrich, Matthew Feickert',
+        u'Lukas Heinrich, Matthew Feickert, Giordon Stark',
         'manual',
     )
 ]

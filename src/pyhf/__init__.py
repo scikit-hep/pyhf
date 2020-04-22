@@ -45,7 +45,7 @@ def set_backend(backend, custom_optimizer=None):
         'numpy'
 
     Args:
-        backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, and PyTorch
+        backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
 
     Returns:
