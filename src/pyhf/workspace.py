@@ -339,10 +339,9 @@ class Workspace(_ChannelSummaryMixin, dict):
                             measurement_name
                         )
                     )
-                else:
-                    measurement = self['measurements'][
-                        self.measurement_names.index(measurement_name)
-                    ]
+                measurement = self['measurements'][
+                    self.measurement_names.index(measurement_name)
+                ]
             else:
                 if measurement_index is None and len(self.measurement_names) > 1:
                     log.warning(
