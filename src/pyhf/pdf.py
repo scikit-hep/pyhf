@@ -222,12 +222,11 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        poiname = config_kwargs.pop('poiname', 'mu')
-
         # measurement_name is explicitly removed in cases where the model is created using poi_name, multiple
         # measurements are there but the first one is taken or if measurement is defined as None in the argument
-        if 'measurement_name' in config_kwargs:
-            del config_kwargs['measurement_name']
+        _unwanted_measurement_name = config_kwargs.pop('measurement_name', None)
+
+        poiname = config_kwargs.pop('poiname', 'mu')
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
         self.modifier_settings = config_kwargs.pop(
