@@ -493,7 +493,7 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pyhf.Model(spec, poiname='reused_name')
+        pyhf.Model(spec, poi_name='reused_name')
 
 
 def test_override_paramset_defaults():
@@ -596,7 +596,7 @@ def test_lumi_np_scaling():
             }
         ],
     }
-    pdf = pyhf.pdf.Model(spec, poiname="SigXsecOverSM")
+    pdf = pyhf.pdf.Model(spec, poi_name="SigXsecOverSM")
 
     poi_slice = pdf.config.par_slice('SigXsecOverSM')
     lumi_slice = pdf.config.par_slice('lumi')

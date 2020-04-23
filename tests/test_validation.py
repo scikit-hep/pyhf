@@ -779,7 +779,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         'channels': parsed_xml_before['channels'],
         'parameters': parsed_xml_before['measurements'][0]['config']['parameters'],
     }
-    pdf_before = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf_before = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     tmpconfig = tmpdir.mkdir('config')
     tmpdata = tmpdir.mkdir('data')
@@ -797,7 +797,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         'channels': parsed_xml_after['channels'],
         'parameters': parsed_xml_after['measurements'][0]['config']['parameters'],
     }
-    pdf_after = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf_after = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     data_before = [
         binvalue

@@ -295,8 +295,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         """Representation of the Workspace."""
         return object.__repr__(self)
 
-    # NB: this is a wrapper function to validate the returned measurement object against the spec
-    def get_measurement(self, **config_kwargs):
+    def get_measurement(
+        self, poi_name=None, measurement_name=None, measurement_index=None
+    ):
         """
         Get (or create) a measurement object.
 
@@ -319,22 +320,14 @@ class Workspace(_ChannelSummaryMixin, dict):
             :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
 
         """
-        m = self._get_measurement(**config_kwargs)
-        utils.validate(m, 'measurement.json', self.version)
-        return m
-
-    def _get_measurement(self, **config_kwargs):
-        """See `Workspace::get_measurement`."""
-        poi_name = config_kwargs.pop('poi_name', None)
-        if poi_name:
-            return {
+        measurement = None
+        if poi_name is not None:
+            measurement = {
                 'name': 'NormalMeasurement',
                 'config': {'poi': poi_name, 'parameters': []},
             }
-
-        if self.measurement_names:
-            measurement_name = config_kwargs.pop('measurement_name', None)
-            if measurement_name:
+        elif self.measurement_names:
+            if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
                     log.debug(
                         'measurements defined:\n\t{0:s}'.format(
@@ -346,36 +339,53 @@ class Workspace(_ChannelSummaryMixin, dict):
                             measurement_name
                         )
                     )
-                return self['measurements'][
+                measurement = self['measurements'][
                     self.measurement_names.index(measurement_name)
                 ]
+            else:
+                if measurement_index is None and len(self.measurement_names) > 1:
+                    log.warning(
+                        'multiple measurements defined. Taking the first measurement.'
+                    )
 
-            measurement_index = config_kwargs.pop('measurement_index', None)
-            if measurement_index:
-                return self['measurements'][measurement_index]
-
-            if len(self.measurement_names) > 1:
-                log.warning(
-                    'multiple measurements defined. Taking the first measurement.'
+                measurement_index = (
+                    measurement_index if measurement_index is not None else 0
                 )
-            return self['measurements'][0]
+                try:
+                    measurement = self['measurements'][measurement_index]
+                except IndexError:
+                    raise exceptions.InvalidMeasurement(
+                        f"The measurement index {measurement_index} is out of bounds as only {len(self.measurement_names)} measurement(s) have been defined."
+                    )
+        else:
+            raise exceptions.InvalidMeasurement("No measurements have been defined.")
 
-        raise exceptions.InvalidMeasurement(
-            "A measurement was not given to create the Model."
-        )
+        utils.validate(measurement, 'measurement.json', self.version)
+        return measurement
 
     def model(self, **config_kwargs):
         """
         Create a model object with/without patches applied.
 
+        See :func:`pyhf.workspace.Workspace.get_measurement` and :class:`pyhf.pdf.Model` for possible keyword arguments.
+
         Args:
             patches: A list of JSON patches to apply to the model specification
+            config_kwargs: Possible keyword arguments for the measurement and model configuration
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
 
         """
-        measurement = self.get_measurement(**config_kwargs)
+
+        poi_name = config_kwargs.pop('poi_name', None)
+        measurement_name = config_kwargs.pop('measurement_name', None)
+        measurement_index = config_kwargs.pop('measurement_index', None)
+        measurement = self.get_measurement(
+            poi_name=poi_name,
+            measurement_name=measurement_name,
+            measurement_index=measurement_index,
+        )
         log.debug(
             'model being created for measurement {0:s}'.format(measurement['name'])
         )
@@ -389,7 +399,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poiname=measurement['config']['poi'], **config_kwargs)
+        return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
 
     def data(self, model, with_aux=True):
         """
