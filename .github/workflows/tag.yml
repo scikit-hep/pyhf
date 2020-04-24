@@ -44,6 +44,9 @@ jobs:
         fi
     - name: Checkout repository
       uses: actions/checkout@v2
+      # Get history for checkout master to work
+    - run: |
+        git fetch --prune --unshallow
     - name: Set up git user
       run: |
         git config --local user.email "action@github.com"
