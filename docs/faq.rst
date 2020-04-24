@@ -48,6 +48,19 @@ If you are unable to get a Python 3 runtime, versioned Docker images of ``pyhf``
 
 Once you have Python 3 installed, see the :ref:`installation` page to get started.
 
+I validated my workspace by comparing ``pyhf`` and ``HistFactory``, and while the expected CLs matches, the observed CLs is different. Why is this?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Make sure you're using the right test statistic (:math:`q` or :math:`\tilde{q}`) in both situations.
+In ``HistFactory``, the asymptotics calculator, for example, will do something more involved for the observed CLs if you choose a different test statistic.
+
+I ran validation to compare ``HistFitter`` and ``pyhf``, but they don't match exactly. Why not?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``pyhf`` is validated against ``HistFactory``.
+``HistFitter`` makes some particular implementation choices that ``pyhf`` doesn't reproduce.
+Instead of trying to compare ``pyhf`` and ``HistFitter`` you should try to validate them both against ``HistFactory``.
+
 How is ``pyhf`` typeset?
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
