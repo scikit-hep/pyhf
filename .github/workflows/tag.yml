@@ -43,7 +43,7 @@ jobs:
           echo "::set-env name=BV_PART::patch"
         fi
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v1.2.0
     - name: Set up git user
       run: |
         git config --local user.email "action@github.com"
