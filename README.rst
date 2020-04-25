@@ -186,7 +186,7 @@ Authors
 ``pyhf`` is openly developed by Lukas Heinrich, Matthew Feickert, and Giordon Stark.
 
 Please check the `contribution statistics for a list of
-contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__
+contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 
 Matthew Feickert has received support to work on ``pyhf`` provided by NSF
 cooperative agreement `OAC-1836650 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__ (IRIS-HEP)
