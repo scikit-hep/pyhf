@@ -188,6 +188,9 @@ Authors
 Please check the `contribution statistics for a list of
 contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 
+Acknowledgements
+----------------
+
 Matthew Feickert has received support to work on ``pyhf`` provided by NSF
 cooperative agreement `OAC-1836650 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__ (IRIS-HEP)
 and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377>`__ (DIANA/HEP).
