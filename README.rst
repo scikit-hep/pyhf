@@ -183,6 +183,8 @@ BibTeX entry for citation of ``pyhf`` is
 Authors
 -------
 
+``pyhf`` is openly developed by Lukas Heinrich, Matthew Feickert, and Giordon Stark.
+
 Please check the `contribution statistics for a list of
 contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__
 
