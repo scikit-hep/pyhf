@@ -12,7 +12,7 @@ from .. import get_backend
 from .test_statistics import qmu, qmu_tilde
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
+def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -22,12 +22,15 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         init_pars (`tensor`): The initial parameter values to be used for fitting.
         par_bounds (`tensor`): The parameter value bounds to be used for fitting.
+        fixed_vals (`tensor`): Parameters to be held constant in the fit.
 
     Returns:
         Tensor: The Asimov dataset.
 
     """
-    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
+    bestfit_nuisance_asimov = fixed_poi_fit(
+        asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals
+    )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
@@ -118,7 +121,9 @@ class AsymptoticTestStatDistribution(object):
 class AsymptoticCalculator(object):
     """The Asymptotic Calculator."""
 
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False):
+    def __init__(
+        self, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, qtilde=False
+    ):
         """
         Asymptotic Calculator.
 
@@ -127,6 +132,7 @@ class AsymptoticCalculator(object):
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (`tensor`): The initial parameter values to be used for fitting.
             par_bounds (`tensor`): The parameter value bounds to be used for fitting.
+            fixed_vals (`tensor`): Parameters to be held constant in the fit.
             qtilde (`bool`): Whether to use qtilde as the test statistic.
 
         Returns:
@@ -137,6 +143,7 @@ class AsymptoticCalculator(object):
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.fixed_vals = fixed_vals
         self.qtilde = qtilde
         self.sqrtqmuA_v = None
 
@@ -173,7 +180,12 @@ class AsymptoticCalculator(object):
         teststat_func = qmu_tilde if self.qtilde else qmu
 
         qmu_v = teststat_func(
-            poi_test, self.data, self.pdf, self.init_pars, self.par_bounds
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_vals,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
@@ -182,7 +194,12 @@ class AsymptoticCalculator(object):
             asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
         )
         qmuA_v = teststat_func(
-            poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds
+            poi_test,
+            asimov_data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_vals,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
