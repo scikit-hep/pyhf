@@ -122,12 +122,14 @@ jobs:
         [ "$(ls -A docs/_build/html/schemas)" ]
     - name: Deploy docs to GitHub Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      uses: crazy-max/ghaction-github-pages@v1.0.1
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        target_branch: gh-pages
-        build_dir: docs/_build/html
-      env:
-        GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/_build/html
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: Deploy to GitHub pages
 
   docker:
 
