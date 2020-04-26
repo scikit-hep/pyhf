@@ -148,7 +148,7 @@ class AsymptoticCalculator(object):
 
         asimov_mu = 0.0
         asimov_data = generate_asimov_data(
-            asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
+            asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds, self.fixed_vals
         )
         qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds, self.fixed_vals)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
