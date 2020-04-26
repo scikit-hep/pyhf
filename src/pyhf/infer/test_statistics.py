@@ -2,7 +2,7 @@ from .. import get_backend
 from .mle import fixed_poi_fit, fit
 
 
-def qmu(mu, data, pdf, init_pars, par_bounds):
+def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, as defiend in
@@ -25,16 +25,17 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
         init_pars (Tensor): The initial parameters
         par_bounds(Tensor): The bounds on the paramter values
+        fixed_vals(Tensor): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
-        mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
+        mu, data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_val=True
     )
     muhatbhat, unconstrained_fit_lhood_val = fit(
-        data, pdf, init_pars, par_bounds, return_fitted_val=True
+        data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_val=True
     )
     qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     qmu = tensorlib.where(
