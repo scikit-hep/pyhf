@@ -28,7 +28,9 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals
         Tensor: The Asimov dataset.
 
     """
-    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals)
+    bestfit_nuisance_asimov = fixed_poi_fit(
+        asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals
+    )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
@@ -90,7 +92,9 @@ class AsymptoticTestStatDistribution(object):
 class AsymptoticCalculator(object):
     """The Asymptotic Calculator."""
 
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, qtilde=False):
+    def __init__(
+        self, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, qtilde=False
+    ):
         """
         Asymptotic Calculator.
 
@@ -143,14 +147,33 @@ class AsymptoticCalculator(object):
 
         """
         tensorlib, _ = get_backend()
-        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds, self.fixed_vals)
+        qmu_v = qmu(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_vals,
+        )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 0.0
         asimov_data = generate_asimov_data(
-            asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds, self.fixed_vals
+            asimov_mu,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_vals,
         )
-        qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds, self.fixed_vals)
+        qmuA_v = qmu(
+            poi_test,
+            asimov_data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_vals,
+        )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
         if not self.qtilde:  # qmu

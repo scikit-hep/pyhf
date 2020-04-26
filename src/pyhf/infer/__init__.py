@@ -6,7 +6,14 @@ from .calculators import AsymptoticCalculator
 
 
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, qtilde=False, **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    fixed_vals=None,
+    qtilde=False,
+    **kwargs,
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
@@ -75,7 +82,9 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, fixed_vals, qtilde=qtilde)
+    calc = AsymptoticCalculator(
+        data, pdf, init_pars, par_bounds, fixed_vals, qtilde=qtilde
+    )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 

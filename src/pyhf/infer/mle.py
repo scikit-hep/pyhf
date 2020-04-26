@@ -33,10 +33,14 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
-    return opt.minimize(twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs)
+    return opt.minimize(
+        twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
+    )
 
 
-def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
+def fixed_poi_fit(
+    poi_val, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs
+):
     """
     Run a maximum likelihood fit with the POI value fixzed.
 
@@ -50,18 +54,12 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, fixed_val
 
     """
     fixed_params = [(pdf.config.poi_index, poi_val)]
-    if(fixed_vals):
+    if fixed_vals:
         fixed_params += fixed_vals
 
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     return opt.minimize(
-        twice_nll,
-        data,
-        pdf,
-        init_pars,
-        par_bounds,
-        fixed_params,
-        **kwargs,
+        twice_nll, data, pdf, init_pars, par_bounds, fixed_params, **kwargs,
     )
