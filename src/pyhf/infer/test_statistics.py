@@ -7,7 +7,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def _qmu_like(mu, data, pdf, init_pars, par_bounds):
+def _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     """
     Clipped version of _tmu_like where the returned test statistic
     is 0 if muhat > 0 else tmu_like_stat.
@@ -25,7 +25,9 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     return qmu_like_stat
 
 
-def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
+def _tmu_like(
+    mu, data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_pars=False
+):
     """
     Basic Profile Likelihood test statistic.
 
@@ -34,10 +36,10 @@ def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     """
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
-        mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
+        mu, data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_val=True
     )
     muhatbhat, unconstrained_fit_lhood_val = fit(
-        data, pdf, init_pars, par_bounds, return_fitted_val=True
+        data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_val=True
     )
     log_likelihood_ratio = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     tmu_like_stat = tensorlib.astensor(
@@ -48,7 +50,7 @@ def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     return tmu_like_stat
 
 
-def qmu(mu, data, pdf, init_pars, par_bounds):
+def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, as defiend in
@@ -91,6 +93,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_vals(`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -104,10 +107,10 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
             'qmu test statistic used for fit configuration with POI bounded at zero.\n'
             + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
         )
-    return _qmu_like(mu, data, pdf, init_pars, par_bounds)
+    return _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals)
 
 
-def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
+def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     r"""
     The test statistic, :math:`\tilde{q}_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, for models with
@@ -155,6 +158,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_vals(`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
@@ -168,10 +172,10 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
             'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
             + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
         )
-    return _qmu_like(mu, data, pdf, init_pars, par_bounds)
+    return _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals)
 
 
-def tmu(mu, data, pdf, init_pars, par_bounds):
+def tmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`, as defiend in Equation (8)
@@ -208,6 +212,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_vals(`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`t_{\mu}`
@@ -221,10 +226,10 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
             'tmu test statistic used for fit configuration with POI bounded at zero.\n'
             + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.'
         )
-    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals)
 
 
-def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
+def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     r"""
     The test statistic, :math:`\tilde{t}_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`, for models with
@@ -266,6 +271,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_vals(`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`
@@ -279,4 +285,4 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
             'tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
             + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
         )
-    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals)
