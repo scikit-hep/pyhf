@@ -96,11 +96,11 @@ def test_hypotest_q_mu(
             {
                 'name': 'norm_bkgunc',
                 'type': 'histosys',
-                'hi_data': bkg_unc_10pc_up,
-                'lo_data': bkg_unc_10pc_dn,
+                'data': {'hi_data': bkg_unc_10pc_up, 'lo_data': bkg_unc_10pc_dn,},
             },
         ],
     }
+    print(background_sample)
     samples = (
         [background_sample, signal_sample]
         if invert_order
