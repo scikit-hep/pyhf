@@ -116,10 +116,10 @@ def test_hypotest_q_mu(
             norm_bkgunc_idx = idx
     #   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
     param_tests = [
-        None,
-        (norm_bkgunc_idx, 0.0),
-        (norm_bkgunc_idx, -1.0),
-        (norm_bkgunc_idx, 1.0),
+        [],
+        [(norm_bkgunc_idx, 0.0)],
+        [(norm_bkgunc_idx, 1.0)],
+        [(norm_bkgunc_idx, -1.0)],
     ]
 
     data = source['bindata']['data'] + pdf.config.auxdata
@@ -132,7 +132,7 @@ def test_hypotest_q_mu(
     ]
 
     for p in param_tests:
-        fixed_vals = [p]
+        fixed_vals = p
 
         test_statistic = []
         for backend in backends:
