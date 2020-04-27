@@ -75,6 +75,8 @@ def test_hypotest_q_mu(
     """
 
     source = generate_source_static(n_bins)
+    bkg_unc_10pc_up = [x+0.10*x for x in source['bindata']['bkg']]
+    bkg_unc_10pc_dn = [x-0.10*x for x in source['bindata']['bkg']]
 
     signal_sample = {
         'name': 'signal',
@@ -89,7 +91,13 @@ def test_hypotest_q_mu(
             {
                 'name': 'uncorr_bkguncrt',
                 'type': 'shapesys',
-                'data': source['bindata']['bkgerr'],
+                'data': source['bindata']['bkgerr']
+            },
+            {
+                'name': 'norm_bkgunc',
+                'type': 'histosys',
+                'hi_data': bkg_unc_10pc_up,
+                'lo_data': bkg_unc_10pc_dn
             }
         ],
     }
@@ -101,6 +109,14 @@ def test_hypotest_q_mu(
     spec = {'channels': [{'name': 'singlechannel', 'samples': samples}]}
     pdf = pyhf.Model(spec)
 
+#   get norm_bkgunc index to set it constatnt    
+    norm_bkgunc_idx=-1
+    for idx, par in enumerate(pdf.config.par_map):
+        if par == "norm_bkgunc":
+            norm_bkgunc_idx = idx
+#   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
+    param_tests = [None, (norm_bkgunc_idx, 0.0), (norm_bkgunc_idx, -1.0), (norm_bkgunc_idx, 1.0)]
+
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
@@ -110,44 +126,47 @@ def test_hypotest_q_mu(
         pyhf.tensor.jax_backend(),
     ]
 
-    test_statistic = []
-    for backend in backends:
-        pyhf.set_backend(backend)
-
-        q_mu = pyhf.infer.test_statistics.qmu(
-            1.0,
-            data,
-            pdf,
-            pdf.config.suggested_init(),
-            pdf.config.suggested_bounds(),
-            None,
-        )
-        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
-
-    # compare to NumPy/SciPy
-    test_statistic = np.array(test_statistic)
-    numpy_ratio = np.divide(test_statistic, test_statistic[0])
-    numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
-
-    # compare tensor libraries to each other
-    tensors_ratio = np.divide(test_statistic[1], test_statistic[2])
-    tensors_ratio_delta_unity = np.absolute(np.subtract(tensors_ratio, 1))
-
-    try:
-        assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
-    except AssertionError:
-        print(
-            'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
-                tolerance['numpy'], numpy_ratio_delta_unity.tolist()
+    for p in param_tests:
+        fixed_vals = [p]
+        
+        test_statistic = []
+        for backend in backends:
+            pyhf.set_backend(backend)
+    
+            q_mu = pyhf.infer.test_statistics.qmu(
+                1.0,
+                data,
+                pdf,
+                pdf.config.suggested_init(),
+                pdf.config.suggested_bounds(),
+                fixed_vals,
             )
-        )
-        assert False
-    try:
-        assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
-    except AssertionError:
-        print(
-            'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
-                tolerance['tensors'], tensors_ratio_delta_unity.tolist()
+            test_statistic.append(pyhf.tensorlib.tolist(q_mu))
+    
+        # compare to NumPy/SciPy
+        test_statistic = np.array(test_statistic)
+        numpy_ratio = np.divide(test_statistic, test_statistic[0])
+        numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
+    
+        # compare tensor libraries to each other
+        tensors_ratio = np.divide(test_statistic[1], test_statistic[2])
+        tensors_ratio_delta_unity = np.absolute(np.subtract(tensors_ratio, 1))
+    
+        try:
+            assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
+        except AssertionError:
+            print(
+                'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
+                    tolerance['numpy'], numpy_ratio_delta_unity.tolist()
+                )
             )
-        )
-        assert False
+            assert False
+        try:
+            assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
+        except AssertionError:
+            print(
+                'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
+                    tolerance['tensors'], tensors_ratio_delta_unity.tolist()
+                )
+            )
+            assert False
