@@ -346,3 +346,45 @@ def test_parameters_normfactor_bad_attribute(bad_parameter):
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec, poi_name='mypoi')
+
+
+@pytest.mark.parametrize(
+    'patch',
+    [
+        {"op": "add", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "replace", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "test", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "remove", "path": "/foo/0/bar"},
+        {"op": "move", "path": "/foo/0/bar", "from": "/foo/0/baz"},
+        {"op": "copy", "path": "/foo/0/bar", "from": "/foo/0/baz"},
+    ],
+    ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
+)
+def test_jsonpatch(patch):
+    pyhf.utils.validate([patch], 'jsonpatch.json')
+
+
+@pytest.mark.parametrize(
+    'patch',
+    [
+        {"path": "/foo/0/bar"},
+        {"op": "add", "path": "/foo/0/bar", "from": {"foo": [1.0]}},
+        {"op": "add", "path": "/foo/0/bar"},
+        {"op": "add", "value": {"foo": [1.0]}},
+        {"op": "remove"},
+        {"op": "move", "path": "/foo/0/bar"},
+        {"op": "move", "from": "/foo/0/baz"},
+    ],
+    ids=[
+        'noop',
+        'add_from_novalue',
+        'add_novalue',
+        'add_nopath',
+        'remove_nopath',
+        'move_nofrom',
+        'move_nopath',
+    ],
+)
+def test_jsonpatch_fail(patch):
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.utils.validate([patch], 'jsonpatch.json')
