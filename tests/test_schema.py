@@ -1,5 +1,6 @@
 import pyhf
 import pytest
+import json
 
 
 def test_no_channels():
@@ -390,19 +391,13 @@ def test_jsonpatch_fail(patch):
         pyhf.utils.validate([patch], 'jsonpatch.json')
 
 
-def test_patchset():
-    spec = {
-        'metadata': {
-            'hash': 'md5:1c60e7aff7adf44c2eb27a666598218e04bf2609',
-            'labels': ['mass_stop', 'mass_neutralino'],
-            'description': 'signal patchset for the SUSY Multi-b-jet analysis',
-            'analysis_id': 'SUSY-2018-23',
-        },
-        'patches': [
-            {
-                'metadata': {'name': 'Gtt_2100_5000_800', 'values': [2100, 800]},
-                'patch': [{"op": "add", "path": "/foo/0/bar", "value": {"foo": [1.0]}}],
-            }
-        ],
-    }
-    pyhf.utils.validate(spec, 'patchset.json')
+@pytest.mark.parametrize(
+    'patchset_file',
+    ['patchset_good_1.json', 'patchset_good_2.json'],
+    ids=['patchset_good', 'patchset_good_noanalysis'],
+)
+def test_patchset(datadir, patchset_file):
+    patchset = json.load(open(datadir.join(patchset_file)))
+    pyhf.utils.validate(patchset, 'patchset.json')
+
+
