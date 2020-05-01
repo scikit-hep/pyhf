@@ -32,7 +32,6 @@ def hypotest(
          [0.23526104]
          [0.57304182]]
 
-
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
