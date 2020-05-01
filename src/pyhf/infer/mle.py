@@ -22,12 +22,14 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
     Run a unconstrained maximum likelihood fit.
 
     Args:
-        data (`tensor`): the data
+        data (`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        kwargs: keyword arguments passed through to the optimizer API
+        init_pars (`list`): Values to initialize the model paramters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model paramters are allowed to reach in the fit
+        kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
-        see optimizer API
+        See optimizer API
 
     """
     _, opt = get_backend()
@@ -41,12 +43,14 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
     Run a maximum likelihood fit with the POI value fixzed.
 
     Args:
-        data: the data
+        data: The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        kwargs: keyword arguments passed through to the optimizer API
+        init_pars (`list`): Values to initialize the model paramters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model paramters are allowed to reach in the fit
+        kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
-        see optimizer API
+        See optimizer API
 
     """
     _, opt = get_backend()
