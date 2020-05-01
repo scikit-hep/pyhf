@@ -1,7 +1,6 @@
 import pyhf
 import pytest
 import json
-import pathlib
 
 
 def test_no_channels():
