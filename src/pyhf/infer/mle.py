@@ -31,33 +31,6 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True)
         (array([0.        , 1.0030512 , 0.96266961]), 24.98393521454011)
-        >>> # Run the same fit with a different optimizer
-        ...
-        >>> pyhf.set_backend("numpy", pyhf.optimize.minuit_optimizer(verbose=True))
-        >>> best_fit_result = pyhf.infer.mle.fit(
-        ...     data, model, return_fitted_val=True, return_uncertainties=True
-        ... )
-        ------------------------------------------------------------------
-        | FCN = 24.98                   |      Ncalls=84 (84 total)      |
-        | EDM = 8.09E-07 (Goal: 0.0002) |            up = 1.0            |
-        ------------------------------------------------------------------
-        |  Valid Min.   | Valid Param.  | Above EDM | Reached call limit |
-        ------------------------------------------------------------------
-        |     True      |     True      |   False   |       False        |
-        ------------------------------------------------------------------
-        | Hesse failed  |   Has cov.    | Accurate  | Pos. def. | Forced |
-        ------------------------------------------------------------------
-        |     False     |     True      |   True    |   True    | False  |
-        ------------------------------------------------------------------
-        >>> best_fit_pars = best_fit_result[0][:, 0]
-        >>> best_fit_pars_uncert = best_fit_result[0][:, 1]
-        >>> best_fit_lhood_value = best_fit_result[1]
-        >>> print(best_fit_pars) # doctest: +SKIP
-        [2.23857553e-07 1.00308914e+00 9.62725456e-01]
-        >>> print(best_fit_pars_uncert) # doctest: +SKIP
-        [1.86505494 0.05531769 0.09476047]
-        >>> print(best_fit_lhood_value) # doctest: +SKIP
-        24.983936012961976
 
     Args:
         data (`tensor`): The data
