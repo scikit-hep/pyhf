@@ -34,7 +34,9 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> # Run the same fit with a different optimizer
         ...
         >>> pyhf.set_backend("numpy", pyhf.optimize.minuit_optimizer(verbose=True))
-        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True, return_uncertainties=True) # doctest:+ELLIPSIS
+        >>> best_fit_result = pyhf.infer.mle.fit(
+        ...     data, model, return_fitted_val=True, return_uncertainties=True
+        ... )
         ------------------------------------------------------------------
         | FCN = 24.98                   |      Ncalls=84 (84 total)      |
         | EDM = 8.09E-07 (Goal: 0.0002) |            up = 1.0            |
@@ -47,9 +49,15 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         ------------------------------------------------------------------
         |     False     |     True      |   True    |   True    | False  |
         ------------------------------------------------------------------
-        (array([[2.23857553e-07, 1.86505494e+00],
-               [1.00308914e+00, 5.53176914e-02],
-               [9.62725456e-01, 9.47604673e-02]]), 24.983936012961976)
+        >>> best_fit_pars = best_fit_result[0][:, 0]
+        >>> best_fit_pars_uncert = best_fit_result[0][:, 1]
+        >>> best_fit_lhood_value = best_fit_result[1]
+        >>> print(best_fit_pars) # doctest:+ELLIPSIS
+        [2.23857553e-07 1.00308914e+00 9.62725456e-01]
+        >>> print(best_fit_pars_uncert)
+        [1.86505494 0.05531769 0.09476047]
+        >>> print(best_fit_lhood_value)
+        24.983936012961976
 
     Args:
         data (`tensor`): The data
