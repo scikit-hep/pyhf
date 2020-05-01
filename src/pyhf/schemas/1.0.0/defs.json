@@ -181,11 +181,11 @@
                 "additionalProperties": false
             }
         },
-        "patch": {
+        "jsonpatch": {
             "operation": {
                 "type": "object",
                 "required": [ "op", "path" ],
-                "allOf": [ { "$ref": "#/definitions/patch/path" } ],
+                "allOf": [ { "$ref": "#/definitions/jsonpatch/path" } ],
                 "oneOf": [
                     {
                         "required": [ "value" ],
@@ -231,6 +231,12 @@
                         "description": "A JSON Pointer path.",
                         "type": "string"
                     }
+                }
+            },
+            "patch": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/jsonpatch/operation"
                 }
             }
         }

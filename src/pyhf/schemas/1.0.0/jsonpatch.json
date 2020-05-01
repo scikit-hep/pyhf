@@ -1,8 +1,5 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
     "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/jsonpatch.json",
-    "type": "array",
-    "items": {
-        "$ref": "defs.json#/definitions/patch/operation"
-    }
+    "$ref": "defs.json#/definitions/jsonpatch/patch"
 }
