@@ -182,7 +182,6 @@
             }
         },
         "jsonpatch": {
-            "title": "JSONPatch",
             "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",
             "type": "array",
             "items": {
@@ -241,15 +240,20 @@
             }
         },
         "patchset": {
+            "description": "A set of JSONPatch patches which modify a pyhf workspace",
             "type": "object",
             "properties": {
-                "patches": { "type": "array", "items": { "$ref": "defs.json#/definitions/patchset/patch" } },
-                "metadata": { "$ref": "defs.json#/definitions/patchset/metadata" }
+                "patches": { "$ref": "#/definitions/patchset/patches" },
+                "metadata": { "$ref": "#/definitions/patchset/metadata" }
             },
             "additionalProperties": false,
             "required": ["patches", "metadata"],
             "hash": {
                 "type": "string", "pattern": "^([^:]+:[a-fA-F0-9]+|[a-fA-F0-9]{32}|)$"
+            },
+            "patches": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/patchset/patch" }
             },
             "patch": {
                 "type": "object",
