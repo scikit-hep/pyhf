@@ -253,7 +253,8 @@
             },
             "patches": {
                 "type": "array",
-                "items": { "$ref": "#/definitions/patchset/patch" }
+                "items": { "$ref": "#/definitions/patchset/patch" },
+                "minItems": 1
             },
             "patch": {
                 "type": "object",
