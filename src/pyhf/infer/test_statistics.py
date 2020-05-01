@@ -36,8 +36,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
-        init_pars (`list`): Values to initialize the model paramters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model paramters are allowed to reach in the fit
+        init_pars (`list`): Values to initialize the model parameters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`

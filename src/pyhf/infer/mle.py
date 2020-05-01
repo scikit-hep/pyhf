@@ -62,8 +62,8 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
     Args:
         data (`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model paramters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model paramters are allowed to reach in the fit
+        init_pars (`list`): Values to initialize the model parameters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
@@ -95,8 +95,8 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
     Args:
         data: The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model paramters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model paramters are allowed to reach in the fit
+        init_pars (`list`): Values to initialize the model parameters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
