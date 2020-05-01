@@ -1,0 +1,24 @@
+{
+    "metadata": {
+        "analysis_id": "SUSY-2018-23",
+        "description": "signal patchset for the SUSY Multi-b-jet analysis",
+        "hash": "md5:1c60e7aff7adf44c2eb27a666598218e04bf2609"
+    },
+    "patches": [
+        {
+            "metadata": {
+                "name": "Gtt_2100_5000_800",
+                "values": [2100, 800]
+            },
+            "patch": [
+                {
+                    "op": "add",
+                    "path": "/foo/0/bar",
+                    "value": {
+                        "foo": [1.0]
+                    }
+                }
+            ]
+        }
+    ]
+}

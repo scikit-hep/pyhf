@@ -1,6 +1,7 @@
 import pyhf
 import pytest
 import json
+import pathlib
 
 
 def test_no_channels():
@@ -401,3 +402,28 @@ def test_patchset(datadir, patchset_file):
     pyhf.utils.validate(patchset, 'patchset.json')
 
 
+@pytest.mark.parametrize(
+    'patchset_file',
+    [
+        'patchset_bad_1.json',
+        'patchset_bad_2.json',
+        'patchset_bad_3.json',
+        'patchset_bad_4.json',
+        'patchset_bad_5.json',
+        'patchset_bad_6.json',
+        'patchset_bad_7.json',
+    ],
+    ids=[
+        'bad_label_pattern',
+        'no_patch_name',
+        'empty_patches',
+        'no_patch_values',
+        'no_hash',
+        'no_description',
+        'no_labels',
+    ],
+)
+def test_patchset_fail(datadir, patchset_file):
+    patchset = json.load(open(datadir.join(patchset_file)))
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.utils.validate(patchset, 'patchset.json')
