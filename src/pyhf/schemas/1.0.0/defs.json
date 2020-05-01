@@ -239,6 +239,43 @@
                     "$ref": "#/definitions/jsonpatch/operation"
                 }
             }
+        },
+        "patchset": {
+            "type": "object",
+            "properties": {
+                "patches": { "type": "array", "items": { "$ref": "defs.json#/definitions/patchset/patch" } },
+                "metadata": { "$ref": "defs.json#/definitions/patchset/metadata" }
+            },
+            "additionalProperties": false,
+            "required": ["patches", "metadata"],
+            "hash": {
+                "type": "string", "pattern": "^([^:]+:[a-fA-F0-9]+|[a-fA-F0-9]{32}|)$"
+            },
+            "patch": {
+                "type": "object",
+                "properties": {
+                    "patch": { "$ref": "#/definitions/jsonpatch/patch" },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                            "values": { "type": "array", "items": { "type": "number" } }
+                        },
+                        "required": ["name", "values"]
+                    }
+                },
+                "required": ["metadata", "patch"]
+            },
+            "metadata": {
+                "type": "object",
+                "properties": {
+                    "hash": { "$ref": "#/definitions/patchset/hash" },
+                    "labels": { "type": "array", "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" } },
+                    "description": { "type": "string" },
+                    "analysis_id": { "type": "string" }
+                },
+                "required": ["hash", "labels", "description"]
+            }
         }
     }
 }
