@@ -182,6 +182,12 @@
             }
         },
         "jsonpatch": {
+            "title": "JSONPatch",
+            "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/jsonpatch/operation"
+            },
             "operation": {
                 "type": "object",
                 "required": [ "op", "path" ],
@@ -232,12 +238,6 @@
                         "type": "string"
                     }
                 }
-            },
-            "patch": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/definitions/jsonpatch/operation"
-                }
             }
         },
         "patchset": {
@@ -254,7 +254,7 @@
             "patch": {
                 "type": "object",
                 "properties": {
-                    "patch": { "$ref": "#/definitions/jsonpatch/patch" },
+                    "patch": { "$ref": "#/definitions/jsonpatch" },
                     "metadata": {
                         "type": "object",
                         "properties": {
