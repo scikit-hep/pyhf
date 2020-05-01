@@ -70,7 +70,19 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
 def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs):
     """
-    Run a maximum likelihood fit with the POI value fixzed.
+    Run a maximum likelihood fit with the POI value fixed.
+
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_poi = 1.0
+        >>> pyhf.infer.mle.fixed_poi_fit(test_poi, data, model, return_fitted_val=True)
+        (array([1.        , 0.97224597, 0.87553894]), 28.92218013492061)
 
     Args:
         data: The data
