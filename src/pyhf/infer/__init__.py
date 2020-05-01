@@ -11,6 +11,28 @@ def hypotest(
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_poi = 1.0
+        >>> CLs_obs, CLs_exp_band = pyhf.infer.hypotest(
+        ...     test_poi, data, model, qtilde=True, return_expected_set=True
+        ... )
+        >>> print(CLs_obs)
+        [0.05251554]
+        >>> print(CLs_exp_band)
+        [[0.00260641]
+         [0.01382066]
+         [0.06445521]
+         [0.23526104]
+         [0.57304182]]
+
+
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
