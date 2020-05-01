@@ -54,9 +54,9 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> best_fit_lhood_value = best_fit_result[1]
         >>> print(best_fit_pars) # doctest: +SKIP
         [2.23857553e-07 1.00308914e+00 9.62725456e-01]
-        >>> print(best_fit_pars_uncert)
+        >>> print(best_fit_pars_uncert) # doctest: +SKIP
         [1.86505494 0.05531769 0.09476047]
-        >>> print(best_fit_lhood_value)
+        >>> print(best_fit_lhood_value) # doctest: +SKIP
         24.983936012961976
 
     Args:
