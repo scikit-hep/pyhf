@@ -2,8 +2,8 @@
     "metadata": {
         "analysis_id": "SUSY-2018-23",
         "description": "signal patchset for the SUSY Multi-b-jet analysis",
-        "hash": { "md5": "098f6bcd4621d373cade4e832627b4f6" },
-        "labels": ["mass_stop-", "^mass_neutralino", "bad label"]
+        "hash": { "nonexistent": "098f6bcd4621d373cade4e832627b4f6" },
+        "labels": ["mass_stop", "mass_neutralino"]
     },
     "patches": [
         {

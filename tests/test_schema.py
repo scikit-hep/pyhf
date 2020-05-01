@@ -411,6 +411,7 @@ def test_patchset(datadir, patchset_file):
         'patchset_bad_5.json',
         'patchset_bad_6.json',
         'patchset_bad_7.json',
+        'patchset_bad_8.json',
     ],
     ids=[
         'bad_label_pattern',
@@ -420,6 +421,7 @@ def test_patchset(datadir, patchset_file):
         'no_hash',
         'no_description',
         'no_labels',
+        'invalid_hash',
     ],
 )
 def test_patchset_fail(datadir, patchset_file):

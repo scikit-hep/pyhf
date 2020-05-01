@@ -249,7 +249,13 @@
             "additionalProperties": false,
             "required": ["patches", "metadata"],
             "hash": {
-                "type": "string", "pattern": "^([^:]+:[a-fA-F0-9]+|[a-fA-F0-9]{32}|)$"
+                "type": "object",
+                "properties": {
+                    "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+                    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
             },
             "patches": {
                 "type": "array",
