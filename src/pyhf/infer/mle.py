@@ -7,7 +7,7 @@ def twice_nll(pars, data, pdf):
     Twice the negative Log-Likelihood.
 
     Args:
-        data (`tensor`): the data
+        data (`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
 
     Returns:
@@ -20,6 +20,36 @@ def twice_nll(pars, data, pdf):
 def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
     """
     Run a unconstrained maximum likelihood fit.
+
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True)
+        (array([0.        , 1.0030512 , 0.96266961]), 24.98393521454011)
+        >>> # Run the same fit with a different optimizer
+        ...
+        >>> pyhf.set_backend("numpy", pyhf.optimize.minuit_optimizer(verbose=True))
+        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True, return_uncertainties=True)
+        ------------------------------------------------------------------
+        | FCN = 24.98                   |      Ncalls=84 (84 total)      |
+        | EDM = 8.09E-07 (Goal: 0.0002) |            up = 1.0            |
+        ------------------------------------------------------------------
+        |  Valid Min.   | Valid Param.  | Above EDM | Reached call limit |
+        ------------------------------------------------------------------
+        |     True      |     True      |   False   |       False        |
+        ------------------------------------------------------------------
+        | Hesse failed  |   Has cov.    | Accurate  | Pos. def. | Forced |
+        ------------------------------------------------------------------
+        |     False     |     True      |   True    |   True    | False  |
+        ------------------------------------------------------------------
+        (array([[2.23857553e-07, 1.86505494e+00],
+               [1.00308914e+00, 5.53176914e-02],
+               [9.62725456e-01, 9.47604673e-02]]), 24.983936012961976)
 
     Args:
         data (`tensor`): The data
