@@ -34,7 +34,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> # Run the same fit with a different optimizer
         ...
         >>> pyhf.set_backend("numpy", pyhf.optimize.minuit_optimizer(verbose=True))
-        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True, return_uncertainties=True)
+        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True, return_uncertainties=True) # doctest:+ELLIPSIS
         ------------------------------------------------------------------
         | FCN = 24.98                   |      Ncalls=84 (84 total)      |
         | EDM = 8.09E-07 (Goal: 0.0002) |            up = 1.0            |
