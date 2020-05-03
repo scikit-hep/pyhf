@@ -404,24 +404,14 @@ def test_patchset(datadir, patchset_file):
 @pytest.mark.parametrize(
     'patchset_file',
     [
-        'patchset_bad_1.json',
-        'patchset_bad_2.json',
-        'patchset_bad_3.json',
-        'patchset_bad_4.json',
-        'patchset_bad_5.json',
-        'patchset_bad_6.json',
-        'patchset_bad_7.json',
-        'patchset_bad_8.json',
-    ],
-    ids=[
-        'bad_label_pattern',
-        'no_patch_name',
-        'empty_patches',
-        'no_patch_values',
-        'no_hash',
-        'no_description',
-        'no_labels',
-        'invalid_hash',
+        'patchset_bad_label_pattern.json',
+        'patchset_bad_no_patch_name.json',
+        'patchset_bad_empty_patches.json',
+        'patchset_bad_no_patch_values.json',
+        'patchset_bad_no_hash.json',
+        'patchset_bad_no_description.json',
+        'patchset_bad_no_labels.json',
+        'patchset_bad_invalid_hash.json',
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
