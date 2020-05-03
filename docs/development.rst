@@ -36,3 +36,26 @@ and tag to :code:`master` with
 .. code-block:: console
 
     git push origin master --tags
+
+Testing
+-------
+
+Data Files
+~~~~~~~~~~
+
+A function-scoped fixture called ``datadir`` exists for a given test module
+which will automatically copy files from the associated test modules data
+directory into a temporary directory for the given test execution. That is, for
+example, if a test was defined in ``test_schema.py``, then data files located
+in ``test_schema/`` will be copied to a temporary directory whose path is made
+available by the ``datadir`` fixture. Therefore, one can do:
+
+.. code-block:: python
+
+    def test_patchset(datadir):
+        data_file = open(datadir.join('test.txt'))
+        ...
+
+which will load the copy of ``text.txt`` in the temporary directory. This also
+works for parameterizations as this will effectively sandbox the file
+modifications made.
