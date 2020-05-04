@@ -263,6 +263,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
     hash_algs = ['sha256', 'md5']
+    """ Hashing algorithms used to compute the hash of the workspace. This list is used by :attr:`~pyhf.workspace.Workspace.hash`. """
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
