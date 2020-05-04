@@ -299,12 +299,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     @property
     def hash(self):
         """
-        Get hash value for workspace.
-
-        The hashing algorithms supported are defined in :attr:`pyhf.workspace.Workspace.hash_algs`.
-
-        Returns:
-            hashes (`dict`): A dictionary of key-value pairs mapping the hash function to the hash value for the workspace.
+        A :obj:`dict` mapping the hashing algorithms defined in :attr:`~pyhf.workspace.Workspace.hash_algs` to the computed hash value for the workspace.
         """
         return {
             hash_alg: utils.hash(self, algorithm=hash_alg)
