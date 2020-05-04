@@ -80,7 +80,7 @@ def hash(obj, algorithm='sha256'):
         ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
 
     Args:
-        obj (`obj`): A JSON-serializable object to compute the hash value for. Usually a ~pyhf.workspace.Workspace object.
+        obj (`obj`): A JSON-serializable object to compute the hash value for. Usually a :class:`~pyhf.workspace.Workspace` object.
         algorithm (`str`): The hashing function to use.
 
     Returns:
