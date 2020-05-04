@@ -282,7 +282,7 @@ def combine(workspace_one, workspace_two, join, output_file):
     '--algorithm',
     default=['sha256'],
     multiple=True,
-    help='The hashing algorithm used to compute the hash of the workspace.',
+    help='The hashing algorithm used to compute the workspace digest.',
 )
 @click.option(
     '-j/-p',
@@ -295,14 +295,14 @@ def digest(workspace, algorithm, output_json):
     Use hashing algorithm to calculate the workspace digest.
 
     Returns:
-        hashes (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
+        digests (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
     workspace = Workspace(spec)
 
-    hashes = {
+    digests = {
         hash_alg: utils.hash(workspace, algorithm=hash_alg) for hash_alg in algorithm
     }
 
@@ -317,7 +317,7 @@ def digest(workspace, algorithm, output_json):
         )
     else:
         output = '\n'.join(
-            f"{hash_alg}:{hash_val}" for hash_alg, hash_val in hashes.items()
+            f"{hash_alg}:{digest}" for hash_alg, digest in digests.items()
         )
 
     click.echo(output)
