@@ -446,3 +446,43 @@ def test_combine_outfile(tmpdir, script_runner):
     combined_ws = pyhf.Workspace(combined_spec)
     assert combined_ws.channels == ['channel1', 'channel2']
     assert len(combined_ws.measurement_names) == 8
+
+
+@pytest.mark.parametrize('do_json', [False, True])
+@pytest.mark.parametrize(
+    'algorithms', [['md5'], ['sha256'], ['sha256', 'md5'], ['sha256', 'md5']]
+)
+def test_workspace_hash(tmpdir, script_runner, algorithms, do_json):
+    results = {
+        'md5': '202eb7615102c35ba86be47eb6fa5e78',
+        'sha256': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
+    }
+
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = f"pyhf hash {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    assert all(algorithm in ret.stdout for algorithm in algorithms)
+    if do_json:
+        expected_output = json.dumps(
+            {algorithm: results[algorithm] for algorithm in algorithms},
+            sort_keys=True,
+            indent=4,
+        )
+    else:
+        expected_output = '\n'.join(
+            f"{algorithm}:{results[algorithm]}" for algorithm in algorithms
+        )
+
+    assert ret.stdout == expected_output + '\n'
+    assert ret.stderr == ''
+
+    if do_json:
+        assert json.loads(ret.stdout) == {
+            algorithm: results[algorithm] for algorithm in algorithms
+        }
