@@ -4,6 +4,7 @@ import pkg_resources
 from pathlib import Path
 import yaml
 import click
+import hashlib
 
 from .exceptions import InvalidSpecification
 
@@ -67,3 +68,19 @@ class EqDelimStringParamType(click.ParamType):
             self.fail(
                 '{0:s} is not a valid equal-delimited string'.format(value), param, ctx
             )
+
+
+def hash(obj, algorithm='sha256'):
+    try:
+        stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode('utf8')
+    except TypeError:
+        raise ValueError(
+            "The supplied object is not JSON-serializable for calculating a hash."
+        )
+    try:
+        hash_alg = getattr(hashlib, algorithm)
+    except AttributeError:
+        raise ValueError(
+            f"{algorithm} is not an algorithm provided by python's hashlib library."
+        )
+    return hash_alg(stringified).hexdigest()
