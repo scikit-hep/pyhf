@@ -46,29 +46,14 @@ Publishing
 ----------
 
 Publishing to `PyPI <https://pypi.org/project/pyhf/>`__ and `TestPyPI <https://test.pypi.org/project/pyhf/>`__
-is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__.
-Publishing a release to PyPI begins with creating a new branch :code:`release/cut-<release tag>`
-and then from that branch running
-
-.. code-block:: console
-
-    bumpversion [major|minor|patch]
-
-to update the release version and get a tagged commit.
-Then, push only the branch to GitHub and open a PR to ensure that the code
-you are going to publish is indeed stable.
-Once the PR has passed all checks and has been approved, a maintainer should merge
-the branch from the command line
-
-.. code-block:: console
-
-    git checkout master
-    git merge release/cut-<release tag>
-
-and then push the commit and tag to :code:`master` with
-
-.. code-block:: console
-
-    git push origin master <release tag>
-
-which will both merge and close the PR and start the release publication workflow.
+is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
+and the ``pyhf`` `Tag Creator GitHub Actions workflow <https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/tag.yml>`__.
+A release can be created from any PR created by a core developer by adding a
+``bumpversion`` tag to it that corresponds to the release type:
+`major <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fmajor>`__,
+`minor <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fminor>`__,
+`patch <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fpatch>`__.
+Once the PR is tagged with the label, the GitHub Actions bot will post a comment
+with information on the actions it will take once the PR is merged. When the PR
+has been reviewed, approved, and merged, the Tag Creator workflow will automatically
+create a new release with ``bumpversion`` and then deploy the release to PyPI.
