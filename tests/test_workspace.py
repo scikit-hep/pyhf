@@ -717,3 +717,24 @@ def test_workspace_equality(workspace_factory):
     assert ws == ws
     assert ws == ws_other
     assert ws != 'not a workspace'
+
+
+def test_workspace_hash(workspace_factory):
+    ws = workspace_factory()
+    assert ws.hash
+
+
+@pytest.mark.parametrize('algorithm', ['md5', 'sha256'])
+def test_workspace_hash_alg(workspace_factory, algorithm, request):
+    results = {
+        'test_workspace_hash_alg[example-one-md5]': '202eb7615102c35ba86be47eb6fa5e78',
+        'test_workspace_hash_alg[example-two-md5]': '5eed9d2a593ca6442c31a4bf373f4825',
+        'test_workspace_hash_alg[example-three-md5]': '8126516669e4e8b347e252e44fd72dff',
+        'test_workspace_hash_alg[example-one-sha256]': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
+        'test_workspace_hash_alg[example-two-sha256]': '06d5700bbe6cae13ca77dfd990482bdec9afc43e0008503169bc6e123984287f',
+        'test_workspace_hash_alg[example-three-sha256]': '73839788b177100f76c192d1f6f4ee9bb64577794e4a054666dfd01008ae3a3f',
+    }
+
+    ws = workspace_factory()
+    assert algorithm in ws.hash
+    assert results[request.node.name] == ws.hash[algorithm]

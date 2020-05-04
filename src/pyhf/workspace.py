@@ -262,6 +262,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     """
 
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
+    hash_algs = ['sha256', 'md5']
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
@@ -294,6 +295,21 @@ class Workspace(_ChannelSummaryMixin, dict):
     def __repr__(self):
         """Representation of the Workspace."""
         return object.__repr__(self)
+
+    @property
+    def hash(self):
+        """
+        Get hash value for workspace.
+
+        The hashing algorithms supported are defined in :attr:`pyhf.workspace.Workspace.hash_algs`.
+
+        Returns:
+            hashes (`dict`): A dictionary of key-value pairs mapping the hash function to the hash value for the workspace.
+        """
+        return {
+            hash_alg: utils.hash(self, algorithm=hash_alg)
+            for hash_alg in Workspace.hash_algs
+        }
 
     def get_measurement(
         self, poi_name=None, measurement_name=None, measurement_index=None
