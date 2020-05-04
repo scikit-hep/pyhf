@@ -1,5 +1,6 @@
 import pyhf
 import pytest
+import json
 
 
 def test_no_channels():
@@ -346,3 +347,72 @@ def test_parameters_normfactor_bad_attribute(bad_parameter):
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec, poi_name='mypoi')
+
+
+@pytest.mark.parametrize(
+    'patch',
+    [
+        {"op": "add", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "replace", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "test", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
+        {"op": "remove", "path": "/foo/0/bar"},
+        {"op": "move", "path": "/foo/0/bar", "from": "/foo/0/baz"},
+        {"op": "copy", "path": "/foo/0/bar", "from": "/foo/0/baz"},
+    ],
+    ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
+)
+def test_jsonpatch(patch):
+    pyhf.utils.validate([patch], 'jsonpatch.json')
+
+
+@pytest.mark.parametrize(
+    'patch',
+    [
+        {"path": "/foo/0/bar"},
+        {"op": "add", "path": "/foo/0/bar", "from": {"foo": [1.0]}},
+        {"op": "add", "path": "/foo/0/bar"},
+        {"op": "add", "value": {"foo": [1.0]}},
+        {"op": "remove"},
+        {"op": "move", "path": "/foo/0/bar"},
+        {"op": "move", "from": "/foo/0/baz"},
+    ],
+    ids=[
+        'noop',
+        'add_from_novalue',
+        'add_novalue',
+        'add_nopath',
+        'remove_nopath',
+        'move_nofrom',
+        'move_nopath',
+    ],
+)
+def test_jsonpatch_fail(patch):
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.utils.validate([patch], 'jsonpatch.json')
+
+
+@pytest.mark.parametrize(
+    'patchset_file', ['patchset_good.json', 'patchset_good_no_analysis.json'],
+)
+def test_patchset(datadir, patchset_file):
+    patchset = json.load(open(datadir.join(patchset_file)))
+    pyhf.utils.validate(patchset, 'patchset.json')
+
+
+@pytest.mark.parametrize(
+    'patchset_file',
+    [
+        'patchset_bad_label_pattern.json',
+        'patchset_bad_no_patch_name.json',
+        'patchset_bad_empty_patches.json',
+        'patchset_bad_no_patch_values.json',
+        'patchset_bad_no_hash.json',
+        'patchset_bad_no_description.json',
+        'patchset_bad_no_labels.json',
+        'patchset_bad_invalid_hash.json',
+    ],
+)
+def test_patchset_fail(datadir, patchset_file):
+    patchset = json.load(open(datadir.join(patchset_file)))
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.utils.validate(patchset, 'patchset.json')
