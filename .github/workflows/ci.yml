@@ -18,6 +18,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      # Get history and tags for check-manifest to work
+    - run: |
+        git fetch --prune --unshallow
+        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
