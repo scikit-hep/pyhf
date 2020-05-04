@@ -30,4 +30,5 @@ ignore = [
     'codecov.yml',
     'CODE_OF_CONDUCT.md',
     'CONTRIBUTING.md',
+    'AUTHORS',
 ]
