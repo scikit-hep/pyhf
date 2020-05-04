@@ -70,21 +70,21 @@ class EqDelimStringParamType(click.ParamType):
             )
 
 
-def hash(obj, algorithm='sha256'):
+def digest(obj, algorithm='sha256'):
     """
-    Get hash value for provided object. Note: object must be JSON-serializable.
+    Get the digest for the provided object. Note: object must be JSON-serializable.
 
-    The hashing algorithms supported are in hashlib, part of Python's Standard Libraries.
+    The hashing algorithms supported are in :module:`hashlib`, part of Python's Standard Libraries.
 
     Raises:
         ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
 
     Args:
-        obj (`obj`): A JSON-serializable object to compute the hash value for. Usually a :class:`~pyhf.workspace.Workspace` object.
-        algorithm (`str`): The hashing function to use.
+        obj (`obj`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
+        algorithm (`str`): The hashing algorithm to use.
 
     Returns:
-        hash (`str`): The hash value for the JSON-serialized object provided and hash algorithm specified.
+        digest (`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
     """
 
     try:

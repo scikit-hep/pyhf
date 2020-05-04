@@ -282,7 +282,7 @@ def combine(workspace_one, workspace_two, join, output_file):
     '--algorithm',
     default=['sha256'],
     multiple=True,
-    help='The hash function used to compute the hash of the workspace.',
+    help='The hashing algorithm used to compute the hash of the workspace.',
 )
 @click.option(
     '-j/-p',
@@ -290,12 +290,12 @@ def combine(workspace_one, workspace_two, join, output_file):
     'output_json',
     help='Output the hash values as a JSON dictionary or plaintext strings',
 )
-def hash(workspace, algorithm, output_json):
+def digest(workspace, algorithm, output_json):
     """
-    Use hashing functions to calculate the hash of the workspace.
+    Use hashing algorithm to calculate the workspace digest.
 
     Returns:
-        hashes (:obj:`dict`): A mapping of the hashing algorithms used to the computed hash value for the workspace.
+        hashes (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)

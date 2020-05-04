@@ -40,21 +40,21 @@ def test_options_from_eqdelimstring(opts, obj):
     ],
 )
 @pytest.mark.parametrize('algorithm', ['md5', 'sha256'])
-def test_hash(obj, algorithm):
+def test_digest(obj, algorithm):
     results = {
         'md5': '155e52b05179a1106d71e5e053452517',
         'sha256': '03dfbceade79855fc9b4e4d6fbd4f437109de68330dab37c3091a15f4bffe593',
     }
-    assert pyhf.utils.hash(obj, algorithm=algorithm) == results[algorithm]
+    assert pyhf.utils.digest(obj, algorithm=algorithm) == results[algorithm]
 
 
-def test_hash_bad_obj():
+def test_digest_bad_obj():
     with pytest.raises(ValueError) as excinfo:
-        pyhf.utils.hash(object())
+        pyhf.utils.digest(object())
     assert 'not JSON-serializable' in str(excinfo.value)
 
 
-def test_hash_bad_alg():
+def test_digest_bad_alg():
     with pytest.raises(ValueError) as excinfo:
-        pyhf.utils.hash({}, algorithm='nonexistent_algorithm')
+        pyhf.utils.digest({}, algorithm='nonexistent_algorithm')
     assert 'nonexistent_algorithm' in str(excinfo.value)

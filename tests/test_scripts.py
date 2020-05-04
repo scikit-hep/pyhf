@@ -452,7 +452,7 @@ def test_combine_outfile(tmpdir, script_runner):
 @pytest.mark.parametrize(
     'algorithms', [['md5'], ['sha256'], ['sha256', 'md5'], ['sha256', 'md5']]
 )
-def test_workspace_hash(tmpdir, script_runner, algorithms, do_json):
+def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
     results = {
         'md5': '202eb7615102c35ba86be47eb6fa5e78',
         'sha256': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
@@ -464,7 +464,7 @@ def test_workspace_hash(tmpdir, script_runner, algorithms, do_json):
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = f"pyhf hash {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
+    command = f"pyhf digest {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert all(algorithm in ret.stdout for algorithm in algorithms)

@@ -25,7 +25,7 @@ pyhf.add_command(spec.inspect)
 pyhf.add_command(spec.prune)
 pyhf.add_command(spec.rename)
 pyhf.add_command(spec.combine)
-pyhf.add_command(spec.hash)
+pyhf.add_command(spec.digest)
 
 # pyhf.add_command(infer.cli)
 pyhf.add_command(infer.cls)
