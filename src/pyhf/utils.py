@@ -71,6 +71,22 @@ class EqDelimStringParamType(click.ParamType):
 
 
 def hash(obj, algorithm='sha256'):
+    """
+    Get hash value for provided object. Note: object must be JSON-serializable.
+
+    The hashing algorithms supported are in hashlib, part of Python's Standard Libraries.
+
+    Raises:
+        ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
+
+    Args:
+        obj (`obj`): A JSON-serializable object to compute the hash value for. Usually a ~pyhf.workspace.Workspace object.
+        algorithm (`str`): The hashing function to use.
+
+    Returns:
+        hash (`str`): The hash value for the JSON-serialized object provided and hash algorithm specified.
+    """
+
     try:
         stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode('utf8')
     except TypeError:
