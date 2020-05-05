@@ -76,6 +76,17 @@ def digest(obj, algorithm='sha256'):
 
     The hashing algorithms supported are in :module:`hashlib`, part of Python's Standard Libraries.
 
+    Example:
+
+        >>> import pyhf
+        >>> obj = {'a': 2.0, 'b': 3.0, 'c': 1.0}
+        >>> pyhf.utils.digest(obj)
+        'a38f6093800189b79bc22ef677baf90c75705af2cfc7ff594159eca54eaa7928'
+        >>> pyhf.utils.digest(obj, algorithm='md5')
+        '2c0633f242928eb55c3672fed5ba8612'
+        >>> pyhf.utils.digest(obj, algorithm='sha1')
+        '49a27f499e763766c9545b294880df277be6f545'
+
     Raises:
         ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
 
