@@ -119,10 +119,6 @@ def test_hypotest_q_mu(
         if par == "norm_bkgunc":
             norm_bkgunc_idx = pdf.config.par_slice(par).start
 
-    np_width = pdf.config.param_set("norm_bkgunc").width()
-    init_val = pdf.config.param_set("norm_bkgunc").suggested_init
-    prange = pdf.config.param_set("norm_bkgunc").suggested_bounds
-
     #   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
     fixed_vals = []
     if fix_param != None:
