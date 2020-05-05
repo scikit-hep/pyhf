@@ -39,6 +39,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         init_pars (Tensor): The initial parameters
         par_bounds(Tensor): The bounds on the paramter values
         fixed_vals(Tensor): Parameters held constant in the fit
+
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
