@@ -121,7 +121,7 @@ def test_hypotest_q_mu(
 
     #   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
     fixed_vals = []
-    if fix_param != None:
+    if fix_param is not None:
         fixed_vals = [(norm_bkgunc_idx, fix_param)]
 
     data = source['bindata']['data'] + pdf.config.auxdata
