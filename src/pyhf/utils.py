@@ -74,7 +74,7 @@ def digest(obj, algorithm='sha256'):
     """
     Get the digest for the provided object. Note: object must be JSON-serializable.
 
-    The hashing algorithms supported are in :module:`hashlib`, part of Python's Standard Libraries.
+    The hashing algorithms supported are in :mod:`hashlib`, part of Python's Standard Libraries.
 
     Example:
 
