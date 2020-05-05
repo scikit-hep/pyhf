@@ -163,4 +163,4 @@ Utilities
    load_schema
    validate
    options_from_eqdelimstring
-   hash
+   digest
