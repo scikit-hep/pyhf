@@ -48,6 +48,7 @@ def generate_source_poisson(n_bins):
         'binning': binning,
         'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
     }
+
     return source
 
 
@@ -58,8 +59,11 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
+@pytest.mark.parametrize(
+    'fix_param', [None, 0.0, 1.0, -1.0], ids=['none', 'central', 'up', 'down']
+)
 def test_hypotest_q_mu(
-    n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
+    n_bins, invert_order, fix_param, tolerance={'numpy': 2e-02, 'tensors': 1e-02}
 ):
     """
     Check that the different backends all compute a test statistic
@@ -75,8 +79,8 @@ def test_hypotest_q_mu(
     """
 
     source = generate_source_static(n_bins)
-    bkg_unc_10pc_up = [x + 0.10 * x for x in source['bindata']['bkg']]
-    bkg_unc_10pc_dn = [x - 0.10 * x for x in source['bindata']['bkg']]
+    bkg_unc_5pc_up = [x + 0.05 * x for x in source['bindata']['bkg']]
+    bkg_unc_5pc_dn = [x - 0.05 * x for x in source['bindata']['bkg']]
 
     signal_sample = {
         'name': 'signal',
@@ -96,11 +100,11 @@ def test_hypotest_q_mu(
             {
                 'name': 'norm_bkgunc',
                 'type': 'histosys',
-                'data': {'hi_data': bkg_unc_10pc_up, 'lo_data': bkg_unc_10pc_dn,},
+                'data': {'hi_data': bkg_unc_5pc_up, 'lo_data': bkg_unc_5pc_dn,},
             },
         ],
     }
-    print(background_sample)
+
     samples = (
         [background_sample, signal_sample]
         if invert_order
@@ -113,14 +117,16 @@ def test_hypotest_q_mu(
     norm_bkgunc_idx = -1
     for idx, par in enumerate(pdf.config.par_map):
         if par == "norm_bkgunc":
-            norm_bkgunc_idx = idx
+            norm_bkgunc_idx = pdf.config.par_slice(par).start
+
+    np_width = pdf.config.param_set("norm_bkgunc").width()
+    init_val = pdf.config.param_set("norm_bkgunc").suggested_init
+    prange = pdf.config.param_set("norm_bkgunc").suggested_bounds
+
     #   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
-    param_tests = [
-        [],
-        [(norm_bkgunc_idx, 0.0)],
-        [(norm_bkgunc_idx, 1.0)],
-        [(norm_bkgunc_idx, -1.0)],
-    ]
+    fixed_vals = []
+    if fix_param != None:
+        fixed_vals = [(norm_bkgunc_idx, fix_param)]
 
     data = source['bindata']['data'] + pdf.config.auxdata
 
@@ -131,47 +137,59 @@ def test_hypotest_q_mu(
         pyhf.tensor.jax_backend(),
     ]
 
-    for p in param_tests:
-        fixed_vals = p
+    test_statistic = []
+    for backend in backends:
 
-        test_statistic = []
-        for backend in backends:
-            pyhf.set_backend(backend)
+        pyhf.set_backend(backend)
 
-            q_mu = pyhf.infer.test_statistics.qmu(
-                1.0,
-                data,
-                pdf,
-                pdf.config.suggested_init(),
-                pdf.config.suggested_bounds(),
-                fixed_vals,
+        q_mu = pyhf.infer.test_statistics.qmu(
+            1.0,
+            data,
+            pdf,
+            pdf.config.suggested_init(),
+            pdf.config.suggested_bounds(),
+            fixed_vals,
+        )
+        print(
+            "Fit with fixed pars",
+            fixed_vals,
+            "BINS",
+            n_bins,
+            "QMU",
+            q_mu,
+            "ORDER",
+            invert_order,
+            "BACKEND",
+            backend,
+        )
+        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
+
+    # compare to NumPy/SciPy
+    test_statistic = np.array(test_statistic)
+    numpy_ratio = np.divide(test_statistic, test_statistic[0])
+    numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
+
+    # compare tensor libraries to each other
+    tensors_ratio = np.divide(test_statistic[1], test_statistic[2])
+    tensors_ratio_delta_unity = np.absolute(np.subtract(tensors_ratio, 1))
+
+    try:
+        assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
+        print("CHECK: Numpy difference ", numpy_ratio_delta_unity)
+    except AssertionError:
+        print(
+            'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
+                tolerance['numpy'], numpy_ratio_delta_unity.tolist()
             )
-            test_statistic.append(pyhf.tensorlib.tolist(q_mu))
-
-        # compare to NumPy/SciPy
-        test_statistic = np.array(test_statistic)
-        numpy_ratio = np.divide(test_statistic, test_statistic[0])
-        numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
-
-        # compare tensor libraries to each other
-        tensors_ratio = np.divide(test_statistic[1], test_statistic[2])
-        tensors_ratio_delta_unity = np.absolute(np.subtract(tensors_ratio, 1))
-
-        try:
-            assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
-        except AssertionError:
-            print(
-                'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
-                    tolerance['numpy'], numpy_ratio_delta_unity.tolist()
-                )
+        )
+        assert False
+    try:
+        assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
+        print("CHECK: Tensors difference ", tensors_ratio_delta_unity)
+    except AssertionError:
+        print(
+            'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
+                tolerance['tensors'], tensors_ratio_delta_unity.tolist()
             )
-            assert False
-        try:
-            assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
-        except AssertionError:
-            print(
-                'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
-                    tolerance['tensors'], tensors_ratio_delta_unity.tolist()
-                )
-            )
-            assert False
+        )
+        assert False
