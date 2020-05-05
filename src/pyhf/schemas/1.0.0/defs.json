@@ -180,6 +180,113 @@
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
             }
+        },
+        "jsonpatch": {
+            "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/jsonpatch/operation"
+            },
+            "operation": {
+                "type": "object",
+                "required": [ "op", "path" ],
+                "allOf": [ { "$ref": "#/definitions/jsonpatch/path" } ],
+                "oneOf": [
+                    {
+                        "required": [ "value" ],
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "add", "replace", "test" ]
+                            },
+                            "value": {
+                                "description": "The value to add, replace or test."
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "remove" ]
+                            }
+                        }
+                    },
+                    {
+                        "required": [ "from" ],
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "move", "copy" ]
+                            },
+                            "from": {
+                                "description": "A JSON Pointer path pointing to the location to move/copy from.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            },
+            "path": {
+                "properties": {
+                    "path": {
+                        "description": "A JSON Pointer path.",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "patchset": {
+            "description": "A set of JSONPatch patches which modify a pyhf workspace",
+            "type": "object",
+            "properties": {
+                "patches": { "$ref": "#/definitions/patchset/patches" },
+                "metadata": { "$ref": "#/definitions/patchset/metadata" }
+            },
+            "additionalProperties": false,
+            "required": ["patches", "metadata"],
+            "hash": {
+                "type": "object",
+                "properties": {
+                    "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+                    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+            },
+            "patches": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/patchset/patch" },
+                "minItems": 1
+            },
+            "patch": {
+                "type": "object",
+                "properties": {
+                    "patch": { "$ref": "#/definitions/jsonpatch" },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                            "values": { "type": "array", "items": { "type": "number" } }
+                        },
+                        "required": ["name", "values"]
+                    }
+                },
+                "required": ["metadata", "patch"]
+            },
+            "metadata": {
+                "type": "object",
+                "properties": {
+                    "hash": { "$ref": "#/definitions/patchset/hash" },
+                    "labels": { "type": "array", "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" } },
+                    "description": { "type": "string" },
+                    "analysis_id": { "type": "string" }
+                },
+                "required": ["hash", "labels", "description"]
+            }
         }
     }
 }
