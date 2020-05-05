@@ -19,24 +19,6 @@ Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__ 
 
     pre-commit install
 
-Publishing
-----------
-
-Publishing to `PyPI <https://pypi.org/project/pyhf/>`__ and `TestPyPI <https://test.pypi.org/project/pyhf/>`__
-is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__.
-To publish a release to PyPI one simply needs to run
-
-.. code-block:: console
-
-    bumpversion [major|minor|patch]
-
-to update the release version and get a tagged commit and then push the commit
-and tag to :code:`master` with
-
-.. code-block:: console
-
-    git push origin master --tags
-
 Testing
 -------
 
@@ -59,3 +41,19 @@ available by the ``datadir`` fixture. Therefore, one can do:
 which will load the copy of ``text.txt`` in the temporary directory. This also
 works for parameterizations as this will effectively sandbox the file
 modifications made.
+
+Publishing
+----------
+
+Publishing to `PyPI <https://pypi.org/project/pyhf/>`__ and `TestPyPI <https://test.pypi.org/project/pyhf/>`__
+is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
+and the ``pyhf`` `Tag Creator GitHub Actions workflow <https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/tag.yml>`__.
+A release can be created from any PR created by a core developer by adding a
+``bumpversion`` tag to it that corresponds to the release type:
+`major <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fmajor>`__,
+`minor <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fminor>`__,
+`patch <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fpatch>`__.
+Once the PR is tagged with the label, the GitHub Actions bot will post a comment
+with information on the actions it will take once the PR is merged. When the PR
+has been reviewed, approved, and merged, the Tag Creator workflow will automatically
+create a new release with ``bumpversion`` and then deploy the release to PyPI.
