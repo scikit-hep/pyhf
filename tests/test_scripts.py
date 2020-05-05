@@ -459,9 +459,7 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
     }
 
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     command = f"pyhf digest {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
