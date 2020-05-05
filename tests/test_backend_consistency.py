@@ -58,8 +58,11 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
+@pytest.mark.parametrize(
+    'fix_param', [None, 0.0, 1.0, -1.0], ids=['none', 'central', 'up', 'down']
+)
 def test_hypotest_qmu_tilde(
-    n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
+    n_bins, invert_order, fix_param, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
 ):
     """
     Check that the different backends all compute a test statistic
