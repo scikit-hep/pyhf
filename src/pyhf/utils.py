@@ -108,6 +108,6 @@ def digest(obj, algorithm='sha256'):
         hash_alg = getattr(hashlib, algorithm)
     except AttributeError:
         raise ValueError(
-            f"{algorithm} is not an algorithm provided by python's hashlib library."
+            f"{algorithm} is not an algorithm provided by Python's hashlib library."
         )
     return hash_alg(stringified).hexdigest()
