@@ -96,7 +96,7 @@ def test_hypotest_qmu_tilde(
             {
                 'name': 'norm_bkgunc',
                 'type': 'histosys',
-                'data': {'hi_data': bkg_unc_10pc_up, 'lo_data': bkg_unc_10pc_dn,},
+                'data': {'hi_data': bkg_unc_10pc_up, 'lo_data': bkg_unc_10pc_dn},
             },
         ],
     }
@@ -114,6 +114,7 @@ def test_hypotest_qmu_tilde(
     for idx, par in enumerate(pdf.config.par_map):
         if par == "norm_bkgunc":
             norm_bkgunc_idx = idx
+
     #   Floating norm_bkgunc, fixed at nominal, plus/minus 1 sigma
     param_tests = [
         [],
