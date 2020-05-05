@@ -29,7 +29,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         >>> test_mu = 1.0
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
-        >>> fixed_vals = [(par_index, par_value)]
+        >>> fixed_vals = [(2, 0)]
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
         3.938244920380498
 
