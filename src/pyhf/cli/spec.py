@@ -303,18 +303,11 @@ def digest(workspace, algorithm, output_json):
     workspace = Workspace(spec)
 
     digests = {
-        hash_alg: utils.hash(workspace, algorithm=hash_alg) for hash_alg in algorithm
+        hash_alg: utils.digest(workspace, algorithm=hash_alg) for hash_alg in algorithm
     }
 
     if output_json:
-        output = json.dumps(
-            {
-                hash_alg: utils.hash(workspace, algorithm=hash_alg)
-                for hash_alg in algorithm
-            },
-            indent=4,
-            sort_keys=True,
-        )
+        output = json.dumps(digests, indent=4, sort_keys=True,)
     else:
         output = '\n'.join(
             f"{hash_alg}:{digest}" for hash_alg, digest in digests.items()
