@@ -18,6 +18,19 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
           \end{array}\right.
         \end{equation}
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_mu = 1.0
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
+        3.938244920380498
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -26,7 +39,6 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         init_pars (Tensor): The initial parameters
         par_bounds(Tensor): The bounds on the paramter values
         fixed_vals(Tensor): Parameters held constant in the fit
-
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
