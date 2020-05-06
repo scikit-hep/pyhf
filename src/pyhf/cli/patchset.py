@@ -159,3 +159,4 @@ def verify(background_only, patchset):
                 f"The digest verification failed for hash algorithm '{hash_alg}'.\n\tExpected: {digest}.\n\tGot:     {digest_calc}"
             )
             sys.exit(2)
+    click.echo("All good.")
