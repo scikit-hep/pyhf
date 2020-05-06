@@ -4,6 +4,7 @@ import pkg_resources
 from pathlib import Path
 import yaml
 import click
+import hashlib
 
 from .exceptions import InvalidSpecification
 
@@ -67,3 +68,46 @@ class EqDelimStringParamType(click.ParamType):
             self.fail(
                 '{0:s} is not a valid equal-delimited string'.format(value), param, ctx
             )
+
+
+def digest(obj, algorithm='sha256'):
+    """
+    Get the digest for the provided object. Note: object must be JSON-serializable.
+
+    The hashing algorithms supported are in :mod:`hashlib`, part of Python's Standard Libraries.
+
+    Example:
+
+        >>> import pyhf
+        >>> obj = {'a': 2.0, 'b': 3.0, 'c': 1.0}
+        >>> pyhf.utils.digest(obj)
+        'a38f6093800189b79bc22ef677baf90c75705af2cfc7ff594159eca54eaa7928'
+        >>> pyhf.utils.digest(obj, algorithm='md5')
+        '2c0633f242928eb55c3672fed5ba8612'
+        >>> pyhf.utils.digest(obj, algorithm='sha1')
+        '49a27f499e763766c9545b294880df277be6f545'
+
+    Raises:
+        ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
+
+    Args:
+        obj (`obj`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
+        algorithm (`str`): The hashing algorithm to use.
+
+    Returns:
+        digest (`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
+    """
+
+    try:
+        stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode('utf8')
+    except TypeError:
+        raise ValueError(
+            "The supplied object is not JSON-serializable for calculating a hash."
+        )
+    try:
+        hash_alg = getattr(hashlib, algorithm)
+    except AttributeError:
+        raise ValueError(
+            f"{algorithm} is not an algorithm provided by Python's hashlib library."
+        )
+    return hash_alg(stringified).hexdigest()
