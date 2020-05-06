@@ -49,7 +49,7 @@ def extract(patchset, name, output_file, with_metadata):
 
     extracted_patch_obj = None
     for patch in patchset_obj['patches']:
-        if patch['name'] == name:
+        if patch['metadata']['name'] == name:
             extracted_patch_obj = patch
             break
 
@@ -112,7 +112,7 @@ def apply(background_only, patchset, name, output_file):
 
     extracted_patch_obj = None
     for patch in patchset_obj['patches']:
-        if patch['name'] == name:
+        if patch['metadata']['name'] == name:
             extracted_patch_obj = patch
             break
 
