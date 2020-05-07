@@ -47,11 +47,18 @@ TestPyPI
 
 ``pyhf`` tests packaging and distributing by publishing each commit to
 ``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
-In addition, you can test installation of releases from TestPyPI with
+In addition, installation of releases can be tested from TestPyPI with
 
 .. code-block:: bash
 
   python -m pip install --extra-index-url https://test.pypi.org/simple/ pyhf
+
+.. note::
+
+  This adds TestPyPI as `an additional package index to search <https://pip.pypa.io/en/stable/reference/pip_install/#cmdoption-extra-index-url>`__
+  when installing ``pyhf`` specifically.
+  PyPI will still be the default package index ``pip`` will attempt to install
+  from for all dependencies.
 
 
 Publishing
