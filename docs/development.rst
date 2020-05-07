@@ -61,7 +61,6 @@ with
   PyPI will still be the default package index ``pip`` will attempt to install
   from for all dependencies.
 
-
 Publishing
 ----------
 
