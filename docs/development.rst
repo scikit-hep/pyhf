@@ -42,6 +42,18 @@ which will load the copy of ``text.txt`` in the temporary directory. This also
 works for parameterizations as this will effectively sandbox the file
 modifications made.
 
+TestPyPI
+~~~~~~~~
+
+``pyhf`` tests packaging and distributing by publishing each commit to
+``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
+In addition, you can test installation of releases from TestPyPI with
+
+.. code-block:: bash
+
+  python -m pip install --extra-index-url https://test.pypi.org/simple/ pyhf
+
+
 Publishing
 ----------
 
