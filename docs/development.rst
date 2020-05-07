@@ -47,11 +47,12 @@ TestPyPI
 
 ``pyhf`` tests packaging and distributing by publishing each commit to
 ``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
-In addition, installation of releases can be tested from TestPyPI with
+In addition, installation of the latest test release from TestPyPI can be tested
+with
 
 .. code-block:: bash
 
-  python -m pip install --extra-index-url https://test.pypi.org/simple/ pyhf
+  python -m pip install --extra-index-url https://test.pypi.org/simple/ --pre pyhf
 
 .. note::
 
