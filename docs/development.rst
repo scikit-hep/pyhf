@@ -42,6 +42,25 @@ which will load the copy of ``text.txt`` in the temporary directory. This also
 works for parameterizations as this will effectively sandbox the file
 modifications made.
 
+TestPyPI
+~~~~~~~~
+
+``pyhf`` tests packaging and distributing by publishing each commit to
+``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
+In addition, installation of the latest test release from TestPyPI can be tested
+with
+
+.. code-block:: bash
+
+  python -m pip install --extra-index-url https://test.pypi.org/simple/ --pre pyhf
+
+.. note::
+
+  This adds TestPyPI as `an additional package index to search <https://pip.pypa.io/en/stable/reference/pip_install/#cmdoption-extra-index-url>`__
+  when installing ``pyhf`` specifically.
+  PyPI will still be the default package index ``pip`` will attempt to install
+  from for all dependencies.
+
 Publishing
 ----------
 
