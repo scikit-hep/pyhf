@@ -82,7 +82,7 @@ setup(
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
     license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch',
+    keywords='physics fitting numpy scipy tensorflow pytorch jax',
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
