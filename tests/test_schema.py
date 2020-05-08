@@ -406,10 +406,10 @@ def test_patchset(datadir, patchset_file):
         'patchset_bad_no_patch_name.json',
         'patchset_bad_empty_patches.json',
         'patchset_bad_no_patch_values.json',
-        'patchset_bad_no_hash.json',
+        'patchset_bad_no_digests.json',
         'patchset_bad_no_description.json',
         'patchset_bad_no_labels.json',
-        'patchset_bad_invalid_hash.json',
+        'patchset_bad_invalid_digests.json',
     ],
 )
 def test_patchset_fail(datadir, patchset_file):

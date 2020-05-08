@@ -248,7 +248,7 @@
             },
             "additionalProperties": false,
             "required": ["patches", "metadata"],
-            "hash": {
+            "digests": {
                 "type": "object",
                 "properties": {
                     "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
@@ -280,12 +280,12 @@
             "metadata": {
                 "type": "object",
                 "properties": {
-                    "hash": { "$ref": "#/definitions/patchset/hash" },
+                    "digests": { "$ref": "#/definitions/patchset/digests" },
                     "labels": { "type": "array", "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" } },
                     "description": { "type": "string" },
                     "analysis_id": { "type": "string" }
                 },
-                "required": ["hash", "labels", "description"]
+                "required": ["digests", "labels", "description"]
             }
         }
     }

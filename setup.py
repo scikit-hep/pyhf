@@ -37,7 +37,7 @@ extras_require['test'] = sorted(
             'pytest-mpl',
             'pydocstyle',
             'coverage>=4.0',  # coveralls
-            'papermill~=1.0',
+            'papermill~=2.0',
             'nteract-scrapbook~=0.2',
             'check-manifest',
             'jupyter',
@@ -87,6 +87,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
