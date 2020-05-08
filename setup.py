@@ -80,9 +80,9 @@ setup(
     long_description_content_type='text/x-rst',
     url='https://github.com/scikit-hep/pyhf',
     project_urls={
-        'Documentation': 'https://scikit-hep.org/pyhf/',
-        'Source': 'https://github.com/scikit-hep/pyhf',
-        'Tracker': 'https://github.com/scikit-hep/pyhf/issues',
+        "Documentation": "https://scikit-hep.org/pyhf/",
+        "Source": "https://github.com/scikit-hep/pyhf",
+        "Tracker": "https://github.com/scikit-hep/pyhf/issues",
     },
     author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
     author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
