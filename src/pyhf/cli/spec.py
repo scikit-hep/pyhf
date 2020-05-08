@@ -6,6 +6,7 @@ import json
 
 from ..workspace import Workspace
 from .. import modifiers
+from .. import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -272,3 +273,44 @@ def combine(workspace_one, workspace_two, join, output_file):
         with open(output_file, 'w+') as out_file:
             json.dump(combined_ws, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
+
+
+@cli.command()
+@click.argument('workspace', default='-')
+@click.option(
+    '-a',
+    '--algorithm',
+    default=['sha256'],
+    multiple=True,
+    help='The hashing algorithm used to compute the workspace digest.',
+)
+@click.option(
+    '-j/-p',
+    '--json/--plaintext',
+    'output_json',
+    help='Output the hash values as a JSON dictionary or plaintext strings',
+)
+def digest(workspace, algorithm, output_json):
+    """
+    Use hashing algorithm to calculate the workspace digest.
+
+    Returns:
+        digests (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
+    """
+    with click.open_file(workspace, 'r') as specstream:
+        spec = json.load(specstream)
+
+    workspace = Workspace(spec)
+
+    digests = {
+        hash_alg: utils.digest(workspace, algorithm=hash_alg) for hash_alg in algorithm
+    }
+
+    if output_json:
+        output = json.dumps(digests, indent=4, sort_keys=True,)
+    else:
+        output = '\n'.join(
+            f"{hash_alg}:{digest}" for hash_alg, digest in digests.items()
+        )
+
+    click.echo(output)
