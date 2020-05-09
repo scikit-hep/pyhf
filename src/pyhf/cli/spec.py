@@ -8,7 +8,6 @@ from ..workspace import Workspace
 from .. import modifiers
 from .. import utils
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
