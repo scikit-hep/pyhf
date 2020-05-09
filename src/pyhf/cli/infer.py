@@ -9,7 +9,6 @@ from ..infer import hypotest
 from ..workspace import Workspace
 from .. import tensor, get_backend, set_backend, optimize
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 

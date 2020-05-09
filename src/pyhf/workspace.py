@@ -14,7 +14,6 @@ from . import utils
 from .pdf import Model
 from .mixins import _ChannelSummaryMixin
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
