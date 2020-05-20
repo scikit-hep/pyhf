@@ -1,9 +1,4 @@
 from setuptools import setup, find_packages
-from pathlib import Path
-
-this_directory = Path(__file__).parent.resolve()
-with open(Path(this_directory).joinpath('README.rst'), encoding='utf-8') as readme_rst:
-    long_description = readme_rst.read()
 
 extras_require = {
     'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
