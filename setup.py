@@ -68,20 +68,7 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
 setup(
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
-    include_package_data=True,
-    python_requires=">=3.6",
-    install_requires=[
-        'scipy',  # requires numpy, which is required by pyhf and tensorflow
-        'click>=6.0',  # for console scripts,
-        'tqdm',  # for readxml
-        'jsonschema>=3.2.0',  # for utils
-        'jsonpatch',
-        'pyyaml',  # for parsing CLI equal-delimited options
-    ],
     extras_require=extras_require,
-    entry_points={'console_scripts': ['pyhf=pyhf.cli:cli']},
     dependency_links=[],
     use_scm_version=lambda: {'local_scheme': lambda version: ''},
 )
