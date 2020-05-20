@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 extras_require = {
     'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
