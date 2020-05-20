@@ -29,6 +29,7 @@ extras_require['test'] = sorted(
         + extras_require['contrib']
         + extras_require['shellcomplete']
         + [
+            'flake8',
             'pytest~=6.0',
             'pytest-cov>=2.5.1',
             'pytest-mock',
