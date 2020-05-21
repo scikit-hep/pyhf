@@ -88,11 +88,16 @@ jobs:
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
-      uses: actions/github-script@0.3.0
+      uses: actions/github-script@v1.1.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.issues.createComment({...context.issue, body: "I've queued this up. When it gets merged, I'll create a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → ${{ env['NEW_TAG'] }} which includes the following ${{ env['NUM_CHANGES'] }} change(s) [including this PR]:<br />${{ env['CHANGES'] }}<br />If you make any more changes, you probably want to re-trigger me again by removing the `bumpversion/${{ env['BV_PART'] }}` label and then adding it back again."})
+          github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "I've queued this up. When it gets merged, I'll create a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → ${{ env['NEW_TAG'] }} which includes the following ${{ env['NUM_CHANGES'] }} change(s) [including this PR]:<br />${{ env['CHANGES'] }}<br />If you make any more changes, you probably want to re-trigger me again by removing the `bumpversion/${{ env['BV_PART'] }}` label and then adding it back again."
+            })
     - name: Push changes
       if: >-
         github.event.action == 'closed' && github.event.pull_request.merged
@@ -101,12 +106,21 @@ jobs:
         github_token: ${{ secrets.GITHUB_PAT }}
     - name: Comment that something failed
       if: failure()
-      uses: actions/github-script@0.3.0
+      uses: actions/github-script@v1.1.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.issues.createComment({...context.issue, body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."})
-          github.issues.removeLabel({...context.issue, labels: "bumpversion/${{ env['BV_PART'] }}" })
+          github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."
+            })
+          github.issues.removeLabel({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
 
   always_job:
     name: Always run job
