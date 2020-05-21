@@ -1,9 +1,4 @@
-from setuptools import setup, find_packages
-from pathlib import Path
-
-this_directory = Path(__file__).parent.resolve()
-with open(Path(this_directory).joinpath('README.rst'), encoding='utf-8') as readme_rst:
-    long_description = readme_rst.read()
+from setuptools import setup
 
 extras_require = {
     'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
@@ -73,46 +68,6 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
 setup(
-    name='pyhf',
-    version='0.4.1',
-    description='(partial) pure python histfactory implementation',
-    long_description=long_description,
-    long_description_content_type='text/x-rst',
-    url='https://github.com/scikit-hep/pyhf',
-    project_urls={
-        "Documentation": "https://scikit-hep.org/pyhf/",
-        "Source": "https://github.com/scikit-hep/pyhf",
-        "Tracker": "https://github.com/scikit-hep/pyhf/issues",
-    },
-    author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
-    author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
-    license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch jax',
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: Apache Software License",
-        "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-    ],
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
-    include_package_data=True,
-    python_requires=">=3.6",
-    install_requires=[
-        'scipy',  # requires numpy, which is required by pyhf and tensorflow
-        'click>=6.0',  # for console scripts,
-        'tqdm',  # for readxml
-        'jsonschema>=3.2.0',  # for utils
-        'jsonpatch',
-        'pyyaml',  # for parsing CLI equal-delimited options
-    ],
     extras_require=extras_require,
-    entry_points={'console_scripts': ['pyhf=pyhf.cli:cli']},
-    dependency_links=[],
     use_scm_version=lambda: {'local_scheme': lambda version: ''},
 )
