@@ -69,6 +69,5 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 setup(
     extras_require=extras_require,
-    dependency_links=[],
     use_scm_version=lambda: {'local_scheme': lambda version: ''},
 )
