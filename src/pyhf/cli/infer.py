@@ -47,7 +47,25 @@ def cls(
     optimizer,
     optconf,
 ):
-    """Compute CLs value(s) for a given pyhf workspace."""
+    """
+    Compute CLs value(s) for a given pyhf workspace.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf cls
+        {
+            "CLs_exp": [
+                0.07807427911686156,
+                0.17472571775474618,
+                0.35998495263681285,
+                0.6343568235898907,
+                0.8809947004472013
+            ],
+            "CLs_obs": 0.3599845631401915
+        }
+    """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
