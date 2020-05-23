@@ -328,6 +328,13 @@ def digest(workspace, algorithm, output_json):
 
     Returns:
         digests (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf digest
+        sha256:dad8822af55205d60152cbe4303929042dbd9d4839012e055e7c6b6459d68d73
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
