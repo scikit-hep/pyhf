@@ -43,10 +43,9 @@ jobs:
           echo "::set-env name=BV_PART::patch"
         fi
     - name: Checkout repository
-      uses: actions/checkout@v2
-      # Get history for checkout master to work
-    - run: |
-        git fetch --prune --unshallow
+      uses: actions/checkout@v2.2.0
+      with:
+        fetch-depth: 0
     - name: Set up git user
       run: |
         git config --local user.email "action@github.com"
