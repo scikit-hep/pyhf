@@ -2,4 +2,4 @@
 
 # Use semantic versioning (https://semver.org/)
 # The version number is controlled through bumpversion.cfg
-__version__ = '0.4.1'
+__version__ = '0.4.2'
