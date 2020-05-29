@@ -122,8 +122,8 @@ class PatchSet(object):
         return len(self.patches)
 
     @property
-    def analysis_id(self):
-        return self.metadata.get('analysis_id', '')
+    def references(self):
+        return self.metadata['references']
 
     @property
     def description(self):

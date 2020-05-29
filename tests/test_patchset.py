@@ -43,7 +43,7 @@ def test_patchset_bad(datadir, patchset_file):
 
 
 def test_patchset_attributes(patchset):
-    assert patchset.analysis_id == "SUSY-2018-23"
+    assert 'hepdata' in patchset.references
     assert patchset.description == "signal patchset for the SUSY Multi-b-jet analysis"
     assert len(patchset.digests) == 1
     assert patchset.digests['md5'] == "098f6bcd4621d373cade4e832627b4f6"
