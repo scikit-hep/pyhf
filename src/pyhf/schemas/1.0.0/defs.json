@@ -281,7 +281,11 @@
                 "type": "object",
                 "properties": {
                     "digests": { "$ref": "#/definitions/patchset/digests" },
-                    "labels": { "type": "array", "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" } },
+                    "labels": {
+                        "type": "array",
+                        "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                        "minItems": 1
+                    },
                     "description": { "type": "string" },
                     "analysis_id": { "type": "string" }
                 },

@@ -34,6 +34,14 @@ class InvalidSpecification(Exception):
         super(InvalidSpecification, self).__init__(message)
 
 
+class InvalidPatchset(Exception):
+    """InvalidPatchset is raised when a given patchset object does not have the right configuration, even though it validates correctly against the schema."""
+
+
+class InvalidPatchLookup(Exception):
+    """InvalidPatchLookup is raised when the patch lookup from a patchset object has failed"""
+
+
 class InvalidWorkspaceOperation(Exception):
     """InvalidWorkspaceOperation is raised when an operation on a workspace fails."""
 

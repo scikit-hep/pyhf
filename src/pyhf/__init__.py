@@ -114,10 +114,12 @@ from .pdf import Model
 from .workspace import Workspace
 from . import simplemodels
 from . import infer
+from .patchset import Patchset
 
 __all__ = [
     'Model',
     'Workspace',
+    'Patchset',
     'infer',
     'utils',
     'modifiers',
