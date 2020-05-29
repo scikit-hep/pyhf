@@ -33,6 +33,7 @@ def test_patchset_invalid_spec(datadir):
     [
         'patchset_bad_duplicate_patch_name.json',
         'patchset_bad_duplicate_patch_values.json',
+        'patchset_bad_wrong_values_multiplicity.json',
     ],
 )
 def test_patchset_bad(datadir, patchset_file):
