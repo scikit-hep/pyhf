@@ -87,6 +87,11 @@ class Patchset(object):
                     f'Multiple patches were defined by values for {patch}.'
                 )
 
+            if len(patch.values) != len(self.labels):
+                raise exceptions.InvalidPatchset(
+                    f'Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}.'
+                )
+
             # all good, register patch
             self.patches.append(patch)
             # register lookup keys for the patch
