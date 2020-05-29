@@ -4,7 +4,6 @@ import logging
 import click
 import json
 import sys
-import jsonpatch
 
 from ..patchset import Patchset
 from ..workspace import Workspace
