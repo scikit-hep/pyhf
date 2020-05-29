@@ -6,6 +6,7 @@ import json
 import sys
 import jsonpatch
 
+from ..patchset import Patchset
 from ..workspace import Workspace
 from .. import utils
 
@@ -43,25 +44,16 @@ def extract(patchset, name, output_file, with_metadata):
         jsonpatch (:obj:`list`): A list of jsonpatch operations to apply to a workspace.
     """
     with click.open_file(patchset, 'r') as fstream:
-        patchset_obj = json.load(fstream)
+        patchset_spec = json.load(fstream)
 
-    utils.validate(patchset_obj, 'patchset.json')
-
-    extracted_patch_obj = None
-    for patch in patchset_obj['patches']:
-        if patch['metadata']['name'] == name:
-            extracted_patch_obj = patch
-            break
-
-    if not extracted_patch_obj:
-        click.echo(f"There is no patch by the name '{name}' in this patchset.")
-        sys.exit(1)
+    patchset = Patchset(patchset_spec)
+    patch = patchset[name]
 
     if with_metadata:
-        result = extracted_patch_obj
-        result['metadata'].update(patchset_obj['metadata'])
+        result = {'metadata': patch.metadata, 'patch': patch.patch}
+        result['metadata'].update(patchset.metadata)
     else:
-        result = extracted_patch_obj['patch']
+        result = patch.patch
 
     if output_file:
         with open(output_file, 'w+') as out_file:
@@ -98,11 +90,11 @@ def apply(background_only, patchset, name, output_file):
     utils.validate(spec, 'workspace.json')
 
     with click.open_file(patchset, 'r') as fstream:
-        patchset_obj = json.load(fstream)
+        patchset_spec = json.load(fstream)
 
-    utils.validate(patchset_obj, 'patchset.json')
+    patchset = Patchset(patchset_spec)
 
-    for hash_alg, digest in patchset_obj['metadata']['digests'].items():
+    for hash_alg, digest in patchset.digests.items():
         digest_calc = utils.digest(spec, algorithm=hash_alg)
         if not digest_calc == digest:
             click.echo(
@@ -110,17 +102,8 @@ def apply(background_only, patchset, name, output_file):
             )
             sys.exit(2)
 
-    extracted_patch_obj = None
-    for patch in patchset_obj['patches']:
-        if patch['metadata']['name'] == name:
-            extracted_patch_obj = patch
-            break
-
-    if not extracted_patch_obj:
-        click.echo(f"There is no patch by the name '{name}' in this patchset.")
-        sys.exit(1)
-
-    result = jsonpatch.JsonPatch(extracted_patch_obj['patch']).apply(spec)
+    patch = patchset[name]
+    result = patch.apply(spec)
 
     if output_file:
         with open(output_file, 'w+') as out_file:
@@ -148,11 +131,11 @@ def verify(background_only, patchset):
     utils.validate(spec, 'workspace.json')
 
     with click.open_file(patchset, 'r') as fstream:
-        patchset_obj = json.load(fstream)
+        patchset_spec = json.load(fstream)
 
-    utils.validate(patchset_obj, 'patchset.json')
+    patchset = Patchset(patchset_spec)
 
-    for hash_alg, digest in patchset_obj['metadata']['digests'].items():
+    for hash_alg, digest in patchset.digests.items():
         digest_calc = utils.digest(spec, algorithm=hash_alg)
         if not digest_calc == digest:
             click.echo(

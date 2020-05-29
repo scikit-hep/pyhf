@@ -26,13 +26,19 @@ class Patch(jsonpatch.JsonPatch):
 
         """
         super(Patch, self).__init__(spec['patch'])
-        # set properties based on metadata
-        self.name = spec['metadata']['name']
-        self.values = tuple(spec['metadata']['values'])
+        self.metadata = spec['metadata']
 
     def __repr__(self):
         """ Representation of the patch object """
         return f"<Patch object '{self.name}{self.values}' at {hex(id(self))}>"
+
+    @property
+    def name(self):
+        return self.metadata['name']
+
+    @property
+    def values(self):
+        return tuple(self.metadata['values'])
 
 
 class Patchset(object):
@@ -60,7 +66,7 @@ class Patchset(object):
         utils.validate(spec, self.schema, version=self.version)
 
         # set properties based on metadata
-        self.__dict__.update(spec['metadata'])
+        self.metadata = spec['metadata']
 
         # list of all patch objects
         self.patches = []
@@ -109,3 +115,19 @@ class Patchset(object):
     # give it a length
     def __len__(self):
         return len(self.patches)
+
+    @property
+    def analysis_id(self):
+        return self.metadata.get('analysis_id', '')
+
+    @property
+    def description(self):
+        return self.metadata['description']
+
+    @property
+    def digests(self):
+        return self.metadata['digests']
+
+    @property
+    def labels(self):
+        return self.metadata['labels']
