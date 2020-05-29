@@ -5,7 +5,7 @@ import click
 import json
 import sys
 
-from ..patchset import Patchset
+from ..patchset import PatchSet
 from ..workspace import Workspace
 from .. import utils
 
@@ -45,7 +45,7 @@ def extract(patchset, name, output_file, with_metadata):
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
-    patchset = Patchset(patchset_spec)
+    patchset = PatchSet(patchset_spec)
     patch = patchset[name]
 
     if with_metadata:
@@ -91,7 +91,7 @@ def apply(background_only, patchset, name, output_file):
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
-    patchset = Patchset(patchset_spec)
+    patchset = PatchSet(patchset_spec)
 
     for hash_alg, digest in patchset.digests.items():
         digest_calc = utils.digest(spec, algorithm=hash_alg)
@@ -134,7 +134,7 @@ def verify(background_only, patchset):
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
-    patchset = Patchset(patchset_spec)
+    patchset = PatchSet(patchset_spec)
 
     for hash_alg, digest in patchset.digests.items():
         digest_calc = utils.digest(spec, algorithm=hash_alg)

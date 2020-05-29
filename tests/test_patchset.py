@@ -12,7 +12,7 @@ import json
 )
 def patchset(datadir, request):
     spec = json.load(open(datadir.join(request.param)))
-    return pyhf.Patchset(spec)
+    return pyhf.PatchSet(spec)
 
 
 @pytest.fixture(scope='function')
@@ -25,7 +25,7 @@ def patch():
 def test_patchset_invalid_spec(datadir):
     patchsetspec = json.load(open(datadir.join('patchset_bad_empty_patches.json')))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Patchset(patchsetspec)
+        pyhf.PatchSet(patchsetspec)
 
 
 @pytest.mark.parametrize(
@@ -38,8 +38,8 @@ def test_patchset_invalid_spec(datadir):
 )
 def test_patchset_bad(datadir, patchset_file):
     patchsetspec = json.load(open(datadir.join(patchset_file)))
-    with pytest.raises(pyhf.exceptions.InvalidPatchset):
-        pyhf.Patchset(patchsetspec)
+    with pytest.raises(pyhf.exceptions.InvalidPatchSet):
+        pyhf.PatchSet(patchsetspec)
 
 
 def test_patchset_attributes(patchset):
@@ -81,9 +81,9 @@ def test_patchset_len(patchset):
 def test_patchset_repr(patchset):
     assert repr(patchset)
     if len(patchset) == 1:
-        assert 'Patchset object with 1 patch at' in repr(patchset)
+        assert 'PatchSet object with 1 patch at' in repr(patchset)
     else:
-        assert f'Patchset object with {len(patchset)} patches at' in repr(patchset)
+        assert f'PatchSet object with {len(patchset)} patches at' in repr(patchset)
 
 
 def test_patch_bashable(patch):

@@ -34,8 +34,8 @@ class InvalidSpecification(Exception):
         super(InvalidSpecification, self).__init__(message)
 
 
-class InvalidPatchset(Exception):
-    """InvalidPatchset is raised when a given patchset object does not have the right configuration, even though it validates correctly against the schema."""
+class InvalidPatchSet(Exception):
+    """InvalidPatchSet is raised when a given patchset object does not have the right configuration, even though it validates correctly against the schema."""
 
 
 class InvalidPatchLookup(Exception):

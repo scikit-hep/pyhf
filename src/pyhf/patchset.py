@@ -41,21 +41,21 @@ class Patch(jsonpatch.JsonPatch):
         return tuple(self.metadata['values'])
 
 
-class Patchset(object):
+class PatchSet(object):
     """
     A collection of patches.
     """
 
     def __init__(self, spec, **config_kwargs):
         """
-        Construct a Patchset.
+        Construct a PatchSet.
 
         Args:
             spec (`jsonable`): The patchset JSON specification
             config_kwargs: Possible keyword arguments for the patchset validation
 
         Returns:
-            patchset (`Patchset`): The Patchset instance.
+            patchset (`PatchSet`): The PatchSet instance.
 
         """
         self.schema = config_kwargs.pop('schema', 'patchset.json')
@@ -78,17 +78,17 @@ class Patchset(object):
             patch = Patch(patchspec)
 
             if patch.name in self._patches_by_key:
-                raise exceptions.InvalidPatchset(
+                raise exceptions.InvalidPatchSet(
                     f'Multiple patches were defined by name for {patch}.'
                 )
 
             if patch.values in self._patches_by_key:
-                raise exceptions.InvalidPatchset(
+                raise exceptions.InvalidPatchSet(
                     f'Multiple patches were defined by values for {patch}.'
                 )
 
             if len(patch.values) != len(self.labels):
-                raise exceptions.InvalidPatchset(
+                raise exceptions.InvalidPatchSet(
                     f'Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}.'
                 )
 
@@ -100,7 +100,7 @@ class Patchset(object):
 
     def __repr__(self):
         """ Representation of the patchset object """
-        return f"<Patchset object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"
+        return f"<PatchSet object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"
 
     def __getitem__(self, key):
         # might be specified as a list, convert to hashable tuple instead for lookup
