@@ -73,7 +73,6 @@ def test_patchset_iterable(patchset):
 
 
 def test_patchset_len(patchset):
-    assert len(patchset)
     assert len(patchset) == len(list(iter(patchset)))
     assert len(patchset) == len(patchset.patches)
 
