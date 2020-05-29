@@ -62,7 +62,7 @@ def test_patchset_get_patch_by_values(patchset):
 
 def test_patchset_get_nonexisting_patch(patchset):
     with pytest.raises(pyhf.exceptions.InvalidPatchLookup) as excinfo:
-         patchset.__getitem__('nonexisting_patch')
+        patchset.__getitem__('nonexisting_patch')
     assert 'No patch associated with' in str(excinfo.value)
     assert 'nonexisting_patch' in str(excinfo.value)
 
