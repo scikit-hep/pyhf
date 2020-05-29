@@ -102,14 +102,16 @@ def apply(background_only, patchset, name, output_file):
             sys.exit(2)
 
     patch = patchset[name]
-    result = patch.apply(spec)
+    patched_spec = patch.apply(spec)
+
+    patched_ws = Workspace(patched_spec)
 
     if output_file:
         with open(output_file, 'w+') as out_file:
-            json.dump(result, out_file, indent=4, sort_keys=True)
+            json.dump(patched_ws, out_file, indent=4, sort_keys=True)
         log.debug("Written to {0:s}".format(output_file))
     else:
-        click.echo(json.dumps(result, indent=4, sort_keys=True))
+        click.echo(json.dumps(patched_ws, indent=4, sort_keys=True))
 
 
 @cli.command()
