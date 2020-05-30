@@ -81,7 +81,7 @@ def apply(background_only, patchset, name, output_file):
     If the patchset is not associated with the background-only workspace, will exit with code 2.
 
     Returns:
-        ~pyhf.workspace.Workspace: The patched background-only workspace.
+        workspace (~pyhf.workspace.Workspace): The patched background-only workspace.
     """
     with click.open_file(background_only, 'r') as specstream:
         spec = json.load(specstream)
@@ -124,7 +124,7 @@ def verify(background_only, patchset):
     If the patchset is not associated with the background-only workspace, will exit with code 2.
 
     Returns:
-        ~pyhf.workspace.Workspace: The patched background-only workspace.
+        workspace (~pyhf.workspace.Workspace): The patched background-only workspace.
     """
     with click.open_file(background_only, 'r') as specstream:
         spec = json.load(specstream)
