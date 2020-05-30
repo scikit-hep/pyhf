@@ -106,6 +106,15 @@ class PatchSet(object):
             self._patches_by_key[patch.name] = patch
             self._patches_by_key[patch.values] = patch
 
+    def verify(self, spec):
+        """ Verify the patchset digests against a workspace """
+        for hash_alg, digest in self.digests.items():
+            digest_calc = utils.digest(spec, algorithm=hash_alg)
+            if not digest_calc == digest:
+                raise exceptions.PatchSetVerificationError(
+                    f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
+                )
+
     def __repr__(self):
         """ Representation of the patchset object """
         return f"<PatchSet object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"

@@ -3,11 +3,9 @@ import logging
 
 import click
 import json
-import sys
 
 from ..patchset import PatchSet
 from ..workspace import Workspace
-from .. import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -36,8 +34,6 @@ def cli():
 def extract(patchset, name, output_file, with_metadata):
     """
     Extract a patch from a patchset.
-
-    If the patchset does not contain the name, will exit with code 1.
 
     Returns:
         jsonpatch (:obj:`list`): A list of jsonpatch operations to apply to a workspace.
@@ -77,29 +73,19 @@ def apply(background_only, patchset, name, output_file):
     """
     Apply a patch from patchset to the background-only workspace.
 
-    If the patchset does not contain the name, will exit with code 1.
-    If the patchset is not associated with the background-only workspace, will exit with code 2.
-
     Returns:
         workspace (~pyhf.workspace.Workspace): The patched background-only workspace.
     """
     with click.open_file(background_only, 'r') as specstream:
         spec = json.load(specstream)
 
-    utils.validate(spec, 'workspace.json')
+    ws = Workspace(spec)
 
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
-
-    for hash_alg, digest in patchset.digests.items():
-        digest_calc = utils.digest(spec, algorithm=hash_alg)
-        if not digest_calc == digest:
-            click.echo(
-                f"The digest verification failed for hash algorithm '{hash_alg}'.\n\tExpected: {digest}.\n\tGot:     {digest_calc}"
-            )
-            sys.exit(2)
+    patchset.verify(ws)
 
     patch = patchset[name]
     patched_spec = patch.apply(spec)
@@ -121,26 +107,18 @@ def verify(background_only, patchset):
     """
     Verify the patchset digest against the background-only workspace.
 
-    If the patchset is not associated with the background-only workspace, will exit with code 2.
-
     Returns:
         workspace (~pyhf.workspace.Workspace): The patched background-only workspace.
     """
     with click.open_file(background_only, 'r') as specstream:
         spec = json.load(specstream)
 
-    utils.validate(spec, 'workspace.json')
+    ws = Workspace(spec)
 
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
+    patchset.verify(ws)
 
-    for hash_alg, digest in patchset.digests.items():
-        digest_calc = utils.digest(spec, algorithm=hash_alg)
-        if not digest_calc == digest:
-            click.echo(
-                f"The digest verification failed for hash algorithm '{hash_alg}'.\n\tExpected: {digest}.\n\tGot:     {digest_calc}"
-            )
-            sys.exit(2)
     click.echo("All good.")

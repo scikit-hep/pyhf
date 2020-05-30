@@ -42,6 +42,10 @@ class InvalidPatchLookup(Exception):
     """InvalidPatchLookup is raised when the patch lookup from a patchset object has failed"""
 
 
+class PatchSetVerificationError(Exception):
+    """PatchSetVerificationError is raised when the workspace digest does not match the patchset digests as part of the verification procedure"""
+
+
 class InvalidWorkspaceOperation(Exception):
     """InvalidWorkspaceOperation is raised when an operation on a workspace fails."""
 

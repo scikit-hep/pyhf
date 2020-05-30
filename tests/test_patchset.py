@@ -86,7 +86,13 @@ def test_patchset_repr(patchset):
         assert f'PatchSet object with {len(patchset)} patches at' in repr(patchset)
 
 
-def test_patch_bashable(patch):
+def test_patchset_verify(datadir):
+    patchset = pyhf.PatchSet(json.load(open(datadir.join('example_patchset.json'))))
+    ws = pyhf.Workspace(json.load(open(datadir.join('example_bkgonly.json'))))
+    assert patchset.verify(ws) is None
+
+
+def test_patch_bashable(datadir):
     assert patch.name == 'test'
     assert isinstance(patch.values, tuple)
     assert patch.values == (1.0, 2.0, 3.0)
