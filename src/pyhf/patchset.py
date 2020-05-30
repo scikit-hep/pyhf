@@ -39,6 +39,7 @@ class Patch(jsonpatch.JsonPatch):
         return (
             jsonpatch.JsonPatch.__eq__(self, other) and self.metadata == other.metadata
         )
+
     @property
     def name(self):
         return self.metadata['name']
