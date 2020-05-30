@@ -5,6 +5,7 @@ import logging
 import jsonpatch
 from . import exceptions
 from . import utils
+from .workspace import Workspace
 
 log = logging.getLogger(__name__)
 
@@ -114,6 +115,11 @@ class PatchSet(object):
                 raise exceptions.PatchSetVerificationError(
                     f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
                 )
+
+    def apply(self, spec, key):
+        """ Apply the patch by key to the workspace """
+        self.verify(spec)
+        return Workspace(self[key].apply(spec))
 
     def __repr__(self):
         """ Representation of the patchset object """

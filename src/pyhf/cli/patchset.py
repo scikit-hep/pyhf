@@ -85,12 +85,7 @@ def apply(background_only, patchset, name, output_file):
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
-    patchset.verify(ws)
-
-    patch = patchset[name]
-    patched_spec = patch.apply(spec)
-
-    patched_ws = Workspace(patched_spec)
+    patched_ws = patchset.apply(ws)
 
     if output_file:
         with open(output_file, 'w+') as out_file:

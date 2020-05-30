@@ -3,6 +3,7 @@ import pytest
 import pyhf.exceptions
 import pyhf.patchset
 import json
+import mock
 
 
 @pytest.fixture(
@@ -90,6 +91,15 @@ def test_patchset_verify(datadir):
     patchset = pyhf.PatchSet(json.load(open(datadir.join('example_patchset.json'))))
     ws = pyhf.Workspace(json.load(open(datadir.join('example_bkgonly.json'))))
     assert patchset.verify(ws) is None
+
+
+def test_patchset_apply(datadir):
+    patchset = pyhf.PatchSet(json.load(open(datadir.join('example_patchset.json'))))
+    ws = pyhf.Workspace(json.load(open(datadir.join('example_bkgonly.json'))))
+    with mock.patch('pyhf.patchset.PatchSet.verify') as m:
+        assert m.call_count == 0
+        assert patchset.apply(ws, 'patch_channel1_signal_syst1')
+        assert m.call_count == 1
 
 
 def test_patch_bashable(datadir):
