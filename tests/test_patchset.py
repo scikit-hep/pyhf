@@ -4,7 +4,6 @@ import pyhf.exceptions
 import pyhf.patchset
 import json
 import mock
-import copy
 
 
 @pytest.fixture(
@@ -121,7 +120,5 @@ def test_patch_repr(patch):
 
 
 def test_patch_equality(patch):
-    other = copy.deepcopy(patch)
-    assert patch == other
-    other.metadata = {}
-    assert patch != other
+    assert patch == patch
+    assert patch != object()
