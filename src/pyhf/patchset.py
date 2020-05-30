@@ -32,6 +32,13 @@ class Patch(jsonpatch.JsonPatch):
         """ Representation of the patch object """
         return f"<Patch object '{self.name}{self.values}' at {hex(id(self))}>"
 
+    def __eq__(self, other):
+        """ Equality for subclass with new attributes """
+        if not isinstance(other, Patch):
+            return False
+        return (
+            jsonpatch.JsonPatch.__eq__(self, other) and self.metadata == other.metadata
+        )
     @property
     def name(self):
         return self.metadata['name']
