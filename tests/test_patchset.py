@@ -4,6 +4,7 @@ import pyhf.exceptions
 import pyhf.patchset
 import json
 import mock
+import copy
 
 
 @pytest.fixture(
@@ -93,6 +94,12 @@ def test_patchset_verify(datadir):
     assert patchset.verify(ws) is None
 
 
+def test_patchset_verify_failure(datadir):
+    patchset = pyhf.PatchSet(json.load(open(datadir.join('example_patchset.json'))))
+    with pytest.raises(pyhf.exceptions.PatchSetVerificationError):
+        assert patchset.verify({})
+
+
 def test_patchset_apply(datadir):
     patchset = pyhf.PatchSet(json.load(open(datadir.join('example_patchset.json'))))
     ws = pyhf.Workspace(json.load(open(datadir.join('example_bkgonly.json'))))
@@ -111,3 +118,10 @@ def test_patch_hashable(patch):
 def test_patch_repr(patch):
     assert repr(patch)
     assert "Patch object 'test(1.0, 2.0, 3.0)' at" in repr(patch)
+
+
+def test_patch_equality(patch):
+    other = copy.deepcopy(patch)
+    assert patch == other
+    other.metadata = {}
+    assert patch != other
