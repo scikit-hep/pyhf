@@ -102,7 +102,7 @@ def test_patchset_apply(datadir):
         assert m.call_count == 1
 
 
-def test_patch_bashable(datadir):
+def test_patch_hashable(patch):
     assert patch.name == 'test'
     assert isinstance(patch.values, tuple)
     assert patch.values == (1.0, 2.0, 3.0)
