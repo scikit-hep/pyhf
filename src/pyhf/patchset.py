@@ -271,11 +271,11 @@ class PatchSet(object):
 
     def apply(self, spec, key):
         """
-        Apply the patch by key to the background-only workspace specificatiom.
+        Apply the patch associated with the key to the background-only workspace specificatiom.
 
         Args:
             spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.
-            key (:obj:`str` or :obj:`tuple` of :obj:`int`/:obj:`float`): The key to lookup the patch by - either a name or a set of values.
+            key (:obj:`str` or :obj:`tuple` of :obj:`int`/:obj:`float`): The key to look up the associated patch - either a name or a set of values.
 
         Raises:
             :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
