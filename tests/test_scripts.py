@@ -484,3 +484,57 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
         assert json.loads(ret.stdout) == {
             algorithm: results[algorithm] for algorithm in algorithms
         }
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+@pytest.mark.parametrize('with_metadata', [False, True])
+def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
+    temp = tmpdir.join("extracted_output.json")
+    command = f'pyhf patchset extract {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+    if with_metadata:
+        command += " --with-metadata"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+    if with_metadata:
+        assert 'metadata' in extracted_output
+    else:
+        assert (
+            extracted_output
+            == json.load(datadir.join("example_patchset.json"))['patches'][0]['patch']
+        )
+
+
+def test_patchset_verify(datadir, script_runner):
+    command = f'pyhf patchset verify {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    assert 'All good' in ret.stdout
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
+    temp = tmpdir.join("patched_output.json")
+    command = f'pyhf patchset apply {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+    assert extracted_output['channels'][0]['samples'][0]['modifiers'][0]['data'] == {
+        "hi": 1.2,
+        "lo": 0.8,
+    }

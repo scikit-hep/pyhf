@@ -44,6 +44,8 @@ Making Models from PDFs
    ~pdf.Model
    ~pdf._ModelConfig
    ~workspace.Workspace
+   ~patchset.PatchSet
+   ~patchset.Patch
 
 Backends
 --------
@@ -143,11 +145,15 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    InvalidMeasurement
    InvalidNameReuse
    InvalidSpecification
+   InvalidPatchSet
+   InvalidPatchLookup
+   PatchSetVerificationError
    InvalidWorkspaceOperation
    InvalidModel
    InvalidModifier
    InvalidInterpCode
    ImportBackendError
+   InvalidBackend
    InvalidOptimizer
    InvalidPdfParameters
    InvalidPdfData
