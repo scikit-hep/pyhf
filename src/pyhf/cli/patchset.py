@@ -110,7 +110,7 @@ def verify(background_only, patchset):
     Verify the patchset digests against a background-only workspace specification. Verified if no exception was raised.
 
     Raises:
-        :class:`~pyhf.exceptions.PatchSetVerificationError1: if the patchset cannot be verified against the workspace specification
+        :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
 
     Returns:
         None
