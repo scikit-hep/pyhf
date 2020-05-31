@@ -216,7 +216,7 @@ class PatchSet(object):
         Access the patch in the patchset by the specified key, either by name or by values.
 
         Raises:
-            :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
+            ~pyhf.exceptions.InvalidPatchLookup: if the provided patch name is not in the patchset
 
         Returns:
             patch (:class:`~pyhf.patchset.Patch`): The patch associated with the specified key
@@ -257,7 +257,7 @@ class PatchSet(object):
             spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.
 
         Raises:
-            :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
+            ~pyhf.exceptions.PatchSetVerificationError: if the patchset cannot be verified against the workspace specification
 
         Returns:
             None
@@ -278,8 +278,8 @@ class PatchSet(object):
             key (:obj:`str` or :obj:`tuple` of :obj:`int`/:obj:`float`): The key to look up the associated patch - either a name or a set of values.
 
         Raises:
-            :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
-            :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
+            ~pyhf.exceptions.InvalidPatchLookup: if the provided patch name is not in the patchset
+            ~pyhf.exceptions.PatchSetVerificationError: if the patchset cannot be verified against the workspace specification
 
         Returns:
             workspace (:class:`~pyhf.workspace.Workspace`): The background-only workspace with the patch applied.
