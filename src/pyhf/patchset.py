@@ -118,7 +118,7 @@ class PatchSet(object):
         >>> patchset.references
         {'hepdata': 'ins1234567'}
         >>> patchset.description
-        example patchset
+        'example patchset'
         >>> patchset.digests
         {'md5': '098f6bcd4621d373cade4e832627b4f6'}
         >>> patchset.labels
