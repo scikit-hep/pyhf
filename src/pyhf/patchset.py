@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 class Patch(jsonpatch.JsonPatch):
     """
-    A Patch is a formalized way to store a patch definition as part of a patchset (:class:`~pyhf.patchset.PatchSet`).
+    A way to store a patch definition as part of a patchset (:class:`~pyhf.patchset.PatchSet`).
 
     It contains metadata (:attr:`~pyhf.patchset.Patch.metadata`:) about the Patch itself:
       - :attr:`~pyhf.patchset.Patch.name`: a descriptive name
@@ -67,7 +67,7 @@ class Patch(jsonpatch.JsonPatch):
 
 class PatchSet(object):
     """
-    A PatchSet is a formalized way to store a collection of patches (:class:`~pyhf.patchset.Patch`).
+    A way to store a collection of patches (:class:`~pyhf.patchset.Patch`).
 
     It contains metadata (:attr:`~PatchSet.metadata`:) about the PatchSet itself:
       - :attr:`~pyhf.patchset.PatchSet.description`: a high-level description of what the patches represent or the analysis it is for
@@ -107,7 +107,7 @@ class PatchSet(object):
         ...             ]
         ...         }
         ...     ]
-        ... }
+        ... })
         ...
         >>> patchset['patch_name_for_2100x_800y']
         <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
