@@ -44,6 +44,8 @@ Making Models from PDFs
    ~pdf.Model
    ~pdf._ModelConfig
    ~workspace.Workspace
+   ~patchset.PatchSet
+   ~patchset.Patch
 
 Backends
 --------
