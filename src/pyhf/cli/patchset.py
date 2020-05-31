@@ -107,7 +107,7 @@ def apply(background_only, patchset, name, output_file):
 @click.argument('patchset', default='-')
 def verify(background_only, patchset):
     """
-    Verify the patchset digest against the background-only workspace specification.
+    Verify the patchset digests against a background-only workspace specification. Verified if no exception was raised.
 
     Raises:
         :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification

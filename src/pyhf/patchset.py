@@ -248,7 +248,7 @@ class PatchSet(object):
 
     def verify(self, spec):
         """
-        Verify the patchset digests against a background-only workspace. Verified if no exception was raised.
+        Verify the patchset digests against a background-only workspace specification. Verified if no exception was raised.
 
         Args:
             spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.
