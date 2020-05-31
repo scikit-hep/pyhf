@@ -12,7 +12,13 @@ log = logging.getLogger(__name__)
 
 class Patch(jsonpatch.JsonPatch):
     """
-    A patch.
+    A Patch is a formalized way to store a patch definition as part of a patchset (:class:`~pyhf.patchset.PatchSet`).
+
+    It contains metadata (:attr:`~pyhf.patchset.Patch.metadata`:) about the Patch itself:
+      - :attr:`~pyhf.patchset.Patch.name`: a descriptive name
+      - :attr:`~pyhf.patchset.Patch.values`: a list of the values for each dimension in the phase-space the associated :class:`~pyhf.patchset.PatchSet` is defined for, see :attr:`~pyhf.patchset.PatchSet.labels`
+
+    In addition to the above metadata, the Patch object behaves like the underlying :class:`jsonpatch.JsonPatch`.
     """
 
     def __init__(self, spec):
@@ -23,15 +29,32 @@ class Patch(jsonpatch.JsonPatch):
             spec (`jsonable`): The patch JSON specification
 
         Returns:
-            patch (`Patch`): The Patch instance.
+            patch (`~pyhf.patchset.Patch`): The Patch instance.
 
         """
         super(Patch, self).__init__(spec['patch'])
-        self.metadata = spec['metadata']
+        self._metadata = spec['metadata']
+
+    @property
+    def metadata(self):
+        """ The metadata of the patch """
+        return self._metadata
+
+    @property
+    def name(self):
+        """ The name of the patch """
+        return self.metadata['name']
+
+    @property
+    def values(self):
+        """ The values of the associated labels for the patch """
+        return tuple(self.metadata['values'])
 
     def __repr__(self):
-        """ Representation of the patch object """
-        return f"<Patch object '{self.name}{self.values}' at {hex(id(self))}>"
+        """ Representation of the object """
+        module = type(self).__module__
+        qualname = type(self).__qualname__
+        return f"<{module}.{qualname} object '{self.name}{self.values}' at {hex(id(self))}>"
 
     def __eq__(self, other):
         """ Equality for subclass with new attributes """
@@ -41,18 +64,65 @@ class Patch(jsonpatch.JsonPatch):
             jsonpatch.JsonPatch.__eq__(self, other) and self.metadata == other.metadata
         )
 
-    @property
-    def name(self):
-        return self.metadata['name']
-
-    @property
-    def values(self):
-        return tuple(self.metadata['values'])
-
 
 class PatchSet(object):
     """
-    A collection of patches.
+    A PatchSet is a formalized way to store a collection of patches (:class:`~pyhf.patchset.Patch`).
+
+    It contains metadata (:attr:`~PatchSet.metadata`:) about the PatchSet itself:
+      - :attr:`~pyhf.patchset.PatchSet.description`: a high-level description of what the patches represent or the analysis it is for
+      - :attr:`~pyhf.patchset.PatchSet.references`:a list of references where the patchset is sourced from (e.g. hepdata)
+      - :attr:`~pyhf.patchset.PatchSet.digests`:a list of digests corresponding to the background-only workspace the patchset was made for
+      - :attr:`~pyhf.patchset.PatchSet.labels`:the labels of the dimensions of the phase-space for what the patches cover
+
+    In addition to the above metadata, the PatchSet object behaves like a:
+      - smart list allowing you to iterate over all the patches defined
+      - smart dictionary allowing you to access a patch by the patch name or the patch values
+
+    The below example shows various ways one can interact with a :class:`PatchSet` object.
+
+    Example:
+        >>> import pyhf
+        >>> patchset = pyhf.PatchSet({
+        ...     "metadata": {
+        ...         "references": { "hepdata": "ins1234567" },
+        ...         "description": "example patchset",
+        ...         "digests": { "md5": "098f6bcd4621d373cade4e832627b4f6" },
+        ...         "labels": ["x", "y"]
+        ...     },
+        ...     "patches": [
+        ...         {
+        ...             "metadata": {
+        ...                 "name": "patch_name_for_2100x_800y",
+        ...                 "values": [2100, 800]
+        ...             },
+        ...             "patch": [
+        ...                 {
+        ...                     "op": "add",
+        ...                     "path": "/foo/0/bar",
+        ...                     "value": {
+        ...                         "foo": [1.0]
+        ...                     }
+        ...                 }
+        ...             ]
+        ...         }
+        ...     ]
+        ... }
+        ...
+        >>> patchset['patch_name_for_2100x_800y']
+        <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
+        >>> patchset[(2100,800)]
+        <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
+        >>> patchset[[2100,800]]
+        <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
+        >>> patchset[2100,800]
+        <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
+        >>> for patch in patchset:
+        ...     print(patch.name)
+        ...
+        patch_name_for_2100x_800y
+        >>> len(patchset)
+        1
     """
 
     def __init__(self, spec, **config_kwargs):
@@ -64,7 +134,7 @@ class PatchSet(object):
             config_kwargs: Possible keyword arguments for the patchset validation
 
         Returns:
-            patchset (`PatchSet`): The PatchSet instance.
+            patchset (:class:`~pyhf.patchset.PatchSet`): The PatchSet instance.
 
         """
         self.schema = config_kwargs.pop('schema', 'patchset.json')
@@ -75,7 +145,7 @@ class PatchSet(object):
         utils.validate(spec, self.schema, version=self.version)
 
         # set properties based on metadata
-        self.metadata = spec['metadata']
+        self._metadata = spec['metadata']
 
         # list of all patch objects
         self.patches = []
@@ -107,25 +177,47 @@ class PatchSet(object):
             self._patches_by_key[patch.name] = patch
             self._patches_by_key[patch.values] = patch
 
-    def verify(self, spec):
-        """ Verify the patchset digests against a workspace """
-        for hash_alg, digest in self.digests.items():
-            digest_calc = utils.digest(spec, algorithm=hash_alg)
-            if not digest_calc == digest:
-                raise exceptions.PatchSetVerificationError(
-                    f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
-                )
+    @property
+    def metadata(self):
+        """ The metadata of the PatchSet """
+        return self._metadata
 
-    def apply(self, spec, key):
-        """ Apply the patch by key to the workspace """
-        self.verify(spec)
-        return Workspace(self[key].apply(spec))
+    @property
+    def references(self):
+        """ The references in the PatchSet metadata """
+        return self.metadata['references']
+
+    @property
+    def description(self):
+        """ The description in the PatchSet metadata """
+        return self.metadata['description']
+
+    @property
+    def digests(self):
+        """ The digests in the PatchSet metadata """
+        return self.metadata['digests']
+
+    @property
+    def labels(self):
+        """ The labels in the PatchSet metadata """
+        return self.metadata['labels']
 
     def __repr__(self):
-        """ Representation of the patchset object """
-        return f"<PatchSet object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"
+        """ Representation of the object """
+        module = type(self).__module__
+        qualname = type(self).__qualname__
+        return f"<{module}.{qualname} object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"
 
     def __getitem__(self, key):
+        """
+        Access the patch in the patchset by the specified key, either by name or by values.
+
+        Raises:
+            :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
+
+        Returns:
+            patch (:class:`~pyhf.patchset.Patch`): The patch associated with the specified key
+        """
         # might be specified as a list, convert to hashable tuple instead for lookup
         if isinstance(key, list):
             key = tuple(key)
@@ -136,26 +228,58 @@ class PatchSet(object):
                 f'No patch associated with "{key}" is defined in patchset.'
             )
 
-    # make it iterable
     def __iter__(self):
+        """
+        Iterate over the defined patches in the patchset.
+
+        Returns:
+            iterable (:obj:`iter`): An iterable over the list of patches in the patchset.
+        """
         return iter(self.patches)
 
-    # give it a length
     def __len__(self):
+        """
+        The number of patches in the patchset.
+
+        Returns:
+            quantity (:obj:`int`): The number of patches in the patchset.
+        """
         return len(self.patches)
 
-    @property
-    def references(self):
-        return self.metadata['references']
+    def verify(self, spec):
+        """
+        Verify the patchset digests against a background-only workspace. Verified if no exception was raised.
 
-    @property
-    def description(self):
-        return self.metadata['description']
+        Args:
+            spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.
 
-    @property
-    def digests(self):
-        return self.metadata['digests']
+        Raises:
+            :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
 
-    @property
-    def labels(self):
-        return self.metadata['labels']
+        Returns:
+            None
+        """
+        for hash_alg, digest in self.digests.items():
+            digest_calc = utils.digest(spec, algorithm=hash_alg)
+            if not digest_calc == digest:
+                raise exceptions.PatchSetVerificationError(
+                    f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
+                )
+
+    def apply(self, spec, key):
+        """
+        Apply the patch by key to the background-only workspace specificatiom.
+
+        Args:
+            spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.
+            key (:obj:`str` or :obj:`tuple` of :obj:`int`/:obj:`float`): The key to lookup the patch by - either a name or a set of values.
+
+        Raises:
+            :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
+            :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
+
+        Returns:
+            workspace (:class:`~pyhf.workspace.Workspace`): The background-only workspace with the patch applied.
+        """
+        self.verify(spec)
+        return Workspace(self[key].apply(spec))

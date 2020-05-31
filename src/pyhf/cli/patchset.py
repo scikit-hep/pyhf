@@ -36,7 +36,7 @@ def extract(patchset, name, output_file, with_metadata):
     Extract a patch from a patchset.
 
     Raises:
-        :class:`~pyhf.exceptions.InvalidPatchSetLookup`: if the provided patch name is not in the patchset
+        :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
 
     Returns:
         jsonpatch (:obj:`list`): A list of jsonpatch operations to apply to a workspace.
@@ -74,11 +74,11 @@ def extract(patchset, name, output_file, with_metadata):
 )
 def apply(background_only, patchset, name, output_file):
     """
-    Apply a patch from patchset to the background-only workspace.
+    Apply a patch from patchset to the background-only workspace specification.
 
     Raises:
-        :class:`~pyhf.exceptions.InvalidPatchSetLookup`: if the provided patch name is not in the patchset
-        :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace
+        :class:`~pyhf.exceptions.InvalidPatchLookup`: if the provided patch name is not in the patchset
+        :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
 
     Returns:
         workspace (:class:`~pyhf.workspace.Workspace`): The patched background-only workspace.
@@ -107,10 +107,10 @@ def apply(background_only, patchset, name, output_file):
 @click.argument('patchset', default='-')
 def verify(background_only, patchset):
     """
-    Verify the patchset digest against the background-only workspace.
+    Verify the patchset digest against the background-only workspace specification.
 
     Raises:
-        :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace
+        :class:`~pyhf.exceptions.PatchSetVerificationError`: if the patchset cannot be verified against the workspace specification
 
     Returns:
         None
