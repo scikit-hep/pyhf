@@ -14,9 +14,9 @@ class Patch(jsonpatch.JsonPatch):
     """
     A way to store a patch definition as part of a patchset (:class:`~pyhf.patchset.PatchSet`).
 
-    It contains metadata (:attr:`~pyhf.patchset.Patch.metadata`:) about the Patch itself:
-      - :attr:`~pyhf.patchset.Patch.name`: a descriptive name
-      - :attr:`~pyhf.patchset.Patch.values`: a list of the values for each dimension in the phase-space the associated :class:`~pyhf.patchset.PatchSet` is defined for, see :attr:`~pyhf.patchset.PatchSet.labels`
+    It contains :attr:`~pyhf.patchset.Patch.metadata` about the Patch itself:
+      - a descriptive :attr:`~pyhf.patchset.Patch.name`
+      - a list of the :attr:`~pyhf.patchset.Patch.values` for each dimension in the phase-space the associated :class:`~pyhf.patchset.PatchSet` is defined for, see :attr:`~pyhf.patchset.PatchSet.labels`
 
     In addition to the above metadata, the Patch object behaves like the underlying :class:`jsonpatch.JsonPatch`.
     """
@@ -69,11 +69,11 @@ class PatchSet(object):
     """
     A way to store a collection of patches (:class:`~pyhf.patchset.Patch`).
 
-    It contains metadata (:attr:`~PatchSet.metadata`:) about the PatchSet itself:
-      - :attr:`~pyhf.patchset.PatchSet.description`: a high-level description of what the patches represent or the analysis it is for
-      - :attr:`~pyhf.patchset.PatchSet.references`:a list of references where the patchset is sourced from (e.g. hepdata)
-      - :attr:`~pyhf.patchset.PatchSet.digests`:a list of digests corresponding to the background-only workspace the patchset was made for
-      - :attr:`~pyhf.patchset.PatchSet.labels`:the labels of the dimensions of the phase-space for what the patches cover
+    It contains :attr:`~PatchSet.metadata` about the PatchSet itself:
+      - a high-level :attr:`~pyhf.patchset.PatchSet.description` of what the patches represent or the analysis it is for
+      - a list of :attr:`~pyhf.patchset.PatchSet.references` where the patchset is sourced from (e.g. hepdata)
+      - a list of :attr:`~pyhf.patchset.PatchSet.digests` corresponding to the background-only workspace the patchset was made for
+      - the :attr:`~pyhf.patchset.PatchSet.labels` of the dimensions of the phase-space for what the patches cover
 
     In addition to the above metadata, the PatchSet object behaves like a:
       - smart list allowing you to iterate over all the patches defined
