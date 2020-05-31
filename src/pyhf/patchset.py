@@ -29,7 +29,7 @@ class Patch(jsonpatch.JsonPatch):
             spec (`jsonable`): The patch JSON specification
 
         Returns:
-            patch (`~pyhf.patchset.Patch`): The Patch instance.
+            patch (:class:`~pyhf.patchset.Patch`): The Patch instance.
 
         """
         super(Patch, self).__init__(spec['patch'])
