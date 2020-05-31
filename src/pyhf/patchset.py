@@ -109,7 +109,8 @@ class PatchSet(object):
         ...                 }
         ...             ]
         ...         }
-        ...     ]
+        ...     ],
+        ...     "version": "1.0.0"
         ... })
         ...
         >>> patchset.version
