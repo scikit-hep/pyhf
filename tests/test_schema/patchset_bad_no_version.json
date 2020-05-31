@@ -20,22 +20,6 @@
                     }
                 }
             ]
-        },
-        {
-            "metadata": {
-                "name": "Gtt_2200_5000_800",
-                "values": [2100, 800]
-            },
-            "patch": [
-                {
-                    "op": "add",
-                    "path": "/foo/0/bar",
-                    "value": {
-                        "foo": [1.0]
-                    }
-                }
-            ]
         }
-    ],
-    "version": "1.0.0"
+    ]
 }

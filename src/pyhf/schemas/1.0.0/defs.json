@@ -244,7 +244,8 @@
             "type": "object",
             "properties": {
                 "patches": { "$ref": "#/definitions/patchset/patches" },
-                "metadata": { "$ref": "#/definitions/patchset/metadata" }
+                "metadata": { "$ref": "#/definitions/patchset/metadata" },
+                "version": { "const": "1.0.0" }
             },
             "additionalProperties": false,
             "required": ["patches", "metadata"],

@@ -112,6 +112,18 @@ class PatchSet(object):
         ...     ]
         ... })
         ...
+        >>> patchset.version
+        1.0.0
+        >>> patchset.references
+        { "hepdata": "ins1234567" }
+        >>> patchset.description
+        example patchset
+        >>> patchset.digests
+        { "md5": "098f6bcd4621d373cade4e832627b4f6" }
+        >>> patchset.labels
+        ["x", "y"]
+        >>> patchset.patches
+        [<pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>]
         >>> patchset['patch_name_for_2100x_800y']
         <pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>
         >>> patchset[(2100,800)]
@@ -141,17 +153,17 @@ class PatchSet(object):
 
         """
         self.schema = config_kwargs.pop('schema', 'patchset.json')
-        self.version = config_kwargs.pop('version', spec.get('version', None))
+        self._version = config_kwargs.pop('version', spec['version'])
 
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema}")
-        utils.validate(spec, self.schema, version=self.version)
+        utils.validate(spec, self.schema, version=self._version)
 
         # set properties based on metadata
         self._metadata = spec['metadata']
 
         # list of all patch objects
-        self.patches = []
+        self._patches = []
         # look-up table for retrieving patch by name or values
         self._patches_by_key = {'name': {}, 'values': {}}
 
@@ -175,10 +187,15 @@ class PatchSet(object):
                 )
 
             # all good, register patch
-            self.patches.append(patch)
+            self._patches.append(patch)
             # register lookup keys for the patch
             self._patches_by_key[patch.name] = patch
             self._patches_by_key[patch.values] = patch
+
+    @property
+    def version(self):
+        """ The version of the PatchSet """
+        return self._version
 
     @property
     def metadata(self):
@@ -204,6 +221,11 @@ class PatchSet(object):
     def labels(self):
         """ The labels in the PatchSet metadata """
         return self.metadata['labels']
+
+    @property
+    def patches(self):
+        """ The patches in the PatchSet """
+        return self._patches
 
     def __repr__(self):
         """ Representation of the object """

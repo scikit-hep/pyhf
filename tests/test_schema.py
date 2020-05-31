@@ -411,6 +411,7 @@ def test_patchset(datadir, patchset_file):
         'patchset_bad_no_labels.json',
         'patchset_bad_invalid_digests.json',
         'patchset_bad_hepdata_reference.json',
+        'patchset_bad_no_version.json',
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
