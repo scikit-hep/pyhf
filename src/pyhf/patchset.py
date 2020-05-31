@@ -114,7 +114,7 @@ class PatchSet(object):
         ... })
         ...
         >>> patchset.version
-        1.0.0
+        '1.0.0'
         >>> patchset.references
         { "hepdata": "ins1234567" }
         >>> patchset.description
