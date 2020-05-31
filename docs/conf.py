@@ -25,7 +25,7 @@ sys.path.insert(1, str(Path('./exts').resolve()))
 
 
 def setup(app):
-    app.add_stylesheet(
+    app.add_css_file(
         'https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css'
     )
 
