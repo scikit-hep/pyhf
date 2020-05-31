@@ -154,7 +154,7 @@ class PatchSet(object):
 
         """
         self.schema = config_kwargs.pop('schema', 'patchset.json')
-        self._version = config_kwargs.pop('version', spec['version'])
+        self._version = config_kwargs.pop('version', spec.get('version', None))
 
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema}")

@@ -23,8 +23,12 @@ def patch():
     )
 
 
-def test_patchset_invalid_spec(datadir):
-    patchsetspec = json.load(open(datadir.join('patchset_bad_empty_patches.json')))
+@pytest.mark.parametrize(
+    'patchset_file',
+    ['patchset_bad_empty_patches.json', 'patchset_bad_no_version.json',],
+)
+def test_patchset_invalid_spec(datadir, patchset_file):
+    patchsetspec = json.load(open(datadir.join(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.PatchSet(patchsetspec)
 

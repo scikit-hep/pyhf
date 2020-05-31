@@ -248,7 +248,7 @@
                 "version": { "const": "1.0.0" }
             },
             "additionalProperties": false,
-            "required": ["patches", "metadata"],
+            "required": ["patches", "metadata", "version"],
             "references": {
                 "type": "object",
                 "properties": {
