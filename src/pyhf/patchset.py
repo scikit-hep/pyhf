@@ -116,13 +116,13 @@ class PatchSet(object):
         >>> patchset.version
         '1.0.0'
         >>> patchset.references
-        { "hepdata": "ins1234567" }
+        {'hepdata': 'ins1234567'}
         >>> patchset.description
         example patchset
         >>> patchset.digests
-        { "md5": "098f6bcd4621d373cade4e832627b4f6" }
+        {'md5': '098f6bcd4621d373cade4e832627b4f6'}
         >>> patchset.labels
-        ["x", "y"]
+        ['x', 'y']
         >>> patchset.patches
         [<pyhf.patchset.Patch object 'patch_name_for_2100x_800y(2100, 800)' at 0x...>]
         >>> patchset['patch_name_for_2100x_800y']
