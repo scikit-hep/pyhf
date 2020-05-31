@@ -49,6 +49,7 @@ def test_patchset_attributes(patchset):
     assert len(patchset.digests) == 1
     assert patchset.digests['md5'] == "098f6bcd4621d373cade4e832627b4f6"
     assert patchset.labels == ["mass_stop", "mass_neutralino"]
+    assert patchset.version == "1.0.0"
 
 
 def test_patchset_get_patch_by_name(patchset):
