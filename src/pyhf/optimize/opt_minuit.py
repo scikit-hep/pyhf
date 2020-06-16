@@ -66,6 +66,7 @@ class minuit_optimizer(object):
         fixed_vals=None,
         return_fitted_val=False,
         return_uncertainties=False,
+        return_correlation=False,
     ):
         """
         Find Function Parameters that minimize the Objective.
@@ -76,12 +77,19 @@ class minuit_optimizer(object):
         """
         mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         result = mm.migrad(ncall=self.ncall)
+
+        if return_correlation:
+            cov = mm.hesse(maxcall=0)
+            corr = mm.matrix(correlation=True, skip_fixed=False)
+
         assert result
+        bestfit_pars = np.asarray([v for k, v in mm.values.items()])
         if return_uncertainties:
             bestfit_pars = np.asarray([(v, mm.errors[k]) for k, v in mm.values.items()])
-        else:
-            bestfit_pars = np.asarray([v for k, v in mm.values.items()])
+        if return_correlation:
+            bestfit_pars = np.asarray([(it[1], mm.errors[it[0]], corr[idx]) for idx, it in enumerate(mm.values.items())])
         bestfit_value = mm.fval
+
         if return_fitted_val:
-            return bestfit_pars, bestfit_value
+            return bestfit_pars, bestfit_value          
         return bestfit_pars
