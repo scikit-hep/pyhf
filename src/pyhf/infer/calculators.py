@@ -147,9 +147,7 @@ class AsymptoticCalculator(object):
         tensorlib, _ = get_backend()
 
         if self.use_q0:
-            f_teststat = lambda data, pdf, init_pars, par_bounds: q0(
-                data, pdf, init_pars, par_bounds
-            )
+            f_teststat = q0
             asimov_mu = 1.0
         else:
             f_teststat = lambda data, pdf, init_pars, par_bounds: qmu(
