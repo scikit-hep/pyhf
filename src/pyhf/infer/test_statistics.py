@@ -54,3 +54,55 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), qmu
     )[0]
     return tensorlib.clip(qmu, 0, max_value=None)
+
+
+def q0(data, pdf, init_pars, par_bounds):
+    r"""
+
+    The test statistic, :math:`q_{0}`, for discovery of a positive signal
+    as defined in Equation (12) in `arXiv:1007.1727`_, for :math:`\mu=0`.
+
+    .. math::
+       :nowrap:
+       \begin{equation}
+          q_{0} = \left\{\begin{array}{ll}
+          -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
+          0, & \hat{\mu} < 0,
+          \end{array}\right.
+        \end{equation}
+
+
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [60, 65]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> pyhf.infer.test_statistics.q0(data, model, init_pars, par_bounds)
+        2.983394486834868
+
+    Args:
+        data (Tensor): The data to be considered
+        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
+        init_pars (`list`): Values to initialize the model parameters at for the fit
+        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+
+    Returns:
+        Float: The calculated test statistic, :math:`q_{\mu}`
+    """
+    tensorlib, optimizer = get_backend()
+    mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
+        0, data, pdf, init_pars, par_bounds, return_fitted_val=True
+    )
+    muhatbhat, unconstrained_fit_lhood_val = fit(
+        data, pdf, init_pars, par_bounds, return_fitted_val=True
+    )
+    q0 = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
+    q0 = tensorlib.where(
+        muhatbhat[pdf.config.poi_index] < 0, tensorlib.astensor(0.0), q0
+    )[0]
+    return tensorlib.clip(q0, 0, max_value=None)
