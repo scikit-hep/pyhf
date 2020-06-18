@@ -1,8 +1,8 @@
 import logging
 
 from . import modifier
-from ..paramsets import constrained_by_normal
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
+from ..parameters import constrained_by_normal, ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(name='lumi', constrained=True, pdf_type='normal', op_code='multiplication')
 class lumi(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
@@ -26,41 +26,48 @@ class lumi(object):
 
 
 class lumi_combined(object):
-    def __init__(self, lumi_mods, pdfconfig, mega_mods):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
+    def __init__(self, lumi_mods, pdfconfig, mega_mods, batch_size=None):
+        self.batch_size = batch_size
 
-        pnames = [pname for pname, _ in lumi_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
-        self._lumi_indices = [self._parindices[pdfconfig.par_slice(p)] for p in pnames]
+
+        parfield_shape = (
+            (self.batch_size, pdfconfig.npars)
+            if self.batch_size
+            else (pdfconfig.npars,)
+        )
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
 
         self._lumi_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.param_viewer.index_selection:
+            return
         tensorlib, _ = get_backend()
-        self.lumi_mask = default_backend.astensor(self._lumi_mask)
-        self.lumi_default = default_backend.ones(self.lumi_mask.shape)
-        self.lumi_indices = default_backend.astensor(self._lumi_indices, dtype='int')
+        self.lumi_mask = tensorlib.tile(
+            tensorlib.astensor(self._lumi_mask), (1, 1, self.batch_size or 1, 1)
+        )
+        self.lumi_mask_bool = tensorlib.astensor(self.lumi_mask, dtype="bool")
+        self.lumi_default = tensorlib.ones(self.lumi_mask.shape)
 
     def apply(self, pars):
         '''
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
-        lumi_indices = tensorlib.astensor(self.lumi_indices, dtype='int')
-        lumi_mask = tensorlib.astensor(self.lumi_mask)
-        if not tensorlib.shape(lumi_indices)[0]:
+        if not self.param_viewer.index_selection:
             return
-        lumis = tensorlib.gather(pars, lumi_indices)
-        results_lumi = lumi_mask * tensorlib.reshape(
-            lumis, tensorlib.shape(lumis) + (1, 1)
-        )
-        results_lumi = tensorlib.where(
-            lumi_mask, results_lumi, tensorlib.astensor(self.lumi_default)
-        )
-        return results_lumi
+
+        tensorlib, _ = get_backend()
+        lumis = self.param_viewer.get(pars)
+        if self.batch_size is None:
+            results_lumi = tensorlib.einsum('msab,x->msab', self.lumi_mask, lumis)
+        else:
+            results_lumi = tensorlib.einsum('msab,xa->msab', self.lumi_mask, lumis)
+
+        return tensorlib.where(self.lumi_mask_bool, results_lumi, self.lumi_default)

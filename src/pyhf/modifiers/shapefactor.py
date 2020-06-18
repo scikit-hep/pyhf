@@ -1,8 +1,8 @@
 import logging
 
 from . import modifier
-from ..paramsets import unconstrained
 from .. import get_backend, default_backend, events
+from ..parameters import unconstrained, ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -10,20 +10,20 @@ log = logging.getLogger(__name__)
 @modifier(name='shapefactor', op_code='multiplication')
 class shapefactor(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
-            'n_parameters': n_parameters,
+            'n_parameters': len(sample_data),
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((0.0, 10.0),) * n_parameters,
+            'inits': (1.0,) * len(sample_data),
+            'bounds': ((0.0, 10.0),) * len(sample_data),
         }
 
 
 class shapefactor_combined(object):
-    def __init__(self, shapefactor_mods, pdfconfig, mega_mods):
+    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=None):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
         bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
@@ -62,64 +62,89 @@ class shapefactor_combined(object):
         and at that point can be used to compute the effect of shapefactor.
         """
 
-        pnames = [pname for pname, _ in shapefactor_mods]
+        self.batch_size = batch_size
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
-        self._shapefactor_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, shapefactor_mods
+        )
+
         self._shapefactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
+
         global_concatenated_bin_indices = [
-            j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])
+            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
-        # compute the max so that we can pad with 0s for the right shape
-        # for gather. The 0s will get masked by self._shapefactor_mask anyway
-        # For example: [[1,2,3],[4,5],[6,7,8]] -> [[1,2,3],[4,5,0],[6,7,8]]
-        max_nbins = max(global_concatenated_bin_indices) + 1
-        self._shapefactor_indices = [
-            default_backend.tolist(
-                default_backend.gather(
-                    default_backend.astensor(
-                        indices + [0] * (max_nbins - len(indices)), dtype='int'
-                    ),
-                    global_concatenated_bin_indices,
-                )
-            )
-            for indices in self._shapefactor_indices
-        ]
+
+        self._access_field = default_backend.tile(
+            global_concatenated_bin_indices,
+            (len(shapefactor_mods), self.batch_size or 1, 1),
+        )
+        # acess field is now
+        # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model
+        # [
+        #   [0 1 2 0 1 0 1 2 3 4] (number of rows according to batch_size but at least 1)
+        #   [0 1 2 0 1 0 1 2 3 4]
+        #   [0 1 2 0 1 0 1 2 3 4]
+        # ]
+
+        # the index selection of param_viewer is a
+        # list of (batch_size, par_slice) tensors
+        # so self.param_viewer.index_selection[s][t]
+        # points to the indices for a given systematic
+        # at a given position in the batch
+        # we thus populate the access field with these indices
+        # up to the point where we run out of bins (in case)
+        # the paramset slice is larger than the number of bins
+        # in which case we use a dummy index that will be masked
+        # anyways in apply (here: 0)
+
+        # access field is shape (sys, batch, globalbin)
+        for s, syst_access in enumerate(self._access_field):
+            for t, batch_access in enumerate(syst_access):
+                selection = self.param_viewer.index_selection[s][t]
+                for b, bin_access in enumerate(batch_access):
+                    self._access_field[s, t, b] = (
+                        selection[bin_access] if bin_access < len(selection) else 0
+                    )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
-        if not self._shapefactor_indices:
+        if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
+        self.shapefactor_mask = tensorlib.tile(
+            tensorlib.astensor(self._shapefactor_mask, dtype="bool"),
+            (1, 1, self.batch_size or 1, 1),
+        )
+        self.access_field = tensorlib.astensor(self._access_field, dtype='int')
+
         self.shapefactor_default = tensorlib.ones(
             tensorlib.shape(self.shapefactor_mask)
         )
-        self.shapefactor_indices = tensorlib.astensor(
-            self._shapefactor_indices, dtype='int'
-        )
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapefactor_mask)[1])
-        self.alpha_ones = tensorlib.ones([1])
 
     def apply(self, pars):
         '''
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        if not self._shapefactor_indices:
+        if not self.param_viewer.index_selection:
             return
+
         tensorlib, _ = get_backend()
-        shapefactors = tensorlib.gather(pars, self.shapefactor_indices)
+        if self.batch_size is None:
+            flat_pars = pars
+        else:
+            flat_pars = tensorlib.reshape(pars, (-1,))
+        shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
-            's,a,mb->msab', self.sample_ones, self.alpha_ones, shapefactors
+            'mab,s->msab', shapefactors, self.sample_ones
         )
         results_shapefactor = tensorlib.where(
             self.shapefactor_mask, results_shapefactor, self.shapefactor_default

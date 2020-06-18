@@ -1,9 +1,9 @@
 import logging
 
 from . import modifier
-from ..paramsets import constrained_by_normal
 from .. import get_backend, events
 from .. import interpolators
+from ..parameters import constrained_by_normal, ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normsys', constrained=True, op_code='multiplication')
 class normsys(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
@@ -25,31 +25,36 @@ class normsys(object):
 
 
 class normsys_combined(object):
-    def __init__(self, normsys_mods, pdfconfig, mega_mods, interpcode='code1'):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
+    def __init__(
+        self, normsys_mods, pdfconfig, mega_mods, interpcode='code1', batch_size=None
+    ):
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
-        pnames = [pname for pname, _ in normsys_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
         normsys_mods = [m for m, _ in normsys_mods]
 
-        self._normsys_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
+        self.batch_size = batch_size
+
+        parfield_shape = (
+            (self.batch_size, pdfconfig.npars)
+            if self.batch_size
+            else (pdfconfig.npars,)
+        )
+        self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, normsys_mods)
         self._normsys_histoset = [
             [
                 [
-                    mega_mods[s][m]['data']['lo'],
-                    mega_mods[s][m]['data']['nom_data'],
-                    mega_mods[s][m]['data']['hi'],
+                    mega_mods[m][s]['data']['lo'],
+                    mega_mods[m][s]['data']['nom_data'],
+                    mega_mods[m][s]['data']['hi'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._normsys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if normsys_mods:
@@ -61,20 +66,32 @@ class normsys_combined(object):
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.param_viewer.index_selection:
+            return
         tensorlib, _ = get_backend()
-        self.normsys_mask = tensorlib.astensor(self._normsys_mask)
+        self.normsys_mask = tensorlib.tile(
+            tensorlib.astensor(self._normsys_mask, dtype="bool"),
+            (1, 1, self.batch_size or 1, 1),
+        )
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
-        self.normsys_indices = tensorlib.astensor(self._normsys_indices, dtype='int')
+        if self.batch_size is None:
+            self.indices = tensorlib.reshape(
+                self.param_viewer.indices_concatenated, (-1, 1)
+            )
 
     def apply(self, pars):
         '''
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         '''
-        tensorlib, _ = get_backend()
-        if not tensorlib.shape(self.normsys_indices)[0]:
+        if not self.param_viewer.index_selection:
             return
-        normsys_alphaset = tensorlib.gather(pars, self.normsys_indices)
+
+        tensorlib, _ = get_backend()
+        if self.batch_size is None:
+            normsys_alphaset = self.param_viewer.get(pars, self.indices)
+        else:
+            normsys_alphaset = self.param_viewer.get(pars)
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below

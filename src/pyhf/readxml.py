@@ -2,7 +2,7 @@ from . import utils
 
 import logging
 
-import os
+from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
@@ -38,7 +38,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     # strip leading slashes as uproot doesn't use "/" for top-level
     path = path or ''
     path = path.strip('/')
-    fullpath = os.path.join(rootdir, filename)
+    fullpath = str(Path(rootdir).joinpath(filename))
     if not fullpath in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
@@ -48,12 +48,10 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
         h = f[name]
     except KeyError:
         try:
-            h = f[os.path.join(path, name)]
+            h = f[str(Path(path).joinpath(name))]
         except KeyError:
             raise KeyError(
-                'Both {0:s} and {1:s} were tried and not found in {2:s}'.format(
-                    name, os.path.join(path, name), os.path.join(rootdir, filename)
-                )
+                f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
             )
     return h.numpy()[0].tolist(), extract_error(h)
 
@@ -69,6 +67,7 @@ def process_sample(
 
     data, err = import_root_histogram(rootdir, inputfile, histopath, histoname)
 
+    parameter_configs = []
     modifiers = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
@@ -101,6 +100,15 @@ def process_sample(
             modifiers.append(
                 {'name': modtag.attrib['Name'], 'type': 'normfactor', 'data': None}
             )
+            parameter_config = {
+                'name': modtag.attrib['Name'],
+                'bounds': [[float(modtag.attrib['Low']), float(modtag.attrib['High'])]],
+                'inits': [float(modtag.attrib['Val'])],
+            }
+            if modtag.attrib.get('Const'):
+                parameter_config['fixed'] = modtag.attrib['Const'] == 'True'
+
+            parameter_configs.append(parameter_config)
         elif modtag.tag == 'HistoSys':
             lo, _ = import_root_histogram(
                 rootdir,
@@ -165,7 +173,12 @@ def process_sample(
         else:
             log.warning('not considering modifier tag %s', modtag)
 
-    return {'name': sample.attrib['Name'], 'data': data, 'modifiers': modifiers}
+    return {
+        'name': sample.attrib['Name'],
+        'data': data,
+        'modifiers': modifiers,
+        'parameter_configs': parameter_configs,
+    }
 
 
 def process_data(sample, rootdir, inputfile, histopath):
@@ -197,19 +210,24 @@ def process_channel(channelxml, rootdir, track_progress=False):
     channelname = channel.attrib['Name']
 
     results = []
+    channel_parameter_configs = []
     for sample in samples:
         samples.set_description('  - sample {}'.format(sample.attrib.get('Name')))
         result = process_sample(
             sample, rootdir, inputfile, histopath, channelname, track_progress
         )
+        channel_parameter_configs.extend(result.pop('parameter_configs'))
         results.append(result)
 
-    return channelname, parsed_data, results
+    return channelname, parsed_data, results, channel_parameter_configs
 
 
-def process_measurements(toplvl):
+def process_measurements(toplvl, other_parameter_configs=None):
     results = []
+    other_parameter_configs = other_parameter_configs if other_parameter_configs else []
+
     for x in toplvl.findall('Measurement'):
+        parameter_configs_map = {k['name']: dict(**k) for k in other_parameter_configs}
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -228,13 +246,14 @@ def process_measurements(toplvl):
                 ],
             },
         }
+
         for param in x.findall('ParamSetting'):
             # determine what all parameters in the paramsetting have in common
             overall_param_obj = {}
             if param.attrib.get('Const'):
                 overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
             if param.attrib.get('Val'):
-                overall_param_obj['value'] = param.attrib['Val']
+                overall_param_obj['inits'] = [float(param.attrib['Val'])]
 
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
@@ -243,11 +262,38 @@ def process_measurements(toplvl):
                     if param_name == 'Lumi':
                         result['config']['parameters'][0].update(overall_param_obj)
                     else:
-                        param_obj = {'name': param_name}
+                        # pop from parameter_configs_map because we don't want to duplicate
+                        param_obj = parameter_configs_map.pop(
+                            param_name, {'name': param_name}
+                        )
+                        # ParamSetting will always take precedence
                         param_obj.update(overall_param_obj)
-                        result['config']['parameters'].append(param_obj)
+                        # add it back in to the parameter_configs_map
+                        parameter_configs_map[param_name] = param_obj
+        result['config']['parameters'].extend(parameter_configs_map.values())
         results.append(result)
+
     return results
+
+
+def dedupe_parameters(parameters):
+    duplicates = {}
+    for p in parameters:
+        duplicates.setdefault(p['name'], []).append(p)
+    for parname in duplicates.keys():
+        parameter_list = duplicates[parname]
+        if len(parameter_list) == 1:
+            continue
+        elif any(p != parameter_list[0] for p in parameter_list[1:]):
+            for p in parameter_list:
+                log.warning(p)
+            raise RuntimeError(
+                'cannot import workspace due to incompatible parameter configurations for {0:s}.'.format(
+                    parname
+                )
+            )
+    # no errors raised, de-dupe and return
+    return list({v['name']: v for v in parameters}.values())
 
 
 def parse(configfile, rootdir, track_progress=False):
@@ -259,20 +305,24 @@ def parse(configfile, rootdir, track_progress=False):
     )
 
     channels = {}
+    parameter_configs = []
     for inp in inputs:
         inputs.set_description('Processing {}'.format(inp))
-        channel, data, samples = process_channel(
-            ET.parse(os.path.join(rootdir, inp)), rootdir, track_progress
+        channel, data, samples, channel_parameter_configs = process_channel(
+            ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
+        parameter_configs.extend(channel_parameter_configs)
 
+    parameter_configs = dedupe_parameters(parameter_configs)
     result = {
-        'measurements': process_measurements(toplvl),
+        'measurements': process_measurements(
+            toplvl, other_parameter_configs=parameter_configs
+        ),
         'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
         'observations': [{'name': k, 'data': v['data']} for k, v in channels.items()],
         'version': utils.SCHEMA_VERSION,
     }
-
     utils.validate(result, 'workspace.json')
 
     return result

@@ -1,8 +1,8 @@
 import logging
 
 from . import modifier
-from ..paramsets import constrained_by_normal
 from .. import get_backend, default_backend, events
+from ..parameters import constrained_by_normal, ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -10,86 +10,79 @@ log = logging.getLogger(__name__)
 @modifier(name='staterror', constrained=True, op_code='multiplication')
 class staterror(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
-            'n_parameters': n_parameters,
+            'n_parameters': len(sample_data),
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((1e-10, 10.0),) * n_parameters,
-            'auxdata': (1.0,) * n_parameters,
+            'inits': (1.0,) * len(sample_data),
+            'bounds': ((1e-10, 10.0),) * len(sample_data),
+            'auxdata': (1.0,) * len(sample_data),
         }
 
 
 class staterror_combined(object):
-    def __init__(self, staterr_mods, pdfconfig, mega_mods):
-        self._parindices = list(range(len(pdfconfig.suggested_init())))
+    def __init__(self, staterr_mods, pdfconfig, mega_mods, batch_size=None):
+        self.batch_size = batch_size
 
-        pnames = [pname for pname, _ in staterr_mods]
         keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
-        staterr_mods = [m for m, _ in staterr_mods]
+        self._staterr_mods = [m for m, _ in staterr_mods]
 
-        self._staterror_indices = [
-            self._parindices[pdfconfig.par_slice(p)] for p in pnames
-        ]
-        self._staterr_mods = staterr_mods
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
+        self.param_viewer = ParamViewer(
+            parfield_shape, pdfconfig.par_map, self._staterr_mods
+        )
+
         self._staterror_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__staterror_uncrt = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[s][m]['data']['uncrt'],
-                        mega_mods[s][m]['data']['nom_data'],
+                        mega_mods[m][s]['data']['uncrt'],
+                        mega_mods[m][s]['data']['nom_data'],
                     ]
                     for s in pdfconfig.samples
                 ]
                 for m in keys
             ]
         )
+        self.finalize(pdfconfig)
 
-        if self._staterror_indices:
-            access_rows = []
-            staterror_mask = default_backend.astensor(self._staterror_mask)
-            for mask, inds in zip(staterror_mask, self._staterror_indices):
-                summed_mask = default_backend.sum(mask[:, 0, :], axis=0)
-                assert default_backend.shape(
-                    summed_mask[summed_mask > 0]
-                ) == default_backend.shape(default_backend.astensor(inds))
-                # make masks of > 0 and == 0
-                positive_mask = summed_mask > 0
-                zero_mask = summed_mask == 0
-                # then apply the mask
-                summed_mask[positive_mask] = inds
-                summed_mask[zero_mask] = len(self._parindices) - 1
-                access_rows.append(summed_mask.tolist())
-            self._factor_access_indices = default_backend.tolist(
-                default_backend.stack(access_rows)
-            )
-            self.finalize(pdfconfig)
-        else:
-            self._factor_access_indices = None
+        global_concatenated_bin_indices = [
+            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+        ]
+
+        self._access_field = default_backend.tile(
+            global_concatenated_bin_indices,
+            (len(staterr_mods), self.batch_size or 1, 1),
+        )
+        # access field is shape (sys, batch, globalbin)
+        for s, syst_access in enumerate(self._access_field):
+            for t, batch_access in enumerate(syst_access):
+                selection = self.param_viewer.index_selection[s][t]
+                for b, bin_access in enumerate(batch_access):
+                    self._access_field[s, t, b] = (
+                        selection[bin_access] if bin_access < len(selection) else 0
+                    )
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _precompute(self):
+        if not self.param_viewer.index_selection:
+            return
         tensorlib, _ = get_backend()
-        self.staterror_mask = tensorlib.astensor(self._staterror_mask)
+        self.staterror_mask = tensorlib.astensor(self._staterror_mask, dtype="bool")
+        self.staterror_mask = tensorlib.tile(
+            self.staterror_mask, (1, 1, self.batch_size or 1, 1)
+        )
+        self.access_field = tensorlib.astensor(self._access_field, dtype='int')
+        self.sample_ones = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
-
-        if self._staterror_indices:
-            self.factor_access_indices = tensorlib.astensor(
-                self._factor_access_indices, dtype='int'
-            )
-            self.default_value = tensorlib.astensor([1.0])
-            self.sample_ones = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
-            self.alpha_ones = tensorlib.astensor([1])
-        else:
-            self.factor_access_indices = None
 
     def finalize(self, pdfconfig):
         staterror_mask = default_backend.astensor(self._staterror_mask)
@@ -123,19 +116,16 @@ class staterror_combined(object):
             pdfconfig.param_set(mod).sigmas = default_backend.tolist(sigmas[sigmas > 0])
 
     def apply(self, pars):
-        tensorlib, _ = get_backend()
-        if self.factor_access_indices is None:
+        if not self.param_viewer.index_selection:
             return
-        select_from = tensorlib.concatenate([pars, self.default_value])
-        factor_row = tensorlib.gather(select_from, self.factor_access_indices)
 
-        results_staterr = tensorlib.einsum(
-            's,a,mb->msab',
-            tensorlib.astensor(self.sample_ones),
-            tensorlib.astensor(self.alpha_ones),
-            factor_row,
-        )
-
+        tensorlib, _ = get_backend()
+        if self.batch_size is None:
+            flat_pars = pars
+        else:
+            flat_pars = tensorlib.reshape(pars, (-1,))
+        statfactors = tensorlib.gather(flat_pars, self.access_field)
+        results_staterr = tensorlib.einsum('mab,s->msab', statfactors, self.sample_ones)
         results_staterr = tensorlib.where(
             self.staterror_mask, results_staterr, self.staterror_default
         )

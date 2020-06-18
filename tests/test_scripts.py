@@ -46,10 +46,7 @@ def test_import_prepHistFactory_withProgress(tmpdir, script_runner):
 
 
 def test_import_prepHistFactory_stdout(tmpdir, script_runner):
-    temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/'.format(
-        temp.strpath
-    )
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert ret.stdout != ''
@@ -99,6 +96,26 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_exp' in d
 
 
+@pytest.mark.parametrize(
+    "backend", ["numpy", "tensorflow", "pytorch", "jax"],
+)
+def test_cls_backend_option(tmpdir, script_runner, backend):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf cls --backend {0:s} {1:s}'.format(backend, temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    d = json.loads(ret.stdout)
+    assert d
+    assert 'CLs_obs' in d
+    assert 'CLs_exp' in d
+
+
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
@@ -116,10 +133,11 @@ def test_import_and_export(tmpdir, script_runner):
 def test_patch(tmpdir, script_runner):
     patch = tmpdir.join('patch.json')
 
-    patchcontent = u'''
+    patch.write(
+        u'''
 [{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
     '''
-    patch.write(patchcontent)
+    )
 
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
@@ -137,23 +155,13 @@ def test_patch(tmpdir, script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    import io
+    command = f'pyhf cls {temp.strpath:s} --patch -'
 
-    command = 'pyhf cls {0:s} --patch -'.format(temp.strpath, patch.strpath)
-
-    pipefile = io.StringIO(
-        patchcontent
-    )  # python 2.7 pytest-files are not file-like enough
-    ret = script_runner.run(*shlex.split(command), stdin=pipefile)
+    ret = script_runner.run(*shlex.split(command), stdin=patch)
     assert ret.success
 
-    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch -'.format(
-        temp.strpath, tmpdir.mkdir('output_2').strpath, patch.strpath
-    )
-    pipefile = io.StringIO(
-        patchcontent
-    )  # python 2.7 pytest-files are not file-like enough
-    ret = script_runner.run(*shlex.split(command), stdin=pipefile)
+    command = f"pyhf json2xml {temp.strpath:s} --output-dir {tmpdir.mkdir('output_2').strpath:s} --patch -"
+    ret = script_runner.run(*shlex.split(command), stdin=patch)
     assert ret.success
 
 
@@ -288,3 +296,245 @@ def test_inspect_outfile(tmpdir, script_runner):
     assert len(summary['parameters']) == 6
     assert len(summary['samples']) == 3
     assert len(summary['systematics']) == 6
+
+
+def test_prune(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_prune_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("prune_output.json")
+    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    spec = json.loads(temp.read())
+    ws = pyhf.Workspace(spec)
+    assert 'GammaExample' in ws.measurement_names
+    assert 'staterror_channel1' in ws.parameters
+    pruned_spec = json.loads(tempout.read())
+    pruned_ws = pyhf.Workspace(pruned_spec)
+    assert 'GammaExample' not in pruned_ws.measurement_names
+    assert 'staterror_channel1' not in pruned_ws.parameters
+
+
+def test_rename(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s}'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_rename_outfile(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("rename_output.json")
+    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s} --output-file {1:s}'.format(
+        temp.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    spec = json.loads(temp.read())
+    ws = pyhf.Workspace(spec)
+    assert 'GammaExample' in ws.measurement_names
+    assert 'GamEx' not in ws.measurement_names
+    assert 'staterror_channel1' in ws.parameters
+    assert 'staterror_channelone' not in ws.parameters
+    renamed_spec = json.loads(tempout.read())
+    renamed_ws = pyhf.Workspace(renamed_spec)
+    assert 'GammaExample' not in renamed_ws.measurement_names
+    assert 'GamEx' in renamed_ws.measurement_names
+    assert 'staterror_channel1' not in renamed_ws.parameters
+    assert 'staterror_channelone' in renamed_ws.parameters
+
+
+def test_combine(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = 'pyhf combine {0:s} {1:s}'.format(temp_1.strpath, temp_2.strpath)
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
+def test_combine_outfile(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
+        temp_1.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    rename_channels = {'channel1': 'channel2'}
+    rename_measurements = {
+        'ConstExample': 'OtherConstExample',
+        'LogNormExample': 'OtherLogNormExample',
+        'GaussExample': 'OtherGaussExample',
+        'GammaExample': 'OtherGammaExample',
+    }
+
+    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
+        temp_1.strpath,
+        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
+        ''.join(
+            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+        ),
+        temp_2.strpath,
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    tempout = tmpdir.join("combined_output.json")
+    command = 'pyhf combine {0:s} {1:s} --output-file {2:s}'.format(
+        temp_1.strpath, temp_2.strpath, tempout.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    combined_spec = json.loads(tempout.read())
+    combined_ws = pyhf.Workspace(combined_spec)
+    assert combined_ws.channels == ['channel1', 'channel2']
+    assert len(combined_ws.measurement_names) == 8
+
+
+@pytest.mark.parametrize('do_json', [False, True])
+@pytest.mark.parametrize(
+    'algorithms', [['md5'], ['sha256'], ['sha256', 'md5'], ['sha256', 'md5']]
+)
+def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
+    results = {
+        'md5': '202eb7615102c35ba86be47eb6fa5e78',
+        'sha256': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
+    }
+
+    temp = tmpdir.join("parsed_output.json")
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath} --hide-progress'
+    ret = script_runner.run(*shlex.split(command))
+
+    command = f"pyhf digest {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    assert all(algorithm in ret.stdout for algorithm in algorithms)
+    if do_json:
+        expected_output = json.dumps(
+            {algorithm: results[algorithm] for algorithm in algorithms},
+            sort_keys=True,
+            indent=4,
+        )
+    else:
+        expected_output = '\n'.join(
+            f"{algorithm}:{results[algorithm]}" for algorithm in algorithms
+        )
+
+    assert ret.stdout == expected_output + '\n'
+    assert ret.stderr == ''
+
+    if do_json:
+        assert json.loads(ret.stdout) == {
+            algorithm: results[algorithm] for algorithm in algorithms
+        }
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+@pytest.mark.parametrize('with_metadata', [False, True])
+def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
+    temp = tmpdir.join("extracted_output.json")
+    command = f'pyhf patchset extract {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+    if with_metadata:
+        command += " --with-metadata"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+    if with_metadata:
+        assert 'metadata' in extracted_output
+    else:
+        assert (
+            extracted_output
+            == json.load(datadir.join("example_patchset.json"))['patches'][0]['patch']
+        )
+
+
+def test_patchset_verify(datadir, script_runner):
+    command = f'pyhf patchset verify {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    assert 'All good' in ret.stdout
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
+    temp = tmpdir.join("patched_output.json")
+    command = f'pyhf patchset apply {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+    assert extracted_output['channels'][0]['samples'][0]['modifiers'][0]['data'] == {
+        "hi": 1.2,
+        "lo": 0.8,
+    }

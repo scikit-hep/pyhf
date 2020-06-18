@@ -1,3 +1,5 @@
+"""Optimizers for Tensor Functions."""
+
 from .. import exceptions
 
 
@@ -10,6 +12,18 @@ class _OptimizerRetriever(object):
             # for autocomplete and dir() calls
             self.scipy_optimizer = scipy_optimizer
             return scipy_optimizer
+        elif name == 'jax_optimizer':
+            try:
+                from .opt_jax import jax_optimizer
+
+                assert jax_optimizer
+                self.jax_optimizer = jax_optimizer
+                return jax_optimizer
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing jax. The jax optimizer cannot be used.",
+                    e,
+                )
         elif name == 'pytorch_optimizer':
             try:
                 from .opt_pytorch import pytorch_optimizer

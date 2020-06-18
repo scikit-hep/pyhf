@@ -5,7 +5,6 @@ import numpy as np
 import json
 
 
-@pytest.mark.fail_mxnet
 def test_pdf_inputs(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -26,6 +25,81 @@ def test_pdf_inputs(backend):
     )
     assert tensorlib.tolist(pdf.logpdf(pars, data)) == pytest.approx(
         [-6.025179228209936], abs=1e-4
+    )
+
+
+def test_invalid_pdf_pars():
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init() + [1.0]
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.logpdf(pars, data)
+
+
+def test_invalid_pdf_data():
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init()
+    data = source['bindata']['data'] + [10.0] + pdf.config.auxdata
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfData):
+        pdf.logpdf(pars, data)
+
+
+def test_pdf_basicapi_tests(backend):
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+    )
+
+    pars = pdf.config.suggested_init()
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    tensorlib, _ = backend
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417118312751542], 2.5e-05
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars)) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'],
+        source['bindata']['bkg'],
+        source['bindata']['bkgerr'],
+        batch_size=2,
+    )
+
+    pars = [pdf.config.suggested_init()] * 2
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    tensorlib, _ = backend
+    assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
+        [0.002417118312751542] * 2, 2.5e-05
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars))
+    assert tensorlib.tolist(pdf.expected_data(pars)[0]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
+    )
+    assert tensorlib.tolist(pdf.expected_data(pars)[1]) == pytest.approx(
+        [60.0, 51.020408630], 1e-08
     )
 
 
@@ -97,7 +171,6 @@ def test_pdf_integration_staterror(backend):
         ]
     }
     pdf = pyhf.Model(spec)
-    par = pdf.config.par_slice('stat_firstchannel')
     par_set = pdf.config.param_set('stat_firstchannel')
     tensorlib, _ = backend
     uncerts = tensorlib.astensor([[12.0, 12.0], [5.0, 5.0]])
@@ -107,6 +180,56 @@ def test_pdf_integration_staterror(backend):
     assert pytest.approx(tensorlib.tolist(par_set.sigmas)) == tensorlib.tolist(
         tensorlib.divide(quad, totals)
     )
+
+
+def test_pdf_integration_shapesys_zeros(backend):
+    spec = {
+        "channels": [
+            {
+                "name": "channel1",
+                "samples": [
+                    {
+                        "data": [20.0, 10.0, 5.0, 3.0, 2.0, 1.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu", "type": "normfactor"}
+                        ],
+                        "name": "signal",
+                    },
+                    {
+                        "data": [100.0, 90, 0.0, 70, 0.1, 50],
+                        "modifiers": [
+                            {
+                                "data": [10, 9, 1, 0.0, 0.1, 5],
+                                "name": "syst",
+                                "type": "shapesys",
+                            },
+                            {
+                                "data": [0, 0, 0, 0, 0, 0],
+                                "name": "syst_lowstats",
+                                "type": "shapesys",
+                            },
+                        ],
+                        "name": "background1",
+                    },
+                ],
+            }
+        ]
+    }
+    pdf = pyhf.Model(spec)
+    par_set_syst = pdf.config.param_set('syst')
+    par_set_syst_lowstats = pdf.config.param_set('syst_lowstats')
+
+    assert par_set_syst.n_parameters == 4
+    assert par_set_syst_lowstats.n_parameters == 0
+    tensorlib, _ = backend
+    nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 0.0, 70, 0.1, 50]), 2)
+    uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1, 0.0, 0.1, 5]), 2)
+    factors = tensorlib.divide(nominal_sq, uncerts_sq)
+    indices = tensorlib.astensor([0, 1, 4, 5], dtype='int')
+    assert pytest.approx(tensorlib.tolist(par_set_syst.factors)) == tensorlib.tolist(
+        tensorlib.gather(factors, indices)
+    )
+    assert getattr(par_set_syst_lowstats, 'factors', None) is None
 
 
 @pytest.mark.only_numpy
@@ -189,7 +312,6 @@ def test_pdf_integration_histosys(backend):
     ]
 
 
-@pytest.mark.skip_mxnet
 def test_pdf_integration_normsys(backend):
     source = json.load(open('validation/data/2bin_histosys_example2.json'))
     spec = {
@@ -371,7 +493,7 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pyhf.Model(spec, poiname='reused_name')
+        pyhf.Model(spec, poi_name='reused_name')
 
 
 def test_override_paramset_defaults():
@@ -474,7 +596,7 @@ def test_lumi_np_scaling():
             }
         ],
     }
-    pdf = pyhf.pdf.Model(spec, poiname="SigXsecOverSM")
+    pdf = pyhf.pdf.Model(spec, poi_name="SigXsecOverSM")
 
     poi_slice = pdf.config.par_slice('SigXsecOverSM')
     lumi_slice = pdf.config.par_slice('lumi')
@@ -527,4 +649,47 @@ def test_sample_wrong_bins():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pdf = pyhf.Model(spec)
+        pyhf.Model(spec)
+
+
+@pytest.mark.parametrize(
+    'measurements, msettings',
+    [
+        (
+            None,
+            {'normsys': {'interpcode': 'code4'}, 'histosys': {'interpcode': 'code4p'},},
+        )
+    ],
+)
+def test_unexpected_keyword_argument(measurements, msettings):
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [5.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": [50.0, 60.0],
+                        "modifiers": [
+                            {
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": [5.0, 12.0],
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    with pytest.raises(KeyError):
+        pyhf.pdf._ModelConfig(
+            spec, measurement_name=measurements, modifiers_settings=msettings
+        )

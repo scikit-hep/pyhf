@@ -1,3 +1,5 @@
+"""scipy.optimize-based Optimizer using finite differences."""
+
 from scipy.optimize import minimize
 import logging
 
@@ -5,35 +7,37 @@ log = logging.getLogger(__name__)
 
 
 class scipy_optimizer(object):
+    """scipy.optimize-based Optimizer using finite differences."""
+
     def __init__(self, **kwargs):
+        """Create scipy.optimize-based Optimizer."""
         self.maxiter = kwargs.get('maxiter', 100000)
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        # The Global Fit
-        result = minimize(
-            objective,
-            init_pars,
-            method='SLSQP',
-            args=(data, pdf),
-            bounds=par_bounds,
-            options=dict(maxiter=self.maxiter),
-        )
-        try:
-            assert result.success
-        except AssertionError:
-            log.error(result)
-            raise
-        return result.x
-
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
+    def minimize(
+        self,
+        objective,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_vals=None,
+        return_fitted_val=False,
     ):
-        # The Fit Conditions on a specific POI value
-        cons = {'type': 'eq', 'fun': lambda v: v[pdf.config.poi_index] - constrained_mu}
+        """
+        Find Function Parameters that minimize the Objective.
+
+        Returns:
+            bestfit parameters
+        
+        """
+        fixed_vals = fixed_vals or []
+        indices = [i for i, _ in fixed_vals]
+        values = [v for _, v in fixed_vals]
+        constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
         result = minimize(
             objective,
             init_pars,
-            constraints=cons,
+            constraints=constraints,
             method='SLSQP',
             args=(data, pdf),
             bounds=par_bounds,
@@ -44,4 +48,6 @@ class scipy_optimizer(object):
         except AssertionError:
             log.error(result)
             raise
+        if return_fitted_val:
+            return result.x, result.fun
         return result.x

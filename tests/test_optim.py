@@ -1,10 +1,30 @@
 import pyhf
 import pytest
+from scipy.optimize import minimize
 
 
 def test_get_invalid_optimizer():
     with pytest.raises(pyhf.exceptions.InvalidOptimizer):
         assert pyhf.optimize.scipy
+
+
+# from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
+@pytest.mark.skip_pytorch
+@pytest.mark.skip_pytorch64
+@pytest.mark.skip_tensorflow
+@pytest.mark.skip_numpy_minuit
+def test_scipy_minimize(backend, capsys):
+    tensorlib, _ = backend
+
+    def rosen(x):
+        """The Rosenbrock function"""
+        return sum(100.0 * (x[1:] - x[:-1] ** 2.0) ** 2.0 + (1 - x[:-1]) ** 2.0)
+
+    x0 = tensorlib.astensor([1.3, 0.7, 0.8, 1.9, 1.2])
+    res = minimize(rosen, x0, method='SLSQP', options=dict(disp=True))
+    captured = capsys.readouterr()
+    assert "Optimization terminated successfully" in captured.out
+    assert pytest.approx([1.0, 1.0, 1.0, 1.0, 1.0], rel=5e-5) == tensorlib.tolist(res.x)
 
 
 @pytest.fixture(scope='module')
@@ -58,7 +78,6 @@ def spec(source):
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
-@pytest.mark.skip_mxnet
 def test_optim(backend, source, spec, mu):
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
@@ -68,12 +87,67 @@ def test_optim(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.unconstrained_bestfit(
-        pyhf.utils.loglambdav, data, pdf, init_pars, par_bounds
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
     )
     assert pyhf.tensorlib.tolist(result)
 
-    result = optim.constrained_bestfit(
-        pyhf.utils.loglambdav, mu, data, pdf, init_pars, par_bounds
+
+@pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
+def test_optim_with_value(backend, source, spec, mu):
+    pdf = pyhf.Model(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result, fitted_val = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
+        return_fitted_val=True,
     )
+    assert pyhf.tensorlib.tolist(result)
+
+
+@pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
+@pytest.mark.only_numpy_minuit
+def test_optim_uncerts(backend, source, spec, mu):
+    pdf = pyhf.Model(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
+        return_uncertainties=True,
+    )
+    assert result.shape[1] == 2
     assert pyhf.tensorlib.tolist(result)

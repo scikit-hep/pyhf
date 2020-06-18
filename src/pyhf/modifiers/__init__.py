@@ -1,4 +1,3 @@
-from six import string_types
 import logging
 
 from .. import exceptions
@@ -90,17 +89,17 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(name='myCustomNamer')
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(constrained=False)
     #   >>> ... class myUnconstrainedModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myUnconstrainedModifier.pdf_type
     #   None
@@ -108,7 +107,7 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
     #   >>> ... class myConstrainedCustomPoissonModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myConstrainedCustomGaussianModifier.pdf_type
     #   'poisson'
@@ -116,12 +115,12 @@ def modifier(*args, **kwargs):
     #   >>> @modifiers.modifier(constrained=True)
     #   >>> ... class myCustomModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #
     #   >>> @modifiers.modifier(op_code='multiplication')
     #   >>> ... class myMultiplierModifier(object):
     #   >>> ...   @classmethod
-    #   >>> ...   def required_parset(cls, npars): pass
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
     #   >>> ...
     #   >>> myMultiplierModifier.op_code
     #   'multiplication'
@@ -147,7 +146,7 @@ def modifier(*args, **kwargs):
     if kwargs:
         raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
     # check to make sure the given name is a string, if passed in one
-    if not isinstance(name, string_types) and name is not None:
+    if not isinstance(name, str) and name is not None:
         raise TypeError(
             '@modifier must be given a string. You gave it {}'.format(type(name))
         )

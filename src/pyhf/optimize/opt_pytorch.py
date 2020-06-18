@@ -1,58 +1,52 @@
-import torch.optim
+"""PyTorch Optimizer Backend."""
+
+from .. import get_backend, default_backend
+from ..tensor.common import _TensorViewer
+from .autodiff import AutoDiffOptimizerMixin
+import torch
 
 
-class pytorch_optimizer(object):
-    def __init__(self, **kwargs):
-        self.tensorlib = kwargs['tensorlib']
-        self.maxdelta = kwargs.get('maxdelta', 1e-5)
-        self.maxiter = kwargs.get('maxiter', 100000)
+class pytorch_optimizer(AutoDiffOptimizerMixin):
+    """PyTorch Optimizer Backend."""
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        init_pars = self.tensorlib.astensor(init_pars)
-        init_pars.requires_grad = True
-        optimizer = torch.optim.Adam([init_pars])
-        maxdelta = None
-        for i in range(self.maxiter):
-            loss = objective(init_pars, data, pdf)
-            optimizer.zero_grad()
-            loss.backward(retain_graph=True)
-            init_old = init_pars.data.clone()
-            optimizer.step()
-            maxdelta = (init_pars.data - init_old).abs().max()
-            if maxdelta < self.maxdelta:
-                break
-        return init_pars
-
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
+    def setup_minimize(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
-        allvars = [
-            self.tensorlib.astensor(
-                [v] if i != pdf.config.poi_index else [constrained_mu]
-            )
-            for i, v in enumerate(init_pars)
-        ]
-        nuis_pars = [v for i, v in enumerate(allvars) if i != pdf.config.poi_index]
-        for np in nuis_pars:
-            np.requires_grad = True
-        poi_par = [v for i, v in enumerate(allvars) if i == pdf.config.poi_index][0]
+        """
+        Prepare Minimization for AutoDiff-Optimizer.
 
-        def assemble(poi_par, nuis_pars):
-            pars = [x for x in nuis_pars]
-            pars.insert(pdf.config.poi_index, poi_par)
-            pars = self.tensorlib.concatenate(pars)
-            return pars
+        Args:
+            objective: objective function
+            data: observed data
+            pdf: model
+            init_pars: initial parameters
+            par_bounds: parameter boundaries
+            fixed_vals: fixed parameter values
 
-        optimizer = torch.optim.Adam(nuis_pars)
-        for i in range(self.maxiter):
-            pars = assemble(poi_par, nuis_pars)
-            loss = objective(pars, data, pdf)
-            optimizer.zero_grad()
-            loss.backward(retain_graph=True)
-            optimizer.step()
+        """
+        tensorlib, _ = get_backend()
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_init = default_backend.astensor(init_pars)
 
-            after_pars = assemble(poi_par, nuis_pars)
-            maxdelta = (after_pars.data - pars.data).abs().max()
-            if maxdelta < self.maxdelta:
-                break
-        return pars
+        fixed_vals = fixed_vals or []
+        fixed_values = [x[1] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
+
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_init = all_init[variable_idx]
+        variable_bounds = [par_bounds[i] for i in variable_idx]
+
+        tv = _TensorViewer([fixed_idx, variable_idx])
+
+        data = tensorlib.astensor(data)
+        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            pars.requires_grad = True
+            constrained_pars = tv.stitch([fixed_values_tensor, pars])
+            constr_nll = objective(constrained_pars, data, pdf)
+            grad = torch.autograd.grad(constr_nll, pars)[0]
+            return constr_nll.detach().numpy(), grad
+
+        return tv, fixed_values_tensor, func, variable_init, variable_bounds

@@ -1,6 +1,7 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
 from .version import __version__
+from .exceptions import InvalidBackend
 from . import events
 
 tensorlib = tensor.numpy_backend()
@@ -33,18 +34,47 @@ def set_backend(backend, custom_optimizer=None):
 
     Example:
         >>> import pyhf
-        >>> import tensorflow as tf
-        >>> pyhf.set_backend(pyhf.tensor.tensorflow_backend(session=tf.Session()))
+        >>> pyhf.set_backend("tensorflow")
+        >>> pyhf.tensorlib.name
+        'tensorflow'
+        >>> pyhf.set_backend(b"pytorch")
+        >>> pyhf.tensorlib.name
+        'pytorch'
+        >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+        >>> pyhf.tensorlib.name
+        'numpy'
 
     Args:
-        backend: One of the supported pyhf backends: NumPy,
-                 TensorFlow, PyTorch, and MXNet
+        backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
+        custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
 
     Returns:
         None
     """
     global tensorlib
     global optimizer
+
+    if isinstance(backend, (str, bytes)):
+        if isinstance(backend, bytes):
+            backend = backend.decode("utf-8")
+        backend = backend.lower()
+        try:
+            backend = getattr(tensor, "{0:s}_backend".format(backend))()
+        except TypeError:
+            raise InvalidBackend(
+                "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
+                    backend
+                )
+            )
+
+    _name_supported = getattr(tensor, "{0:s}_backend".format(backend.name))
+    if _name_supported:
+        if not isinstance(backend, _name_supported):
+            raise AttributeError(
+                "'{0:s}' is not a valid name attribute for backend type {1}\n                 Custom backends must have names unique from supported backends".format(
+                    backend.name, type(backend)
+                )
+            )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(backend.name != tensorlib.name)
@@ -54,17 +84,16 @@ def set_backend(backend, custom_optimizer=None):
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
         )
-        if tensorlib.name == 'tensorflow':
-            tensorlib_changed |= bool(backend.session != tensorlib.session)
     elif backend.name == 'pytorch':
         new_optimizer = (
             custom_optimizer
             if custom_optimizer
             else optimize.pytorch_optimizer(tensorlib=backend)
         )
-    # TODO: Add support for mxnet_optimizer()
-    # elif tensorlib.name == 'mxnet':
-    #     new_optimizer = custom_optimizer if custom_optimizer else mxnet_optimizer()
+    elif backend.name == 'jax':
+        new_optimizer = (
+            custom_optimizer if custom_optimizer else optimize.jax_optimizer()
+        )
     else:
         new_optimizer = (
             custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
@@ -81,7 +110,19 @@ def set_backend(backend, custom_optimizer=None):
         events.trigger("optimizer_changed")()
 
 
-from .pdf import Model, Workspace
+from .pdf import Model
+from .workspace import Workspace
 from . import simplemodels
+from . import infer
+from .patchset import PatchSet
 
-__all__ = ['Model', 'Workspace', 'utils', 'modifiers', 'simplemodels', '__version__']
+__all__ = [
+    'Model',
+    'Workspace',
+    'PatchSet',
+    'infer',
+    'utils',
+    'modifiers',
+    'simplemodels',
+    '__version__',
+]

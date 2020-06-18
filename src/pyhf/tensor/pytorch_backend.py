@@ -1,3 +1,4 @@
+"""PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
 import logging
@@ -10,6 +11,11 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self.dtypemap = {
+            'float': getattr(torch, kwargs.get('float', 'float32')),
+            'int': getattr(torch, kwargs.get('float', 'int32')),
+            'bool': torch.bool,
+        }
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -18,7 +24,7 @@ class pytorch_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.set_backend("pytorch")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
             tensor([-1., -1.,  0.,  1.,  1.])
@@ -31,8 +37,31 @@ class pytorch_backend(object):
         Returns:
             PyTorch tensor: A clipped `tensor`
         """
-        tensor_in = self.astensor(tensor_in)
         return torch.clamp(tensor_in, min_value, max_value)
+
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensorlib = pyhf.tensorlib
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            tensor([9.])
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            PyTorch Tensor: The output of the callable that was evaluated
+        """
+        return true_callable() if predicate else false_callable()
 
     def tolist(self, tensor_in):
         try:
@@ -42,9 +71,29 @@ class pytorch_backend(object):
                 return tensor_in
             raise
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> pyhf.tensorlib.tile(a, (1, 2))
+            tensor([[1., 1.],
+                    [2., 2.]])
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            PyTorch tensor: The tensor with repeated axes
+        """
+        return tensor_in.repeat(repeats)
+
     def outer(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.ger(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype='float'):
@@ -57,9 +106,8 @@ class pytorch_backend(object):
         Returns:
             torch.Tensor: A multi-dimensional matrix containing elements of a single data type.
         """
-        dtypemap = {'float': torch.float, 'int': torch.int, 'bool': torch.uint8}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
@@ -73,10 +121,9 @@ class pytorch_backend(object):
         return tensor
 
     def gather(self, tensor, indices):
-        return torch.take(tensor, indices.type(torch.LongTensor))
+        return tensor[indices.type(torch.LongTensor)]
 
     def boolean_mask(self, tensor, mask):
-        mask = self.astensor(mask).type(torch.ByteTensor)
         return torch.masked_select(tensor, mask)
 
     def reshape(self, tensor, newshape):
@@ -86,7 +133,6 @@ class pytorch_backend(object):
         return tuple(map(int, tensor.shape))
 
     def sum(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return (
             torch.sum(tensor_in)
             if (axis is None or tensor_in.shape == torch.Size([]))
@@ -94,49 +140,37 @@ class pytorch_backend(object):
         )
 
     def product(self, tensor_in, axis=None):
-        tensor_in = self.astensor(tensor_in)
         return torch.prod(tensor_in) if axis is None else torch.prod(tensor_in, axis)
 
     def abs(self, tensor):
-        tensor = self.astensor(tensor)
         return torch.abs(tensor)
 
     def ones(self, shape):
-        return torch.Tensor(torch.ones(shape))
+        return torch.ones(shape, dtype=self.dtypemap['float'])
 
     def zeros(self, shape):
-        return torch.Tensor(torch.zeros(shape))
+        return torch.zeros(shape, dtype=self.dtypemap['float'])
 
     def power(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.pow(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.sqrt(tensor_in)
 
     def divide(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return torch.div(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.log(tensor_in)
 
     def exp(self, tensor_in):
-        tensor_in = self.astensor(tensor_in)
         return torch.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        mask = self.astensor(mask).type(torch.FloatTensor)
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
-        return mask * tensor_in_1 + (1 - mask) * tensor_in_2
+        return torch.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -162,7 +196,7 @@ class pytorch_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
+            >>> pyhf.set_backend("pytorch")
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -176,7 +210,6 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
-        args = [self.astensor(arg) for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
@@ -201,12 +234,9 @@ class pytorch_backend(object):
         Returns:
             tensor: the calculation based on the Einstein summation convention
         """
-        ops = tuple(self.astensor(op) for op in operands)
-        return torch.einsum(subscripts, ops)
+        return torch.einsum(subscripts, operands)
 
     def poisson_logpdf(self, n, lam):
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return torch.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
@@ -218,11 +248,13 @@ class pytorch_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.poisson([5.], [6.])
-            tensor([0.1606])
+            >>> pyhf.set_backend("pytorch")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            tensor([0.1606])
+            tensor(0.1606)
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
+            tensor([0.1606, 0.1241])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -233,14 +265,9 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: Value of the continous approximation to Poisson(n|lam)
         """
-        n = self.astensor(n)
-        lam = self.astensor(lam)
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -253,11 +280,14 @@ class pytorch_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal([0.5], [0.], [1.])
-            tensor([0.3521])
+            >>> pyhf.set_backend("pytorch")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            tensor([0.3521])
+            tensor(0.3521)
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
+            tensor([0.3521, 0.4648])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -267,22 +297,22 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
-    def normal_cdf(self, x, mu=[0.0], sigma=[1.0]):
+    def normal_cdf(self, x, mu=0.0, sigma=1.0):
         """
         The cumulative distribution function for the Normal distribution
 
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.pytorch_backend())
-            >>> pyhf.tensorlib.normal_cdf([0.8])
-            tensor([0.7881])
+            >>> pyhf.set_backend("pytorch")
+            >>> pyhf.tensorlib.normal_cdf(0.8)
+            tensor(0.7881)
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            tensor([0.7881, 0.9772])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -292,8 +322,51 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        x = self.astensor(x)
-        mu = self.astensor(mu)
-        sigma = self.astensor(sigma)
         normal = torch.distributions.Normal(mu, sigma)
         return normal.cdf(x)
+
+    def poisson_dist(self, rate):
+        r"""
+        The Poisson distribution with rate parameter :code:`rate`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> rates = pyhf.tensorlib.astensor([5, 8])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> poissons = pyhf.tensorlib.poisson_dist(rates)
+            >>> poissons.log_prob(values)
+            tensor([-1.7403, -2.0869])
+
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+
+        Returns:
+            PyTorch Poisson distribution: The Poisson distribution class
+
+        """
+        return torch.distributions.Poisson(rate)
+
+    def normal_dist(self, mu, sigma):
+        r"""
+        The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> means = pyhf.tensorlib.astensor([5, 8])
+            >>> stds = pyhf.tensorlib.astensor([1, 0.5])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> normals = pyhf.tensorlib.normal_dist(means, stds)
+            >>> normals.log_prob(values)
+            tensor([-1.4189, -2.2258])
+
+        Args:
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            PyTorch Normal distribution: The Normal distribution class
+
+        """
+        return torch.distributions.Normal(mu, sigma)

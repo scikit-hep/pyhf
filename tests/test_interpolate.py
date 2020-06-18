@@ -73,21 +73,20 @@ def test_interpolator_subscription(interpcode, random_histosets_alphasets_pair):
     # inject into our interpolator class
     interpolator_cls = pyhf.interpolators.get(interpcode)
     with mock.patch('{0:s}._precompute'.format(interpolator_cls.__module__)) as m:
-        interpolator = interpolator_cls(histogramssets.tolist(), subscribe=False)
+        interpolator_cls(histogramssets.tolist(), subscribe=False)
         assert m.call_count == 1
         assert m not in pyhf.events.__events.get(ename, [])
         pyhf.events.trigger(ename)()
         assert m.call_count == 1
 
     with mock.patch('{0:s}._precompute'.format(interpolator_cls.__module__)) as m:
-        interpolator = interpolator_cls(histogramssets.tolist(), subscribe=True)
+        interpolator_cls(histogramssets.tolist(), subscribe=True)
         assert m.call_count == 1
         assert m in pyhf.events.__events.get(ename, [])
         pyhf.events.trigger(ename)()
         assert m.call_count == 2
 
 
-@pytest.mark.skip_mxnet
 def test_interpolator_alphaset_change(
     backend, interpcode, random_histosets_alphasets_pair
 ):
@@ -103,7 +102,6 @@ def test_interpolator_alphaset_change(
     assert interpolator.alphasets_shape == alphasets.shape
 
 
-@pytest.mark.skip_mxnet
 def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
@@ -116,7 +114,6 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     assert interpolator.alphasets_shape == alphasets.shape
 
 
-@pytest.mark.skip_mxnet
 def test_validate_implementation(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
@@ -150,7 +147,6 @@ def test_validate_implementation(backend, interpcode, random_histosets_alphasets
     )
 
 
-@pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
 def test_code0_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
@@ -177,7 +173,6 @@ def test_code0_validation(backend, do_tensorized_calc):
     )
 
 
-@pytest.mark.skip_mxnet
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
 def test_code1_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]

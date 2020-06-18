@@ -11,18 +11,18 @@ The relationship between them is often formalised in a statistical *model*
 data, the *likelihood* :math:`\mathcal{L}(\fullset)` then serves as the basis to test
 hypotheses on the parameters \ :math:`\fullset`. For measurements based
 on binned data (*histograms*), the :math:`\HiFa{}` family of statistical models has been widely used
-in both Standard Model measurements :cite:`HIGG-2013-02` as
+in both Standard Model measurements :cite:`intro-HIGG-2013-02` as
 well as searches for new
-physics :cite:`ATLAS-CONF-2018-041`. In this package, a
+physics :cite:`intro-ATLAS-CONF-2018-041`. In this package, a
 declarative, plain-text format for describing :math:`\HiFa{}`-based likelihoods is
 presented that is targeted for reinterpretation and long-term
 preservation in analysis data repositories such as
-HEPData :cite:`Maguire:2017ypu`.
+HEPData :cite:`intro-Maguire:2017ypu`.
 
 HistFactory
 -----------
 
-Statistical models described using :math:`\HiFa{}` :cite:`Cranmer:1456844`
+Statistical models described using :math:`\HiFa{}` :cite:`intro-Cranmer:1456844`
 center around the simultaneous measurement of disjoint binned
 distributions (*channels*) observed as event counts :math:`\channelcounts`. For
 each channel, the overall expected event rate [1]_ is the sum over a
@@ -91,7 +91,7 @@ equally.  For constrained modifiers, the implied constraint term is given as
 well as the necessary input data required to construct it.  :math:`\sigma_b`
 corresponds to the relative uncertainty of the event rate, whereas
 :math:`\delta_b` is the event rate uncertainty of the sample relative to the
-total event rate :math:`\nu_b = \sum_s = \nu^0_{sb}`.
+total event rate :math:`\nu_b = \sum_s \nu^0_{sb}`.
 
 Modifiers implementing uncertainties are paired with
 a corresponding default constraint term on the parameter limiting the
@@ -133,7 +133,7 @@ parameters are *nuisance parameters* — parameters that are not the main target
 measurement but are necessary to correctly model the data. A small
 subset of the unconstrained parameters may be declared as *parameters of interest* for which
 measurements hypothesis tests are performed, e.g. profile likelihood
-methods :cite:`Cowan:2010js`. The :ref:`tab:symbol_summary` table provides a summary of all the
+methods :cite:`intro-Cowan:2010js`. The :ref:`tab:symbol_summary` table provides a summary of all the
 notation introduced in this documentation.
 
 .. _tab:symbol_summary:
@@ -173,7 +173,7 @@ the likelihood minimisation to be analysis-dependent and/or
 language-dependent. Originally XML was chosen as a specification
 language to define the structure of the model while introducing a
 dependence on :math:`\Root{}` to encode the nominal rates and required input data of the
-constraint terms :cite:`Cranmer:1456844`. Using this
+constraint terms :cite:`intro-Cranmer:1456844`. Using this
 specification, a model can be constructed and evaluated within the
 :math:`\RooFit{}` framework.
 
@@ -207,7 +207,7 @@ Footnotes
    corresponds to the corresponding identity operation of the modifier, i.e.
    :math:`f_{p}(\alpha=0) = 0` and :math:`g_{p}(\alpha = 0)=1` for additive and
    multiplicative modifiers respectively. See Section 4.1
-   in :cite:`Cranmer:1456844`.
+   in :cite:`intro-Cranmer:1456844`.
 
 Bibliography
 ~~~~~~~~~~~~
@@ -215,3 +215,5 @@ Bibliography
 .. bibliography:: bib/docs.bib
    :filter: docname in docnames
    :style: plain
+   :keyprefix: intro-
+   :labelprefix: intro-

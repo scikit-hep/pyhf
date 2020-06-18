@@ -195,13 +195,64 @@ def test_export_modifier(mocker, spec, has_root_data, attrs):
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
     modifier = pyhf.writexml.build_modifier(
-        modifierspec, channelname, samplename, sampledata
+        {'measurements': [{'config': {'parameters': []}}]},
+        modifierspec,
+        channelname,
+        samplename,
+        sampledata,
     )
     # if the modifier is a staterror, it has no Name
     if 'Name' in modifier.attrib:
         assert modifier.attrib['Name'] == modifierspec['name']
     assert all(attr in modifier.attrib for attr in attrs)
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == has_root_data
+
+
+@pytest.mark.parametrize(
+    "spec, normfactor_config",
+    [
+        (spec_staterror(), dict(name='mu', inits=[1.0], bounds=[[0.0, 8.0]])),
+        (spec_histosys(), dict()),
+        (spec_normsys(), dict(name='mu', inits=[2.0], bounds=[[0.0, 10.0]])),
+        (spec_shapesys(), dict(name='mu', inits=[1.0], bounds=[[5.0, 10.0]])),
+    ],
+    ids=['upper-bound', 'empty-config', 'init', 'lower-bound'],
+)
+def test_export_modifier_normfactor(mocker, spec, normfactor_config):
+    channelspec = spec['channels'][0]
+    channelname = channelspec['name']
+    samplespec = channelspec['samples'][0]
+    samplename = samplespec['name']
+    sampledata = samplespec['data']
+    modifierspec = samplespec['modifiers'][0]
+
+    mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
+    modifier = pyhf.writexml.build_modifier(
+        {
+            'measurements': [
+                {
+                    'config': {
+                        'parameters': [normfactor_config] if normfactor_config else []
+                    }
+                }
+            ]
+        },
+        modifierspec,
+        channelname,
+        samplename,
+        sampledata,
+    )
+
+    assert all(attr in modifier.attrib for attr in ['Name', 'Val', 'High', 'Low'])
+    assert float(modifier.attrib['Val']) == normfactor_config.get('inits', [1.0])[0]
+    assert (
+        float(modifier.attrib['Low'])
+        == normfactor_config.get('bounds', [[0.0, 10.0]])[0][0]
+    )
+    assert (
+        float(modifier.attrib['High'])
+        == normfactor_config.get('bounds', [[0.0, 10.0]])[0][1]
+    )
 
 
 @pytest.mark.parametrize(
@@ -213,12 +264,10 @@ def test_export_sample(mocker, spec):
     channelspec = spec['channels'][0]
     channelname = channelspec['name']
     samplespec = channelspec['samples'][1]
-    samplename = samplespec['name']
-    sampledata = samplespec['data']
 
     mocker.patch('pyhf.writexml.build_modifier', return_value=ET.Element("Modifier"))
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
-    sample = pyhf.writexml.build_sample(samplespec, channelname)
+    sample = pyhf.writexml.build_sample({}, samplespec, channelname)
     assert sample.attrib['Name'] == samplespec['name']
     assert sample.attrib['HistoName']
     assert sample.attrib['InputFile']
@@ -241,8 +290,12 @@ def test_export_sample_zerodata(mocker, spec):
     # make sure no RuntimeWarning, https://stackoverflow.com/a/45671804
     with pytest.warns(None) as record:
         for modifierspec in samplespec['modifiers']:
-            modifier = pyhf.writexml.build_modifier(
-                modifierspec, channelname, samplename, sampledata
+            pyhf.writexml.build_modifier(
+                {'measurements': [{'config': {'parameters': []}}]},
+                modifierspec,
+                channelname,
+                samplename,
+                sampledata,
             )
     assert not record.list
 
@@ -254,12 +307,11 @@ def test_export_sample_zerodata(mocker, spec):
 )
 def test_export_channel(mocker, spec):
     channelspec = spec['channels'][0]
-    channelname = channelspec['name']
 
     mocker.patch('pyhf.writexml.build_data', return_value=ET.Element("Data"))
     mocker.patch('pyhf.writexml.build_sample', return_value=ET.Element("Sample"))
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
-    channel = pyhf.writexml.build_channel(channelspec, {})
+    channel = pyhf.writexml.build_channel({}, channelspec, {})
     assert channel.attrib['Name'] == channelspec['name']
     assert channel.attrib['InputFile']
     assert pyhf.writexml.build_data.called is False

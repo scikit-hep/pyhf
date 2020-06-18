@@ -53,7 +53,7 @@ def generate_source_poisson(n_bins):
 
 
 def hypotest(pdf, data):
-    return pyhf.utils.hypotest(
+    return pyhf.infer.hypotest(
         1.0,
         data,
         pdf,
@@ -62,17 +62,14 @@ def hypotest(pdf, data):
         return_tail_probs=True,
         return_expected=True,
         return_expected_set=True,
-        return_test_statistics=True,
     )
 
 
-# bins = [1, 10, 50, 100, 200, 500, 800, 1000]
-bins = [10, 100, 200]
+bins = [1, 10, 50, 100, 200]
 bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
-@pytest.mark.skip_mxnet
 def test_hypotest(benchmark, backend, n_bins):
     """
     Benchmark the performance of pyhf.utils.hypotest()

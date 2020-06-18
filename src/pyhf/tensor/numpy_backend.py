@@ -1,9 +1,36 @@
+"""NumPy Tensor Library Module."""
 import numpy as np
 import logging
 from scipy.special import gammaln
-from scipy.stats import norm
+from scipy.stats import norm, poisson
+
 
 log = logging.getLogger(__name__)
+
+
+class _BasicPoisson(object):
+    def __init__(self, rate):
+        self.rate = rate
+
+    def sample(self, sample_shape):
+        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+
+    def log_prob(self, value):
+        tensorlib = numpy_backend()
+        return tensorlib.poisson_logpdf(value, self.rate)
+
+
+class _BasicNormal(object):
+    def __init__(self, loc, scale):
+        self.loc = loc
+        self.scale = scale
+
+    def sample(self, sample_shape):
+        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
+
+    def log_prob(self, value):
+        tensorlib = numpy_backend()
+        return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
 class numpy_backend(object):
@@ -19,7 +46,7 @@ class numpy_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend("numpy")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
             array([-1., -1.,  0.,  1.,  1.])
@@ -34,6 +61,52 @@ class numpy_backend(object):
         """
         return np.clip(tensor_in, min_value, max_value)
 
+    def tile(self, tensor_in, repeats):
+        """
+        Repeat tensor data along a specific dimension
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
+            >>> pyhf.tensorlib.tile(a, (1, 2))
+            array([[1., 1.],
+                   [2., 2.]])
+
+        Args:
+            tensor_in (`Tensor`): The tensor to be repeated
+            repeats (`Tensor`): The tuple of multipliers for each dimension
+
+        Returns:
+            NumPy ndarray: The tensor with repeated axes
+        """
+        return np.tile(tensor_in, repeats)
+
+    def conditional(self, predicate, true_callable, false_callable):
+        """
+        Runs a callable conditional on the boolean value of the evaulation of a predicate
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensorlib = pyhf.tensorlib
+            >>> a = tensorlib.astensor([4])
+            >>> b = tensorlib.astensor([5])
+            >>> tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
+            array([9.])
+
+        Args:
+            predicate (`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+
+        Returns:
+            NumPy ndarray: The output of the callable that was evaluated
+        """
+        return true_callable() if predicate else false_callable()
+
     def tolist(self, tensor_in):
         try:
             return tensor_in.tolist()
@@ -43,8 +116,6 @@ class numpy_backend(object):
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
-        tensor_in_1 = self.astensor(tensor_in_1)
-        tensor_in_2 = self.astensor(tensor_in_2)
         return np.outer(tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
@@ -138,7 +209,7 @@ class numpy_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
@@ -179,8 +250,6 @@ class numpy_backend(object):
         return np.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        n = np.asarray(n)
-        lam = np.asarray(lam)
         return n * np.log(lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
@@ -192,9 +261,13 @@ class numpy_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.poisson(5., 6.)
             0.16062314104797995
+            >>> values = pyhf.tensorlib.astensor([5., 9.])
+            >>> rates = pyhf.tensorlib.astensor([6., 8.])
+            >>> pyhf.tensorlib.poisson(values, rates)
+            array([0.16062314, 0.12407692])
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -231,9 +304,14 @@ class numpy_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
             0.3520653267642995
+            >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
+            >>> means = pyhf.tensorlib.astensor([0., 2.3])
+            >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
+            >>> pyhf.tensorlib.normal(values, means, sigmas)
+            array([0.35206533, 0.46481887])
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -252,9 +330,12 @@ class numpy_backend(object):
         Example:
 
             >>> import pyhf
-            >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
+            >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal_cdf(0.8)
             0.7881446014166034
+            >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
+            >>> pyhf.tensorlib.normal_cdf(values)
+            array([0.7881446 , 0.97724987])
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -265,3 +346,48 @@ class numpy_backend(object):
             NumPy float: The CDF
         """
         return norm.cdf(x, loc=mu, scale=sigma)
+
+    def poisson_dist(self, rate):
+        r"""
+        The Poisson distribution with rate parameter :code:`rate`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> rates = pyhf.tensorlib.astensor([5, 8])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> poissons = pyhf.tensorlib.poisson_dist(rates)
+            >>> poissons.log_prob(values)
+            array([-1.74030218, -2.0868536 ])
+
+        Args:
+            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+
+        Returns:
+            Poisson distribution: The Poisson distribution class
+        """
+        return _BasicPoisson(rate)
+
+    def normal_dist(self, mu, sigma):
+        r"""
+        The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> means = pyhf.tensorlib.astensor([5, 8])
+            >>> stds = pyhf.tensorlib.astensor([1, 0.5])
+            >>> values = pyhf.tensorlib.astensor([4, 9])
+            >>> normals = pyhf.tensorlib.normal_dist(means, stds)
+            >>> normals.log_prob(values)
+            array([-1.41893853, -2.22579135])
+
+        Args:
+            mu (`tensor` or `float`): The mean of the Normal distribution
+            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+
+        Returns:
+            Normal distribution: The Normal distribution class
+
+        """
+        return _BasicNormal(mu, sigma)

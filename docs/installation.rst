@@ -1,3 +1,5 @@
+..  _installation:
+
 Installation
 ============
 
@@ -7,12 +9,6 @@ To install, we suggest first setting up a `virtual environment <https://packagin
 
     # Python3
     python3 -m venv pyhf
-
-
-.. code-block:: console
-
-    # Python2
-    virtualenv --python=$(which python) pyhf
 
 and activating it
 
@@ -29,35 +25,35 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 .. code-block:: console
 
-    pip install pyhf
+    python -m pip install pyhf
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install pyhf[tensorflow]
+    python -m pip install pyhf[tensorflow]
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install pyhf[torch]
+    python -m pip install pyhf[torch]
 
-... with MXNet backend
-++++++++++++++++++++++
+... with JAX backend
+++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install pyhf[mxnet]
+    python -m pip install pyhf[jax]
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install pyhf[tensorflow,torch,mxnet]
+    python -m pip install pyhf[backends]
 
 
 ... with xml import/export functionality
@@ -65,46 +61,46 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 .. code-block:: console
 
-    pip install pyhf[xmlio]
+    python -m pip install pyhf[xmlio]
 
 
-Install latest development version from `GitHub <https://github.com/diana-hep/pyhf>`__...
------------------------------------------------------------------------------------------
+Install latest development version from `GitHub <https://github.com/scikit-hep/pyhf>`__...
+------------------------------------------------------------------------------------------
 
 ... with NumPy backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf"
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow]"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]"
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[torch]"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
 
-... with MXNet backend
+... with JAX backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[mxnet]"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]"
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[tensorflow,torch,mxnet]"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]"
 
 
 ... with xml import/export functionality
@@ -112,7 +108,7 @@ Install latest development version from `GitHub <https://github.com/diana-hep/py
 
 .. code-block:: console
 
-    pip install --ignore-installed -U "git+https://github.com/diana-hep/pyhf.git#egg=pyhf[xmlio]"
+    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]"
 
 
 Updating :code:`pyhf`

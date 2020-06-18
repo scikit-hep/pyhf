@@ -1,3 +1,4 @@
+"""Polynomial Interpolation (Code 4)."""
 import logging
 import math
 from .. import get_backend, default_backend
@@ -30,6 +31,7 @@ class code4(object):
     """
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
+        """Polynomial Interpolation."""
         # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
         # we cannot calculate the coefficients (e.g. determinant == 0)
         assert alpha0 > 0
@@ -58,10 +60,10 @@ class code4(object):
                 [
                     15.0 / (16 * alpha0),
                     -15.0 / (16 * alpha0),
-                    -7.0 / 16,
-                    -7.0 / 16,
+                    -7.0 / 16.0,
+                    -7.0 / 16.0,
                     1.0 / 16 * alpha0,
-                    -1.0 / 16 * alpha0,
+                    -1.0 / 16.0 * alpha0,
                 ],
                 [
                     3.0 / (2 * math.pow(alpha0, 2)),
@@ -163,6 +165,7 @@ class code4(object):
         return
 
     def __call__(self, alphasets):
+        """Compute Interpolated Values."""
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
 
@@ -170,16 +173,22 @@ class code4(object):
         where_alphasets_gtalpha0 = tensorlib.where(
             alphasets >= self.__alpha0, self.mask_on, self.mask_off
         )
-        masks_gtalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+        masks_gtalpha0 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         # select where alpha > -alpha0 ["not(alpha <= -alpha0)"] and produce the mask
         where_alphasets_not_ltalpha0 = tensorlib.where(
             alphasets > -self.__alpha0, self.mask_on, self.mask_off
         )
-        masks_not_ltalpha0 = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
+        masks_not_ltalpha0 = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         # s: set under consideration (i.e. the modifier)
@@ -227,6 +236,8 @@ class code4(object):
 
 class _slow_code4(object):
     """
+    Reference Implementation of Code 4.
+
     delta_up^alpha0 = 1 + a1 alpha0 + a2 alpha0^2 + a3 alpha0^3 + a4 alpha0^4 + a5 alpha0^5 + a6 alpha0^6
     delta_down^alpha0 = 1 - a1 alpha0 + a2 alpha0^2 - a3 alpha0^3 + a4 alpha0^4 - a5 alpha0^5 + a6 alpha0^6
 
@@ -284,10 +295,10 @@ class _slow_code4(object):
                 [
                     15.0 / (16 * self.alpha0),
                     -15.0 / (16 * self.alpha0),
-                    -7.0 / 16,
-                    -7.0 / 16,
+                    -7.0 / 16.0,
+                    -7.0 / 16.0,
                     1.0 / 16 * self.alpha0,
-                    -1.0 / 16 * self.alpha0,
+                    -1.0 / 16.0 * self.alpha0,
                 ],
                 [
                     3.0 / (2 * math.pow(self.alpha0, 2)),
