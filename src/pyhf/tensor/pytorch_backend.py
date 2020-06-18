@@ -129,7 +129,7 @@ class pytorch_backend(object):
         except IndexError:
             tensor = tensor.expand(1)
 
-        if self._mode == "CPU":
+        if self._mode == "GPU":
             if torch.cuda.is_available():
                 tensor.cuda()
         return tensor
