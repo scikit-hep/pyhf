@@ -124,9 +124,12 @@ def hypotest(
 
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
-    if kwargs.get('return_expected_set'):
+    if kwargs.get('return_expected_set') or kwargs.get('return_expected'):
+        n_sigma_list = [2, 1, 0, -1, -2]
+        if not kwargs.get('return_expected_set'):
+            n_sigma_list = [0]
         CLs_exp = []
-        for n_sigma in [2, 1, 0, -1, -2]:
+        for n_sigma in n_sigma_list:
             if not use_q0:
                 CLs = sig_plus_bkg_distribution.pvalue(
                     n_sigma
@@ -136,15 +139,15 @@ def hypotest(
                 CLs = sig_plus_bkg_distribution.pvalue(n_sigma)
             CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
-        if kwargs.get('return_expected'):
-            _returns.append(CLs_exp[2])
-        _returns.append(CLs_exp)
-    elif kwargs.get('return_expected'):
-        n_sigma = 0
-        CLs = sig_plus_bkg_distribution.pvalue(n_sigma) / b_only_distribution.pvalue(
-            n_sigma
-        )
-        _returns.append(tensorlib.reshape(CLs, (1,)))
+        if not kwargs.get('return_expected_set'):
+            # return only expected_set
+            _returns.append(CLs_exp[0])
+        else:
+            if kwargs.get('return_expected'):
+                # return both expected and expected_set
+                _returns.append(CLs_exp[2])
+            _returns.append(CLs_exp)
+
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
