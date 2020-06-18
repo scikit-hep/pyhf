@@ -9,7 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from .test_statistics import qmu
+from .test_statistics import qmu, q0
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
@@ -145,19 +145,25 @@ class AsymptoticCalculator(object):
 
         """
         tensorlib, _ = get_backend()
-        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
+        if not self.use_q0:
+            qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
+        else:
+            qmu_v = q0(self.data, self.pdf, self.init_pars, self.par_bounds)
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-        asimov_mu = 0.0
+        if self.use_q0:
+            asimov_mu = 1.0
+        else:
+            asimov_mu = 0.0
         asimov_data = generate_asimov_data(
             asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
         )
         qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if not self.qtilde and not self.use_q0:  # qmu
+        if not self.qtilde:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v
-        else:  # qtilde or q0
+        else:  # qtilde
 
             def _true_case():
                 teststat = sqrtqmu_v - self.sqrtqmuA_v
@@ -169,9 +175,7 @@ class AsymptoticCalculator(object):
                 teststat = (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
                 return teststat
 
-            if self.use_q0:
-                condition = sqrtqmu_v < self.sqrtqmuA_v
-            else:
-                condition = sqrtqmu_v > self.sqrtqmuA_v
-            teststat = tensorlib.conditional(condition, _true_case, _false_case)
+            teststat = tensorlib.conditional(
+                sqrtqmu_v > self.sqrtqmuA_v, _true_case, _false_case
+            )
         return teststat
