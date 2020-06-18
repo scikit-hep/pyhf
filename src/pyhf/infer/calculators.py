@@ -89,7 +89,9 @@ class AsymptoticTestStatDistribution(object):
 class AsymptoticCalculator(object):
     """The Asymptotic Calculator."""
 
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False):
+    def __init__(
+        self, data, pdf, init_pars=None, par_bounds=None, qtilde=False, use_q0=False
+    ):
         """
         Asymptotic Calculator.
 
@@ -109,6 +111,9 @@ class AsymptoticCalculator(object):
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.qtilde = qtilde
+        self.use_q0 = use_q0
+        if qtilde and use_q0:
+            raise ValueError("Can't have `use_q0` together with `qtilde`")
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -150,9 +155,9 @@ class AsymptoticCalculator(object):
         qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if not self.qtilde:  # qmu
+        if not self.qtilde and not self.use_q0:  # qmu
             teststat = sqrtqmu_v - self.sqrtqmuA_v
-        else:  # qtilde
+        else:  # qtilde or q0
 
             def _true_case():
                 teststat = sqrtqmu_v - self.sqrtqmuA_v
@@ -164,7 +169,9 @@ class AsymptoticCalculator(object):
                 teststat = (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
                 return teststat
 
-            teststat = tensorlib.conditional(
-                (sqrtqmu_v < self.sqrtqmuA_v), _true_case, _false_case
-            )
+            if self.use_q0:
+                condition = sqrtqmu_v < self.sqrtqmuA_v
+            else:
+                condition = sqrtqmu_v > self.sqrtqmuA_v
+            teststat = tensorlib.conditional(condition, _true_case, _false_case)
         return teststat
