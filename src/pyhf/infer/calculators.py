@@ -145,20 +145,25 @@ class AsymptoticCalculator(object):
 
         """
         tensorlib, _ = get_backend()
-        if not self.use_q0:
-            qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
-        else:
-            qmu_v = q0(self.data, self.pdf, self.init_pars, self.par_bounds)
-        sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         if self.use_q0:
+            f_teststat = lambda data, pdf, init_pars, par_bounds: q0(
+                data, pdf, init_pars, par_bounds
+            )
             asimov_mu = 1.0
         else:
+            f_teststat = lambda data, pdf, init_pars, par_bounds: qmu(
+                poi_test, data, pdf, init_pars, par_bounds
+            )
             asimov_mu = 0.0
+
+        qmu_v = f_teststat(self.data, self.pdf, self.init_pars, self.par_bounds)
+        sqrtqmu_v = tensorlib.sqrt(qmu_v)
+
         asimov_data = generate_asimov_data(
             asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
         )
-        qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds)
+        qmuA_v = f_teststat(asimov_data, self.pdf, self.init_pars, self.par_bounds)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
         if not self.qtilde:  # qmu or q0
