@@ -181,6 +181,6 @@ class AsymptoticCalculator(object):
                 return teststat
 
             teststat = tensorlib.conditional(
-                sqrtqmu_v > self.sqrtqmuA_v, _true_case, _false_case
+                (sqrtqmu_v < self.sqrtqmuA_v), _true_case, _false_case
             )
         return teststat
