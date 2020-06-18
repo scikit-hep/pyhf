@@ -11,12 +11,21 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self._mode = 'GPU'
         self.dtypemap = {
             'float': getattr(torch, kwargs.get('float', 'float32')),
             'int': getattr(torch, kwargs.get('int', 'int32')),
             'bool': torch.bool,
         }
         torch.set_default_dtype(self.dtypemap["float"])
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, m):
+        self._mode = m
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -119,6 +128,10 @@ class pytorch_backend(object):
             tensor.shape[0]
         except IndexError:
             tensor = tensor.expand(1)
+
+        if self._mode == "CPU":
+            if torch.cuda.is_available():
+                tensor.cuda()
         return tensor
 
     def gather(self, tensor, indices):

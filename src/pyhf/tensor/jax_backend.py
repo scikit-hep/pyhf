@@ -4,6 +4,7 @@ from jax.scipy.special import gammaln
 from jax.scipy.stats import norm, poisson
 import numpy as onp
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +43,18 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
+        self._mode = 'GPU'
+        os.environ["JAX_PLATFORM_NAME"] = self._mode.lower()
         config.update('jax_enable_x64', True)
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, m):
+        self._mode = m
+        os.environ["JAX_PLATFORM_NAME"] = self._mode.lower()
 
     def clip(self, tensor_in, min_value, max_value):
         """
