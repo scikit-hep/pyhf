@@ -6,7 +6,14 @@ from .calculators import AsymptoticCalculator
 
 
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    qtilde=False,
+    use_q0=False,
+    **kwargs,
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
@@ -39,6 +46,7 @@ def hypotest(
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
+        use_q0 (Bool): When ``True`` perform the calculation using the discovery test statistic, :math:`q_0`, as defined in Equation (12) of `arXiv:1007.1727`_
 
     Keyword Args:
         return_tail_probs (bool): Bool for returning :math:`\textrm{CL}_{s+b}` and :math:`\textrm{CL}_{b}`
@@ -95,7 +103,9 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
+    calc = AsymptoticCalculator(
+        data, pdf, init_pars, par_bounds, qtilde=qtilde, use_q0=use_q0
+    )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
@@ -109,14 +119,21 @@ def hypotest(
     )
 
     _returns = [CLs]
+    if use_q0:
+        _returns = [CLsb]
+
     if kwargs.get('return_tail_probs'):
         _returns.append([CLsb, CLb])
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
-            CLs = sig_plus_bkg_distribution.pvalue(
-                n_sigma
-            ) / b_only_distribution.pvalue(n_sigma)
+            if not use_q0:
+                CLs = sig_plus_bkg_distribution.pvalue(
+                    n_sigma
+                ) / b_only_distribution.pvalue(n_sigma)
+            else:
+                # despite the name in this case this is the discovery p value
+                CLs = sig_plus_bkg_distribution.pvalue(n_sigma)
             CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
