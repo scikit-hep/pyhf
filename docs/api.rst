@@ -123,6 +123,7 @@ Inference
 
    hypotest
    test_statistics.qmu
+   test_statistics.q0
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit

@@ -60,11 +60,12 @@ def q0(data, pdf, init_pars, par_bounds):
     r"""
 
     The test statistic, :math:`q_{0}`, for discovery of a positive signal
-    as defined in Equation (12) in `arXiv:1007.1727`_, for :math:`\mu=0`.
+    as defined in Equation (12) in :xref:`arXiv:1007.1727`, for :math:`\mu=0`.
 
     .. math::
        :nowrap:
-       \begin{equation}
+
+        \begin{equation}
           q_{0} = \left\{\begin{array}{ll}
           -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
           0, & \hat{\mu} < 0,
@@ -92,7 +93,7 @@ def q0(data, pdf, init_pars, par_bounds):
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
+        Float: The calculated test statistic, :math:`q_{0}`
     """
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
