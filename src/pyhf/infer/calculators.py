@@ -71,7 +71,7 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        return 1 - tensorlib.normal_cdf(value - self.shift)
+        return tensorlib.normal_cdf(-(value - self.shift))
 
     def expected_value(self, nsigma):
         """
