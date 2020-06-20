@@ -157,3 +157,15 @@ def test_calculator_distributions_without_teststatistic(qtilde):
     )
     with pytest.raises(RuntimeError):
         calc.distributions(1.0)
+
+
+def test_asymptotic_dist_low_pvalues():
+    rtol = 1e-6
+    atol = 0
+    dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
+    # values tabulated using ROOT.RooStats.SignificanceToPValue
+    assert np.isclose(dist.pvalue(5), 2.866515718791945e-07, rtol=rtol, atol=atol)
+    assert np.isclose(dist.pvalue(6), 9.865876450377018e-10, rtol=rtol, atol=atol)
+    assert np.isclose(dist.pvalue(7), 1.279812543885835e-12, rtol=rtol, atol=atol)
+    assert np.isclose(dist.pvalue(8), 6.220960574271829e-16, rtol=rtol, atol=atol)
+    assert np.isclose(dist.pvalue(9), 1.1285884059538408e-19, rtol=rtol, atol=atol)
