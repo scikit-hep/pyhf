@@ -159,13 +159,31 @@ def test_calculator_distributions_without_teststatistic(qtilde):
         calc.distributions(1.0)
 
 
-def test_asymptotic_dist_low_pvalues():
-    rtol = 1e-6
+@pytest.mark.parametrize(
+    "backend",
+    [
+        pyhf.tensor.numpy_backend(),
+        pyhf.tensor.tensorflow_backend(),
+        pyhf.tensor.pytorch_backend(),
+        pyhf.tensor.jax_backend(),
+    ],
+)
+@pytest.mark.parametrize(
+    "nsigma,expected_pval",
+    [
+        # values tabulated using ROOT.RooStats.SignificanceToPValue
+        (5, 2.866515718791945e-07),
+        (6, 9.865876450377018e-10),
+        (7, 1.279812543885835e-12),
+        (8, 6.220960574271829e-16),
+        (9, 1.1285884059538408e-19),
+    ],
+)
+def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
+    rtol = 1e-5
     atol = 0
+    pyhf.set_backend(backend)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
-    # values tabulated using ROOT.RooStats.SignificanceToPValue
-    assert np.isclose(dist.pvalue(5), 2.866515718791945e-07, rtol=rtol, atol=atol)
-    assert np.isclose(dist.pvalue(6), 9.865876450377018e-10, rtol=rtol, atol=atol)
-    assert np.isclose(dist.pvalue(7), 1.279812543885835e-12, rtol=rtol, atol=atol)
-    assert np.isclose(dist.pvalue(8), 6.220960574271829e-16, rtol=rtol, atol=atol)
-    assert np.isclose(dist.pvalue(9), 1.1285884059538408e-19, rtol=rtol, atol=atol)
+    assert np.isclose(
+        np.array(dist.pvalue(nsigma)), expected_pval, rtol=rtol, atol=atol
+    )
