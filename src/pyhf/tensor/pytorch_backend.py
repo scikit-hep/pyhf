@@ -1,7 +1,9 @@
 """PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
+from torch.distributions.utils import broadcast_all
 import logging
+import math
 
 log = logging.getLogger(__name__)
 
@@ -322,8 +324,11 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        normal = torch.distributions.Normal(mu, sigma)
-        return normal.cdf(x)
+        # the following variant is numerically more stable for low p-values
+        # than the default version that uses torch.erf
+        # erfc(x) = 1 - erf(x)
+        mu, sigma = broadcast_all(mu, sigma)
+        return 0.5 * torch.erfc(-((x - mu) * sigma.reciprocal() / math.sqrt(2)))
 
     def poisson_dist(self, rate):
         r"""
