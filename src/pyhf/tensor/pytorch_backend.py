@@ -131,7 +131,7 @@ class pytorch_backend(object):
 
         if self._mode == "GPU":
             if torch.cuda.is_available():
-                tensor.cuda()
+                tensor = tensor.cuda()
         return tensor
 
     def gather(self, tensor, indices):
