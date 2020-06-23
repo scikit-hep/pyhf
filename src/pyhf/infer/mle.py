@@ -30,7 +30,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True)
-        (array([0.        , 1.0030512 , 0.96266961]), 24.98393521454011)
+        (array([0.        , 1.0030512 , 0.96266961]), array([24.98393521]))
 
     Args:
         data (`tensor`): The data
