@@ -27,18 +27,6 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
         python -m pip list
-    - name: Lint with Pyflakes
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        python -m pyflakes .
-    - name: Lint with Black
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        black --check --diff --verbose .
-    - name: Check MANIFEST
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        check-manifest
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
