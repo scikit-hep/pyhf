@@ -26,6 +26,3 @@ jobs:
     - name: Lint with Black
       run: |
         black --check --diff --verbose .
-    - name: Check MANIFEST
-      run: |
-        check-manifest
