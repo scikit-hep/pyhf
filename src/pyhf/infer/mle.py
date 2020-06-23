@@ -30,7 +30,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True)
-        (array([0.        , 1.0030512 , 0.96266961]), 24.98393521454011)
+        (array([0.        , 1.0030512 , 0.96266961]), array([24.98393521]))
 
     Args:
         data (`tensor`): The data
@@ -63,7 +63,7 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> test_poi = 1.0
         >>> pyhf.infer.mle.fixed_poi_fit(test_poi, data, model, return_fitted_val=True)
-        (array([1.        , 0.97224597, 0.87553894]), 28.92218013492061)
+        (array([1.        , 0.97224597, 0.87553894]), array([28.92218013]))
 
     Args:
         data: The data
