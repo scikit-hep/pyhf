@@ -172,6 +172,7 @@ def test_calculator_distributions_without_teststatistic(qtilde):
     "nsigma,expected_pval",
     [
         # values tabulated using ROOT.RooStats.SignificanceToPValue
+        # they are consistent with relative difference < 1e-14 with scipy.stats.norm.sf
         (5, 2.866515718791945e-07),
         (6, 9.865876450377018e-10),
         (7, 1.279812543885835e-12),
