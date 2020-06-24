@@ -1,4 +1,4 @@
-name: Build Binder Image 
+name: Build Binder Image
 on: [push]
 
 jobs:
@@ -14,3 +14,4 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_NAME: "pyhf/binder"
+        NOTEBOOK_USER: "jovyan"
