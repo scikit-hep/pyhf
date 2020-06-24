@@ -1,0 +1,16 @@
+name: Build Binder Image 
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+    - name: Update jupyter dependencies with repo2docker
+      uses: machine-learning-apps/repo2docker-action@0.1
+
+      with:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        IMAGE_NAME: "pyhf/binder"
