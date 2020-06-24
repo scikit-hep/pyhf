@@ -43,18 +43,9 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
-        self._mode = 'GPU'
-        os.environ["JAX_PLATFORM_NAME"] = self._mode.lower()
+        self._mode = kwargs['mode'] if 'mode' in kwargs else 'cpu'
+        os.environ["JAX_PLATFORM_NAME"] = self._mode
         config.update('jax_enable_x64', True)
-
-    @property
-    def mode(self):
-        return self._mode
-
-    @mode.setter
-    def mode(self, m):
-        self._mode = m
-        os.environ["JAX_PLATFORM_NAME"] = self._mode.lower()
 
     def clip(self, tensor_in, min_value, max_value):
         """

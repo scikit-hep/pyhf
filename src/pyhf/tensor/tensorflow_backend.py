@@ -11,20 +11,12 @@ class tensorflow_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
-        self._mode = 'GPU'
+        self._mode = kwargs['mode'] if 'mode' in kwargs else 'cpu'
         self.dtypemap = {
             'float': getattr(tf, kwargs.get('float', 'float32')),
             'int': getattr(tf, kwargs.get('int', 'int32')),
             'bool': tf.bool,
         }
-
-    @property
-    def mode(self):
-        return self._mode
-
-    @mode.setter
-    def mode(self, m):
-        self._mode = m
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -166,7 +158,7 @@ class tensorflow_backend(object):
                 tensor_out = tf.cast(tensor_out, dtype)
             return tensor_out
 
-        if self._mode == "CPU":
+        if self._mode == "cpu":
             with tf.device('/CPU:0'):
                 tensor = transform(tensor_in)
         else:
