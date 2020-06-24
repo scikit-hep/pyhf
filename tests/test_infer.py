@@ -1,6 +1,7 @@
 import pytest
 import pyhf
 import numpy as np
+import scipy.stats
 
 
 @pytest.fixture(scope='module')
@@ -160,12 +161,12 @@ def test_calculator_distributions_without_teststatistic(qtilde):
 
 
 @pytest.mark.parametrize(
-    "backend",
+    "backend_rtol",
     [
-        pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(),
-        pyhf.tensor.pytorch_backend(),
-        pyhf.tensor.jax_backend(),
+        (pyhf.tensor.numpy_backend(), 1e-8),
+        (pyhf.tensor.tensorflow_backend(), 1e-5),
+        (pyhf.tensor.pytorch_backend(), 1e-5),
+        (pyhf.tensor.jax_backend(), 1e-8),
     ],
 )
 @pytest.mark.parametrize(
@@ -180,11 +181,30 @@ def test_calculator_distributions_without_teststatistic(qtilde):
         (9, 1.1285884059538408e-19),
     ],
 )
-def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
-    rtol = 1e-5
+def test_asymptotic_dist_low_pvalues(backend_rtol, nsigma, expected_pval):
+    backend, rtol = backend_rtol
     atol = 0
     pyhf.set_backend(backend)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
     assert np.isclose(
         np.array(dist.pvalue(nsigma)), expected_pval, rtol=rtol, atol=atol
     )
+
+
+@pytest.mark.parametrize(
+    "backend_rtol",
+    [
+        (pyhf.tensor.numpy_backend(), 1e-15),
+        (pyhf.tensor.tensorflow_backend(), 1e-6),
+        (pyhf.tensor.pytorch_backend(), 1e-6),
+        (pyhf.tensor.jax_backend(), 1e-15),
+    ],
+)
+def test_significance_to_pvalue_roundtrip(backend_rtol):
+    backend, rtol = backend_rtol
+    pyhf.set_backend(backend)
+    sigma = np.arange(0, 10, 0.1)
+    dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
+    pvalue = dist.pvalue(pyhf.tensorlib.astensor(sigma))
+    back_to_sigma = -scipy.stats.norm.ppf(np.array(pvalue))
+    assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)
