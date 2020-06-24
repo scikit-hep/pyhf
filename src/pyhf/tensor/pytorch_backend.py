@@ -324,8 +324,11 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        # the following variant is numerically more stable for low p-values
-        # than the default version that uses torch.erf
+        # the implementation of torch.Normal.cdf uses torch.erf:
+        # 0.5 * (1 + torch.erf((value - self.loc) * self.scale.reciprocal() / math.sqrt(2)))
+        # (see https://github.com/pytorch/pytorch/blob/3bbedb34b9b316729a27e793d94488b574e1577a/torch/distributions/normal.py#L78-L81)
+        # we get a more numerically stable variant for low p-values/high significances
+        # by replacing erf with (1 - erfc) since by definition
         # erfc(x) = 1 - erf(x)
         mu, sigma = broadcast_all(mu, sigma)
         return 0.5 * torch.erfc(-((x - mu) * sigma.reciprocal() / math.sqrt(2)))
