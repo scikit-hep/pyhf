@@ -18,8 +18,8 @@ def twice_nll(pars, data, pdf):
 
        \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}
 
-    It serves as the objective function to minimize in ~pyhf.infer.mle.fit and
-    ~pyhf.infer.mle.fixed_poi_fit.
+    It serves as the objective function to minimize in :func:`~pyhf.infer.mle.fit`
+    and :func:`~pyhf.infer.mle.fixed_poi_fit`.
 
     Example:
         >>> import pyhf
