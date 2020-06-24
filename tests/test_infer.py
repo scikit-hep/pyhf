@@ -161,15 +161,6 @@ def test_calculator_distributions_without_teststatistic(qtilde):
 
 
 @pytest.mark.parametrize(
-    "backend_rtol",
-    [
-        (pyhf.tensor.numpy_backend(), 1e-8),
-        (pyhf.tensor.tensorflow_backend(), 1e-5),
-        (pyhf.tensor.pytorch_backend(), 1e-5),
-        (pyhf.tensor.jax_backend(), 1e-8),
-    ],
-)
-@pytest.mark.parametrize(
     "nsigma,expected_pval",
     [
         # values tabulated using ROOT.RooStats.SignificanceToPValue
@@ -181,8 +172,16 @@ def test_calculator_distributions_without_teststatistic(qtilde):
         (9, 1.1285884059538408e-19),
     ],
 )
-def test_asymptotic_dist_low_pvalues(backend_rtol, nsigma, expected_pval):
-    backend, rtol = backend_rtol
+@pytest.mark.parametrize(
+    "backend,rtol",
+    [
+        (pyhf.tensor.numpy_backend(), 1e-8),
+        (pyhf.tensor.tensorflow_backend(), 1e-5),
+        (pyhf.tensor.pytorch_backend(), 1e-5),
+        (pyhf.tensor.jax_backend(), 1e-8),
+    ],
+)
+def test_asymptotic_dist_low_pvalues(backend, rtol, nsigma, expected_pval):
     atol = 0
     pyhf.set_backend(backend)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
@@ -192,7 +191,7 @@ def test_asymptotic_dist_low_pvalues(backend_rtol, nsigma, expected_pval):
 
 
 @pytest.mark.parametrize(
-    "backend_rtol",
+    "backend,rtol",
     [
         (pyhf.tensor.numpy_backend(), 1e-15),
         (pyhf.tensor.tensorflow_backend(), 1e-6),
@@ -200,8 +199,7 @@ def test_asymptotic_dist_low_pvalues(backend_rtol, nsigma, expected_pval):
         (pyhf.tensor.jax_backend(), 1e-15),
     ],
 )
-def test_significance_to_pvalue_roundtrip(backend_rtol):
-    backend, rtol = backend_rtol
+def test_significance_to_pvalue_roundtrip(backend, rtol):
     pyhf.set_backend(backend)
     sigma = np.arange(0, 10, 0.1)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
