@@ -5,12 +5,7 @@ from ..exceptions import UnspecifiedPOI
 
 def twice_nll(pars, data, pdf):
     r"""
-    Two times the negative log-likelihood of the model parameters, :math:`\left(\mu, \boldsymbol{\theta}\right)`, given the observed data
-
-    .. math::
-
-        -2\ln L\left(\mu, \boldsymbol{\theta}\right)
-
+    Two times the negative log-likelihood of the model parameters, :math:`\left(\mu, \boldsymbol{\theta}\right)`, given the observed data.
     It is used in the calculation of the test statistic, :math:`t_{\mu}`, as defiend in Equation (8) in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -22,6 +17,9 @@ def twice_nll(pars, data, pdf):
     .. math::
 
        \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}
+
+    It serves as the objective function to minimize in ~pyhf.infer.mle.fit and
+    ~pyhf.infer.mle.fixed_poi_fit.
 
     Args:
         pars (`tensor`): The parameters of the HistFactory model
