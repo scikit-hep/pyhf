@@ -21,13 +21,28 @@ def twice_nll(pars, data, pdf):
     It serves as the objective function to minimize in ~pyhf.infer.mle.fit and
     ~pyhf.infer.mle.fixed_poi_fit.
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> parameters = model.config.suggested_init()  # nominal parameters
+        >>> twice_nll = pyhf.infer.mle.twice_nll(parameters, data, model)
+        >>> twice_nll
+        array([30.77525435])
+        >>> -2 * model.logpdf(parameters, data) == twice_nll
+        array([ True])
+
     Args:
         pars (`tensor`): The parameters of the HistFactory model
         data (`tensor`): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
 
     Returns:
-        Float: Two times the negative log-likelihood, :math:`-2\ln L\left(\mu, \boldsymbol{\theta}\right)`
+        Tensor: Two times the negative log-likelihood, :math:`-2\ln L\left(\mu, \boldsymbol{\theta}\right)`
     """
     return -2 * pdf.logpdf(pars, data)
 
