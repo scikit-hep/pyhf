@@ -16,6 +16,7 @@ extras_require['backends'] = sorted(
     )
 )
 extras_require['contrib'] = sorted(set(['matplotlib']))
+extras_require['lint'] = sorted(set(['pyflakes', 'black']))
 
 extras_require['test'] = sorted(
     set(
@@ -23,7 +24,6 @@ extras_require['test'] = sorted(
         + extras_require['xmlio']
         + extras_require['contrib']
         + [
-            'pyflakes',
             'pytest~=3.5',
             'pytest-cov>=2.5.1',
             'pytest-mock',
@@ -34,12 +34,10 @@ extras_require['test'] = sorted(
             'coverage>=4.0',  # coveralls
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
-            'check-manifest',
             'jupyter',
             'uproot~=3.3',
             'graphviz',
             'jsonpatch',
-            'black',
         ]
     )
 )
@@ -60,8 +58,9 @@ extras_require['docs'] = sorted(
 extras_require['develop'] = sorted(
     set(
         extras_require['docs']
+        + extras_require['lint']
         + extras_require['test']
-        + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine']
+        + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'check-manifest', 'twine']
     )
 )
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))

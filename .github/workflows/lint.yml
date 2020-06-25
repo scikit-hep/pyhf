@@ -1,0 +1,28 @@
+name: Lint
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+
+    name: Lint Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[lint]
+        python -m pip list
+    - name: Lint with Pyflakes
+      run: |
+        python -m pyflakes .
+    - name: Lint with Black
+      run: |
+        black --check --diff --verbose .
