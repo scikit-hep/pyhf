@@ -16,6 +16,7 @@ class pytorch_backend(object):
             'int': getattr(torch, kwargs.get('int', 'int32')),
             'bool': torch.bool,
         }
+        torch.set_default_dtype(self.dtypemap["float"])
 
     def clip(self, tensor_in, min_value, max_value):
         """
