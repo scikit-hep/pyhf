@@ -13,7 +13,7 @@ class pytorch_backend(object):
         self.name = 'pytorch'
         self.dtypemap = {
             'float': getattr(torch, kwargs.get('float', 'float32')),
-            'int': getattr(torch, kwargs.get('float', 'int32')),
+            'int': getattr(torch, kwargs.get('int', 'int32')),
             'bool': torch.bool,
         }
 
