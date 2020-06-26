@@ -11,7 +11,7 @@ class tensorflow_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
-        self.mode = 'cpu'
+        self.mode = kwargs.get('mode', 'cpu')
         self.dtypemap = {
             'float': getattr(tf, kwargs.get('float', 'float32')),
             'int': getattr(tf, kwargs.get('int', 'int32')),

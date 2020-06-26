@@ -43,7 +43,7 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
-        self.mode = 'cpu'
+        self.mode = kwargs.get('mode', 'cpu')
         os.environ["JAX_PLATFORM_NAME"] = self.mode
         config.update('jax_enable_x64', True)
 

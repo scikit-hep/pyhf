@@ -11,7 +11,7 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self.mode = 'cpu'
+        self.mode = kwargs.get('mode', 'cpu')
         self.dtypemap = {
             'float': getattr(torch, kwargs.get('float', 'float32')),
             'int': getattr(torch, kwargs.get('int', 'int32')),
