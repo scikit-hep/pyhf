@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 class minuit_optimizer(object):
     """MINUIT Optimizer Backend."""
 
-    def __init__(self, verbose=False, ncall=10000, errordef=1, steps=1000):
+    def __init__(self, verbose=False, ncall=500000, errordef=None, steps=1000):
         """
         Create MINUIT Optimizer.
 
