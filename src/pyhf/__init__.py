@@ -28,7 +28,7 @@ def get_backend():
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None):
+def set_backend(backend, custom_optimizer=None, mode="CPU"):
     """
     Set the backend and the associated optimizer
 
@@ -53,6 +53,9 @@ def set_backend(backend, custom_optimizer=None):
     """
     global tensorlib
     global optimizer
+
+    if mode not in ['cpu', 'gpu', 'CPU', 'GPU']:
+        raise ValueError(f"The mode must be either 'cpu' or 'gpu', not {mode}.")
 
     if isinstance(backend, (str, bytes)):
         if isinstance(backend, bytes):
@@ -102,6 +105,7 @@ def set_backend(backend, custom_optimizer=None):
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend
     tensorlib = backend
+    tensorlib.mode = mode.lower()
     optimizer = new_optimizer
     # trigger events
     if tensorlib_changed:

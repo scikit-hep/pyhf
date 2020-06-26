@@ -11,6 +11,7 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self.mode = kwargs.get('mode', 'cpu')
         self.dtypemap = {
             'float': getattr(torch, kwargs.get('float', 'float32')),
             'int': getattr(torch, kwargs.get('int', 'int32')),
@@ -119,6 +120,10 @@ class pytorch_backend(object):
             tensor.shape[0]
         except IndexError:
             tensor = tensor.expand(1)
+
+        if self.mode == "gpu":
+            if torch.cuda.is_available():
+                tensor = tensor.cuda()
         return tensor
 
     def gather(self, tensor, indices):

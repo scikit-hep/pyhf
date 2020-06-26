@@ -4,6 +4,7 @@ from jax.scipy.special import gammaln
 from jax.scipy.stats import norm, poisson
 import numpy as onp
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +43,8 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
+        self.mode = kwargs.get('mode', 'cpu')
+        os.environ["JAX_PLATFORM_NAME"] = self.mode
         config.update('jax_enable_x64', True)
 
     def clip(self, tensor_in, min_value, max_value):
@@ -142,6 +145,8 @@ class jax_backend(object):
         Returns:
             `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
+        if os.environ["JAX_PLATFORM_NAME"] != self.mode:
+            os.environ["JAX_PLATFORM_NAME"] = self.mode
         dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
             dtype = dtypemap[dtype]

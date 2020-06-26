@@ -11,6 +11,7 @@ class tensorflow_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
+        self.mode = kwargs.get('mode', 'cpu')
         self.dtypemap = {
             'float': getattr(tf, kwargs.get('float', 'float32')),
             'int': getattr(tf, kwargs.get('int', 'int32')),
@@ -140,20 +141,30 @@ class tensorflow_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = tensor_in
-        # If already a tensor then done
-        try:
-            # Use a tensor attribute that isn't meaningless when eager execution is enabled
-            tensor.device
-        except AttributeError:
-            tensor = tf.convert_to_tensor(tensor_in)
-            # Ensure non-empty tensor shape for consistency
+        def transform(tensor_in):
+            tensor_out = tensor_in
+            # If already a tensor then done
             try:
-                tensor.shape[0]
-            except IndexError:
-                tensor = tf.reshape(tensor, [1])
-        if tensor.dtype is not dtype:
-            tensor = tf.cast(tensor, dtype)
+                # Use a tensor attribute that isn't meaningless when eager execution is enabled
+                tensor_out.device
+            except AttributeError:
+                tensor_out = tf.convert_to_tensor(tensor_in)
+                # Ensure non-empty tensor shape for consistency
+                try:
+                    tensor_out.shape[0]
+                except IndexError:
+                    tensor_out = tf.reshape(tensor_out, [1])
+            if tensor_out.dtype is not dtype:
+                tensor_out = tf.cast(tensor_out, dtype)
+            return tensor_out
+
+        if self.mode == "cpu":
+            with tf.device('/CPU:0'):
+                tensor = transform(tensor_in)
+        else:
+            with tf.device('/GPU:0'):
+                tensor = transform(tensor_in)
+
         return tensor
 
     def sum(self, tensor_in, axis=None):
