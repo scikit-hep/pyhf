@@ -62,7 +62,7 @@ def set_backend(backend, custom_optimizer=None, mode="CPU"):
             backend = backend.decode("utf-8")
         backend = backend.lower()
         try:
-            backend = getattr(tensor, "{0:s}_backend".format(backend), mode.lower())()
+            backend = getattr(tensor, "{0:s}_backend".format(backend))()
         except TypeError:
             raise InvalidBackend(
                 "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
