@@ -62,7 +62,7 @@ def set_backend(backend, custom_optimizer=None, mode="CPU"):
             backend = backend.decode("utf-8")
         backend = backend.lower()
         try:
-            backend = getattr(tensor, "{0:s}_backend".format(backend))()
+            backend = getattr(tensor, "{0:s}_backend".format(backend), mode.lower())()
         except TypeError:
             raise InvalidBackend(
                 "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
@@ -104,7 +104,8 @@ def set_backend(backend, custom_optimizer=None, mode="CPU"):
 
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend
-    tensorlib = backend(mode=mode.lower())
+    tensorlib = backend
+    tensorlib.mode = mode.lower()
     optimizer = new_optimizer
     # trigger events
     if tensorlib_changed:

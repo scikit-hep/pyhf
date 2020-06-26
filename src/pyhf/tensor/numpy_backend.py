@@ -38,7 +38,7 @@ class numpy_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'numpy'
-        self._mode = kwargs['mode'] if 'mode' in kwargs else 'cpu'
+        self.mode = 'cpu'
 
     def clip(self, tensor_in, min_value, max_value):
         """

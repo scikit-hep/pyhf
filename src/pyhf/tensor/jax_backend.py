@@ -43,8 +43,8 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
-        self._mode = kwargs['mode'] if 'mode' in kwargs else 'cpu'
-        os.environ["JAX_PLATFORM_NAME"] = self._mode
+        self.mode = 'cpu'
+        os.environ["JAX_PLATFORM_NAME"] = self.mode
         config.update('jax_enable_x64', True)
 
     def clip(self, tensor_in, min_value, max_value):
@@ -145,6 +145,8 @@ class jax_backend(object):
         Returns:
             `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
+        if os.environ["JAX_PLATFORM_NAME"] != self.mode:
+            os.environ["JAX_PLATFORM_NAME"] = self.mode
         dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
             dtype = dtypemap[dtype]

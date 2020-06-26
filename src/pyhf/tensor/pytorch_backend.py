@@ -11,7 +11,7 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self._mode = kwargs['mode'] if 'mode' in kwargs else 'cpu'
+        self.mode = 'cpu'
         self.dtypemap = {
             'float': getattr(torch, kwargs.get('float', 'float32')),
             'int': getattr(torch, kwargs.get('int', 'int32')),
@@ -121,7 +121,7 @@ class pytorch_backend(object):
         except IndexError:
             tensor = tensor.expand(1)
 
-        if self._mode == "gpu":
+        if self.mode == "gpu":
             if torch.cuda.is_available():
                 tensor = tensor.cuda()
         return tensor

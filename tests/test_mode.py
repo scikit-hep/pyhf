@@ -24,9 +24,9 @@ def test_pytorch_cpu_gpu():
 
 def test_jax_cpu_gpu():
     pyhf.set_backend(backend="jax", mode="GPU")
-    tensorlib, _ = pyhf.get_backend()
+    tensor = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
     assert os.environ["JAX_PLATFORM_NAME"] == "gpu"
 
     pyhf.set_backend(backend="jax", mode="CPU")
-    tensorlib, _ = pyhf.get_backend()
+    tensor = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
     assert os.environ["JAX_PLATFORM_NAME"] == "cpu"
