@@ -29,7 +29,7 @@ jobs:
     - name: Check MANIFEST
       run: |
         check-manifest
-    - name: Build a binary wheel and a source tarball
+    - name: Build a wheel and a sdist
       run: |
         python -m pep517.build --source --binary --out-dir dist/ .
     - name: Verify untagged commits have dev versions
