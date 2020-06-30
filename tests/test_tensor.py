@@ -379,7 +379,6 @@ def test_tensor_precision(backend):
     assert tb.precision in ['32b', '64b']
 
 
-
 def test_set_tensor_precision():
     tb = pyhf.tensor.pytorch_backend(float='float64', int='int64')
     assert tb.precision == '64b'
