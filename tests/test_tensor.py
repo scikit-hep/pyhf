@@ -372,3 +372,37 @@ def test_pdf_eval_2(backend):
     assert pytest.approx([-23.579605171119738], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
     )
+
+
+def test_tensor_precision(backend):
+    tb, _ = backend
+    assert tb.float_precision in ['32b', '64b']
+    assert tb.int_precision in ['32b', '64b']
+
+
+def test_set_tensor_precision():
+    tb = pyhf.tensor.pytorch_backend(float='float64', int='int64')
+    assert tb.float_precision == '64b'
+    assert tb.int_precision == '64b'
+    tb = pyhf.tensor.pytorch_backend(float='float32', int='int64')
+    assert tb.float_precision == '32b'
+    assert tb.int_precision == '64b'
+    tb = pyhf.tensor.pytorch_backend(float='float64', int='int32')
+    assert tb.float_precision == '64b'
+    assert tb.int_precision == '32b'
+    tb = pyhf.tensor.pytorch_backend()
+    assert tb.float_precision == '32b'
+    assert tb.int_precision == '32b'
+
+    tb = pyhf.tensor.tensorflow_backend(float='float64', int='int64')
+    assert tb.float_precision == '64b'
+    assert tb.int_precision == '64b'
+    tb = pyhf.tensor.tensorflow_backend(float='float32', int='int64')
+    assert tb.float_precision == '32b'
+    assert tb.int_precision == '64b'
+    tb = pyhf.tensor.tensorflow_backend(float='float64', int='int32')
+    assert tb.float_precision == '64b'
+    assert tb.int_precision == '32b'
+    tb = pyhf.tensor.tensorflow_backend()
+    assert tb.float_precision == '32b'
+    assert tb.int_precision == '32b'

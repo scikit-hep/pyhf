@@ -16,6 +16,8 @@ class tensorflow_backend(object):
             'int': getattr(tf, kwargs.get('int', 'int32')),
             'bool': tf.bool,
         }
+        self.float_precision = '32b' if self.dtypemap['float'] == tf.float32 else '64b'
+        self.int_precision = '32b' if self.dtypemap['int'] == tf.int32 else '64b'
 
     def clip(self, tensor_in, min_value, max_value):
         """

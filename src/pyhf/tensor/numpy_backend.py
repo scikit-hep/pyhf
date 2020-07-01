@@ -38,6 +38,8 @@ class numpy_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'numpy'
+        self.float_precision = '64b'
+        self.int_precision = '64b'
 
     def clip(self, tensor_in, min_value, max_value):
         """
