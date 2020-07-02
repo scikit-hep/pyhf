@@ -144,6 +144,7 @@ jobs:
     - name: List built images
       run: docker images
     - name: Run CLI API check
+      if: "!(startsWith(github.ref, 'refs/tags/'))"
       run: |
         printf "\npyhf\n"
         docker run --rm pyhf/pyhf:test
@@ -152,6 +153,7 @@ jobs:
         printf "\npyhf --help\n"
         docker run --rm pyhf/pyhf:test --help
     - name: Check for curl and tar
+      if: "!(startsWith(github.ref, 'refs/tags/'))"
       run: >-
         docker run --rm
         --entrypoint /bin/bash
