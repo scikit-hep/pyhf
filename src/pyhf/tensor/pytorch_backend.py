@@ -335,7 +335,10 @@ class pytorch_backend(object):
         # we get a more numerically stable variant for low p-values/high significances using erfc(x) := 1 - erf(x)
         # since erf(-x) = -erf(x) we can replace
         # 1 + erf(x) = 1 - erf(-x) = 1 - (1 - erfc(-x)) = erfc(-x)
-        mu, sigma = broadcast_all(mu, sigma)
+        mu, sigma = [
+            torch.as_tensor(_par, dtype=self.dtypemap["float"])
+            for _par in broadcast_all(mu, sigma)
+        ]
         return 0.5 * torch.erfc(-((x - mu) * sigma.reciprocal() / math.sqrt(2)))
 
     def poisson_dist(self, rate):
