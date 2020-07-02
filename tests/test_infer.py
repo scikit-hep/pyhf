@@ -176,7 +176,7 @@ def test_calculator_distributions_without_teststatistic(qtilde):
 )
 def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
     rtol = 1e-8
-    if backend[0].float_precision != '64b':
+    if backend[0].precision != '64b':
         rtol = 1e-5
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
     assert np.isclose(np.array(dist.pvalue(nsigma)), expected_pval, rtol=rtol, atol=0)
@@ -184,7 +184,7 @@ def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
 
 def test_significance_to_pvalue_roundtrip(backend):
     rtol = 1e-15
-    if backend[0].float_precision != '64b':
+    if backend[0].precision != '64b':
         rtol = 1e-6
     sigma = np.arange(0, 10, 0.1)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
