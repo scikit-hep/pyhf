@@ -14,7 +14,7 @@ class pytorch_backend(object):
         self.precision = kwargs.get('precision', '32b')
         self.dtypemap = {
             'float': torch.float64 if self.precision == '64b' else torch.float32,
-            'int': torch.int64 if self.precision == '32b' else torch.int32,
+            'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
         torch.set_default_dtype(self.dtypemap["float"])

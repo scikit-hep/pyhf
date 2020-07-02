@@ -14,7 +14,7 @@ class tensorflow_backend(object):
         self.precision = kwargs.get('precision', '32b')
         self.dtypemap = {
             'float': tf.float64 if self.precision == '64b' else tf.float32,
-            'int': tf.int64 if self.precision == '32b' else tf.int32,
+            'int': tf.int64 if self.precision == '64b' else tf.int32,
             'bool': tf.bool,
         }
 
