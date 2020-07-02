@@ -376,33 +376,11 @@ def test_pdf_eval_2(backend):
 
 def test_tensor_precision(backend):
     tb, _ = backend
-    assert tb.float_precision in ['32b', '64b']
-    assert tb.int_precision in ['32b', '64b']
+    assert tb.precision in ['32b', '64b']
 
 
-def test_set_tensor_precision():
-    tb = pyhf.tensor.pytorch_backend(float='float64', int='int64')
-    assert tb.float_precision == '64b'
-    assert tb.int_precision == '64b'
-    tb = pyhf.tensor.pytorch_backend(float='float32', int='int64')
-    assert tb.float_precision == '32b'
-    assert tb.int_precision == '64b'
-    tb = pyhf.tensor.pytorch_backend(float='float64', int='int32')
-    assert tb.float_precision == '64b'
-    assert tb.int_precision == '32b'
-    tb = pyhf.tensor.pytorch_backend()
-    assert tb.float_precision == '32b'
-    assert tb.int_precision == '32b'
-
-    tb = pyhf.tensor.tensorflow_backend(float='float64', int='int64')
-    assert tb.float_precision == '64b'
-    assert tb.int_precision == '64b'
-    tb = pyhf.tensor.tensorflow_backend(float='float32', int='int64')
-    assert tb.float_precision == '32b'
-    assert tb.int_precision == '64b'
-    tb = pyhf.tensor.tensorflow_backend(float='float64', int='int32')
-    assert tb.float_precision == '64b'
-    assert tb.int_precision == '32b'
-    tb = pyhf.tensor.tensorflow_backend()
-    assert tb.float_precision == '32b'
-    assert tb.int_precision == '32b'
+@pytest.mark.parametrize('tensorlib', ['pytorch_backend', 'tensorflow_backend'])
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_set_tensor_precision(tensorlib, precision):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+    assert tb.precision == precision

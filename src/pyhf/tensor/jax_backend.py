@@ -42,8 +42,7 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
-        self.float_precision = '64b'
-        self.int_precision = '64b'
+        self.precision = '64b'
         config.update('jax_enable_x64', True)
 
     def clip(self, tensor_in, min_value, max_value):
