@@ -379,8 +379,15 @@ def test_tensor_precision(backend):
     assert tb.precision in ['32b', '64b']
 
 
-@pytest.mark.parametrize('tensorlib', ['pytorch_backend', 'tensorflow_backend'])
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
 @pytest.mark.parametrize('precision', ['64b', '32b'])
 def test_set_tensor_precision(tensorlib, precision):
     tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
     assert tb.precision == precision
+    # check for float64/int64/float32/int32 in the dtypemap by looking at the class names
+    #   - may break if class names stop including this, but i doubt it
+    assert f'float{precision[:1]}' in str(tb.dtypemap['float'])
+    assert f'int{precision[:1]}' in str(tb.dtypemap['int'])
