@@ -11,13 +11,12 @@ class tensorflow_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
+        self.precision = kwargs.get('precision', '32b')
         self.dtypemap = {
-            'float': getattr(tf, kwargs.get('float', 'float32')),
-            'int': getattr(tf, kwargs.get('int', 'int32')),
+            'float': tf.float64 if self.precision == '64b' else tf.float32,
+            'int': tf.int64 if self.precision == '64b' else tf.int32,
             'bool': tf.bool,
         }
-        self.float_precision = '32b' if self.dtypemap['float'] == tf.float32 else '64b'
-        self.int_precision = '32b' if self.dtypemap['int'] == tf.int32 else '64b'
 
     def clip(self, tensor_in, min_value, max_value):
         """

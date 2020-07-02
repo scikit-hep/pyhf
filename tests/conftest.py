@@ -79,7 +79,7 @@ def reset_backend():
     params=[
         (pyhf.tensor.numpy_backend(), None),
         (pyhf.tensor.pytorch_backend(), None),
-        (pyhf.tensor.pytorch_backend(float='float64', int='int64'), None),
+        (pyhf.tensor.pytorch_backend(precision='64b'), None),
         (pyhf.tensor.tensorflow_backend(), None),
         (pyhf.tensor.jax_backend(), None),
         (

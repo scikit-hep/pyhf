@@ -42,9 +42,13 @@ class jax_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'jax'
-        self.float_precision = '64b'
-        self.int_precision = '64b'
-        config.update('jax_enable_x64', True)
+        self.precision = kwargs.get('precision', '64b')
+        self.dtypemap = {
+            'float': np.float64 if self.precision == '64b' else np.float32,
+            'int': np.int64 if self.precision == '64b' else np.int32,
+            'bool': np.bool_,
+        }
+        config.update('jax_enable_x64', self.precision == '64b')
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -144,9 +148,8 @@ class jax_backend(object):
         Returns:
             `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
-        dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise

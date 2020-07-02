@@ -11,16 +11,13 @@ class pytorch_backend(object):
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self.precision = kwargs.get('precision', '32b')
         self.dtypemap = {
-            'float': getattr(torch, kwargs.get('float', 'float32')),
-            'int': getattr(torch, kwargs.get('int', 'int32')),
+            'float': torch.float64 if self.precision == '64b' else torch.float32,
+            'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
         torch.set_default_dtype(self.dtypemap["float"])
-        self.float_precision = (
-            '32b' if self.dtypemap['float'] == torch.float32 else '64b'
-        )
-        self.int_precision = '32b' if self.dtypemap['int'] == torch.int32 else '64b'
 
     def clip(self, tensor_in, min_value, max_value):
         """
