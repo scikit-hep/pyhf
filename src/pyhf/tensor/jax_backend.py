@@ -149,7 +149,7 @@ class jax_backend(object):
             `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
