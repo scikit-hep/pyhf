@@ -2,8 +2,6 @@ import pytest
 import pyhf
 import numpy as np
 import scipy.stats
-import torch
-import tensorflow as tf
 
 
 @pytest.fixture(scope='module')
