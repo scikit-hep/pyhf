@@ -42,6 +42,7 @@ def test_custom_backend_name_supported():
     class custom_backend(object):
         def __init__(self, **kwargs):
             self.name = "pytorch"
+            self.precision = '64b'
 
     with pytest.raises(AttributeError):
         pyhf.set_backend(custom_backend())
@@ -51,6 +52,7 @@ def test_custom_backend_name_notsupported():
     class custom_backend(object):
         def __init__(self, **kwargs):
             self.name = "notsupported"
+            self.precision = '64b'
 
     backend = custom_backend()
     assert pyhf.tensorlib.name != backend.name
