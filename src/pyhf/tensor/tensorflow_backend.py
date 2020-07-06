@@ -22,7 +22,6 @@ class tensorflow_backend(object):
         """
         Run any global setups for the tensorflow lib.
         """
-        pass
 
     def clip(self, tensor_in, min_value, max_value):
         """

@@ -49,7 +49,6 @@ class numpy_backend(object):
         """
         Run any global setups for the numpy lib.
         """
-        pass
 
     def clip(self, tensor_in, min_value, max_value):
         """
