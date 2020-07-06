@@ -1,5 +1,7 @@
 import jax.numpy as np
 from jax.config import config
+
+config.update('jax_enable_x64', True)
 from jax.scipy.special import gammaln
 from jax.scipy.stats import norm, poisson
 import numpy as onp
@@ -53,7 +55,6 @@ class jax_backend(object):
         """
         Run any global setups for the jax lib.
         """
-        config.update('jax_enable_x64', self.precision == '64b')
 
     def clip(self, tensor_in, min_value, max_value):
         """
