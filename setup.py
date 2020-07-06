@@ -1,11 +1,7 @@
 from setuptools import setup
 
 extras_require = {
-    'tensorflow': [
-        'tensorflow~=2.0',
-        'tensorflow-probability~=0.8',
-        'cloudpickle!=1.5.0',  # TODO: Temp patch until tfp v0.11
-    ],
+    'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8',],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
     'xmlio': ['uproot'],
