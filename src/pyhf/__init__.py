@@ -77,7 +77,9 @@ def set_backend(backend, custom_optimizer=None):
             )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(backend.name != tensorlib.name)
+    tensorlib_changed = bool(
+        (backend.name != tensorlib.name) | (backend.precision != tensorlib.precision)
+    )
     optimizer_changed = False
 
     if backend.name == 'tensorflow':
