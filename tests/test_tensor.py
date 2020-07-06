@@ -399,12 +399,12 @@ def test_trigger_tensorlib_changed_name(mocker):
 
     pyhf.set_backend(numpy_64)
 
-    evt = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(evt)
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func)
 
-    assert evt.call_count == 0
+    assert func.call_count == 0
     pyhf.set_backend(jax_64)
-    assert evt.call_count == 1
+    assert func.call_count == 1
 
 
 def test_trigger_tensorlib_changed_precision(mocker):
@@ -413,12 +413,12 @@ def test_trigger_tensorlib_changed_precision(mocker):
 
     pyhf.set_backend(jax_64)
 
-    evt = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(evt)
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func)
 
-    assert evt.call_count == 0
+    assert func.call_count == 0
     pyhf.set_backend(jax_32)
-    assert evt.call_count == 1
+    assert func.call_count == 1
 
 
 @pytest.mark.parametrize(
@@ -429,7 +429,7 @@ def test_trigger_tensorlib_changed_precision(mocker):
 def test_tensorlib_setup(tensorlib, precision, mocker):
     tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
 
-    m = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
-    assert m.call_count == 0
+    func = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
+    assert func.call_count == 0
     pyhf.set_backend(tb)
-    assert m.call_count == 1
+    assert func.call_count == 1
