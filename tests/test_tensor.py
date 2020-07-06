@@ -391,3 +391,45 @@ def test_set_tensor_precision(tensorlib, precision):
     #   - may break if class names stop including this, but i doubt it
     assert f'float{precision[:1]}' in str(tb.dtypemap['float'])
     assert f'int{precision[:1]}' in str(tb.dtypemap['int'])
+
+
+def test_trigger_tensorlib_changed_name(mocker):
+    numpy_64 = pyhf.tensor.numpy_backend(precision='64b')
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+
+    pyhf.set_backend(numpy_64)
+
+    evt = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(evt)
+
+    assert evt.call_count == 0
+    pyhf.set_backend(jax_64)
+    assert evt.call_count == 1
+
+
+def test_trigger_tensorlib_changed_precision(mocker):
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+    jax_32 = pyhf.tensor.jax_backend(precision='32b')
+
+    pyhf.set_backend(jax_64)
+
+    evt = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(evt)
+
+    assert evt.call_count == 0
+    pyhf.set_backend(jax_32)
+    assert evt.call_count == 1
+
+
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_tensorlib_setup(tensorlib, precision, mocker):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+
+    m = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
+    assert m.call_count == 0
+    pyhf.set_backend(tb)
+    assert m.call_count == 1

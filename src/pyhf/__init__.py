@@ -108,6 +108,8 @@ def set_backend(backend, custom_optimizer=None):
         events.trigger("tensorlib_changed")()
     if optimizer_changed:
         events.trigger("optimizer_changed")()
+    # set up any other globals for backend
+    tensorlib._setup()
 
 
 from .pdf import Model

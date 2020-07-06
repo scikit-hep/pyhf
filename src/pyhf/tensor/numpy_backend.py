@@ -45,6 +45,12 @@ class numpy_backend(object):
             'bool': np.bool_,
         }
 
+    def _setup(self):
+        """
+        Run any global setups for the numpy lib.
+        """
+        pass
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.

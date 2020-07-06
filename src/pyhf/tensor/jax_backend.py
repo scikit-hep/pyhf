@@ -48,6 +48,11 @@ class jax_backend(object):
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
+
+    def _setup(self):
+        """
+        Run any global setups for the jax lib.
+        """
         config.update('jax_enable_x64', self.precision == '64b')
 
     def clip(self, tensor_in, min_value, max_value):
