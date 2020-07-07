@@ -18,6 +18,11 @@ class tensorflow_backend(object):
             'bool': tf.bool,
         }
 
+    def _setup(self):
+        """
+        Run any global setups for the tensorflow lib.
+        """
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
