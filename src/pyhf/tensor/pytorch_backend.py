@@ -17,6 +17,11 @@ class pytorch_backend(object):
             'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
+
+    def _setup(self):
+        """
+        Run any global setups for the pytorch lib.
+        """
         torch.set_default_dtype(self.dtypemap["float"])
 
     def clip(self, tensor_in, min_value, max_value):
