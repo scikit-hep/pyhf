@@ -1,7 +1,9 @@
 """PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
+from torch.distributions.utils import broadcast_all
 import logging
+import math
 
 log = logging.getLogger(__name__)
 
@@ -17,6 +19,11 @@ class pytorch_backend(object):
             'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
+
+    def _setup(self):
+        """
+        Run any global setups for the pytorch lib.
+        """
         torch.set_default_dtype(self.dtypemap["float"])
 
     def clip(self, tensor_in, min_value, max_value):
@@ -324,8 +331,14 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        normal = torch.distributions.Normal(mu, sigma)
-        return normal.cdf(x)
+        # the implementation of torch.Normal.cdf uses torch.erf:
+        # 0.5 * (1 + torch.erf((value - self.loc) * self.scale.reciprocal() / math.sqrt(2)))
+        # (see https://github.com/pytorch/pytorch/blob/3bbedb34b9b316729a27e793d94488b574e1577a/torch/distributions/normal.py#L78-L81)
+        # we get a more numerically stable variant for low p-values/high significances using erfc(x) := 1 - erf(x)
+        # since erf(-x) = -erf(x) we can replace
+        # 1 + erf(x) = 1 - erf(-x) = 1 - (1 - erfc(-x)) = erfc(-x)
+        mu, sigma = broadcast_all(mu, sigma)
+        return 0.5 * torch.erfc(-((x - mu) * sigma.reciprocal() / math.sqrt(2)))
 
     def poisson_dist(self, rate):
         r"""

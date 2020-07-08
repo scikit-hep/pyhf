@@ -71,7 +71,8 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        return 1 - tensorlib.normal_cdf(value - self.shift)
+        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability
+        return tensorlib.normal_cdf(-(value - self.shift))
 
     def expected_value(self, nsigma):
         """
