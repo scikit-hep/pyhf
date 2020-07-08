@@ -65,3 +65,40 @@ These are all the files you need in order to use `pyhf xml2json <cli.html#pyhf-x
 which will read all of the XML files and load the histogram data from the histogram cache.
 
 The ``HistFactory`` workspace in ``results/`` contains all of the information necessary to rebuild the XML files again. For debugging purposes, the ``pyhf`` developers will often ask for your workspace file, which means ``results/3b_tag21.2.27-1_RW_ExpSyst_36100_multibin_bkg/Excl_combined_DefaultMeasurement.root``. If you want to generate the XML, you can open this file in ``ROOT`` and run ``DefaultMeasurement->PrintXML()`` which puts all of the XML files into the current directory you are in.
+
+
+TRExFitter
+----------
+
+.. note::
+
+    For more details on this section, please refer to the ATLAS-internal `TRExFitter documentation <https://trexfitter-docs.web.cern.ch/trexfitter-docs/advanced_topics/pyhf/>`_.
+
+In order to go from ``TRExFitter`` to ``pyhf``, the good news is that the RooWorkspace files (``XML`` and ``ROOT``) are already made for you. For a given configurastion which looks like
+
+.. code:: yaml
+
+    Job: "pyhf_example"
+    Label: "..."
+
+You can expect some files to be made like so:
+
+- ``pyhf_example/RooStats/pyhf_example.xml``
+- ``pyhf_example/RooStats/pyhf_example_Signal_region.xml``
+- ``pyhf_example/Histograms/pyhf_example_Signal_region_histos.root``
+
+These are all the files you need in order to use `pyhf xml2json <cli.html#pyhf-xml2json>`_. At this point, you could run
+
+.. code:: bash
+
+    pyhf xml2json pyhf_example/RooStats/pyhf_example.xml
+
+which will read all of the XML files and load the histogram data from the histogram cache.
+
+.. warning::
+
+    There are a few caveats one needs to be aware of with this conversion:
+
+    - Custom parameters cannot be held constant (e.g. lumi), see :pr:`846` and :issue:`739`.
+    - Uncorrelated shape systematics cannot be pruned, see :issue:`662`.
+    - Custom expressions for normalization factors cannot be used, see :issue:`850`.
