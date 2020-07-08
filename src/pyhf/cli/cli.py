@@ -42,7 +42,7 @@ pyhf.add_command(patchset.cli)
 
 try:
 
-    @pyhf.command(help='generate shell completion code')
+    @pyhf.command(help='Generate shell completion code.')
     @click.argument(
         'shell',
         required=False,
