@@ -5,6 +5,7 @@ import click
 
 try:
     import click_completion
+
     click_completion.init()
 except ImportError:
     pass
@@ -40,9 +41,16 @@ pyhf.add_command(infer.cls)
 pyhf.add_command(patchset.cli)
 
 try:
-    @pyhf.command(help = 'generate shell completion code')
-    @click.argument('shell', required=False, type=click_completion.DocumentedChoice(click_completion.core.shells))
-    def shell_completion(shell):
+
+    @pyhf.command(help='generate shell completion code')
+    @click.argument(
+        'shell',
+        required=False,
+        type=click_completion.DocumentedChoice(click_completion.core.shells),
+    )
+    def shellcomplete(shell):
         click.echo(click_completion.core.get_code(shell))
+
+
 except NameError:
     pass

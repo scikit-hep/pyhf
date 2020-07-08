@@ -1,6 +1,7 @@
 from setuptools import setup
 
 extras_require = {
+    'shellcomplete': ['click_completion'],
     'tensorflow': [
         'tensorflow~=2.0',
         'tensorflow-probability~=0.8',
@@ -27,6 +28,7 @@ extras_require['test'] = sorted(
         extras_require['backends']
         + extras_require['xmlio']
         + extras_require['contrib']
+        + extras_require['shellcomplete']
         + [
             'pytest~=3.5',
             'pytest-cov>=2.5.1',
