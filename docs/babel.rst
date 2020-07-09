@@ -81,7 +81,7 @@ In order to go from ``TRExFitter`` to ``pyhf``, the good news is that the RooWor
     Job: "pyhf_example"
     Label: "..."
 
-You can expect some files to be made like so:
+You can expect some files to be made after the ``n``/``h`` and ``w`` steps:
 
 - ``pyhf_example/RooStats/pyhf_example.xml``
 - ``pyhf_example/RooStats/pyhf_example_Signal_region.xml``
