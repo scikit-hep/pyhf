@@ -47,7 +47,7 @@ extras_require['test'] = sorted(
 extras_require['docs'] = sorted(
     set(
         [
-            'sphinx~=3.1,>3.1.1',  # Sphinx v3.1.1 regression (PR #some number)
+            'sphinx>3.1.1',
             'sphinxcontrib-bibtex',
             'sphinx-click',
             'sphinx_rtd_theme',
