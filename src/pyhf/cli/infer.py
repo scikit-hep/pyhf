@@ -54,7 +54,8 @@ def cls(
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf cls
+    \b
+        $ curl -sL https://git.io/JJYDE | pyhf cls
         {
             "CLs_exp": [
                 0.07807427911686156,
