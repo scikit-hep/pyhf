@@ -10,6 +10,8 @@ If you're looking for some examples of high quality contributed pull requests we
 
 - PR #902 by @nikoladze
 
+Many thanks goes out to our contributors!
+
 ### WIP
 
 Unless you are making a single commit pull request please create a WIP pull request. Outline the work that will be done in this ongoing pull request. When you are close to being done please assign someone with Approver permissions to follow the pull request.
