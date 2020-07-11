@@ -8,7 +8,7 @@ We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub r
 
 If you're looking for some examples of high quality contributed pull requests we recommend you take a look at these:
 
-- PR #902 by @nikoladze
+- PR [#902](https://github.com/scikit-hep/pyhf/pull/902) by Nikolai Hartmann ([@nikoladze](https://github.com/nikoladze))
 
 Many thanks goes out to our contributors!
 
