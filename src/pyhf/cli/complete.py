@@ -14,7 +14,7 @@ try:
     )
     def cli(shell):
         '''Generate shell completion code for various shells.'''
-        click.echo(click_completion.core.get_code(shell))
+        click.echo(click_completion.core.get_code(shell, prog_name='pyhf'))
 
 
 except ImportError:
