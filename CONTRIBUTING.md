@@ -6,7 +6,7 @@ We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub r
 
 ### Good Examples
 
-If you're looking for some examples of high quality contributed pull requests we recommend you take a look at these following ones:
+If you're looking for some examples of high quality contributed pull requests we recommend you take a look at these:
 
 - PR #902 by @nikoladze
 
