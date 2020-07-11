@@ -12,6 +12,7 @@ def test_shllcomplete_cli():
 
 def test_shllcomplete_cli_missing_extra(isolate_modules):
     import click_completion
+
     assert click_completion
     CACHE_MOD, sys.modules['click_completion'] = sys.modules['click_completion'], None
     from pyhf.cli.cli import pyhf
