@@ -54,8 +54,9 @@ def cls(
 
     .. code-block:: shell
 
-        \b
         $ curl -sL https://git.io/JJYDE | pyhf cls
+
+        \b
         {
             "CLs_exp": [
                 0.07807427911686156,
