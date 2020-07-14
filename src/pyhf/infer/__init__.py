@@ -98,6 +98,7 @@ def hypotest(
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)
     CLs = CLsb / CLb
+    # Ensure that all CL values are scalars
     CLsb, CLb, CLs = (
         tensorlib.reshape(CLsb, ()),
         tensorlib.reshape(CLb, ()),
