@@ -68,6 +68,13 @@ class jax_backend:
         Run any global setups for the jax lib.
         """
 
+    @property
+    def tensor(self):
+        """
+        Provide the underlying tensor type.
+        """
+        return np.array
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.

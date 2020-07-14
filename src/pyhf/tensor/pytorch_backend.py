@@ -29,6 +29,13 @@ class pytorch_backend:
         """
         torch.set_default_dtype(self.dtypemap["float"])
 
+    @property
+    def tensor(self):
+        """
+        Provide the underlying tensor type.
+        """
+        return torch.Tensor
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
