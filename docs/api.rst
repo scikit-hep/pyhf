@@ -46,6 +46,7 @@ Making Models from PDFs
    ~workspace.Workspace
    ~patchset.PatchSet
    ~patchset.Patch
+   simplemodels.hepdata_like
 
 Backends
 --------
