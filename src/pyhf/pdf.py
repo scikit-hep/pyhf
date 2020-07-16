@@ -227,6 +227,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             'modifier_settings', default_modifier_settings
         )
 
+        poi_name = config_kwargs.pop('poi_name', 'mu')
         if config_kwargs:
             raise KeyError(
                 f"""Unexpected keyword argument(s): '{"', '".join(config_kwargs.keys())}'"""
@@ -240,10 +241,6 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata_order = []
 
         self._create_and_register_paramsets(_required_paramsets)
-
-        poi_name = config_kwargs.pop('poi_name', None)
-        if poi_name:
-            self.set_poi(poi_name)
 
         self.npars = len(self.suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
