@@ -222,7 +222,6 @@ class _ModelConfig(_ChannelSummaryMixin):
             spec, self.channel_nbins
         )
 
-        poi_name = config_kwargs.pop('poi_name', 'mu')
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
         self.modifier_settings = config_kwargs.pop(
@@ -242,7 +241,11 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata_order = []
 
         self._create_and_register_paramsets(_required_paramsets)
-        self.set_poi(poi_name)
+
+        poi_name = config_kwargs.pop('poi_name')
+        if poi_name:
+            self.set_poi(poi_name)
+        
         self.npars = len(self.suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
 

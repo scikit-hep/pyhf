@@ -42,6 +42,10 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
+    if not pdf.config.poi_index:
+        raise RuntimeError('No POI is defined. We need this for profile likelihood based test statistics.')
+
+
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
