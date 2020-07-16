@@ -241,7 +241,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         self._create_and_register_paramsets(_required_paramsets)
 
-        poi_name = config_kwargs.pop('poi_name',None)
+        poi_name = config_kwargs.pop('poi_name', None)
         if poi_name:
             self.set_poi(poi_name)
 
