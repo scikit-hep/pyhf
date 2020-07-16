@@ -231,6 +231,9 @@ def test_poiless_model(backend):
     with pytest.raises(RuntimeError):
         pyhf.infer.mle.fixed_poi_fit(1.0, data, m)
 
+    with pytest.raises(RuntimeError):
+        pyhf.infer.hypotest(1.0, data, m)
+
 
 def test_pdf_integration_shapesys_zeros(backend):
     spec = {
