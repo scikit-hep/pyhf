@@ -240,13 +240,14 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata = []
         self.auxdata_order = []
 
-        if poi_name is not None:
-            self.set_poi(poi_name)
 
         self._create_and_register_paramsets(_required_paramsets)
 
         self.npars = len(self.suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
+
+        if poi_name is not None:
+            self.set_poi(poi_name)
 
     def suggested_init(self):
         init = []
