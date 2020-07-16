@@ -24,14 +24,14 @@ class AutoDiffOptimizerMixin(object):
 
         Returns:
             bestfit parameters
-        
+
         """
         tensorlib, _ = get_backend()
-        tv, fixed_values_tensor, func, init, bounds = self.setup_minimize(
+        tv, fixed_values_tensor, func_and_grad, init, bounds = self.setup_minimize(
             objective, data, pdf, init_pars, par_bounds, fixed_vals
         )
         fitresult = scipy.optimize.minimize(
-            func, init, method='SLSQP', jac=True, bounds=bounds
+            func_and_grad, init, method='SLSQP', jac=True, bounds=bounds
         )
         nonfixed_vals = fitresult.x
         fitted_val = fitresult.fun
