@@ -5,21 +5,25 @@ import numpy as np
 import json
 
 
-
 def test_hello_world_ctor():
     spec = {
         'channels': [
             {
                 'name': 'channel',
                 'samples': [
-                    {'name': 'goodsample', 'data': [1.0], 'modifiers': [
-                        {'type': 'normfactor', 'name': 'mu', 'data': None}
-                    ]},
+                    {
+                        'name': 'goodsample',
+                        'data': [1.0],
+                        'modifiers': [
+                            {'type': 'normfactor', 'name': 'mu', 'data': None}
+                        ],
+                    },
                 ],
             }
         ]
     }
     pyhf.Model(spec)
+
 
 def test_pdf_inputs(backend):
     source = {
@@ -204,20 +208,28 @@ def test_poiless_model(backend):
             {
                 'name': 'channel',
                 'samples': [
-                    {'name': 'goodsample', 'data': [10.0], 'modifiers': [
-                        {'type': 'normsys', 'name': 'shape', 'data': {"hi": 0.5, "lo": 1.5}}
-                    ]},
+                    {
+                        'name': 'goodsample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'type': 'normsys',
+                                'name': 'shape',
+                                'data': {"hi": 0.5, "lo": 1.5},
+                            }
+                        ],
+                    },
                 ],
             }
         ]
     }
-    m = pyhf.Model(spec, poi_name = None)
-    
+    m = pyhf.Model(spec, poi_name=None)
+
     data = [12] + m.config.auxdata
-    pyhf.infer.mle.fit(data,m)
+    pyhf.infer.mle.fit(data, m)
 
     with pytest.raises(RuntimeError):
-        pyhf.infer.mle.fixed_poi_fit(1.0,data,m)
+        pyhf.infer.mle.fixed_poi_fit(1.0, data, m)
 
 
 def test_pdf_integration_shapesys_zeros(backend):
