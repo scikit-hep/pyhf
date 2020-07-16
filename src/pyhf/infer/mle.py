@@ -76,7 +76,7 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
         See optimizer API
 
     """
-    if not pdf.config.poi_index:
+    if pdf.config.poi_index is None:
         raise RuntimeError(
             'No POI is defined. We need this if you want to fit  with a fixed POI.'
         )

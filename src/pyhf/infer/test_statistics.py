@@ -42,7 +42,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
-    if not pdf.config.poi_index:
+    if pdf.config.poi_index is None:
         raise RuntimeError(
             'No POI is defined. We need this for profile likelihood based test statistics.'
         )

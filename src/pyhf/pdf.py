@@ -240,7 +240,6 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata = []
         self.auxdata_order = []
 
-
         self._create_and_register_paramsets(_required_paramsets)
 
         self.npars = len(self.suggested_init())
