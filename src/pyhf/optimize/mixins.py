@@ -1,5 +1,6 @@
 """Helper Classes for use of automatic differentiation."""
 from .. import get_backend
+from .. import exceptions
 
 import logging
 
