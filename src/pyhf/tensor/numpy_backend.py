@@ -157,13 +157,7 @@ class numpy_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = np.asarray(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.reshape(1)
-        return tensor
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
