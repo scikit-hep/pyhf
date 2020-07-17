@@ -156,11 +156,6 @@ class tensorflow_backend(object):
             tensor.device
         except AttributeError:
             tensor = tf.convert_to_tensor(tensor_in)
-            # Ensure non-empty tensor shape for consistency
-            try:
-                tensor.shape[0]
-            except IndexError:
-                tensor = tf.reshape(tensor, [1])
         if tensor.dtype is not dtype:
             tensor = tf.cast(tensor, dtype)
         return tensor
