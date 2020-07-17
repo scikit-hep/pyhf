@@ -25,9 +25,11 @@ class minuit_optimizer(OptimizerMixin):
         Args:
             errordef (`float`): See minuit docs. Default is 1.0.
             steps (`int`): Number of steps for the bounds. Default is 1000.
+            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
         """
-        self.errordef = kwargs.get('errordef', 1)
-        self.steps = kwargs.get('steps', 1000)
+        self.errordef = kwargs.pop('errordef', 1)
+        self.steps = kwargs.pop('steps', 1000)
+        self.return_uncertainties = kwargs.pop('return_uncertainties', False)
         self.name = 'minuit'
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
@@ -86,13 +88,20 @@ class minuit_optimizer(OptimizerMixin):
                 message += " Estimated distance to minimum too large."
 
         n = len(init)
+        hess_inv = np.ones((n, n))
+        if self._minimizer.valid:
+            hess_inv = self._minimizer.np_covariance()
+
+        unc = None
+        if self.return_uncertainties:
+            unc = self._minimizer.np_errors()
+
         return scipy.optimize.OptimizeResult(
             x=self._minimizer.np_values(),
+            unc=unc,
             success=self._minimizer.valid,
             fun=self._minimizer.fval,
-            hess_inv=self._minimizer.np_covariance()
-            if self._minimizer.valid
-            else np.ones((n, n)),
+            hess_inv=hess_inv,
             message=message,
             nfev=self._minimizer.ncalls,
             njev=self._minimizer.ngrads,
