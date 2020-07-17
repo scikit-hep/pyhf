@@ -1,49 +1,10 @@
 """Helper Classes for use of automatic differentiation."""
 from .. import get_backend
-from .. import exceptions
+from .common import shim
 
 import logging
 
 log = logging.getLogger(__name__)
-
-
-def get_tensor_shim(name):
-    if name == 'numpy':
-        from .opt_numpy import numpy_shim
-
-        return numpy_shim
-    elif name == 'tensorflow':
-        try:
-            from .opt_tflow import tflow_shim
-
-            return tflow_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing TensorFlow. The pytorch backend cannot be used.",
-                e,
-            )
-    elif name == 'pytorch':
-        try:
-            from .opt_pytorch import pytorch_shim
-
-            return pytorch_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing PyTorch. The pytorch backend cannot be used.",
-                e,
-            )
-    elif name == 'jax':
-        try:
-            from .opt_jax import jax_shim
-
-            return jax_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing JAX. The pytorch backend cannot be used.",
-                e,
-            )
-    else:
-        raise ValueError(f'No optimizer shim for {name}.')
 
 
 class OptimizerMixin(object):
@@ -96,9 +57,9 @@ class OptimizerMixin(object):
         self._setup_minimizer(objective, data, pdf, init_pars, par_bounds, fixed_vals)
 
         tensorlib, _ = get_backend()
-        tv, fixed_values_tensor, func_and_grad, init, bounds = get_tensor_shim(
-            tensorlib.name
-        )(objective, data, pdf, init_pars, par_bounds, fixed_vals, do_grad=self.grad)
+        tv, fixed_values_tensor, func_and_grad, init, bounds = shim(
+            objective, data, pdf, init_pars, par_bounds, fixed_vals, do_grad=self.grad
+        )
         if self.grad:
             func = lambda pars: func_and_grad(pars)[0]
             jac = lambda pars: func_and_grad(pars)[1]
