@@ -100,8 +100,9 @@ def set_backend(backend, custom_optimizer=None):
                 )
         else:
             _name_supported = getattr(
-                optimize, "{0:s}_optimizer".format(optimizer.name)
+                optimize, "{0:s}_optimizer".format(custom_optimizer.name)
             )
+            breakpoint()
             if _name_supported:
                 if not isinstance(custom_optimizer, _name_supported):
                     raise AttributeError(
