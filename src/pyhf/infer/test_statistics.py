@@ -45,7 +45,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. We need this for profile likelihood based test statistics.'
+            'No POI is defined. A POI is required for profile likelihood based test statistics.'
         )
 
     tensorlib, optimizer = get_backend()

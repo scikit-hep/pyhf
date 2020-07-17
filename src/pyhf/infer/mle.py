@@ -79,7 +79,7 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. We need this if you want to fit  with a fixed POI.'
+            'No POI is defined. A POI is required to fit with a fixed POI.'
         )
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
