@@ -43,7 +43,7 @@ def test_sbottom_regionA_1300_205_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.24443627759085326, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.24443627759085326, rel=1.2e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -56,7 +56,7 @@ def test_sbottom_regionA_1300_205_60(
                     0.8910420971601081,
                 ]
             ),
-            rtol=1e-5,
+            rtol=1.2e-5,
         )
     )
 
@@ -73,7 +73,7 @@ def test_sbottom_regionA_1400_950_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1400_950_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1.1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -86,7 +86,7 @@ def test_sbottom_regionA_1400_950_60(
                     0.5744843501873754,
                 ]
             ),
-            rtol=1e-5,
+            rtol=7e-5,
         )
     )
 
@@ -103,7 +103,7 @@ def test_sbottom_regionA_1500_850_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1500_850_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.04536774062150508, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.04536774062150508, rel=1.3e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -116,7 +116,7 @@ def test_sbottom_regionA_1500_850_60(
                     0.6553686728646031,
                 ]
             ),
-            rtol=1e-5,
+            rtol=7e-5,
         )
     )
 
