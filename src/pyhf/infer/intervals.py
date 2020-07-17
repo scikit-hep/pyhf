@@ -32,9 +32,8 @@ def upperlimit(data, model, scan, return_results=False):
     exp = tb.astensor([[r[1][i][0] for i in range(5)] for r in results])
     resarary = tb.concatenate([obs, exp], axis=1).T
 
-    ol = _interp(0.05, resarary[0][::-1], scan[::-1])
-    el = [_interp(0.05, resarary[i][::-1], scan[::-1]) for i in range(5)]
+    limits = [_interp(0.05, resarary[i][::-1], scan[::-1]) for i in range(6)]
 
     if return_results:
-        return ol, el, (scan, results)
-    return ol, el
+        return limits[0], limits[1:], (scan, results)
+    return limits[0], limits[1:]
