@@ -52,7 +52,7 @@ class OptimizerMixin(object):
         fixed_vals=None,
         return_fitted_val=False,
         method='SLSQP',
-        minimizer_options={},
+        **kwargs,
     ):
         """
         Find Function Parameters that minimize the Objective.
@@ -66,7 +66,7 @@ class OptimizerMixin(object):
             fixed_vals: fixed parameter values
             return_fitted_val: return bestfit value
             method: minimization routine
-            minimizer_options: other options to pass through to underlying minimizer
+            kwargs: other options to pass through to underlying minimizer
 
         Returns:
             bestfit parameters
@@ -85,7 +85,7 @@ class OptimizerMixin(object):
             func = func_and_grad
             jac = None
         result = self._internal_minimize(
-            func, init, method=method, bounds=bounds, options=minimizer_options, jac=jac
+            func, init, method=method, bounds=bounds, options=kwargs, jac=jac
         )
 
         nonfixed_vals = result.x

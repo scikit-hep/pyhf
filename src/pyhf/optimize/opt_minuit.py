@@ -25,11 +25,9 @@ class minuit_optimizer(OptimizerMixin):
         Args:
             errordef (`float`): See minuit docs. Default is 1.0.
             steps (`int`): Number of steps for the bounds. Default is 1000.
-            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
         """
         self.errordef = kwargs.pop('errordef', 1)
         self.steps = kwargs.pop('steps', 1000)
-        self.return_uncertainties = kwargs.pop('return_uncertainties', False)
         self.name = 'minuit'
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
@@ -72,9 +70,13 @@ class minuit_optimizer(OptimizerMixin):
         Note: an additional `minuit` is injected into the fitresult to get the
         underlying minimizer.
 
+        Minimizer Options:
+            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
+
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
+        return_uncertainties = options.pop('return_uncertainties', False)
         self._minimizer.migrad(ncall=self.maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
@@ -93,7 +95,7 @@ class minuit_optimizer(OptimizerMixin):
             hess_inv = self._minimizer.np_covariance()
 
         unc = None
-        if self.return_uncertainties:
+        if return_uncertainties:
             unc = self._minimizer.np_errors()
 
         return scipy.optimize.OptimizeResult(
