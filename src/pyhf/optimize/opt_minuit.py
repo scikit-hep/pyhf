@@ -1,29 +1,25 @@
-"""MINUIT Optimizer Backend."""
-
-import iminuit
-import logging
+"""Helper Classes for use of automatic differentiation."""
+from .mixins import OptimizerMixin
+import scipy
 import numpy as np
+import iminuit
 
-log = logging.getLogger(__name__)
 
-
-class minuit_optimizer(object):
-    """MINUIT Optimizer Backend."""
-
-    def __init__(self, verbose=False, ncall=10000, errordef=1, steps=1000):
+class MinuitOptimizer(OptimizerMixin):
+    def __init__(self, *args, **kwargs):
         """
         Create MINUIT Optimizer.
 
         Args:
             verbose (`bool`): print verbose output during minimization
-        
-        """
-        self.verbose = verbose
-        self.ncall = ncall
-        self.errordef = errordef
-        self.steps = steps
 
-    def _make_minuit(
+        """
+        self.errordef = kwargs.get('errordef', 1)
+        self.steps = kwargs.get('steps', 1000)
+        self.name = 'minuit'
+        super(MinuitOptimizer, self).__init__(*args, **kwargs)
+
+    def _setup_minimizer(
         self, objective, data, pdf, init_pars, init_bounds, fixed_vals=None
     ):
         def f(pars):
@@ -46,7 +42,7 @@ class minuit_optimizer(object):
         kwargs = {}
         for d in [kw, constraints, initvals, step_sizes]:
             kwargs.update(**d)
-        mm = iminuit.Minuit(
+        self._minimizer = iminuit.Minuit(
             f,
             print_level=1 if self.verbose else 0,
             errordef=1,
@@ -54,34 +50,30 @@ class minuit_optimizer(object):
             forced_parameters=parnames,
             **kwargs,
         )
-        return mm
 
-    def minimize(
-        self,
-        objective,
-        data,
-        pdf,
-        init_pars,
-        par_bounds,
-        fixed_vals=None,
-        return_fitted_val=False,
-        return_uncertainties=False,
-    ):
-        """
-        Find Function Parameters that minimize the Objective.
+    def _minimize(self, func, init, method='SLSQP', jac=None, bounds=None, options={}):
+        self._minimizer.migrad(ncall=self.maxiter)
+        # Following lines below come from:
+        # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
+        message = "Optimization terminated successfully."
+        if not self._minimizer.valid:
+            message = "Optimization failed."
+            fmin = self._minimizer.fmin
+            if fmin.has_reached_call_limit:
+                message += " Call limit was reached."
+            if fmin.is_above_max_edm:
+                message += " Estimated distance to minimum too large."
 
-        Returns:
-            bestfit parameters
-        
-        """
-        mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds, fixed_vals)
-        result = mm.migrad(ncall=self.ncall)
-        assert result
-        if return_uncertainties:
-            bestfit_pars = np.asarray([(v, mm.errors[k]) for k, v in mm.values.items()])
-        else:
-            bestfit_pars = np.asarray([v for k, v in mm.values.items()])
-        bestfit_value = mm.fval
-        if return_fitted_val:
-            return bestfit_pars, bestfit_value
-        return bestfit_pars
+        n = len(init)
+        return scipy.optimize.OptimizeResult(
+            x=self._minimizer.np_values(),
+            success=self._minimizer.valid,
+            fun=self._minimizer.fval,
+            hess_inv=self._minimizer.np_covariance()
+            if self._minimizer.valid
+            else np.ones((n, n)),
+            message=message,
+            nfev=self._minimizer.ncalls,
+            njev=self._minimizer.ngrads,
+            minuit=self._minimizer,
+        )

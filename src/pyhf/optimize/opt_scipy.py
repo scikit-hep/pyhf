@@ -1,53 +1,24 @@
-"""scipy.optimize-based Optimizer using finite differences."""
-
-from scipy.optimize import minimize
-import logging
-
-log = logging.getLogger(__name__)
+"""Helper Classes for use of automatic differentiation."""
+from .mixins import OptimizerMixin
+import scipy
 
 
-class scipy_optimizer(object):
-    """scipy.optimize-based Optimizer using finite differences."""
+class ScipyOptimizer(OptimizerMixin):
+    def __init__(self, *args, **kwargs):
+        self.name = 'scipy'
+        super(ScipyOptimizer, self).__init__(*args, **kwargs)
 
-    def __init__(self, **kwargs):
-        """Create scipy.optimize-based Optimizer."""
-        self.maxiter = kwargs.get('maxiter', 100000)
-
-    def minimize(
-        self,
-        objective,
-        data,
-        pdf,
-        init_pars,
-        par_bounds,
-        fixed_vals=None,
-        return_fitted_val=False,
+    def _setup_minimizer(
+        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
     ):
-        """
-        Find Function Parameters that minimize the Objective.
+        self._minimizer = scipy.optimize.minimize
 
-        Returns:
-            bestfit parameters
-        
-        """
-        fixed_vals = fixed_vals or []
-        indices = [i for i, _ in fixed_vals]
-        values = [v for _, v in fixed_vals]
-        constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
-        result = minimize(
-            objective,
-            init_pars,
-            constraints=constraints,
-            method='SLSQP',
-            args=(data, pdf),
-            bounds=par_bounds,
-            options=dict(maxiter=self.maxiter),
+    def _minimize(self, func, init, method='SLSQP', bounds=None, options={}, jac=None):
+        return self._minimizer(
+            func,
+            init,
+            method=method,
+            jac=jac,
+            bounds=bounds,
+            options=dict(maxiter=self.maxiter, disp=self.verbose, **options),
         )
-        try:
-            assert result.success
-        except AssertionError:
-            log.error(result)
-            raise
-        if return_fitted_val:
-            return result.x, result.fun
-        return result.x
