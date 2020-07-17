@@ -93,6 +93,17 @@ class OptimizerMixin(object):
         fitted_pars = tv.stitch(
             [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
         )
+        # check if uncertainties were provided
+        uncertainties = getattr(result, 'unc')
+        if uncertainties:
+            # step 1: stitch in zero-uncertainty for fixed values, with uncertainties from all (other) values
+            fitted_uncs = tv.stitch(
+                [
+                    tensorlib.zeros(fixed_values_tensor.shape),
+                    tensorlib.astensor(uncertainties),
+                ]
+            )
+            fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
         if return_fitted_val:
             return fitted_pars, tensorlib.astensor(fitted_val)
         return fitted_pars
