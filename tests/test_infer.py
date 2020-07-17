@@ -1,5 +1,6 @@
 import pytest
 import pyhf
+import pyhf.infer.intervals
 import numpy as np
 import scipy.stats
 
@@ -18,6 +19,14 @@ def check_uniform_type(in_list):
     return all(
         [isinstance(item, type(pyhf.tensorlib.astensor(item))) for item in in_list]
     )
+
+
+def test_upperlimit(tmpdir, hypotest_args):
+    """
+    Check that the default return structure of pyhf.infer.hypotest is as expected
+    """
+    _, data, model = hypotest_args
+    pyhf.infer.intervals.upperlimit(data, model, scan=np.linspace(0, 5, 11))
 
 
 def test_mle_fit_default(tmpdir, hypotest_args):

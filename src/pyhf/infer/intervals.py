@@ -2,7 +2,7 @@ from . import hypotest
 from .. import get_backend
 
 
-def interp(x, xp, fp):
+def _interp(x, xp, fp):
     import numpy as np
 
     tb, _ = get_backend()
@@ -10,14 +10,30 @@ def interp(x, xp, fp):
 
 
 def upperlimit(data, model, scan, return_results=False):
+    '''
+    Calculate an upper limit interval (0,poi_up) for a single
+    Parameter of Interest (POI) using a fixed scan through
+    POI-space.
+
+    Args:
+        data (tensor): the observed data
+        model (pyhf.Model): the statistical model
+        scan (Iterable): iterable of poi values
+        return_results (bool): whether to return the per-point results
+
+    Returns:
+        observed limit (tensor)
+        expected limit (tensor)
+        scan results (tuple  (tensor, tensor))
+    '''
     tb, _ = get_backend()
     results = [hypotest(mu, data, model, return_expected_set=True) for mu in scan]
     obs = tb.astensor([[r[0][0]] for r in results])
     exp = tb.astensor([[r[1][i][0] for i in range(5)] for r in results])
     resarary = tb.concatenate([obs, exp], axis=1).T
 
-    ol = interp(0.05, resarary[0][::-1], scan[::-1])
-    el = [interp(0.05, resarary[i][::-1], scan[::-1]) for i in range(5)]
+    ol = _interp(0.05, resarary[0][::-1], scan[::-1])
+    el = [_interp(0.05, resarary[i][::-1], scan[::-1]) for i in range(5)]
 
     if return_results:
         return ol, el, (scan, results)
