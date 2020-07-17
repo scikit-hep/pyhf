@@ -6,6 +6,10 @@ import iminuit
 
 
 class minuit_optimizer(OptimizerMixin):
+    """
+    Optimizer that uses iminuit.Minuit.migrad.
+    """
+
     def __init__(self, *args, **kwargs):
         """
         Create MINUIT Optimizer.
