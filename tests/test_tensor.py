@@ -145,10 +145,9 @@ def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
     assert tb.shape(tb.ones((0, 0))) == (0, 0)
+    assert tb.shape(tb.astensor(1.0)) == ()
     assert tb.shape(tb.astensor([])) == (0,)
     assert tb.shape(tb.astensor([1.0])) == (1,)
-    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
-    assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
     with pytest.raises(
