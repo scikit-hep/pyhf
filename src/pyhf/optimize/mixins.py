@@ -95,7 +95,7 @@ class OptimizerMixin(object):
         )
         # check if uncertainties were provided
         uncertainties = getattr(result, 'unc', None)
-        if uncertainties:
+        if uncertainties is not None:
             # step 1: stitch in zero-uncertainty for fixed values, with uncertainties from all (other) values
             fitted_uncs = tv.stitch(
                 [
