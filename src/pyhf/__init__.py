@@ -1,13 +1,11 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
 from .version import __version__
-from .exceptions import InvalidBackend
+from .exceptions import InvalidBackend, InvalidOptimizer
 from . import events
 
-tensorlib = tensor.numpy_backend()
-default_backend = tensorlib
-optimizer = optimize.scipy_optimizer()
-default_optimizer = optimizer
+tensorlib = None
+optimizer = None
 
 
 def get_backend():
@@ -25,6 +23,12 @@ def get_backend():
     global tensorlib
     global optimizer
     return tensorlib, optimizer
+
+
+tensorlib = tensor.numpy_backend()
+default_backend = tensorlib
+optimizer = optimize.scipy_optimizer()
+default_optimizer = optimizer
 
 
 @events.register('change_backend')
@@ -82,24 +86,30 @@ def set_backend(backend, custom_optimizer=None):
     )
     optimizer_changed = False
 
-    if backend.name == 'tensorflow':
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.tflow_optimizer(backend)
-        )
-    elif backend.name == 'pytorch':
-        new_optimizer = (
-            custom_optimizer
-            if custom_optimizer
-            else optimize.pytorch_optimizer(tensorlib=backend)
-        )
-    elif backend.name == 'jax':
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.jax_optimizer()
-        )
+    if custom_optimizer:
+        if isinstance(custom_optimizer, (str, bytes)):
+            if isinstance(custom_optimizer, bytes):
+                custom_optimizer = custom_optimizer.decode("utf-8")
+            try:
+                new_optimizer = getattr(
+                    optimize, f"{custom_optimizer.lower()}_optimizer"
+                )()
+            except TypeError:
+                raise InvalidOptimizer(
+                    f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
+                )
+        else:
+            _name_supported = getattr(
+                custom_optimizer, "{0:s}_optimizer".format(optimizer.name)
+            )
+            if _name_supported:
+                if not isinstance(custom_optimizer, _name_supported):
+                    raise AttributeError(
+                        f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom backends must have names unique from supported backends"
+                    )
+
     else:
-        new_optimizer = (
-            custom_optimizer if custom_optimizer else optimize.scipy_optimizer()
-        )
+        new_optimizer = optimize.scipy_optimizer()
 
     optimizer_changed = bool(optimizer != new_optimizer)
     # set new backend

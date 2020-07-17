@@ -1,10 +1,10 @@
-"""Tensorflow Optimizer Backend."""
+"""JAX Optimizer Backend."""
+
 from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
-import tensorflow as tf
 
 
-def tflow_shim(
+def numpy_shim(
     objective, data, pdf, init_pars, par_bounds, fixed_vals=None, do_grad=False
 ):
     """
@@ -19,8 +19,8 @@ def tflow_shim(
         fixed_vals: fixed parameter values
 
     """
+    assert do_grad == False, "Numpy does not support autodifferentiation"
     tensorlib, _ = get_backend()
-
     all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
     all_init = default_backend.astensor(init_pars)
 
@@ -37,23 +37,9 @@ def tflow_shim(
     data = tensorlib.astensor(data)
     fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
 
-    if do_grad:
-
-        def func(pars):
-            pars = tensorlib.astensor(pars)
-            with tf.GradientTape() as tape:
-                tape.watch(pars)
-                constrained_pars = tv.stitch([fixed_values_tensor, pars])
-                constr_nll = objective(constrained_pars, data, pdf)
-            grad = tape.gradient(constr_nll, pars).values
-            return constr_nll.numpy(), grad
-
-    else:
-
-        def func(pars):
-            pars = tensorlib.astensor(pars)
-            constrained_pars = tv.stitch([fixed_values_tensor, pars])
-            constr_nll = objective(constrained_pars, data, pdf)
-            return constr_nll.numpy()
+    def func(pars):
+        pars = tensorlib.astensor(pars)
+        constrained_pars = tv.stitch([fixed_values_tensor, pars])
+        return objective(constrained_pars, data, pdf)
 
     return tv, fixed_values_tensor, func, variable_init, variable_bounds
