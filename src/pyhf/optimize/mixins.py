@@ -5,21 +5,42 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from .opt_numpy import numpy_shim
-from .opt_tflow import tflow_shim
-from .opt_pytorch import pytorch_shim
-from .opt_jax import jax_shim
-
 
 def get_tensor_shim(name):
     if name == 'numpy':
+        from .opt_numpy import numpy_shim
+
         return numpy_shim
     elif name == 'tensorflow':
-        return tflow_shim
+        try:
+            from .opt_tflow import tflow_shim
+
+            return tflow_shim
+        except ImportError as e:
+            raise exceptions.ImportBackendError(
+                "There was a problem importing TensorFlow. The pytorch backend cannot be used.",
+                e,
+            )
     elif name == 'pytorch':
-        return pytorch_shim
+        try:
+            from .opt_pytorch import pytorch_shim
+
+            return pytorch_shim
+        except ImportError as e:
+            raise exceptions.ImportBackendError(
+                "There was a problem importing PyTorch. The pytorch backend cannot be used.",
+                e,
+            )
     elif name == 'jax':
-        return jax_shim
+        try:
+            from .opt_jax import jax_shim
+
+            return jax_shim
+        except ImportError as e:
+            raise exceptions.ImportBackendError(
+                "There was a problem importing JAX. The pytorch backend cannot be used.",
+                e,
+            )
     else:
         raise ValueError(f'No optimizer shim for {name}.')
 
