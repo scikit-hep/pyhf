@@ -100,13 +100,14 @@ def set_backend(backend, custom_optimizer=None):
                 )
         else:
             _name_supported = getattr(
-                custom_optimizer, "{0:s}_optimizer".format(optimizer.name)
+                optimize, "{0:s}_optimizer".format(optimizer.name)
             )
             if _name_supported:
                 if not isinstance(custom_optimizer, _name_supported):
                     raise AttributeError(
                         f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom backends must have names unique from supported backends"
                     )
+            new_optimizer = custom_optimizer
 
     else:
         new_optimizer = optimize.scipy_optimizer()
