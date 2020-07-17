@@ -58,6 +58,12 @@ def shim(objective, data, pdf, init_pars, par_bounds, fixed_vals=None, do_grad=F
         par_bounds: parameter boundaries
         fixed_vals: fixed parameter values
 
+    Returns:
+        tv: tensor viewer
+        fixed_values_tensor: constant parameters in the fit
+        func: tensor backend wrapped function,gradient pair
+        variable_init: initializations for minimizer
+        variable_bounds: bounds for minimizer
     """
     tensorlib, _ = get_backend()
 

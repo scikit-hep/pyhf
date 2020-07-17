@@ -11,7 +11,14 @@ class OptimizerMixin(object):
     """Mixin Class to build optimizers."""
 
     def __init__(self, **kwargs):
-        """Create Mixin for optimizers."""
+        """
+        Create an optimizer.
+
+        Args:
+            maxiter (`int`): maximum number of iterations. Default is 100000.
+            verbose (`bool`): print verbose output during minimization. Default is off.
+            grad (`bool`): enable autodifferentiation mode. Default is off.
+        """
         self.maxiter = kwargs.pop('maxiter', 100000)
         self.verbose = kwargs.pop('verbose', False)
         self.grad = kwargs.pop('grad', False)

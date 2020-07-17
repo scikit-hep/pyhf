@@ -30,6 +30,20 @@ def make_func(
     variable_idx=[],
     do_grad=False,
 ):
+    """
+    Wrap the objective function for the minimization.
+
+    Args:
+        objective: objective function
+        data: observed data
+        pdf: model
+        init_pars: initial parameters
+        par_bounds: parameter boundaries
+        fixed_vals: fixed parameter values
+
+    Returns:
+        func: tensor backend wrapped function,gradient pair
+    """
     tensorlib, _ = get_backend()
 
     if do_grad:

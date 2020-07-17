@@ -10,9 +10,17 @@ class minuit_optimizer(OptimizerMixin):
         """
         Create MINUIT Optimizer.
 
-        Args:
-            verbose (`bool`): print verbose output during minimization
+        .. note::
 
+            errordef should be 1.0 for a least-squares cost function and 0.5
+            for negative log-likelihood function. See page 37 of
+            http://hep.fi.infn.it/minuit.pdf. This parameter is sometimes
+            called UP in the MINUIT docs.
+
+
+        Args:
+            errordef (`float`): See minuit docs. Default is 1.0.
+            steps (`int`): Number of steps for the bounds. Default is 1000.
         """
         self.errordef = kwargs.get('errordef', 1)
         self.steps = kwargs.get('steps', 1000)

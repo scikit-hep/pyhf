@@ -4,7 +4,16 @@ import scipy
 
 
 class scipy_optimizer(OptimizerMixin):
+    """
+    Optimizer that uses scipy.optimize.minimize.
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the scipy_optimizer.
+
+        See :class:`pyhf.optimize.mixins.OptimizerMixin` for configuration options.
+        """
         self.name = 'scipy'
         super(scipy_optimizer, self).__init__(*args, **kwargs)
 
