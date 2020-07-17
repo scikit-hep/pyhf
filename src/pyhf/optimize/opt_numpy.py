@@ -15,7 +15,7 @@ def make_func(
 ):
     tensorlib, _ = get_backend()
 
-    assert do_grad == False, "Numpy does not support autodifferentiation"
+    assert not do_grad, "Numpy does not support autodifferentiation"
 
     def func(pars):
         pars = tensorlib.astensor(pars)
