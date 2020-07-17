@@ -136,6 +136,18 @@ class tensorflow_backend(object):
         """
         Convert to a TensorFlow Tensor.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            <tf.Tensor: shape=(2, 3), dtype=float32, numpy=
+            array([[1., 2., 3.],
+                   [4., 5., 6.]], dtype=float32)>
+            >>> type(tensor)
+            <class 'tensorflow.python.framework.ops.EagerTensor'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 

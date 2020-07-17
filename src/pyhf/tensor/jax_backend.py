@@ -152,6 +152,17 @@ class jax_backend(object):
         """
         Convert to a JAX ndarray.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> type(tensor)
+            <class 'jax.interpreters.xla.DeviceArray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 

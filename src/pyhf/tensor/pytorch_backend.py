@@ -112,6 +112,17 @@ class pytorch_backend(object):
         """
         Convert to a PyTorch Tensor.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'torch.Tensor'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 

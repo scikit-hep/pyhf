@@ -145,6 +145,17 @@ class numpy_backend(object):
         """
         Convert to a NumPy array.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'numpy.ndarray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
