@@ -52,7 +52,7 @@ class InvalidWorkspaceOperation(Exception):
 
 class UnspecifiedPOI(Exception):
     """
-    UnspecifiedPOi is raised when a given model does not have POI(s) defined but is used in contexts that need it.
+    UnspecifiedPOI is raised when a given model does not have POI(s) defined but is used in contexts that need it.
 
     This can occur when e.g. trying to calculate CLs on a POI-less model.
     """
