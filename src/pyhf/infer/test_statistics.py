@@ -1,5 +1,6 @@
 from .. import get_backend
 from .mle import fixed_poi_fit, fit
+from ..exceptions import UnspecifiedPOI
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
@@ -43,7 +44,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
     if pdf.config.poi_index is None:
-        raise RuntimeError(
+        raise UnspecifiedPOI(
             'No POI is defined. We need this for profile likelihood based test statistics.'
         )
 

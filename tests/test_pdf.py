@@ -228,10 +228,10 @@ def test_poiless_model(backend):
     data = [12] + m.config.auxdata
     pyhf.infer.mle.fit(data, m)
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
         pyhf.infer.mle.fixed_poi_fit(1.0, data, m)
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
         pyhf.infer.hypotest(1.0, data, m)
 
 

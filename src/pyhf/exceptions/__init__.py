@@ -50,6 +50,14 @@ class InvalidWorkspaceOperation(Exception):
     """InvalidWorkspaceOperation is raised when an operation on a workspace fails."""
 
 
+class UnspecifiedPOI(Exception):
+    """
+    UnspecifiedPOi is raised when a given model does not have POI(s) defined but is used in contexts that need it.
+
+    This can occur when e.g. trying to calculate CLs on a POI-less model.
+    """
+
+
 class InvalidModel(Exception):
     """
     InvalidModel is raised when a given model does not have the right configuration, even though it validates correctly against the schema.

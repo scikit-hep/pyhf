@@ -221,13 +221,13 @@ class _ModelConfig(_ChannelSummaryMixin):
         _required_paramsets = _paramset_requirements_from_modelspec(
             spec, self.channel_nbins
         )
+        poi_name = config_kwargs.pop('poi_name', 'mu')
 
         default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
         self.modifier_settings = config_kwargs.pop(
             'modifier_settings', default_modifier_settings
         )
 
-        poi_name = config_kwargs.pop('poi_name', 'mu')
         if config_kwargs:
             raise KeyError(
                 f"""Unexpected keyword argument(s): '{"', '".join(config_kwargs.keys())}'"""
@@ -241,12 +241,11 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata_order = []
 
         self._create_and_register_paramsets(_required_paramsets)
+        if poi_name is not None:
+            self.set_poi(poi_name)
 
         self.npars = len(self.suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
-
-        if poi_name is not None:
-            self.set_poi(poi_name)
 
     def suggested_init(self):
         init = []
