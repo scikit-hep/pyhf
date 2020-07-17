@@ -283,18 +283,39 @@ class tensorflow_backend(object):
             list of Tensors: The sequence broadcast together.
 
         """
-        max_dim = max(map(lambda arg: arg.shape[0], args))
+
+        # How does NumPy do this?
+        # def generic_len(a):
+        #     try:
+        #         return len(a)
+        #     except TypeError:
+        #         if len(a.shape) < 1:
+        #             return 0
+        #         else:
+        #             return a.shape[0]
+        def generic_len(a):
+            try:
+                return a.shape[0]
+            except IndexError:
+                return 0
+
+        # [self.astensor([arg]) for arg in args if arg.shape[0] errror]
+
+        max_dim = max(map(generic_len, args))
         try:
-            assert not [arg for arg in args if 1 < arg.shape[0] < max_dim]
+            assert not [arg for arg in args if 1 < generic_len(arg) < max_dim]
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
             )
             raise error
 
+        print([arg for arg in args])
+        print([generic_len(arg) for arg in args])
+        print("spacer")
         broadcast = [
             arg
-            if arg.shape[0] > 1
+            if generic_len(arg) > 1
             else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
             for arg in args
         ]
@@ -459,7 +480,7 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The CDF
         """
         normal = tfp.distributions.Normal(
-            self.astensor(mu, dtype='float')[0], self.astensor(sigma, dtype='float')[0],
+            self.astensor(mu, dtype='float'), self.astensor(sigma, dtype='float'),
         )
         return normal.cdf(x)
 
