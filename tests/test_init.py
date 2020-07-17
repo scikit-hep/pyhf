@@ -60,25 +60,13 @@ def test_missing_backends(isolate_modules, param):
     [
         ["scipy", "scipy_optimizer", "opt_scipy", pytest.raises(ImportError)],
         [
-            "torch",
-            "pytorch_optimizer",
-            "opt_pytorch",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
-        [
-            "tensorflow",
-            "tflow_optimizer",
-            "opt_tflow",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
-        [
             "iminuit",
             "minuit_optimizer",
             "opt_minuit",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
     ],
-    ids=["scipy", "pytorch", "tensorflow", "minuit"],
+    ids=["scipy", "minuit"],
 )
 def test_missing_optimizer(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
