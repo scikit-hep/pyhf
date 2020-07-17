@@ -94,7 +94,7 @@ class OptimizerMixin(object):
             [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
         )
         # check if uncertainties were provided
-        uncertainties = getattr(result, 'unc')
+        uncertainties = getattr(result, 'unc', None)
         if uncertainties:
             # step 1: stitch in zero-uncertainty for fixed values, with uncertainties from all (other) values
             fitted_uncs = tv.stitch(
