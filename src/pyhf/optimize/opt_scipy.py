@@ -3,10 +3,10 @@ from .mixins import OptimizerMixin
 import scipy
 
 
-class ScipyOptimizer(OptimizerMixin):
+class scipy_optimizer(OptimizerMixin):
     def __init__(self, *args, **kwargs):
         self.name = 'scipy'
-        super(ScipyOptimizer, self).__init__(*args, **kwargs)
+        super(scipy_optimizer, self).__init__(*args, **kwargs)
 
     def _setup_minimizer(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None

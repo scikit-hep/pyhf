@@ -5,7 +5,7 @@ import numpy as np
 import iminuit
 
 
-class MinuitOptimizer(OptimizerMixin):
+class minuit_optimizer(OptimizerMixin):
     def __init__(self, *args, **kwargs):
         """
         Create MINUIT Optimizer.
@@ -17,7 +17,7 @@ class MinuitOptimizer(OptimizerMixin):
         self.errordef = kwargs.get('errordef', 1)
         self.steps = kwargs.get('steps', 1000)
         self.name = 'minuit'
-        super(MinuitOptimizer, self).__init__(*args, **kwargs)
+        super(minuit_optimizer, self).__init__(*args, **kwargs)
 
     def _setup_minimizer(
         self, objective, data, pdf, init_pars, init_bounds, fixed_vals=None
