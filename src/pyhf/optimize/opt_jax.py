@@ -2,7 +2,9 @@
 
 from .. import get_backend, default_backend
 from ..tensor.common import _TensorViewer
-from .autodiff import AutoDiffOptimizerMixin
+from .minimizer import ScipyOptimizer as Optimizer
+
+# from .minimizer import MinuitOptimizer as Optimizer
 import jax
 
 
@@ -19,8 +21,37 @@ _jitted_objective_and_grad = jax.jit(
 )
 
 
-class jax_optimizer(AutoDiffOptimizerMixin):
+class jax_optimizer(Optimizer):
     """JAX Optimizer Backend."""
+
+    def minimize(
+        self,
+        objective,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_vals=None,
+        return_fitted_val=False,
+    ):
+        tensorlib, _ = get_backend()
+        tv, fixed_values_tensor, func_and_grad, init, bounds = self.setup_minimize(
+            objective, data, pdf, init_pars, par_bounds, fixed_vals
+        )
+        func = lambda pars: func_and_grad(pars)[0]
+        grad = lambda pars: func_and_grad(pars)[1]
+
+        fitresult = super(jax_optimizer, self).minimize(
+            func, init, jac=grad, bounds=bounds
+        )
+        nonfixed_vals = fitresult.x
+        fitted_val = fitresult.fun
+        fitted_pars = tv.stitch(
+            [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
+        )
+        if return_fitted_val:
+            return fitted_pars, tensorlib.astensor(fitted_val)
+        return fitted_pars
 
     def setup_minimize(
         self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
@@ -37,7 +68,7 @@ class jax_optimizer(AutoDiffOptimizerMixin):
             fixed_vals: fixed parameter values
 
         """
-
+        self._setup_minimizer(objective, data, pdf, init_pars, par_bounds, fixed_vals)
         tensorlib, _ = get_backend()
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
         all_init = default_backend.astensor(init_pars)
