@@ -12,7 +12,6 @@ class _OptimizerRetriever(object):
             # hide away one level of the module name
             # pyhf.optimize.scipy_optimizer.scipy_optimizer->pyhf.optimize.scipy_optimizer
             scipy_optimizer.__module__ = __name__
-            print(__name__)
             # for autocomplete and dir() calls
             self.scipy_optimizer = scipy_optimizer
             return scipy_optimizer
