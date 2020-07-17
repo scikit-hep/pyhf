@@ -15,7 +15,7 @@ def get_backend():
     Example:
         >>> import pyhf
         >>> pyhf.get_backend()
-        (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.opt_scipy.scipy_optimizer object at 0x...>)
+        (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.scipy_optimizer object at 0x...>)
 
     Returns:
         backend, optimizer
