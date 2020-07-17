@@ -1,4 +1,4 @@
-"""JAX Optimizer Function Shim."""
+"""JAX Backend Function Shim."""
 
 from .. import get_backend
 from ..tensor.common import _TensorViewer

@@ -1,4 +1,4 @@
-"""PyTorch Optimizer Backend."""
+"""PyTorch Backend Function Shim."""
 
 from .. import get_backend
 import torch

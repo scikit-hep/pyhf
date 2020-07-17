@@ -1,4 +1,4 @@
-"""Numpy Optimizer Function Shim."""
+"""Numpy Backend Function Shim."""
 
 from .. import get_backend
 

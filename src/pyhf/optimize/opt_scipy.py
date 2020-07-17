@@ -1,4 +1,4 @@
-"""Helper Classes for use of automatic differentiation."""
+"""SciPy Optimizer Class."""
 from .mixins import OptimizerMixin
 import scipy
 
@@ -14,6 +14,12 @@ class ScipyOptimizer(OptimizerMixin):
         self._minimizer = scipy.optimize.minimize
 
     def _minimize(self, func, init, method='SLSQP', bounds=None, options={}, jac=None):
+        """
+        Same signature as scipy.optimize.minimize.
+
+        Returns:
+            fitresult (`scipy.optimize.OptimizeResult`): the fit result
+        """
         return self._minimizer(
             func,
             init,

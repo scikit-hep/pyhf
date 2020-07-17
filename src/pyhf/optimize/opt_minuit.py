@@ -1,4 +1,4 @@
-"""Helper Classes for use of automatic differentiation."""
+"""Minuit Optimizer Class."""
 from .mixins import OptimizerMixin
 import scipy
 import numpy as np
@@ -52,6 +52,15 @@ class MinuitOptimizer(OptimizerMixin):
         )
 
     def _minimize(self, func, init, method='SLSQP', jac=None, bounds=None, options={}):
+        """
+        Same signature as scipy.optimize.minimize.
+
+        Note: an additional `minuit` is injected into the fitresult to get the
+        underlying minimizer.
+
+        Returns:
+            fitresult (`scipy.optimize.OptimizeResult`): the fit result
+        """
         self._minimizer.migrad(ncall=self.maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125

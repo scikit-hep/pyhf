@@ -50,6 +50,17 @@ class OptimizerMixin(object):
         """
         Find Function Parameters that minimize the Objective.
 
+        Args:
+            objective: objective function
+            data: observed data
+            pdf: model
+            init_pars: initial parameters
+            par_bounds: parameter boundaries
+            fixed_vals: fixed parameter values
+            return_fitted_val: return bestfit value
+            method: minimization routine
+            minimizer_options: other options to pass through to underlying minimizer
+
         Returns:
             bestfit parameters
 
