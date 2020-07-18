@@ -57,9 +57,9 @@ class minuit_optimizer(OptimizerMixin):
         self._minimizer = iminuit.Minuit(
             f,
             print_level=1 if self.verbose else 0,
-            errordef=1,
+            errordef=self.errordef,
             use_array_call=True,
-            forced_parameters=parnames,
+            name=parnames,
             **kwargs,
         )
 
