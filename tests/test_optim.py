@@ -1,7 +1,8 @@
 import pyhf
+from pyhf.optimize.mixins import OptimizerMixin
+from pyhf.optimize.common import _get_tensor_shim
 import pytest
 from scipy.optimize import minimize
-from pyhf.optimize.mixins import OptimizerMixin
 import iminuit
 
 
@@ -294,3 +295,11 @@ def test_minuit_failed_optimization(
         assert 'Call limit was reached' in spy.spy_return.message
     if is_above_max_edm:
         assert 'Estimated distance to minimum too large' in spy.spy_return.message
+
+
+def test_get_tensor_shim(monkeypatch):
+    monkeypatch.setattr(pyhf.tensorlib, 'name', 'fake_backend')
+    with pytest.raises(ValueError) as excinfo:
+        _get_tensor_shim()
+
+    assert 'No optimizer shim for fake_backend.' == str(excinfo.value)
