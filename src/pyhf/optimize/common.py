@@ -4,6 +4,12 @@ from ..tensor.common import _TensorViewer
 
 
 def _get_tensor_shim():
+    """
+    A shim-retriever to lazy-retrieve the necessary shims as needed.
+
+    Because pyhf.tensor is a lazy-retriever for the backends, we can be sure
+    that tensorlib is imported correctly.
+    """
     tensorlib, _ = get_backend()
     if tensorlib.name == 'numpy':
         from .opt_numpy import make_func as numpy_shim
