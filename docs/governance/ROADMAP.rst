@@ -108,8 +108,8 @@ Roadmap
    -  |uncheck| Add "discovery" test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
    -  |uncheck| Add better Model creation [2019-Q4 → 2020-Q1]
    -  |check| Add background model support (Issues #514, #946) [2019-Q4 → 2020-Q1]
-   -  |uncheck| Develop interface for the optimizers similar to tensor/backend
-      [2019-Q4 → 2020-Q1]
+   -  |check| Develop interface for the optimizers similar to tensor/backend
+     (Issue #754, PR #951) [2019-Q4 → 2020-Q1]
    -  |check| Migrate to TensorFlow v2.0 (PR #541) [2019-Q4]
    -  |check| Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4
       (last week of December 2019)]
