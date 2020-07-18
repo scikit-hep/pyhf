@@ -1,7 +1,6 @@
 import pytest
 import sys
 import pyhf
-from pyhf.optimize.common import _get_tensor_shim
 
 
 @pytest.mark.parametrize(
@@ -29,7 +28,7 @@ from pyhf.optimize.common import _get_tensor_shim
     ],
     ids=["numpy", "pytorch", "tensorflow", "jax"],
 )
-def test_missing_backends(isolate_modules, param, mocker):
+def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
 
     # hide
@@ -47,13 +46,6 @@ def test_missing_backends(isolate_modules, param, mocker):
 
     with expectation:
         getattr(pyhf.tensor, module_name)
-
-    # numpy will always work
-    if backend_name != "numpy":
-        mocked = mocker.patch('pyhf.tensorlib')
-        mocked.name = import_name.split('_')[0]
-        with expectation:
-            _get_tensor_shim()
 
     # put back
     CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND

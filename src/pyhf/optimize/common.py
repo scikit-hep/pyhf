@@ -1,6 +1,5 @@
 """Common Backend Shim to prepare minimization for optimizer."""
 from .. import get_backend, default_backend
-from .. import exceptions
 from ..tensor.common import _TensorViewer
 
 
@@ -12,37 +11,19 @@ def _get_tensor_shim():
         return numpy_shim
 
     if tensorlib.name == 'tensorflow':
-        try:
-            from .opt_tflow import make_func as tflow_shim
+        from .opt_tflow import make_func as tflow_shim
 
-            return tflow_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing TensorFlow. The pytorch backend cannot be used.",
-                e,
-            )
+        return tflow_shim
 
     if tensorlib.name == 'pytorch':
-        try:
-            from .opt_pytorch import make_func as pytorch_shim
+        from .opt_pytorch import make_func as pytorch_shim
 
-            return pytorch_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing PyTorch. The pytorch backend cannot be used.",
-                e,
-            )
+        return pytorch_shim
 
     if tensorlib.name == 'jax':
-        try:
-            from .opt_jax import make_func as jax_shim
+        from .opt_jax import make_func as jax_shim
 
-            return jax_shim
-        except ImportError as e:
-            raise exceptions.ImportBackendError(
-                "There was a problem importing JAX. The pytorch backend cannot be used.",
-                e,
-            )
+        return jax_shim
     raise ValueError(f'No optimizer shim for {tensorlib.name}.')
 
 
