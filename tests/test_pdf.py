@@ -5,7 +5,7 @@ import numpy as np
 import json
 
 
-def test_hello_world_ctor():
+def test_minimum_model_spec():
     spec = {
         'channels': [
             {
@@ -223,16 +223,16 @@ def test_poiless_model(backend):
             }
         ]
     }
-    m = pyhf.Model(spec, poi_name=None)
+    model = pyhf.Model(spec, poi_name=None)
 
-    data = [12] + m.config.auxdata
-    pyhf.infer.mle.fit(data, m)
-
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
-        pyhf.infer.mle.fixed_poi_fit(1.0, data, m)
+    data = [12] + model.config.auxdata
+    pyhf.infer.mle.fit(data, model)
 
     with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
-        pyhf.infer.hypotest(1.0, data, m)
+        pyhf.infer.mle.fixed_poi_fit(1.0, data, model)
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        pyhf.infer.hypotest(1.0, data, model)
 
 
 def test_pdf_integration_shapesys_zeros(backend):
