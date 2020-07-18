@@ -4,6 +4,7 @@ from scipy.optimize import minimize
 from pyhf.optimize.mixins import OptimizerMixin
 import iminuit
 
+
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
@@ -258,13 +259,29 @@ def test_optim_uncerts(backend, source, spec, mu):
     assert pyhf.tensorlib.tolist(result)
 
 
-def test_minuit_failed_optimization(mocker):
+@pytest.mark.parametrize(
+    'has_reached_call_limit', [False, True], ids=['no_call_limit', 'call_limit']
+)
+@pytest.mark.parametrize(
+    'is_above_max_edm', [False, True], ids=['below_max_edm', 'above_max_edm']
+)
+def test_minuit_failed_optimization(
+    monkeypatch, mocker, has_reached_call_limit, is_above_max_edm
+):
     class BadMinuit(iminuit.Minuit):
         @property
         def valid(self):
             return False
 
-    iminuit.Minuit = BadMinuit
+        @property
+        def fmin(self):
+            mock = mocker.MagicMock()
+            mock.has_reached_call_limit = has_reached_call_limit
+            mock.is_above_max_edm = is_above_max_edm
+            return mock
+
+    monkeypatch.setattr(iminuit, 'Minuit', BadMinuit)
+    # iminuit.Minuit = BadMinuit
     pyhf.set_backend('numpy', 'minuit')
     pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
@@ -273,3 +290,7 @@ def test_minuit_failed_optimization(mocker):
         pyhf.infer.mle.fit(data, pdf)
 
     assert 'Optimization failed' in spy.spy_return.message
+    if has_reached_call_limit:
+        assert 'Call limit was reached' in spy.spy_return.message
+    if is_above_max_edm:
+        assert 'Estimated distance to minimum too large' in spy.spy_return.message
