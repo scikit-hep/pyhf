@@ -1,6 +1,7 @@
 import pyhf
 import pytest
 from scipy.optimize import minimize
+from pyhf.optimize.mixins import OptimizerMixin
 
 
 def test_get_invalid_optimizer():
@@ -104,6 +105,16 @@ def test_minimize(tensorlib, precision, optimizer, do_grad):
         result = pyhf.infer.mle.fit(data, m)
         # check fitted parameters
         assert pytest.approx(expected) == pyhf.tensorlib.tolist(result)
+
+
+@pytest.mark.parametrize(
+    'optimizer',
+    [OptimizerMixin, pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
+    ids=['mixin', 'scipy', 'minuit'],
+)
+def test_optimizer_mixin_extra_kwargs(optimizer):
+    with pytest.raises(KeyError):
+        optimizer(fake_kwarg=False)
 
 
 @pytest.fixture(scope='module')
