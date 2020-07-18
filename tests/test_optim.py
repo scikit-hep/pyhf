@@ -3,7 +3,6 @@ import pytest
 from scipy.optimize import minimize
 from pyhf.optimize.mixins import OptimizerMixin
 
-
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
