@@ -64,7 +64,7 @@ class OptimizerMixin(object):
             init_pars: initial parameters
             par_bounds: parameter boundaries
             fixed_vals: fixed parameter values
-            return_fitted_val: return bestfit value
+            return_fitted_val: return bestfit value of the objective
             method: minimization routine
             kwargs: other options to pass through to underlying minimizer
 
