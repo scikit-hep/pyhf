@@ -2,6 +2,7 @@ import pyhf
 import pytest
 from scipy.optimize import minimize
 from pyhf.optimize.mixins import OptimizerMixin
+import iminuit
 
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
@@ -255,3 +256,20 @@ def test_optim_uncerts(backend, source, spec, mu):
     )
     assert result.shape[1] == 2
     assert pyhf.tensorlib.tolist(result)
+
+
+def test_minuit_failed_optimization(mocker):
+    class BadMinuit(iminuit.Minuit):
+        @property
+        def valid(self):
+            return False
+
+    iminuit.Minuit = BadMinuit
+    pyhf.set_backend('numpy', 'minuit')
+    pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
+    data = [10] + pdf.config.auxdata
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    with pytest.raises(AssertionError):
+        pyhf.infer.mle.fit(data, pdf)
+
+    assert 'Optimization failed' in spy.spy_return.message
