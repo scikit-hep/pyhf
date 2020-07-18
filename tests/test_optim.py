@@ -27,6 +27,76 @@ def test_scipy_minimize(backend, capsys):
     assert pytest.approx([1.0, 1.0, 1.0, 1.0, 1.0], rel=5e-5) == tensorlib.tolist(res.x)
 
 
+@pytest.mark.parametrize(
+    'precision', ['32b', '64b'], ids=['32b', '64b'],
+)
+@pytest.mark.parametrize(
+    'tensorlib',
+    [
+        pyhf.tensor.numpy_backend,
+        pyhf.tensor.pytorch_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.jax_backend,
+    ],
+    ids=['numpy', 'pytorch', 'tensorflow', 'jax'],
+)
+@pytest.mark.parametrize(
+    'optimizer',
+    [pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
+    ids=['scipy', 'minuit'],
+)
+@pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
+def test_minimize(tensorlib, precision, optimizer, do_grad):
+    pyhf.set_backend(tensorlib(precision=precision), optimizer(grad=do_grad))
+    m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
+    # numpy does not support grad
+    if pyhf.tensorlib.name == 'numpy' and do_grad:
+        with pytest.raises(AssertionError):
+            pyhf.infer.mle.fit(data, m)
+    else:
+        expected = {
+            'no_grad-scipy-numpy-32b': [1.0, 1.0],
+            'no_grad-scipy-numpy-64b': [2.67369062e-06, 9.99985555e-01],
+            'no_grad-scipy-pytorch-32b': [1.0, 1.0],
+            'no_grad-scipy-pytorch-64b': [2.67369062e-06, 9.99985555e-01],
+            'no_grad-scipy-tensorflow-32b': [1.0, 1.0],
+            'no_grad-scipy-tensorflow-64b': [2.85259486e-06, 9.99985487e-01],
+            'no_grad-scipy-jax-32b': [1.0, 1.0],
+            'no_grad-scipy-jax-64b': [2.87242218e-06, 9.99985478e-01],
+            'no_grad-minuit-numpy-32b': [1.27911707e-02, 9.95959699e-01],
+            'no_grad-minuit-numpy-64b': [9.19623487e-03, 9.98248083e-01],
+            'no_grad-minuit-pytorch-32b': [2.69202143e-02, 9.92773652e-01],
+            'no_grad-minuit-pytorch-64b': [9.19623487e-03, 9.98248083e-01],
+            'no_grad-minuit-tensorflow-32b': [5.47232048e-04, 9.99859154e-01],
+            'no_grad-minuit-tensorflow-64b': [9.19624519e-03, 9.98248076e-01],
+            'no_grad-minuit-jax-32b': [1.01476780e-03, 9.9928200e-01],
+            'no_grad-minuit-jax-64b': [9.19623486e-03, 9.9824808e-01],
+            'do_grad-scipy-numpy-32b': None,
+            'do_grad-scipy-numpy-64b': None,
+            'do_grad-scipy-pytorch-32b': [2.85133024e-06, 9.99985516e-01],
+            'do_grad-scipy-pytorch-64b': [3.00311835e-06, 9.99985456e-01],
+            'do_grad-scipy-tensorflow-32b': [3.46792535e-06, 9.99985337e-01],
+            'do_grad-scipy-tensorflow-64b': [3.02640865e-06, 9.99985445e-01],
+            'do_grad-scipy-jax-32b': [2.91515607e-06, 9.99985516e-01],
+            'do_grad-scipy-jax-64b': [3.00311835e-06, 9.99985456e-01],
+            'do_grad-minuit-numpy-32b': None,
+            'do_grad-minuit-numpy-64b': None,
+            'do_grad-minuit-pytorch-32b': [2.69202143e-02, 9.92773652e-01],
+            'do_grad-minuit-pytorch-64b': [9.19623487e-03, 9.98248083e-01],
+            'do_grad-minuit-tensorflow-32b': [5.47232048e-04, 9.99859154e-01],
+            'do_grad-minuit-tensorflow-64b': [9.19624519e-03, 9.98248076e-01],
+            'do_grad-minuit-jax-32b': [1.01476780e-03, 9.99282002e-01],
+            'do_grad-minuit-jax-64b': [9.19623486e-03, 9.98248083e-01],
+        }[
+            f'{"do_grad" if pyhf.optimizer.grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
+        ]
+
+        result = pyhf.infer.mle.fit(data, m)
+        # check fitted parameters
+        assert pytest.approx(expected) == pyhf.tensorlib.tolist(result)
+
+
 @pytest.fixture(scope='module')
 def source():
     source = {
