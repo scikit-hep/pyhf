@@ -33,10 +33,6 @@ class _OptimizerRetriever(object):
                 )
         elif name == '__wrapped__':  # doctest
             pass
-        else:
-            raise exceptions.InvalidOptimizer(
-                "The requested optimizer \"{0:s}\" does not exist.".format(name)
-            )
 
 
 OptimizerRetriever = _OptimizerRetriever()

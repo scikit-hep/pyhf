@@ -105,7 +105,7 @@ def set_backend(backend, custom_optimizer=None):
             if _name_supported:
                 if not isinstance(custom_optimizer, _name_supported):
                     raise AttributeError(
-                        f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom backends must have names unique from supported backends"
+                        f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
                     )
             new_optimizer = custom_optimizer
 

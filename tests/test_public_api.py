@@ -23,6 +23,15 @@ def test_set_backend_by_string(backend_name):
     )
 
 
+@pytest.mark.parametrize("optimizer_name", ["scipy", "minuit"])
+def test_set_optimizer_by_string(optimizer_name):
+    pyhf.set_backend(pyhf.tensorlib, optimizer_name)
+    assert isinstance(
+        pyhf.optimizer,
+        getattr(pyhf.optimize, "{0:s}_optimizer".format(optimizer_name.lower())),
+    )
+
+
 @pytest.mark.parametrize("backend_name", [b"numpy", b"tensorflow", b"pytorch"])
 def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
@@ -32,10 +41,27 @@ def test_set_backend_by_bytestring(backend_name):
     )
 
 
+@pytest.mark.parametrize("optimizer_name", [b"scipy", b"minuit"])
+def test_set_optimizer_by_bytestring(optimizer_name):
+    pyhf.set_backend(pyhf.tensorlib, optimizer_name)
+    assert isinstance(
+        pyhf.optimizer,
+        getattr(
+            pyhf.optimize, "{0:s}_optimizer".format(optimizer_name.decode("utf-8"))
+        ),
+    )
+
+
 @pytest.mark.parametrize("backend_name", ["fail", b"fail"])
 def test_supported_backends(backend_name):
     with pytest.raises(pyhf.exceptions.InvalidBackend):
         pyhf.set_backend(backend_name)
+
+
+@pytest.mark.parametrize("optimizer_name", ["fail", b"fail"])
+def test_supported_optimizers(optimizer_name):
+    with pytest.raises(pyhf.exceptions.InvalidOptimizer):
+        pyhf.set_backend(pyhf.tensorlib, optimizer_name)
 
 
 def test_custom_backend_name_supported():
@@ -51,6 +77,15 @@ def test_custom_backend_name_supported():
         pyhf.set_backend(custom_backend())
 
 
+def test_custom_optimizer_name_supported():
+    class custom_optimizer(object):
+        def __init__(self, **kwargs):
+            self.name = "scipy"
+
+    with pytest.raises(AttributeError):
+        pyhf.set_backend(pyhf.tensorlib, custom_optimizer())
+
+
 def test_custom_backend_name_notsupported():
     class custom_backend(object):
         def __init__(self, **kwargs):
@@ -64,6 +99,17 @@ def test_custom_backend_name_notsupported():
     assert pyhf.tensorlib.name != backend.name
     pyhf.set_backend(backend)
     assert pyhf.tensorlib.name == backend.name
+
+
+def test_custom_optimizer_name_notsupported():
+    class custom_optimizer(object):
+        def __init__(self, **kwargs):
+            self.name = "notsupported"
+
+    optimizer = custom_optimizer()
+    assert pyhf.optimizer.name != optimizer.name
+    pyhf.set_backend(pyhf.tensorlib, optimizer)
+    assert pyhf.optimizer.name == optimizer.name
 
 
 def test_logpprob(backend, model_setup):

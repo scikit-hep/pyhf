@@ -4,11 +4,6 @@ from scipy.optimize import minimize
 from pyhf.optimize.mixins import OptimizerMixin
 
 
-def test_get_invalid_optimizer():
-    with pytest.raises(pyhf.exceptions.InvalidOptimizer):
-        assert pyhf.optimize.scipy
-
-
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
