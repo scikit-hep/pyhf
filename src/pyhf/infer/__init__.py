@@ -22,7 +22,7 @@ def _assemble_metrics(CLsb, CLb, metrics):
             returns.append(CLsb)
         if m == 'CLb':
             returns.append(CLb)
-    return returns
+    return tuple(returns) if len(returns) > 1 else returns[0]
 
 
 def hypotest(
