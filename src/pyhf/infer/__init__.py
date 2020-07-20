@@ -5,8 +5,8 @@ from .. import get_backend
 from .calculators import AsymptoticCalculator
 
 
-def _assemble_metrics(
-    sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+def _assemble_pvalues(
+    sig_plus_bkg_distribution, b_only_distribution, teststat, pvalues
 ):
     tensorlib, _ = get_backend()
 
@@ -21,13 +21,15 @@ def _assemble_metrics(
     )
 
     returns = []
-    for m in metrics:
-        if m == 'CLs':
+    for p in pvalues:
+        if p == 'CLs':
             returns.append(CLs)
-        if m == 'CLsb':
+        elif p == 'p_sb':
             returns.append(CLsb)
-        if m == 'CLb':
+        elif p == 'p_b':
             returns.append(CLb)
+        else:
+            raise ValueError(f'no such pvalue "{p}". Choose from [CLs, p_sb, p_b]')
     return tuple(returns) if len(returns) > 1 else returns[0]
 
 
@@ -172,12 +174,12 @@ def hypotest(
         tensorlib.astensor(CLs),
     )
 
-    metrics = kwargs.get('pvalues', ['CLs'])
+    pvalues = kwargs.get('pvalues', ['CLs'])
 
     _returns = []
     _returns.append(
-        _assemble_metrics(
-            sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+        _assemble_pvalues(
+            sig_plus_bkg_distribution, b_only_distribution, teststat, pvalues
         )
     )
 
@@ -185,16 +187,16 @@ def hypotest(
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
             teststat = b_only_distribution.expected_value(n_sigma)
-            this_nsigma = _assemble_metrics(
-                sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+            this_nsigma = _assemble_pvalues(
+                sig_plus_bkg_distribution, b_only_distribution, teststat, pvalues
             )
             CLs_exp.append(this_nsigma)
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
         teststat = b_only_distribution.expected_value(n_sigma)
-        this_nsigma = _assemble_metrics(
-            sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+        this_nsigma = _assemble_pvalues(
+            sig_plus_bkg_distribution, b_only_distribution, teststat, pvalues
         )
         _returns.append(this_nsigma)
     # Enforce a consistent return type of the observed CLs
