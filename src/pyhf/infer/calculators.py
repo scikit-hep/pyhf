@@ -12,7 +12,7 @@ from .. import get_backend
 from .test_statistics import qmu
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
+def generate_asimov_data(asimov_mu, data, pdf, fitcfg):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -27,7 +27,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
         Tensor: The Asimov dataset.
 
     """
-    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, init_pars, par_bounds)
+    bestfit_nuisance_asimov = fixed_poi_fit(asimov_mu, data, pdf, fitcfg)
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
@@ -90,7 +90,7 @@ class AsymptoticTestStatDistribution(object):
 class AsymptoticCalculator(object):
     """The Asymptotic Calculator."""
 
-    def __init__(self, data, pdf, init_pars=None, par_bounds=None, qtilde=False):
+    def __init__(self, data, pdf, fitcfg=None, qtilde=False):
         """
         Asymptotic Calculator.
 
@@ -107,8 +107,7 @@ class AsymptoticCalculator(object):
         """
         self.data = data
         self.pdf = pdf
-        self.init_pars = init_pars or pdf.config.suggested_init()
-        self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.fitcfg = fitcfg
         self.qtilde = qtilde
         self.sqrtqmuA_v = None
 
@@ -141,14 +140,12 @@ class AsymptoticCalculator(object):
 
         """
         tensorlib, _ = get_backend()
-        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
+        qmu_v = qmu(poi_test, self.data, self.pdf, self.fitcfg)
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 0.0
-        asimov_data = generate_asimov_data(
-            asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
-        )
-        qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds)
+        asimov_data = generate_asimov_data(asimov_mu, self.data, self.pdf, self.fitcfg)
+        qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.fitcfg)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
         if not self.qtilde:  # qmu

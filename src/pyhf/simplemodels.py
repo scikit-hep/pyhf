@@ -21,7 +21,7 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
         ['background', 'signal']
         >>> model.config.parameters
         ['mu', 'uncorr_bkguncrt']
-        >>> model.expected_data(model.config.suggested_init())
+        >>> model.expected_data(model.config.fitcfg.suggested_init())
         array([ 62.        ,  63.        , 277.77777778,  55.18367347])
 
     Args:

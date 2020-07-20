@@ -5,9 +5,7 @@ from .. import get_backend
 from .calculators import AsymptoticCalculator
 
 
-def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
-):
+def hypotest(poi_test, data, pdf, fitcfg=None, qtilde=False, **kwargs):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
 
@@ -91,11 +89,9 @@ def hypotest(
             for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when ``return_expected_set`` is ``True``.
 
     """
-    init_pars = init_pars or pdf.config.suggested_init()
-    par_bounds = par_bounds or pdf.config.suggested_bounds()
     tensorlib, _ = get_backend()
 
-    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
+    calc = AsymptoticCalculator(data, pdf, fitcfg, qtilde=qtilde)
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 

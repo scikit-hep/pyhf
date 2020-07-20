@@ -3,7 +3,7 @@ from .mle import fixed_poi_fit, fit
 from ..exceptions import UnspecifiedPOI
 
 
-def qmu(mu, data, pdf, init_pars, par_bounds):
+def qmu(mu, data, pdf, fitcfg = None):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, as defiend in
@@ -28,9 +28,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> test_mu = 1.0
-        >>> init_pars = model.config.suggested_init()
-        >>> par_bounds = model.config.suggested_bounds()
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
+        >>> pyhf.infer.test_statistics.qmu(test_mu, data, models)
         3.938244920380498
 
     Args:
@@ -50,10 +48,10 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
 
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
-        mu, data, pdf, init_pars, par_bounds, return_fitted_val=True
+        mu, data, pdf, fitcfg, return_fitted_val=True
     )
     muhatbhat, unconstrained_fit_lhood_val = fit(
-        data, pdf, init_pars, par_bounds, return_fitted_val=True
+        data, pdf, fitcfg, return_fitted_val=True
     )
     qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     qmu = tensorlib.where(

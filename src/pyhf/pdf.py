@@ -215,6 +215,18 @@ def _nominal_and_modifiers_from_spec(config, spec):
     return mega_mods, _nominal_rates
 
 
+class FitConfig(object):
+    def __init__(self, init, bounds):
+        self.init = init
+        self.bounds = bounds
+
+    def suggested_init(self):
+        return self.init
+
+    def suggested_bounds(self):
+        return self.bounds
+
+
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
@@ -244,16 +256,18 @@ class _ModelConfig(_ChannelSummaryMixin):
         if poi_name is not None:
             self.set_poi(poi_name)
 
-        self.npars = len(self.suggested_init())
+        self.npars = len(self._suggested_init())
         self.nmaindata = sum(self.channel_nbins.values())
 
-    def suggested_init(self):
+        self.fitcfg = FitConfig(self._suggested_init(), self._suggested_bounds())
+
+    def _suggested_init(self):
         init = []
         for name in self.par_order:
             init = init + self.par_map[name]['paramset'].suggested_init
         return init
 
-    def suggested_bounds(self):
+    def _suggested_bounds(self):
         bounds = []
         for name in self.par_order:
             bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
