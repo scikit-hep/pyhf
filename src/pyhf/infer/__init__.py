@@ -127,6 +127,8 @@ def hypotest(
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
+        expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+
         CLs = sig_plus_bkg_distribution.pvalue(
             expected_bonly_teststat
         ) / b_only_distribution.pvalue(expected_bonly_teststat)
