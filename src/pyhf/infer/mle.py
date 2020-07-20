@@ -24,7 +24,9 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
 
     .. note::
 
-        :func:`twice_nll` is the objective function.
+        :func:`twice_nll` is the objective function given to the optimizer, and
+        is returned evaluated at the best fit model parameters when the kwarg
+        `return_fitted_val` is `True`.
 
     Example:
         >>> import pyhf
