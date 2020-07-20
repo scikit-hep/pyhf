@@ -78,20 +78,31 @@ def test_hypotest_default(tmpdir, hypotest_args):
     assert isinstance(result, type(tb.astensor(result)))
 
 
-def test_hypotest_return_tail_probs(tmpdir, hypotest_args):
+def test_hypotest_return(tmpdir, hypotest_args):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     return_tail_probs keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True}
+    kwargs = {'pvalues': ['CLs', 'p_sb', 'p_b']}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-    # CLs_obs, [CL_sb, CL_b]
-    assert len(list(result)) == 2
+    # [CLs_obs, CL_sb, CL_b]
+    assert len(list(result)) == 3
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
-    assert check_uniform_type(result[1])
+    assert check_uniform_type(result)
+
+
+def test_invalid_pvalue(tmpdir, hypotest_args):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_expected keyword arg is as expected
+    """
+    tb = pyhf.tensorlib
+
+    kwargs = {'pvalues': ['nosuchpvalue'], 'return_expected': True}
+    with pytest.raises(ValueError):
+        result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
 
 
 def test_hypotest_return_expected(tmpdir, hypotest_args):
@@ -101,14 +112,16 @@ def test_hypotest_return_expected(tmpdir, hypotest_args):
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True, 'return_expected': True}
+    kwargs = {'pvalues': ['CLs', 'p_sb', 'p_b'], 'return_expected': True}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-    # CLs_obs, [CLsb, CLb], CLs_exp
-    assert len(list(result)) == 3
-    assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
+    # [CLs_obs, CLsb, CLb], [CLs_obs, CLsb, CLb]
+    assert len(list(result)) == 2
+
+    assert isinstance(result[0][0], type(tb.astensor(result[0][0])))
+    assert check_uniform_type(result[0])
+
+    assert isinstance(result[1][0], type(tb.astensor(result[1][0])))
     assert check_uniform_type(result[1])
-    assert isinstance(result[2], type(tb.astensor(result[2])))
 
 
 def test_hypotest_return_expected_set(tmpdir, hypotest_args):
@@ -119,19 +132,15 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     tb = pyhf.tensorlib
 
     kwargs = {
-        'return_tail_probs': True,
-        'return_expected': True,
+        'pvalues': ['CLs', 'p_sb', 'p_b'],
         'return_expected_set': True,
     }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-    # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma
-    assert len(list(result)) == 4
-    assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
-    assert check_uniform_type(result[1])
-    assert isinstance(result[2], type(tb.astensor(result[2])))
-    assert len(result[3]) == 5
-    assert check_uniform_type(result[3])
+    # [CLs_obs, CLsb, CLb], [[CLs_obs, CLsb, CLb]x5]
+    assert len(list(result)) == 2
+    assert isinstance(result[0][0], type(tb.astensor(result[0][0])))
+    assert len(result[-1]) == 5
+    assert check_uniform_type(result[-1][0])
 
 
 def test_inferapi_pyhf_independence():
