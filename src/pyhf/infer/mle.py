@@ -36,8 +36,13 @@ def fit(data, pdf, init_pars=None, par_bounds=None, **kwargs):
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-        >>> pyhf.infer.mle.fit(data, model, return_fitted_val=True)
-        (array([0.        , 1.0030512 , 0.96266961]), array([24.98393521]))
+        >>> bestfit_pars, twice_nll = pyhf.infer.mle.fit(data, model, return_fitted_val=True)
+        >>> bestfit_pars
+        array([0.        , 1.0030512 , 0.96266961])
+        >>> twice_nll
+        array([24.98393521])
+        >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
+        array([ True])
 
     Args:
         data (`tensor`): The data
@@ -75,8 +80,15 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> test_poi = 1.0
-        >>> pyhf.infer.mle.fixed_poi_fit(test_poi, data, model, return_fitted_val=True)
-        (array([1.        , 0.97224597, 0.87553894]), array([28.92218013]))
+        >>> bestfit_pars, twice_nll = pyhf.infer.mle.fixed_poi_fit(
+        ...     test_poi, data, model, return_fitted_val=True
+        ... )
+        >>> bestfit_pars
+        array([1.        , 0.97224597, 0.87553894])
+        >>> twice_nll
+        array([28.92218013])
+        >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
+        array([ True])
 
     Args:
         data: The data
