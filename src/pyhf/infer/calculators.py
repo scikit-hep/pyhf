@@ -84,7 +84,7 @@ class AsymptoticTestStatDistribution(object):
         Returns:
             Float: The expected value of the test statistic.
         """
-        return nsigma
+        return self.shift + nsigma
 
 
 class AsymptoticCalculator(object):
