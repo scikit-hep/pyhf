@@ -9,7 +9,7 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit(data, model, scan, return_results=False):
+def upperlimit(data, model, scan, level = 0.05, return_results=False):
     '''
     Calculate an upper limit interval (0,poi_up) for a single
     Parameter of Interest (POI) using a fixed scan through
@@ -32,7 +32,7 @@ def upperlimit(data, model, scan, return_results=False):
     exp = tb.astensor([[r[1][i][0] for i in range(5)] for r in results])
     resarary = tb.concatenate([obs, exp], axis=1).T
 
-    limits = [_interp(0.05, resarary[i][::-1], scan[::-1]) for i in range(6)]
+    limits = [_interp(level, resarary[i][::-1], scan[::-1]) for i in range(6)]
 
     if return_results:
         return limits[0], limits[1:], (scan, results)
