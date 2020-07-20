@@ -114,9 +114,12 @@ def hypotest(
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
+
+            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+
             CLs = sig_plus_bkg_distribution.pvalue(
-                n_sigma
-            ) / b_only_distribution.pvalue(n_sigma)
+                expected_bonly_teststat
+            ) / b_only_distribution.pvalue(expected_bonly_teststat)
             CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
@@ -124,9 +127,9 @@ def hypotest(
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
-        CLs = sig_plus_bkg_distribution.pvalue(n_sigma) / b_only_distribution.pvalue(
-            n_sigma
-        )
+        CLs = sig_plus_bkg_distribution.pvalue(
+            expected_bonly_teststat
+        ) / b_only_distribution.pvalue(expected_bonly_teststat)
         _returns.append(tensorlib.reshape(CLs, (1,)))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
