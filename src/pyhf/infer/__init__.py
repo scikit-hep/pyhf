@@ -5,8 +5,14 @@ from .. import get_backend
 from .calculators import AsymptoticCalculator
 
 
-def _assemble_metrics(CLsb, CLb, metrics):
+def _assemble_metrics(
+    sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+):
     tensorlib, _ = get_backend()
+
+    CLsb = sig_plus_bkg_distribution.pvalue(teststat)
+    CLb = b_only_distribution.pvalue(teststat)
+
     CLs = CLsb / CLb
     CLsb, CLb, CLs = (
         tensorlib.reshape(CLsb, (1,)),
@@ -166,25 +172,30 @@ def hypotest(
         tensorlib.astensor(CLs),
     )
 
+    metrics = kwargs.get('pvalues', ['CLs'])
+
     _returns = []
-
-    metrics = kwargs.get('metrics', ['CLs'])
-
-    _returns.append(_assemble_metrics(CLsb, CLb, metrics))
+    _returns.append(
+        _assemble_metrics(
+            sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+        )
+    )
 
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
-            CLsb = sig_plus_bkg_distribution.pvalue(n_sigma)
-            CLb = b_only_distribution.pvalue(n_sigma)
-            this_nsigma = _assemble_metrics(CLsb, CLb, metrics)
+            teststat = b_only_distribution.expected_value(n_sigma)
+            this_nsigma = _assemble_metrics(
+                sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+            )
             CLs_exp.append(this_nsigma)
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
-        CLsb = sig_plus_bkg_distribution.pvalue(n_sigma)
-        CLb = b_only_distribution.pvalue(n_sigma)
-        this_nsigma = _assemble_metrics(CLsb, CLb, metrics)
+        teststat = b_only_distribution.expected_value(n_sigma)
+        this_nsigma = _assemble_metrics(
+            sig_plus_bkg_distribution, b_only_distribution, teststat, metrics
+        )
         _returns.append(this_nsigma)
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
