@@ -5,6 +5,26 @@ from .. import get_backend
 from .calculators import AsymptoticCalculator
 
 
+def _assemble_metrics(CLsb, CLb, metrics):
+    tensorlib, _ = get_backend()
+    CLs = CLsb / CLb
+    CLsb, CLb, CLs = (
+        tensorlib.reshape(CLsb, (1,)),
+        tensorlib.reshape(CLb, (1,)),
+        tensorlib.reshape(CLs, (1,)),
+    )
+
+    returns = []
+    for m in metrics:
+        if m == 'CLs':
+            returns.append(CLs)
+        if m == 'CLsb':
+            returns.append(CLsb)
+        if m == 'CLb':
+            returns.append(CLb)
+    return returns
+
+
 def hypotest(
     poi_test,
     data,
@@ -146,30 +166,26 @@ def hypotest(
         tensorlib.astensor(CLs),
     )
 
-    _returns = [CLs]
-    if kwargs.get('return_tail_probs'):
-        _returns.append([CLsb, CLb])
+    _returns = []
+
+    metrics = kwargs.get('metrics', ['CLs'])
+
+    _returns += _assemble_metrics(CLsb, CLb, metrics)
+
     if kwargs.get('return_expected_set'):
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
-
-            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
-
-            CLs = sig_plus_bkg_distribution.pvalue(
-                expected_bonly_teststat
-            ) / b_only_distribution.pvalue(expected_bonly_teststat)
-            CLs_exp.append(tensorlib.astensor(CLs))
-        if kwargs.get('return_expected'):
-            _returns.append(CLs_exp[2])
+            CLsb = sig_plus_bkg_distribution.pvalue(n_sigma)
+            CLb = b_only_distribution.pvalue(n_sigma)
+            this_nsigma = _assemble_metrics(CLsb, CLb, metrics)
+            CLs_exp.append(this_nsigma)
         _returns.append(CLs_exp)
     elif kwargs.get('return_expected'):
         n_sigma = 0
-        expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
-
-        CLs = sig_plus_bkg_distribution.pvalue(
-            expected_bonly_teststat
-        ) / b_only_distribution.pvalue(expected_bonly_teststat)
-        _returns.append(tensorlib.astensor(CLs))
+        CLsb = sig_plus_bkg_distribution.pvalue(n_sigma)
+        CLb = b_only_distribution.pvalue(n_sigma)
+        this_nsigma = _assemble_metrics(CLsb, CLb, metrics)
+        _returns += this_nsigma
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
