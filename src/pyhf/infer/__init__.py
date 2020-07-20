@@ -126,7 +126,7 @@ def hypotest(
 
     metrics = kwargs.get('metrics', ['CLs'])
 
-    _returns += _assemble_metrics(CLsb, CLb, metrics)
+    _returns.append(_assemble_metrics(CLsb, CLb, metrics))
 
     if kwargs.get('return_expected_set'):
         CLs_exp = []
@@ -141,7 +141,7 @@ def hypotest(
         CLsb = sig_plus_bkg_distribution.pvalue(n_sigma)
         CLb = b_only_distribution.pvalue(n_sigma)
         this_nsigma = _assemble_metrics(CLsb, CLb, metrics)
-        _returns += this_nsigma
+        _returns.append(this_nsigma)
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
