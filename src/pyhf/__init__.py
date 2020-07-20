@@ -4,10 +4,8 @@ from .version import __version__
 from .exceptions import InvalidBackend
 from . import events
 
-tensorlib = tensor.numpy_backend()
-default_backend = tensorlib
-optimizer = optimize.scipy_optimizer()
-default_optimizer = optimizer
+tensorlib = None
+optimizer = None
 
 
 def get_backend():
@@ -25,6 +23,12 @@ def get_backend():
     global tensorlib
     global optimizer
     return tensorlib, optimizer
+
+
+tensorlib = tensor.numpy_backend()
+default_backend = tensorlib
+optimizer = optimize.scipy_optimizer()
+default_optimizer = optimizer
 
 
 @events.register('change_backend')

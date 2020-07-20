@@ -1,4 +1,6 @@
 """scipy.optimize-based Optimizer using finite differences."""
+from .. import get_backend, default_backend
+from ..tensor.common import _TensorViewer
 
 from scipy.optimize import minimize
 import logging
@@ -28,19 +30,37 @@ class scipy_optimizer(object):
 
         Returns:
             bestfit parameters
-        
+
         """
+        tensorlib, _ = get_backend()
+
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_init = default_backend.astensor(init_pars)
+
         fixed_vals = fixed_vals or []
-        indices = [i for i, _ in fixed_vals]
-        values = [v for _, v in fixed_vals]
-        constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
+        fixed_values = [x[1] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
+
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_init = all_init[variable_idx]
+        variable_bounds = [par_bounds[i] for i in variable_idx]
+
+        tv = _TensorViewer([fixed_idx, variable_idx])
+
+        data = tensorlib.astensor(data)
+        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            constrained_pars = tv.stitch([fixed_values_tensor, pars])
+            return objective(constrained_pars, data, pdf)
+
         result = minimize(
-            objective,
-            init_pars,
-            constraints=constraints,
+            func,
+            variable_init,
             method='SLSQP',
-            args=(data, pdf),
-            bounds=par_bounds,
+            jac=False,
+            bounds=variable_bounds,
             options=dict(maxiter=self.maxiter),
         )
         try:
@@ -48,6 +68,12 @@ class scipy_optimizer(object):
         except AssertionError:
             log.error(result)
             raise
+
+        nonfixed_vals = result.x
+        fitted_val = result.fun
+        fitted_pars = tv.stitch(
+            [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
+        )
         if return_fitted_val:
-            return result.x, result.fun
-        return result.x
+            return fitted_pars, fitted_val
+        return fitted_pars
