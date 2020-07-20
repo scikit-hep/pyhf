@@ -19,19 +19,26 @@ import pyhf
             "tensorflow_backend",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
+        [
+            "jax",
+            "jax_backend",
+            "jax_backend",
+            pytest.raises(pyhf.exceptions.ImportBackendError),
+        ],
     ],
-    ids=["numpy", "pytorch", "tensorflow"],
+    ids=["numpy", "pytorch", "tensorflow", "jax"],
 )
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-    sys.modules.setdefault('pyhf.tensor.{}'.format(import_name), None)
-    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+    sys.modules.setdefault(f'pyhf.tensor.{import_name}', None)
+    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
         sys.modules['pyhf.tensor.{}'.format(module_name)],
         None,
     )
+
     try:
         delattr(pyhf.tensor, module_name)
     except:
@@ -42,7 +49,7 @@ def test_missing_backends(isolate_modules, param):
 
     # put back
     CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
         None,
         CACHE_MODULE,
     )
