@@ -152,6 +152,7 @@ def hypotest(
             sig_plus_bkg_distribution, b_only_distribution, teststat, pvalues
         )
         _returns.append(this_nsigma)
+
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
