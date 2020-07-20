@@ -84,7 +84,7 @@ def fixed_poi_fit(poi_val, data, pdf, init_pars=None, par_bounds=None, **kwargs)
         ...     test_poi, data, model, return_fitted_val=True
         ... )
         >>> bestfit_pars
-        array([1.        , 0.97224597, 0.87553894])
+        array([1.        , 0.97224594, 0.87553889])
         >>> twice_nll
         array([28.92218013])
         >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll

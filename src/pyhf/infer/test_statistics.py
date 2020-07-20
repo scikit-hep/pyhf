@@ -31,7 +31,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
-        3.938244920380498
+        3.9382449203593524
 
     Args:
         mu (Number or Tensor): The signal strength parameter
