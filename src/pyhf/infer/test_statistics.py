@@ -56,7 +56,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
     qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
-    # Required for backend uniformity (JAX differs from others)
+    # atleast_1d required for backend uniformity (JAX differs from others)
     qmu = tensorlib.atleast_1d(
         tensorlib.where(
             muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), qmu
