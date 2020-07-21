@@ -923,3 +923,50 @@ def test_shapesys_nuisparfilter_validation():
     assert np.allclose(
         reference_root_results['CLs_exp'], pyhf_results['CLs_exp'], atol=1e-4, rtol=1e-5
     )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.numpy_backend,
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
+def test_optimizer_stitching(backend, optimizer):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = [10.0] + pdf.config.auxdata
+
+    result_nostitch = pyhf.infer.mle.fit(data, pdf, do_stitch=False)
+    result_stitch = pyhf.infer.mle.fit(data, pdf, do_stitch=True)
+
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nostitch), pyhf.tensorlib.tolist(result_stitch),
+    )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
+def test_optimizer_grad(backend, optimizer):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = [10.0] + pdf.config.auxdata
+
+    result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)
+    result_grad = pyhf.infer.mle.fit(data, pdf, do_grad=True)
+
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nograd), pyhf.tensorlib.tolist(result_grad),
+    )
