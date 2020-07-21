@@ -4,14 +4,7 @@ from .. import get_backend
 
 
 def make_func(
-    objective,
-    data,
-    pdf,
-    tv,
-    fixed_values_tensor,
-    fixed_idx=[],
-    variable_idx=[],
-    do_grad=False,
+    objective, data, pdf, build_pars, do_grad=False,
 ):
     """
     Wrap the objective function for the minimization.
@@ -34,7 +27,7 @@ def make_func(
 
     def func(pars):
         pars = tensorlib.astensor(pars)
-        constrained_pars = tv.stitch([fixed_values_tensor, pars])
+        constrained_pars = build_pars(pars)
         return objective(constrained_pars, data, pdf)
 
     return func

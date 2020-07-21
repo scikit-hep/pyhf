@@ -30,11 +30,25 @@ class OptimizerMixin(object):
             )
 
     def _internal_minimize(
-        self, func, init, method='SLSQP', jac=None, bounds=None, options={}
+        self,
+        func,
+        init,
+        method='SLSQP',
+        jac=None,
+        bounds=None,
+        fixed_vals=None,
+        options={},
     ):
         result = self._minimize(
-            func, init, method=method, bounds=bounds, options=options, jac=jac
+            func,
+            init,
+            method=method,
+            bounds=bounds,
+            fixed_vals=fixed_vals,
+            options=options,
+            jac=jac,
         )
+
         try:
             assert result.success
         except AssertionError:
@@ -51,6 +65,7 @@ class OptimizerMixin(object):
         par_bounds,
         fixed_vals=None,
         return_fitted_val=False,
+        stitch_constraints=False,
         method='SLSQP',
         **kwargs,
     ):
@@ -72,11 +87,16 @@ class OptimizerMixin(object):
             bestfit parameters
 
         """
-        self._setup_minimizer(objective, data, pdf, init_pars, par_bounds, fixed_vals)
-
         tensorlib, _ = get_backend()
         tv, fixed_values_tensor, func_and_grad, init, bounds = shim(
-            objective, data, pdf, init_pars, par_bounds, fixed_vals, do_grad=self.grad
+            objective,
+            data,
+            pdf,
+            init_pars,
+            par_bounds,
+            fixed_vals,
+            do_grad=self.grad,
+            do_stitch=stitch_constraints,
         )
         if self.grad:
             func = lambda pars: func_and_grad(pars)[0]
@@ -84,25 +104,35 @@ class OptimizerMixin(object):
         else:
             func = func_and_grad
             jac = None
-        result = self._internal_minimize(
-            func, init, method=method, bounds=bounds, options=kwargs, jac=jac
-        )
 
-        nonfixed_vals = result.x
+        self._setup_minimizer(func, data, pdf, init_pars, par_bounds, fixed_vals)
+
+        minimizer_kwargs = dict(method=method, bounds=bounds, options=kwargs, jac=jac)
+        if not stitch_constraints:
+            minimizer_kwargs.update(dict(fixed_vals=fixed_vals))
+        result = self._internal_minimize(func, init, **minimizer_kwargs)
+
+        nonfixed_vals = tensorlib.astensor(result.x)
         fitted_val = result.fun
-        fitted_pars = tv.stitch(
-            [fixed_values_tensor, tensorlib.astensor(nonfixed_vals)]
-        )
+        # stitch things back up if needed
+        if stitch_constraints:
+            fitted_pars = tv.stitch([fixed_values_tensor, nonfixed_vals])
+        else:
+            fitted_pars = nonfixed_vals
+
         # check if uncertainties were provided
         uncertainties = getattr(result, 'unc', None)
         if uncertainties is not None:
-            # step 1: stitch in zero-uncertainty for fixed values, with uncertainties from all (other) values
-            fitted_uncs = tv.stitch(
-                [
-                    tensorlib.zeros(fixed_values_tensor.shape),
-                    tensorlib.astensor(uncertainties),
-                ]
-            )
+            if stitch_constraints:
+                # stitch in zero-uncertainty for fixed values
+                fitted_uncs = tv.stitch(
+                    [
+                        tensorlib.zeros(fixed_values_tensor.shape),
+                        tensorlib.astensor(uncertainties),
+                    ]
+                )
+            else:
+                fitted_uncs = tensorlib.astensor(uncertainties)
             fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
         if return_fitted_val:
             return fitted_pars, tensorlib.astensor(fitted_val)

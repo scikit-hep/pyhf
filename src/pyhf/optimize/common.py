@@ -33,7 +33,16 @@ def _get_tensor_shim():
     raise ValueError(f'No optimizer shim for {tensorlib.name}.')
 
 
-def shim(objective, data, pdf, init_pars, par_bounds, fixed_vals=None, do_grad=False):
+def shim(
+    objective,
+    data,
+    pdf,
+    init_pars,
+    par_bounds,
+    fixed_vals=None,
+    do_grad=False,
+    do_stitch=False,
+):
     """
     Prepare Minimization for Optimizer.
 
@@ -54,32 +63,31 @@ def shim(objective, data, pdf, init_pars, par_bounds, fixed_vals=None, do_grad=F
     """
     tensorlib, _ = get_backend()
 
-    all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
     all_init = default_backend.astensor(init_pars)
 
-    fixed_vals = fixed_vals or []
-    fixed_values = [x[1] for x in fixed_vals]
-    fixed_idx = [x[0] for x in fixed_vals]
+    if do_stitch:
+        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
 
-    variable_idx = [x for x in all_idx if x not in fixed_idx]
-    variable_init = all_init[variable_idx]
-    variable_bounds = [par_bounds[i] for i in variable_idx]
+        fixed_vals = fixed_vals or []
+        fixed_values = [x[1] for x in fixed_vals]
+        fixed_idx = [x[0] for x in fixed_vals]
 
-    tv = _TensorViewer([fixed_idx, variable_idx])
+        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_init = all_init[variable_idx]
+        variable_bounds = [par_bounds[i] for i in variable_idx]
 
-    data = tensorlib.astensor(data)
-    fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+        tv = _TensorViewer([fixed_idx, variable_idx])
+        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+        build_pars = lambda pars: tv.stitch([fixed_values_tensor, pars])
+    else:
+        tv = None
+        fixed_values_tensor = tensorlib.astensor([], dtype='float')
+        variable_init = all_init
+        variable_bounds = par_bounds
+        build_pars = lambda pars: pars
 
-    # NB: need to pass in fixed_idx, variable_idx for jax to jit correctly
     func = _get_tensor_shim()(
-        objective,
-        data,
-        pdf,
-        tv,
-        fixed_values_tensor,
-        fixed_idx=fixed_idx,
-        variable_idx=variable_idx,
-        do_grad=do_grad,
+        objective, tensorlib.astensor(data), pdf, build_pars, do_grad=do_grad,
     )
 
     return tv, fixed_values_tensor, func, variable_init, variable_bounds

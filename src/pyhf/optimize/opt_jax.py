@@ -1,34 +1,25 @@
 """JAX Backend Function Shim."""
 
 from .. import get_backend
-from ..tensor.common import _TensorViewer
 import jax
 
 
-def _final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
+def _final_objective(objective, data, pdf, build_pars, pars):
     tensorlib, _ = get_backend()
-    tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
-    constrained_pars = tv.stitch([fixed_vals, pars])
-    return objective(constrained_pars, data, model)[0]
+    constrained_pars = build_pars(pars)
+    return objective(constrained_pars, data, pdf)[0]
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective), static_argnums=(3, 4, 5, 6)
+    jax.value_and_grad(_final_objective), static_argnums=(0, 2, 3)
 )
 
-_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6))
+_jitted_objective = jax.jit(_final_objective, static_argnums=(0, 2, 3))
 
 
 def make_func(
-    objective,
-    data,
-    pdf,
-    tv,
-    fixed_values_tensor,
-    fixed_idx=[],
-    variable_idx=[],
-    do_grad=False,
+    objective, data, pdf, build_pars, do_grad=False,
 ):
     """
     Wrap the objective function for the minimization.
@@ -50,28 +41,12 @@ def make_func(
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective_and_grad(
-                pars,
-                data,
-                fixed_values_tensor,
-                pdf,
-                objective,
-                tuple(fixed_idx),
-                tuple(variable_idx),
-            )
+            return _jitted_objective_and_grad(objective, data, pdf, build_pars, pars,)
 
     else:
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective(
-                pars,
-                data,
-                fixed_values_tensor,
-                pdf,
-                objective,
-                tuple(fixed_idx),
-                tuple(variable_idx),
-            )
+            return _jitted_objective(objective, data, pdf, build_pars, pars,)
 
     return func

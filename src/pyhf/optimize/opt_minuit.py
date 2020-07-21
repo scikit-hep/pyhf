@@ -34,10 +34,6 @@ class minuit_optimizer(OptimizerMixin):
     def _setup_minimizer(
         self, objective, data, pdf, init_pars, init_bounds, fixed_vals=None
     ):
-        def f(pars):
-            result = objective(pars, data, pdf)
-            logpdf = result[0]
-            return logpdf
 
         parnames = ['p{}'.format(i) for i in range(len(init_pars))]
         kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
@@ -49,21 +45,30 @@ class minuit_optimizer(OptimizerMixin):
         fixed_vals = fixed_vals or []
         constraints = {}
         for index, value in fixed_vals:
-            constraints = {'fix_p{}'.format(index): True}
+            constraints['fix_p{}'.format(index)] = True
             initvals['p{}'.format(index)] = value
-        kwargs = {}
-        for d in [kw, constraints, initvals, step_sizes]:
-            kwargs.update(**d)
         self._minimizer = iminuit.Minuit(
-            f,
+            lambda pars: objective(pars)[0],
             print_level=1 if self.verbose else 0,
             errordef=self.errordef,
             use_array_call=True,
             name=parnames,
-            **kwargs,
+            **kw,
+            **constraints,
+            **initvals,
+            **step_sizes,
         )
 
-    def _minimize(self, func, init, method='SLSQP', jac=None, bounds=None, options={}):
+    def _minimize(
+        self,
+        func,
+        init,
+        method='SLSQP',
+        jac=None,
+        bounds=None,
+        fixed_vals=None,
+        options={},
+    ):
         """
         Same signature as scipy.optimize.minimize.
 
