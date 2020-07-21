@@ -37,6 +37,8 @@ class pytorch_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend("pytorch")
+            >>> pyhf.tensorlib.atleast_1d(1.)
+            tensor([1.])
             >>> pyhf.tensorlib.atleast_1d(1., [3., 4.])
             [tensor([1.]), tensor([3., 4.])]
 

@@ -34,6 +34,9 @@ class tensorflow_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.atleast_1d(1.)
+            >>> print(tensor)
+            tf.Tensor([1.], shape=(1,), dtype=float32)
             >>> tensor_list = pyhf.tensorlib.atleast_1d(1., [3., 4.])
             >>> print([str(t) for t in tensor_list]) # doctest: +NORMALIZE_WHITESPACE
             ['tf.Tensor([1.], shape=(1,), dtype=float32)',

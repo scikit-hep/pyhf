@@ -68,6 +68,8 @@ class jax_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend("jax")
+            >>> pyhf.tensorlib.atleast_1d(1.)
+            DeviceArray([1.], dtype=float64)
             >>> pyhf.tensorlib.atleast_1d(1., [3., 4.])
             [DeviceArray([1.], dtype=float64), DeviceArray([3., 4.], dtype=float64)]
 
