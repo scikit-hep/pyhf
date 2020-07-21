@@ -25,10 +25,10 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
             'histosys': {'interpcode': 'code4p'},
         },
     )
-    result = pyhf.infer.hypotest(
+    obs, exp = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    return result[0].tolist()[0], result[-1].ravel().tolist()
+    return obs.tolist()[0], [r.tolist()[0] for r in exp]
 
 
 def test_sbottom_regionA_1300_205_60(
