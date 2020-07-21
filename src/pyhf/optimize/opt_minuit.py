@@ -48,7 +48,7 @@ class minuit_optimizer(OptimizerMixin):
             constraints['fix_p{}'.format(index)] = True
             initvals['p{}'.format(index)] = value
         self._minimizer = iminuit.Minuit(
-            lambda pars: objective(pars)[0],
+            objective,
             print_level=1 if self.verbose else 0,
             errordef=self.errordef,
             use_array_call=True,

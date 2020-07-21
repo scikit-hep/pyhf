@@ -17,11 +17,9 @@ class OptimizerMixin(object):
         Args:
             maxiter (`int`): maximum number of iterations. Default is 100000.
             verbose (`bool`): print verbose output during minimization. Default is off.
-            grad (`bool`): enable autodifferentiation mode. Default is off.
         """
         self.maxiter = kwargs.pop('maxiter', 100000)
         self.verbose = kwargs.pop('verbose', False)
-        self.grad = kwargs.pop('grad', False)
         self._minimizer = None
 
         if kwargs:
@@ -65,7 +63,8 @@ class OptimizerMixin(object):
         par_bounds,
         fixed_vals=None,
         return_fitted_val=False,
-        stitch_constraints=False,
+        do_grad=False,
+        do_stitch=False,
         method='SLSQP',
         **kwargs,
     ):
@@ -80,6 +79,8 @@ class OptimizerMixin(object):
             par_bounds: parameter boundaries
             fixed_vals: fixed parameter values
             return_fitted_val: return bestfit value of the objective
+            do_grad (`bool`): enable autodifferentiation mode. Default is off.
+            do_stitch (`bool`): enable splicing/stitching fixed parameter.
             method: minimization routine
             kwargs: other options to pass through to underlying minimizer
 
@@ -95,10 +96,10 @@ class OptimizerMixin(object):
             init_pars,
             par_bounds,
             fixed_vals,
-            do_grad=self.grad,
-            do_stitch=stitch_constraints,
+            do_grad=do_grad,
+            do_stitch=do_stitch,
         )
-        if self.grad:
+        if do_grad:
             func = lambda pars: func_and_grad(pars)[0]
             jac = lambda pars: func_and_grad(pars)[1]
         else:
@@ -108,14 +109,14 @@ class OptimizerMixin(object):
         self._setup_minimizer(func, data, pdf, init_pars, par_bounds, fixed_vals)
 
         minimizer_kwargs = dict(method=method, bounds=bounds, options=kwargs, jac=jac)
-        if not stitch_constraints:
+        if not do_stitch:
             minimizer_kwargs.update(dict(fixed_vals=fixed_vals))
         result = self._internal_minimize(func, init, **minimizer_kwargs)
 
         nonfixed_vals = tensorlib.astensor(result.x)
         fitted_val = result.fun
         # stitch things back up if needed
-        if stitch_constraints:
+        if do_stitch:
             fitted_pars = tv.stitch([fixed_values_tensor, nonfixed_vals])
         else:
             fitted_pars = nonfixed_vals
@@ -123,7 +124,7 @@ class OptimizerMixin(object):
         # check if uncertainties were provided
         uncertainties = getattr(result, 'unc', None)
         if uncertainties is not None:
-            if stitch_constraints:
+            if do_stitch:
                 # stitch in zero-uncertainty for fixed values
                 fitted_uncs = tv.stitch(
                     [

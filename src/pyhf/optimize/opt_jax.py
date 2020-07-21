@@ -12,7 +12,7 @@ def _final_objective(objective, data, pdf, build_pars, pars):
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective), static_argnums=(0, 2, 3)
+    jax.value_and_grad(_final_objective, argnums=(4,)), static_argnums=(0, 2, 3)
 )
 
 _jitted_objective = jax.jit(_final_objective, static_argnums=(0, 2, 3))
