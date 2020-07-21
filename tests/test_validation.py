@@ -709,13 +709,13 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
 @pytest.mark.parametrize(
     'setup_and_tolerance',
     [
-        (setup_1bin_shapesys(), 1e-6),
-        (setup_1bin_lumi(), 4e-6),
-        (setup_1bin_normsys(), 2e-9),
-        (setup_2bin_histosys(), 8e-5),
-        (setup_2bin_2channel(), 1e-6),
-        (setup_2bin_2channel_couplednorm(), 1e-6),
-        (setup_2bin_2channel_coupledhistosys(), 1e-6),
+        (setup_1bin_shapesys(), 4e-5),
+        (setup_1bin_lumi(), 6e-5),
+        (setup_1bin_normsys(), 2e-4),
+        (setup_2bin_histosys(), 9e-5),
+        (setup_2bin_2channel(), 3e-5),
+        (setup_2bin_2channel_couplednorm(), 3e-5),
+        (setup_2bin_2channel_coupledhistosys(), 4e-5),
         (setup_2bin_2channel_coupledshapefactor(), 2.5e-6),
     ],
     ids=[
