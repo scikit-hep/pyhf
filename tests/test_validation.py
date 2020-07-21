@@ -704,8 +704,6 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         qtilde=False,
     )
 
-    breakpoint()
-
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected) / expected < tolerance
