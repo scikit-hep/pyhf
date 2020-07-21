@@ -284,42 +284,15 @@ class tensorflow_backend(object):
 
         """
 
-        # How does NumPy do this?
-        # def generic_len(a):
-        #     try:
-        #         return len(a)
-        #     except TypeError:
-        #         if len(a.shape) < 1:
-        #             return 0
-        #         else:
-        #             return a.shape[0]
-        def generic_len(a):
-            try:
-                return a.shape[0]
-            except IndexError:
-                return 0
-
-        # [self.astensor([arg]) for arg in args if arg.shape[0] errror]
-
-        max_dim = max(map(generic_len, args))
+        max_dim = max(map(tf.size, args))
         try:
-            assert not [arg for arg in args if 1 < generic_len(arg) < max_dim]
+            assert not [arg for arg in args if 1 < tf.size(arg) < max_dim]
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
             )
             raise error
-
-        print([arg for arg in args])
-        print([generic_len(arg) for arg in args])
-        print("spacer")
-        broadcast = [
-            arg
-            if generic_len(arg) > 1
-            else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
-            for arg in args
-        ]
-        return broadcast
+        return [tf.broadcast_to(arg, (max_dim,)) for arg in args]
 
     def einsum(self, subscripts, *operands):
         """
