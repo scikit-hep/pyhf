@@ -947,11 +947,7 @@ def test_scipy_constraints():
         return pyhf.infer.mle.twice_nll(pars, data, pdf)[0]
 
     expected_result = scipy.optimize.minimize(
-        objective,
-        init,
-        constraints=constraints,
-        method='SLSQP',
-        bounds=bounds,
+        objective, init, constraints=constraints, method='SLSQP', bounds=bounds,
     )
 
     assert expected_result.success
