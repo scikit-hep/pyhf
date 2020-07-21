@@ -49,7 +49,10 @@ class pytorch_backend(object):
         """
         # TODO: Use torch.atleast_1d API when available
         arg_map = map(self.astensor, args)
-        return [arg.view(1) if not self.shape(arg) else arg for arg in arg_map]
+        tensor_list = [arg.view(1) if not self.shape(arg) else arg for arg in arg_map]
+        if len(tensor_list) == 1:
+            tensor_list = tensor_list[0]
+        return tensor_list
 
     def clip(self, tensor_in, min_value, max_value):
         """
