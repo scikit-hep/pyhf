@@ -29,33 +29,6 @@ class pytorch_backend(object):
         """
         torch.set_default_dtype(self.dtypemap["float"])
 
-    def atleast_1d(self, *args):
-        """
-        Convert inputs to tensors with at least one dimension.
-
-        Example:
-
-            >>> import pyhf
-            >>> pyhf.set_backend("pytorch")
-            >>> pyhf.tensorlib.atleast_1d(1.)
-            tensor([1.])
-            >>> pyhf.tensorlib.atleast_1d(1., [3., 4.])
-            [tensor([1.]), tensor([3., 4.])]
-
-        Args:
-            args (Array of Tensors): Sequence of tensors
-
-        Returns:
-            PyTorch tensor: A tensor, or list of tensors, each with ``ndim >= 1``
-
-        """
-        # TODO: Use torch.atleast_1d API when available
-        arg_map = map(self.astensor, args)
-        tensor_list = [arg.view(1) if not self.shape(arg) else arg for arg in arg_map]
-        if len(tensor_list) == 1:
-            tensor_list = tensor_list[0]
-        return tensor_list
-
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.

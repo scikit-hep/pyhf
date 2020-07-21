@@ -60,28 +60,6 @@ class jax_backend(object):
         Run any global setups for the jax lib.
         """
 
-    def atleast_1d(self, *args):
-        """
-        Convert inputs to tensors with at least one dimension.
-
-        Example:
-
-            >>> import pyhf
-            >>> pyhf.set_backend("jax")
-            >>> pyhf.tensorlib.atleast_1d(1.)
-            DeviceArray([1.], dtype=float64)
-            >>> pyhf.tensorlib.atleast_1d(1., [3., 4.])
-            [DeviceArray([1.], dtype=float64), DeviceArray([3., 4.], dtype=float64)]
-
-        Args:
-            args (Array of Tensors): Sequence of tensors
-
-        Returns:
-            JAX ndarray: A tensor, or list of tensors, each with ``ndim >= 1``
-
-        """
-        return np.atleast_1d(*args)
-
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
