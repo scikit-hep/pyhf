@@ -38,12 +38,12 @@ class scipy_optimizer(object):
         all_init = default_backend.astensor(init_pars)
 
         fixed_vals = fixed_vals or []
-        fixed_values = [x[1] for x in fixed_vals]
         fixed_idx = [x[0] for x in fixed_vals]
+        fixed_values = [x[1] for x in fixed_vals]
 
-        variable_idx = [x for x in all_idx if x not in fixed_idx]
+        variable_idx = [idx for idx in all_idx if idx not in fixed_idx]
         variable_init = all_init[variable_idx]
-        variable_bounds = [par_bounds[i] for i in variable_idx]
+        variable_bounds = [par_bounds[idx] for idx in variable_idx]
 
         tv = _TensorViewer([fixed_idx, variable_idx])
 
