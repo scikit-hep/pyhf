@@ -25,6 +25,7 @@ def test_scipy_minimize(backend, capsys):
     assert pytest.approx([1.0, 1.0, 1.0, 1.0, 1.0], rel=5e-5) == tensorlib.tolist(res.x)
 
 
+@pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
 @pytest.mark.parametrize(
     'precision', ['32b', '64b'], ids=['32b', '64b'],
 )
@@ -44,16 +45,16 @@ def test_scipy_minimize(backend, capsys):
     ids=['scipy', 'minuit'],
 )
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
-def test_minimize(tensorlib, precision, optimizer, do_grad):
-    pyhf.set_backend(tensorlib(precision=precision), optimizer(grad=do_grad))
+def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
+    pyhf.set_backend(tensorlib(precision=precision), optimizer())
     m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
     # numpy does not support grad
     if pyhf.tensorlib.name == 'numpy' and do_grad:
         with pytest.raises(AssertionError):
-            pyhf.infer.mle.fit(data, m)
+            pyhf.infer.mle.fit(data, m, do_grad=do_grad)
     else:
-        identifier = f'{"do_grad" if pyhf.optimizer.grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
+        identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
         expected = {
             # numpy does not do grad
             'do_grad-scipy-numpy-32b': None,
@@ -86,7 +87,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad):
             'no_grad-minuit-tensorflow-32b': [5.47232048e-04, 9.99859154e-01],
             'no_grad-minuit-jax-32b': [8.74461184e-05, 1.0001129e00],
             #     nb: macos gives different numerics than ubuntu for minuit jax 32b
-            #'no_grad-minuit-jax-32b': [1.01476780e-03, 9.9928200e-01],
+            #'no_grad-minuit-jax-32b': [1.22383861e-02, 9.9635810e-01],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [9.19623487e-03, 9.98248083e-01],
             'no_grad-minuit-pytorch-64b': [9.19623487e-03, 9.98248083e-01],
@@ -99,14 +100,14 @@ def test_minimize(tensorlib, precision, optimizer, do_grad):
             'do_grad-minuit-tensorflow-32b': [5.47232048e-04, 9.99859154e-01],
             'do_grad-minuit-jax-32b': [8.74461184e-05, 1.00011289e00],
             #     nb: macos gives different numerics than ubuntu for minuit jax 32b
-            #'do_grad-minuit-jax-32b': [1.01476780e-03, 9.99282002e-01],
+            #'do_grad-minuit-jax-32b': [1.22383861e-02, 9.96358097e-01],
             # do grad, minuit, 64b - quite consistent
             'do_grad-minuit-pytorch-64b': [9.19623487e-03, 9.98248083e-01],
             'do_grad-minuit-tensorflow-64b': [9.19624519e-03, 9.98248076e-01],
             'do_grad-minuit-jax-64b': [9.19623486e-03, 9.98248083e-01],
         }[identifier]
 
-        result = pyhf.infer.mle.fit(data, m)
+        result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
         atol = 1e-6
         rtol = 1e-6
@@ -116,7 +117,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad):
             rtol = 2e-3
         if 'minuit-jax-32b' in identifier:
             # quite a large difference, so we bump the absolute tolerance down
-            atol = 1e-3
+            atol = 2e-2
 
         # check fitted parameters
         assert pytest.approx(expected, rel=rtol, abs=atol) == pyhf.tensorlib.tolist(

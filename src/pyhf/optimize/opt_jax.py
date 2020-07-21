@@ -18,9 +18,7 @@ _jitted_objective_and_grad = jax.jit(
 _jitted_objective = jax.jit(_final_objective, static_argnums=(0, 2, 3))
 
 
-def make_func(
-    objective, data, pdf, build_pars, do_grad=False,
-):
+def make_func(objective, data, pdf, build_pars, do_grad=False):
     """
     Wrap the objective function for the minimization.
 

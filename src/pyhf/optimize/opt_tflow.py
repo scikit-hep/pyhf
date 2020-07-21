@@ -31,8 +31,11 @@ def make_func(
                 tape.watch(pars)
                 constrained_pars = build_pars(pars)
                 constr_nll = objective(constrained_pars, data, pdf)
-            grad = tape.gradient(constr_nll, pars).values
-            return constr_nll.numpy(), grad
+            # NB: tape.gradient can return a sparse gradient (tf.IndexedSlices)
+            # when tf.gather is used and this needs to be converted back to a
+            # tensor to be usable as a value
+            grad = tape.gradient(constr_nll, pars)
+            return constr_nll.numpy(), tf.convert_to_tensor(grad)
 
     else:
 
