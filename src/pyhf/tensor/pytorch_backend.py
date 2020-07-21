@@ -227,9 +227,7 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
-        args = [
-            arg if arg.size() != torch.Size([]) else arg.unsqueeze(0) for arg in args
-        ]
+        args = [arg if arg.size() != torch.Size([]) else arg.view(1) for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
