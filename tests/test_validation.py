@@ -951,7 +951,6 @@ def test_scipy_constraints():
         init,
         constraints=constraints,
         method='SLSQP',
-        args=(data, pdf),
         bounds=bounds,
     )
 
