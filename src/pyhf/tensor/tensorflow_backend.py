@@ -26,6 +26,38 @@ class tensorflow_backend(object):
         Run any global setups for the tensorflow lib.
         """
 
+    def atleast_1d(self, *args):
+        """
+        Convert inputs to tensors with at least one dimension.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor_list = pyhf.tensorlib.atleast_1d(1., [3., 4.]))
+            >>> print([str(t) for t in tensor_list]) # doctest: +NORMALIZE_WHITESPACE
+            ['tf.Tensor([1.], shape=(1,), dtype=float32)',
+             'tf.Tensor([3. 4.], shape=(2,), dtype=float32)']
+
+        Args:
+            args (Array of Tensors): Sequence of tensors
+
+        Returns:
+            TensorFlow Tensor: A tensor, or list of tensors, each with `ndim >= 1`
+
+        """
+        # TODO: Use tf.experimental.numpy.atleast_1d API when available
+        arg_map = map(self.astensor, args)
+        tensor_list = []
+        for arg in arg_map:
+            try:
+                arg.shape[0]
+            except IndexError:
+                arg = tf.reshape(arg, [1])
+            tensor_list.append(arg)
+
+        return tensor_list
+
     def clip(self, tensor_in, min_value, max_value):
         """
         Clips (limits) the tensor values to be within a specified min and max.
