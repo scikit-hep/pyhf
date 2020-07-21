@@ -43,7 +43,7 @@ class tensorflow_backend(object):
             args (Array of Tensors): Sequence of tensors
 
         Returns:
-            TensorFlow Tensor: A tensor, or list of tensors, each with `ndim >= 1`
+            TensorFlow Tensor: A tensor, or list of tensors, each with ``ndim >= 1``
 
         """
         # TODO: Use tf.experimental.numpy.atleast_1d API when available

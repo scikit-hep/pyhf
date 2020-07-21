@@ -44,7 +44,7 @@ class pytorch_backend(object):
             args (Array of Tensors): Sequence of tensors
 
         Returns:
-            PyTorch tensor: A tensor, or list of tensors, each with `ndim >= 1`
+            PyTorch tensor: A tensor, or list of tensors, each with ``ndim >= 1``
 
         """
         # TODO: Use torch.atleast_1d API when available

@@ -75,7 +75,7 @@ class jax_backend(object):
             args (Array of Tensors): Sequence of tensors
 
         Returns:
-            JAX ndarray: A tensor, or list of tensors, each with `ndim >= 1`
+            JAX ndarray: A tensor, or list of tensors, each with ``ndim >= 1``
 
         """
         return np.atleast_1d(*args)
