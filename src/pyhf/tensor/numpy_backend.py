@@ -68,7 +68,7 @@ class numpy_backend(object):
             args (Array of Tensors): Sequence of arrays
 
         Returns:
-            NumPy ndarray: An array, or list of arrays, each with `ndim >= 1`
+            NumPy ndarray: An array, or list of arrays, each with ``ndim >= 1``
 
         """
         return np.atleast_1d(*args)
