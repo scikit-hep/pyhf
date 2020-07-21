@@ -61,7 +61,7 @@ class numpy_backend(object):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.atleast_1d(1., [3., 4.]))
+            >>> pyhf.tensorlib.atleast_1d(1., [3., 4.])
             [array([1.]), array([3., 4.])]
 
         Args:
