@@ -5,6 +5,8 @@ import json
 import pytest
 from pathlib import Path
 import numpy as np
+import scipy
+import iminuit
 
 
 @pytest.fixture(scope='module')
@@ -701,6 +703,9 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         return_expected_set=True,
         qtilde=False,
     )
+
+    breakpoint()
+
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected) / expected < tolerance
@@ -923,3 +928,82 @@ def test_shapesys_nuisparfilter_validation():
     assert np.allclose(
         reference_root_results['CLs_exp'], pyhf_results['CLs_exp'], atol=1e-4, rtol=1e-5
     )
+
+
+def test_scipy_constraints():
+    poi_val = 1.0
+    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = [10.0] + pdf.config.auxdata
+
+    result = pyhf.infer.mle.fixed_poi_fit(poi_val, data, pdf)
+
+    init = pdf.config.suggested_init()
+    bounds = pdf.config.suggested_bounds()
+    fixed_vals = [(pdf.config.poi_index, poi_val)]
+
+    indices = [i for i, _ in fixed_vals]
+    values = [v for _, v in fixed_vals]
+    constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
+
+    def objective(pars):
+        return pyhf.infer.mle.twice_nll(pars, data, pdf)[0]
+
+    expected_result = scipy.optimize.minimize(
+        objective,
+        init,
+        constraints=constraints,
+        method='SLSQP',
+        args=(data, pdf),
+        bounds=bounds,
+    )
+
+    assert expected_result.success
+    assert np.allclose(result, expected_result.x)
+
+
+def test_minuit_constraints():
+    pyhf.set_backend('numpy', pyhf.optimize.minuit_optimizer())
+    poi_val = 1.0
+    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = [10.0] + pdf.config.auxdata
+
+    result = pyhf.infer.mle.fixed_poi_fit(poi_val, data, pdf)
+
+    init = pdf.config.suggested_init()
+    bounds = pdf.config.suggested_bounds()
+    fixed_vals = [(pdf.config.poi_index, poi_val)]
+
+    indices = [i for i, _ in fixed_vals]
+    values = [v for _, v in fixed_vals]
+    constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
+
+    parnames = ['p{}'.format(i) for i in range(len(init))]
+    kw = {'limit_p{}'.format(i): b for i, b in enumerate(bounds)}
+    initvals = {'p{}'.format(i): v for i, v in enumerate(init)}
+    step_sizes = {
+        'error_p{}'.format(i): (b[1] - b[0]) / float(1000) for i, b in enumerate(bounds)
+    }
+
+    constraints = {}
+    for index, value in fixed_vals:
+        constraints['fix_p{}'.format(index)] = True
+        initvals['p{}'.format(index)] = value
+
+    def objective(pars):
+        return pyhf.infer.mle.twice_nll(pars, data, pdf)[0]
+
+    mm = iminuit.Minuit(
+        objective,
+        errordef=1,
+        use_array_call=True,
+        name=parnames,
+        **kw,
+        **constraints,
+        **initvals,
+        **step_sizes,
+    )
+
+    expected_result = mm.migrad()
+
+    assert expected_result
+    assert np.allclose(result, mm.np_values())
