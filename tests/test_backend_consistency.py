@@ -117,7 +117,7 @@ def test_hypotest_q_mu(
         q_mu = pyhf.infer.test_statistics.qmu(
             1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds(),
         )
-        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
+        test_statistic.append(q_mu)
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)
