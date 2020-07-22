@@ -66,7 +66,6 @@ class OptimizerMixin(object):
         """
         tensorlib, _ = get_backend()
 
-        fitted_val = tensorlib.astensor(fitresult.fun)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
         # extract number of fixed parameters
         num_fixed_pars = len(fitted_pars) - len(fitresult.x)
