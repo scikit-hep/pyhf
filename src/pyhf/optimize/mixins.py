@@ -28,14 +28,7 @@ class OptimizerMixin(object):
             )
 
     def _internal_minimize(
-        self,
-        func,
-        x0,
-        method='SLSQP',
-        jac=None,
-        bounds=None,
-        fixed_vals=None,
-        options={},
+        self, func, x0, jac=None, bounds=None, fixed_vals=None, options={},
     ):
 
         minimizer = self._get_minimizer(func, x0, bounds, fixed_vals=fixed_vals)
@@ -43,7 +36,6 @@ class OptimizerMixin(object):
             minimizer,
             func,
             x0,
-            method=method,
             jac=jac,
             bounds=bounds,
             fixed_vals=fixed_vals,
@@ -98,7 +90,6 @@ class OptimizerMixin(object):
         return_fit_object=False,
         do_grad=False,
         do_stitch=False,
-        method='SLSQP',
         **kwargs,
     ):
         """
@@ -115,7 +106,6 @@ class OptimizerMixin(object):
             return_fit_object (`bool`): return ``scipy.optimize.OptimizeResult``
             do_grad (`bool`): enable autodifferentiation mode. Default is off.
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
-            method (`str`): minimization routine
             kwargs: other options to pass through to underlying minimizer
 
         Returns:
@@ -134,9 +124,7 @@ class OptimizerMixin(object):
             do_stitch=do_stitch,
         )
 
-        minimizer_kwargs.update(dict(method=method, options=kwargs))
-
-        result = self._internal_minimize(**minimizer_kwargs)
+        result = self._internal_minimize(**minimizer_kwargs, options=kwargs)
         result = self._internal_postprocess(result, stitch_pars)
 
         _returns = [result.x]

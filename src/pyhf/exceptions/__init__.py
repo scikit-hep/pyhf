@@ -1,6 +1,12 @@
 import sys
 
 
+class Unsupported(Exception):
+    """
+    Unsupported exceptions are raised when something is requested, that is not supported by the current configuration.
+    """
+
+
 class InvalidMeasurement(Exception):
     """
     InvalidMeasurement is raised when a specified measurement is invalid given the specification.

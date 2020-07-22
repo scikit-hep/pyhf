@@ -1,6 +1,7 @@
 """Numpy Backend Function Shim."""
 
 from .. import get_backend
+from .. import exceptions
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False):
@@ -20,7 +21,8 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False):
 
     tensorlib, _ = get_backend()
 
-    assert not do_grad, "Numpy does not support autodifferentiation"
+    if do_grad:
+        raise exceptions.Unsupported("Numpy does not support autodifferentiation.")
 
     def func(pars):
         pars = tensorlib.astensor(pars)

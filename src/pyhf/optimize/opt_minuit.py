@@ -1,5 +1,5 @@
 """Minuit Optimizer Class."""
-from .. import default_backend
+from .. import default_backend, exceptions
 from .mixins import OptimizerMixin
 import scipy
 import iminuit
@@ -63,7 +63,6 @@ class minuit_optimizer(OptimizerMixin):
         minimizer,
         func,
         x0,
-        method='SLSQP',
         jac=None,
         bounds=None,
         fixed_vals=None,
@@ -78,14 +77,20 @@ class minuit_optimizer(OptimizerMixin):
         underlying minimizer.
 
         Minimizer Options:
+            maxiter (`int`): maximum number of iterations. Default is 100000.
             return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
 
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
-        assert method == 'SLSQP', "Optimizer only supports 'SLSQP' minimization."
+        maxiter = options.pop('maxiter', self.maxiter)
         return_uncertainties = options.pop('return_uncertainties', False)
-        minimizer.migrad(ncall=self.maxiter)
+        if options:
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(options.keys())}."
+            )
+
+        minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
         message = "Optimization terminated successfully."

@@ -1,4 +1,5 @@
 """SciPy Optimizer Class."""
+from .. import exceptions
 from .mixins import OptimizerMixin
 import scipy
 
@@ -25,7 +26,6 @@ class scipy_optimizer(OptimizerMixin):
         minimizer,
         func,
         x0,
-        method='SLSQP',
         jac=None,
         bounds=None,
         fixed_vals=None,
@@ -35,12 +35,21 @@ class scipy_optimizer(OptimizerMixin):
         """
         Same signature as scipy.optimize.minimize.
 
+        Minimizer Options:
+            maxiter (`int`): maximum number of iterations. Default is 100000.
+            verbose (`bool`): print verbose output during minimization. Default is off.
+            method (`str`): minimization routine. Default is 'SLSQP'.
+
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
-        assert (
-            'return_uncertainties' not in options
-        ), "Optimizer does not support returning uncertainties."
+        maxiter = options.pop('maxiter', self.maxiter)
+        verbose = options.pop('verbose', self.verbose)
+        method = options.pop('method', 'SLSQP')
+        if options:
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(options.keys())}."
+            )
 
         fixed_vals = fixed_vals or []
         indices = [i for i, _ in fixed_vals]
@@ -57,5 +66,5 @@ class scipy_optimizer(OptimizerMixin):
             jac=jac,
             bounds=bounds,
             constraints=constraints,
-            options=dict(maxiter=self.maxiter, disp=self.verbose, **options),
+            options=dict(maxiter=maxiter, disp=verbose),
         )
