@@ -315,6 +315,20 @@ def test_minuit_failed_optimization(
     monkeypatch, mocker, has_reached_call_limit, is_above_max_edm
 ):
     class BadMinuit(iminuit.Minuit):
+        @classmethod
+        def from_array_func(cls, *args, **kwargs):
+            self = super().from_array_func(*args, **kwargs)
+            """
+            from_array_func won't need mocker in a newer version of iminuit
+
+            See scikit-hep/iminuit#464 for more details
+            """
+            mock = mocker.MagicMock(wraps=self)
+            mock.valid = False
+            mock.fmin.has_reached_call_limit = has_reached_call_limit
+            mock.fmin.is_above_max_edm = is_above_max_edm
+            return mock
+
         @property
         def valid(self):
             return False
@@ -327,7 +341,6 @@ def test_minuit_failed_optimization(
             return mock
 
     monkeypatch.setattr(iminuit, 'Minuit', BadMinuit)
-    # iminuit.Minuit = BadMinuit
     pyhf.set_backend('numpy', 'minuit')
     pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
