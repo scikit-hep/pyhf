@@ -107,9 +107,9 @@ class OptimizerMixin(object):
             jac = None
 
         if do_stitch:
-            self._setup_minimizer(func, pdf, init_pars, par_bounds, [])
+            self._setup_minimizer(func, init_pars, par_bounds, [])
         else:
-            self._setup_minimizer(func, pdf, init_pars, par_bounds, fixed_vals)
+            self._setup_minimizer(func, init_pars, par_bounds, fixed_vals)
 
         minimizer_kwargs = dict(method=method, bounds=bounds, options=kwargs, jac=jac)
         if not do_stitch:

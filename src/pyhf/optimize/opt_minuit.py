@@ -31,7 +31,7 @@ class minuit_optimizer(OptimizerMixin):
         self.name = 'minuit'
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
-    def _setup_minimizer(self, objective, pdf, init_pars, init_bounds, fixed_vals=None):
+    def _setup_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
 
         parnames = ['p{}'.format(i) for i in range(len(init_pars))]
         kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
