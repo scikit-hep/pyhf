@@ -3,7 +3,7 @@ from .. import get_backend
 import tensorflow as tf
 
 
-def make_func(
+def wrap_objective(
     objective, data, pdf, build_pars, do_grad=False,
 ):
     """

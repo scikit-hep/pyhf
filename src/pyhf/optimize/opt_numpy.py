@@ -3,7 +3,7 @@
 from .. import get_backend
 
 
-def make_func(objective, data, pdf, build_pars, do_grad=False):
+def wrap_objective(objective, data, pdf, build_pars, do_grad=False):
     """
     Wrap the objective function for the minimization.
 

@@ -12,22 +12,22 @@ def _get_tensor_shim():
     """
     tensorlib, _ = get_backend()
     if tensorlib.name == 'numpy':
-        from .opt_numpy import make_func as numpy_shim
+        from .opt_numpy import wrap_objective as numpy_shim
 
         return numpy_shim
 
     if tensorlib.name == 'tensorflow':
-        from .opt_tflow import make_func as tflow_shim
+        from .opt_tflow import wrap_objective as tflow_shim
 
         return tflow_shim
 
     if tensorlib.name == 'pytorch':
-        from .opt_pytorch import make_func as pytorch_shim
+        from .opt_pytorch import wrap_objective as pytorch_shim
 
         return pytorch_shim
 
     if tensorlib.name == 'jax':
-        from .opt_jax import make_func as jax_shim
+        from .opt_jax import wrap_objective as jax_shim
 
         return jax_shim
     raise ValueError(f'No optimizer shim for {tensorlib.name}.')
