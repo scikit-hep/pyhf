@@ -103,25 +103,26 @@ class OptimizerMixin(object):
         **kwargs,
     ):
         """
-        Find Function Parameters that minimize the Objective.
+        Find parameters that minimize the objective.
 
         Args:
-            objective: objective function
-            data: observed data
-            pdf: model
-            init_pars: initial parameters
-            par_bounds: parameter boundaries
-            fixed_vals: fixed parameter values
-            return_fitted_val: return bestfit value of the objective
-            return_fit_object: return scipy.optimize.OptimizeResult
+            objective (`func`): objective function
+            data (`list`): observed data
+            pdf (`pyhf.pdf.Model`): model
+            init_pars (`list`): initial parameters
+            par_bounds (`list`): parameter boundaries
+            fixed_vals (`list`): fixed parameter values
+            return_fitted_val (`bool`): return bestfit value of the objective
+            return_fit_object (`bool`): return ``scipy.optimize.OptimizeResult``
             do_grad (`bool`): enable autodifferentiation mode. Default is off.
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
-            method: minimization routine
+            method (`str`): minimization routine
             kwargs: other options to pass through to underlying minimizer
 
         Returns:
-            bestfit parameters
-
+            parameters (`tensor`): fitted parameters
+            minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
+            result (scipy.optimize.OptimizeResult`): if ``return_fit_object`` flagged
         """
         stitch_pars, wrapped_objective, jac, init, bounds = shim(
             objective,
