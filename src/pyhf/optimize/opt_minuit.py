@@ -33,18 +33,18 @@ class minuit_optimizer(OptimizerMixin):
 
     def _get_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
 
-        parnames = ['p{}'.format(i) for i in range(len(init_pars))]
-        kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
-        initvals = {'p{}'.format(i): v for i, v in enumerate(init_pars)}
+        parnames = [f'p{i}' for i in range(len(init_pars))]
+        kw = {f'limit_p{i}': b for i, b in enumerate(init_bounds)}
+        initvals = {f'p{i}': v for i, v in enumerate(init_pars)}
         step_sizes = {
-            'error_p{}'.format(i): (b[1] - b[0]) / float(self.steps)
+            'error_p{i}': (b[1] - b[0]) / float(self.steps)
             for i, b in enumerate(init_bounds)
         }
         fixed_vals = fixed_vals or []
         constraints = {}
         for index, value in fixed_vals:
-            constraints['fix_p{}'.format(index)] = True
-            initvals['p{}'.format(index)] = value
+            constraints[f'fix_p{index}'] = True
+            initvals[f'p{index}'] = value
 
         return iminuit.Minuit(
             objective,
