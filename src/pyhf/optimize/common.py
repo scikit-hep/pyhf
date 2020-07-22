@@ -56,20 +56,27 @@ def shim(
 
     .. note::
 
+        ``minimizer_kwargs`` is a dictionary containing
+
+          - ``func`` (`func`): backend-wrapped ``objective`` function
+          - ``x0`` (`list`):  modified initializations for minimizer
+          - ``jac`` (`func`): callable that accepts same parameters as the input ``objective`` but returns the gradient
+          - ``bounds`` (`list`): modified bounds for minimizer
+          - ``fixed_vals`` (`list`): modified fixed values for minimizer
+
+    .. note::
+
         ``stitch_pars(pars, stitch_with=None)`` is a callable that will
         stitch the fixed parameters of the minimization back into the unfixed
         parameters.
 
     .. note::
 
-        ``do_stitch`` will modify the ``init_pars`` and ``par_bounds`` by stripping away the entries associated with fixed parameters. The parameters can be stitched back in via ``stitch_pars``.
+        ``do_stitch`` will modify the ``init_pars``, ``par_bounds``, and ``fixed_vals`` by stripping away the entries associated with fixed parameters. The parameters can be stitched back in via ``stitch_pars``.
 
     Returns:
+        minimizer_kwargs (`dict`): arguments to pass to a minimizer following the ``scipy.optimize.minimize`` API (see notes)
         stitch_pars (`func`): callable that stitches fixed parameters into the unfixed parameters
-        wrapped_objective (`func`): backend-wrapped ``objective`` function
-        jac (`func`) callable that accepts same parameters as the input ``objective`` but returns the gradient
-        variable_init (`list`): modified initializations for minimizer
-        variable_bounds (`list`): modified bounds for minimizer
     """
     tensorlib, _ = get_backend()
 
@@ -84,6 +91,8 @@ def shim(
         variable_idx = [x for x in all_idx if x not in fixed_idx]
         variable_init = default_backend.tolist(all_init[variable_idx])
         variable_bounds = [par_bounds[i] for i in variable_idx]
+        # stitched out the fixed values, so we don't pass any to the underlying minimizer
+        minimizer_fixed_vals = []
 
         tv = _TensorViewer([fixed_idx, variable_idx])
         # NB: this is a closure, tensorlib needs to be accessed at a different point in time
@@ -95,6 +104,7 @@ def shim(
         tv = None
         variable_init = init_pars
         variable_bounds = par_bounds
+        minimizer_fixed_vals = fixed_vals
         stitch_pars = lambda pars, stitch_with=None: pars
 
     objective_and_grad = _get_tensor_shim()(
@@ -108,4 +118,12 @@ def shim(
         wrapped_objective = objective_and_grad
         jac = None
 
-    return stitch_pars, wrapped_objective, jac, variable_init, variable_bounds
+    minimizer_kwargs = dict(
+        func=wrapped_objective,
+        x0=variable_init,
+        jac=jac,
+        bounds=variable_bounds,
+        fixed_vals=minimizer_fixed_vals,
+    )
+
+    return minimizer_kwargs, stitch_pars

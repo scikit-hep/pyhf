@@ -23,8 +23,8 @@ class scipy_optimizer(OptimizerMixin):
     def _minimize(
         self,
         minimizer,
-        objective,
-        init,
+        func,
+        x0,
         method='SLSQP',
         jac=None,
         bounds=None,
@@ -51,8 +51,8 @@ class scipy_optimizer(OptimizerMixin):
             constraints = []
 
         return minimizer(
-            objective,
-            init,
+            func,
+            x0,
             method=method,
             jac=jac,
             bounds=bounds,

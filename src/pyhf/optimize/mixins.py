@@ -29,8 +29,8 @@ class OptimizerMixin(object):
 
     def _internal_minimize(
         self,
-        objective,
-        init,
+        func,
+        x0,
         method='SLSQP',
         jac=None,
         bounds=None,
@@ -38,11 +38,11 @@ class OptimizerMixin(object):
         options={},
     ):
 
-        minimizer = self._get_minimizer(objective, init, bounds, fixed_vals=fixed_vals)
+        minimizer = self._get_minimizer(func, x0, bounds, fixed_vals=fixed_vals)
         result = self._minimize(
             minimizer,
-            objective,
-            init,
+            func,
+            x0,
             method=method,
             jac=jac,
             bounds=bounds,
@@ -123,7 +123,7 @@ class OptimizerMixin(object):
             minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
             result (scipy.optimize.OptimizeResult`): if ``return_fit_object`` flagged
         """
-        stitch_pars, wrapped_objective, jac, init, bounds = shim(
+        minimizer_kwargs, stitch_pars = shim(
             objective,
             data,
             pdf,
@@ -134,13 +134,9 @@ class OptimizerMixin(object):
             do_stitch=do_stitch,
         )
 
-        minimizer_kwargs = dict(
-            method=method, jac=jac, bounds=bounds, fixed_vals=fixed_vals, options=kwargs
-        )
-        if do_stitch:
-            minimizer_kwargs['fixed_vals'] = []
+        minimizer_kwargs.update(dict(method=method, options=kwargs))
 
-        result = self._internal_minimize(wrapped_objective, init, **minimizer_kwargs)
+        result = self._internal_minimize(**minimizer_kwargs)
         result = self._internal_postprocess(result, stitch_pars)
 
         _returns = [result.x]

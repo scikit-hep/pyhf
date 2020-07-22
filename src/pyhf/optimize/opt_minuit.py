@@ -1,7 +1,7 @@
 """Minuit Optimizer Class."""
+from .. import default_backend
 from .mixins import OptimizerMixin
 import scipy
-import numpy as np
 import iminuit
 
 
@@ -61,8 +61,8 @@ class minuit_optimizer(OptimizerMixin):
     def _minimize(
         self,
         minimizer,
-        objective,
-        init,
+        func,
+        x0,
         method='SLSQP',
         jac=None,
         bounds=None,
@@ -97,8 +97,8 @@ class minuit_optimizer(OptimizerMixin):
             if fmin.is_above_max_edm:
                 message += " Estimated distance to minimum too large."
 
-        n = len(init)
-        hess_inv = np.ones((n, n))
+        n = len(x0)
+        hess_inv = default_backend.ones((n, n))
         if minimizer.valid:
             hess_inv = minimizer.np_covariance()
 
