@@ -63,9 +63,8 @@ def shim(
     """
     tensorlib, _ = get_backend()
 
-    all_init = default_backend.astensor(init_pars)
-
     if do_stitch:
+        all_init = default_backend.astensor(init_pars)
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
 
         fixed_vals = fixed_vals or []
@@ -73,7 +72,7 @@ def shim(
         fixed_idx = [x[0] for x in fixed_vals]
 
         variable_idx = [x for x in all_idx if x not in fixed_idx]
-        variable_init = all_init[variable_idx]
+        variable_init = default_backend.tolist(all_init[variable_idx])
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
         tv = _TensorViewer([fixed_idx, variable_idx])
@@ -82,12 +81,12 @@ def shim(
     else:
         tv = None
         fixed_values_tensor = tensorlib.astensor([], dtype='float')
-        variable_init = all_init
+        variable_init = init_pars
         variable_bounds = par_bounds
         build_pars = lambda pars: pars
 
-    func = _get_tensor_shim()(
+    wrapped_objective = _get_tensor_shim()(
         objective, tensorlib.astensor(data), pdf, build_pars, do_grad=do_grad,
     )
 
-    return tv, fixed_values_tensor, func, variable_init, variable_bounds
+    return tv, fixed_values_tensor, wrapped_objective, variable_init, variable_bounds

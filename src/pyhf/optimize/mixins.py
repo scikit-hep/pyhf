@@ -27,33 +27,6 @@ class OptimizerMixin(object):
                 f"""Unexpected keyword argument(s): '{"', '".join(kwargs.keys())}'"""
             )
 
-    def _internal_minimize(
-        self,
-        func,
-        init,
-        method='SLSQP',
-        jac=None,
-        bounds=None,
-        fixed_vals=None,
-        options={},
-    ):
-        result = self._minimize(
-            func,
-            init,
-            method=method,
-            bounds=bounds,
-            fixed_vals=fixed_vals,
-            options=options,
-            jac=jac,
-        )
-
-        try:
-            assert result.success
-        except AssertionError:
-            log.error(result)
-            raise
-        return result
-
     def minimize(
         self,
         objective,
@@ -89,7 +62,7 @@ class OptimizerMixin(object):
 
         """
         tensorlib, _ = get_backend()
-        tv, fixed_values_tensor, func_and_grad, init, bounds = shim(
+        tv, fixed_values_tensor, objective_and_grad, init, bounds = shim(
             objective,
             data,
             pdf,
@@ -99,22 +72,27 @@ class OptimizerMixin(object):
             do_grad=do_grad,
             do_stitch=do_stitch,
         )
+
         if do_grad:
-            func = lambda pars: func_and_grad(pars)[0]
-            jac = lambda pars: func_and_grad(pars)[1]
+            wrapped_objective = lambda pars: objective_and_grad(pars)[0]
+            jac = lambda pars: objective_and_grad(pars)[1]
         else:
-            func = func_and_grad
+            wrapped_objective = objective_and_grad
             jac = None
 
-        if do_stitch:
-            self._setup_minimizer(func, init_pars, par_bounds, [])
-        else:
-            self._setup_minimizer(func, init_pars, par_bounds, fixed_vals)
-
-        minimizer_kwargs = dict(method=method, bounds=bounds, options=kwargs, jac=jac)
+        minimizer_kwargs = dict(
+            method=method, jac=jac, bounds=bounds, fixed_vals=[], **kwargs
+        )
         if not do_stitch:
             minimizer_kwargs.update(dict(fixed_vals=fixed_vals))
-        result = self._internal_minimize(func, init, **minimizer_kwargs)
+
+        result = self._minimize(wrapped_objective, init, **minimizer_kwargs)
+
+        try:
+            assert result.success
+        except AssertionError:
+            log.error(result)
+            raise
 
         nonfixed_vals = tensorlib.astensor(result.x)
         fitted_val = result.fun

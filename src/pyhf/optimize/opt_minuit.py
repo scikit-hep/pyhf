@@ -31,20 +31,44 @@ class minuit_optimizer(OptimizerMixin):
         self.name = 'minuit'
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
-    def _setup_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
+    def _minimize(
+        self,
+        objective,
+        init,
+        method='SLSQP',
+        jac=None,
+        bounds=None,
+        fixed_vals=None,
+        return_uncertainties=False,
+        options={},
+    ):
+        """
+        Same signature as scipy.optimize.minimize.
 
-        parnames = ['p{}'.format(i) for i in range(len(init_pars))]
-        kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
-        initvals = {'p{}'.format(i): v for i, v in enumerate(init_pars)}
+        This returns a callable that returns the fitresult.
+
+        Note: an additional `minuit` is injected into the fitresult to get the
+        underlying minimizer.
+
+        Minimizer Options:
+            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
+
+        Returns:
+            fitresult (`scipy.optimize.OptimizeResult`): the fit result
+        """
+        parnames = ['p{}'.format(i) for i in range(len(init))]
+        kw = {'limit_p{}'.format(i): b for i, b in enumerate(bounds)}
+        initvals = {'p{}'.format(i): v for i, v in enumerate(init)}
         step_sizes = {
             'error_p{}'.format(i): (b[1] - b[0]) / float(self.steps)
-            for i, b in enumerate(init_bounds)
+            for i, b in enumerate(bounds)
         }
         fixed_vals = fixed_vals or []
         constraints = {}
         for index, value in fixed_vals:
             constraints['fix_p{}'.format(index)] = True
             initvals['p{}'.format(index)] = value
+
         self._minimizer = iminuit.Minuit(
             objective,
             print_level=1 if self.verbose else 0,
@@ -57,29 +81,6 @@ class minuit_optimizer(OptimizerMixin):
             **step_sizes,
         )
 
-    def _minimize(
-        self,
-        func,
-        init,
-        method='SLSQP',
-        jac=None,
-        bounds=None,
-        fixed_vals=None,
-        options={},
-    ):
-        """
-        Same signature as scipy.optimize.minimize.
-
-        Note: an additional `minuit` is injected into the fitresult to get the
-        underlying minimizer.
-
-        Minimizer Options:
-            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
-
-        Returns:
-            fitresult (`scipy.optimize.OptimizeResult`): the fit result
-        """
-        return_uncertainties = options.pop('return_uncertainties', False)
         self._minimizer.migrad(ncall=self.maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
