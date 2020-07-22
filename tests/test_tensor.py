@@ -65,6 +65,9 @@ def test_complex_tensor_ops(backend):
         [4, 5, 6],
     ]
     assert tb.tolist(
+        tb.stack([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])], axis=1)
+    ) == [[1, 4], [2, 5], [3, 6]]
+    assert tb.tolist(
         tb.concatenate([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])
     ) == [1, 2, 3, 4, 5, 6]
     assert tb.tolist(tb.clip(tb.astensor([-2, -1, 0, 1, 2]), -1, 1)) == [

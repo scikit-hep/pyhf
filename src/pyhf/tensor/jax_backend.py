@@ -199,9 +199,7 @@ class jax_backend(object):
         return np.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
-        if axis == 0:
-            return np.stack(sequence)
-        raise RuntimeError('stack axis!=0')
+        return np.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         return np.where(mask, tensor_in_1, tensor_in_2)
