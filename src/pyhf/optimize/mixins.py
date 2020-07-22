@@ -29,7 +29,7 @@ class OptimizerMixin(object):
 
     def _internal_minimize(
         self,
-        func,
+        objective,
         init,
         method='SLSQP',
         jac=None,
@@ -37,14 +37,17 @@ class OptimizerMixin(object):
         fixed_vals=None,
         options={},
     ):
+
+        minimizer = self._get_minimizer(objective, init, bounds, fixed_vals=fixed_vals)
         result = self._minimize(
-            func,
+            minimizer,
+            objective,
             init,
             method=method,
+            jac=jac,
             bounds=bounds,
             fixed_vals=fixed_vals,
             options=options,
-            jac=jac,
         )
 
         try:
@@ -53,6 +56,36 @@ class OptimizerMixin(object):
             log.error(result)
             raise
         return result
+
+    def _internal_postprocess(self, fitresult, stitch_pars):
+        """
+        Post-process the fit result, ``scipy.optimize.OptimizeResult`` object.
+
+        Returns:
+            fitresult (`scipy.optimize.OptimizeResult`): A modified version of the fit result.
+        """
+        tensorlib, _ = get_backend()
+
+        fitted_val = tensorlib.astensor(fitresult.fun)
+        fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
+        # extract number of fixed parameters
+        num_fixed_pars = len(fitted_pars) - len(fitresult.x)
+
+        # check if uncertainties were provided
+        uncertainties = getattr(fitresult, 'unc', None)
+        if uncertainties is not None:
+            # stitch in zero-uncertainty for fixed values
+            fitted_uncs = stitch_pars(
+                tensorlib.astensor(uncertainties),
+                stitch_with=tensorlib.zeros(num_fixed_pars),
+            )
+            fitresult.unc = fitted_uncs
+            fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
+
+        fitresult.x = fitted_pars
+        fitresult.fun = tensorlib.astensor(fitresult.fun)
+
+        return fitresult
 
     def minimize(
         self,
@@ -63,6 +96,7 @@ class OptimizerMixin(object):
         par_bounds,
         fixed_vals=None,
         return_fitted_val=False,
+        return_fit_object=False,
         do_grad=False,
         do_stitch=False,
         method='SLSQP',
@@ -79,6 +113,7 @@ class OptimizerMixin(object):
             par_bounds: parameter boundaries
             fixed_vals: fixed parameter values
             return_fitted_val: return bestfit value of the objective
+            return_fit_object: return scipy.optimize.OptimizeResult
             do_grad (`bool`): enable autodifferentiation mode. Default is off.
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
             method: minimization routine
@@ -88,8 +123,7 @@ class OptimizerMixin(object):
             bestfit parameters
 
         """
-        tensorlib, _ = get_backend()
-        tv, fixed_values_tensor, func_and_grad, init, bounds = shim(
+        stitch_pars, wrapped_objective, jac, init, bounds = shim(
             objective,
             data,
             pdf,
@@ -99,45 +133,19 @@ class OptimizerMixin(object):
             do_grad=do_grad,
             do_stitch=do_stitch,
         )
-        if do_grad:
-            func = lambda pars: func_and_grad(pars)[0]
-            jac = lambda pars: func_and_grad(pars)[1]
-        else:
-            func = func_and_grad
-            jac = None
 
+        minimizer_kwargs = dict(
+            method=method, jac=jac, bounds=bounds, fixed_vals=fixed_vals, options=kwargs
+        )
         if do_stitch:
-            self._setup_minimizer(func, init_pars, par_bounds, [])
-        else:
-            self._setup_minimizer(func, init_pars, par_bounds, fixed_vals)
+            minimizer_kwargs['fixed_vals'] = []
 
-        minimizer_kwargs = dict(method=method, bounds=bounds, options=kwargs, jac=jac)
-        if not do_stitch:
-            minimizer_kwargs.update(dict(fixed_vals=fixed_vals))
-        result = self._internal_minimize(func, init, **minimizer_kwargs)
+        result = self._internal_minimize(wrapped_objective, init, **minimizer_kwargs)
+        result = self._internal_postprocess(result, stitch_pars)
 
-        nonfixed_vals = tensorlib.astensor(result.x)
-        fitted_val = result.fun
-        # stitch things back up if needed
-        if do_stitch:
-            fitted_pars = tv.stitch([fixed_values_tensor, nonfixed_vals])
-        else:
-            fitted_pars = nonfixed_vals
-
-        # check if uncertainties were provided
-        uncertainties = getattr(result, 'unc', None)
-        if uncertainties is not None:
-            if do_stitch:
-                # stitch in zero-uncertainty for fixed values
-                fitted_uncs = tv.stitch(
-                    [
-                        tensorlib.zeros(fixed_values_tensor.shape),
-                        tensorlib.astensor(uncertainties),
-                    ]
-                )
-            else:
-                fitted_uncs = tensorlib.astensor(uncertainties)
-            fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
+        _returns = [result.x]
         if return_fitted_val:
-            return fitted_pars, tensorlib.astensor(fitted_val)
-        return fitted_pars
+            _returns.append(result.fun)
+        if return_fit_object:
+            _returns.append(result)
+        return tuple(_returns) if len(_returns) > 1 else _returns[0]

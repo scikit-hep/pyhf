@@ -31,7 +31,7 @@ class minuit_optimizer(OptimizerMixin):
         self.name = 'minuit'
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
-    def _setup_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
+    def _get_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
 
         parnames = ['p{}'.format(i) for i in range(len(init_pars))]
         kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
@@ -45,7 +45,8 @@ class minuit_optimizer(OptimizerMixin):
         for index, value in fixed_vals:
             constraints['fix_p{}'.format(index)] = True
             initvals['p{}'.format(index)] = value
-        self._minimizer = iminuit.Minuit(
+
+        return iminuit.Minuit(
             objective,
             print_level=1 if self.verbose else 0,
             errordef=self.errordef,
@@ -59,14 +60,17 @@ class minuit_optimizer(OptimizerMixin):
 
     def _minimize(
         self,
-        func,
+        minimizer,
+        objective,
         init,
         method='SLSQP',
         jac=None,
         bounds=None,
         fixed_vals=None,
+        return_uncertainties=False,
         options={},
     ):
+
         """
         Same signature as scipy.optimize.minimize.
 
@@ -79,14 +83,15 @@ class minuit_optimizer(OptimizerMixin):
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
+        assert method == 'SLSQP', "Optimizer only supports 'SLSQP' minimization."
         return_uncertainties = options.pop('return_uncertainties', False)
-        self._minimizer.migrad(ncall=self.maxiter)
+        minimizer.migrad(ncall=self.maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
         message = "Optimization terminated successfully."
-        if not self._minimizer.valid:
+        if not minimizer.valid:
             message = "Optimization failed."
-            fmin = self._minimizer.fmin
+            fmin = minimizer.fmin
             if fmin.has_reached_call_limit:
                 message += " Call limit was reached."
             if fmin.is_above_max_edm:
@@ -94,21 +99,21 @@ class minuit_optimizer(OptimizerMixin):
 
         n = len(init)
         hess_inv = np.ones((n, n))
-        if self._minimizer.valid:
-            hess_inv = self._minimizer.np_covariance()
+        if minimizer.valid:
+            hess_inv = minimizer.np_covariance()
 
         unc = None
         if return_uncertainties:
-            unc = self._minimizer.np_errors()
+            unc = minimizer.np_errors()
 
         return scipy.optimize.OptimizeResult(
-            x=self._minimizer.np_values(),
+            x=minimizer.np_values(),
             unc=unc,
-            success=self._minimizer.valid,
-            fun=self._minimizer.fval,
+            success=minimizer.valid,
+            fun=minimizer.fval,
             hess_inv=hess_inv,
             message=message,
-            nfev=self._minimizer.ncalls,
-            njev=self._minimizer.ngrads,
-            minuit=self._minimizer,
+            nfev=minimizer.ncalls,
+            njev=minimizer.ngrads,
+            minuit=minimizer,
         )

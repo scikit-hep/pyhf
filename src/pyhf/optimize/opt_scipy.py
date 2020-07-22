@@ -17,17 +17,19 @@ class scipy_optimizer(OptimizerMixin):
         self.name = 'scipy'
         super(scipy_optimizer, self).__init__(*args, **kwargs)
 
-    def _setup_minimizer(self, objective, init_pars, par_bounds, fixed_vals=None):
-        self._minimizer = scipy.optimize.minimize
+    def _get_minimizer(self, objective, init_pars, par_bounds, fixed_vals=None):
+        return scipy.optimize.minimize
 
     def _minimize(
         self,
-        func,
+        minimizer,
+        objective,
         init,
         method='SLSQP',
         jac=None,
         bounds=None,
         fixed_vals=None,
+        return_uncertainties=False,
         options={},
     ):
         """
@@ -36,6 +38,9 @@ class scipy_optimizer(OptimizerMixin):
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
+        assert (
+            'return_uncertainties' not in options
+        ), "Optimizer does not support returning uncertainties."
 
         fixed_vals = fixed_vals or []
         indices = [i for i, _ in fixed_vals]
@@ -45,8 +50,8 @@ class scipy_optimizer(OptimizerMixin):
         else:
             constraints = []
 
-        return self._minimizer(
-            func,
+        return minimizer(
+            objective,
             init,
             method=method,
             jac=jac,

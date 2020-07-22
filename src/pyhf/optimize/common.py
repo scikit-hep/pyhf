@@ -63,9 +63,8 @@ def shim(
     """
     tensorlib, _ = get_backend()
 
-    all_init = default_backend.astensor(init_pars)
-
     if do_stitch:
+        all_init = default_backend.astensor(init_pars)
         all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
 
         fixed_vals = fixed_vals or []
@@ -73,21 +72,30 @@ def shim(
         fixed_idx = [x[0] for x in fixed_vals]
 
         variable_idx = [x for x in all_idx if x not in fixed_idx]
-        variable_init = all_init[variable_idx]
+        variable_init = default_backend.tolist(all_init[variable_idx])
         variable_bounds = [par_bounds[i] for i in variable_idx]
 
         tv = _TensorViewer([fixed_idx, variable_idx])
-        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
-        build_pars = lambda pars: tv.stitch([fixed_values_tensor, pars])
+        # NB: this is a closure, tensorlib needs to be accessed at a different point in time
+        def stitch_pars(pars, stitch_with=fixed_values):
+            tb, _ = get_backend()
+            return tv.stitch([tb.astensor(fixed_values, dtype='float'), pars])
+
     else:
         tv = None
-        fixed_values_tensor = tensorlib.astensor([], dtype='float')
-        variable_init = all_init
+        variable_init = init_pars
         variable_bounds = par_bounds
-        build_pars = lambda pars: pars
+        stitch_pars = lambda pars, stitch_with=None: pars
 
-    func = _get_tensor_shim()(
-        objective, tensorlib.astensor(data), pdf, build_pars, do_grad=do_grad,
+    objective_and_grad = _get_tensor_shim()(
+        objective, tensorlib.astensor(data), pdf, stitch_pars, do_grad=do_grad,
     )
 
-    return tv, fixed_values_tensor, func, variable_init, variable_bounds
+    if do_grad:
+        wrapped_objective = lambda pars: objective_and_grad(pars)[0]
+        jac = lambda pars: objective_and_grad(pars)[1]
+    else:
+        wrapped_objective = objective_and_grad
+        jac = None
+
+    return stitch_pars, wrapped_objective, jac, variable_init, variable_bounds
