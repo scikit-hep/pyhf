@@ -19,7 +19,7 @@ class scipy_optimizer(OptimizerMixin):
         super(scipy_optimizer, self).__init__(*args, **kwargs)
 
     def _get_minimizer(
-        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, jac=None
+        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
     ):
         return scipy.optimize.minimize
 
@@ -28,7 +28,7 @@ class scipy_optimizer(OptimizerMixin):
         minimizer,
         func,
         x0,
-        jac=None,
+        do_grad=False,
         bounds=None,
         fixed_vals=None,
         return_uncertainties=False,
@@ -65,7 +65,7 @@ class scipy_optimizer(OptimizerMixin):
             func,
             x0,
             method=method,
-            jac=jac,
+            do_grad=do_grad,
             bounds=bounds,
             constraints=constraints,
             options=dict(maxiter=maxiter, disp=verbose),

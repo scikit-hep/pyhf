@@ -58,9 +58,9 @@ def shim(
 
         ``minimizer_kwargs`` is a dictionary containing
 
-          - ``func`` (`func`): backend-wrapped ``objective`` function
+          - ``func`` (`func`): backend-wrapped ``objective`` function (potentially with gradient)
           - ``x0`` (`list`):  modified initializations for minimizer
-          - ``jac`` (`func`): callable that accepts same parameters as the input ``objective`` but returns the gradient
+          - ``do_grad`` (`bool`): whether or not gradient is used
           - ``bounds`` (`list`): modified bounds for minimizer
           - ``fixed_vals`` (`list`): modified fixed values for minimizer
 
@@ -113,7 +113,7 @@ def shim(
     minimizer_kwargs = dict(
         func=objective_and_grad,
         x0=variable_init,
-        jac=do_grad,
+        do_grad=do_grad,
         bounds=variable_bounds,
         fixed_vals=minimizer_fixed_vals,
     )

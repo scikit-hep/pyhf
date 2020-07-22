@@ -32,7 +32,7 @@ class minuit_optimizer(OptimizerMixin):
         super(minuit_optimizer, self).__init__(*args, **kwargs)
 
     def _get_minimizer(
-        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, jac=None
+        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
     ):
 
         step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
@@ -43,7 +43,7 @@ class minuit_optimizer(OptimizerMixin):
             fixed_bools[index] = True
 
         # Minuit requires jac=callable
-        if jac:
+        if do_grad:
             wrapped_objective = lambda pars: objective_and_grad(pars)[0]
             jac = lambda pars: objective_and_grad(pars)[1]
         else:
@@ -67,7 +67,7 @@ class minuit_optimizer(OptimizerMixin):
         minimizer,
         func,
         x0,
-        jac=None,
+        do_grad=False,
         bounds=None,
         fixed_vals=None,
         return_uncertainties=False,
