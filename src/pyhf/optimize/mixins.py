@@ -31,7 +31,9 @@ class OptimizerMixin(object):
         self, func, x0, jac=None, bounds=None, fixed_vals=None, options={},
     ):
 
-        minimizer = self._get_minimizer(func, x0, bounds, fixed_vals=fixed_vals)
+        minimizer = self._get_minimizer(
+            func, x0, bounds, fixed_vals=fixed_vals, jac=jac
+        )
         result = self._minimize(
             minimizer,
             func,

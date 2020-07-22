@@ -110,17 +110,10 @@ def shim(
         objective, tensorlib.astensor(data), pdf, stitch_pars, do_grad=do_grad,
     )
 
-    if do_grad:
-        wrapped_objective = lambda pars: objective_and_grad(pars)[0]
-        jac = lambda pars: objective_and_grad(pars)[1]
-    else:
-        wrapped_objective = objective_and_grad
-        jac = None
-
     minimizer_kwargs = dict(
-        func=wrapped_objective,
+        func=objective_and_grad,
         x0=variable_init,
-        jac=jac,
+        jac=do_grad,
         bounds=variable_bounds,
         fixed_vals=minimizer_fixed_vals,
     )
