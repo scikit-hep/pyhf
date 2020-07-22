@@ -33,30 +33,23 @@ class minuit_optimizer(OptimizerMixin):
 
     def _get_minimizer(self, objective, init_pars, init_bounds, fixed_vals=None):
 
-        parnames = [f'p{i}' for i in range(len(init_pars))]
-        kw = {f'limit_p{i}': b for i, b in enumerate(init_bounds)}
-        initvals = {f'p{i}': v for i, v in enumerate(init_pars)}
-        step_sizes = {
-            f'error_p{i}': (b[1] - b[0]) / float(self.steps)
-            for i, b in enumerate(init_bounds)
-        }
+        step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
         fixed_vals = fixed_vals or []
-        constraints = {}
-        for index, value in fixed_vals:
-            constraints[f'fix_p{index}'] = True
-            initvals[f'p{index}'] = value
+        # Minuit wants True/False for each parameter
+        fixed_bools = [False] * len(init_pars)
+        for index, _ in fixed_vals:
+            fixed_bools[index] = True
 
-        return iminuit.Minuit(
-            objective,
+        kwargs = dict(
+            fcn=objective,
+            start=init_pars,
+            error=step_sizes,
+            limit=init_bounds,
+            fix=fixed_bools,
             print_level=1 if self.verbose else 0,
             errordef=self.errordef,
-            use_array_call=True,
-            name=parnames,
-            **kw,
-            **constraints,
-            **initvals,
-            **step_sizes,
         )
+        return iminuit.Minuit.from_array_func(**kwargs)
 
     def _minimize(
         self,
