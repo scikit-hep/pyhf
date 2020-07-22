@@ -1,5 +1,5 @@
 """Helper Classes for use of automatic differentiation."""
-from .. import get_backend
+from .. import get_backend, exceptions
 from .common import shim
 
 import logging
@@ -23,8 +23,8 @@ class OptimizerMixin(object):
         self._minimizer = None
 
         if kwargs:
-            raise KeyError(
-                f"""Unexpected keyword argument(s): '{"', '".join(kwargs.keys())}'"""
+            raise exceptions.Unsupported(
+                f"Unsupported kwargs were passed in: {list(kwargs.keys())}."
             )
 
     def _internal_minimize(

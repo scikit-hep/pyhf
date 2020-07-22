@@ -51,7 +51,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
     # numpy does not support grad
     if pyhf.tensorlib.name == 'numpy' and do_grad:
-        with pytest.raises(AssertionError):
+        with pytest.raises(pyhf.exceptions.Unsupported):
             pyhf.infer.mle.fit(data, m, do_grad=do_grad)
     else:
         identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
@@ -131,8 +131,22 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
     ids=['mixin', 'scipy', 'minuit'],
 )
 def test_optimizer_mixin_extra_kwargs(optimizer):
-    with pytest.raises(KeyError):
+    with pytest.raises(pyhf.exceptions.Unsupported):
         optimizer(fake_kwarg=False)
+
+
+@pytest.mark.parametrize(
+    'optimizer',
+    [pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
+    ids=['scipy', 'minuit'],
+)
+def test_optimizer_unsupported_minimizer_options(optimizer):
+    pyhf.set_backend(pyhf.default_backend, optimizer())
+    m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
+    with pytest.raises(pyhf.exceptions.Unsupported) as excinfo:
+        pyhf.infer.mle.fit(data, m, unsupported_minimizer_options=False)
+    assert 'unsupported_minimizer_options' in str(excinfo.value)
 
 
 @pytest.fixture(scope='module')
