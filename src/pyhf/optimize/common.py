@@ -101,7 +101,6 @@ def shim(
             return tv.stitch([tb.astensor(fixed_values, dtype='float'), pars])
 
     else:
-        tv = None
         variable_init = init_pars
         variable_bounds = par_bounds
         minimizer_fixed_vals = fixed_vals
