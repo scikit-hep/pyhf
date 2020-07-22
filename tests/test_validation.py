@@ -967,6 +967,10 @@ def test_optimizer_grad(backend, optimizer):
     result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)
     result_grad = pyhf.infer.mle.fit(data, pdf, do_grad=True)
 
+    # TODO: let's make this agreement better
     assert np.allclose(
-        pyhf.tensorlib.tolist(result_nograd), pyhf.tensorlib.tolist(result_grad),
+        pyhf.tensorlib.tolist(result_nograd),
+        pyhf.tensorlib.tolist(result_grad),
+        rtol=1e-6,
+        atol=1e-6,
     )
