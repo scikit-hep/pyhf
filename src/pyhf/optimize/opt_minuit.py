@@ -37,7 +37,7 @@ class minuit_optimizer(OptimizerMixin):
         kw = {f'limit_p{i}': b for i, b in enumerate(init_bounds)}
         initvals = {f'p{i}': v for i, v in enumerate(init_pars)}
         step_sizes = {
-            'error_p{i}': (b[1] - b[0]) / float(self.steps)
+            f'error_p{i}': (b[1] - b[0]) / float(self.steps)
             for i, b in enumerate(init_bounds)
         }
         fixed_vals = fixed_vals or []
