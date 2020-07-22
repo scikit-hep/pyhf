@@ -47,19 +47,29 @@ def shim(
     Prepare Minimization for Optimizer.
 
     Args:
-        objective: objective function
-        data: observed data
-        pdf: model
-        init_pars: initial parameters
-        par_bounds: parameter boundaries
-        fixed_vals: fixed parameter values
+        objective (`func`): objective function
+        data (`list`): observed data
+        pdf (`pyhf.pdf.Model`): model
+        init_pars (`list`): initial parameters
+        par_bounds (`list`): parameter boundaries
+        fixed_vals (`list`): fixed parameter values
+
+    .. note::
+
+        ``stitch_pars(pars, stitch_with=None)`` is a callable that will
+        stitch the fixed parameters of the minimization back into the unfixed
+        parameters.
+
+    .. note::
+
+        ``do_stitch`` will modify the ``init_pars`` and ``par_bounds`` by stripping away the entries associated with fixed parameters. The parameters can be stitched back in via ``stitch_pars``.
 
     Returns:
-        tv: tensor viewer
-        fixed_values_tensor: constant parameters in the fit
-        func: tensor backend wrapped function,gradient pair
-        variable_init: initializations for minimizer
-        variable_bounds: bounds for minimizer
+        stitch_pars (`func`): callable that stitches fixed parameters into the unfixed parameters
+        wrapped_objective (`func`): backend-wrapped ``objective`` function
+        jac (`func`) callable that accepts same parameters as the input ``objective`` but returns the gradient
+        variable_init (`list`): modified initializations for minimizer
+        variable_bounds (`list`): modified bounds for minimizer
     """
     tensorlib, _ = get_backend()
 
