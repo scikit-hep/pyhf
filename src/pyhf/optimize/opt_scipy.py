@@ -17,9 +17,12 @@ class scipy_optimizer(OptimizerMixin):
         self.name = 'scipy'
         super(scipy_optimizer, self).__init__(*args, **kwargs)
 
+    def _setup_minimizer(self, objective, init_pars, par_bounds, fixed_vals=None):
+        self._minimizer = scipy.optimize.minimize
+
     def _minimize(
         self,
-        objective,
+        func,
         init,
         method='SLSQP',
         jac=None,
@@ -30,12 +33,9 @@ class scipy_optimizer(OptimizerMixin):
         """
         Same signature as scipy.optimize.minimize.
 
-        This returns a callable that returns the fitresult.
-
         Returns:
             fitresult (`scipy.optimize.OptimizeResult`): the fit result
         """
-        self._minimizer = scipy.optimize.minimize
 
         fixed_vals = fixed_vals or []
         indices = [i for i, _ in fixed_vals]
@@ -46,7 +46,7 @@ class scipy_optimizer(OptimizerMixin):
             constraints = []
 
         return self._minimizer(
-            objective,
+            func,
             init,
             method=method,
             jac=jac,
