@@ -17,9 +17,7 @@ class scipy_optimizer(OptimizerMixin):
         self.name = 'scipy'
         super(scipy_optimizer, self).__init__(*args, **kwargs)
 
-    def _setup_minimizer(
-        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
-    ):
+    def _setup_minimizer(self, objective, pdf, init_pars, par_bounds, fixed_vals=None):
         self._minimizer = scipy.optimize.minimize
 
     def _minimize(
