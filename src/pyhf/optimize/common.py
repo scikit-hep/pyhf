@@ -1,5 +1,5 @@
 """Common Backend Shim to prepare minimization for optimizer."""
-from .. import get_backend, default_backend
+from .. import get_backend
 from ..tensor.common import _TensorViewer
 
 
@@ -81,15 +81,15 @@ def shim(
     tensorlib, _ = get_backend()
 
     if do_stitch:
-        all_init = default_backend.astensor(init_pars)
-        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
+        all_init = tensorlib.astensor(init_pars)
+        all_idx = tensorlib.astensor(range(pdf.config.npars), dtype='int')
 
         fixed_vals = fixed_vals or []
         fixed_values = [x[1] for x in fixed_vals]
         fixed_idx = [x[0] for x in fixed_vals]
 
         variable_idx = [x for x in all_idx if x not in fixed_idx]
-        variable_init = default_backend.tolist(all_init[variable_idx])
+        variable_init = tensorlib.tolist(all_init[variable_idx])
         variable_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
         minimizer_fixed_vals = []
