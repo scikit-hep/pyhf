@@ -84,12 +84,12 @@ def shim(
     all_idx = tensorlib.astensor(range(pdf.config.npars), dtype='int')
 
     fixed_vals = fixed_vals or []
-    fixed_values = [x[1] for x in fixed_vals]
     fixed_idx = [x[0] for x in fixed_vals]
 
     variable_idx = [x for x in all_idx if x not in fixed_idx]
 
     if do_stitch:
+        fixed_values = [x[1] for x in fixed_vals]
         variable_init = tensorlib.tolist(all_init[variable_idx])
         variable_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
@@ -102,6 +102,8 @@ def shim(
             return tv.stitch([tb.astensor(fixed_values, dtype='float'), pars])
 
     else:
+        # NB: we set this to [] so that jax.jit doesn't stitch
+        fixed_values = []
         variable_init = init_pars
         variable_bounds = par_bounds
         minimizer_fixed_vals = fixed_vals
