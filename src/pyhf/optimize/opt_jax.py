@@ -8,11 +8,13 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def _final_objective(pars, data, fixed_values, fixed_idx, variable_idx, objective, pdf):
+def _final_objective(
+    pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf
+):
     log.debug('jitting function')
     tensorlib, _ = get_backend()
     pars = tensorlib.astensor(pars)
-    if len(fixed_values) > 0:
+    if do_stitch:
         tv = _TensorViewer([fixed_idx, variable_idx])
         constrained_pars = tv.stitch(
             [tensorlib.astensor(fixed_values, dtype='float'), pars]
@@ -23,10 +25,10 @@ def _final_objective(pars, data, fixed_values, fixed_idx, variable_idx, objectiv
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6)
+    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7)
 )
 
-_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6))
+_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7))
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
@@ -55,6 +57,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
                 jit_pieces['fixed_values'],
                 tuple(jit_pieces['fixed_idx']),
                 tuple(jit_pieces['variable_idx']),
+                jit_pieces['do_stitch'],
                 objective,
                 pdf,
             )
@@ -69,6 +72,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
                 jit_pieces['fixed_values'],
                 tuple(jit_pieces['fixed_idx']),
                 tuple(jit_pieces['variable_idx']),
+                jit_pieces['do_stitch'],
                 objective,
                 pdf,
             )
