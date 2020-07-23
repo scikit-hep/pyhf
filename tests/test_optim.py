@@ -103,14 +103,14 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
-        rtol = 1e-6
+        rtol = 2e-06
         # handle cases where macos and ubuntu provide very different results numerical
         if 'no_grad-minuit-tensorflow-32b' in identifier:
             # not a very large difference, so we bump the relative difference down
-            rtol = 3e-2
+            rtol = 3e-02
         if 'no_grad-minuit-pytorch-32b' in identifier:
             # quite a large difference
-            rtol = 3e-1
+            rtol = 3e-01
         if 'do_grad-minuit-pytorch-32b' in identifier:
             # a small difference
             rtol = 7e-05
