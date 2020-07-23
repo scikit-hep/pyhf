@@ -31,13 +31,13 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
             # when tf.gather is used and this needs to be converted back to a
             # tensor to be usable as a value
             grad = tape.gradient(constr_nll, pars)
-            return constr_nll.numpy(), tf.convert_to_tensor(grad)
+            return constr_nll.numpy()[0], tf.convert_to_tensor(grad)
 
     else:
 
         def func(pars):
             pars = tensorlib.astensor(pars)
             constrained_pars = stitch_pars(pars)
-            return objective(constrained_pars, data, pdf)
+            return objective(constrained_pars, data, pdf)[0]
 
     return func
