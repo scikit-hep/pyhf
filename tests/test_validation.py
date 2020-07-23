@@ -941,11 +941,13 @@ def test_optimizer_stitching(backend, optimizer):
     pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
     data = [125.0] + pdf.config.auxdata
 
-    result_nostitch = pyhf.infer.mle.fit(data, pdf, do_stitch=False)
-    result_stitch = pyhf.infer.mle.fit(data, pdf, do_stitch=True)
+    result_nostitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=False)
+    result_stitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=True)
 
     assert np.allclose(
-        pyhf.tensorlib.tolist(result_nostitch), pyhf.tensorlib.tolist(result_stitch),
+        pyhf.tensorlib.tolist(result_nostitch),
+        pyhf.tensorlib.tolist(result_stitch),
+        rtol=4e-05,
     )
 
 
