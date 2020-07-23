@@ -151,14 +151,14 @@ def test_optimizer_unsupported_minimizer_options(optimizer):
     assert 'unsupported_minimizer_options' in str(excinfo.value)
 
 
-@pytest.mark.parametrize('return_fit_object', [False, True], ids=['no_obj', 'obj'])
+@pytest.mark.parametrize('return_result_obj', [False, True], ids=['no_obj', 'obj'])
 @pytest.mark.parametrize('return_fitted_val', [False, True], ids=['no_fval', 'fval'])
 @pytest.mark.parametrize(
     'optimizer',
     [pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
     ids=['scipy', 'minuit'],
 )
-def test_optimizer_return_values(optimizer, return_fitted_val, return_fit_object):
+def test_optimizer_return_values(optimizer, return_fitted_val, return_result_obj):
     pyhf.set_backend(pyhf.default_backend, optimizer())
     m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
@@ -166,17 +166,17 @@ def test_optimizer_return_values(optimizer, return_fitted_val, return_fit_object
         data,
         m,
         return_fitted_val=return_fitted_val,
-        return_fit_object=return_fit_object,
+        return_result_obj=return_result_obj,
     )
 
-    if not return_fitted_val and not return_fit_object:
+    if not return_fitted_val and not return_result_obj:
         assert not isinstance(result, tuple)
         assert len(result) == 2
     else:
         assert isinstance(result, tuple)
-        assert len(result) == sum([1, return_fitted_val, return_fit_object])
+        assert len(result) == sum([1, return_fitted_val, return_result_obj])
 
-    if return_fit_object:
+    if return_result_obj:
         assert isinstance(result[-1], OptimizeResult)
 
 

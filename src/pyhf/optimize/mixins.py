@@ -90,7 +90,7 @@ class OptimizerMixin(object):
         par_bounds,
         fixed_vals=None,
         return_fitted_val=False,
-        return_fit_object=False,
+        return_result_obj=False,
         do_grad=False,
         do_stitch=False,
         **kwargs,
@@ -106,7 +106,7 @@ class OptimizerMixin(object):
             par_bounds (`list`): parameter boundaries
             fixed_vals (`list`): fixed parameter values
             return_fitted_val (`bool`): return bestfit value of the objective
-            return_fit_object (`bool`): return ``scipy.optimize.OptimizeResult``
+            return_result_obj (`bool`): return ``scipy.optimize.OptimizeResult``
             do_grad (`bool`): enable autodifferentiation mode. Default is off.
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
@@ -114,7 +114,7 @@ class OptimizerMixin(object):
         Returns:
             parameters (`tensor`): fitted parameters
             minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
-            result (scipy.optimize.OptimizeResult`): if ``return_fit_object`` flagged
+            result (scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
         minimizer_kwargs, stitch_pars = shim(
             objective,
@@ -133,6 +133,6 @@ class OptimizerMixin(object):
         _returns = [result.x]
         if return_fitted_val:
             _returns.append(result.fun)
-        if return_fit_object:
+        if return_result_obj:
             _returns.append(result)
         return tuple(_returns) if len(_returns) > 1 else _returns[0]
