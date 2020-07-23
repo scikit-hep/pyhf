@@ -938,8 +938,8 @@ def test_shapesys_nuisparfilter_validation():
 def test_optimizer_stitching(backend, optimizer):
     pyhf.set_backend(backend(precision='64b'), optimizer)
 
-    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
-    data = [10.0] + pdf.config.auxdata
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
 
     result_nostitch = pyhf.infer.mle.fit(data, pdf, do_stitch=False)
     result_stitch = pyhf.infer.mle.fit(data, pdf, do_stitch=True)
@@ -957,12 +957,12 @@ def test_optimizer_stitching(backend, optimizer):
         pyhf.tensor.pytorch_backend,
     ],
 )
-@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
-def test_optimizer_grad(backend, optimizer):
+@pytest.mark.parametrize('optimizer,rtol', [('scipy', 1e-6), ('minuit', 1e-3)])
+def test_optimizer_grad(backend, optimizer, rtol):
     pyhf.set_backend(backend(precision='64b'), optimizer)
 
-    pdf = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
-    data = [10.0] + pdf.config.auxdata
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
 
     result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)
     result_grad = pyhf.infer.mle.fit(data, pdf, do_grad=True)
@@ -971,6 +971,6 @@ def test_optimizer_grad(backend, optimizer):
     assert np.allclose(
         pyhf.tensorlib.tolist(result_nograd),
         pyhf.tensorlib.tolist(result_grad),
-        rtol=1e-6,
+        rtol=rtol,
         atol=1e-6,
     )
