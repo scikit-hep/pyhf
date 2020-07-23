@@ -107,7 +107,16 @@ def shim(
         stitch_pars = lambda pars, stitch_with=None: pars
 
     objective_and_grad = _get_tensor_shim()(
-        objective, tensorlib.astensor(data), pdf, stitch_pars, do_grad=do_grad,
+        objective,
+        tensorlib.astensor(data),
+        pdf,
+        stitch_pars,
+        do_grad=do_grad,
+        jit_pieces={
+            'fixed_idx': fixed_idx,
+            'variable_idx': variable_idx,
+            'fixed_values': fixed_values,
+        },
     )
 
     minimizer_kwargs = dict(

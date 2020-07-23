@@ -1,24 +1,32 @@
 """JAX Backend Function Shim."""
 
 from .. import get_backend
+from ..tensor.common import _TensorViewer
 import jax
+import logging
+
+log = logging.getLogger(__name__)
 
 
-def _final_objective(objective, data, pdf, stitch_pars, pars):
+def _final_objective(pars, fixed_values, fixed_idx, variable_idx, objective, data, pdf):
+    log.debug('I am being jitted!!!!!')
     tensorlib, _ = get_backend()
+    tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
-    constrained_pars = stitch_pars(pars)
+    constrained_pars = tv.stitch(
+        [tensorlib.astensor(fixed_values, dtype='float'), pars]
+    )
     return objective(constrained_pars, data, pdf)[0]
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective, argnums=4), static_argnums=(0, 2, 3)
+    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(2, 3, 4, 5, 6)
 )
 
-_jitted_objective = jax.jit(_final_objective, static_argnums=(0, 2, 3))
+_jitted_objective = jax.jit(_final_objective, static_argnums=(2, 3, 4, 5, 6))
 
 
-def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False):
+def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
     """
     Wrap the objective function for the minimization.
 
@@ -34,16 +42,33 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False):
     """
     tensorlib, _ = get_backend()
 
+    # NB: tuple arguments that need to be hashable (static_argnums)
     if do_grad:
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective_and_grad(objective, data, pdf, stitch_pars, pars,)
+            return _jitted_objective_and_grad(
+                pars,
+                jit_pieces['fixed_values'],
+                tuple(jit_pieces['fixed_idx']),
+                tuple(jit_pieces['variable_idx']),
+                objective,
+                data,
+                pdf,
+            )
 
     else:
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective(objective, data, pdf, stitch_pars, pars,)
+            return _jitted_objective(
+                pars,
+                jit_pieces['fixed_values'],
+                tuple(jit_pieces['fixed_idx']),
+                tuple(jit_pieces['variable_idx']),
+                objective,
+                data,
+                pdf,
+            )
 
     return func

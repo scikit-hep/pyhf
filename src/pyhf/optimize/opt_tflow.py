@@ -3,9 +3,7 @@ from .. import get_backend
 import tensorflow as tf
 
 
-def wrap_objective(
-    objective, data, pdf, stitch_pars, do_grad=False,
-):
+def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
     """
     Wrap the objective function for the minimization.
 
