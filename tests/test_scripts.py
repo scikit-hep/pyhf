@@ -237,19 +237,21 @@ def test_testpoi(tmpdir, script_runner):
 
 
 @pytest.mark.parametrize(
-    'opts,success',
-    [(['maxiter=1000'], True), (['maxiter=100'], True), (['maxiter=10'], False)],
+    'optimizer', ['scipy', 'minuit', 'scipy_optimizer', 'minuit_optimizer']
 )
-def test_cls_optimizer(tmpdir, script_runner, opts, success):
+@pytest.mark.parametrize(
+    'opts,success', [(['maxiter=1000'], True), (['maxiter=10'], False)],
+)
+def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
         temp.strpath
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls {0:s} --optimizer scipy_optimizer {1:s}'.format(
-        temp.strpath, ' '.join('--optconf {0:s}'.format(opt) for opt in opts)
-    )
+    optconf = " ".join(f"--optconf {opt}" for opt in opts)
+    command = f'pyhf cls {temp.strpath} --optimizer {optimizer} {optconf}'
+    breakpoint()
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success == success
