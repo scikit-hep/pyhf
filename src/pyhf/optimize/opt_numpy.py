@@ -1,7 +1,7 @@
-"""PyTorch Backend Function Shim."""
+"""Numpy Backend Function Shim."""
 
 from .. import get_backend
-import torch
+from .. import exceptions
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
@@ -22,21 +22,11 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     tensorlib, _ = get_backend()
 
     if do_grad:
+        raise exceptions.Unsupported("Numpy does not support autodifferentiation.")
 
-        def func(pars):
-            pars = tensorlib.astensor(pars)
-            pars.requires_grad = True
-            constrained_pars = stitch_pars(pars)
-            constr_nll = objective(constrained_pars, data, pdf)
-            grad = torch.autograd.grad(constr_nll, pars)[0]
-            return constr_nll.detach().numpy(), grad
-
-    else:
-
-        def func(pars):
-            pars = tensorlib.astensor(pars)
-            constrained_pars = stitch_pars(pars)
-            constr_nll = objective(constrained_pars, data, pdf)
-            return constr_nll
+    def func(pars):
+        pars = tensorlib.astensor(pars)
+        constrained_pars = stitch_pars(pars)
+        return objective(constrained_pars, data, pdf)
 
     return func

@@ -98,7 +98,9 @@ def cls(
 
     # set the new optimizer
     if optimizer:
-        new_optimizer = getattr(optimize, optimizer)
+        new_optimizer = getattr(optimize, optimizer) or getattr(
+            optimize, f'{optimizer}_optimizer'
+        )
         set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(
