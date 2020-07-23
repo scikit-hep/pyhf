@@ -101,8 +101,14 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
+        rtol = 1e-6
+        # handle cases where macos and ubuntu provide very different results numerical
+        if 'no_grad-minuit-tensorflow-32b' in identifier:
+            # not a very large difference, so we bump the relative difference down
+            rtol = 3e-2
+
         # check fitted parameters
-        assert pytest.approx(expected) == pyhf.tensorlib.tolist(
+        assert pytest.approx(expected, rel=rtol) == pyhf.tensorlib.tolist(
             result
         ), f"{identifier} = {pyhf.tensorlib.tolist(result)}"
 
