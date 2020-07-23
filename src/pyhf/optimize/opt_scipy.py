@@ -65,7 +65,7 @@ class scipy_optimizer(OptimizerMixin):
             func,
             x0,
             method=method,
-            do_grad=do_grad,
+            jac=do_grad,
             bounds=bounds,
             constraints=constraints,
             options=dict(maxiter=maxiter, disp=verbose),
