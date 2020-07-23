@@ -49,7 +49,7 @@ class OptimizerMixin(object):
             assert result.success
         except AssertionError:
             log.error(result)
-            raise
+            raise exceptions.FailedMinimization(result)
         return result
 
     def _internal_postprocess(self, fitresult, stitch_pars):

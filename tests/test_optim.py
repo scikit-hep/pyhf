@@ -347,13 +347,18 @@ def test_minuit_failed_optimization(
     pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    with pytest.raises(AssertionError):
+    with pytest.raises(pyhf.exceptions.FailedMinimization) as excinfo:
         pyhf.infer.mle.fit(data, pdf)
 
+    assert isinstance(excinfo.value.result, OptimizeResult)
+
+    assert excinfo.match('Optimization failed')
     assert 'Optimization failed' in spy.spy_return.message
     if has_reached_call_limit:
+        assert excinfo.match('Call limit was reached')
         assert 'Call limit was reached' in spy.spy_return.message
     if is_above_max_edm:
+        assert excinfo.match('Estimated distance to minimum too large')
         assert 'Estimated distance to minimum too large' in spy.spy_return.message
 
 

@@ -37,7 +37,7 @@ class InvalidSpecification(Exception):
             ValidationError.message, self.path, self.instance
         )
         # Call the base class constructor with the parameters it needs
-        super(InvalidSpecification, self).__init__(message)
+        super().__init__(message)
 
 
 class InvalidPatchSet(Exception):
@@ -116,3 +116,16 @@ class InvalidPdfData(Exception):
     """
     InvalidPdfData is raised when trying to evaluate a pdf with invalid data.
     """
+
+
+class FailedMinimization(Exception):
+    """
+    FailedMinimization is raised when a minimization did not succeed.
+    """
+
+    def __init__(self, result):
+        self.result = result
+        message = getattr(
+            result, 'message', "Unknown failure. See fit result for more details."
+        )
+        super().__init__(message)
