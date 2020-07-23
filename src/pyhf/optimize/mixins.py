@@ -91,7 +91,7 @@ class OptimizerMixin(object):
         fixed_vals=None,
         return_fitted_val=False,
         return_result_obj=False,
-        do_grad=False,
+        do_grad=None,
         do_stitch=False,
         **kwargs,
     ):
@@ -107,7 +107,7 @@ class OptimizerMixin(object):
             fixed_vals (`list`): fixed parameter values
             return_fitted_val (`bool`): return bestfit value of the objective
             return_result_obj (`bool`): return ``scipy.optimize.OptimizeResult``
-            do_grad (`bool`): enable autodifferentiation mode. Default is off.
+            do_grad (`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
 
@@ -116,6 +116,10 @@ class OptimizerMixin(object):
             minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
             result (scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
+        # Configure do_grad based on backend "automagically" if not set by user
+        tensorlib, _ = get_backend()
+        do_grad = tensorlib.default_do_grad if do_grad is None else do_grad
+
         minimizer_kwargs, stitch_pars = shim(
             objective,
             data,

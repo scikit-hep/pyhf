@@ -4,7 +4,7 @@ from pyhf.optimize.common import _get_tensor_shim
 import pytest
 from scipy.optimize import minimize, OptimizeResult
 import iminuit
-
+import itertools
 
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
@@ -135,6 +135,47 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 def test_optimizer_mixin_extra_kwargs(optimizer):
     with pytest.raises(pyhf.exceptions.Unsupported):
         optimizer(fake_kwarg=False)
+
+
+@pytest.mark.parametrize(
+    'backend,backend_new',
+    itertools.permutations(
+        [('numpy', False), ('pytorch', True), ('tensorflow', True), ('jax', True),], 2
+    ),
+    ids=lambda pair: f'{pair[0]}',
+)
+def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
+    backend, do_grad = backend
+    backend_new, do_grad_new = backend_new
+
+    # patch all we need
+    from pyhf.optimize import mixins
+
+    shim = mocker.patch.object(mixins, 'shim', return_value=({}, lambda x: True))
+    mocker.patch.object(OptimizerMixin, '_internal_minimize')
+    mocker.patch.object(OptimizerMixin, '_internal_postprocess')
+
+    # start with first backend
+    pyhf.set_backend(backend, 'scipy')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    assert pyhf.tensorlib.default_do_grad == do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert shim.call_args[1]['do_grad'] == pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m, do_grad=not (pyhf.tensorlib.default_do_grad))
+    assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
+
+    # now switch to new backend and see what happens
+    pyhf.set_backend(backend_new)
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    assert pyhf.tensorlib.default_do_grad == do_grad_new
+    pyhf.infer.mle.fit(data, m)
+    assert shim.call_args[1]['do_grad'] == pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m, do_grad=not (pyhf.tensorlib.default_do_grad))
+    assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
 
 
 @pytest.mark.parametrize(
