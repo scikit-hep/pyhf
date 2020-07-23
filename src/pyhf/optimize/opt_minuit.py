@@ -77,7 +77,7 @@ class minuit_optimizer(OptimizerMixin):
     ):
 
         """
-        Same signature as scipy.optimize.minimize.
+        Same signature as :func:`scipy.optimize.minimize`.
 
         Note: an additional `minuit` is injected into the fitresult to get the
         underlying minimizer.
@@ -87,7 +87,7 @@ class minuit_optimizer(OptimizerMixin):
             return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
 
         Returns:
-            fitresult (`scipy.optimize.OptimizeResult`): the fit result
+            fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
         return_uncertainties = options.pop('return_uncertainties', False)

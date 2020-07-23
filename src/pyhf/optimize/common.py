@@ -75,7 +75,7 @@ def shim(
         ``do_stitch`` will modify the ``init_pars``, ``par_bounds``, and ``fixed_vals`` by stripping away the entries associated with fixed parameters. The parameters can be stitched back in via ``stitch_pars``.
 
     Returns:
-        minimizer_kwargs (`dict`): arguments to pass to a minimizer following the ``scipy.optimize.minimize`` API (see notes)
+        minimizer_kwargs (`dict`): arguments to pass to a minimizer following the :func:`scipy.optimize.minimize` API (see notes)
         stitch_pars (`func`): callable that stitches fixed parameters into the unfixed parameters
     """
     tensorlib, _ = get_backend()

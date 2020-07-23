@@ -6,7 +6,7 @@ import scipy
 
 class scipy_optimizer(OptimizerMixin):
     """
-    Optimizer that uses scipy.optimize.minimize.
+    Optimizer that uses :func:`scipy.optimize.minimize`.
     """
 
     __slots__ = ['name']
@@ -37,7 +37,7 @@ class scipy_optimizer(OptimizerMixin):
         options={},
     ):
         """
-        Same signature as scipy.optimize.minimize.
+        Same signature as :func:`scipy.optimize.minimize`.
 
         Minimizer Options:
             maxiter (`int`): maximum number of iterations. Default is 100000.
@@ -45,7 +45,7 @@ class scipy_optimizer(OptimizerMixin):
             method (`str`): minimization routine. Default is 'SLSQP'.
 
         Returns:
-            fitresult (`scipy.optimize.OptimizeResult`): the fit result
+            fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
         verbose = options.pop('verbose', self.verbose)

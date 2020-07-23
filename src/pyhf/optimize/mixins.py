@@ -54,10 +54,10 @@ class OptimizerMixin(object):
 
     def _internal_postprocess(self, fitresult, stitch_pars):
         """
-        Post-process the fit result, ``scipy.optimize.OptimizeResult`` object.
+        Post-process the fit result.
 
         Returns:
-            fitresult (`scipy.optimize.OptimizeResult`): A modified version of the fit result.
+            fitresult (scipy.optimize.OptimizeResult): A modified version of the fit result.
         """
         tensorlib, _ = get_backend()
 
@@ -106,7 +106,7 @@ class OptimizerMixin(object):
             par_bounds (`list`): parameter boundaries
             fixed_vals (`list`): fixed parameter values
             return_fitted_val (`bool`): return bestfit value of the objective
-            return_result_obj (`bool`): return ``scipy.optimize.OptimizeResult``
+            return_result_obj (`bool`): return :class:`scipy.optimize.OptimizeResult`
             do_grad (`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
             do_stitch (`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
@@ -116,7 +116,7 @@ class OptimizerMixin(object):
 
                 - parameters (`tensor`): fitted parameters
                 - minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
-                - result (:class:`~scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
+                - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()
