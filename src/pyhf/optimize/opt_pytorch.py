@@ -11,7 +11,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     Args:
         objective (`func`): objective function
         data (`list`): observed data
-        pdf (`pyhf.pdf.Model`): model
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         stitch_pars (`func`): callable that stitches parameters, see :func:`pyhf.optimize.common.shim`.
         do_grad (`bool`): enable autodifferentiation mode. Default is off.
 
