@@ -80,17 +80,16 @@ def shim(
     """
     tensorlib, _ = get_backend()
 
-    all_init = tensorlib.astensor(init_pars)
-    all_idx = tensorlib.astensor(range(pdf.config.npars), dtype='int')
-
     fixed_vals = fixed_vals or []
     fixed_idx = [x[0] for x in fixed_vals]
-
-    variable_idx = [x for x in all_idx if x not in fixed_idx]
+    variable_idx = [x for x in range(pdf.config.npars) if x not in fixed_idx]
 
     if do_stitch:
         fixed_values = [x[1] for x in fixed_vals]
-        variable_init = tensorlib.tolist(all_init[variable_idx])
+        all_init = tensorlib.astensor(init_pars)
+        variable_init = tensorlib.tolist(
+            tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype='int'))
+        )
         variable_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
         minimizer_fixed_vals = []
