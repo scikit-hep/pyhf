@@ -41,8 +41,9 @@ class minuit_optimizer(OptimizerMixin):
         fixed_vals = fixed_vals or []
         # Minuit wants True/False for each parameter
         fixed_bools = [False] * len(init_pars)
-        for index, _ in fixed_vals:
+        for index, val in fixed_vals:
             fixed_bools[index] = True
+            init_pars[index] = val
 
         # Minuit requires jac=callable
         if do_grad:
