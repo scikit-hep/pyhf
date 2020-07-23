@@ -11,6 +11,8 @@ log = logging.getLogger(__name__)
 class pytorch_backend(object):
     """PyTorch backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'pytorch'
         self.precision = kwargs.get('precision', '32b')
@@ -19,6 +21,7 @@ class pytorch_backend(object):
             'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
+        self.default_do_grad = True
 
     def _setup(self):
         """

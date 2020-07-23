@@ -112,6 +112,20 @@ def test_custom_optimizer_name_notsupported():
     assert pyhf.optimizer.name == optimizer.name
 
 
+@pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch", "PyTorch"])
+def test_backend_no_custom_attributes(backend_name):
+    pyhf.set_backend(backend_name)
+    with pytest.raises(AttributeError):
+        pyhf.tensorlib.nonslotted = True
+
+
+@pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch", "PyTorch"])
+def test_backend_slotted_attributes(backend_name):
+    pyhf.set_backend(backend_name)
+    for attr in ["name", "precision", "dtypemap", "default_do_grad"]:
+        assert getattr(pyhf.tensorlib, attr) is not None
+
+
 def test_logpprob(backend, model_setup):
     model, data, init_pars = model_setup
     model.logpdf(init_pars, data)

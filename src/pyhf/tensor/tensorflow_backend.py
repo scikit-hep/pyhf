@@ -9,6 +9,8 @@ log = logging.getLogger(__name__)
 class tensorflow_backend(object):
     """TensorFlow backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
         self.precision = kwargs.get('precision', '32b')
@@ -17,6 +19,7 @@ class tensorflow_backend(object):
             'int': tf.int64 if self.precision == '64b' else tf.int32,
             'bool': tf.bool,
         }
+        self.default_do_grad = True
 
     def _setup(self):
         """
