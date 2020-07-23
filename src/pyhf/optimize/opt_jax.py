@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 def _final_objective(pars, fixed_values, fixed_idx, variable_idx, objective, data, pdf):
-    log.debug('I am being jitted!!!!!')
+    log.debug('jitting function')
     tensorlib, _ = get_backend()
     tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
