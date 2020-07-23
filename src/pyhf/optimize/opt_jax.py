@@ -30,7 +30,6 @@ _jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6))
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
-    print(jit_pieces)
     """
     Wrap the objective function for the minimization.
 
