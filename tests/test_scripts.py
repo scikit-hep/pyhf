@@ -251,7 +251,6 @@ def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
     command = f'pyhf cls {temp.strpath} --optimizer {optimizer} {optconf}'
-    breakpoint()
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success == success
