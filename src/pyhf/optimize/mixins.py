@@ -112,9 +112,11 @@ class OptimizerMixin(object):
             kwargs: other options to pass through to underlying minimizer
 
         Returns:
-            parameters (`tensor`): fitted parameters
-            minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
-            result (scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
+            Fitted parameters or tuple of results:
+
+                - parameters (`tensor`): fitted parameters
+                - minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
+                - result (:class:`~scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()

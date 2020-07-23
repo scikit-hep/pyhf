@@ -49,7 +49,7 @@ def shim(
     Args:
         objective (`func`): objective function
         data (`list`): observed data
-        pdf (`pyhf.pdf.Model`): model
+        pdf (~pyhf.pdf.Model): model
         init_pars (`list`): initial parameters
         par_bounds (`list`): parameter boundaries
         fixed_vals (`list`): fixed parameter values
