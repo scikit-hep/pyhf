@@ -43,6 +43,8 @@ class _BasicNormal(object):
 class jax_backend(object):
     """JAX backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'jax'
         self.precision = kwargs.get('precision', '64b')
@@ -51,6 +53,7 @@ class jax_backend(object):
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
+        self.default_do_grad = True
 
     def _setup(self):
         """

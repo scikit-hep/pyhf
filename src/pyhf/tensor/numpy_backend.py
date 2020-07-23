@@ -36,6 +36,8 @@ class _BasicNormal(object):
 class numpy_backend(object):
     """NumPy backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'numpy'
         self.precision = kwargs.get('precision', '64b')
@@ -44,6 +46,7 @@ class numpy_backend(object):
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
+        self.default_do_grad = False
 
     def _setup(self):
         """
