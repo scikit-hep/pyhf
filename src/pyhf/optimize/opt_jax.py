@@ -11,11 +11,14 @@ log = logging.getLogger(__name__)
 def _final_objective(pars, data, fixed_values, fixed_idx, variable_idx, objective, pdf):
     log.debug('jitting function')
     tensorlib, _ = get_backend()
-    tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
-    constrained_pars = tv.stitch(
-        [tensorlib.astensor(fixed_values, dtype='float'), pars]
-    )
+    if len(fixed_values) > 0:
+        tv = _TensorViewer([fixed_idx, variable_idx])
+        constrained_pars = tv.stitch(
+            [tensorlib.astensor(fixed_values, dtype='float'), pars]
+        )
+    else:
+        constrained_pars = pars
     return objective(constrained_pars, data, pdf)[0]
 
 
@@ -27,6 +30,7 @@ _jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6))
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
+    print(jit_pieces)
     """
     Wrap the objective function for the minimization.
 
