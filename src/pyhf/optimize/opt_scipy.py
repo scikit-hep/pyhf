@@ -9,6 +9,8 @@ class scipy_optimizer(OptimizerMixin):
     Optimizer that uses scipy.optimize.minimize.
     """
 
+    __slots__ = ['name']
+
     def __init__(self, *args, **kwargs):
         """
         Initialize the scipy_optimizer.
@@ -16,7 +18,7 @@ class scipy_optimizer(OptimizerMixin):
         See :class:`pyhf.optimize.mixins.OptimizerMixin` for configuration options.
         """
         self.name = 'scipy'
-        super(scipy_optimizer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_minimizer(
         self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
@@ -68,5 +70,5 @@ class scipy_optimizer(OptimizerMixin):
             jac=do_grad,
             bounds=bounds,
             constraints=constraints,
-            options=dict(maxiter=maxiter, disp=verbose),
+            options=dict(maxiter=maxiter, disp=bool(verbose)),
         )

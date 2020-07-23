@@ -10,17 +10,18 @@ log = logging.getLogger(__name__)
 class OptimizerMixin(object):
     """Mixin Class to build optimizers."""
 
+    __slots__ = ['maxiter', 'verbose']
+
     def __init__(self, **kwargs):
         """
         Create an optimizer.
 
         Args:
             maxiter (`int`): maximum number of iterations. Default is 100000.
-            verbose (`bool`): print verbose output during minimization. Default is off.
+            verbose (`int`): verbose output level during minimization. Default is off (0).
         """
         self.maxiter = kwargs.pop('maxiter', 100000)
-        self.verbose = kwargs.pop('verbose', False)
-        self._minimizer = None
+        self.verbose = kwargs.pop('verbose', 0)
 
         if kwargs:
             raise exceptions.Unsupported(

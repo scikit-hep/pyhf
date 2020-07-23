@@ -10,6 +10,8 @@ class minuit_optimizer(OptimizerMixin):
     Optimizer that uses iminuit.Minuit.migrad.
     """
 
+    __slots__ = ['name', 'errordef', 'steps']
+
     def __init__(self, *args, **kwargs):
         """
         Create MINUIT Optimizer.
@@ -26,10 +28,10 @@ class minuit_optimizer(OptimizerMixin):
             errordef (`float`): See minuit docs. Default is 1.0.
             steps (`int`): Number of steps for the bounds. Default is 1000.
         """
+        self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)
         self.steps = kwargs.pop('steps', 1000)
-        self.name = 'minuit'
-        super(minuit_optimizer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_minimizer(
         self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
@@ -57,7 +59,7 @@ class minuit_optimizer(OptimizerMixin):
             error=step_sizes,
             limit=init_bounds,
             fix=fixed_bools,
-            print_level=1 if self.verbose else 0,
+            print_level=self.verbose,
             errordef=self.errordef,
         )
         return iminuit.Minuit.from_array_func(**kwargs)
