@@ -68,7 +68,7 @@ def test_set_precision_by_bytestring(precision_level):
 
 @pytest.mark.parametrize("precision_level", ["32b", "64b"])
 def test_set_precision_by_string_wins(precision_level):
-    conflicting_precision = "32b" if precision_level is "64b" else "64b"
+    conflicting_precision = "32b" if precision_level == "64b" else "64b"
     pyhf.set_backend(
         pyhf.tensor.numpy_backend(precision=conflicting_precision),
         precision=precision_level,
