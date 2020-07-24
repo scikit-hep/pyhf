@@ -35,7 +35,7 @@ default_optimizer = optimizer
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, precision=None):
+def set_backend(backend, custom_optimizer=None, **kwargs):
     """
     Set the backend and the associated optimizer
 
@@ -60,7 +60,8 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     Args:
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
-        precision (`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is ``64b``.
+        kwargs: Supported keyword arguments.
+            precision (`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is ``64b``.
 
     Returns:
         None
@@ -69,12 +70,11 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     global optimizer
 
     _valid_precisions = ["32b", "64b"]
-    if precision is None:
-        precision = "64b"
-    elif isinstance(precision, (str, bytes)):
-        if isinstance(precision, bytes):
-            precision = precision.decode("utf-8")
-        precision = precision.lower()
+    precision = kwargs["precision"] if "precision" in kwargs else "64b"
+
+    if isinstance(precision, bytes):
+        precision = precision.decode("utf-8")
+    precision = precision.lower()
 
     if isinstance(backend, (str, bytes)):
         if isinstance(backend, bytes):
@@ -104,10 +104,11 @@ def set_backend(backend, custom_optimizer=None, precision=None):
             f"The backend precision provided is not supported: {precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _valid_precisions])}"
         )
     # If kwarg passed, it should always win
-    if backend.precision != precision:
-        backend = getattr(tensor, "{0:s}_backend".format(backend.name))(
-            precision=precision
-        )
+    if "precision" in kwargs:
+        if backend.precision != precision:
+            backend = getattr(tensor, "{0:s}_backend".format(backend.name))(
+                precision=precision
+            )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
