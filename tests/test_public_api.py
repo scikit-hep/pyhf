@@ -64,6 +64,16 @@ def test_set_precision_by_bytestring(precision_level):
     assert pyhf.tensorlib.precision == precision_level.decode("utf-8")
 
 
+@pytest.mark.parametrize("precision_level", ["32b", "64b"])
+def test_set_precision_by_string_wins(precision_level):
+    conflicting_precision = "32b" if precision_level is "64b" else "64b"
+    pyhf.set_backend(
+        pyhf.tensor.numpy_backend(precision=conflicting_precision),
+        precision=precision_level,
+    )
+    assert pyhf.tensorlib.precision == precision_level.lower()
+
+
 @pytest.mark.parametrize("backend_name", ["fail", b"fail"])
 def test_supported_backends(backend_name):
     with pytest.raises(pyhf.exceptions.InvalidBackend):

@@ -103,6 +103,11 @@ def set_backend(backend, custom_optimizer=None, precision=None):
         raise InvalidBackend(
             f"The backend precision provided is not supported: {precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _valid_precisions])}"
         )
+    # If kwarg passed, it should always win
+    if backend.precision != precision:
+        backend = getattr(tensor, "{0:s}_backend".format(backend.name))(
+            precision=precision
+        )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
