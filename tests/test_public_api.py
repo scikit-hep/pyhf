@@ -76,6 +76,12 @@ def test_supported_optimizers(optimizer_name):
         pyhf.set_backend(pyhf.tensorlib, optimizer_name)
 
 
+@pytest.mark.parametrize("precision_level", ["fail", b"fail"])
+def test_supported_precision(precision_level):
+    with pytest.raises(pyhf.exceptions.InvalidBackend):
+        pyhf.set_backend("numpy", precision=precision_level)
+
+
 def test_custom_backend_name_supported():
     class custom_backend(object):
         def __init__(self, **kwargs):
