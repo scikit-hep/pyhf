@@ -71,6 +71,10 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     _valid_precisions = ["32b", "64b"]
     if precision is None:
         precision = "64b"
+    elif isinstance(precision, (str, bytes)):
+        if isinstance(precision, bytes):
+            precision = precision.decode("utf-8")
+        precision = precision.lower()
 
     if isinstance(backend, (str, bytes)):
         if isinstance(backend, bytes):
