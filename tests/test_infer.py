@@ -20,6 +20,36 @@ def check_uniform_type(in_list):
     )
 
 
+def test_mle_fit_default(tmpdir, hypotest_args):
+    """
+    Check that the default return structure of pyhf.infer.mle.fit is as expected
+    """
+    tb = pyhf.tensorlib
+
+    _, data, model = hypotest_args
+    kwargs = {}
+    result = pyhf.infer.mle.fit(data, model, **kwargs)
+    # bestfit_pars
+    assert isinstance(result, type(tb.astensor(result)))
+    assert pyhf.tensorlib.shape(result) == (model.config.npars,)
+
+
+def test_mle_fit_return_fitted_val(tmpdir, hypotest_args):
+    """
+    Check that the return structure of pyhf.infer.mle.fit with the
+    return_fitted_val keyword arg is as expected
+    """
+    tb = pyhf.tensorlib
+
+    _, data, model = hypotest_args
+    kwargs = {"return_fitted_val": True}
+    result = pyhf.infer.mle.fit(data, model, **kwargs)
+    # bestfit_pars, twice_nll
+    assert pyhf.tensorlib.shape(result[0]) == (model.config.npars,)
+    assert isinstance(result[0], type(tb.astensor(result[0])))
+    assert pyhf.tensorlib.shape(result[1]) == ()
+
+
 def test_hypotest_default(tmpdir, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
