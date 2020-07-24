@@ -36,6 +36,8 @@ def test_set_optimizer_by_string(optimizer_name):
 def test_set_precision_by_string(precision_level):
     pyhf.set_backend(pyhf.tensorlib.name, precision=precision_level)
     assert pyhf.tensorlib.precision == precision_level.lower()
+    pyhf.set_backend(pyhf.tensor.numpy_backend(precision=precision_level))
+    assert pyhf.tensorlib.precision == precision_level.lower()
 
 
 @pytest.mark.parametrize("backend_name", [b"numpy", b"tensorflow", b"pytorch"])
