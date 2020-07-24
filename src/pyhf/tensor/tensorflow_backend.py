@@ -36,7 +36,7 @@ class tensorflow_backend(object):
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> t = pyhf.tensorlib.clip(a, -1, 1)
             >>> print(t)
-            tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float64)
+            tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float32)
 
         Args:
             tensor_in (`tensor`): The input tensor object
@@ -65,7 +65,7 @@ class tensorflow_backend(object):
             >>> print(t)
             tf.Tensor(
             [[1. 1.]
-             [2. 2.]], shape=(2, 2), dtype=float64)
+             [2. 2.]], shape=(2, 2), dtype=float32)
 
         Args:
             tensor_in (`Tensor`): The tensor to be repeated
@@ -89,7 +89,7 @@ class tensorflow_backend(object):
             >>> b = tensorlib.astensor([5])
             >>> t = tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
             >>> print(t)
-            tf.Tensor([9.], shape=(1,), dtype=float64)
+            tf.Tensor([9.], shape=(1,), dtype=float32)
 
         Args:
             predicate (`scalar`): The logical condition that determines which callable to evaluate
@@ -226,7 +226,7 @@ class tensorflow_backend(object):
             ...     pyhf.tensorlib.astensor([2, 2, 2]),
             ... )
             >>> print(t)
-            tf.Tensor([1. 2. 1.], shape=(3,), dtype=float64)
+            tf.Tensor([1. 2. 1.], shape=(3,), dtype=float32)
 
         Args:
             mask (bool): Boolean mask (boolean or tensor object of booleans)
@@ -265,9 +265,9 @@ class tensorflow_backend(object):
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
             >>> print([str(t) for t in b]) # doctest: +NORMALIZE_WHITESPACE
-            ['tf.Tensor([1. 1. 1.], shape=(3,), dtype=float64)',
-             'tf.Tensor([2. 3. 4.], shape=(3,), dtype=float64)',
-             'tf.Tensor([5. 6. 7.], shape=(3,), dtype=float64)']
+            ['tf.Tensor([1. 1. 1.], shape=(3,), dtype=float32)',
+             'tf.Tensor([2. 3. 4.], shape=(3,), dtype=float32)',
+             'tf.Tensor([5. 6. 7.], shape=(3,), dtype=float32)']
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -326,7 +326,7 @@ class tensorflow_backend(object):
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
             >>> print(t)
-            tf.Tensor([-1.8286944 -2.0868536], shape=(2,), dtype=float64)
+            tf.Tensor([-1.8286943 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -355,7 +355,7 @@ class tensorflow_backend(object):
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
             >>> print(t)
-            tf.Tensor([0.16062314 0.12407692], shape=(2,), dtype=float64)
+            tf.Tensor([0.16062315 0.12407687], shape=(2,), dtype=float32)
 
         Args:
             n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -385,7 +385,7 @@ class tensorflow_backend(object):
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
             >>> t = pyhf.tensorlib.normal_logpdf(values, means, sigmas)
             >>> print(t)
-            tf.Tensor([-1.04393853 -0.76610747], shape=(2,), dtype=float64)
+            tf.Tensor([-1.0439385 -0.7661075], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -415,7 +415,7 @@ class tensorflow_backend(object):
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
             >>> t = pyhf.tensorlib.normal(values, means, sigmas)
             >>> print(t)
-            tf.Tensor([0.35206533 0.46481887], shape=(2,), dtype=float64)
+            tf.Tensor([0.35206532 0.46481887], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -437,11 +437,11 @@ class tensorflow_backend(object):
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_cdf(0.8)
             >>> print(t)
-            tf.Tensor(0.7881446014166034, shape=(), dtype=float64)
+            tf.Tensor(0.7881446, shape=(), dtype=float32)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> t = pyhf.tensorlib.normal_cdf(values)
             >>> print(t)
-            tf.Tensor([0.7881446  0.97724987], shape=(2,), dtype=float64)
+            tf.Tensor([0.7881446  0.97724986], shape=(2,), dtype=float32)
 
         Args:
             x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
@@ -468,7 +468,7 @@ class tensorflow_backend(object):
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
             >>> t = poissons.log_prob(values)
             >>> print(t)
-            tf.Tensor([-1.74030218 -2.0868536 ], shape=(2,), dtype=float64)
+            tf.Tensor([-1.7403021 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
             rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
@@ -492,7 +492,7 @@ class tensorflow_backend(object):
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
             >>> t = normals.log_prob(values)
             >>> print(t)
-            tf.Tensor([-1.41893853 -2.22579135], shape=(2,), dtype=float64)
+            tf.Tensor([-1.4189385 -2.2257915], shape=(2,), dtype=float32)
 
         Args:
             mu (`tensor` or `float`): The mean of the Normal distribution
