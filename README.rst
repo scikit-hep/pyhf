@@ -14,7 +14,7 @@ style: black|
 
 |Docs| |Binder|
 
-|PyPI version| |Supported Python versionss| |Docker Stars| |Docker
+|PyPI version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
 
 The HistFactory p.d.f. template
@@ -63,18 +63,12 @@ Computational Backends:
   - ☑ TensorFlow
   - ☑ JAX
 
-Available Optimizers
+Optimizers:
+  - ☑ SciPy (``scipy.optimize``)
+  - ☑ MINUIT (``iminuit``)
 
-+---------------------+-----------------------+-----------------------+
-| NumPy               | Tensorflow            | PyTorch               |
-+=====================+=======================+=======================+
-| SLSQP               | Newton’s Method       | Newton’s Method       |
-| (``scipy.optimize`` | (autodiff)            | (autodiff)            |
-| )                   |                       |                       |
-+---------------------+-----------------------+-----------------------+
-| MINUIT              | .                     | .                     |
-| (``iminuit``)       |                       |                       |
-+---------------------+-----------------------+-----------------------+
+All backends can be used in combination with all optimizers.
+Custom user backends and optimizers can be used as well.
 
 Todo
 ----
@@ -221,7 +215,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
-.. |Supported Python versionss| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
+.. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
 .. |Docker Stars| image:: https://img.shields.io/docker/stars/pyhf/pyhf.svg
    :target: https://hub.docker.com/r/pyhf/pyhf/
