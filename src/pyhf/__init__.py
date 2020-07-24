@@ -102,8 +102,8 @@ def set_backend(backend, custom_optimizer=None, precision=None):
         raise InvalidBackend(
             f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _valid_precisions])}"
         )
-    # If kwarg passed, it should always win
-    # If no kwarg, defer to tensor backend object API if set there
+    # If "precision" arg passed, it should always win
+    # If no "precision" arg, defer to tensor backend object API if set there
     if precision is not None:
         if backend.precision != precision:
             backend = getattr(tensor, "{0:s}_backend".format(backend.name))(
