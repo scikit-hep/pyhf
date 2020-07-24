@@ -85,21 +85,17 @@ def set_backend(backend, custom_optimizer=None, precision=None):
             backend_kwargs["precision"] = precision
 
         try:
-            backend = getattr(tensor, "{0:s}_backend".format(backend))(**backend_kwargs)
+            backend = getattr(tensor, f"{backend:s}_backend")(**backend_kwargs)
         except TypeError:
             raise InvalidBackend(
-                "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                    backend
-                )
+                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
             )
 
-    _name_supported = getattr(tensor, "{0:s}_backend".format(backend.name))
+    _name_supported = getattr(tensor, f"{backend.name:s}_backend")
     if _name_supported:
         if not isinstance(backend, _name_supported):
             raise AttributeError(
-                "'{0:s}' is not a valid name attribute for backend type {1}\n                 Custom backends must have names unique from supported backends".format(
-                    backend.name, type(backend)
-                )
+                f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
             )
     if backend.precision not in _valid_precisions:
         raise Unsupported(
@@ -131,9 +127,7 @@ def set_backend(backend, custom_optimizer=None, precision=None):
                     f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
                 )
         else:
-            _name_supported = getattr(
-                optimize, "{0:s}_optimizer".format(custom_optimizer.name)
-            )
+            _name_supported = getattr(optimize, f"{custom_optimizer.name:s}_optimizer")
             if _name_supported:
                 if not isinstance(custom_optimizer, _name_supported):
                     raise AttributeError(
