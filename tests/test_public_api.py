@@ -32,6 +32,12 @@ def test_set_optimizer_by_string(optimizer_name):
     )
 
 
+@pytest.mark.parametrize("precision_level", ["32b", "64b"])
+def test_set_precision_by_string(precision_level):
+    pyhf.set_backend(pyhf.tensorlib.name, precision=precision_level)
+    assert pyhf.tensorlib.precision == precision_level.lower()
+
+
 @pytest.mark.parametrize("backend_name", [b"numpy", b"tensorflow", b"pytorch"])
 def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
@@ -50,6 +56,12 @@ def test_set_optimizer_by_bytestring(optimizer_name):
             pyhf.optimize, "{0:s}_optimizer".format(optimizer_name.decode("utf-8"))
         ),
     )
+
+
+@pytest.mark.parametrize("precision_level", [b"32b", b"64b"])
+def test_set_precision_by_bytestring(precision_level):
+    pyhf.set_backend(pyhf.tensorlib.name, precision=precision_level)
+    assert pyhf.tensorlib.precision == precision_level.decode("utf-8")
 
 
 @pytest.mark.parametrize("backend_name", ["fail", b"fail"])
