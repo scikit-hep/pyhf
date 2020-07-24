@@ -90,7 +90,7 @@ def test_supported_optimizers(optimizer_name):
 
 @pytest.mark.parametrize("precision_level", ["fail", b"fail"])
 def test_supported_precision(precision_level):
-    with pytest.raises(pyhf.exceptions.InvalidBackend):
+    with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.set_backend("numpy", precision=precision_level)
 
 

@@ -1,7 +1,7 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
 from .version import __version__
-from .exceptions import InvalidBackend, InvalidOptimizer
+from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
 from . import events
 
 tensorlib = None
@@ -99,7 +99,7 @@ def set_backend(backend, custom_optimizer=None, precision=None):
                 )
             )
     if backend.precision not in _valid_precisions:
-        raise InvalidBackend(
+        raise Unsupported(
             f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _valid_precisions])}"
         )
     # If "precision" arg passed, it should always win
