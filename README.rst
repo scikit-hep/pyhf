@@ -63,22 +63,22 @@ Computational Backends:
   - ☑ TensorFlow
   - ☑ JAX
 
-Supported Backends and Optimizers
+Supported Backends and Optimizers:
 
 All backends can be used in combination with all optimizers.
 Custom user backends and optimizers can be used as well.
 
-+-----------------------------------+-----------------------------+
-| Backend                           | Optimizer                   |
-+===================================+=============================+
-| NumPy ( |numpy_backend| )         | SciPy (|scipy_optimizer|)   |
-+-----------------------------------+-----------------------------+
-| TensorFlow (|tensorflow_backend|) | MINUIT (|minuit_optimizer|) |
-+-----------------------------------+-----------------------------+
-| PyTorch (|pytorch_backend|)       |                             |
-+-----------------------------------+-----------------------------+
-| JAX (|jax_backend|)               |                             |
-+-----------------------------------+-----------------------------+
++-------------------------------------+----------------------------+
+| Backend                             | Optimizer                  |
++=====================================+============================+
+| NumPy (``numpy_backend``)           | SciPy (``scipy.optimize``) |
++-------------------------------------+----------------------------+
+| TensorFlow (``tensorflow_backend``) | MINUIT (``iminuit``)       |
++-------------------------------------+----------------------------+
+| PyTorch (``pytorch_backend``)       |                            |
++-------------------------------------+----------------------------+
+| JAX (``jax_backend``)               |                            |
++-------------------------------------+----------------------------+
 
 Todo
 ----
@@ -242,5 +242,5 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/pyhf/_generated/pyhf.tensor.jax_backend.jax_backend.html
 .. |scipy_optimizer| replace:: ``scipy.optimize``
    :target: https://scikit-hep.org/pyhf/_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html
-.. |iminuit_optimizer| replace:: ``iminuit``
+.. |minuit_optimizer| replace:: ``iminuit``
    :target: https://scikit-hep.org/pyhf/_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html
