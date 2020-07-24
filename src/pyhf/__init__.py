@@ -44,12 +44,18 @@ def set_backend(backend, custom_optimizer=None, precision=None):
         >>> pyhf.set_backend("tensorflow")
         >>> pyhf.tensorlib.name
         'tensorflow'
-        >>> pyhf.set_backend(b"pytorch")
+        >>> pyhf.tensorlib.precision
+        '64b'
+        >>> pyhf.set_backend(b"pytorch", precision="32b")
         >>> pyhf.tensorlib.name
         'pytorch'
+        >>> pyhf.tensorlib.precision
+        '32b'
         >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
         >>> pyhf.tensorlib.name
         'numpy'
+        >>> pyhf.tensorlib.precision
+        '64b'
 
     Args:
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
