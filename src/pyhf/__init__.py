@@ -68,7 +68,7 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     global tensorlib
     global optimizer
 
-    _valid_precisions = ["32b", "64b"]
+    _supported_precisions = ["32b", "64b"]
     backend_kwargs = {}
 
     if isinstance(precision, (str, bytes)):
@@ -97,10 +97,10 @@ def set_backend(backend, custom_optimizer=None, precision=None):
             raise AttributeError(
                 f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
             )
-    if backend.precision not in _valid_precisions:
-        raise Unsupported(
-            f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _valid_precisions])}"
-        )
+        if backend.precision not in _supported_precisions:
+            raise Unsupported(
+                f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
+            )
     # If "precision" arg passed, it should always win
     # If no "precision" arg, defer to tensor backend object API if set there
     if precision is not None:
