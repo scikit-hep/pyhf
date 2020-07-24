@@ -63,7 +63,22 @@ Computational Backends:
   - ☑ TensorFlow
   - ☑ JAX
 
-Available Optimizers
+Supported Backends and Optimizers
+
+All backends can be used in combination with all optimizers.
+Custom user backends and optimizers can be used as well.
+
++---------------------------------+-------------------------+
+| Backend                         | Optimizer               |
++=================================+=========================+
+| NumPy (|numpy_backend|)         | SciPy (scipy.optimize)  |
++---------------------------------+-------------------------+
+| TensorFlow (tensorflow_backend) | MINUIT (scipy.optimize) |
++---------------------------------+-------------------------+
+| PyTorch (pytorch_backend)       |                         |
++---------------------------------+-------------------------+
+| JAX (jax_backend)               |                         |
++---------------------------------+-------------------------+
 
 +---------------------+-----------------------+-----------------------+
 | NumPy               | Tensorflow            | PyTorch               |
@@ -227,3 +242,16 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Docker Pulls| image:: https://img.shields.io/docker/pulls/pyhf/pyhf.svg
    :target: https://hub.docker.com/r/pyhf/pyhf/
+
+.. |numpy_backend| ``numpy_backend``
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.tensor.numpy_backend.numpy_backend.html
+.. |``tensorflow_backend``|
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html
+.. |``pytorch_backend``|
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html
+.. |``jax_backend``|
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.tensor.jax_backend.jax_backend.html
+.. |``scipy.optimize``|
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html
+.. |``iminuit``|
+   :target: https://scikit-hep.org/pyhf/_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html
