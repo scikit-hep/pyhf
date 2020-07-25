@@ -17,6 +17,7 @@
    babel
    cli
    api
+   schema
    citations
    governance/ROADMAP
 

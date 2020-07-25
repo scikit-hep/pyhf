@@ -434,3 +434,28 @@ mathjax_config = {
         }
     },
 }
+
+# generate JSON Schema HTML
+import fileinput
+from json_schema_for_humans.generate import (
+    GenerationConfiguration,
+    generate_from_filename,
+)
+
+schema_doc = Path("_static/schema_doc.html")
+config = GenerationConfiguration(expand_buttons=False, minify=False, copy_js=False)
+generate_from_filename(
+    "../src/pyhf/schemas/1.0.0/workspace.json", schema_doc, config=config
+)
+with fileinput.FileInput(schema_doc, inplace=True, backup='.bak') as f:
+    replace_dict = {
+        "schema_doc": "_static/schema_doc",
+        'class="collapse ': 'class="',
+    }
+    for line in f:
+        for find, replace in replace_dict.items():
+            line = line.replace(find, replace)
+        print(line, end='')
+
+with open(Path("_static/schema_doc.css"), "a+") as f:
+    f.write(".btn:active { padding: .375rem .75rem; }")

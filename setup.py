@@ -57,6 +57,7 @@ extras_require['docs'] = sorted(
             'ipywidgets',
             'sphinx-issues',
             'sphinx-copybutton>0.2.9',
+            'json-schema-for-humans',
         ]
     )
 )
