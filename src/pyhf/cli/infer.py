@@ -7,7 +7,7 @@ import json
 from ..utils import EqDelimStringParamType
 from ..infer import hypotest
 from ..workspace import Workspace
-from .. import tensor, get_backend, set_backend, optimize
+from .. import get_backend, set_backend, optimize
 
 log = logging.getLogger(__name__)
 
@@ -87,11 +87,11 @@ def cls(
 
     # set the backend if not NumPy
     if backend in ['pytorch', 'torch']:
-        set_backend(tensor.pytorch_backend(precision='64b'))
+        set_backend("pytorch", precision="64b")
     elif backend in ['tensorflow', 'tf']:
-        set_backend(tensor.tensorflow_backend(precision='64b'))
+        set_backend("tensorflow", precision="64b")
     elif backend in ['jax']:
-        set_backend(tensor.jax_backend())
+        set_backend("jax")
     tensorlib, _ = get_backend()
 
     optconf = {k: v for item in optconf for k, v in item.items()}

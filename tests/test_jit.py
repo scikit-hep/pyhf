@@ -10,7 +10,7 @@ import logging
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 @pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
 def test_jax_jit(caplog, optimizer, do_grad, do_stitch, return_fitted_val):
-    pyhf.set_backend(pyhf.tensor.jax_backend(precision='64b'), optimizer)
+    pyhf.set_backend("jax", optimizer, precision="64b")
     pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + pdf.config.auxdata)
 
@@ -76,7 +76,7 @@ def test_jax_jit(caplog, optimizer, do_grad, do_stitch, return_fitted_val):
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 def test_jax_jit_switch_optimizer(caplog, do_grad, do_stitch, return_fitted_val):
-    pyhf.set_backend(pyhf.tensor.jax_backend(precision='64b'), 'scipy')
+    pyhf.set_backend("jax", "scipy", precision="64b")
     pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + pdf.config.auxdata)
 
@@ -132,7 +132,7 @@ def test_jax_jit_switch_optimizer(caplog, do_grad, do_stitch, return_fitted_val)
 )
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 def test_jax_jit_enable_stitching(caplog, do_grad, return_fitted_val):
-    pyhf.set_backend(pyhf.tensor.jax_backend(precision='64b'), 'scipy')
+    pyhf.set_backend("jax", "scipy", precision="64b")
     pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + pdf.config.auxdata)
 
@@ -166,7 +166,7 @@ def test_jax_jit_enable_stitching(caplog, do_grad, return_fitted_val):
 )
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
 def test_jax_jit_enable_autograd(caplog, do_stitch, return_fitted_val):
-    pyhf.set_backend(pyhf.tensor.jax_backend(precision='64b'), 'scipy')
+    pyhf.set_backend("jax", "scipy", precision="64b")
     pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + pdf.config.auxdata)
 

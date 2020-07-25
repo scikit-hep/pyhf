@@ -1,7 +1,7 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
 from .version import __version__
-from .exceptions import InvalidBackend, InvalidOptimizer
+from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
 from . import events
 
 tensorlib = None
@@ -35,7 +35,7 @@ default_optimizer = optimizer
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None):
+def set_backend(backend, custom_optimizer=None, precision=None):
     """
     Set the backend and the associated optimizer
 
@@ -44,16 +44,23 @@ def set_backend(backend, custom_optimizer=None):
         >>> pyhf.set_backend("tensorflow")
         >>> pyhf.tensorlib.name
         'tensorflow'
-        >>> pyhf.set_backend(b"pytorch")
+        >>> pyhf.tensorlib.precision
+        '32b'
+        >>> pyhf.set_backend(b"pytorch", precision="64b")
         >>> pyhf.tensorlib.name
         'pytorch'
+        >>> pyhf.tensorlib.precision
+        '64b'
         >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
         >>> pyhf.tensorlib.name
         'numpy'
+        >>> pyhf.tensorlib.precision
+        '64b'
 
     Args:
         backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
+        precision (`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
 
     Returns:
         None
@@ -61,27 +68,45 @@ def set_backend(backend, custom_optimizer=None):
     global tensorlib
     global optimizer
 
+    _supported_precisions = ["32b", "64b"]
+    backend_kwargs = {}
+
+    if isinstance(precision, (str, bytes)):
+        if isinstance(precision, bytes):
+            precision = precision.decode("utf-8")
+        precision = precision.lower()
+
     if isinstance(backend, (str, bytes)):
         if isinstance(backend, bytes):
             backend = backend.decode("utf-8")
         backend = backend.lower()
+
+        if precision is not None:
+            backend_kwargs["precision"] = precision
+
         try:
-            backend = getattr(tensor, "{0:s}_backend".format(backend))()
+            backend = getattr(tensor, f"{backend:s}_backend")(**backend_kwargs)
         except TypeError:
             raise InvalidBackend(
-                "The backend provided is not supported: {0:s}. Select from one of the supported backends: numpy, tensorflow, pytorch".format(
-                    backend
-                )
+                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
             )
 
-    _name_supported = getattr(tensor, "{0:s}_backend".format(backend.name))
+    _name_supported = getattr(tensor, f"{backend.name:s}_backend")
     if _name_supported:
         if not isinstance(backend, _name_supported):
             raise AttributeError(
-                "'{0:s}' is not a valid name attribute for backend type {1}\n                 Custom backends must have names unique from supported backends".format(
-                    backend.name, type(backend)
-                )
+                f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
             )
+        if backend.precision not in _supported_precisions:
+            raise Unsupported(
+                f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
+            )
+    # If "precision" arg passed, it should always win
+    # If no "precision" arg, defer to tensor backend object API if set there
+    if precision is not None:
+        if backend.precision != precision:
+            backend_kwargs["precision"] = precision
+            backend = getattr(tensor, f"{backend.name:s}_backend")(**backend_kwargs)
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
@@ -102,9 +127,7 @@ def set_backend(backend, custom_optimizer=None):
                     f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
                 )
         else:
-            _name_supported = getattr(
-                optimize, "{0:s}_optimizer".format(custom_optimizer.name)
-            )
+            _name_supported = getattr(optimize, f"{custom_optimizer.name:s}_optimizer")
             if _name_supported:
                 if not isinstance(custom_optimizer, _name_supported):
                     raise AttributeError(
