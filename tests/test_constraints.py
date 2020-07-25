@@ -187,7 +187,7 @@ def test_batched_constraints(backend):
         )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -195,7 +195,7 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     suggested_pars = [1.1] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
@@ -208,7 +208,7 @@ def test_batched_constraints(backend):
         )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -216,7 +216,7 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     constraint = poisson_constraint_combined(config, batch_size=10)
     result = constraint.logpdf(

@@ -318,7 +318,7 @@ def test_optim_with_value(backend, source, spec, mu):
         return_fitted_val=True,
     )
     assert pyhf.tensorlib.tolist(result)
-    assert pyhf.tensorlib.shape(fitted_val) == (1,)
+    assert pyhf.tensorlib.shape(fitted_val) == ()
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])

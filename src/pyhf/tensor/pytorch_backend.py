@@ -112,6 +112,17 @@ class pytorch_backend(object):
         """
         Convert to a PyTorch Tensor.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'torch.Tensor'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
@@ -124,13 +135,7 @@ class pytorch_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = torch.as_tensor(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.expand(1)
-        return tensor
+        return torch.as_tensor(tensor_in, dtype=dtype)
 
     def gather(self, tensor, indices):
         return tensor[indices.type(torch.LongTensor)]
@@ -222,6 +227,7 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
+        args = [arg.view(1) if not self.shape(arg) else arg for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]

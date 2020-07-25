@@ -27,6 +27,6 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     def func(pars):
         pars = tensorlib.astensor(pars)
         constrained_pars = stitch_pars(pars)
-        return objective(constrained_pars, data, pdf)
+        return objective(constrained_pars, data, pdf)[0]
 
     return func
