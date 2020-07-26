@@ -3,6 +3,17 @@ from .. import get_backend
 from ..tensor.common import _TensorViewer
 
 
+def _make_stitch_pars(tv=None, fixed_values=None):
+    if tv is None:
+        return lambda pars, stitch_with=None: pars
+
+    def stitch_pars(pars, stitch_with=fixed_values):
+        tb, _ = get_backend()
+        return tv.stitch([tb.astensor(stitch_with, dtype='float'), pars])
+
+    return stitch_pars
+
+
 def _get_tensor_shim():
     """
     A shim-retriever to lazy-retrieve the necessary shims as needed.
@@ -96,15 +107,13 @@ def shim(
 
         tv = _TensorViewer([fixed_idx, variable_idx])
         # NB: this is a closure, tensorlib needs to be accessed at a different point in time
-        def stitch_pars(pars, stitch_with=fixed_values):
-            tb, _ = get_backend()
-            return tv.stitch([tb.astensor(fixed_values, dtype='float'), pars])
+        stitch_pars = _make_stitch_pars(tv, fixed_values)
 
     else:
         variable_init = init_pars
         variable_bounds = par_bounds
         minimizer_fixed_vals = fixed_vals
-        stitch_pars = lambda pars, stitch_with=None: pars
+        stitch_pars = _make_stitch_pars()
 
     objective_and_grad = _get_tensor_shim()(
         objective,
