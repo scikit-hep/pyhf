@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import jsonpatch
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 

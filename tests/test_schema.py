@@ -392,7 +392,7 @@ def test_jsonpatch_fail(patch):
 
 
 @pytest.mark.parametrize(
-    'patchset_file', ['patchset_good.json', 'patchset_good_no_analysis.json'],
+    'patchset_file', ['patchset_good.json'],
 )
 def test_patchset(datadir, patchset_file):
     patchset = json.load(open(datadir.join(patchset_file)))
@@ -410,6 +410,8 @@ def test_patchset(datadir, patchset_file):
         'patchset_bad_no_description.json',
         'patchset_bad_no_labels.json',
         'patchset_bad_invalid_digests.json',
+        'patchset_bad_hepdata_reference.json',
+        'patchset_bad_no_version.json',
     ],
 )
 def test_patchset_fail(datadir, patchset_file):

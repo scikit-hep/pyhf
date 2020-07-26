@@ -8,7 +8,6 @@ from ..workspace import Workspace
 from .. import modifiers
 from .. import utils
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
@@ -26,7 +25,40 @@ def cli():
 )
 @click.option('--measurement', default=None)
 def inspect(workspace, output_file, measurement):
-    """Inspect a pyhf JSON document."""
+    """
+    Inspect a pyhf JSON document.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf inspect
+                  Summary
+            ------------------
+               channels  1
+                samples  2
+             parameters  2
+              modifiers  2
+
+               channels  nbins
+             ----------  -----
+          singlechannel    2
+
+                samples
+             ----------
+             background
+                 signal
+
+             parameters  constraint              modifiers
+             ----------  ----------              ----------
+                     mu  unconstrained           normfactor
+        uncorr_bkguncrt  constrained_by_poisson  shapesys
+
+            measurement           poi            parameters
+             ----------        ----------        ----------
+        (*) Measurement            mu            (none)
+
+    """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
@@ -296,6 +328,13 @@ def digest(workspace, algorithm, output_json):
 
     Returns:
         digests (:obj:`dict`): A mapping of the hashing algorithms used to the computed digest for the workspace.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf digest
+        sha256:dad8822af55205d60152cbe4303929042dbd9d4839012e055e7c6b6459d68d73
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)

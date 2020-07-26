@@ -25,7 +25,7 @@ sys.path.insert(1, str(Path('./exts').resolve()))
 
 
 def setup(app):
-    app.add_stylesheet(
+    app.add_css_file(
         'https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css'
     )
 
@@ -47,6 +47,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.intersphinx',
     'sphinxcontrib.bibtex',
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
@@ -58,6 +59,10 @@ extensions = [
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
+
+intersphinx_mapping = {
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+}
 
 # Github repo
 issues_github_path = 'scikit-hep/pyhf'

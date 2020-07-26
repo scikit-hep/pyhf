@@ -127,10 +127,10 @@ def test_hypotest_q_mu(
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
-        pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(),
-        pyhf.tensor.pytorch_backend(),
-        pyhf.tensor.jax_backend(),
+        pyhf.tensor.numpy_backend(precision='64b'),
+        pyhf.tensor.tensorflow_backend(precision='64b'),
+        pyhf.tensor.pytorch_backend(precision='64b'),
+        pyhf.tensor.jax_backend(precision='64b'),
     ]
 
     test_statistic = []
@@ -158,7 +158,7 @@ def test_hypotest_q_mu(
             "BACKEND",
             backend,
         )
-        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
+        test_statistic.append(q_mu)
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)

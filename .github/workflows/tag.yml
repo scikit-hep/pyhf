@@ -43,10 +43,10 @@ jobs:
           echo "::set-env name=BV_PART::patch"
         fi
     - name: Checkout repository
-      uses: actions/checkout@v2
-      # Get history for checkout master to work
-    - run: |
-        git fetch --prune --unshallow
+      uses: actions/checkout@v2.2.0
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0
     - name: Set up git user
       run: |
         git config --local user.email "action@github.com"
@@ -59,7 +59,7 @@ jobs:
         git merge --squash "origin/${GITHUB_HEAD_REF}"
         git commit -m "${PR_TITLE} (#${PR_NUMBER})"
     - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: 3.7
     - name: Install bumpversion
@@ -79,7 +79,7 @@ jobs:
 
         CHANGES=$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):')
         CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
-        SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' )
+        SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' -e 's/"/'"'"'/g')
         echo "::set-env name=CHANGES::${SANITIZED_CHANGES//$'\n'/}"
         NUM_CHANGES=$(echo -n "$CHANGES" | grep -c '^')
         echo "::set-env name=NUM_CHANGES::${NUM_CHANGES}"
@@ -88,25 +88,40 @@ jobs:
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
-      uses: actions/github-script@0.3.0
+      uses: actions/github-script@v1.1.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.issues.createComment({...context.issue, body: "I've queued this up. When it gets merged, I'll create a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → ${{ env['NEW_TAG'] }} which includes the following ${{ env['NUM_CHANGES'] }} change(s) [including this PR]:<br />${{ env['CHANGES'] }}<br />If you make any more changes, you probably want to re-trigger me again by removing the `bumpversion/${{ env['BV_PART'] }}` label and then adding it back again."})
+          github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "I've queued this up. When it gets merged, I'll create a ${{ env['BV_PART'] }} release from ${{ env['OLD_TAG'] }} → ${{ env['NEW_TAG'] }} which includes the following ${{ env['NUM_CHANGES'] }} change(s) [including this PR]:<br />${{ env['CHANGES'] }}<br />If you make any more changes, you probably want to re-trigger me again by removing the `bumpversion/${{ env['BV_PART'] }}` label and then adding it back again."
+            })
     - name: Push changes
       if: >-
         github.event.action == 'closed' && github.event.pull_request.merged
-      uses: ad-m/github-push-action@v0.5.0
+      uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ secrets.GITHUB_PAT }}
     - name: Comment that something failed
       if: failure()
-      uses: actions/github-script@0.3.0
+      uses: actions/github-script@v1.1.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.issues.createComment({...context.issue, body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."})
-          github.issues.removeLabel({...context.issue, labels: "bumpversion/${{ env['BV_PART'] }}" })
+          github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ":cry: Something went wrong. I am not able to push. Check the [Actions pipeline](https://github.com/${{ github.repository }}/actions?query=workflow%3A%22Tag+Creator%22) to see what happened. If you make any more changes, you probably want to re-trigger me again by adding the `bumpversion/${{ env['BV_PART'] }}` label again."
+            })
+          github.issues.removeLabel({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "bumpversion/${{ env['BV_PART'] }}"
+            })
 
   always_job:
     name: Always run job

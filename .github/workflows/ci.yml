@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -27,18 +27,6 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
         python -m pip list
-    - name: Lint with Pyflakes
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        python -m pyflakes .
-    - name: Lint with Black
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        black --check --diff --verbose .
-    - name: Check MANIFEST
-      if: matrix.python-version == 3.7 && matrix.os == 'ubuntu-latest'
-      run: |
-        check-manifest
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
@@ -67,7 +55,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -88,12 +76,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      # Get history and tags for versioning to work
-    - run: |
-        git fetch --prune --unshallow
-        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      with:
+        fetch-depth: 0
     - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -106,7 +92,15 @@ jobs:
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
-        pydocstyle --select D1 src/pyhf/pdf.py src/pyhf/workspace.py src/pyhf/probability.py src/pyhf/interpolators src/pyhf/infer src/pyhf/optimize src/pyhf/contrib src/pyhf/cli
+        pydocstyle --select D1 src/pyhf/pdf.py \
+                               src/pyhf/workspace.py \
+                               src/pyhf/probability.py \
+                               src/pyhf/patchset.py \
+                               src/pyhf/interpolators \
+                               src/pyhf/infer \
+                               src/pyhf/optimize \
+                               src/pyhf/contrib \
+                               src/pyhf/cli
     - name: Test and build docs
       run: |
         python -m doctest README.rst
@@ -138,7 +132,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build Docker image
-      if: "!(startsWith(github.ref, 'refs/tags/'))"
       uses: docker/build-push-action@v1
       with:
         repository: pyhf/pyhf

@@ -244,10 +244,19 @@
             "type": "object",
             "properties": {
                 "patches": { "$ref": "#/definitions/patchset/patches" },
-                "metadata": { "$ref": "#/definitions/patchset/metadata" }
+                "metadata": { "$ref": "#/definitions/patchset/metadata" },
+                "version": { "const": "1.0.0" }
             },
             "additionalProperties": false,
-            "required": ["patches", "metadata"],
+            "required": ["patches", "metadata", "version"],
+            "references": {
+                "type": "object",
+                "properties": {
+                    "hepdata": { "type": "string", "pattern": "^ins[0-9]{7}$" }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+            },
             "digests": {
                 "type": "object",
                 "properties": {
@@ -281,11 +290,15 @@
                 "type": "object",
                 "properties": {
                     "digests": { "$ref": "#/definitions/patchset/digests" },
-                    "labels": { "type": "array", "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" } },
+                    "labels": {
+                        "type": "array",
+                        "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                        "minItems": 1
+                    },
                     "description": { "type": "string" },
-                    "analysis_id": { "type": "string" }
+                    "references": { "$ref": "#/definitions/patchset/references" }
                 },
-                "required": ["digests", "labels", "description"]
+                "required": ["references", "digests", "labels", "description"]
             }
         }
     }

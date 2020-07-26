@@ -1,70 +1,80 @@
-"""JAX Optimizer Backend."""
+"""JAX Backend Function Shim."""
 
-from .. import get_backend, default_backend
+from .. import get_backend
 from ..tensor.common import _TensorViewer
-from .autodiff import AutoDiffOptimizerMixin
 import jax
+import logging
+
+log = logging.getLogger(__name__)
 
 
-def _final_objective(pars, data, fixed_vals, model, objective, fixed_idx, variable_idx):
+def _final_objective(
+    pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf
+):
+    log.debug('jitting function')
     tensorlib, _ = get_backend()
-    tv = _TensorViewer([fixed_idx, variable_idx])
     pars = tensorlib.astensor(pars)
-    constrained_pars = tv.stitch([fixed_vals, pars])
-    return objective(constrained_pars, data, model)[0]
+    if do_stitch:
+        tv = _TensorViewer([fixed_idx, variable_idx])
+        constrained_pars = tv.stitch(
+            [tensorlib.astensor(fixed_values, dtype='float'), pars]
+        )
+    else:
+        constrained_pars = pars
+    return objective(constrained_pars, data, pdf)[0]
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective), static_argnums=(3, 4, 5, 6)
+    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7)
 )
 
+_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7))
 
-class jax_optimizer(AutoDiffOptimizerMixin):
-    """JAX Optimizer Backend."""
 
-    def setup_minimize(
-        self, objective, data, pdf, init_pars, par_bounds, fixed_vals=None
-    ):
-        """
-        Prepare Minimization for AutoDiff-Optimizer.
+def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
+    """
+    Wrap the objective function for the minimization.
 
-        Args:
-            objective: objective function
-            data: observed data
-            pdf: model
-            init_pars: initial parameters
-            par_bounds: parameter boundaries
-            fixed_vals: fixed parameter values
+    Args:
+        objective (`func`): objective function
+        data (`list`): observed data
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
+        stitch_pars (`func`): callable that stitches parameters, see :func:`pyhf.optimize.common.shim`.
+        do_grad (`bool`): enable autodifferentiation mode. Default is off.
 
-        """
-
-        tensorlib, _ = get_backend()
-        all_idx = default_backend.astensor(range(pdf.config.npars), dtype='int')
-        all_init = default_backend.astensor(init_pars)
-
-        fixed_vals = fixed_vals or []
-        fixed_values = [x[1] for x in fixed_vals]
-        fixed_idx = [x[0] for x in fixed_vals]
-
-        variable_idx = [x for x in all_idx if x not in fixed_idx]
-        variable_init = all_init[variable_idx]
-        variable_bounds = [par_bounds[i] for i in variable_idx]
-
-        tv = _TensorViewer([fixed_idx, variable_idx])
-
-        data = tensorlib.astensor(data)
-        fixed_values_tensor = tensorlib.astensor(fixed_values, dtype='float')
+    Returns:
+        objective_and_grad (`func`): tensor backend wrapped objective,gradient pair
+    """
+    tensorlib, _ = get_backend()
+    # NB: tuple arguments that need to be hashable (static_argnums)
+    if do_grad:
 
         def func(pars):
             # need to conver to tuple to make args hashable
             return _jitted_objective_and_grad(
                 pars,
                 data,
-                fixed_values_tensor,
-                pdf,
+                jit_pieces['fixed_values'],
+                tuple(jit_pieces['fixed_idx']),
+                tuple(jit_pieces['variable_idx']),
+                jit_pieces['do_stitch'],
                 objective,
-                tuple(fixed_idx),
-                tuple(variable_idx),
+                pdf,
             )
 
-        return tv, fixed_values_tensor, func, variable_init, variable_bounds
+    else:
+
+        def func(pars):
+            # need to conver to tuple to make args hashable
+            return _jitted_objective(
+                pars,
+                data,
+                jit_pieces['fixed_values'],
+                tuple(jit_pieces['fixed_idx']),
+                tuple(jit_pieces['variable_idx']),
+                jit_pieces['do_stitch'],
+                objective,
+                pdf,
+            )
+
+    return func

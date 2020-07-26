@@ -1,5 +1,6 @@
 from .. import get_backend
 from .mle import fixed_poi_fit, fit
+from ..exceptions import UnspecifiedPOI
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
@@ -44,6 +45,11 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
+    if pdf.config.poi_index is None:
+        raise UnspecifiedPOI(
+            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+        )
+
     tensorlib, optimizer = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_val=True
@@ -54,5 +60,5 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     qmu = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), qmu
-    )[0]
+    )
     return tensorlib.clip(qmu, 0, max_value=None)

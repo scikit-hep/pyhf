@@ -4,7 +4,7 @@ import logging
 import click
 
 from ..version import __version__
-from . import rootio, spec, infer
+from . import rootio, spec, infer, patchset, complete
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -29,3 +29,7 @@ pyhf.add_command(spec.digest)
 
 # pyhf.add_command(infer.cli)
 pyhf.add_command(infer.cls)
+
+pyhf.add_command(patchset.cli)
+
+pyhf.add_command(complete.cli)

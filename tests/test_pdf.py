@@ -5,6 +5,26 @@ import numpy as np
 import json
 
 
+def test_minimum_model_spec():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [1.0],
+                        'modifiers': [
+                            {'type': 'normfactor', 'name': 'mu', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    pyhf.Model(spec)
+
+
 def test_pdf_inputs(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -180,6 +200,39 @@ def test_pdf_integration_staterror(backend):
     assert pytest.approx(tensorlib.tolist(par_set.sigmas)) == tensorlib.tolist(
         tensorlib.divide(quad, totals)
     )
+
+
+def test_poiless_model(backend):
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'type': 'normsys',
+                                'name': 'shape',
+                                'data': {"hi": 0.5, "lo": 1.5},
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    model = pyhf.Model(spec, poi_name=None)
+
+    data = [12] + model.config.auxdata
+    pyhf.infer.mle.fit(data, model)
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        pyhf.infer.mle.fixed_poi_fit(1.0, data, model)
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        pyhf.infer.hypotest(1.0, data, model)
 
 
 def test_pdf_integration_shapesys_zeros(backend):

@@ -41,16 +41,16 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
     a = tb.astensor(1)
     b = tb.astensor(2)
-    assert tb.tolist(a < b)[0] is True
-    assert tb.tolist(b < a)[0] is False
-    assert tb.tolist(a < a)[0] is False
-    assert tb.tolist(a > b)[0] is False
-    assert tb.tolist(b > a)[0] is True
-    assert tb.tolist(a > a)[0] is False
+    assert tb.tolist(a < b) is True
+    assert tb.tolist(b < a) is False
+    assert tb.tolist(a < a) is False
+    assert tb.tolist(a > b) is False
+    assert tb.tolist(b > a) is True
+    assert tb.tolist(a > a) is False
     a = tb.astensor(4)
     b = tb.astensor(5)
-    assert tb.tolist(tb.conditional((a < b)[0], lambda: a + b, lambda: a - b)) == [9]
-    assert tb.tolist(tb.conditional((a > b)[0], lambda: a + b, lambda: a - b)) == [-1]
+    assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0
+    assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
 
 def test_complex_tensor_ops(backend):
@@ -64,6 +64,9 @@ def test_complex_tensor_ops(backend):
         [1, 2, 3],
         [4, 5, 6],
     ]
+    assert tb.tolist(
+        tb.stack([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])], axis=1)
+    ) == [[1, 4], [2, 5], [3, 6]]
     assert tb.tolist(
         tb.concatenate([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])
     ) == [1, 2, 3, 4, 5, 6]
@@ -142,10 +145,9 @@ def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
     assert tb.shape(tb.ones((0, 0))) == (0, 0)
+    assert tb.shape(tb.astensor(1.0)) == ()
     assert tb.shape(tb.astensor([])) == (0,)
     assert tb.shape(tb.astensor([1.0])) == (1,)
-    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
-    assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
     with pytest.raises(
@@ -372,3 +374,64 @@ def test_pdf_eval_2(backend):
     assert pytest.approx([-23.579605171119738], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
     )
+
+
+def test_tensor_precision(backend):
+    tb, _ = backend
+    assert tb.precision in ['32b', '64b']
+
+
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_set_tensor_precision(tensorlib, precision):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+    assert tb.precision == precision
+    # check for float64/int64/float32/int32 in the dtypemap by looking at the class names
+    #   - may break if class names stop including this, but i doubt it
+    assert f'float{precision[:1]}' in str(tb.dtypemap['float'])
+    assert f'int{precision[:1]}' in str(tb.dtypemap['int'])
+
+
+def test_trigger_tensorlib_changed_name(mocker):
+    numpy_64 = pyhf.tensor.numpy_backend(precision='64b')
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+
+    pyhf.set_backend(numpy_64)
+
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func)
+
+    assert func.call_count == 0
+    pyhf.set_backend(jax_64)
+    assert func.call_count == 1
+
+
+def test_trigger_tensorlib_changed_precision(mocker):
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+    jax_32 = pyhf.tensor.jax_backend(precision='32b')
+
+    pyhf.set_backend(jax_64)
+
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func)
+
+    assert func.call_count == 0
+    pyhf.set_backend(jax_32)
+    assert func.call_count == 1
+
+
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_tensorlib_setup(tensorlib, precision, mocker):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+
+    func = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
+    assert func.call_count == 0
+    pyhf.set_backend(tb)
+    assert func.call_count == 1

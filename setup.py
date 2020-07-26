@@ -1,16 +1,15 @@
-from setuptools import setup, find_packages
-from pathlib import Path
-
-this_directory = Path(__file__).parent.resolve()
-with open(Path(this_directory).joinpath('README.rst'), encoding='utf-8') as readme_rst:
-    long_description = readme_rst.read()
+from setuptools import setup
 
 extras_require = {
-    'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
+    'shellcomplete': ['click_completion'],
+    'tensorflow': [
+        'tensorflow~=2.0',
+        'tensorflow-probability~=0.10',  # TODO: Temp patch until tfp v0.11
+    ],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
-    'xmlio': ['uproot'],
-    'minuit': ['iminuit'],
+    'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
+    'minuit': ['iminuit~=1.4,>=1.4.3'],  # Use "name" keyword in MINUIT optimizer
 }
 extras_require['backends'] = sorted(
     set(
@@ -21,14 +20,15 @@ extras_require['backends'] = sorted(
     )
 )
 extras_require['contrib'] = sorted(set(['matplotlib']))
+extras_require['lint'] = sorted(set(['pyflakes', 'black']))
 
 extras_require['test'] = sorted(
     set(
         extras_require['backends']
         + extras_require['xmlio']
         + extras_require['contrib']
+        + extras_require['shellcomplete']
         + [
-            'pyflakes',
             'pytest~=3.5',
             'pytest-cov>=2.5.1',
             'pytest-mock',
@@ -39,19 +39,17 @@ extras_require['test'] = sorted(
             'coverage>=4.0',  # coveralls
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
-            'check-manifest',
             'jupyter',
             'uproot~=3.3',
             'graphviz',
             'jsonpatch',
-            'black',
         ]
     )
 )
 extras_require['docs'] = sorted(
     set(
         [
-            'sphinx',
+            'sphinx>=3.1.2',
             'sphinxcontrib-bibtex',
             'sphinx-click',
             'sphinx_rtd_theme',
@@ -65,44 +63,15 @@ extras_require['docs'] = sorted(
 extras_require['develop'] = sorted(
     set(
         extras_require['docs']
+        + extras_require['lint']
         + extras_require['test']
-        + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'twine']
+        + ['nbdime', 'bumpversion', 'ipython', 'pre-commit', 'check-manifest', 'twine']
     )
 )
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
 setup(
-    name='pyhf',
-    version='0.4.1',
-    description='(partial) pure python histfactory implementation',
-    long_description=long_description,
-    long_description_content_type='text/x-rst',
-    url='https://github.com/scikit-hep/pyhf',
-    author='Lukas Heinrich, Matthew Feickert, Giordon Stark',
-    author_email='lukas.heinrich@cern.ch, matthew.feickert@cern.ch, gstark@cern.ch',
-    license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch',
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-    ],
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
-    include_package_data=True,
-    python_requires=">=3.6",
-    install_requires=[
-        'scipy',  # requires numpy, which is required by pyhf and tensorflow
-        'click>=6.0',  # for console scripts,
-        'tqdm',  # for readxml
-        'jsonschema>=3.2.0',  # for utils
-        'jsonpatch',
-        'pyyaml',  # for parsing CLI equal-delimited options
-    ],
     extras_require=extras_require,
-    entry_points={'console_scripts': ['pyhf=pyhf.cli:cli']},
-    dependency_links=[],
     use_scm_version=lambda: {'local_scheme': lambda version: ''},
 )
