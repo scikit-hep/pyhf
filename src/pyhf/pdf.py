@@ -93,6 +93,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
         paramset_type = paramset_requirements.get('paramset_type')
         paramset = paramset_type(**paramset_requirements)
         _sets[param_name] = paramset
+
     return _sets
 
 
@@ -216,6 +217,16 @@ def _nominal_and_modifiers_from_spec(config, spec):
 
 
 class _ModelConfig(_ChannelSummaryMixin):
+    __slots__ = [
+        'par_map',
+        'par_order',
+        'poi_name',
+        'poi_index',
+        'auxdata',
+        'auxdata_order',
+        'modifier_settings',
+    ]
+
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
         _required_paramsets = _paramset_requirements_from_modelspec(
@@ -229,8 +240,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         )
 
         if config_kwargs:
-            raise KeyError(
-                f"""Unexpected keyword argument(s): '{"', '".join(config_kwargs.keys())}'"""
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
             )
 
         self.par_map = {}
@@ -264,6 +275,23 @@ class _ModelConfig(_ChannelSummaryMixin):
 
     def param_set(self, name):
         return self.par_map[name]['paramset']
+
+    def fixed_pars(self):
+        """
+        Something like the following to build fixed_vals appropriately:
+
+        fixed_pars = pdf.config.fixed_pars()
+        inits = pdf.config.suggested_init()
+        fixed_vals = [
+            (index, init)
+            for index, (init, is_fixed) in enumerate(zip(inits, fixed_pars))
+            if is_fixed
+        ]
+        """
+        fixed_pars = []
+        for name in self.par_order:
+            fixed_pars = fixed_pars + self.par_map[name]['paramset'].fixed
+        return fixed_pars
 
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:

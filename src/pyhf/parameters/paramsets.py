@@ -2,25 +2,34 @@ from .. import default_backend
 
 
 class paramset(object):
+    __slots__ = ['n_parameters', 'suggested_init', 'suggested_bounds', 'fixed']
+
     def __init__(self, **kwargs):
         self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
+        self.fixed = kwargs.pop('fixed')
 
 
 class unconstrained(paramset):
+    __slots__ = ['constrained']
+
     def __init__(self, **kwargs):
         super(unconstrained, self).__init__(**kwargs)
         self.constrained = False
 
 
 class constrained_paramset(paramset):
+    __slots__ = ['constrained']
+
     def __init__(self, **kwargs):
         super(constrained_paramset, self).__init__(**kwargs)
         self.constrained = True
 
 
 class constrained_by_normal(constrained_paramset):
+    __slots__ = ['pdf_type', 'auxdata', 'sigmas']
+
     def __init__(self, **kwargs):
         super(constrained_by_normal, self).__init__(**kwargs)
         self.pdf_type = 'normal'
