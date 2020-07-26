@@ -74,7 +74,6 @@ class minuit_optimizer(OptimizerMixin):
         do_grad=False,
         bounds=None,
         fixed_vals=None,
-        return_uncertainties=False,
         options={},
     ):
 
@@ -93,6 +92,8 @@ class minuit_optimizer(OptimizerMixin):
         """
         maxiter = options.pop('maxiter', self.maxiter)
         return_uncertainties = options.pop('return_uncertainties', False)
+        return_correlations = options.pop('return_correlations', False)
+
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
@@ -119,9 +120,16 @@ class minuit_optimizer(OptimizerMixin):
         if return_uncertainties:
             unc = minimizer.np_errors()
 
+        # cov = None
+        corr = None
+        if return_correlations:
+            # cov = minimizer.hesse(maxcall=maxiter)
+            corr = minimizer.matrix(correlation=True, skip_fixed=False)
+
         return scipy.optimize.OptimizeResult(
             x=minimizer.np_values(),
             unc=unc,
+            corr=corr,
             success=minimizer.valid,
             fun=minimizer.fval,
             hess_inv=hess_inv,

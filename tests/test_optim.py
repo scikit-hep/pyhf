@@ -347,6 +347,35 @@ def test_optim_uncerts(backend, source, spec, mu):
     assert pyhf.tensorlib.tolist(result)
 
 
+@pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
+@pytest.mark.only_numpy_minuit
+def test_optim_correlations(backend, source, spec, mu):
+    pdf = pyhf.Model(spec)
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result, result_obj = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
+        return_correlations=True,
+        return_result_obj=True,
+    )
+    assert result.shape == (2,)
+    assert result_obj.corr.shape == (2, 2)
+    assert pyhf.tensorlib.tolist(result)
+
+
 @pytest.mark.parametrize(
     'has_reached_call_limit', [False, True], ids=['no_call_limit', 'call_limit']
 )

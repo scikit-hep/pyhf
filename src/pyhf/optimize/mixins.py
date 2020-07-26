@@ -65,6 +65,7 @@ class OptimizerMixin(object):
         # extract number of fixed parameters
         num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
+        _stackables = []
         # check if uncertainties were provided
         uncertainties = getattr(fitresult, 'unc', None)
         if uncertainties is not None:
@@ -74,7 +75,20 @@ class OptimizerMixin(object):
                 stitch_with=tensorlib.zeros(num_fixed_pars),
             )
             fitresult.unc = fitted_uncs
-            fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
+            _stackables.append(fitted_uncs)
+
+        # check if correlations were provided
+        correlations = getattr(fitresult, 'corr', None)
+        if correlations is not None:
+            # stitch in zero-uncertainty for fixed values
+            fitted_corrs = stitch_pars(
+                tensorlib.astensor(correlations),
+                stitch_with=tensorlib.zeros(num_fixed_pars),
+            )
+            fitresult.corr = fitted_corrs
+
+        if _stackables:
+            fitted_pars = tensorlib.stack([fitted_pars, *_stackables], axis=1)
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)

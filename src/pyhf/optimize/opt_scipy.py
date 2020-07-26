@@ -33,7 +33,6 @@ class scipy_optimizer(OptimizerMixin):
         do_grad=False,
         bounds=None,
         fixed_vals=None,
-        return_uncertainties=False,
         options={},
     ):
         """
