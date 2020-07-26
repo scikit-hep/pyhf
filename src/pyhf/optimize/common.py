@@ -4,6 +4,16 @@ from ..tensor.common import _TensorViewer
 
 
 def _make_stitch_pars(tv=None, fixed_values=None):
+    """
+    Construct a callable to stitch fixed paramter values into the unfixed parameters.
+
+    Args:
+        tv (`_TensorViewer`): The `_TensorViewer` defining the parameter composition
+        fixed_vals (`list`): The fixed parameter values
+
+    Returns:
+        stitch_pars (`func`): Callable that stitches fixed parameters into the unfixed parameters
+    """
     if tv is None:
         return lambda pars, stitch_with=None: pars
 
