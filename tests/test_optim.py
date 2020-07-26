@@ -415,7 +415,7 @@ def test_get_tensor_shim(monkeypatch):
 def test_stitch_pars(backend):
     tb, _ = backend
 
-    passthrough = make_stitch_pars()
+    passthrough = _make_stitch_pars()
     pars = ['a', 'b', 1.0, 2.0, object()]
     assert passthrough(pars) == pars
 
@@ -424,7 +424,7 @@ def test_stitch_pars(backend):
     fixed_vals = [10, 40, 50]
     variable_vals = [20, 30, 60]
     tv = _TensorViewer([fixed_idx, variable_idx])
-    stitch_pars = make_stitch_pars(tv, fixed_vals)
+    stitch_pars = _make_stitch_pars(tv, fixed_vals)
 
     pars = tb.astensor(variable_vals)
     assert tb.tolist(stitch_pars(pars)) == [10, 20, 30, 40, 50, 60]
