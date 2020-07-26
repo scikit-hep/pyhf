@@ -251,7 +251,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
             # determine what all parameters in the paramsetting have in common
             overall_param_obj = {}
             if param.attrib.get('Const'):
-                overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
+                overall_param_obj['fixed'] = [param.attrib['Const'] == 'True']
             if param.attrib.get('Val'):
                 overall_param_obj['inits'] = [float(param.attrib['Val'])]
 
