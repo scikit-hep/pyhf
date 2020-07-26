@@ -74,8 +74,10 @@ def test_process_normfactor_configs():
     toplvl.append(meas)
 
     other_parameter_configs = [
-        dict(name='mu_both', inits=[1.0], bounds=[[1.0, 5.0]], fixed=False),
-        dict(name='mu_otherConfigOnly', inits=[1.0], bounds=[[0.0, 10.0]], fixed=False),
+        dict(name='mu_both', inits=[1.0], bounds=[[1.0, 5.0]], fixed=[False]),
+        dict(
+            name='mu_otherConfigOnly', inits=[1.0], bounds=[[0.0, 10.0]], fixed=[False]
+        ),
     ]
 
     result = pyhf.readxml.process_measurements(
@@ -97,12 +99,12 @@ def test_process_normfactor_configs():
     assert 'bounds' not in result['NormalMeasurement']['mu_paramSettingOnly']
 
     # make sure our code doesn't accidentally override other parameter configs
-    assert not result['NormalMeasurement']['mu_otherConfigOnly']['fixed']
+    assert result['NormalMeasurement']['mu_otherConfigOnly']['fixed'] == [False]
     assert result['NormalMeasurement']['mu_otherConfigOnly']['inits'] == [1.0]
     assert result['NormalMeasurement']['mu_otherConfigOnly']['bounds'] == [[0.0, 10.0]]
 
     # make sure settings from one measurement don't leak to other
-    assert not result['ParallelMeasurement']['mu_both']['fixed']
+    assert result['ParallelMeasurement']['mu_both']['fixed'] == [False]
     assert result['ParallelMeasurement']['mu_both']['inits'] == [3.0]
     assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
 
