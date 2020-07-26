@@ -280,13 +280,15 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         Something like the following to build fixed_vals appropriately:
 
-        fixed_pars = pdf.config.fixed_pars()
-        inits = pdf.config.suggested_init()
-        fixed_vals = [
-            (index, init)
-            for index, (init, is_fixed) in enumerate(zip(inits, fixed_pars))
-            if is_fixed
-        ]
+        .. code:: python
+
+            fixed_pars = pdf.config.fixed_pars()
+            inits = pdf.config.suggested_init()
+            fixed_vals = [
+                (index, init)
+                for index, (init, is_fixed) in enumerate(zip(inits, fixed_pars))
+                if is_fixed
+            ]
         """
         fixed_pars = []
         for name in self.par_order:
