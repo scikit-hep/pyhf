@@ -742,7 +742,7 @@ def test_unexpected_keyword_argument(measurements, msettings):
             }
         ]
     }
-    with pytest.raises(KeyError):
+    with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.pdf._ModelConfig(
             spec, measurement_name=measurements, modifiers_settings=msettings
         )
