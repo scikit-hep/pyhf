@@ -746,3 +746,33 @@ def test_unexpected_keyword_argument(measurements, msettings):
         pyhf.pdf._ModelConfig(
             spec, measurement_name=measurements, modifiers_settings=msettings
         )
+
+
+def test_pdf_integration_fixed_parameters():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {'name': 'unfixed', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': [True]}],
+    }
+    pdf = pyhf.Model(spec, poi_name='mypoi')
+    assert pdf.config.fixed_pars() == [False, True]
+    assert pdf.config.poi_index == 1
