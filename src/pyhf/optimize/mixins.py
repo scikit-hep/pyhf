@@ -80,11 +80,16 @@ class OptimizerMixin(object):
         # check if correlations were provided
         correlations = getattr(fitresult, 'corr', None)
         if correlations is not None:
-            # stitch in zero-uncertainty for fixed values
-            fitted_corrs = stitch_pars(
-                tensorlib.astensor(correlations),
-                stitch_with=tensorlib.zeros(num_fixed_pars),
-            )
+            correlations = tensorlib.astensor(correlations)
+            _zeros = tensorlib.zeros(num_fixed_pars)
+            # possibly a more elegant way to do this
+            stitched_columns = [
+                stitch_pars(column, stitch_with=_zeros) for column in zip(*correlations)
+            ]
+            stitched_rows = [
+                stitch_pars(row, stitch_with=_zeros) for row in zip(*stitched_columns)
+            ]
+            fitted_corrs = tensorlib.concatenate([stitched_rows], axis=1)
             fitresult.corr = fitted_corrs
 
         if _stackables:
