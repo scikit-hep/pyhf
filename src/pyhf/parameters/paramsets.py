@@ -46,6 +46,7 @@ class constrained_by_normal(constrained_paramset):
 
 
 class constrained_by_poisson(constrained_paramset):
+    __slots__ = ['pdf_type', 'auxdata', 'factors']
     def __init__(self, **kwargs):
         super(constrained_by_poisson, self).__init__(**kwargs)
         self.pdf_type = 'poisson'
