@@ -58,3 +58,40 @@ def test_digest_bad_alg():
     with pytest.raises(ValueError) as excinfo:
         pyhf.utils.digest({}, algorithm='nonexistent_algorithm')
     assert 'nonexistent_algorithm' in str(excinfo.value)
+
+
+@pytest.mark.parametrize(
+    'expression',
+    [
+        '1+2',
+        'parameter-name',
+        'parameter.name',
+        'parameter[name]',
+        'parameter["name"]',
+        'parameter[:"name"]',
+        'parameter[1].a',
+        'parameter[1][2]',
+        'parameter[1,2]',
+        'parameter[1]*2',
+        'parameter[-1:5]',
+    ],
+)
+def test_parse_parameter_name_fail(expression):
+    with pytest.raises(ValueError):
+        pyhf.utils.parse_parameter_name(expression)
+
+
+@pytest.mark.parametrize(
+    'expression,expected',
+    [
+        ('parameter', slice(None)),
+        ('parameter[:]', slice(None)),
+        ('parameter[1]', slice(1, 2, 1)),
+        ('parameter[:2]', slice(None, 2)),
+        ('parameter[3:]', slice(3, None)),
+        ('parameter[4::2]', slice(4, None, 2)),
+        ('parameter[::3]', slice(None, None, 3)),
+    ],
+)
+def test_parse_parameter_name(expression, expected):
+    pyhf.utils.parse_parameter_name(expression) == expected
