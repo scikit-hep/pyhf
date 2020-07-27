@@ -9,7 +9,7 @@ RUN apt-get -qq -y update && \
         git && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
-    rm -rf /var/lib/apt-get/lists/* && \
+    rm -rf /var/lib/apt/lists/* && \
     cd /code && \
     python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python -m pip install --no-cache-dir .[xmlio] && \
@@ -21,6 +21,6 @@ RUN apt-get -qq -y update && \
         curl && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
-    rm -rf /var/lib/apt-get/lists/*
+    rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/local /usr/local
 ENTRYPOINT ["/usr/local/bin/pyhf"]
