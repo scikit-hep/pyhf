@@ -66,7 +66,7 @@ class AsymptoticTestStatDistribution:
     the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
-    def __init__(self, shift):
+    def __init__(self, shift, cutoff):
         """
         Asymptotic test statistic distribution.
 
@@ -78,7 +78,7 @@ class AsymptoticTestStatDistribution:
 
         """
         self.shift = shift
-        self.sqrtqmuA_v = None
+        self.cutoff = cutoff
 
     def cdf(self, value):
         """
@@ -128,7 +128,13 @@ class AsymptoticTestStatDistribution:
 
         """
         tensorlib, _ = get_backend()
-        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability
+        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability\\
+
+        if value < self.cutoff:
+            raise RuntimeError(
+                'cannot evaluate pvalue outside of domain of the distribution'
+            )
+
         return tensorlib.normal_cdf(-(value - self.shift))
 
     def expected_value(self, nsigma):
@@ -150,7 +156,10 @@ class AsymptoticTestStatDistribution:
         Returns:
             Float: The expected value of the test statistic.
         """
-        return self.shift + nsigma
+        tensorlib, _ = get_backend()
+        return tensorlib.where(
+            self.shift + nsigma > self.cutoff, self.shift + nsigma, self.cutoff
+        )
 
 
 class AsymptoticCalculator:
@@ -164,6 +173,7 @@ class AsymptoticCalculator:
         par_bounds=None,
         fixed_params=None,
         test_stat="qtilde",
+        base_distr="normal",
     ):
         r"""
         Asymptotic Calculator.
@@ -191,6 +201,7 @@ class AsymptoticCalculator:
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.test_stat = test_stat
+        self.base_distr = base_distr
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -224,8 +235,17 @@ class AsymptoticCalculator:
         """
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(0.0)
+
+        if self.base_distr == 'normal':
+            cutoff = -1e10
+        elif self.base_distr == 'clipped_normal':
+            cutoff = -self.sqrtqmuA_v
+        else:
+            raise RuntimeError(
+                f'unknown base distribution for asymptotics {self.base_distr}'
+            )
+        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
+        b_dist = AsymptoticTestStatDistribution(0.0, cutoff)
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
