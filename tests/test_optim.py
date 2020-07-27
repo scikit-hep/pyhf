@@ -431,6 +431,18 @@ def test_minuit_failed_optimization(
         assert 'Estimated distance to minimum too large' in spy.spy_return.message
 
 
+def test_minuit_set_options(mocker):
+    pyhf.set_backend('numpy', 'minuit')
+    pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
+    data = [10] + pdf.config.auxdata
+    # no need to postprocess in this test
+    mocker.patch.object(OptimizerMixin, '_internal_postprocess')
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    pyhf.infer.mle.fit(data, pdf, tol=0.5, strategy=0)
+    assert spy.spy_return.minuit.tol == 0.5
+    assert spy.spy_return.minuit.strategy == 0
+
+
 def test_get_tensor_shim(monkeypatch):
     monkeypatch.setattr(pyhf.tensorlib, 'name', 'fake_backend')
     with pytest.raises(ValueError) as excinfo:
