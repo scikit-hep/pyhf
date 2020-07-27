@@ -146,10 +146,7 @@ def parse_parameter_name(expression):
             raise _error("Index must be a number.")
 
         # provided par_name="{name:s}[{index:num}]"
-        lower = expr.slice.value.n
-        upper = lower + 1
-        step = 1
-        return par_name, slice(lower, upper, step)
+        return par_name, expr.slice.value.n
 
     if isinstance(expr.slice, ast.Slice):
         # provided par_name="{name:s}[slice]"

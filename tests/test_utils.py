@@ -86,7 +86,8 @@ def test_parse_parameter_name_fail(expression):
     [
         ('parameter', slice(None)),
         ('parameter[:]', slice(None)),
-        ('parameter[1]', slice(1, 2, 1)),
+        ('parameter[1]', 1),
+        ('parameter[1:2]', slice(1, 2)),
         ('parameter[:2]', slice(None, 2)),
         ('parameter[3:]', slice(3, None)),
         ('parameter[4::2]', slice(4, None, 2)),
