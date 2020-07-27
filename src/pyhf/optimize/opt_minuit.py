@@ -7,14 +7,14 @@ import iminuit
 
 class minuit_optimizer(OptimizerMixin):
     """
-    Optimizer that uses iminuit.Minuit.migrad.
+    Optimizer that minimizes via :func:`iminuit.Minuit.migrad`.
     """
 
     __slots__ = ['name', 'errordef', 'steps']
 
     def __init__(self, *args, **kwargs):
         """
-        Create MINUIT Optimizer.
+        Create :class:`iminuit.Minuit` optimizer.
 
         .. note::
 
@@ -25,7 +25,7 @@ class minuit_optimizer(OptimizerMixin):
 
 
         Args:
-            errordef (`float`): See minuit docs. Default is 1.0.
+            errordef (`float`): See :attr:`iminuit.Minuit.errordef`. Default is 1.0.
             steps (`int`): Number of steps for the bounds. Default is 1000.
         """
         self.name = 'minuit'
@@ -84,13 +84,18 @@ class minuit_optimizer(OptimizerMixin):
         underlying minimizer.
 
         Minimizer Options:
-            maxiter (`int`): maximum number of iterations. Default is 100000.
-            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
+            maxiter (`int`): maximum number of iterations. See :attr:`~iminuit.Minuit.ncalls`. Default is ``100000``.
+            tol (`float`): tolerance for convergence. See :attr:`~iminuit.Minuit.tol`. Default is ``0.1``.
+            strategy (`int`): current minimization strategy. See :attr:`~iminuit.Minuit.strategy`. Default is ``1``.
+            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
+            return_correlations (`bool`): Return correlations of the fitted parameters. Default is off (``False``).
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
+        tolerance = options.pop('tol', 0.1)
+        strategy = options.pop('strategy', 1)
         return_uncertainties = options.pop('return_uncertainties', False)
         return_correlations = options.pop('return_correlations', False)
 
@@ -98,6 +103,9 @@ class minuit_optimizer(OptimizerMixin):
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
             )
+
+        minimizer.tol = tolerance
+        minimizer.strategy = strategy
 
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
