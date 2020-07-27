@@ -5,16 +5,20 @@ from ..tensor.common import _TensorViewer
 
 def _make_stitch_pars(tv=None, fixed_values=None):
     """
-    Construct a callable to stitch fixed paramter values into the unfixed parameters.
+    Construct a callable to stitch fixed paramter values into the unfixed parameters. See :func:`shim`.
+
+    This is extracted out to be unit-tested for proper behavior.
+
+    If ``tv`` or ``fixed_values`` are not provided, this returns the identity callable.
 
     Args:
-        tv (`_TensorViewer`): The `_TensorViewer` defining the parameter composition
-        fixed_vals (`list`): The fixed parameter values
+        tv (~pyhf.tensor.common._TensorViewer): tensor viewer instance
+        fixed_values (`list`): default set of values to stitch parameters with
 
     Returns:
-        stitch_pars (`func`): Callable that stitches fixed parameters into the unfixed parameters
+        callable (`func`): a callable that takes nuisance parameter values as input
     """
-    if tv is None:
+    if tv is None or fixed_values is None:
         return lambda pars, stitch_with=None: pars
 
     def stitch_pars(pars, stitch_with=fixed_values):
