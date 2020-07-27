@@ -2,7 +2,6 @@
 
 import copy
 import logging
-import ast
 
 from . import get_backend, default_backend
 from . import exceptions
@@ -265,14 +264,6 @@ class _ModelConfig(_ChannelSummaryMixin):
 
     def param_set(self, name):
         return self.par_map[name]['paramset']
-
-    def par_index(self, name):
-        par_name, subscript = utils.parse_parameter_name(name)
-        par_slice = self.par_slice(name)
-        indices = list(range(par_slice.stop)[par_slice])[subscript]
-        if len(indices) == 1:
-            return indices[0]
-        return indices
 
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
