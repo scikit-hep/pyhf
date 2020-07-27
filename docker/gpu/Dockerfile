@@ -9,7 +9,7 @@ RUN apt-get update -y && \
       python3-pip && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
-    rm -rf /var/lib/apt-get/lists/*
+    rm -rf /var/lib/apt/lists/*
 COPY . /code
 COPY ./docker/gpu/install_backend.sh /code/install_backend.sh
 WORKDIR /code
