@@ -15,7 +15,7 @@ import pytest
         ('syst', [7, 8, 9, 10, 11]),
     ],
 )
-def test_parameter_indices(expression, expected):
+def test_query_parameter_indices(expression, expected):
     # NB: "asecondchannel" is used to test the sorting of indices as well
     spec = {
         'channels': [
