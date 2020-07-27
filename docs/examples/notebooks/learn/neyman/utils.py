@@ -134,7 +134,7 @@ def plot_neyman_construction(ax,min_mu,max_mu,hypos,scans,delta = True):
 def plot_cuts(ax,hypos_over_sigma,atcut,sigma,teststat):
     ax.plot(hypos_over_sigma,atcut[:,0])
     ax.vlines(hypos_over_sigma,0,atcut[:,0], colors = 'k', alpha = 0.2)
-    ax.set_ylim(0,4)
+    ax.set_ylim(0,1.5*np.max(atcut[:,0]))
     
     colors = ['r','b','k','g','y']
     for n,c in zip([-2,-1,0,1,2],colors):
