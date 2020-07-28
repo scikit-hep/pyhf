@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 __FILECACHE__ = {}
 
 
-def extract_error(h):
+def extract_error(hist):
     """
     Determine the bin uncertainties for a histogram.
 
@@ -23,12 +23,12 @@ def extract_error(h):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        h (uproot.rootio.TH1 object): The histogram
+        hist (uproot.rootio.TH1 object): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = h.variances if h.variances.any() else h.numpy()[0]
+    err = hist.variances if hist.variances.any() else hist.to_numpy()[0]
     return np.sqrt(err).tolist()
 
 
@@ -46,15 +46,15 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     else:
         f = filecache[fullpath]
     try:
-        h = f[name]
+        hist = f[name]
     except KeyError:
         try:
-            h = f[str(Path(path).joinpath(name))]
+            hist = f[str(Path(path).joinpath(name))]
         except KeyError:
             raise KeyError(
                 f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
             )
-    return h.numpy()[0].tolist(), extract_error(h)
+    return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
 def process_sample(
