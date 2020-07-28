@@ -6,7 +6,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
-import uproot3 as uproot
+import uproot4 as uproot
 import re
 
 log = logging.getLogger(__name__)

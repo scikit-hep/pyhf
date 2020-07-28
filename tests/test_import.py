@@ -1,7 +1,7 @@
 import pyhf
 import pyhf.readxml
 import numpy as np
-import uproot3 as uproot
+import uproot4 as uproot
 from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
