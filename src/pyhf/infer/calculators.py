@@ -241,7 +241,7 @@ class AsymptoticCalculator:
         elif self.base_distr == 'clipped_normal':
             cutoff = -self.sqrtqmuA_v
         else:
-            raise RuntimeError(
+            raise ValueError(
                 f'unknown base distribution for asymptotics {self.base_distr}'
             )
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
