@@ -185,7 +185,7 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 Milestones
 ----------
 
-- 2020-07-28: 1000 GitHub issues and pull requests. (See PR :pr: `#1000`)
+- 2020-07-28: 1000 GitHub issues and pull requests. (See PR :pr:`1000`)
 
 Acknowledgements
 ----------------
