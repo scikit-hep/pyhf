@@ -28,7 +28,9 @@ def extract_error(hist):
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = hist.variances if hist.variances.any() else hist.to_numpy()[0]
+
+    sumw2 = hist.member("fSumw2", none_if_missing=True)
+    err = sumw2 if sumw2 else hist.to_numpy()[0]
     return np.sqrt(err).tolist()
 
 
