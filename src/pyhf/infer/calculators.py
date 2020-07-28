@@ -237,7 +237,7 @@ class AsymptoticCalculator:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
 
         if self.base_distr == 'normal':
-            cutoff = -1e10
+            cutoff = float('-inf')
         elif self.base_distr == 'clipped_normal':
             cutoff = -self.sqrtqmuA_v
         else:
