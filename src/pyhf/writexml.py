@@ -6,7 +6,7 @@ import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
 import uproot4 as uproot
-from uproot3_methods.classes import TH1
+from uproot4.behaviors.TH1 import TH1
 
 from .mixins import _ChannelSummaryMixin
 
@@ -32,7 +32,7 @@ def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
 
 
 def _export_root_histogram(histname, data):
-    h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
+    h = TH1((np.asarray(data), np.arange(len(data) + 1)))
     h._fName = histname
     # NB: uproot crashes for some reason, figure out why later
     # if histname in _ROOT_DATA_FILE:
