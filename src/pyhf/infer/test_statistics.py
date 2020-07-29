@@ -18,10 +18,10 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     tmu_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
-    qmu = tensorlib.where(
+    qmu_like = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_stat
     )
-    return qmu
+    return qmu_like
 
 
 def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
@@ -38,11 +38,11 @@ def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     muhatbhat, unconstrained_fit_lhood_val = fit(
         data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    tmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
-    tmu = tensorlib.clip(tmu, 0, max_value=None)
+    tmu_like = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
+    tmu_like = tensorlib.clip(tmu, 0, max_value=None)
     if return_fitted_pars:
-        return tmu, (mubhathat, muhatbhat)
-    return tmu
+        return tmu_like, (mubhathat, muhatbhat)
+    return tmu_like
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
@@ -91,7 +91,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
-            'qmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
+            'qmu test statistic used for fit configuration with POI bounded at zero.\n'
+            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
         )
     return _qmu_like(mu, data, pdf, init_pars, par_bounds)
 
@@ -102,10 +103,24 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
     limit on the strength parameter, :math:`\mu` for models with
     bounded POI.
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_mu = 1.0
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds)
+        array(3.93824492)
+
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
-        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
@@ -118,20 +133,21 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
-            'qmu tilde test statistic used for fit configuration with POI not bounded at zero. Use qmu.'
+            'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
+            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
         )
     return _qmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def tmu(mu, data, pdf, init_pars, par_bounds):
     r"""
-    The test statistic, :math:`t_{\mu}`, for establishing an two-sided
-    intervals on the strength parameter, :math:`\mu`.
+    The test statistic, :math:`t_{\mu}`, for establishing a two-sided
+    interval on the strength parameter, :math:`\mu`.
 
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
-        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
@@ -144,21 +160,22 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
-            'tmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
+            'tmu test statistic used for fit configuration with POI bounded at zero.\n'
+            + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.'
         )
     return _tmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
     r"""
-    The test statistic, :math:`t_{\mu}`, for establishing an two-sided
-    intervals on the strength parameter, :math:`\mu` for models with
+    The test statistic, :math:`t_{\mu}`, for establishing a two-sided
+    interval on the strength parameter, :math:`\mu` for models with
     bounded POI.
 
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
-        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
@@ -171,6 +188,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
-            'tmu tilde test statistic used for fit configuration with POI not bounded at zero. Use tmu.'
+            'tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
+            + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
         )
     return _tmu_like(mu, data, pdf, init_pars, par_bounds)

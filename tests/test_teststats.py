@@ -25,7 +25,7 @@ def test_qmu_tilde(caplog):
     par_bounds[pdf.config.poi_index] = [-10, 10]
     with caplog.at_level(logging.WARNING, 'pyhf.infer.test_statistics'):
         pyhf.infer.test_statistics.qmu_tilde(mu, data, pdf, init_pars, par_bounds)
-        assert 'WARNING  qmu tilde test statistic used for fit' in caplog.text
+        assert 'WARNING  qmu_tilde test statistic used for fit' in caplog.text
 
 
 def test_tmu(caplog):
@@ -51,4 +51,4 @@ def test_tmu_tilde(caplog):
     par_bounds[pdf.config.poi_index] = [-10, 10]
     with caplog.at_level(logging.WARNING, 'pyhf.infer.test_statistics'):
         pyhf.infer.test_statistics.tmu_tilde(mu, data, pdf, init_pars, par_bounds)
-        assert 'WARNING  tmu tilde test statistic used for fit' in caplog.text
+        assert 'WARNING  tmu_tilde test statistic used for fit' in caplog.text
