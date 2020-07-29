@@ -122,6 +122,9 @@ Inference
 
    hypotest
    test_statistics.qmu
+   test_statistics.qmu_tilde
+   test_statistics.tmu
+   test_statistics.tmu_tilde
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit
