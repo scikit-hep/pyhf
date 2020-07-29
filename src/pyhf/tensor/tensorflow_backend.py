@@ -136,6 +136,18 @@ class tensorflow_backend(object):
         """
         Convert to a TensorFlow Tensor.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            <tf.Tensor: shape=(2, 3), dtype=float32, numpy=
+            array([[1., 2., 3.],
+                   [4., 5., 6.]], dtype=float32)>
+            >>> type(tensor)
+            <class 'tensorflow.python.framework.ops.EagerTensor'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
@@ -156,11 +168,6 @@ class tensorflow_backend(object):
             tensor.device
         except AttributeError:
             tensor = tf.convert_to_tensor(tensor_in)
-            # Ensure non-empty tensor shape for consistency
-            try:
-                tensor.shape[0]
-            except IndexError:
-                tensor = tf.reshape(tensor, [1])
         if tensor.dtype is not dtype:
             tensor = tf.cast(tensor, dtype)
         return tensor
@@ -276,22 +283,16 @@ class tensorflow_backend(object):
             list of Tensors: The sequence broadcast together.
 
         """
-        max_dim = max(map(lambda arg: arg.shape[0], args))
+
+        max_dim = max(map(tf.size, args))
         try:
-            assert not [arg for arg in args if 1 < arg.shape[0] < max_dim]
+            assert not [arg for arg in args if 1 < tf.size(arg) < max_dim]
         except AssertionError as error:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
             )
             raise error
-
-        broadcast = [
-            arg
-            if arg.shape[0] > 1
-            else tf.tile(tf.slice(arg, [0], [1]), tf.stack([max_dim]))
-            for arg in args
-        ]
-        return broadcast
+        return [tf.broadcast_to(arg, (max_dim,)) for arg in args]
 
     def einsum(self, subscripts, *operands):
         """
@@ -452,7 +453,7 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The CDF
         """
         normal = tfp.distributions.Normal(
-            self.astensor(mu, dtype='float')[0], self.astensor(sigma, dtype='float')[0],
+            self.astensor(mu, dtype='float'), self.astensor(sigma, dtype='float'),
         )
         return normal.cdf(x)
 

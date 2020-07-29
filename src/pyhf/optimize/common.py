@@ -3,6 +3,31 @@ from .. import get_backend
 from ..tensor.common import _TensorViewer
 
 
+def _make_stitch_pars(tv=None, fixed_values=None):
+    """
+    Construct a callable to stitch fixed paramter values into the unfixed parameters. See :func:`shim`.
+
+    This is extracted out to be unit-tested for proper behavior.
+
+    If ``tv`` or ``fixed_values`` are not provided, this returns the identity callable.
+
+    Args:
+        tv (~pyhf.tensor.common._TensorViewer): tensor viewer instance
+        fixed_values (`list`): default set of values to stitch parameters with
+
+    Returns:
+        callable (`func`): a callable that takes nuisance parameter values as input
+    """
+    if tv is None or fixed_values is None:
+        return lambda pars, stitch_with=None: pars
+
+    def stitch_pars(pars, stitch_with=fixed_values):
+        tb, _ = get_backend()
+        return tv.stitch([tb.astensor(stitch_with, dtype='float'), pars])
+
+    return stitch_pars
+
+
 def _get_tensor_shim():
     """
     A shim-retriever to lazy-retrieve the necessary shims as needed.
@@ -96,15 +121,13 @@ def shim(
 
         tv = _TensorViewer([fixed_idx, variable_idx])
         # NB: this is a closure, tensorlib needs to be accessed at a different point in time
-        def stitch_pars(pars, stitch_with=fixed_values):
-            tb, _ = get_backend()
-            return tv.stitch([tb.astensor(fixed_values, dtype='float'), pars])
+        stitch_pars = _make_stitch_pars(tv, fixed_values)
 
     else:
         variable_init = init_pars
         variable_bounds = par_bounds
         minimizer_fixed_vals = fixed_vals
-        stitch_pars = lambda pars, stitch_with=None: pars
+        stitch_pars = _make_stitch_pars()
 
     objective_and_grad = _get_tensor_shim()(
         objective,

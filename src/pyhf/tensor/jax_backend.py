@@ -152,6 +152,17 @@ class jax_backend(object):
         """
         Convert to a JAX ndarray.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> type(tensor)
+            <class 'jax.interpreters.xla.DeviceArray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
@@ -163,13 +174,8 @@ class jax_backend(object):
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
-        tensor = np.asarray(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = np.reshape(tensor, [1])
-        return np.asarray(tensor, dtype=dtype)
+
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)

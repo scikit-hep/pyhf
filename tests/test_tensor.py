@@ -41,16 +41,16 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
     a = tb.astensor(1)
     b = tb.astensor(2)
-    assert tb.tolist(a < b)[0] is True
-    assert tb.tolist(b < a)[0] is False
-    assert tb.tolist(a < a)[0] is False
-    assert tb.tolist(a > b)[0] is False
-    assert tb.tolist(b > a)[0] is True
-    assert tb.tolist(a > a)[0] is False
+    assert tb.tolist(a < b) is True
+    assert tb.tolist(b < a) is False
+    assert tb.tolist(a < a) is False
+    assert tb.tolist(a > b) is False
+    assert tb.tolist(b > a) is True
+    assert tb.tolist(a > a) is False
     a = tb.astensor(4)
     b = tb.astensor(5)
-    assert tb.tolist(tb.conditional((a < b)[0], lambda: a + b, lambda: a - b)) == [9]
-    assert tb.tolist(tb.conditional((a > b)[0], lambda: a + b, lambda: a - b)) == [-1]
+    assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0
+    assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
 
 def test_complex_tensor_ops(backend):
@@ -145,10 +145,9 @@ def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
     assert tb.shape(tb.ones((0, 0))) == (0, 0)
+    assert tb.shape(tb.astensor(1.0)) == ()
     assert tb.shape(tb.astensor([])) == (0,)
     assert tb.shape(tb.astensor([1.0])) == (1,)
-    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
-    assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
     with pytest.raises(

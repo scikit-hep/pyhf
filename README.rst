@@ -14,7 +14,7 @@ style: black|
 
 |Docs| |Binder|
 
-|PyPI version| |Supported Python versions| |Docker Stars| |Docker
+|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
 
 The HistFactory p.d.f. template
@@ -168,8 +168,8 @@ BibTeX entry for citation of ``pyhf`` is
 
    @software{pyhf,
      author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
-     title = "{pyhf: v0.4.4}",
-     version = {0.4.4},
+     title = "{pyhf: v0.5.0}",
+     version = {0.5.0},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
    }
@@ -181,6 +181,11 @@ Authors
 
 Please check the `contribution statistics for a list of
 contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
+
+Milestones
+----------
+
+- 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
 
 Acknowledgements
 ----------------
@@ -215,6 +220,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
+.. |Conda-forge version| image:: https://img.shields.io/conda/vn/conda-forge/pyhf.svg
+   :target: https://anaconda.org/conda-forge/pyhf
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
 .. |Docker Stars| image:: https://img.shields.io/docker/stars/pyhf/pyhf.svg

@@ -145,6 +145,17 @@ class numpy_backend(object):
         """
         Convert to a NumPy array.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'numpy.ndarray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
@@ -157,13 +168,7 @@ class numpy_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = np.asarray(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.reshape(1)
-        return tensor
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)

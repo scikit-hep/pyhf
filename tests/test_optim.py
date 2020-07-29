@@ -1,6 +1,7 @@
 import pyhf
 from pyhf.optimize.mixins import OptimizerMixin
-from pyhf.optimize.common import _get_tensor_shim
+from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
+from pyhf.tensor.common import _TensorViewer
 import pytest
 from scipy.optimize import minimize, OptimizeResult
 import iminuit
@@ -318,7 +319,7 @@ def test_optim_with_value(backend, source, spec, mu):
         return_fitted_val=True,
     )
     assert pyhf.tensorlib.tolist(result)
-    assert pyhf.tensorlib.shape(fitted_val) == (1,)
+    assert pyhf.tensorlib.shape(fitted_val) == ()
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -409,3 +410,29 @@ def test_get_tensor_shim(monkeypatch):
         _get_tensor_shim()
 
     assert 'No optimizer shim for fake_backend.' == str(excinfo.value)
+
+
+def test_stitch_pars(backend):
+    tb, _ = backend
+
+    passthrough = _make_stitch_pars()
+    pars = ['a', 'b', 1.0, 2.0, object()]
+    assert passthrough(pars) == pars
+
+    fixed_idx = [0, 3, 4]
+    variable_idx = [1, 2, 5]
+    fixed_vals = [10, 40, 50]
+    variable_vals = [20, 30, 60]
+    tv = _TensorViewer([fixed_idx, variable_idx])
+    stitch_pars = _make_stitch_pars(tv, fixed_vals)
+
+    pars = tb.astensor(variable_vals)
+    assert tb.tolist(stitch_pars(pars)) == [10, 20, 30, 40, 50, 60]
+    assert tb.tolist(stitch_pars(pars, stitch_with=tb.zeros(3))) == [
+        0,
+        20,
+        30,
+        0,
+        0,
+        60,
+    ]

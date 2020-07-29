@@ -29,7 +29,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
             constrained_pars = stitch_pars(pars)
             constr_nll = objective(constrained_pars, data, pdf)
             grad = torch.autograd.grad(constr_nll, pars)[0]
-            return constr_nll.detach().numpy(), grad
+            return constr_nll.detach().numpy()[0], grad
 
     else:
 
@@ -37,6 +37,6 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
             pars = tensorlib.astensor(pars)
             constrained_pars = stitch_pars(pars)
             constr_nll = objective(constrained_pars, data, pdf)
-            return constr_nll
+            return constr_nll[0]
 
     return func

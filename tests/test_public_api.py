@@ -32,6 +32,14 @@ def test_set_optimizer_by_string(optimizer_name):
     )
 
 
+@pytest.mark.parametrize("precision_level", ["32b", "64b"])
+def test_set_precision_by_string(precision_level):
+    pyhf.set_backend(pyhf.tensorlib.name, precision=precision_level)
+    assert pyhf.tensorlib.precision == precision_level.lower()
+    pyhf.set_backend(pyhf.tensor.numpy_backend(precision=precision_level))
+    assert pyhf.tensorlib.precision == precision_level.lower()
+
+
 @pytest.mark.parametrize("backend_name", [b"numpy", b"tensorflow", b"pytorch"])
 def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
@@ -52,6 +60,22 @@ def test_set_optimizer_by_bytestring(optimizer_name):
     )
 
 
+@pytest.mark.parametrize("precision_level", [b"32b", b"64b"])
+def test_set_precision_by_bytestring(precision_level):
+    pyhf.set_backend(pyhf.tensorlib.name, precision=precision_level)
+    assert pyhf.tensorlib.precision == precision_level.decode("utf-8")
+
+
+@pytest.mark.parametrize("precision_level", ["32b", "64b"])
+def test_set_precision_by_string_wins(precision_level):
+    conflicting_precision = "32b" if precision_level == "64b" else "64b"
+    pyhf.set_backend(
+        pyhf.tensor.numpy_backend(precision=conflicting_precision),
+        precision=precision_level,
+    )
+    assert pyhf.tensorlib.precision == precision_level.lower()
+
+
 @pytest.mark.parametrize("backend_name", ["fail", b"fail"])
 def test_supported_backends(backend_name):
     with pytest.raises(pyhf.exceptions.InvalidBackend):
@@ -62,6 +86,12 @@ def test_supported_backends(backend_name):
 def test_supported_optimizers(optimizer_name):
     with pytest.raises(pyhf.exceptions.InvalidOptimizer):
         pyhf.set_backend(pyhf.tensorlib, optimizer_name)
+
+
+@pytest.mark.parametrize("precision_level", ["fail", b"fail"])
+def test_supported_precision(precision_level):
+    with pytest.raises(pyhf.exceptions.Unsupported):
+        pyhf.set_backend("numpy", precision=precision_level)
 
 
 def test_custom_backend_name_supported():
