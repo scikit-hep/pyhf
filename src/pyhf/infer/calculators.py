@@ -59,6 +59,20 @@ class AsymptoticTestStatDistribution(object):
         self.shift = shift
         self.sqrtqmuA_v = None
 
+    def cdf(self, value):
+        """
+        Compute the value of the cumulative distribution funcation for a given value of the test statistic.
+
+        Args:
+            value (`float`): The test statistic value.
+
+        Returns:
+            Float: The integrated probability to observe  value at up to the observed one.
+
+        """
+        tensorlib, _ = get_backend()
+        return tensorlib.normal_cdf((value - self.shift))
+
     def pvalue(self, value):
         """
         Compute the :math:`p`-value for a given value of the test statistic.
