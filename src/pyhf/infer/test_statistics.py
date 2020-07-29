@@ -2,6 +2,10 @@ from .. import get_backend
 from .mle import fixed_poi_fit, fit
 from ..exceptions import UnspecifiedPOI
 
+import logging
+
+log = logging.getLogger(__name__)
+
 
 def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     """
@@ -11,7 +15,7 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
-    tmu_stat, (mubhathat, muhatbhat) = _tmu(
+    tmu_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
     qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0.0, tmu_stat)
@@ -84,7 +88,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
-        raise ValueError(
+        log.warning(
             'qmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
         )
     return _qmu_like(mu, data, pdf, init_pars, par_bounds)
@@ -111,7 +115,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
-        raise ValueError(
+        log.warning(
             'qmu tilde test statistic used for fit configuration with POI not bounded at zero. Use qmu.'
         )
     return _qmu_like(mu, data, pdf, init_pars, par_bounds)
@@ -137,10 +141,10 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
-        raise ValueError(
+        log.warning(
             'tmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
         )
-    return _tmu(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
@@ -164,7 +168,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
-        raise ValueError(
+        log.warning(
             'tmu tilde test statistic used for fit configuration with POI not bounded at zero. Use tmu.'
         )
-    return _tmu(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
