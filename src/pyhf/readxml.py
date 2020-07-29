@@ -23,7 +23,7 @@ def extract_error(hist):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        hist (uproot.rootio.TH1 object): The histogram
+        hist (`<dynamic>.Model_TH1F_v2`): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
@@ -48,8 +48,10 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     else:
         f = filecache[fullpath]
     try:
+        print(f)
+        print(f"name: {name}")
         hist = f[name]
-    except KeyError:
+    except KeyError or uproot4.deserialization.DeserializationError:
         try:
             hist = f[str(Path(path).joinpath(name))]
         except KeyError:
@@ -151,6 +153,9 @@ def process_sample(
                 }
             )
         elif modtag.tag == 'ShapeSys':
+            print(modtag.tag)
+            print(modtag.attrib)
+            print(modtag.attrib['HistoName'])
             # NB: ConstraintType is ignored
             if modtag.attrib.get('ConstraintType', 'Poisson') != 'Poisson':
                 log.warning(
