@@ -14,7 +14,7 @@ style: black|
 
 |Docs| |Binder|
 
-|PyPI version| |Supported Python versions| |Docker Stars| |Docker
+|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
 
 The HistFactory p.d.f. template
