@@ -142,6 +142,6 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
     """
     if par_bounds[pdf.config.poi_index][0] != 0:
         raise ValueError(
-            'tmu tilde test statistic used for fit configuration with POI not bounded at zero. Use qmu.'
+            'tmu tilde test statistic used for fit configuration with POI not bounded at zero. Use tmu.'
         )
     return _tmu(mu, data, pdf, init_pars, par_bounds)
