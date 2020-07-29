@@ -28,7 +28,7 @@ def scan_tests_for_size(mu,sigma,teststat):
 
 def find_level_for_size(mu,sigma,target_size,teststat):
     a = scan_tests_for_size(mu,sigma,teststat)
-    result = level,a,b,size = a[np.argmax(a[:,-1]>target_size)]
+    level,a,b,size = a[np.argmax(a[:,-1]>target_size)]
     return level
 
 def jointplot(mu,sigma,teststat,tcut = 4):
