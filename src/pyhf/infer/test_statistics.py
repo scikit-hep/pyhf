@@ -18,7 +18,7 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     tmu_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
-    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0.0, tmu_stat)
+    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_stat)
     return qmu
 
 
@@ -71,7 +71,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
-        3.938244920380498
+        array(3.93824492)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
