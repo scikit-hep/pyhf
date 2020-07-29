@@ -130,12 +130,13 @@ class AsymptoticTestStatDistribution:
         tensorlib, _ = get_backend()
         # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability\\
 
-        if value < self.cutoff:
-            raise RuntimeError(
-                'cannot evaluate pvalue outside of domain of the distribution'
-            )
-
-        return tensorlib.normal_cdf(-(value - self.shift))
+        return_value = tensorlib.normal_cdf(-(value - self.shift))
+        invalid_value = tensorlib.ones(tensorlib.shape(return_value)) * float('nan')
+        return tensorlib.where(
+            tensorlib.astensor(value >= self.cutoff, dtype='bool'),
+            return_value,
+            invalid_value,
+        )
 
     def expected_value(self, nsigma):
         """
