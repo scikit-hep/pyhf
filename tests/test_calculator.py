@@ -2,6 +2,6 @@ import pyhf
 import pyhf.infer.calculators
 
 
-def test_calc_distr():
-    a = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
-    assert a.pvalue(1) == a.cdf(-1)
+def test_calc_dist():
+    asymptotic_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+    assert asymptotic_dist.pvalue(1) == asymptotic_dist.cdf(-1)
