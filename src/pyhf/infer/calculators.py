@@ -159,7 +159,9 @@ class AsymptoticTestStatDistribution:
         """
         tensorlib, _ = get_backend()
         return tensorlib.where(
-            self.shift + nsigma > self.cutoff, self.shift + nsigma, self.cutoff
+            tensorlib.astensor(self.shift + nsigma > self.cutoff, dtype='bool'),
+            tensorlib.astensor(self.shift + nsigma),
+            tensorlib.astensor(self.cutoff),
         )
 
 
