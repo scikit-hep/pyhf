@@ -3,7 +3,13 @@ from .mle import fixed_poi_fit, fit
 from ..exceptions import UnspecifiedPOI
 
 
-def _qmu(mu, data, pdf, init_pars, par_bounds):
+def _qmu_like(mu, data, pdf, init_pars, par_bounds):
+    """
+    Clipped version of _tmu where _qmu = 0 if muhat > 0 else _tmu
+
+    If the lower bound of the POI is 0 this automatically implments
+    qmu_tilde. Otherwise this is qmu (no tilde).
+    """
     tensorlib, optimizer = get_backend()
     tmu_stat, (mubhathat, muhatbhat) = _tmu(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
@@ -12,7 +18,13 @@ def _qmu(mu, data, pdf, init_pars, par_bounds):
     return qmu
 
 
-def _tmu(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
+def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
+    """
+    Basic Profile Likelihood statistic.
+
+    If the lower bound of the POI is 0 this automatically implments
+    tmu_tilde. Otherwise this is tmu (no tilde).
+    """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
@@ -76,7 +88,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         raise ValueError(
             'qmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
         )
-    return _qmu(mu, data, pdf, init_pars, par_bounds)
+    return _qmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
@@ -99,7 +111,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
         raise ValueError(
             'qmu tilde test statistic used for fit configuration with POI not bounded at zero. Use qmu.'
         )
-    return _qmu(mu, data, pdf, init_pars, par_bounds)
+    return _qmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def tmu(mu, data, pdf, init_pars, par_bounds):
@@ -121,7 +133,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
         raise ValueError(
             'tmu test statistic used for fit configuration with POI bounded at zero. Use qmutilde.'
         )
-    return _tmu(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
 
 
 def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
@@ -144,4 +156,4 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
         raise ValueError(
             'tmu tilde test statistic used for fit configuration with POI not bounded at zero. Use tmu.'
         )
-    return _tmu(mu, data, pdf, init_pars, par_bounds)
+    return _tmu_like(mu, data, pdf, init_pars, par_bounds)
