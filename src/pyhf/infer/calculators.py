@@ -66,7 +66,7 @@ class AsymptoticTestStatDistribution:
     the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
-    def __init__(self, shift, cutoff):
+    def __init__(self, shift, cutoff=float('-inf')):
         """
         Asymptotic test statistic distribution.
 
