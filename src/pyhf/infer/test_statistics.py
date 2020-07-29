@@ -43,6 +43,15 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
     """
+    tensorlib, optimizer = get_backend()
+    tmu_stat, (mubhathat, muhatbhat) = tmu(
+        mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
+    )
+    qmu = tensorlib.where(muhatbhat[pdf.config.poi_index] > mu, 0.0, tmu_stat)
+    return qmu
+
+
+def tmu(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
             'No POI is defined. A POI is required for profile likelihood based test statistics.'
@@ -55,8 +64,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     muhatbhat, unconstrained_fit_lhood_val = fit(
         data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    qmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
-    qmu = tensorlib.where(
-        muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), qmu
-    )
-    return tensorlib.clip(qmu, 0, max_value=None)
+    tmu = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
+    tmu = tensorlib.clip(tmu, 0, max_value=None)
+    if return_fitted_pars:
+        return tmu, (mubhathat, muhatbhat)
+    return tmu
