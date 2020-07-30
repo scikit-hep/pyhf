@@ -9,24 +9,25 @@ log = logging.getLogger(__name__)
 
 def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     """
-    Clipped version of _tmu where _qmu = 0 if muhat > 0 else _tmu
+    Clipped version of _tmu_like where the returned test statistic
+    is 0 if muhat > 0 else tmu_like_stat.
 
     If the lower bound of the POI is 0 this automatically implments
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
-    tmu_stat, (_, muhatbhat) = _tmu_like(
+    tmu_like_stat, (_, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
-    qmu_like = tensorlib.where(
-        muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_stat
+    qmu_like_stat = tensorlib.where(
+        muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_like_stat
     )
-    return qmu_like
+    return qmu_like_stat
 
 
 def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     """
-    Basic Profile Likelihood statistic.
+    Basic Profile Likelihood test statistic.
 
     If the lower bound of the POI is 0 this automatically implments
     tmu_tilde. Otherwise this is tmu (no tilde).
@@ -38,11 +39,11 @@ def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     muhatbhat, unconstrained_fit_lhood_val = fit(
         data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    tmu_like = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
-    tmu_like = tensorlib.clip(tmu_like, 0, max_value=None)
+    tmu_like_stat = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
+    tmu_like_stat = tensorlib.clip(tmu_like_stat, 0, max_value=None)
     if return_fitted_pars:
-        return tmu_like, (mubhathat, muhatbhat)
-    return tmu_like
+        return tmu_like_stat, (mubhathat, muhatbhat)
+    return tmu_like_stat
 
 
 def qmu(mu, data, pdf, init_pars, par_bounds):
