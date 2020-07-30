@@ -39,8 +39,10 @@ def _tmu_like(mu, data, pdf, init_pars, par_bounds, return_fitted_pars=False):
     muhatbhat, unconstrained_fit_lhood_val = fit(
         data, pdf, init_pars, par_bounds, return_fitted_val=True
     )
-    tmu_like_stat = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
-    tmu_like_stat = tensorlib.clip(tmu_like_stat, 0, max_value=None)
+    log_likelihood_ratio = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
+    tmu_like_stat = tensorlib.astensor(
+        tensorlib.clip(log_likelihood_ratio, 0, max_value=None)
+    )
     if return_fitted_pars:
         return tmu_like_stat, (mubhathat, muhatbhat)
     return tmu_like_stat
@@ -159,7 +161,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds)
-        3.954989104752883
+        array(3.9549891)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -201,7 +203,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds)
-        3.938244920380498
+        array(3.93824492)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
