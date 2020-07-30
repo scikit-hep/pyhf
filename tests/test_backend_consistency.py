@@ -58,7 +58,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
-def test_hypotest_q_mu(
+def test_hypotest_qmu_tilde(
     n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
 ):
     """
@@ -114,10 +114,10 @@ def test_hypotest_q_mu(
     for backend in backends:
         pyhf.set_backend(backend)
 
-        q_mu = pyhf.infer.test_statistics.qmu(
+        qmu_tilde = pyhf.infer.test_statistics.qmu_tilde(
             1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds(),
         )
-        test_statistic.append(q_mu)
+        test_statistic.append(qmu_tilde)
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)
