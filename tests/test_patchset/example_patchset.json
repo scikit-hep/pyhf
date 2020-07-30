@@ -2,7 +2,7 @@
     "metadata": {
         "references": { "hepdata": "ins1234567" },
         "description": "patchset for validation/xmlimport_input/config/example.xml",
-        "digests": { "sha256": "d475d6bcbc17383a9ad3e157503e045a0f08676dc7a8483386a832f6cb94e4ca" },
+        "digests": { "sha256": "7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec" },
         "labels": ["x"]
     },
     "patches": [

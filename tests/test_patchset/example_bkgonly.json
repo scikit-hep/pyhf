@@ -102,7 +102,7 @@
                                 1.5
                             ]
                         ],
-                        "fixed": [true],
+                        "fixed": true,
                         "inits": [
                             1.0
                         ],
@@ -124,7 +124,7 @@
                         "name": "SigXsecOverSM"
                     },
                     {
-                        "fixed": [true],
+                        "fixed": true,
                         "name": "alpha_syst1"
                     }
                 ],
@@ -145,7 +145,7 @@
                                 1.5
                             ]
                         ],
-                        "fixed": [true],
+                        "fixed": true,
                         "inits": [
                             1.0
                         ],
@@ -167,7 +167,7 @@
                         "name": "SigXsecOverSM"
                     },
                     {
-                        "fixed": [true],
+                        "fixed": true,
                         "name": "alpha_syst1"
                     }
                 ],
@@ -188,7 +188,7 @@
                                 1.5
                             ]
                         ],
-                        "fixed": [true],
+                        "fixed": true,
                         "inits": [
                             1.0
                         ],
@@ -210,7 +210,7 @@
                         "name": "SigXsecOverSM"
                     },
                     {
-                        "fixed": [true],
+                        "fixed": true,
                         "name": "alpha_syst1"
                     }
                 ],
@@ -231,7 +231,7 @@
                                 1.5
                             ]
                         ],
-                        "fixed": [true],
+                        "fixed": true,
                         "inits": [
                             1.0
                         ],
@@ -253,7 +253,7 @@
                         "name": "SigXsecOverSM"
                     },
                     {
-                        "fixed": [true],
+                        "fixed": true,
                         "name": "alpha_syst1"
                     }
                 ],
