@@ -98,6 +98,8 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
 
 
 def _nominal_and_modifiers_from_spec(config, spec):
+    tensorlib, _ = get_backend()
+
     default_data_makers = {
         'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': [],},
         'lumi': lambda: {'mask': []},
@@ -152,7 +154,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                 if defined_samp
                 else [0.0] * config.channel_nbins[c]
             )
-            mega_nom += nom
+            mega_nom.append(nom)
             defined_mods = (
                 {
                     '{}/{}'.format(x['type'], x['name']): x
@@ -170,28 +172,28 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     lo_data = thismod['data']['lo_data'] if thismod else nom
                     hi_data = thismod['data']['hi_data'] if thismod else nom
                     maskval = True if thismod else False
-                    mega_mods[key][s]['data']['lo_data'] += lo_data
-                    mega_mods[key][s]['data']['hi_data'] += hi_data
-                    mega_mods[key][s]['data']['nom_data'] += nom
-                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                        nom
+                    mega_mods[key][s]['data']['lo_data'].append(lo_data)
+                    mega_mods[key][s]['data']['hi_data'].append(hi_data)
+                    mega_mods[key][s]['data']['nom_data'].append(nom)
+                    mega_mods[key][s]['data']['mask'].append(
+                        [maskval] * len(nom)
                     )  # broadcasting
                 elif mtype == 'normsys':
                     maskval = True if thismod else False
                     lo_factor = thismod['data']['lo'] if thismod else 1.0
                     hi_factor = thismod['data']['hi'] if thismod else 1.0
-                    mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
-                    mega_mods[key][s]['data']['lo'] += [lo_factor] * len(
-                        nom
+                    mega_mods[key][s]['data']['nom_data'].append([1.0] * len(nom))
+                    mega_mods[key][s]['data']['lo'].append(
+                        [lo_factor] * len(nom)
                     )  # broadcasting
-                    mega_mods[key][s]['data']['hi'] += [hi_factor] * len(nom)
-                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                        nom
+                    mega_mods[key][s]['data']['hi'].append([hi_factor] * len(nom))
+                    mega_mods[key][s]['data']['mask'].append(
+                        [maskval] * len(nom)
                     )  # broadcasting
                 elif mtype in ['normfactor', 'shapefactor', 'lumi']:
                     maskval = True if thismod else False
-                    mega_mods[key][s]['data']['mask'] += [maskval] * len(
-                        nom
+                    mega_mods[key][s]['data']['mask'].append(
+                        [maskval] * len(nom)
                     )  # broadcasting
                 elif mtype in ['shapesys', 'staterror']:
                     uncrt = thismod['data'] if thismod else [0.0] * len(nom)
@@ -199,14 +201,16 @@ def _nominal_and_modifiers_from_spec(config, spec):
                         maskval = [(x > 0 and y > 0) for x, y in zip(uncrt, nom)]
                     else:
                         maskval = [True if thismod else False] * len(nom)
-                    mega_mods[key][s]['data']['mask'] += maskval
-                    mega_mods[key][s]['data']['uncrt'] += uncrt
-                    mega_mods[key][s]['data']['nom_data'] += nom
+                    mega_mods[key][s]['data']['mask'].append(maskval)
+                    mega_mods[key][s]['data']['uncrt'].append(uncrt)
+                    mega_mods[key][s]['data']['nom_data'].append(nom)
 
-        sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
+        sample_dict = {
+            'name': 'mega_{}'.format(s),
+            'nom': tensorlib.concatenate(mega_nom),
+        }
         mega_samples[s] = sample_dict
 
-    tensorlib, _ = get_backend()
     for m, mtype in config.modifiers:
         key = '{}/{}'.format(mtype, m)
         for s in config.samples:
