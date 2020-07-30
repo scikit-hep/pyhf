@@ -15,7 +15,7 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
-    tmu_stat, (mubhathat, muhatbhat) = _tmu_like(
+    tmu_stat, (_, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
     qmu_like = tensorlib.where(
