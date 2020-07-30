@@ -20,7 +20,7 @@ class lumi(object):
             'op_code': cls.op_code,
             'inits': None,  # lumi
             'bounds': None,  # (0, 10*lumi)
-            'fixed': (False,),
+            'fixed': False,
             'auxdata': None,  # lumi
             'sigmas': None,  # lumi * lumirelerror
         }
