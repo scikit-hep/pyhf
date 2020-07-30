@@ -67,7 +67,7 @@ class AsymptoticTestStatDistribution(object):
             value (`float`): The test statistic value.
 
         Returns:
-            probability (`float`): The integrated probability to observe a test statistic less than or equal to the observed ``value``.
+            Float: The integrated probability to observe a test statistic less than or equal to the observed ``value``.
 
         """
         tensorlib, _ = get_backend()
