@@ -455,8 +455,8 @@ def test_combine_outfile(tmpdir, script_runner):
 )
 def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
     results = {
-        'md5': 'c84f26b47bf3ae768d87db21c31048f0',
-        'sha256': 'd475d6bcbc17383a9ad3e157503e045a0f08676dc7a8483386a832f6cb94e4ca',
+        'md5': '202eb7615102c35ba86be47eb6fa5e78',
+        'sha256': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
     }
 
     temp = tmpdir.join("parsed_output.json")
