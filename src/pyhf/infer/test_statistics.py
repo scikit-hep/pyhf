@@ -20,7 +20,7 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds):
         mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
     )
     qmu_like_stat = tensorlib.where(
-        muhatbhat[pdf.config.poi_index] > mu, 0.0, tmu_like_stat
+        muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_like_stat
     )
     return qmu_like_stat
 
