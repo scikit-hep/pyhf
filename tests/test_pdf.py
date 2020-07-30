@@ -802,7 +802,7 @@ def test_model_integration_fixed_parameters_shapesys():
                 ],
             }
         ],
-        'parameters': [{'name': 'uncorr', 'inits': [1.0, 0.0, -1.0], 'fixed': True}],
+        'parameters': [{'name': 'uncorr', 'inits': [1.0, 2.0, 3.0], 'fixed': True}],
     }
     model = pyhf.Model(spec, poi_name='mypoi')
     assert len(model.config.fixed_pars()) == 5
