@@ -290,7 +290,11 @@ class _ModelConfig(_ChannelSummaryMixin):
                 if is_fixed
             ]
         """
-        return [self.par_map[name]['paramset'].fixed for name in self.par_order]
+        fixed = []
+        for name in self.par_order:
+            paramset = self.par_map[name]['paramset']
+            fixed = fixed + [paramset.fixed] * paramset.n_parameters
+        return fixed
 
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
