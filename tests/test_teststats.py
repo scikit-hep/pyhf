@@ -1,3 +1,4 @@
+import pytest
 import pyhf
 import pyhf.infer.test_statistics
 import logging
@@ -54,3 +55,76 @@ def test_tmu_tilde(caplog):
         pyhf.infer.test_statistics.tmu_tilde(mu, data, pdf, init_pars, par_bounds)
         assert 'WARNING  tmu_tilde test statistic used for fit' in caplog.text
         caplog.clear()
+
+
+def test_no_poi_test_stats(caplog):
+    # FIXME: Can reduce the model more
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'type': 'normsys',
+                                'name': 'shape',
+                                'data': {"hi": 0.5, "lo": 1.5},
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    model = pyhf.Model(spec, poi_name=None)
+
+    test_poi = 1.0
+    data = [12] + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        with caplog.at_level(logging.DEBUG, 'pyhf.infer.test_statistics'):
+            pyhf.infer.test_statistics.qmu(test_poi, data, model, init_pars, par_bounds)
+            # FIXME: This isn't implimented correctly
+            # Example: This should fail given "definedz" but doesn't
+            assert (
+                'No POI is definedz. A POI is required for profile likelihood based test statistics'
+                in caplog.text
+            )
+            # assert (
+            #     'No POI is defined. A POI is required for profile likelihood based test statistics'
+            #     in caplog.text
+            # )
+            caplog.clear()
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        with caplog.at_level(logging.DEBUG, 'pyhf.infer.test_statistics'):
+            pyhf.infer.test_statistics.qmu_tilde(
+                test_poi, data, model, init_pars, par_bounds
+            )
+            assert (
+                'No POI is defined. A POI is required for profile likelihood based test statistics'
+                in caplog.text
+            )
+            caplog.clear()
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        with caplog.at_level(logging.DEBUG, 'pyhf.infer.test_statistics'):
+            pyhf.infer.test_statistics.tmu(test_poi, data, model, init_pars, par_bounds)
+            assert (
+                'No POI is defined. A POI is required for profile likelihood based test statistics'
+                in caplog.text
+            )
+            caplog.clear()
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        with caplog.at_level(logging.DEBUG, 'pyhf.infer.test_statistics'):
+            pyhf.infer.test_statistics.tmu_tilde(
+                test_poi, data, model, init_pars, par_bounds
+            )
+            assert (
+                'No POI is defined. A POI is required for profile likelihood based test statistics'
+                in caplog.text
+            )
+            caplog.clear()
