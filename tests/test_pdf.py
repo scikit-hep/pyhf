@@ -748,7 +748,7 @@ def test_unexpected_keyword_argument(measurements, msettings):
         )
 
 
-def test_pdf_integration_fixed_parameters():
+def test_model_integration_fixed_parameters():
     spec = {
         'channels': [
             {
@@ -773,12 +773,12 @@ def test_pdf_integration_fixed_parameters():
         ],
         'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
     }
-    pdf = pyhf.Model(spec, poi_name='mypoi')
-    assert pdf.config.fixed_pars() == [False, True]
-    assert pdf.config.poi_index == 1
+    model = pyhf.Model(spec, poi_name='mypoi')
+    assert model.config.fixed_pars() == [False, True]
+    assert model.config.poi_index == 1
 
 
-def test_pdf_integration_fixed_parameters_shapesys():
+def test_model_integration_fixed_parameters_shapesys():
     spec = {
         'channels': [
             {
@@ -804,7 +804,7 @@ def test_pdf_integration_fixed_parameters_shapesys():
         ],
         'parameters': [{'name': 'uncorr', 'inits': [1.0, 0.0, -1.0], 'fixed': True}],
     }
-    pdf = pyhf.Model(spec, poi_name='mypoi')
-    assert len(pdf.config.fixed_pars()) == 5
-    assert pdf.config.fixed_pars() == [False, True, True, True, False]
-    assert pdf.config.poi_index == 4
+    model = pyhf.Model(spec, poi_name='mypoi')
+    assert len(model.config.fixed_pars()) == 5
+    assert model.config.fixed_pars() == [False, True, True, True, False]
+    assert model.config.poi_index == 4
