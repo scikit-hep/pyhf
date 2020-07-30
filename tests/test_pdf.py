@@ -771,8 +771,40 @@ def test_pdf_integration_fixed_parameters():
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': [True]}],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
     }
     pdf = pyhf.Model(spec, poi_name='mypoi')
     assert pdf.config.fixed_pars() == [False, True]
     assert pdf.config.poi_index == 1
+
+
+def test_pdf_integration_fixed_parameters_shapesys():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0] * 3,
+                        'modifiers': [
+                            {'name': 'unfixed', 'type': 'normfactor', 'data': None},
+                            {'name': 'uncorr', 'type': 'shapesys', 'data': [1.5] * 3},
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0] * 3,
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'uncorr', 'inits': [1.0, 0.0, -1.0], 'fixed': True}],
+    }
+    pdf = pyhf.Model(spec, poi_name='mypoi')
+    assert len(pdf.config.fixed_pars()) == 5
+    assert pdf.config.fixed_pars() == [False, True, True, True, False]
+    assert pdf.config.poi_index == 4
