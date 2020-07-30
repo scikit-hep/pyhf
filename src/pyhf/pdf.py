@@ -278,6 +278,11 @@ class _ModelConfig(_ChannelSummaryMixin):
 
     def fixed_pars(self):
         """
+        Identify the fixed parameters in the model.
+
+        Returns:
+            fixed (`list`): A list of booleans, ``True`` for fixed and ``False`` for not fixed.
+
         Something like the following to build fixed_vals appropriately:
 
         .. code:: python
