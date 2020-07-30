@@ -72,7 +72,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
         >>> test_mu = 1.0
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
-        >>> par_bounds[model.config.poi_index] = [-10.0,10.0]
+        >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
         array(3.9549891)
 
@@ -126,7 +126,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
+        Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -145,6 +145,21 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`.
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_mu = 1.0
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
+        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds)
+        3.954989104752883
+
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
@@ -153,7 +168,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
+        Float: The calculated test statistic, :math:`t_{\mu}`
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -173,6 +188,20 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
     interval on the strength parameter, :math:`\mu` for models with
     bounded POI.
 
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_mu = 1.0
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds)
+        3.938244920380498
+
     Args:
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
@@ -181,7 +210,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
+        Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
