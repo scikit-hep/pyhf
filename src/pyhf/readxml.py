@@ -106,7 +106,7 @@ def process_sample(
                 'inits': [float(modtag.attrib['Val'])],
             }
             if modtag.attrib.get('Const'):
-                parameter_config['fixed'] = [modtag.attrib['Const'] == 'True']
+                parameter_config['fixed'] = modtag.attrib['Const'] == 'True'
 
             parameter_configs.append(parameter_config)
         elif modtag.tag == 'HistoSys':
