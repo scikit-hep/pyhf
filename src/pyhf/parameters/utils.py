@@ -55,7 +55,6 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                     )
                 )
             elif v and default_v == 'undefined':
-                breakpoint()
                 raise exceptions.InvalidModel(
                     '{} does not use the {} attribute.'.format(paramset_name, k)
                 )
