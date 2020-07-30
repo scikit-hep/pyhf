@@ -95,4 +95,4 @@ def test_parse_parameter_name_fail(expression):
     ],
 )
 def test_parse_parameter_name(expression, expected):
-    pyhf.utils.parse_parameter_name(expression) == expected
+    assert pyhf.utils.parse_parameter_name(expression) == expected
