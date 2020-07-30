@@ -276,7 +276,7 @@ class _ModelConfig(_ChannelSummaryMixin):
     def param_set(self, name):
         return self.par_map[name]['paramset']
 
-    def fixed_pars(self):
+    def suggested_fixed(self):
         """
         Identify the fixed parameters in the model.
 
@@ -287,7 +287,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         .. code:: python
 
-            fixed_pars = pdf.config.fixed_pars()
+            fixed_pars = pdf.config.suggested_fixed()
             inits = pdf.config.suggested_init()
             fixed_vals = [
                 (index, init)
