@@ -162,5 +162,3 @@ def parse_parameter_name(expression):
         upper = getattr(expr.slice.upper, 'n', None)
         step = getattr(expr.slice.step, 'n', None)
         return par_name, slice(lower, upper, step)
-
-    raise _error("Unhandled pattern.")
