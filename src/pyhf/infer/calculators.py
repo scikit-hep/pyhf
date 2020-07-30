@@ -61,13 +61,13 @@ class AsymptoticTestStatDistribution(object):
 
     def cdf(self, value):
         """
-        Compute the value of the cumulative distribution funcation for a given value of the test statistic.
+        Compute the value of the cumulative distribution function for a given value of the test statistic.
 
         Args:
             value (`float`): The test statistic value.
 
         Returns:
-            Float: The integrated probability to observe a test statistic less than or equal to the observed ``value``.
+            probability (`float`): The integrated probability to observe a test statistic less than or equal to the observed ``value``.
 
         """
         tensorlib, _ = get_backend()
