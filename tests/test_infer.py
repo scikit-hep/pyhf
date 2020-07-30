@@ -238,6 +238,30 @@ def test_inferapi_pyhf_independence():
     assert np.isclose(cls, 0.7267836451638846)
 
 
+def test_clipped_normal_calc(hypotest_args):
+    mu_test, data, pdf = hypotest_args
+    _, exp1 = pyhf.infer.hypotest(
+        0.2,
+        data,
+        pdf,
+        calc_kwargs={"base_distr": "clipped_normal"},
+        return_expected_set=True,
+    )
+    _, exp2 = pyhf.infer.hypotest(
+        0.2, data, pdf, calc_kwargs={"base_distr": "normal"}, return_expected_set=True
+    )
+    assert exp1[-1] < exp2[-1]
+
+    with pytest.raises(ValueError):
+        _, exp2 = pyhf.infer.hypotest(
+            0.2,
+            data,
+            pdf,
+            calc_kwargs={"base_distr": "unknown"},
+            return_expected_set=True,
+        )
+
+
 @pytest.mark.parametrize("test_stat", ["qtilde", "q"])
 def test_calculator_distributions_without_teststatistic(test_stat):
     calc = pyhf.infer.calculators.AsymptoticCalculator(
