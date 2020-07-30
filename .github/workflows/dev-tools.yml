@@ -25,9 +25,8 @@ jobs:
         shellcheck dev_tools/*.sh
     - name: Install dev-tools
       run: |
-        echo $PATH
-        ls -lhtra /usr/local/
         bash dev_tools/install-devtools.sh
+        ls -lhtra /usr/local/bin/
     - name: Test doctest-on
       run: |
         doctest-on src/pyhf/infer/test_statistics.py
