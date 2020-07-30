@@ -280,7 +280,7 @@ def test_parameters_fixed():
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': [True]}],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
     }
     pyhf.Model(spec, poi_name='mypoi')
 
