@@ -105,7 +105,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`\tilde{q}_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu` for models with
-    bounded POI.
+    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`.
 
     Example:
         >>> import pyhf
@@ -146,7 +146,8 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
 def tmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
-    interval on the strength parameter, :math:`\mu`.
+    interval on the strength parameter, :math:`\mu`, as defiend in Equation (10)
+    in :xref:`arXiv:1007.1727`.
 
     Example:
         >>> import pyhf
@@ -189,7 +190,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu` for models with
-    bounded POI.
+    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`.
 
     Example:
         >>> import pyhf
