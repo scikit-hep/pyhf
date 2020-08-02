@@ -20,6 +20,7 @@ class histosys(object):
             'is_shared': True,
             'inits': (0.0,),
             'bounds': ((-5.0, 5.0),),
+            'fixed': False,
             'auxdata': (0.0,),
         }
 

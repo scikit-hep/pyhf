@@ -19,6 +19,7 @@ class shapefactor(object):
             'is_shared': True,
             'inits': (1.0,) * len(sample_data),
             'bounds': ((0.0, 10.0),) * len(sample_data),
+            'fixed': False,
         }
 
 

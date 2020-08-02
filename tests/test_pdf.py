@@ -742,7 +742,69 @@ def test_unexpected_keyword_argument(measurements, msettings):
             }
         ]
     }
-    with pytest.raises(KeyError):
+    with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.pdf._ModelConfig(
             spec, measurement_name=measurements, modifiers_settings=msettings
         )
+
+
+def test_model_integration_fixed_parameters():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {'name': 'unfixed', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
+    }
+    model = pyhf.Model(spec, poi_name='mypoi')
+    assert model.config.suggested_fixed() == [False, True]
+    assert model.config.poi_index == 1
+
+
+def test_model_integration_fixed_parameters_shapesys():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0] * 3,
+                        'modifiers': [
+                            {'name': 'unfixed', 'type': 'normfactor', 'data': None},
+                            {'name': 'uncorr', 'type': 'shapesys', 'data': [1.5] * 3},
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0] * 3,
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'uncorr', 'inits': [1.0, 2.0, 3.0], 'fixed': True}],
+    }
+    model = pyhf.Model(spec, poi_name='mypoi')
+    assert len(model.config.suggested_fixed()) == 5
+    assert model.config.suggested_fixed() == [False, True, True, True, False]
+    assert model.config.poi_index == 4

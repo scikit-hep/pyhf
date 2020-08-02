@@ -93,6 +93,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
         paramset_type = paramset_requirements.get('paramset_type')
         paramset = paramset_type(**paramset_requirements)
         _sets[param_name] = paramset
+
     return _sets
 
 
@@ -229,8 +230,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         )
 
         if config_kwargs:
-            raise KeyError(
-                f"""Unexpected keyword argument(s): '{"', '".join(config_kwargs.keys())}'"""
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
             )
 
         self.par_map = {}
@@ -264,6 +265,31 @@ class _ModelConfig(_ChannelSummaryMixin):
 
     def param_set(self, name):
         return self.par_map[name]['paramset']
+
+    def suggested_fixed(self):
+        """
+        Identify the fixed parameters in the model.
+
+        Returns:
+            List: A list of booleans, ``True`` for fixed and ``False`` for not fixed.
+
+        Something like the following to build fixed_vals appropriately:
+
+        .. code:: python
+
+            fixed_pars = pdf.config.suggested_fixed()
+            inits = pdf.config.suggested_init()
+            fixed_vals = [
+                (index, init)
+                for index, (init, is_fixed) in enumerate(zip(inits, fixed_pars))
+                if is_fixed
+            ]
+        """
+        fixed = []
+        for name in self.par_order:
+            paramset = self.par_map[name]['paramset']
+            fixed = fixed + [paramset.fixed] * paramset.n_parameters
+        return fixed
 
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
