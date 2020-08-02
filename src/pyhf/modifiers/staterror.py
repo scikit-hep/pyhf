@@ -19,6 +19,7 @@ class staterror(object):
             'is_shared': True,
             'inits': (1.0,) * len(sample_data),
             'bounds': ((1e-10, 10.0),) * len(sample_data),
+            'fixed': False,
             'auxdata': (1.0,) * len(sample_data),
         }
 

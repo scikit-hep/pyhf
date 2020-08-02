@@ -5,7 +5,12 @@ from pyhf.modifiers.staterror import staterror_combined
 from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.modifiers.normfactor import normfactor_combined
 from pyhf.modifiers.shapefactor import shapefactor_combined
-from pyhf.parameters import paramset
+from pyhf.parameters import (
+    paramset,
+    unconstrained,
+    constrained_by_normal,
+    constrained_by_poisson,
+)
 import numpy as np
 import pyhf
 
@@ -42,11 +47,23 @@ def test_histosys(backend):
     mc = MockConfig(
         par_map={
             'hello': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[-5, 5]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[-5, 5]],
+                    fixed=False,
+                    auxdata=[0.0],
+                ),
                 'slice': slice(0, 1),
             },
             'world': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[-5, 5]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[-5, 5]],
+                    fixed=False,
+                    auxdata=[0.0],
+                ),
                 'slice': slice(1, 2),
             },
         },
@@ -131,11 +148,23 @@ def test_normsys(backend):
     mc = MockConfig(
         par_map={
             'hello': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[-5, 5]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[-5, 5]],
+                    fixed=False,
+                    auxdata=[0.0],
+                ),
                 'slice': slice(0, 1),
             },
             'world': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[-5, 5]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[-5, 5]],
+                    fixed=False,
+                    auxdata=[0.0],
+                ),
                 'slice': slice(1, 2),
             },
         },
@@ -222,7 +251,14 @@ def test_lumi(backend):
     mc = MockConfig(
         par_map={
             'lumi': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[-5, 5]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[-5, 5]],
+                    fixed=False,
+                    auxdata=[None],
+                    sigmas=[None],
+                ),
                 'slice': slice(0, 1),
             }
         },
@@ -272,12 +308,22 @@ def test_stat(backend):
     mc = MockConfig(
         par_map={
             'staterror_chan1': {
-                'paramset': paramset(n_parameters=1, inits=[1], bounds=[[0, 10]]),
+                'paramset': constrained_by_normal(
+                    n_parameters=1,
+                    inits=[1],
+                    bounds=[[0, 10]],
+                    fixed=False,
+                    auxdata=[1],
+                ),
                 'slice': slice(0, 1),
             },
             'staterror_chan2': {
-                'paramset': paramset(
-                    n_parameters=2, inits=[1, 1], bounds=[[0, 10], [0, 10]]
+                'paramset': constrained_by_normal(
+                    n_parameters=2,
+                    inits=[1, 1],
+                    bounds=[[0, 10], [0, 10]],
+                    fixed=False,
+                    auxdata=[1, 1],
                 ),
                 'slice': slice(1, 3),
             },
@@ -349,21 +395,37 @@ def test_shapesys(backend):
     mc = MockConfig(
         par_map={
             'dummy1': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': paramset(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(0, 1),
             },
             'shapesys1': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': constrained_by_poisson(
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
+                    auxdata=[None],
+                    factors=[None],
+                ),
                 'slice': slice(1, 2),
             },
             'shapesys2': {
-                'paramset': paramset(
-                    n_parameters=2, inits=[0, 0], bounds=[[0, 10], [0, 10]]
+                'paramset': constrained_by_poisson(
+                    n_parameters=2,
+                    inits=[0, 0],
+                    bounds=[[0, 10], [0, 10]],
+                    fixed=False,
+                    auxdata=[None, None],
+                    factors=[None, None],
                 ),
                 'slice': slice(2, 4),
             },
             'dummy2': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': paramset(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(4, 5),
             },
         },
@@ -432,11 +494,15 @@ def test_normfactor(backend):
     mc = MockConfig(
         par_map={
             'mu1': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': unconstrained(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(0, 1),
             },
             'mu2': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': unconstrained(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(1, 2),
             },
         },
@@ -508,18 +574,30 @@ def test_shapesys_zero(backend):
     mc = MockConfig(
         par_map={
             'SigXsecOverSM': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': paramset(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(0, 1),
             },
             'syst': {
-                'paramset': paramset(
-                    n_parameters=5, inits=[0] * 5, bounds=[[0, 10]] * 5
+                'paramset': constrained_by_poisson(
+                    n_parameters=5,
+                    inits=[0] * 5,
+                    bounds=[[0, 10]] * 5,
+                    fixed=False,
+                    auxdata=[None] * 5,
+                    factors=[None] * 5,
                 ),
                 'slice': slice(1, 6),
             },
             'syst_lowstats': {
-                'paramset': paramset(
-                    n_parameters=0, inits=[0] * 0, bounds=[[0, 10]] * 0
+                'paramset': constrained_by_poisson(
+                    n_parameters=0,
+                    inits=[0] * 0,
+                    bounds=[[0, 10]] * 0,
+                    fixed=False,
+                    auxdata=[None] * 0,
+                    factors=[None] * 0,
                 ),
                 'slice': slice(6, 6),
             },
@@ -590,12 +668,17 @@ def test_shapefactor(backend):
     mc = MockConfig(
         par_map={
             'shapefac1': {
-                'paramset': paramset(n_parameters=1, inits=[0], bounds=[[0, 10]]),
+                'paramset': unconstrained(
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False,
+                ),
                 'slice': slice(0, 1),
             },
             'shapefac2': {
-                'paramset': paramset(
-                    n_parameters=2, inits=[0, 0], bounds=[[0, 10], [0, 10]]
+                'paramset': unconstrained(
+                    n_parameters=2,
+                    inits=[0, 0],
+                    bounds=[[0, 10], [0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(1, 3),
             },

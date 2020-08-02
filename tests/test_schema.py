@@ -257,6 +257,34 @@ def test_parameters_duplicated():
         pyhf.Model(spec, poi_name='mypoi')
 
 
+def test_parameters_fixed():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {'name': 'unfixed', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0],
+                        'modifiers': [
+                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
+    }
+    pyhf.Model(spec, poi_name='mypoi')
+
+
 def test_parameters_all_props():
     spec = {
         'channels': [
