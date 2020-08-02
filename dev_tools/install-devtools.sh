@@ -28,8 +28,8 @@ function cp_to_bin() {
   source_path="${1}"
   path_to_bin="${2}"
   target_path="${path_to_bin}/$(strip_file_extension "${source_path}")"
-  sudo cp "${source_path}" "${target_path}"
-  sudo chmod +x "${target_path}"
+  cp "${source_path}" "${target_path}"
+  chmod +x "${target_path}"
 }
 
 function main() {
