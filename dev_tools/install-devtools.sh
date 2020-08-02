@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+function python_bin_path {
+  local python_runtime_path
+  local strip_out_string
+  local python_bin_path
+  python_runtime_path="$(command -v python3)"
+  strip_out_string="${python_runtime_path##*/}"
+  python_bin_path="${python_runtime_path::-${#strip_out_string}}"
+  echo "${python_bin_path}"
+}
+
 function strip_file_extension() {
   #1: file path
   # assumes there is a "/" in argument
@@ -25,8 +35,9 @@ function cp_to_bin() {
 }
 
 function main() {
-  #1: (optional) full path to bin directory. Default: /usr/local/bin
-  local path_to_bin="/usr/local/bin"
+  #1: (optional) full path to bin directory. Default: virtual environment bin
+  # local path_to_bin="/usr/local/bin"
+  local path_to_bin="$(python_bin_path)"
   cp_to_bin dev_tools/doctest-on.sh "${path_to_bin}"
 
   # test install
