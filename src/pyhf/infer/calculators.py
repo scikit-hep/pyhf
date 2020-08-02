@@ -9,7 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from .test_statistics import qmu
+from .test_statistics import qmu, qmu_tilde
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
@@ -155,14 +155,21 @@ class AsymptoticCalculator(object):
 
         """
         tensorlib, _ = get_backend()
-        qmu_v = qmu(poi_test, self.data, self.pdf, self.init_pars, self.par_bounds)
+
+        teststat_func = qmu_tilde if self.qtilde else qmu
+
+        qmu_v = teststat_func(
+            poi_test, self.data, self.pdf, self.init_pars, self.par_bounds
+        )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 0.0
         asimov_data = generate_asimov_data(
             asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
         )
-        qmuA_v = qmu(poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds)
+        qmuA_v = teststat_func(
+            poi_test, asimov_data, self.pdf, self.init_pars, self.par_bounds
+        )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
         if not self.qtilde:  # qmu
