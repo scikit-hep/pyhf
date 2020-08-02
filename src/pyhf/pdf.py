@@ -217,16 +217,6 @@ def _nominal_and_modifiers_from_spec(config, spec):
 
 
 class _ModelConfig(_ChannelSummaryMixin):
-    __slots__ = [
-        'par_map',
-        'par_order',
-        'poi_name',
-        'poi_index',
-        'auxdata',
-        'auxdata_order',
-        'modifier_settings',
-    ]
-
     def __init__(self, spec, **config_kwargs):
         super(_ModelConfig, self).__init__(channels=spec['channels'])
         _required_paramsets = _paramset_requirements_from_modelspec(
