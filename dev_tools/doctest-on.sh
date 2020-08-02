@@ -22,8 +22,6 @@ function main() {
   source_path="${1}"
   module_path="$(path_to_module "${source_path}")"
   python -c "import doctest; import pyhf; doctest.testmod(${module_path})"
-  # Write check for this. Be optimistic now
-  echo "# doctest succeeded!"
 }
 
 main "$@" || exit 1
