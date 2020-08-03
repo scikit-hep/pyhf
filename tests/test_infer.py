@@ -59,7 +59,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
     kwargs = {}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs
-    assert len(list(result)) == 1
+    assert pyhf.tensorlib.shape(result) == ()
     assert isinstance(result, type(tb.astensor(result)))
 
 
