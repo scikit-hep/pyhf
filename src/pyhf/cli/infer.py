@@ -107,8 +107,8 @@ def cls(
         testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
     )
     result = {
-        'CLs_obs': tensorlib.tolist(result[0])[0],
-        'CLs_exp': tensorlib.tolist(tensorlib.reshape(result[-1], [-1])),
+        'CLs_obs': tensorlib.tolist(result[0]),
+        'CLs_exp': [tensorlib.tolist(tensor) for tensor in result[-1]],
     }
 
     if output_file is None:
