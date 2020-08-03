@@ -178,7 +178,7 @@ def test_inferapi_pyhf_independence():
         1.0, model.expected_data(model.config.suggested_init()), model
     )
 
-    assert np.isclose(cls[0], 0.7267836451638846)
+    assert np.isclose(cls, 0.7267836451638846)
 
 
 @pytest.mark.parametrize("qtilde", [True, False])
