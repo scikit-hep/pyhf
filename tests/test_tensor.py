@@ -89,11 +89,9 @@ def test_complex_tensor_ops(backend):
 def test_atleast_1d(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.atleast_1d(1)) == [1]
-    # FIXME for PyTorch
-    # assert np.all(
-    #     np.array(tb.atleast_1d(1, [2, 3])).all()
-    #     == np.array([tb.astensor([1]), tb.astensor([2, 3])]).all()
-    # )
+    assert [tb.tolist(t) for t in tb.atleast_1d(1, [2, 3])] == [
+        tb.tolist(t) for t in [tb.astensor([1]), tb.astensor([2, 3])]
+    ]
 
 
 def test_ones(backend):
