@@ -118,7 +118,6 @@ def hypotest(
                 expected_bonly_teststat
             ) / b_only_distribution.pvalue(expected_bonly_teststat)
             CLs_exp.append(tensorlib.astensor(CLs))
-        CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
