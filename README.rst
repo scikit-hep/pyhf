@@ -110,10 +110,14 @@ A one bin example
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
+**pyhf**
+
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png
    :alt: manual
@@ -152,10 +156,14 @@ A two bin example
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
 
+**pyhf**
+
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
