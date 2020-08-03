@@ -24,7 +24,7 @@ def hypotest(
         ...     test_poi, data, model, qtilde=True, return_expected_set=True
         ... )
         >>> print(CLs_obs)
-        0.052515541856109765
+        array(0.05251554)
         >>> print(CLs_exp_band)
         [0.00260641 0.01382066 0.06445521 0.23526104 0.57304182]
 
@@ -98,12 +98,12 @@ def hypotest(
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)
     CLs = CLsb / CLb
-    # # Ensure that all CL values are 0-d tensors
-    # CLsb, CLb, CLs = (
-    #     tensorlib.reshape(CLsb, ()),
-    #     tensorlib.reshape(CLb, ()),
-    #     tensorlib.reshape(CLs, ()),
-    # )
+    # Ensure that all CL values are 0-d tensors
+    CLsb, CLb, CLs = (
+        tensorlib.astensor(CLsb),
+        tensorlib.astensor(CLb),
+        tensorlib.astensor(CLs),
+    )
 
     _returns = [CLs]
     if kwargs.get('return_tail_probs'):
@@ -117,8 +117,7 @@ def hypotest(
             CLs = sig_plus_bkg_distribution.pvalue(
                 expected_bonly_teststat
             ) / b_only_distribution.pvalue(expected_bonly_teststat)
-            # CLs_exp.append(tensorlib.reshape(CLs, ()))
-            CLs_exp.append(CLs)
+            CLs_exp.append(tensorlib.astensor(CLs))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if kwargs.get('return_expected'):
             _returns.append(CLs_exp[2])
@@ -130,8 +129,7 @@ def hypotest(
         CLs = sig_plus_bkg_distribution.pvalue(
             expected_bonly_teststat
         ) / b_only_distribution.pvalue(expected_bonly_teststat)
-        # _returns.append(tensorlib.reshape(CLs, ()))
-        _returns.append(CLs)
+        _returns.append(tensorlib.astensor(CLs))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
