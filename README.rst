@@ -95,14 +95,11 @@ A one bin example
    )
    data = [55.0] + model.config.auxdata
 
-   results = []
    poi_vals = np.linspace(0, 5, 41)
-   for test_poi in poi_vals:
-       results.append(
-           pyhf.infer.hypotest(
-               test_poi, data, model, qtilde=True, return_expected_set=True
-           )
-       )
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
@@ -140,14 +137,11 @@ A two bin example
    )
    data = [100.0, 145.0] + model.config.auxdata
 
-   results = []
    poi_vals = np.linspace(0, 5, 41)
-   for test_poi in poi_vals:
-       results.append(
-           pyhf.infer.hypotest(
-               test_poi, data, model, qtilde=True, return_expected_set=True
-           )
-       )
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
