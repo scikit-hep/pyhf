@@ -84,12 +84,37 @@ A one bin example
 
 .. code:: python
 
-   nobs = 55, b = 50, db = 7, nom_sig = 10.
+   import pyhf
+   import numpy as np
+   import matplotlib.pyplot as plt
+   import pyhf.contrib.viz.brazil
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_1bin_55_50_7.png
+   pyhf.set_backend("numpy")
+   model = pyhf.simplemodels.hepdata_like(
+       signal_data=[10.0], bkg_data=[50.0], bkg_uncerts=[7.0]
+   )
+   data = [55.0] + model.config.auxdata
+
+   poi_vals = np.linspace(0, 5, 41)
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
+
+   fig, ax = plt.subplots()
+   fig.set_size_inches(7, 5)
+   ax.set_xlabel(r"$\mu$ (POI)")
+   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+
+**pyhf**
+
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png
    :alt: manual
@@ -101,14 +126,38 @@ A two bin example
 
 .. code:: python
 
-   bin 1: nobs = 100, b = 100, db = 15., nom_sig = 30.
-   bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
+   import pyhf
+   import numpy as np
+   import matplotlib.pyplot as plt
+   import pyhf.contrib.viz.brazil
+
+   pyhf.set_backend("numpy")
+   model = pyhf.simplemodels.hepdata_like(
+       signal_data=[30.0, 45.0], bkg_data=[100.0, 150.0], bkg_uncerts=[15.0, 20.0]
+   )
+   data = [100.0, 145.0] + model.config.auxdata
+
+   poi_vals = np.linspace(0, 5, 41)
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
+
+   fig, ax = plt.subplots()
+   fig.set_size_inches(7, 5)
+   ax.set_xlabel(r"$\mu$ (POI)")
+   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
+**pyhf**
+
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
