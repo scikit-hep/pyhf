@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |Scikit-HEP|
+|GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Publish| |Docker
 Automated| |Code Coverage| |Language grade: Python| |CodeFactor| |Code
