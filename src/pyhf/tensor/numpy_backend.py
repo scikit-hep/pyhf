@@ -36,8 +36,22 @@ class _BasicNormal(object):
 class numpy_backend(object):
     """NumPy backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'numpy'
+        self.precision = kwargs.get('precision', '64b')
+        self.dtypemap = {
+            'float': np.float64 if self.precision == '64b' else np.float32,
+            'int': np.int64 if self.precision == '64b' else np.int32,
+            'bool': np.bool_,
+        }
+        self.default_do_grad = False
+
+    def _setup(self):
+        """
+        Run any global setups for the numpy lib.
+        """
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -131,26 +145,30 @@ class numpy_backend(object):
         """
         Convert to a NumPy array.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'numpy.ndarray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
             `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
         """
-        dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = np.asarray(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.reshape(1)
-        return tensor
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)

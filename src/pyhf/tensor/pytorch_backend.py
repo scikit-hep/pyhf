@@ -1,7 +1,9 @@
 """PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
+from torch.distributions.utils import broadcast_all
 import logging
+import math
 
 log = logging.getLogger(__name__)
 
@@ -9,13 +11,22 @@ log = logging.getLogger(__name__)
 class pytorch_backend(object):
     """PyTorch backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'pytorch'
+        self.precision = kwargs.get('precision', '32b')
         self.dtypemap = {
-            'float': getattr(torch, kwargs.get('float', 'float32')),
-            'int': getattr(torch, kwargs.get('int', 'int32')),
+            'float': torch.float64 if self.precision == '64b' else torch.float32,
+            'int': torch.int64 if self.precision == '64b' else torch.int32,
             'bool': torch.bool,
         }
+        self.default_do_grad = True
+
+    def _setup(self):
+        """
+        Run any global setups for the pytorch lib.
+        """
         torch.set_default_dtype(self.dtypemap["float"])
 
     def clip(self, tensor_in, min_value, max_value):
@@ -101,6 +112,17 @@ class pytorch_backend(object):
         """
         Convert to a PyTorch Tensor.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> type(tensor)
+            <class 'torch.Tensor'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
@@ -113,13 +135,7 @@ class pytorch_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        tensor = torch.as_tensor(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = tensor.expand(1)
-        return tensor
+        return torch.as_tensor(tensor_in, dtype=dtype)
 
     def gather(self, tensor, indices):
         return tensor[indices.type(torch.LongTensor)]
@@ -211,6 +227,7 @@ class pytorch_backend(object):
             list of Tensors: The sequence broadcast together.
         """
 
+        args = [arg.view(1) if not self.shape(arg) else arg for arg in args]
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
@@ -323,8 +340,14 @@ class pytorch_backend(object):
         Returns:
             PyTorch FloatTensor: The CDF
         """
-        normal = torch.distributions.Normal(mu, sigma)
-        return normal.cdf(x)
+        # the implementation of torch.Normal.cdf uses torch.erf:
+        # 0.5 * (1 + torch.erf((value - self.loc) * self.scale.reciprocal() / math.sqrt(2)))
+        # (see https://github.com/pytorch/pytorch/blob/3bbedb34b9b316729a27e793d94488b574e1577a/torch/distributions/normal.py#L78-L81)
+        # we get a more numerically stable variant for low p-values/high significances using erfc(x) := 1 - erf(x)
+        # since erf(-x) = -erf(x) we can replace
+        # 1 + erf(x) = 1 - erf(-x) = 1 - (1 - erfc(-x)) = erfc(-x)
+        mu, sigma = broadcast_all(mu, sigma)
+        return 0.5 * torch.erfc(-((x - mu) * sigma.reciprocal() / math.sqrt(2)))
 
     def poisson_dist(self, rate):
         r"""

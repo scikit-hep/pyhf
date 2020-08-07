@@ -9,7 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from .test_statistics import qmu, q0
+from .test_statistics import qmu, qmu_tilde, q0
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds):
@@ -59,6 +59,20 @@ class AsymptoticTestStatDistribution(object):
         self.shift = shift
         self.sqrtqmuA_v = None
 
+    def cdf(self, value):
+        """
+        Compute the value of the cumulative distribution function for a given value of the test statistic.
+
+        Args:
+            value (`float`): The test statistic value.
+
+        Returns:
+            Float: The integrated probability to observe a test statistic less than or equal to the observed ``value``.
+
+        """
+        tensorlib, _ = get_backend()
+        return tensorlib.normal_cdf((value - self.shift))
+
     def pvalue(self, value):
         """
         Compute the :math:`p`-value for a given value of the test statistic.
@@ -71,7 +85,8 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        return 1 - tensorlib.normal_cdf(value - self.shift)
+        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability
+        return tensorlib.normal_cdf(-(value - self.shift))
 
     def expected_value(self, nsigma):
         """
@@ -83,7 +98,7 @@ class AsymptoticTestStatDistribution(object):
         Returns:
             Float: The expected value of the test statistic.
         """
-        return nsigma
+        return self.shift + nsigma
 
 
 class AsymptoticCalculator(object):
@@ -147,21 +162,26 @@ class AsymptoticCalculator(object):
         tensorlib, _ = get_backend()
 
         if self.use_q0:
-            f_teststat = q0
+            teststat_func = q0
             asimov_mu = 1.0
         else:
-            f_teststat = lambda data, pdf, init_pars, par_bounds: qmu(
-                poi_test, data, pdf, init_pars, par_bounds
-            )
+
+            def teststat_func(*args, **kwargs):
+                "make function signature without poi_test to be consistent with q0"
+                args = tuple([poi_test] + list(args))
+                if self.qtilde:
+                    return qmu_tilde(*args, **kwargs)
+                else:
+                    return qmu(*args, **kwargs)
+
             asimov_mu = 0.0
 
-        qmu_v = f_teststat(self.data, self.pdf, self.init_pars, self.par_bounds)
+        qmu_v = teststat_func(self.data, self.pdf, self.init_pars, self.par_bounds)
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
-
         asimov_data = generate_asimov_data(
             asimov_mu, self.data, self.pdf, self.init_pars, self.par_bounds
         )
-        qmuA_v = f_teststat(asimov_data, self.pdf, self.init_pars, self.par_bounds)
+        qmuA_v = teststat_func(asimov_data, self.pdf, self.init_pars, self.par_bounds)
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
         if not self.qtilde:  # qmu or q0

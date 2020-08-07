@@ -19,6 +19,7 @@ class normfactor(object):
             'is_shared': True,
             'inits': (1.0,),
             'bounds': ((0, 10),),
+            'fixed': False,
         }
 
 

@@ -46,6 +46,7 @@ Making Models from PDFs
    ~workspace.Workspace
    ~patchset.PatchSet
    ~patchset.Patch
+   simplemodels.hepdata_like
 
 Backends
 --------
@@ -74,10 +75,8 @@ Optimizers
    :nosignatures:
    :template: modifierclass.rst
 
-   opt_pytorch.pytorch_optimizer
+   mixins.OptimizerMixin
    opt_scipy.scipy_optimizer
-   opt_tflow.tflow_optimizer
-   opt_jax.jax_optimizer
    opt_minuit.minuit_optimizer
 
 Modifiers
@@ -122,8 +121,11 @@ Inference
    :toctree: _generated/
 
    hypotest
-   test_statistics.qmu
    test_statistics.q0
+   test_statistics.qmu
+   test_statistics.qmu_tilde
+   test_statistics.tmu
+   test_statistics.tmu_tilde
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit

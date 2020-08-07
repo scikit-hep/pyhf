@@ -14,7 +14,7 @@ style: black|
 
 |Docs| |Binder|
 
-|PyPI version| |Supported Python versionss| |Docker Stars| |Docker
+|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
 
 The HistFactory p.d.f. template
@@ -63,18 +63,12 @@ Computational Backends:
   - ☑ TensorFlow
   - ☑ JAX
 
-Available Optimizers
+Optimizers:
+  - ☑ SciPy (``scipy.optimize``)
+  - ☑ MINUIT (``iminuit``)
 
-+---------------------+-----------------------+-----------------------+
-| NumPy               | Tensorflow            | PyTorch               |
-+=====================+=======================+=======================+
-| SLSQP               | Newton’s Method       | Newton’s Method       |
-| (``scipy.optimize`` | (autodiff)            | (autodiff)            |
-| )                   |                       |                       |
-+---------------------+-----------------------+-----------------------+
-| MINUIT              | .                     | .                     |
-| (``iminuit``)       |                       |                       |
-+---------------------+-----------------------+-----------------------+
+All backends can be used in combination with all optimizers.
+Custom user backends and optimizers can be used as well.
 
 Todo
 ----
@@ -90,12 +84,37 @@ A one bin example
 
 .. code:: python
 
-   nobs = 55, b = 50, db = 7, nom_sig = 10.
+   import pyhf
+   import numpy as np
+   import matplotlib.pyplot as plt
+   import pyhf.contrib.viz.brazil
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_1bin_55_50_7.png
+   pyhf.set_backend("numpy")
+   model = pyhf.simplemodels.hepdata_like(
+       signal_data=[10.0], bkg_data=[50.0], bkg_uncerts=[7.0]
+   )
+   data = [55.0] + model.config.auxdata
+
+   poi_vals = np.linspace(0, 5, 41)
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
+
+   fig, ax = plt.subplots()
+   fig.set_size_inches(7, 5)
+   ax.set_xlabel(r"$\mu$ (POI)")
+   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+
+**pyhf**
+
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png
    :alt: manual
@@ -107,14 +126,38 @@ A two bin example
 
 .. code:: python
 
-   bin 1: nobs = 100, b = 100, db = 15., nom_sig = 30.
-   bin 2: nobs = 145, b = 150, db = 20., nom_sig = 45.
+   import pyhf
+   import numpy as np
+   import matplotlib.pyplot as plt
+   import pyhf.contrib.viz.brazil
+
+   pyhf.set_backend("numpy")
+   model = pyhf.simplemodels.hepdata_like(
+       signal_data=[30.0, 45.0], bkg_data=[100.0, 150.0], bkg_uncerts=[15.0, 20.0]
+   )
+   data = [100.0, 145.0] + model.config.auxdata
+
+   poi_vals = np.linspace(0, 5, 41)
+   results = [
+       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       for test_poi in poi_vals
+   ]
+
+   fig, ax = plt.subplots()
+   fig.set_size_inches(7, 5)
+   ax.set_xlabel(r"$\mu$ (POI)")
+   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/manual_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
+**pyhf**
+
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png
    :alt: manual
    :width: 500
    :align: center
+
+**ROOT**
 
 .. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
@@ -174,8 +217,8 @@ BibTeX entry for citation of ``pyhf`` is
 
    @software{pyhf,
      author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
-     title = "{pyhf: v0.4.3}",
-     version = {0.4.3},
+     title = "{pyhf: v0.5.1}",
+     version = {0.5.1},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
    }
@@ -187,6 +230,11 @@ Authors
 
 Please check the `contribution statistics for a list of
 contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
+
+Milestones
+----------
+
+- 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
 
 Acknowledgements
 ----------------
@@ -221,7 +269,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
-.. |Supported Python versionss| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
+.. |Conda-forge version| image:: https://img.shields.io/conda/vn/conda-forge/pyhf.svg
+   :target: https://anaconda.org/conda-forge/pyhf
+.. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
 .. |Docker Stars| image:: https://img.shields.io/docker/stars/pyhf/pyhf.svg
    :target: https://hub.docker.com/r/pyhf/pyhf/

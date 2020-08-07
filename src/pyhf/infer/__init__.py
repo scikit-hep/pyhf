@@ -130,13 +130,16 @@ def hypotest(
             n_sigma_list = [0]
         CLs_exp = []
         for n_sigma in n_sigma_list:
+
+            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+
             if not use_q0:
                 CLs = sig_plus_bkg_distribution.pvalue(
-                    n_sigma
-                ) / b_only_distribution.pvalue(n_sigma)
+                    expected_bonly_teststat
+                ) / b_only_distribution.pvalue(expected_bonly_teststat)
             else:
                 # despite the name in this case this is the discovery p value
-                CLs = sig_plus_bkg_distribution.pvalue(n_sigma)
+                CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
             CLs_exp.append(tensorlib.reshape(CLs, (1,)))
         CLs_exp = tensorlib.astensor(CLs_exp)
         if not kwargs.get('return_expected_set'):

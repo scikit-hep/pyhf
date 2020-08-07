@@ -7,7 +7,7 @@ import json
 from ..utils import EqDelimStringParamType
 from ..infer import hypotest
 from ..workspace import Workspace
-from .. import tensor, get_backend, set_backend, optimize
+from .. import get_backend, set_backend, optimize
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +54,9 @@ def cls(
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf cls
+        $ curl -sL https://git.io/JJYDE | pyhf cls
+
+        \b
         {
             "CLs_exp": [
                 0.07807427911686156,
@@ -85,18 +87,20 @@ def cls(
 
     # set the backend if not NumPy
     if backend in ['pytorch', 'torch']:
-        set_backend(tensor.pytorch_backend(float='float64'))
+        set_backend("pytorch", precision="64b")
     elif backend in ['tensorflow', 'tf']:
-        set_backend(tensor.tensorflow_backend(float='float64'))
+        set_backend("tensorflow", precision="64b")
     elif backend in ['jax']:
-        set_backend(tensor.jax_backend())
+        set_backend("jax")
     tensorlib, _ = get_backend()
 
     optconf = {k: v for item in optconf for k, v in item.items()}
 
     # set the new optimizer
     if optimizer:
-        new_optimizer = getattr(optimize, optimizer)
+        new_optimizer = getattr(optimize, optimizer) or getattr(
+            optimize, f'{optimizer}_optimizer'
+        )
         set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(

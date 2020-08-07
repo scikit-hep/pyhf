@@ -1,5 +1,8 @@
-import jax.numpy as np
 from jax.config import config
+
+config.update('jax_enable_x64', True)
+
+import jax.numpy as np
 from jax.scipy.special import gammaln
 from jax.scipy.stats import norm, poisson
 import numpy as onp
@@ -40,9 +43,22 @@ class _BasicNormal(object):
 class jax_backend(object):
     """JAX backend for pyhf"""
 
+    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+
     def __init__(self, **kwargs):
         self.name = 'jax'
-        config.update('jax_enable_x64', True)
+        self.precision = kwargs.get('precision', '64b')
+        self.dtypemap = {
+            'float': np.float64 if self.precision == '64b' else np.float32,
+            'int': np.int64 if self.precision == '64b' else np.int32,
+            'bool': np.bool_,
+        }
+        self.default_do_grad = True
+
+    def _setup(self):
+        """
+        Run any global setups for the jax lib.
+        """
 
     def clip(self, tensor_in, min_value, max_value):
         """
@@ -136,25 +152,30 @@ class jax_backend(object):
         """
         Convert to a JAX ndarray.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> type(tensor)
+            <class 'jax.interpreters.xla.DeviceArray'>
+
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
             `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
-        dtypemap = {'float': np.float64, 'int': np.int64, 'bool': np.bool_}
         try:
-            dtype = dtypemap[dtype]
+            dtype = self.dtypemap[dtype]
         except KeyError:
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
-        tensor = np.asarray(tensor_in, dtype=dtype)
-        # Ensure non-empty tensor shape for consistency
-        try:
-            tensor.shape[0]
-        except IndexError:
-            tensor = np.reshape(tensor, [1])
-        return np.asarray(tensor, dtype=dtype)
+
+        return np.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
@@ -187,9 +208,7 @@ class jax_backend(object):
         return np.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
-        if axis == 0:
-            return np.stack(sequence)
-        raise RuntimeError('stack axis!=0')
+        return np.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
         return np.where(mask, tensor_in_1, tensor_in_2)

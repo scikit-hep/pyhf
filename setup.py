@@ -1,11 +1,15 @@
 from setuptools import setup
 
 extras_require = {
-    'tensorflow': ['tensorflow~=2.0', 'tensorflow-probability~=0.8'],
+    'shellcomplete': ['click_completion'],
+    'tensorflow': [
+        'tensorflow~=2.2.0',  # TensorFlow minor releases are as volatile as major
+        'tensorflow-probability~=0.10.0',
+    ],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
-    'xmlio': ['uproot'],
-    'minuit': ['iminuit'],
+    'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
+    'minuit': ['iminuit~=1.4,>=1.4.3'],  # Use "name" keyword in MINUIT optimizer
 }
 extras_require['backends'] = sorted(
     set(
@@ -23,6 +27,7 @@ extras_require['test'] = sorted(
         extras_require['backends']
         + extras_require['xmlio']
         + extras_require['contrib']
+        + extras_require['shellcomplete']
         + [
             'pytest~=3.5',
             'pytest-cov>=2.5.1',
@@ -44,7 +49,7 @@ extras_require['test'] = sorted(
 extras_require['docs'] = sorted(
     set(
         [
-            'sphinx~=3.0.0',  # Sphinx v3.1.X regressions break docs
+            'sphinx>=3.1.2',
             'sphinxcontrib-bibtex',
             'sphinx-click',
             'sphinx_rtd_theme',

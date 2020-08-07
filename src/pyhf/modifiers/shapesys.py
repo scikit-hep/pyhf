@@ -27,6 +27,7 @@ class shapesys(object):
             'is_shared': False,
             'inits': (1.0,) * n_parameters,
             'bounds': ((1e-10, 10.0),) * n_parameters,
+            'fixed': False,
             # nb: auxdata/factors set by finalize. Set to non-numeric to crash
             # if we fail to set auxdata/factors correctly
             'auxdata': (None,) * n_parameters,

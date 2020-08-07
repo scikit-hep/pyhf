@@ -1,6 +1,7 @@
 import pytest
 import pyhf
 import numpy as np
+import scipy.stats
 
 
 @pytest.fixture(scope='module')
@@ -17,6 +18,36 @@ def check_uniform_type(in_list):
     return all(
         [isinstance(item, type(pyhf.tensorlib.astensor(item))) for item in in_list]
     )
+
+
+def test_mle_fit_default(tmpdir, hypotest_args):
+    """
+    Check that the default return structure of pyhf.infer.mle.fit is as expected
+    """
+    tb = pyhf.tensorlib
+
+    _, data, model = hypotest_args
+    kwargs = {}
+    result = pyhf.infer.mle.fit(data, model, **kwargs)
+    # bestfit_pars
+    assert isinstance(result, type(tb.astensor(result)))
+    assert pyhf.tensorlib.shape(result) == (model.config.npars,)
+
+
+def test_mle_fit_return_fitted_val(tmpdir, hypotest_args):
+    """
+    Check that the return structure of pyhf.infer.mle.fit with the
+    return_fitted_val keyword arg is as expected
+    """
+    tb = pyhf.tensorlib
+
+    _, data, model = hypotest_args
+    kwargs = {"return_fitted_val": True}
+    result = pyhf.infer.mle.fit(data, model, **kwargs)
+    # bestfit_pars, twice_nll
+    assert pyhf.tensorlib.shape(result[0]) == (model.config.npars,)
+    assert isinstance(result[0], type(tb.astensor(result[0])))
+    assert pyhf.tensorlib.shape(result[1]) == ()
 
 
 def test_hypotest_default(tmpdir, hypotest_args):
@@ -157,3 +188,34 @@ def test_calculator_distributions_without_teststatistic(qtilde):
     )
     with pytest.raises(RuntimeError):
         calc.distributions(1.0)
+
+
+@pytest.mark.parametrize(
+    "nsigma,expected_pval",
+    [
+        # values tabulated using ROOT.RooStats.SignificanceToPValue
+        # they are consistent with relative difference < 1e-14 with scipy.stats.norm.sf
+        (5, 2.866515718791945e-07),
+        (6, 9.865876450377018e-10),
+        (7, 1.279812543885835e-12),
+        (8, 6.220960574271829e-16),
+        (9, 1.1285884059538408e-19),
+    ],
+)
+def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
+    rtol = 1e-8
+    if backend[0].precision != '64b':
+        rtol = 1e-5
+    dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
+    assert np.isclose(np.array(dist.pvalue(nsigma)), expected_pval, rtol=rtol, atol=0)
+
+
+def test_significance_to_pvalue_roundtrip(backend):
+    rtol = 1e-15
+    if backend[0].precision != '64b':
+        rtol = 1e-6
+    sigma = np.arange(0, 10, 0.1)
+    dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
+    pvalue = dist.pvalue(pyhf.tensorlib.astensor(sigma))
+    back_to_sigma = -scipy.stats.norm.ppf(np.array(pvalue))
+    assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)

@@ -227,7 +227,7 @@ def expected_result_1bin_normsys(mu=1.0):
     if mu == 1:
         expected_result = {
             "exp": [
-                7.471684419037561e-10,
+                7.47169462e-10,
                 5.7411551509088054e-08,
                 3.6898088062731205e-06,
                 0.00016965731538267896,
@@ -753,7 +753,7 @@ def validate_hypotest(
         (setup_1bin_shapesys(), 1e-6),
         (setup_1bin_shapesys_q0(), 3e-4),
         (setup_1bin_lumi(), 4e-6),
-        (setup_1bin_normsys(), 1e-6),
+        (setup_1bin_normsys(), 2e-9),
         (setup_2bin_histosys(), 8e-5),
         (setup_2bin_2channel(), 1e-6),
         (setup_2bin_2channel_couplednorm(), 1e-6),
@@ -975,4 +975,57 @@ def test_shapesys_nuisparfilter_validation():
     )
     assert np.allclose(
         reference_root_results['CLs_exp'], pyhf_results['CLs_exp'], atol=1e-4, rtol=1e-5
+    )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.numpy_backend,
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
+def test_optimizer_stitching(backend, optimizer):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
+
+    result_nostitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=False)
+    result_stitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=True)
+
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nostitch),
+        pyhf.tensorlib.tolist(result_stitch),
+        rtol=4e-05,
+    )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer,rtol', [('scipy', 1e-6), ('minuit', 1e-3)])
+def test_optimizer_grad(backend, optimizer, rtol):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
+
+    result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)
+    result_grad = pyhf.infer.mle.fit(data, pdf, do_grad=True)
+
+    # TODO: let's make this agreement better
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nograd),
+        pyhf.tensorlib.tolist(result_grad),
+        rtol=rtol,
+        atol=1e-6,
     )

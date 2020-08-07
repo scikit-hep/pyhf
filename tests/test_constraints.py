@@ -141,6 +141,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]],
                     auxdata=[12],
                     factors=[12],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
                 'auxdata': [1],
@@ -152,6 +153,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]] * 2,
                     auxdata=[13, 14],
                     factors=[13, 14],
+                    fixed=False,
                 ),
                 'slice': slice(1, 3),
             },
@@ -162,6 +164,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]] * 2,
                     auxdata=[0, 0],
                     sigmas=[1.5, 2.0],
+                    fixed=False,
                 ),
                 'slice': slice(3, 5),
             },
@@ -171,6 +174,7 @@ def test_batched_constraints(backend):
                     inits=[0] * 3,
                     bounds=[[0, 10]] * 3,
                     auxdata=[0, 0, 0],
+                    fixed=False,
                 ),
                 'slice': slice(5, 8),
             },
@@ -187,7 +191,7 @@ def test_batched_constraints(backend):
         )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -195,7 +199,7 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     suggested_pars = [1.1] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
@@ -208,7 +212,7 @@ def test_batched_constraints(backend):
         )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -216,7 +220,7 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     constraint = poisson_constraint_combined(config, batch_size=10)
     result = constraint.logpdf(
