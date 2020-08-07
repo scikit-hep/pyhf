@@ -277,5 +277,5 @@ def q0(data, pdf, init_pars, par_bounds):
     q0 = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     q0 = tensorlib.where(
         muhatbhat[pdf.config.poi_index] < 0, tensorlib.astensor(0.0), q0
-    )[0]
+    )
     return tensorlib.clip(q0, 0, max_value=None)
