@@ -527,7 +527,7 @@ class _MainModel(object):
 
         newbysample = tensorlib.product(allfac, axis=0)
         if return_by_sample:
-            batchfirst = tensorlib.swapaxes(newbysample, 0, 1)
+            batchfirst = tensorlib.einsum('ij...->ji...', newbysample)
             if self.batch_size is None:
                 return batchfirst[0]
             return batchfirst

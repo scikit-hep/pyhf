@@ -173,9 +173,6 @@ class numpy_backend(object):
     def sum(self, tensor_in, axis=None):
         return np.sum(tensor_in, axis=axis)
 
-    def swapaxes(self, tensor_in, ax1, ax2):
-        return np.swapaxes(tensor_in, ax1, ax2)
-
     def product(self, tensor_in, axis=None):
         return np.product(tensor_in, axis=axis)
 

@@ -136,9 +136,6 @@ class jax_backend(object):
                 return tensor_in
             raise
 
-    def swapaxes(self, tensor, ax1, ax2):
-        return np.swapaxes(tensor, ax1, ax2)
-
     def outer(self, tensor_in_1, tensor_in_2):
         return np.outer(tensor_in_1, tensor_in_2)
 

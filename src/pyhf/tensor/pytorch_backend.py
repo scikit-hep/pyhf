@@ -137,9 +137,6 @@ class pytorch_backend(object):
 
         return torch.as_tensor(tensor_in, dtype=dtype)
 
-    def swapaxes(self, tensor, ax1, ax2):
-        return torch.transpose(tensor, ax1, ax2)
-
     def gather(self, tensor, indices):
         return tensor[indices.type(torch.LongTensor)]
 
