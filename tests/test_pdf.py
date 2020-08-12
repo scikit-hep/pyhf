@@ -92,7 +92,7 @@ def test_pdf_expected_data_by_sample(backend):
     assert tb.tolist(
         pdf.main_model.expected_data(tb.astensor(pdf.config.suggested_init()))
     ) == [60]
-    d = dict(
+    sample_expected_data = dict(
         zip(
             pdf.config.samples,
             tb.tolist(
@@ -102,8 +102,8 @@ def test_pdf_expected_data_by_sample(backend):
             ),
         )
     )
-    assert d['background'] == [50.0]
-    assert d['signal'] == [10.0]
+    assert sample_expected_data['background'] == [50.0]
+    assert sample_expected_data['signal'] == [10.0]
 
 
 def test_pdf_basicapi_tests(backend):
