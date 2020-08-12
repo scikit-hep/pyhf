@@ -25,13 +25,17 @@ def test_minimum_model_spec():
     pyhf.Model(spec)
 
 
-def test_pdf_inputs(backend):
+@pytest.mark.parametrize('batch_size', [None, 2])
+def test_pdf_inputs(backend, batch_size):
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.hepdata_like(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source['bindata']['sig'],
+        source['bindata']['bkg'],
+        source['bindata']['bkgerr'],
+        batch_size=batch_size,
     )
 
     pars = pdf.config.suggested_init()
