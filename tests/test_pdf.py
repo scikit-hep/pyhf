@@ -95,7 +95,7 @@ def test_pdf_expected_data_by_sample(backend, batch_size):
     )
 
     nrepeats = (batch_size, 1) if batch_size else (1,)
-    # tensorflow tile is a bit odd?
+    # tensorflow tile is a bit odd? see scikit-hep/pyhf#1025
     if backend[0].name == 'tensorflow' and batch_size:
         init_pars = tb.tile(tb.astensor([pdf.config.suggested_init()]), nrepeats)
         expected_data = tb.tile(tb.astensor([[60]]), nrepeats)
