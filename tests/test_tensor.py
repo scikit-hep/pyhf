@@ -243,6 +243,10 @@ def test_tensor_tile(backend):
         [[10.0, 20.0, 10.0, 20.0, 10.0, 20.0]],
     ]
 
+    if tb.name == 'tensorflow':
+        with pytest.raises(tf.python.framework.errors_impl.InvalidArgumentError):
+            tb.tile(tb.astensor([[[10, 20, 30]]]), (2, 1))
+
 
 def test_1D_gather(backend):
     tb = pyhf.tensorlib
