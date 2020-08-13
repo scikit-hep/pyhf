@@ -80,6 +80,39 @@ def test_invalid_pdf_data():
         pdf.logpdf(pars, data)
 
 
+@pytest.mark.parametrize('batch_size', [None, 2])
+def test_pdf_expected_data_by_sample(backend, batch_size):
+    tb, _ = backend
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    pdf = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'],
+        source['bindata']['bkg'],
+        source['bindata']['bkgerr'],
+        batch_size=batch_size,
+    )
+
+    nrepeats = (batch_size, 1) if batch_size else (1,)
+    init_pars = tb.tile(tb.astensor(pdf.config.suggested_init()), nrepeats)
+    expected_data = tb.tile(tb.astensor([60]), nrepeats)
+    expected_bkg = tb.tile(tb.astensor([50]), nrepeats)
+    expected_sig = tb.tile(tb.astensor([10]), nrepeats)
+
+    assert tb.tolist(pdf.main_model.expected_data(init_pars)) == tb.tolist(
+        expected_data
+    )
+
+    data = pdf.main_model.expected_data(init_pars, return_by_sample=True)
+    if batch_size:
+        data = tb.tolist(tb.einsum('ij...->ji...', data))
+
+    sample_expected_data = dict(zip(pdf.config.samples, tb.tolist(data)))
+    assert sample_expected_data['background'] == tb.tolist(expected_bkg)
+    assert sample_expected_data['signal'] == tb.tolist(expected_sig)
+
+
 def test_pdf_basicapi_tests(backend):
     source = {
         "binning": [2, -0.5, 1.5],

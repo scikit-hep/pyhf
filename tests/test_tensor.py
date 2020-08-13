@@ -141,6 +141,23 @@ def test_reshape(backend):
     assert tb.tolist(tb.reshape(tb.ones((1, 2, 3)), (-1,))) == [1, 1, 1, 1, 1, 1]
 
 
+def test_swap(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[1, 2, 3]]))) == [
+        [1],
+        [2],
+        [3],
+    ]
+    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[[1, 2, 3]]]))) == [
+        [[1, 2, 3]]
+    ]
+    assert tb.tolist(tb.einsum('ijk...->kji...', tb.astensor([[[1, 2, 3]]]))) == [
+        [[1]],
+        [[2]],
+        [[3]],
+    ]
+
+
 def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
