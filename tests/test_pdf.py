@@ -31,7 +31,7 @@ def test_pdf_inputs(backend):
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.hepdata_like(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr'],
+        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
 
     pars = pdf.config.suggested_init()
