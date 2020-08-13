@@ -75,7 +75,16 @@ class tensorflow_backend(object):
             TensorFlow Tensor: The tensor with repeated axes
 
         """
-        return tf.tile(tensor_in, repeats)
+        try:
+            return tf.tile(tensor_in, repeats)
+        except tf.python.framework.errors_impl.InvalidArgumentError:
+            diff = len(repeats) - len(tf.shape(tensor_in))
+            if diff < 0:
+                raise
+            return tf.tile(
+                tf.reshape(tensor_in, [1] * diff + tf.shape([10, 20]).numpy().tolist()),
+                repeats,
+            )
 
     def conditional(self, predicate, true_callable, false_callable):
         """
