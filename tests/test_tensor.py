@@ -234,11 +234,9 @@ def test_tensor_tile(backend):
     assert tb.tolist(tb.tile(tb.astensor(a), (1, 2))) == [[1, 1], [2, 2], [3, 3]]
 
     a = [1, 2, 3]
-    tb = pyhf.tensorlib
     assert tb.tolist(tb.tile(tb.astensor(a), (2,))) == [1, 2, 3, 1, 2, 3]
 
     a = [10, 20]
-    tb = pyhf.tensorlib
     assert tb.tolist(tb.tile(tb.astensor(a), (2, 1))) == [[10, 20], [10, 20]]
     assert tb.tolist(tb.tile(tb.astensor(a), (2, 1, 3))) == [
         [[10.0, 20.0, 10.0, 20.0, 10.0, 20.0]],
