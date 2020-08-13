@@ -95,17 +95,10 @@ def test_pdf_expected_data_by_sample(backend, batch_size):
     )
 
     nrepeats = (batch_size, 1) if batch_size else (1,)
-    # tensorflow tile is a bit odd? see scikit-hep/pyhf#1025
-    if backend[0].name == 'tensorflow' and batch_size:
-        init_pars = tb.tile(tb.astensor([pdf.config.suggested_init()]), nrepeats)
-        expected_data = tb.tile(tb.astensor([[60]]), nrepeats)
-        expected_bkg = tb.tile(tb.astensor([[50]]), nrepeats)
-        expected_sig = tb.tile(tb.astensor([[10]]), nrepeats)
-    else:
-        init_pars = tb.tile(tb.astensor(pdf.config.suggested_init()), nrepeats)
-        expected_data = tb.tile(tb.astensor([60]), nrepeats)
-        expected_bkg = tb.tile(tb.astensor([50]), nrepeats)
-        expected_sig = tb.tile(tb.astensor([10]), nrepeats)
+    init_pars = tb.tile(tb.astensor(pdf.config.suggested_init()), nrepeats)
+    expected_data = tb.tile(tb.astensor([60]), nrepeats)
+    expected_bkg = tb.tile(tb.astensor([50]), nrepeats)
+    expected_sig = tb.tile(tb.astensor([10]), nrepeats)
 
     assert tb.tolist(pdf.main_model.expected_data(init_pars)) == tb.tolist(
         expected_data
