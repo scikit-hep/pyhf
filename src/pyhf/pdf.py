@@ -527,10 +527,10 @@ class _MainModel(object):
 
         newbysample = tensorlib.product(allfac, axis=0)
         if return_by_sample:
-            batchfirst = tensorlib.einsum('ij...->ji...', newbysample)
+            batch_first = tensorlib.einsum('ij...->ji...', newbysample)
             if self.batch_size is None:
-                return batchfirst[0]
-            return batchfirst
+                return batch_first[0]
+            return batch_first
 
         newresults = tensorlib.sum(newbysample, axis=0)
         if self.batch_size is None:
