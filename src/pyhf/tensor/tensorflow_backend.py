@@ -82,7 +82,7 @@ class tensorflow_backend(object):
             diff = len(repeats) - len(shape)
             if diff < 0:
                 raise
-            return tf.tile(tf.reshape(tensor_in, [1] * diff + shape), repeats,)
+            return tf.tile(tf.reshape(tensor_in, [1] * diff + shape), repeats)
 
     def conditional(self, predicate, true_callable, false_callable):
         """
