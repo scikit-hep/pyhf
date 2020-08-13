@@ -44,15 +44,22 @@ def hypotest(
     Returns:
         Tuple of Floats and lists of Floats:
 
-            - :math:`\mathrm{CL}_{s}`: The :math:`p`-value compared to the given threshold :math:`\alpha`, typically taken to be :math:`0.05`, defined in :xref:`arXiv:1007.1727` as
+            - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to
+              the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,
+              defined in :xref:`arXiv:1007.1727` as
 
             .. math::
 
                 \mathrm{CL}_{s} = \frac{\mathrm{CL}_{s+b}}{\mathrm{CL}_{b}} = \frac{p_{s+b}}{1-p_{b}}
 
-            to protect against excluding signal models in which there is little sensitivity. In the case that :math:`\mathrm{CL}_{s} \leq \alpha` the given signal model is excluded.
+            to protect against excluding signal models in which there is little
+            sensitivity. In the case that :math:`\mathrm{CL}_{s} \leq \alpha`
+            the given signal model is excluded.
 
-            - :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`: The signal + background :math:`p`-value and 1 minus the background only :math:`p`-value as defined in Equations (75) and (76) of :xref:`arXiv:1007.1727`
+            - :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`: The
+              signal + background :math:`p`-value and 1 minus the background only
+              :math:`p`-value as defined in Equations (75) and (76) of
+              :xref:`arXiv:1007.1727`
 
             .. math::
 
@@ -74,17 +81,31 @@ def hypotest(
 
                 V\left[q\right] = \frac{4}{\sigma^{2}}
 
-            of the test statistic :math:`q` under the background only and and signal + background hypotheses. Only returned when ``return_tail_probs`` is ``True``.
+            of the test statistic :math:`q` under the background only and and
+            signal + background hypotheses.
+            Only returned when ``return_tail_probs`` is ``True``.
 
-            - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}` value corresponding to the test statistic under the background only hypothesis :math:`\left(\mu=0\right)`. Only returned when ``return_expected`` is ``True``.
+            - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}`
+              value corresponding to the test statistic under the background
+              only hypothesis :math:`\left(\mu=0\right)`.
+              Only returned when ``return_expected`` is ``True``.
 
-            - :math:`\mathrm{CL}_{s,\mathrm{exp}}` band: The set of expected :math:`\mathrm{CL}_{s}` values corresponding to the median significance of variations of the signal strength from the background only hypothesis :math:`\left(\mu=0\right)` at :math:`(-2,-1,0,1,2)\sigma`. That is, the :math:`p`-values that satisfy Equation (89) of :xref:`arXiv:1007.1727`
+            - :math:`\mathrm{CL}_{s,\mathrm{exp}}` band: The set of expected
+              :math:`\mathrm{CL}_{s}` values corresponding to the median
+              significance of variations of the signal strength from the
+              background only hypothesis :math:`\left(\mu=0\right)` at
+              :math:`(-2,-1,0,1,2)\sigma`.
+              That is, the :math:`p`-values that satisfy Equation (89) of
+              :xref:`arXiv:1007.1727`
 
             .. math::
 
                 \mathrm{band}_{N\sigma} = \mu' + \sigma\,\Phi^{-1}\left(1-\alpha\right) \pm N\sigma
 
-            for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`. These values define the boundaries of an uncertainty band sometimes referred to as the "Brazil band". Only returned when ``return_expected_set`` is ``True``.
+            for :math:`\mu'=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`.
+            These values define the boundaries of an uncertainty band sometimes
+            referred to as the "Brazil band".
+            Only returned when ``return_expected_set`` is ``True``.
 
     """
     init_pars = init_pars or pdf.config.suggested_init()
