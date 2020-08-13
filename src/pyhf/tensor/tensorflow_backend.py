@@ -78,13 +78,11 @@ class tensorflow_backend(object):
         try:
             return tf.tile(tensor_in, repeats)
         except tf.python.framework.errors_impl.InvalidArgumentError:
-            diff = len(repeats) - len(tf.shape(tensor_in))
+            shape = tf.shape(tensor_in).numpy().tolist()
+            diff = len(repeats) - len(shape)
             if diff < 0:
                 raise
-            return tf.tile(
-                tf.reshape(tensor_in, [1] * diff + tf.shape([10, 20]).numpy().tolist()),
-                repeats,
-            )
+            return tf.tile(tf.reshape(tensor_in, [1] * diff + shape), repeats,)
 
     def conditional(self, predicate, true_callable, false_callable):
         """
