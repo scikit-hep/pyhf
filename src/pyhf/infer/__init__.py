@@ -59,15 +59,22 @@ def hypotest(
             - :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`: The
               signal + background :math:`p`-value and 1 minus the background only
               :math:`p`-value as defined in Equations (75) and (76) of
-              :xref:`arXiv:1007.1727`
+              :xref:`arXiv:1007.1727` for upper-limit-like test statistic
+              :math:`q \in \{q_{\mu}, \tilde{q}_{\mu}\}`
 
             .. math::
 
-                \mathrm{CL}_{s+b} = p_{s+b} = \int\limits_{q_{\mathrm{obs}}}^{\infty} f\left(q\,\middle|s+b\right)\,dq = 1 - \Phi\left(\frac{q_{\mathrm{obs}} + 1/\sigma_{s+b}^{2}}{2/\sigma_{s+b}}\right)
+                \mathrm{CL}_{s+b} = p_{s+b}
+                = p\left(q \geq q_{\mathrm{obs}}\middle|s+b\right)
+                = \int\limits_{q_{\mathrm{obs}}}^{\infty} f\left(q\,\middle|s+b\right)\,dq
+                = 1 - \Phi\left(\frac{q_{\mathrm{obs}} + 1/\sigma_{s+b}^{2}}{2/\sigma_{s+b}}\right)
 
             .. math::
 
-                \mathrm{CL}_{b} = 1- p_{b} = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq = 1 - \Phi\left(\frac{q_{\mathrm{obs}} - 1/\sigma_{b}^{2}}{2/\sigma_{b}}\right)
+                \mathrm{CL}_{b} = 1- p_{b}
+                = p\left(q \geq q_{\mathrm{obs}}\middle|b\right)
+                = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq
+                = 1 - \Phi\left(\frac{q_{\mathrm{obs}} - 1/\sigma_{b}^{2}}{2/\sigma_{b}}\right)
 
             with Equations (73) and (74) for the mean
 
