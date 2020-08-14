@@ -75,8 +75,9 @@ class AsymptoticTestStatDistribution(object):
 
     def pvalue(self, value):
         r"""
-        The :math:`p`-value for a given value of the test statistic.
-        The :math:`p`-values for signal strength :math:`\mu` and Asimov strength :math:`\mu'` as defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`
+        The :math:`p`-value for a given value of the test statistic corresponding
+        to signal strength :math:`\mu` and Asimov strength :math:`\mu'` as
+        defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`
 
         .. math::
 
