@@ -66,7 +66,7 @@ def hypotest(
                 \mathrm{CL}_{s+b} = p_{s+b}
                 = p\left(q \geq q_{\mathrm{obs}}\middle|s+b\right)
                 = \int\limits_{q_{\mathrm{obs}}}^{\infty} f\left(q\,\middle|s+b\right)\,dq
-                = 1 - F\left(q_{\mathrm{obs}}\,\middle|\mu'\right)
+                = 1 - F\left(q_{\mathrm{obs}}(\mu)\,\middle|\mu'\right)
 
             and 1 minus the background only model hypothesis :math:`p`-value
 
@@ -75,14 +75,13 @@ def hypotest(
                 \mathrm{CL}_{b} = 1- p_{b}
                 = p\left(q \geq q_{\mathrm{obs}}\middle|b\right)
                 = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq
-                = 1 - F\left(q_{\mathrm{obs}}\,\middle|0\right)
+                = 1 - F\left(q_{\mathrm{obs}}(\mu)\,\middle|0\right)
 
-            for signal strength :math:`\mu` and Asimov strength :math:`\mu'`,
-            where the cumulative density functions
-            :math:`F\left(q\,\middle|\mu'\right)`
-            are given by Equations (57) and (65) of :xref:`arXiv:1007.1727`
-            for upper-limit-like test statistic
-            :math:`q \in \{q_{\mu}, \tilde{q}_{\mu}\}`.
+            for signal strength :math:`\mu` and model hypothesis signal strength
+            :math:`\mu'`, where the cumulative density functions
+            :math:`F\left(q(\mu)\,\middle|\mu'\right)` are given by Equations (57)
+            and (65) of :xref:`arXiv:1007.1727` for upper-limit-like test
+            statistic :math:`q \in \{q_{\mu}, \tilde{q}_{\mu}\}`.
             Only returned when ``return_tail_probs`` is ``True``.
 
             - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}`
