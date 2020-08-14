@@ -30,11 +30,13 @@ def hypotest(
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
-        data (Number or Tensor): The root of the calculated test statistic given the Asimov data, :math:`\sqrt{q_{\mu,A}}`
-        pdf (~pyhf.pdf.Model): The HistFactory statistical model
+        data (Number or Tensor): The data considered
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
-        qtilde (Bool): When ``True`` perform the calculation using the alternative test statistic, :math:`\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
+        qtilde (Bool): When ``True`` perform the calculation using the alternative
+         test statistic, :math:`\tilde{q}`, as defined under the Wald
+         approximation in Equation (62) of :xref:`arXiv:1007.1727`.
 
     Keyword Args:
         return_tail_probs (bool): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
