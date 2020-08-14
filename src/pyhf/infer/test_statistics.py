@@ -52,7 +52,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, as defiend in
-    Equation (14) in :xref:`arXiv:1007.1727`.
+    Equation (14) in :xref:`arXiv:1007.1727`
 
     .. math::
        :nowrap:
@@ -63,6 +63,12 @@ def qmu(mu, data, pdf, init_pars, par_bounds):
           0, & \hat{\mu} > \mu
           \end{array}\right.
         \end{equation}
+
+    where :math:`\lambda\left(\mu\right)` is the profile likelihood ratio as defined in Equation (7)
+
+    .. math::
+
+       \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}\,.
 
     Example:
         >>> import pyhf
@@ -105,7 +111,29 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`\tilde{q}_{\mu}`, for establishing an upper
     limit on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`.
+    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`
+
+    .. math::
+       :nowrap:
+
+       \begin{equation}
+          \tilde{q}_{\mu} = \left\{\begin{array}{ll}
+          -2\ln\tilde{\lambda}\left(\mu\right), &\hat{\mu} < \mu,\\
+          0, & \hat{\mu} > \mu
+          \end{array}\right.
+        \end{equation}
+
+    where :math:`\tilde{\lambda}\left(\mu\right)` is the constrained profile likelihood ratio as defined in Equation (10)
+
+    .. math::
+       :nowrap:
+
+       \begin{equation}
+          \tilde{\lambda}\left(\mu\right) = \left\{\begin{array}{ll}
+          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\hat{\boldsymbol{\theta}}}(0)\right)}, &\hat{\mu} < 0,\\
+          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}, &\hat{\mu} \geq 0.
+          \end{array}\right.
+        \end{equation}
 
     Example:
         >>> import pyhf
@@ -146,8 +174,18 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds):
 def tmu(mu, data, pdf, init_pars, par_bounds):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
-    interval on the strength parameter, :math:`\mu`, as defiend in Equation (10)
-    in :xref:`arXiv:1007.1727`.
+    interval on the strength parameter, :math:`\mu`, as defiend in Equation (8)
+    in :xref:`arXiv:1007.1727`
+
+    .. math::
+
+       t_{\mu} = -2\ln\lambda\left(\mu\right)
+
+    where :math:`\lambda\left(\mu\right)` is the profile likelihood ratio as defined in Equation (7)
+
+    .. math::
+
+       \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}\,.
 
     Example:
         >>> import pyhf
@@ -188,9 +226,25 @@ def tmu(mu, data, pdf, init_pars, par_bounds):
 
 def tmu_tilde(mu, data, pdf, init_pars, par_bounds):
     r"""
-    The test statistic, :math:`t_{\mu}`, for establishing a two-sided
+    The test statistic, :math:`\tilde{t}_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`.
+    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`
+
+    .. math::
+
+       \tilde{t}_{\mu} = -2\ln\tilde{\lambda}\left(\mu\right)
+
+    where :math:`\tilde{\lambda}\left(\mu\right)` is the constrained profile likelihood ratio as defined in Equation (10)
+
+    .. math::
+       :nowrap:
+
+       \begin{equation}
+          \tilde{\lambda}\left(\mu\right) = \left\{\begin{array}{ll}
+          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\hat{\boldsymbol{\theta}}}(0)\right)}, &\hat{\mu} < 0,\\
+          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}, &\hat{\mu} \geq 0.
+          \end{array}\right.
+        \end{equation}
 
     Example:
         >>> import pyhf

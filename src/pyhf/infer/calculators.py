@@ -74,8 +74,22 @@ class AsymptoticTestStatDistribution(object):
         return tensorlib.normal_cdf((value - self.shift))
 
     def pvalue(self, value):
-        """
-        Compute the :math:`p`-value for a given value of the test statistic.
+        r"""
+        The :math:`p`-value for a given value of the test statistic corresponding
+        to signal strength :math:`\mu` and Asimov strength :math:`\mu'` as
+        defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`
+
+        .. math::
+
+            p_{\mu} = 1-F\left(q_{\mu}\middle|\mu'\right) = 1- \Phi\left(\sqrt{q_{\mu}} - \frac{\left(\mu-\mu'\right)}{\sigma}\right)
+
+        with Equation (29)
+
+        .. math::
+
+            \frac{(\mu-\mu')}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}
+
+        given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
 
         Args:
             value (`float`): The test statistic value.

@@ -120,7 +120,6 @@ Inference
 .. autosummary::
    :toctree: _generated/
 
-   hypotest
    test_statistics.qmu
    test_statistics.qmu_tilde
    test_statistics.tmu
@@ -128,6 +127,7 @@ Inference
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit
+   hypotest
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
    calculators.AsymptoticCalculator
