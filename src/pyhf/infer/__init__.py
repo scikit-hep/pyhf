@@ -73,7 +73,7 @@ def hypotest(
                 \mathrm{CL}_{b} = 1- p_{b}
                 = p\left(q \geq q_{\mathrm{obs}}\middle|b\right)
                 = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq
-                = 1 - F\left(q_{\mathrm{obs}}\,\middle|\mu'=0\right)
+                = 1 - F\left(q_{\mathrm{obs}}\,\middle|0\right)
 
             for signal strength :math:`\mu` and Asimov strength :math:`\mu'`,
             where the cumulative density functions
