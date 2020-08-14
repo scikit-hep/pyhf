@@ -906,16 +906,16 @@ def test_shapesys_nuisparfilter_validation():
         "observations": [{"data": [100, 10], "name": "channel1"}],
         "version": "1.0.0",
     }
-    w = pyhf.Workspace(spec)
-    m = w.model(
+    ws = pyhf.Workspace(spec)
+    model = ws.model(
         modifier_settings={
             'normsys': {'interpcode': 'code4'},
             'histosys': {'interpcode': 'code4p'},
         },
     )
-    d = w.data(m)
-    obs, exp = pyhf.infer.hypotest(1.0, d, m, return_expected_set=True)
-    pyhf_results = {'CLs_obs': obs[0], 'CLs_exp': [e[0] for e in exp]}
+    data = ws.data(model)
+    obs, exp = pyhf.infer.hypotest(1.0, data, model, return_expected_set=True)
+    pyhf_results = {'CLs_obs': obs, 'CLs_exp': [e for e in exp]}
 
     assert np.allclose(
         reference_root_results['CLs_obs'], pyhf_results['CLs_obs'], atol=1e-4, rtol=1e-5

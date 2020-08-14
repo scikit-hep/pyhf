@@ -59,7 +59,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
     kwargs = {}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs
-    assert len(list(result)) == 1
+    assert pyhf.tensorlib.shape(result) == ()
     assert isinstance(result, type(tb.astensor(result)))
 
 
@@ -178,7 +178,7 @@ def test_inferapi_pyhf_independence():
         1.0, model.expected_data(model.config.suggested_init()), model
     )
 
-    assert np.isclose(cls[0], 0.7267836451638846)
+    assert np.isclose(cls, 0.7267836451638846)
 
 
 @pytest.mark.parametrize("qtilde", [True, False])

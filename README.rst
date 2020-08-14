@@ -38,10 +38,12 @@ Hello World
 .. code:: python
 
    >>> import pyhf
-   >>> pdf = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(1.0, [51, 48] + pdf.config.auxdata, pdf, return_expected=True)
-   >>> print('Observed: {}, Expected: {}'.format(CLs_obs, CLs_exp))
-   Observed: [0.05290116], Expected: [0.06445521]
+   >>> model = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
+   >>> data = [51, 48] + model.config.auxdata
+   >>> test_mu = 1.0
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
+   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
+   Observed: 0.052515541856109765, Expected: 0.06445521290832805
 
 What does it support
 --------------------
