@@ -84,6 +84,15 @@ def hypotest(
             statistic :math:`q \in \{q_{\mu}, \tilde{q}_{\mu}\}`.
             Only returned when ``return_tail_probs`` is ``True``.
 
+            .. note::
+
+                The definitions of the :math:`\mathrm{CL}_{s+b}` and
+                :math:`\mathrm{CL}_{b}` used are based on profile likelihood
+                ratio test statistics.
+                This procedure is common in the LHC-era, but differs from
+                procedures used in the LEP and Tevatron eras, as briefly
+                discussed in :math:`\S` 3.8 of of :xref:`arXiv:1007.1727`.
+
             - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}`
               value corresponding to the test statistic under the background
               only hypothesis :math:`\left(\mu=0\right)`.
