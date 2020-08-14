@@ -67,6 +67,7 @@ def hypotest(
                 \mathrm{CL}_{s+b} = p_{s+b}
                 = p\left(q \geq q_{\mathrm{obs}}\middle|s+b\right)
                 = \int\limits_{q_{\mathrm{obs}}}^{\infty} f\left(q\,\middle|s+b\right)\,dq
+                = 1 - F\left(q_{\mathrm{obs}}\,\middle|\mu'\right)
                 = 1 - \Phi\left(\frac{q_{\mathrm{obs}} + 1/\sigma_{s+b}^{2}}{2/\sigma_{s+b}}\right)
 
             .. math::
@@ -74,8 +75,12 @@ def hypotest(
                 \mathrm{CL}_{b} = 1- p_{b}
                 = p\left(q \geq q_{\mathrm{obs}}\middle|b\right)
                 = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq
+                = 1 - F\left(q_{\mathrm{obs}}\,\middle|0\right)
                 = 1 - \Phi\left(\frac{q_{\mathrm{obs}} - 1/\sigma_{b}^{2}}{2/\sigma_{b}}\right)
 
+            where the cumulative density functions
+            :math:`F\left(q\,\middle|\mu'\right)`
+            are given by Equations (57) and (65)
             with Equations (73) and (74) for the mean
 
             .. math::
