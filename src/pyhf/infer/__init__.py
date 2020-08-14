@@ -35,7 +35,7 @@ def hypotest(
         init_pars (Array or Tensor): The initial parameter values to be used for minimization
         par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative
-         test statistic, :math:`\tilde{q}`, as defined under the Wald
+         test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
          approximation in Equation (62) of :xref:`arXiv:1007.1727`.
 
     Keyword Args:
