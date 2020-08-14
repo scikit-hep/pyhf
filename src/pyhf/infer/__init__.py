@@ -91,7 +91,7 @@ def hypotest(
                 ratio test statistics.
                 This procedure is common in the LHC-era, but differs from
                 procedures used in the LEP and Tevatron eras, as briefly
-                discussed in :math:`\S` 3.8 of of :xref:`arXiv:1007.1727`.
+                discussed in :math:`\S` 3.8 of :xref:`arXiv:1007.1727`.
 
             - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}`
               value corresponding to the test statistic under the background
