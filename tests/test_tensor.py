@@ -429,7 +429,7 @@ def test_trigger_tensorlib_changed_name(mocker):
     pyhf.set_backend(numpy_64)
 
     func = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(func)
+    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
 
     assert func.call_count == 0
     pyhf.set_backend(jax_64)
@@ -443,7 +443,7 @@ def test_trigger_tensorlib_changed_precision(mocker):
     pyhf.set_backend(jax_64)
 
     func = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(func)
+    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
 
     assert func.call_count == 0
     pyhf.set_backend(jax_32)
