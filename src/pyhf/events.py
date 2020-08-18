@@ -19,7 +19,7 @@ class Callables(WeakList):
             if isinstance(func, weakref.WeakMethod):
                 func()(*args, **kwargs)
             else:
-                f(*args, **kwargs)
+                func(*args, **kwargs)
 
     def __repr__(self):
         return "Callables(%s)" % list.__repr__(self)
