@@ -16,10 +16,8 @@ class WeakList(list):
 class Callables(WeakList):
     def __call__(self, *args, **kwargs):
         for func in self:
-            if isinstance(func, weakref.WeakMethod):
-                func()(*args, **kwargs)
-            else:
-                func(*args, **kwargs)
+            # weakref: needs to be de-ref'd first before calling
+            func()(*args, **kwargs)
 
     def __repr__(self):
         return "Callables(%s)" % list.__repr__(self)
