@@ -609,6 +609,8 @@ class Model(object):
             Tensor: The expected data of the auxiliary pdf
 
         """
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
         return self.make_pdf(pars)[1].expected_data()
 
     def _modifications(self, pars):
@@ -630,6 +632,8 @@ class Model(object):
             Tensor: The expected data of the main model (no auxiliary data)
 
         """
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
         return self.make_pdf(pars)[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
