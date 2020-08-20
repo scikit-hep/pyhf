@@ -133,7 +133,6 @@ def test_pdf_basicapi_tests(backend):
         [60.0, 51.020408630], 1e-08
     )
 
-    # issue #1027
     assert tensorlib.tolist(pdf.expected_actualdata(pars)) == pytest.approx(
         [60.0], 1e-08
     )
