@@ -372,7 +372,13 @@ def sort(workspace, output_file):
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf sorted
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf sort | jq '.' | md5
+        8be5186ec249d2704e14dd29ef05ffb0
+
+    .. code-block:: shell
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | jq -S '.channels|=sort_by(.name)|.channels[].samples|=sort_by(.name)|.channels[].samples[].modifiers|=sort_by(.name,.type)|.observations|=sort_by(.name)' | md5
+        8be5186ec249d2704e14dd29ef05ffb0
+
 
     """
     with click.open_file(workspace, 'r') as specstream:
