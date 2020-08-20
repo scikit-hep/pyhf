@@ -719,7 +719,6 @@ def test_workspace_equality(workspace_factory):
     assert ws != 'not a workspace'
 
 
-<<<<<<< HEAD
 def test_workspace_inheritance(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
