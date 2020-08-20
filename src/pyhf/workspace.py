@@ -676,3 +676,38 @@ class Workspace(_ChannelSummaryMixin, dict):
             'version': new_version,
         }
         return cls(newspec)
+
+    @classmethod
+    def normalize(cls, workspace):
+        """
+        Return a new workspace specification that is normalized (sorted).
+
+        Args:
+            workspace (~pyhf.workspace.Workspace): A workspace to normalize
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new normalized workspace object
+
+        """
+        channels = sorted(workspace['channels'], key=lambda e: e['name'])
+        for channel in channels:
+            channel['samples'] = sorted(channel['samples'], key=lambda e: e['name'])
+            for sample in channel['samples']:
+                sample['modifiers'] = sorted(
+                    sample['modifiers'], key=lambda e: (e['name'], e['type'])
+                )
+
+        measurements = sorted(workspace['measurements'], key=lambda e: e['name'])
+        for measurement in measurements:
+            measurement['config']['parameters'] = sorted(
+                measurement['config']['parameters'], key=lambda e: e['name']
+            )
+
+        observations = sorted(workspace['observations'], key=lambda e: e['name'])
+
+        newspec = {
+            'channels': channels,
+            'measurements': measurements,
+            'observations': observations,
+            'version': workspace['version'],
+        }
