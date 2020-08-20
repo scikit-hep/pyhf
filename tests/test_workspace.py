@@ -717,3 +717,32 @@ def test_workspace_equality(workspace_factory):
     assert ws == ws
     assert ws == ws_other
     assert ws != 'not a workspace'
+
+
+def test_workspace_inheritance(workspace_factory):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={'channel1': 'channel3', 'channel2': 'channel4'},
+        samples={
+            'background1': 'background3',
+            'background2': 'background4',
+            'signal': 'signal2',
+        },
+        modifiers={
+            'syst1': 'syst4',
+            'bkg1Shape': 'bkg3Shape',
+            'bkg2Shape': 'bkg4Shape',
+        },
+        measurements={
+            'GaussExample': 'OtherGaussExample',
+            'GammaExample': 'OtherGammaExample',
+            'ConstExample': 'OtherConstExample',
+            'LogNormExample': 'OtherLogNormExample',
+        },
+    )
+
+    class FooWorkspace(pyhf.Workspace):
+        pass
+
+    combined = FooWorkspace.combine(ws, new_ws)
+    assert isinstance(combined, FooWorkspace)
