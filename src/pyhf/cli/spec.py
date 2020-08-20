@@ -362,28 +362,28 @@ def digest(workspace, algorithm, output_json):
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-def normalize(workspace, output_file):
+def sort(workspace, output_file):
     """
-    Normalize the workspace.
+    Sort the workspace.
 
-    See :func:`pyhf.workspace.Workspace.normalize` for more information.
+    See :func:`pyhf.workspace.Workspace.sorted` for more information.
 
     Example:
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf normalize
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf sorted
 
     """
     with click.open_file(workspace, 'r') as specstream:
         spec = json.load(specstream)
 
     workspace = Workspace(spec)
-    sorted_ws = Workspace.normalize(workspace)
+    sorted_ws = Workspace.sorted(workspace)
 
     if output_file is None:
         click.echo(json.dumps(sorted_ws, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(sorted_ws, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file}")

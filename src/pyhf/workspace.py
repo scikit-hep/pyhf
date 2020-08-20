@@ -678,15 +678,15 @@ class Workspace(_ChannelSummaryMixin, dict):
         return cls(newspec)
 
     @classmethod
-    def normalize(cls, workspace):
+    def sorted(cls, workspace):
         """
-        Return a new workspace specification that is normalized (sorted).
+        Return a new workspace specification that is sorted.
 
         Args:
-            workspace (~pyhf.workspace.Workspace): A workspace to normalize
+            workspace (~pyhf.workspace.Workspace): A workspace to sort
 
         Returns:
-            ~pyhf.workspace.Workspace: A new normalized workspace object
+            ~pyhf.workspace.Workspace: A new sorted workspace object
 
         """
         channels = sorted(workspace['channels'], key=lambda e: e['name'])

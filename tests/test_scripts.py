@@ -541,28 +541,28 @@ def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
     }
 
 
-def test_normalize(tmpdir, script_runner):
+def test_sort(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
         temp.strpath
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = f'pyhf normalize {temp.strpath}'
+    command = f'pyhf sort {temp.strpath}'
 
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
 
-def test_normalize_outfile(tmpdir, script_runner):
+def test_sort_outfile(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
         temp.strpath
     )
     ret = script_runner.run(*shlex.split(command))
 
-    tempout = tmpdir.join("normalize_output.json")
-    command = f'pyhf normalize {temp.strpath} --output-file {tempout.strpath}'
+    tempout = tmpdir.join("sort_output.json")
+    command = f'pyhf sort {temp.strpath} --output-file {tempout.strpath}'
 
     ret = script_runner.run(*shlex.split(command))
     assert ret.success

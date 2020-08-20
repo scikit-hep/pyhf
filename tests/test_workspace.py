@@ -719,6 +719,7 @@ def test_workspace_equality(workspace_factory):
     assert ws != 'not a workspace'
 
 
+<<<<<<< HEAD
 def test_workspace_inheritance(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
@@ -748,12 +749,12 @@ def test_workspace_inheritance(workspace_factory):
     assert isinstance(combined, FooWorkspace)
 
 
-def test_normalize(workspace_factory):
+def test_sorted(workspace_factory):
     ws = workspace_factory()
     # force the first sample in each channel to be last
     for channel in ws['channels']:
         channel['samples'][0]['name'] = 'zzzzlast'
 
-    new_ws = pyhf.Workspace.normalize(ws)
+    new_ws = pyhf.Workspace.sorted(ws)
     for channel in ws['channels']:
         assert channel['samples'][-1]['name'] == 'zzzzlast'
