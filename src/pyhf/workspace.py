@@ -675,4 +675,4 @@ class Workspace(_ChannelSummaryMixin, dict):
             'observations': new_observations,
             'version': new_version,
         }
-        return Workspace(newspec)
+        return cls(newspec)
