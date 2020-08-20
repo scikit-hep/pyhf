@@ -676,3 +676,31 @@ class Workspace(_ChannelSummaryMixin, dict):
             'version': new_version,
         }
         return cls(newspec)
+
+    @classmethod
+    def sorted(cls, workspace):
+        """
+        Return a new workspace specification that is sorted.
+
+        Args:
+            workspace (~pyhf.workspace.Workspace): A workspace to sort
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new sorted workspace object
+
+        """
+        newspec = copy.deepcopy(dict(workspace))
+
+        newspec['channels'].sort(key=lambda e: e['name'])
+        for channel in newspec['channels']:
+            channel['samples'].sort(key=lambda e: e['name'])
+            for sample in channel['samples']:
+                sample['modifiers'].sort(key=lambda e: (e['name'], e['type']))
+
+        newspec['measurements'].sort(key=lambda e: e['name'])
+        for measurement in newspec['measurements']:
+            measurement['config']['parameters'].sort(key=lambda e: e['name'])
+
+        newspec['observations'].sort(key=lambda e: e['name'])
+
+        return cls(newspec)

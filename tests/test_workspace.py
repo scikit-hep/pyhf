@@ -746,3 +746,18 @@ def test_workspace_inheritance(workspace_factory):
 
     combined = FooWorkspace.combine(ws, new_ws)
     assert isinstance(combined, FooWorkspace)
+
+
+def test_sorted(workspace_factory):
+    ws = workspace_factory()
+    # force the first sample in each channel to be last
+    for channel in ws['channels']:
+        channel['samples'][0]['name'] = 'zzzzlast'
+
+    new_ws = pyhf.Workspace.sorted(ws)
+    for channel in ws['channels']:
+        # check no sort
+        assert channel['samples'][0]['name'] == 'zzzzlast'
+    for channel in new_ws['channels']:
+        # check sort
+        assert channel['samples'][-1]['name'] == 'zzzzlast'

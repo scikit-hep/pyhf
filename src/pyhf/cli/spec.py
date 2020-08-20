@@ -353,3 +353,44 @@ def digest(workspace, algorithm, output_json):
         )
 
     click.echo(output)
+
+
+@cli.command()
+@click.argument('workspace', default='-')
+@click.option(
+    '--output-file',
+    help='The location of the output json file. If not specified, prints to screen.',
+    default=None,
+)
+def sort(workspace, output_file):
+    """
+    Sort the workspace.
+
+    See :func:`pyhf.workspace.Workspace.sorted` for more information.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf sort | jq '.' | md5
+        8be5186ec249d2704e14dd29ef05ffb0
+
+    .. code-block:: shell
+
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | jq -S '.channels|=sort_by(.name)|.channels[].samples|=sort_by(.name)|.channels[].samples[].modifiers|=sort_by(.name,.type)|.observations|=sort_by(.name)' | md5
+        8be5186ec249d2704e14dd29ef05ffb0
+
+
+    """
+    with click.open_file(workspace, 'r') as specstream:
+        spec = json.load(specstream)
+
+    workspace = Workspace(spec)
+    sorted_ws = Workspace.sorted(workspace)
+
+    if output_file is None:
+        click.echo(json.dumps(sorted_ws, indent=4, sort_keys=True))
+    else:
+        with open(output_file, 'w+') as out_file:
+            json.dump(sorted_ws, out_file, indent=4, sort_keys=True)
+        log.debug(f"Written to {output_file}")
