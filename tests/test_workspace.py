@@ -756,4 +756,8 @@ def test_sorted(workspace_factory):
 
     new_ws = pyhf.Workspace.sorted(ws)
     for channel in ws['channels']:
+        # check no sort
+        assert channel['samples'][0]['name'] == 'zzzzlast'
+    for channel in new_ws['channels']:
+        # check sort
         assert channel['samples'][-1]['name'] == 'zzzzlast'

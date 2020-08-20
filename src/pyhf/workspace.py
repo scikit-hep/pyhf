@@ -689,26 +689,18 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new sorted workspace object
 
         """
-        channels = sorted(workspace['channels'], key=lambda e: e['name'])
-        for channel in channels:
-            channel['samples'] = sorted(channel['samples'], key=lambda e: e['name'])
+        newspec = copy.deepcopy(dict(workspace))
+
+        newspec['channels'].sort(key=lambda e: e['name'])
+        for channel in newspec['channels']:
+            channel['samples'].sort(key=lambda e: e['name'])
             for sample in channel['samples']:
-                sample['modifiers'] = sorted(
-                    sample['modifiers'], key=lambda e: (e['name'], e['type'])
-                )
+                sample['modifiers'].sort(key=lambda e: (e['name'], e['type']))
 
-        measurements = sorted(workspace['measurements'], key=lambda e: e['name'])
-        for measurement in measurements:
-            measurement['config']['parameters'] = sorted(
-                measurement['config']['parameters'], key=lambda e: e['name']
-            )
+        newspec['measurements'].sort(key=lambda e: e['name'])
+        for measurement in newspec['measurements']:
+            measurement['config']['parameters'].sort(key=lambda e: e['name'])
 
-        observations = sorted(workspace['observations'], key=lambda e: e['name'])
+        newspec['observations'].sort(key=lambda e: e['name'])
 
-        newspec = {
-            'channels': channels,
-            'measurements': measurements,
-            'observations': observations,
-            'version': workspace['version'],
-        }
         return cls(newspec)
