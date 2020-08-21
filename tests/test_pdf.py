@@ -139,6 +139,9 @@ def test_pdf_basicapi_tests(backend):
     assert tensorlib.tolist(pdf.expected_auxdata(pars)) == pytest.approx(
         [51.020408630], 1e-08
     )
+    assert tensorlib.tolist(pdf.main_model.expected_data(pars)) == pytest.approx(
+        [60.0], 1e-08
+    )
 
     pdf = pyhf.simplemodels.hepdata_like(
         source['bindata']['sig'],

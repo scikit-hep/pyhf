@@ -514,6 +514,7 @@ class _MainModel(object):
 
         """
         tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
         deltas, factors = self._modifications(pars)
 
         allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
