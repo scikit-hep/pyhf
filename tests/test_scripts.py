@@ -561,6 +561,31 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
         }
 
 
+@pytest.mark.parametrize(
+    "archive",
+    [
+        "https://www.hepdata.net/record/resource/1408476?view=true",
+        "https://doi.org/10.17182/hepdata.89408.v1/r2",
+    ],
+)
+def test_patchset_download(datadir, script_runner, archive):
+    command = f'pyhf patchset download {archive} {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = f'pyhf patchset download --verbose {archive} {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = f'pyhf patchset download --verbose https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    assert (
+        "pyhf.exceptions.InvalidArchiveHost: fail.org is not an approved archive host"
+        in ret.stderr
+    )
+
+
 @pytest.mark.parametrize('output_file', [False, True])
 @pytest.mark.parametrize('with_metadata', [False, True])
 def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
