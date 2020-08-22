@@ -49,8 +49,9 @@ def download(archive_url, output_directory, verbose, force):
     tar_cmd = ["tar", f"-{tar_options}", f"--one-top-level={output_directory}"]
 
     ps = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE)
-    output = subprocess.run(tar_cmd, stdin=ps.stdout, capture_output=True)
-    # subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.STDOUT)
+    # TODO: Use capture_output=True instead of stdout=subprocess.PIPE
+    # when Python 3.6 support is dorpped
+    output = subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.PIPE)
     ps.wait()  # Wait for the process to fully terminate
 
     if verbose:
