@@ -48,8 +48,8 @@ def download(archive_url, output_directory, verbose, force):
     tar_options = "xzv" if verbose else "xz"
     tar_cmd = ["tar", f"-{tar_options}", f"--one-top-level={output_directory}"]
     ps = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE)
-    output = subprocess.run(tar_cmd, stdin=ps.stdout, capture_output=True)
-    # output = subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.STDOUT)
+    subprocess.run(tar_cmd, stdin=ps.stdout, capture_output=True)
+    # subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.STDOUT)
     ps.wait()
 
 
