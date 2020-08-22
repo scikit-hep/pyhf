@@ -3,7 +3,7 @@ import logging
 
 import click
 import json
-import requests
+import urllib.request
 import tarfile
 from io import BytesIO
 from pathlib import Path
@@ -47,14 +47,10 @@ def download(archive_url, output_directory, verbose, force):
                 + "To download an archive from this host use the --force option."
             )
 
-    try:
-        response = requests.get(archive_url, stream=True)
-        response.raise_for_status()
-    except requests.exceptions.RequestException as exception:
-        raise SystemExit(exception)
-
-    with tarfile.open(mode="r|gz", fileobj=BytesIO(response.content)) as archive:
-        archive.extractall(output_directory)
+    req = urllib.request.Request(archive_url)
+    with urllib.request.urlopen(req) as response:
+        with tarfile.open(mode="r|gz", fileobj=BytesIO(response.read())) as archive:
+            archive.extractall(output_directory)
 
     if verbose:
         file_list = [str(file) for file in list(Path(output_directory).glob("*"))]

@@ -588,7 +588,10 @@ def test_patchset_download(datadir, script_runner, archive):
     command = f'pyhf patchset download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
-    assert "Certificate did not match expected hostname: www.fail.org." in ret.stderr
+    assert (
+        "certificate verify failed: Hostname mismatch, certificate is not valid for 'www.fail.org'."
+        in ret.stderr
+    )
 
 
 @pytest.mark.parametrize('output_file', [False, True])
