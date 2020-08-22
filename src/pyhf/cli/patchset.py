@@ -50,7 +50,7 @@ def download(archive_url, output_directory, verbose, force):
     ps = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE)
     output = subprocess.run(tar_cmd, stdin=ps.stdout, capture_output=True)
     # subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.STDOUT)
-    ps.wait()
+    ps.wait()  # Wait for the process to fully terminate
     if verbose:
         stdout_by_line = output.stdout.decode("utf-8").split("\n")
         for line in list(filter(None, stdout_by_line)):
