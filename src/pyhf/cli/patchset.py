@@ -3,7 +3,10 @@ import logging
 
 import click
 import json
-import subprocess
+import requests
+import tarfile
+from io import BytesIO
+from pathlib import Path
 
 from .. import exceptions
 from ..patchset import PatchSet
@@ -44,20 +47,17 @@ def download(archive_url, output_directory, verbose, force):
                 + "To download an archive from this host use the --force option."
             )
 
-    curl_cmd = ["curl", "-sL", archive_url]
-    tar_options = "xzv" if verbose else "xz"
-    tar_cmd = ["tar", f"-{tar_options}", f"--one-top-level={output_directory}"]
-
-    ps = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE)
-    # TODO: Use capture_output=True instead of stdout=subprocess.PIPE
-    # when Python 3.6 support is dorpped
-    output = subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.PIPE)
-    ps.wait()  # Wait for the process to fully terminate
+    try:
+        response = requests.get(archive_url, stream=True)
+    except requests.exceptions.RequestException as exception:
+        raise SystemExit(exception)
+    response.raise_for_status()
+    with tarfile.open(mode="r|gz", fileobj=BytesIO(response.content)) as archive:
+        archive.extractall(output_directory)
 
     if verbose:
-        stdout_by_line = output.stdout.decode("utf-8").split("\n")
-        for line in list(filter(None, stdout_by_line)):
-            print(line)
+        file_list = [str(file) for file in list(Path(output_directory).glob("*"))]
+        print('\n'.join(file_list))
 
 
 @cli.command()
