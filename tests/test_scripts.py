@@ -573,7 +573,8 @@ def test_patchset_download(datadir, script_runner, archive):
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = f'pyhf patchset download --verbose {archive} {datadir.join("likelihoods").strpath}'
+    # Run with all optional flags
+    command = f'pyhf patchset download --verbose --force {archive} {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
