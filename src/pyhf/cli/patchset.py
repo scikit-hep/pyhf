@@ -26,7 +26,7 @@ def cli():
 @click.argument("output-directory", default="-")
 @click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
 @click.option(
-    "-f", "--force", is_flag=True, help="Force download from non-approved repository"
+    "-f", "--force", is_flag=True, help="Force download from non-approved host"
 )
 def download(archive_url, output_directory, verbose, force):
     """
