@@ -33,11 +33,13 @@ def download(archive_url, output_directory, verbose, force):
         None
     """
     if not force:
-        domain = archive_url.split(".")[1]
-        top_level_domain = archive_url.split(".")[2].split("/")[0]
-        hostname = ".".join([domain, top_level_domain])
-        if hostname != "hepdata.net":
-            raise exceptions.InvalidPatchSet(f'Use force')
+        hostname = archive_url.split("://")[1].split("/")[0].strip("www.")
+        valid_hosts = ["hepdata.net", "doi.org"]
+        if hostname not in valid_hosts:
+            raise exceptions.InvalidArchiveHost(
+                f"{hostname} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
+                + "To download an archive from this host use the --force option."
+            )
 
     curl_cmd = ["curl", "-sL", archive_url]
     tar_options = "xzv" if verbose else "xz"
