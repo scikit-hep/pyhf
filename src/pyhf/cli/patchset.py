@@ -29,6 +29,9 @@ def download(archive_url, output_directory, verbose, force):
     """
     Download the patchset archive from the remote URL and extract it in a directory at the path given.
 
+    Raises:
+        :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
+
     Returns:
         None
     """
