@@ -3,7 +3,9 @@ import logging
 
 import click
 import json
+import subprocess
 
+from .. import exceptions
 from ..patchset import PatchSet
 from ..workspace import Workspace
 
@@ -14,6 +16,36 @@ log = logging.getLogger(__name__)
 @click.group(name='patchset')
 def cli():
     """Operations involving patchsets."""
+
+
+@cli.command()
+@click.argument("archive-url", default="-")
+@click.argument("output-directory", default="-")
+@click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
+@click.option(
+    "-f", "--force", is_flag=True, help="Force download from non-approved repository"
+)
+def download(archive_url, output_directory, verbose, force):
+    """
+    Download the patchset archive from the remote URL and extract it in a directory at the path given.
+
+    Returns:
+        None
+    """
+    if not force:
+        domain = archive_url.split(".")[1]
+        top_level_domain = archive_url.split(".")[2].split("/")[0]
+        hostname = ".".join([domain, top_level_domain])
+        if hostname != "hepdata.net":
+            raise exceptions.InvalidPatchSet(f'Use force')
+
+    curl_cmd = ["curl", "-sL", archive_url]
+    tar_options = "xzv" if verbose else "xz"
+    tar_cmd = ["tar", f"-{tar_options}", f"--one-top-level={output_directory}"]
+    ps = subprocess.Popen(curl_cmd, stdout=subprocess.PIPE)
+    output = subprocess.run(tar_cmd, stdin=ps.stdout, capture_output=True)
+    # output = subprocess.run(tar_cmd, stdin=ps.stdout, stdout=subprocess.STDOUT)
+    ps.wait()
 
 
 @cli.command()
