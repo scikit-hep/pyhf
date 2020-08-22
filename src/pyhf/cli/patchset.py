@@ -49,9 +49,10 @@ def download(archive_url, output_directory, verbose, force):
 
     try:
         response = requests.get(archive_url, stream=True)
+        response.raise_for_status()
     except requests.exceptions.RequestException as exception:
         raise SystemExit(exception)
-    response.raise_for_status()
+
     with tarfile.open(mode="r|gz", fileobj=BytesIO(response.content)) as archive:
         archive.extractall(output_directory)
 
