@@ -35,7 +35,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
 
 class AsymptoticTestStatDistribution(object):
-    """
+    r"""
     The distribution the test statistic in the asymptotic case.
 
     Note: These distributions are in :math:`-\hat{\mu}/\sigma` space.
