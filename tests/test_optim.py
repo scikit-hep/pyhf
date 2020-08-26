@@ -28,7 +28,9 @@ def test_scipy_minimize(backend, capsys):
 
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
 @pytest.mark.parametrize(
-    'precision', ['32b', '64b'], ids=['32b', '64b'],
+    'precision',
+    ['32b', '64b'],
+    ids=['32b', '64b'],
 )
 @pytest.mark.parametrize(
     'tensorlib',
@@ -141,7 +143,13 @@ def test_optimizer_mixin_extra_kwargs(optimizer):
 @pytest.mark.parametrize(
     'backend,backend_new',
     itertools.permutations(
-        [('numpy', False), ('pytorch', True), ('tensorflow', True), ('jax', True),], 2
+        [
+            ('numpy', False),
+            ('pytorch', True),
+            ('tensorflow', True),
+            ('jax', True),
+        ],
+        2,
     ),
     ids=lambda pair: f'{pair[0]}',
 )

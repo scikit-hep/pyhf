@@ -120,11 +120,11 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
 
 
 def test_inferapi_pyhf_independence():
-    '''
+    """
     pyhf.infer should eventually be factored out so it should be
     infependent from pyhf internals. This is testing that
     a much simpler model still can run through pyhf.infer.hypotest
-    '''
+    """
     from pyhf import get_backend
 
     class _NonPyhfConfig(object):
