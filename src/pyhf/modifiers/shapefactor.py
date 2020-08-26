@@ -131,10 +131,10 @@ class shapefactor_combined(object):
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapefactor_mask)[1])
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
 

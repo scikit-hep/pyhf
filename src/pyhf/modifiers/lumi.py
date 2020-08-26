@@ -57,10 +57,10 @@ class lumi_combined(object):
         self.lumi_default = tensorlib.ones(self.lumi_mask.shape)
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
 

@@ -74,7 +74,7 @@ def _tensorviewer_from_slices(target_slices, names, batch_size):
 
 
 def _tensorviewer_from_sizes(sizes, names, batch_size):
-    '''
+    """
     Creates a _Tensorviewer based on tensor sizes.
 
     the TV will be able to stitch together data with
@@ -83,7 +83,7 @@ def _tensorviewer_from_sizes(sizes, names, batch_size):
     tv.stitch([foo[slice1],foo[slice2],foo[slice3])
 
     and split them again accordingly.
-    '''
+    """
     target_slices = []
     start = 0
     for sz in sizes:
