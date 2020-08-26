@@ -19,7 +19,9 @@ def cli():
 @cli.command()
 @click.argument('patchset', default='-')
 @click.option(
-    '--name', help='The name of the patch to extract.', default=None,
+    '--name',
+    help='The name of the patch to extract.',
+    default=None,
 )
 @click.option(
     '--output-file',
@@ -65,7 +67,9 @@ def extract(patchset, name, output_file, with_metadata):
 @click.argument('background-only', default='-')
 @click.argument('patchset', default='-')
 @click.option(
-    '--name', help='The name of the patch to extract.', default=None,
+    '--name',
+    help='The name of the patch to extract.',
+    default=None,
 )
 @click.option(
     '--output-file',

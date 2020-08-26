@@ -99,7 +99,12 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
 
 def _nominal_and_modifiers_from_spec(config, spec):
     default_data_makers = {
-        'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': [],},
+        'histosys': lambda: {
+            'hi_data': [],
+            'lo_data': [],
+            'nom_data': [],
+            'mask': [],
+        },
         'lumi': lambda: {'mask': []},
         'normsys': lambda: {'hi': [], 'lo': [], 'nom_data': [], 'mask': []},
         'normfactor': lambda: {'mask': []},

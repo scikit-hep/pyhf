@@ -9,7 +9,14 @@ def _tensorviewer_from_parmap(par_map, batch_size):
     names, slices, _ = list(
         zip(
             *sorted(
-                [(k, v['slice'], v['slice'].start,) for k, v in par_map.items()],
+                [
+                    (
+                        k,
+                        v['slice'],
+                        v['slice'].start,
+                    )
+                    for k, v in par_map.items()
+                ],
                 key=lambda x: x[2],
             )
         )
@@ -18,7 +25,9 @@ def _tensorviewer_from_parmap(par_map, batch_size):
 
 
 def extract_index_access(
-    baseviewer, subviewer, indices,
+    baseviewer,
+    subviewer,
+    indices,
 ):
     tensorlib, _ = get_backend()
 
