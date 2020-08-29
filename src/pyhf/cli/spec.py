@@ -346,11 +346,7 @@ def digest(workspace, algorithm, output_json):
     }
 
     if output_json:
-        output = json.dumps(
-            digests,
-            indent=4,
-            sort_keys=True,
-        )
+        output = json.dumps(digests, indent=4, sort_keys=True)
     else:
         output = '\n'.join(
             f"{hash_alg}:{digest}" for hash_alg, digest in digests.items()
