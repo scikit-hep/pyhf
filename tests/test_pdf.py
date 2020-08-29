@@ -753,10 +753,7 @@ def test_sample_wrong_bins():
     [
         (
             None,
-            {
-                'normsys': {'interpcode': 'code4'},
-                'histosys': {'interpcode': 'code4p'},
-            },
+            {'normsys': {'interpcode': 'code4'}, 'histosys': {'interpcode': 'code4p'}},
         )
     ],
 )

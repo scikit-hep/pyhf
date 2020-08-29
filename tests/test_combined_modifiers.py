@@ -396,10 +396,7 @@ def test_shapesys(backend):
         par_map={
             'dummy1': {
                 'paramset': paramset(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(0, 1),
             },
@@ -427,10 +424,7 @@ def test_shapesys(backend):
             },
             'dummy2': {
                 'paramset': paramset(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(4, 5),
             },
@@ -501,19 +495,13 @@ def test_normfactor(backend):
         par_map={
             'mu1': {
                 'paramset': unconstrained(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(0, 1),
             },
             'mu2': {
                 'paramset': unconstrained(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(1, 2),
             },
@@ -587,10 +575,7 @@ def test_shapesys_zero(backend):
         par_map={
             'SigXsecOverSM': {
                 'paramset': paramset(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(0, 1),
             },
@@ -684,19 +669,13 @@ def test_shapefactor(backend):
         par_map={
             'shapefac1': {
                 'paramset': unconstrained(
-                    n_parameters=1,
-                    inits=[0],
-                    bounds=[[0, 10]],
-                    fixed=False,
+                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
                 ),
                 'slice': slice(0, 1),
             },
             'shapefac2': {
                 'paramset': unconstrained(
-                    n_parameters=2,
-                    inits=[0, 0],
-                    bounds=[[0, 10], [0, 10]],
-                    fixed=False,
+                    n_parameters=2, inits=[0, 0], bounds=[[0, 10], [0, 10]], fixed=False
                 ),
                 'slice': slice(1, 3),
             },
