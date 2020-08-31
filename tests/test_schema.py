@@ -419,9 +419,7 @@ def test_jsonpatch_fail(patch):
         pyhf.utils.validate([patch], 'jsonpatch.json')
 
 
-@pytest.mark.parametrize(
-    'patchset_file', ['patchset_good.json'],
-)
+@pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
     patchset = json.load(open(datadir.join(patchset_file)))
     pyhf.utils.validate(patchset, 'patchset.json')

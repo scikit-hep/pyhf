@@ -18,9 +18,7 @@ def cli():
 
 @cli.command()
 @click.argument('patchset', default='-')
-@click.option(
-    '--name', help='The name of the patch to extract.', default=None,
-)
+@click.option('--name', help='The name of the patch to extract.', default=None)
 @click.option(
     '--output-file',
     help='The location of the output json file. If not specified, prints to screen.',
@@ -64,9 +62,7 @@ def extract(patchset, name, output_file, with_metadata):
 @cli.command()
 @click.argument('background-only', default='-')
 @click.argument('patchset', default='-')
-@click.option(
-    '--name', help='The name of the patch to extract.', default=None,
-)
+@click.option('--name', help='The name of the patch to extract.', default=None)
 @click.option(
     '--output-file',
     help='The location of the output json file. If not specified, prints to screen.',

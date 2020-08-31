@@ -96,9 +96,7 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_exp' in d
 
 
-@pytest.mark.parametrize(
-    "backend", ["numpy", "tensorflow", "pytorch", "jax"],
-)
+@pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
 def test_cls_backend_option(tmpdir, script_runner, backend):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
@@ -240,7 +238,7 @@ def test_testpoi(tmpdir, script_runner):
     'optimizer', ['scipy', 'minuit', 'scipy_optimizer', 'minuit_optimizer']
 )
 @pytest.mark.parametrize(
-    'opts,success', [(['maxiter=1000'], True), (['maxiter=10'], False)],
+    'opts,success', [(['maxiter=1000'], True), (['maxiter=10'], False)]
 )
 def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
     temp = tmpdir.join("parsed_output.json")
@@ -306,8 +304,8 @@ def test_prune(tmpdir, script_runner):
     )
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s}'.format(
-        temp.strpath
+    command = (
+        f"pyhf prune -m staterror_channel1 --measurement GammaExample {temp.strpath:s}"
     )
     ret = script_runner.run(*shlex.split(command))
     assert ret.success

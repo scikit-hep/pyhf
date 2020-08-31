@@ -19,6 +19,15 @@ Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__ 
 
     pre-commit install
 
+as the ``rev`` gets updated through time to track changes of different hooks,
+simply run
+
+.. code-block:: console
+
+    pre-commit autoupdate
+
+to have pre-commit install the new version.
+
 Testing
 -------
 

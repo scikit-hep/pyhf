@@ -245,7 +245,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
-        "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix)),
+        "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix))
     )
 
     with uproot.recreate(

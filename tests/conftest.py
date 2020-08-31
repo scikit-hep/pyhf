@@ -144,11 +144,11 @@ def interpcode(request):
 
 @pytest.fixture(scope='function')
 def datadir(tmpdir, request):
-    '''
+    """
     Fixture responsible for searching a folder with the same name of test
     module and, if available, moving all contents to a temporary directory so
     tests can use them freely.
-    '''
+    """
     # this gets the module name (e.g. /path/to/pyhf/tests/test_schema.py)
     # and then gets the directory by removing the suffix (e.g. /path/to/pyhf/tests/test_schema)
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')

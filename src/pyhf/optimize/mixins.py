@@ -29,7 +29,7 @@ class OptimizerMixin(object):
             )
 
     def _internal_minimize(
-        self, func, x0, do_grad=False, bounds=None, fixed_vals=None, options={},
+        self, func, x0, do_grad=False, bounds=None, fixed_vals=None, options={}
     ):
 
         minimizer = self._get_minimizer(

@@ -4,7 +4,7 @@ from pyhf.tensor.common import _TensorViewer
 def test_tensorviewer(backend):
     tb, _ = backend
     tv = _TensorViewer(
-        [tb.astensor([0, 4, 5]), tb.astensor([1, 2, 3]), tb.astensor([6]),],
+        [tb.astensor([0, 4, 5]), tb.astensor([1, 2, 3]), tb.astensor([6])],
         names=['zzz', 'aaa', 'x'],
     )
 
@@ -29,11 +29,11 @@ def test_tensorviewer(backend):
     assert a == [[0, 40, 50], [10, 20, 30], [60]]
 
     subviewer = _TensorViewer(
-        [tb.astensor([0]), tb.astensor([1, 2, 3]),], names=['x', 'aaa']
+        [tb.astensor([0]), tb.astensor([1, 2, 3])], names=['x', 'aaa']
     )
     assert tb.tolist(subviewer.stitch(tv.split(data, ['x', 'aaa']))) == [60, 10, 20, 30]
 
     subviewer = _TensorViewer(
-        [tb.astensor([0, 1, 2]), tb.astensor([3]),], names=['aaa', 'x']
+        [tb.astensor([0, 1, 2]), tb.astensor([3])], names=['aaa', 'x']
     )
     assert tb.tolist(subviewer.stitch(tv.split(data, ['aaa', 'x']))) == [10, 20, 30, 60]

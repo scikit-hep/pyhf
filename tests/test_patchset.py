@@ -25,7 +25,7 @@ def patch():
 
 @pytest.mark.parametrize(
     'patchset_file',
-    ['patchset_bad_empty_patches.json', 'patchset_bad_no_version.json',],
+    ['patchset_bad_empty_patches.json', 'patchset_bad_no_version.json'],
 )
 def test_patchset_invalid_spec(datadir, patchset_file):
     patchsetspec = json.load(open(datadir.join(patchset_file)))
