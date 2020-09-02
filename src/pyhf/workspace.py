@@ -606,6 +606,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
 
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to prune does not exist in the workspace.
+
         """
         # avoid mutable defaults
         modifiers = [] if modifiers is None else modifiers
@@ -637,6 +640,9 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
+
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to rename does not exist in the workspace.
 
         """
         # avoid mutable defaults
