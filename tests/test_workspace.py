@@ -159,50 +159,53 @@ def test_json_serializable(workspace_factory):
     assert json.dumps(workspace_factory())
 
 
-def test_prune_nothing(workspace_factory):
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(channels=['fake-name']),
+        dict(samples=['fake-sample']),
+        dict(modifiers=['fake-modifier']),
+        dict(modifier_types=['fake-type']),
+    ],
+)
+def test_prune_error(workspace_factory, kwargs):
     ws = workspace_factory()
-    new_ws = ws.prune(
-        channels=['fake-name'],
-        samples=['fake-sample'],
-        modifiers=['fake-modifier'],
-        modifier_types=['fake-type'],
-    )
-    assert new_ws
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        ws.prune(**kwargs)
 
 
 def test_prune_channel(workspace_factory):
     ws = workspace_factory()
     channel = ws.channels[0]
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        ws.prune(channels=channel)
+
     if len(ws.channels) == 1:
         with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws.prune(channels=channel)
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws.prune(channels=[channel])
+            ws.prune(channels=[channel])
     else:
-        new_ws = ws.prune(channels=channel)
+        new_ws = ws.prune(channels=[channel])
         assert channel not in new_ws.channels
         assert channel not in [obs['name'] for obs in new_ws['observations']]
-
-        new_ws_list = ws.prune(channels=[channel])
-        assert new_ws_list == new_ws
 
 
 def test_prune_sample(workspace_factory):
     ws = workspace_factory()
     sample = ws.samples[1]
-    new_ws = ws.prune(samples=sample)
-    assert new_ws
-    assert sample not in new_ws.samples
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        ws.prune(samples=sample)
 
-    new_ws_list = ws.prune(samples=[sample])
-    assert new_ws_list == new_ws
+    new_ws = ws.prune(samples=[sample])
+    assert sample not in new_ws.samples
 
 
 def test_prune_modifier(workspace_factory):
     ws = workspace_factory()
     modifier = 'lumi'
-    new_ws = ws.prune(modifiers=modifier)
-    assert new_ws
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        ws.prune(modifiers=modifier)
+
+    new_ws = ws.prune(modifiers=[modifier])
     assert modifier not in new_ws.parameters
     assert modifier not in [
         p['name']
@@ -210,19 +213,16 @@ def test_prune_modifier(workspace_factory):
         for p in measurement['config']['parameters']
     ]
 
-    new_ws_list = ws.prune(modifiers=[modifier])
-    assert new_ws_list == new_ws
-
 
 def test_prune_modifier_type(workspace_factory):
     ws = workspace_factory()
     modifier_type = 'lumi'
-    new_ws = ws.prune(modifier_types=modifier_type)
-    assert new_ws
-    assert modifier_type not in [item[1] for item in new_ws.modifiers]
 
-    new_ws_list = ws.prune(modifier_types=[modifier_type])
-    assert new_ws_list == new_ws
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        ws.prune(modifier_types=modifier_type)
+
+    new_ws = ws.prune(modifier_types=[modifier_type])
+    assert modifier_type not in [item[1] for item in new_ws.modifiers]
 
 
 def test_prune_measurements(workspace_factory):
@@ -230,10 +230,10 @@ def test_prune_measurements(workspace_factory):
     measurement = ws.measurement_names[0]
 
     if len(ws.measurement_names) == 1:
+        with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+            ws.prune(measurements=measurement)
         with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws.prune(measurements=measurement)
-        with pytest.raises(pyhf.exceptions.InvalidSpecification):
-            new_ws = ws.prune(measurements=[measurement])
+            ws.prune(measurements=[measurement])
     else:
         new_ws = ws.prune(measurements=[measurement])
         assert new_ws
@@ -341,22 +341,20 @@ def test_combine_workspace_same_channels_incompatible_structure(
 ):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel2': 'channel3'},
-        samples={'signal': 'signal_other'},
-        measurements={'GaussExample': 'GaussExample2'},
-    ).prune(measurements=['GammaExample', 'ConstExample', 'LogNormExample'])
+        samples={ws.samples[0]: 'sample_other'},
+    )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'channel1' in str(excinfo.value)
-    assert 'channel2' not in str(excinfo.value)
 
 
 @pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
 def test_combine_workspace_same_channels_outer_join(workspace_factory, join):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    new_ws = ws.rename(channels={ws.channels[-1]: 'new_channel'})
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
-    assert 'channel1' in combined.channels
+    assert all(channel in combined.channels for channel in ws.channels)
+    assert all(channel in combined.channels for channel in new_ws.channels)
 
 
 @pytest.mark.parametrize("join", ['left outer', 'right outer'])
@@ -364,7 +362,7 @@ def test_combine_workspace_same_channels_outer_join_unsafe(
     workspace_factory, join, caplog
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel2': 'channel3'})
+    new_ws = ws.rename(channels={ws.channels[-1]: 'new_channel'})
     pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'using an unsafe join operation' in caplog.text
 
@@ -372,11 +370,9 @@ def test_combine_workspace_same_channels_outer_join_unsafe(
 @pytest.mark.parametrize("join", ['none', 'outer'])
 def test_combine_workspace_incompatible_poi(workspace_factory, join):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
-    )
-    new_ws = new_ws.rename(
-        modifiers={new_ws.get_measurement()['config']['poi']: 'renamedPOI'}
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        modifiers={ws.get_measurement()['config']['poi']: 'renamedPOI'},
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
@@ -388,22 +384,16 @@ def test_combine_workspace_diff_version(workspace_factory, join):
     ws = workspace_factory()
     ws.version = '1.0.0'
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
     new_ws['version'] = '1.2.0'
@@ -416,8 +406,8 @@ def test_combine_workspace_diff_version(workspace_factory, join):
 @pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_duplicate_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
@@ -429,8 +419,8 @@ def test_combine_workspace_duplicate_parameter_configs_outer_join(
     workspace_factory, join
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
 
@@ -465,8 +455,8 @@ def test_combine_workspace_duplicate_parameter_configs_outer_join(
 
 def test_combine_workspace_parameter_configs_ordering(workspace_factory):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     assert (
         ws.get_measurement(measurement_name='GaussExample')['config']['parameters']
@@ -478,16 +468,16 @@ def test_combine_workspace_parameter_configs_ordering(workspace_factory):
 
 def test_combine_workspace_observation_ordering(workspace_factory):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     assert ws['observations'][0]['data'] == new_ws['observations'][0]['data']
 
 
 def test_combine_workspace_deepcopied(workspace_factory):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
@@ -507,8 +497,8 @@ def test_combine_workspace_deepcopied(workspace_factory):
 @pytest.mark.parametrize("join", ['fake join operation'])
 def test_combine_workspace_invalid_join_operation(workspace_factory, join):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     with pytest.raises(ValueError) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
@@ -518,8 +508,8 @@ def test_combine_workspace_invalid_join_operation(workspace_factory, join):
 @pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_incompatible_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
@@ -534,8 +524,8 @@ def test_combine_workspace_incompatible_parameter_configs_outer_join(
     workspace_factory, join
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
@@ -555,8 +545,8 @@ def test_combine_workspace_incompatible_parameter_configs_left_outer_join(
     workspace_factory,
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
@@ -576,8 +566,8 @@ def test_combine_workspace_incompatible_parameter_configs_right_outer_join(
     workspace_factory,
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(channels={'channel1': 'channel3', 'channel2': 'channel4'}).prune(
-        measurements=['GammaExample', 'ConstExample', 'LogNormExample']
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
     )
     new_ws.get_measurement(measurement_name='GaussExample')['config']['parameters'][0][
         'bounds'
@@ -597,22 +587,16 @@ def test_combine_workspace_incompatible_parameter_configs_right_outer_join(
 def test_combine_workspace_incompatible_observations(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
     new_ws['observations'][0]['name'] = ws['observations'][0]['name']
@@ -626,22 +610,16 @@ def test_combine_workspace_incompatible_observations(workspace_factory, join):
 def test_combine_workspace_incompatible_observations_left_outer(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
     new_ws['observations'][0]['name'] = ws['observations'][0]['name']
@@ -656,22 +634,16 @@ def test_combine_workspace_incompatible_observations_left_outer(workspace_factor
 def test_combine_workspace_incompatible_observations_right_outer(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
     new_ws['observations'][0]['name'] = ws['observations'][0]['name']
@@ -687,22 +659,16 @@ def test_combine_workspace_incompatible_observations_right_outer(workspace_facto
 def test_combine_workspace(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
@@ -722,22 +688,16 @@ def test_workspace_equality(workspace_factory):
 def test_workspace_inheritance(workspace_factory):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={'channel1': 'channel3', 'channel2': 'channel4'},
-        samples={
-            'background1': 'background3',
-            'background2': 'background4',
-            'signal': 'signal2',
-        },
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
         modifiers={
-            'syst1': 'syst4',
-            'bkg1Shape': 'bkg3Shape',
-            'bkg2Shape': 'bkg4Shape',
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
         },
         measurements={
-            'GaussExample': 'OtherGaussExample',
-            'GammaExample': 'OtherGammaExample',
-            'ConstExample': 'OtherConstExample',
-            'LogNormExample': 'OtherLogNormExample',
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
         },
     )
 

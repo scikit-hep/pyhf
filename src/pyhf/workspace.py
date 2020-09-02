@@ -473,6 +473,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed
 
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to prune or rename does not exist in the workspace.
+
         """
         # avoid mutable defaults
         prune_modifiers = [] if prune_modifiers is None else prune_modifiers
@@ -486,6 +489,36 @@ class Workspace(_ChannelSummaryMixin, dict):
         rename_samples = {} if rename_samples is None else rename_samples
         rename_channels = {} if rename_channels is None else rename_channels
         rename_measurements = {} if rename_measurements is None else rename_measurements
+
+        for modifier_type in prune_modifier_types:
+            if modifier_type not in dict(self.modifiers).values():
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"{modifier_type} is not one of the modifier types in this workspace."
+                )
+
+        for modifier_name in (*prune_modifiers, *rename_modifiers.keys()):
+            if modifier_name not in dict(self.modifiers):
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"{modifier_name} is not one of the modifiers in this workspace."
+                )
+
+        for sample_name in (*prune_samples, *rename_samples.keys()):
+            if sample_name not in self.samples:
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"{sample_name} is not one of the samples in this workspace."
+                )
+
+        for channel_name in (*prune_channels, *rename_channels.keys()):
+            if channel_name not in self.channels:
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"{channel_name} is not one of the channels in this workspace."
+                )
+
+        for measurement_name in (*prune_measurements, *rename_measurements.keys()):
+            if measurement_name not in self.measurement_names:
+                raise exceptions.InvalidWorkspaceOperation(
+                    f"{measurement_name} is not one of the measurements in this workspace."
+                )
 
         newspec = {
             'channels': [
@@ -573,6 +606,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
 
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to prune does not exist in the workspace.
+
         """
         # avoid mutable defaults
         modifiers = [] if modifiers is None else modifiers
@@ -604,6 +640,9 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed
+
+        Raises:
+          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to rename does not exist in the workspace.
 
         """
         # avoid mutable defaults
