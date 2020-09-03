@@ -176,8 +176,8 @@ def fixed_poi_fit(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
 
-    # get fixed params from the model
-    model_fixed_params = [
+    # get fixed vals from the model
+    model_fixed_vals = [
         (index, init)
         for index, (init, is_fixed) in enumerate(
             zip(init_pars, pdf.config.suggested_fixed())
@@ -185,12 +185,13 @@ def fixed_poi_fit(
         if is_fixed
     ]
     # add user-defined ones at the end
-    fixed_params = model_fixed_params + (fixed_vals or [])
+    fixed_vals = model_fixed_vals + (fixed_vals or [])
+
     # add the fixed POI
-    fixed_params += [(pdf.config.poi_index, poi_val)]
+    fixed_vals = fixed_vals + [(pdf.config.poi_index, poi_val)]
 
     # de-dupe and use last-appended result for each index
-    fixed_params = list(dict(fixed_params))
+    fixed_vals = list(dict(fixed_vals))
 
     return opt.minimize(
         twice_nll,
@@ -198,6 +199,6 @@ def fixed_poi_fit(
         pdf,
         init_pars,
         par_bounds,
-        fixed_params,
+        fixed_vals,
         **kwargs,
     )
