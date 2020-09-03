@@ -150,7 +150,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         >>> test_mu = 1.0
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds)
+        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, [])
         array(3.93824492)
 
     Args:
