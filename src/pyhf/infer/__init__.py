@@ -126,7 +126,19 @@ def hypotest(
     """
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
-    tensorlib, _ = get_backend()
+    # get fixed vals from the model
+    model_fixed_vals = [
+        (index, init)
+        for index, (init, is_fixed) in enumerate(
+            zip(init_pars, pdf.config.suggested_fixed())
+        )
+        if is_fixed
+    ]
+    # add user-defined ones at the end
+    fixed_vals = model_fixed_vals + (fixed_vals or [])
+
+    # de-dupe and use last-appended result for each index
+    fixed_vals = list(dict(fixed_vals))
 
     calc = AsymptoticCalculator(
         data, pdf, init_pars, par_bounds, fixed_vals, qtilde=qtilde
@@ -137,6 +149,8 @@ def hypotest(
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)
     CLs = CLsb / CLb
+
+    tensorlib, _ = get_backend()
     # Ensure that all CL values are 0-d tensors
     CLsb, CLb, CLs = (
         tensorlib.astensor(CLsb),

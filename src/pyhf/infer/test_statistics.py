@@ -17,7 +17,7 @@ def _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_vals):
     """
     tensorlib, optimizer = get_backend()
     tmu_like_stat, (_, muhatbhat) = _tmu_like(
-        mu, data, pdf, init_pars, par_bounds, return_fitted_pars=True
+        mu, data, pdf, init_pars, par_bounds, fixed_vals, return_fitted_pars=True
     )
     qmu_like_stat = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_like_stat
@@ -84,7 +84,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds)
+        >>> fixed_vals = []
+        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, [])
         array(3.9549891)
 
     Args:
@@ -93,7 +94,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_vals(`list`): Parameters held constant in the fit
+        fixed_vals (`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -158,7 +159,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_vals(`list`): Parameters held constant in the fit
+        fixed_vals (`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
@@ -203,7 +204,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds)
+        >>> fixed_vals = []
+        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, [])
         array(3.9549891)
 
     Args:
@@ -212,7 +214,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_vals(`list`): Parameters held constant in the fit
+        fixed_vals (`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`t_{\mu}`
@@ -262,7 +264,8 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         >>> test_mu = 1.0
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds)
+        >>> fixed_vals = []
+        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, [])
         array(3.93824492)
 
     Args:
@@ -271,7 +274,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_vals):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (`list`): Values to initialize the model parameters at for the fit
         par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_vals(`list`): Parameters held constant in the fit
+        fixed_vals (`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`

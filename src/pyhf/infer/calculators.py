@@ -143,6 +143,21 @@ class AsymptoticCalculator(object):
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+
+        # get fixed vals from the model
+        model_fixed_vals = [
+            (index, init)
+            for index, (init, is_fixed) in enumerate(
+                zip(init_pars, pdf.config.suggested_fixed())
+            )
+            if is_fixed
+        ]
+        # add user-defined ones at the end
+        fixed_vals = model_fixed_vals + (fixed_vals or [])
+
+        # de-dupe and use last-appended result for each index
+        fixed_vals = list(dict(fixed_vals))
+
         self.fixed_vals = fixed_vals
         self.qtilde = qtilde
         self.sqrtqmuA_v = None
