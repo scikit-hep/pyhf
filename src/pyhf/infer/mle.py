@@ -96,8 +96,23 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+
+    # get fixed params from the model
+    model_fixed_params = [
+        (index, init)
+        for index, (init, is_fixed) in enumerate(
+            zip(init_pars, pdf.config.suggested_fixed())
+        )
+        if is_fixed
+    ]
+    # add user-defined ones at the end
+    fixed_params = model_fixed_params + (fixed_vals or [])
+
+    # de-dupe and use last-appended result for each index
+    fixed_params = list(dict(fixed_params))
+
     return opt.minimize(
-        twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
+        twice_nll, data, pdf, init_pars, par_bounds, fixed_params, **kwargs
     )
 
 
@@ -157,13 +172,26 @@ def fixed_poi_fit(
             'No POI is defined. A POI is required to fit with a fixed POI.'
         )
 
-    fixed_params = [(pdf.config.poi_index, poi_val)]
-    if fixed_vals:
-        fixed_params += fixed_vals
-
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+
+    # get fixed params from the model
+    model_fixed_params = [
+        (index, init)
+        for index, (init, is_fixed) in enumerate(
+            zip(init_pars, pdf.config.suggested_fixed())
+        )
+        if is_fixed
+    ]
+    # add user-defined ones at the end
+    fixed_params = model_fixed_params + (fixed_vals or [])
+    # add the fixed POI
+    fixed_params += [(pdf.config.poi_index, poi_val)]
+
+    # de-dupe and use last-appended result for each index
+    fixed_params = list(dict(fixed_params))
+
     return opt.minimize(
         twice_nll,
         data,
