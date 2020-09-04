@@ -120,7 +120,7 @@ def test_hypotest_qmu_tilde(
             pdf,
             pdf.config.suggested_init(),
             pdf.config.suggested_bounds(),
-            [],
+            pdf.config.suggested_fixed(),
         )
         test_statistic.append(qmu_tilde)
 
