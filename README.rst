@@ -43,7 +43,7 @@ Hello World
    >>> test_mu = 1.0
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.052515541856109765, Expected: 0.06445521290832805
+   Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
 What does it support
 --------------------
