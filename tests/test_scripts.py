@@ -238,7 +238,7 @@ def test_testpoi(tmpdir, script_runner):
     'optimizer', ['scipy', 'minuit', 'scipy_optimizer', 'minuit_optimizer']
 )
 @pytest.mark.parametrize(
-    'opts,success', [(['maxiter=1000'], True), (['maxiter=10'], False)]
+    'opts,success', [(['maxiter=1000'], True), (['maxiter=1'], False)]
 )
 def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
     temp = tmpdir.join("parsed_output.json")
