@@ -156,7 +156,7 @@ class AsymptoticCalculator(object):
         fixed_vals = model_fixed_vals + (fixed_vals or [])
 
         # de-dupe and use last-appended result for each index
-        fixed_vals = list(dict(fixed_vals))
+        fixed_vals = list(dict(fixed_vals).items())
 
         self.fixed_vals = fixed_vals
         self.qtilde = qtilde

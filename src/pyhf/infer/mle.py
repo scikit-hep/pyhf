@@ -109,7 +109,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
     fixed_vals = model_fixed_vals + (fixed_vals or [])
 
     # de-dupe and use last-appended result for each index
-    fixed_vals = list(dict(fixed_vals))
+    fixed_vals = list(dict(fixed_vals).items())
 
     return opt.minimize(
         twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
@@ -191,7 +191,7 @@ def fixed_poi_fit(
     fixed_vals = fixed_vals + [(pdf.config.poi_index, poi_val)]
 
     # de-dupe and use last-appended result for each index
-    fixed_vals = list(dict(fixed_vals))
+    fixed_vals = list(dict(fixed_vals).items())
 
     return opt.minimize(
         twice_nll,

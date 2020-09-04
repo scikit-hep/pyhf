@@ -138,7 +138,7 @@ def hypotest(
     fixed_vals = model_fixed_vals + (fixed_vals or [])
 
     # de-dupe and use last-appended result for each index
-    fixed_vals = list(dict(fixed_vals))
+    fixed_vals = list(dict(fixed_vals).items())
 
     calc = AsymptoticCalculator(
         data, pdf, init_pars, par_bounds, fixed_vals, qtilde=qtilde
