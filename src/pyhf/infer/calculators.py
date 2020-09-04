@@ -122,7 +122,14 @@ class AsymptoticCalculator(object):
     """The Asymptotic Calculator."""
 
     def __init__(
-        self, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, qtilde=False
+        self,
+        data,
+        pdf,
+        init_pars=None,
+        par_bounds=None,
+        fixed_params=None,
+        fixed_vals=None,
+        qtilde=False,
     ):
         """
         Asymptotic Calculator.
@@ -132,7 +139,8 @@ class AsymptoticCalculator(object):
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (`tensor`): The initial parameter values to be used for fitting.
             par_bounds (`tensor`): The parameter value bounds to be used for fitting.
-            fixed_vals (`tensor`): Parameters to be held constant in the fit.
+            fixed_params (`tensor`): A list of booleans for each parameter on whether it should be fixed in the fit or not.
+            fixed_vals (list of tuples): The fixed parameters and fixed values to be used for fitting.
             qtilde (`bool`): Whether to use qtilde as the test statistic.
 
         Returns:
@@ -148,7 +156,7 @@ class AsymptoticCalculator(object):
         model_fixed_vals = [
             (index, init)
             for index, (init, is_fixed) in enumerate(
-                zip(init_pars, pdf.config.suggested_fixed())
+                zip(init_pars, fixed_params or pdf.config.suggested_fixed())
             )
             if is_fixed
         ]
