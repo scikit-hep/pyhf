@@ -11,7 +11,7 @@ def hypotest(
     pdf,
     init_pars=None,
     par_bounds=None,
-    fixed_vals=None,
+    fixed_params=None,
     qtilde=False,
     **kwargs,
 ):
@@ -39,9 +39,9 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (Array or Tensor): The initial parameter values to be used for minimization
-        par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
-        fixed_vals (list of tuples): Parameters to be held constant and their value
+        init_pars (`tensor`): The initial parameter values to be used for minimization
+        par_bounds (`tensor`): The parameter value bounds to be used for minimization
+        fixed_params (`tensor`): Whether to fix the parameter to the init_pars value during minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative
          test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
          approximation in Equation (62) of :xref:`arXiv:1007.1727`.
@@ -126,22 +126,10 @@ def hypotest(
     """
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
-    # get fixed vals from the model
-    model_fixed_vals = [
-        (index, init)
-        for index, (init, is_fixed) in enumerate(
-            zip(init_pars, pdf.config.suggested_fixed())
-        )
-        if is_fixed
-    ]
-    # add user-defined ones at the end
-    fixed_vals = model_fixed_vals + (fixed_vals or [])
-
-    # de-dupe and use last-appended result for each index
-    fixed_vals = list(dict(fixed_vals).items())
+    fixed_params = fixed_params or pdf.config.suggested_fixed()
 
     calc = AsymptoticCalculator(
-        data, pdf, init_pars, par_bounds, fixed_vals, qtilde=qtilde
+        data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
     )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)

@@ -47,7 +47,7 @@ def twice_nll(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 
-def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
+def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs):
     r"""
     Run a unconstrained maximum likelihood fit.
     This is done by minimizing the objective function :func:`~pyhf.infer.mle.twice_nll`
@@ -96,20 +96,14 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+    fixed_params = fixed_params or pdf.config.suggested_fixed()
 
     # get fixed vals from the model
-    model_fixed_vals = [
+    fixed_vals = [
         (index, init)
-        for index, (init, is_fixed) in enumerate(
-            zip(init_pars, pdf.config.suggested_fixed())
-        )
+        for index, (init, is_fixed) in enumerate(zip(init_pars, fixed_params))
         if is_fixed
     ]
-    # add user-defined ones at the end
-    fixed_vals = model_fixed_vals + (fixed_vals or [])
-
-    # de-dupe and use last-appended result for each index
-    fixed_vals = list(dict(fixed_vals).items())
 
     return opt.minimize(
         twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
@@ -117,7 +111,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs):
 
 
 def fixed_poi_fit(
-    poi_val, data, pdf, init_pars=None, par_bounds=None, fixed_vals=None, **kwargs
+    poi_val, data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs
 ):
     r"""
     Run a maximum likelihood fit with the POI value fixed.
@@ -175,21 +169,16 @@ def fixed_poi_fit(
     _, opt = get_backend()
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
+    fixed_params = fixed_params or pdf.config.suggested_fixed()
 
     # get fixed vals from the model
-    model_fixed_vals = [
+    fixed_vals = [
         (index, init)
-        for index, (init, is_fixed) in enumerate(
-            zip(init_pars, pdf.config.suggested_fixed())
-        )
+        for index, (init, is_fixed) in enumerate(zip(init_pars, fixed_params))
         if is_fixed
     ]
-    # add user-defined ones at the end
-    fixed_vals = model_fixed_vals + (fixed_vals or [])
-
     # add the fixed POI
     fixed_vals = fixed_vals + [(pdf.config.poi_index, poi_val)]
-
     # de-dupe and use last-appended result for each index
     fixed_vals = list(dict(fixed_vals).items())
 

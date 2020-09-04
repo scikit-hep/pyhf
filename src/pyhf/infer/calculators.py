@@ -12,7 +12,7 @@ from .. import get_backend
 from .test_statistics import qmu, qmu_tilde
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals):
+def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -22,14 +22,14 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         init_pars (`tensor`): The initial parameter values to be used for fitting.
         par_bounds (`tensor`): The parameter value bounds to be used for fitting.
-        fixed_vals (`tensor`): Parameters to be held constant in the fit.
+        fixed_params (`tensor`): Parameters to be held constant in the fit.
 
     Returns:
         Tensor: The Asimov dataset.
 
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
-        asimov_mu, data, pdf, init_pars, par_bounds, fixed_vals
+        asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
     )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
@@ -128,7 +128,6 @@ class AsymptoticCalculator(object):
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        fixed_vals=None,
         qtilde=False,
     ):
         """
@@ -139,8 +138,7 @@ class AsymptoticCalculator(object):
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (`tensor`): The initial parameter values to be used for fitting.
             par_bounds (`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (`tensor`): A list of booleans for each parameter on whether it should be fixed in the fit or not.
-            fixed_vals (list of tuples): The fixed parameters and fixed values to be used for fitting.
+            fixed_params (`tensor`): Whether to fix the parameter to the init_pars value during minimization
             qtilde (`bool`): Whether to use qtilde as the test statistic.
 
         Returns:
@@ -151,22 +149,8 @@ class AsymptoticCalculator(object):
         self.pdf = pdf
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-        # get fixed vals from the model
-        model_fixed_vals = [
-            (index, init)
-            for index, (init, is_fixed) in enumerate(
-                zip(init_pars, fixed_params or pdf.config.suggested_fixed())
-            )
-            if is_fixed
-        ]
-        # add user-defined ones at the end
-        fixed_vals = model_fixed_vals + (fixed_vals or [])
-
-        # de-dupe and use last-appended result for each index
-        fixed_vals = list(dict(fixed_vals).items())
-
-        self.fixed_vals = fixed_vals
         self.qtilde = qtilde
         self.sqrtqmuA_v = None
 
@@ -208,7 +192,7 @@ class AsymptoticCalculator(object):
             self.pdf,
             self.init_pars,
             self.par_bounds,
-            self.fixed_vals,
+            self.fixed_params,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
@@ -219,7 +203,7 @@ class AsymptoticCalculator(object):
             self.pdf,
             self.init_pars,
             self.par_bounds,
-            self.fixed_vals,
+            self.fixed_params,
         )
         qmuA_v = teststat_func(
             poi_test,
@@ -227,7 +211,7 @@ class AsymptoticCalculator(object):
             self.pdf,
             self.init_pars,
             self.par_bounds,
-            self.fixed_vals,
+            self.fixed_params,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
