@@ -38,7 +38,6 @@ class minuit_optimizer(OptimizerMixin):
     ):
 
         step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
-
         fixed_vals = fixed_vals or []
         # Minuit wants True/False for each parameter
         fixed_bools = [False] * len(init_pars)
