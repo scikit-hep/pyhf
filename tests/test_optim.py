@@ -434,3 +434,23 @@ def test_stitch_pars(backend):
         0,
         60,
     ]
+
+
+def test_init_pars_sync_fixed_values_scipy(mocker):
+    opt = pyhf.optimize.scipy_optimizer()
+
+    minimizer = mocker.MagicMock()
+    opt._minimize(minimizer, None, [9, 9, 9], fixed_vals=[(0, 1)])
+    assert minimizer.call_args[0] == (None, [1, 9, 9])
+
+
+def test_init_pars_sync_fixed_values_minuit(mocker):
+    opt = pyhf.optimize.minuit_optimizer()
+
+    # patch all we need
+    from pyhf.optimize import opt_minuit
+
+    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
+    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+    assert minimizer.Minuit.from_array_func.call_args[1]['start'] == [1, 9, 9]
+    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
