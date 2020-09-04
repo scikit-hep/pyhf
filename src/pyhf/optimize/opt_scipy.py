@@ -60,6 +60,9 @@ class scipy_optimizer(OptimizerMixin):
         values = [v for _, v in fixed_vals]
         if fixed_vals:
             constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
+            # update the initial values to the fixed value for any fixed parameter
+            for idx, fixed_val in fixed_vals:
+                x0[idx] = fixed_val
         else:
             constraints = []
 
