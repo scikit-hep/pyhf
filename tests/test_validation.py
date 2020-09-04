@@ -453,10 +453,14 @@ def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
 
 @pytest.fixture(scope='module')
 def expected_result_2bin_2channel_couplednorm(mu=1.0):
+    # NB: mac/linux differ for exp[0]
+    # Mac:   0.055222676184648795
+    # Linux: 0.05522273289103311
+    # Fill with midpoint of both values
     if mu == 1:
         expected_result = {
             "exp": [
-                0.055222676184648795,
+                0.05522270453784095,
                 0.1361301880753241,
                 0.30686879632329855,
                 0.5839437910061168,
@@ -709,7 +713,7 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     )
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
-        assert abs(result - expected) / expected < tolerance
+        assert abs(result - expected) / expected < tolerance, result
 
 
 @pytest.mark.parametrize(
