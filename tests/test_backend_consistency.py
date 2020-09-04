@@ -115,7 +115,12 @@ def test_hypotest_qmu_tilde(
         pyhf.set_backend(backend)
 
         qmu_tilde = pyhf.infer.test_statistics.qmu_tilde(
-            1.0, data, pdf, pdf.config.suggested_init(), pdf.config.suggested_bounds()
+            1.0,
+            data,
+            pdf,
+            pdf.config.suggested_init(),
+            pdf.config.suggested_bounds(),
+            [],
         )
         test_statistic.append(qmu_tilde)
 

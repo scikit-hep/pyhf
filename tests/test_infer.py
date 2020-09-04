@@ -138,6 +138,9 @@ def test_inferapi_pyhf_independence():
         def suggested_bounds(self):
             return [[0.0, 10.0], [0.0, 10.0]]
 
+        def suggested_fixed(self):
+            return [False, False]
+
     class NonPyhfModel(object):
         def __init__(self, spec):
             self.sig, self.nominal, self.uncert = spec
