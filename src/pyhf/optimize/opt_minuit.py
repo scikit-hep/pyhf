@@ -44,6 +44,7 @@ class minuit_optimizer(OptimizerMixin):
         for index, val in fixed_vals:
             fixed_bools[index] = True
             init_pars[index] = val
+            step_sizes[index] = 0.0
 
         # Minuit requires jac=callable
         if do_grad:

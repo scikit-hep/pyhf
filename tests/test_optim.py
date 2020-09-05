@@ -454,3 +454,15 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
     opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
     assert minimizer.Minuit.from_array_func.call_args[1]['start'] == [1, 9, 9]
     assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
+
+
+def test_step_sizes_fixed_parameters_minuit(mocker):
+    opt = pyhf.optimize.minuit_optimizer()
+
+    # patch all we need
+    from pyhf.optimize import opt_minuit
+
+    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
+    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
+    assert minimizer.Minuit.from_array_func.call_args[1]['error'] == [0.0, 0.01, 0.01]
