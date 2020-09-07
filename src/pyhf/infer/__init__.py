@@ -6,7 +6,14 @@ from .calculators import AsymptoticCalculator
 
 
 def hypotest(
-    poi_test, data, pdf, init_pars=None, par_bounds=None, qtilde=False, **kwargs
+    poi_test,
+    data,
+    pdf,
+    init_pars=None,
+    par_bounds=None,
+    fixed_params=None,
+    qtilde=False,
+    **kwargs,
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
@@ -32,8 +39,9 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (Array or Tensor): The initial parameter values to be used for minimization
-        par_bounds (Array or Tensor): The parameter value bounds to be used for minimization
+        init_pars (`tensor`): The initial parameter values to be used for minimization
+        par_bounds (`tensor`): The parameter value bounds to be used for minimization
+        fixed_params (`tensor`): Whether to fix the parameter to the init_pars value during minimization
         qtilde (Bool): When ``True`` perform the calculation using the alternative
          test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
          approximation in Equation (62) of :xref:`arXiv:1007.1727`.
@@ -118,15 +126,19 @@ def hypotest(
     """
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
-    tensorlib, _ = get_backend()
+    fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-    calc = AsymptoticCalculator(data, pdf, init_pars, par_bounds, qtilde=qtilde)
+    calc = AsymptoticCalculator(
+        data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
+    )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)
     CLs = CLsb / CLb
+
+    tensorlib, _ = get_backend()
     # Ensure that all CL values are 0-d tensors
     CLsb, CLb, CLs = (
         tensorlib.astensor(CLsb),

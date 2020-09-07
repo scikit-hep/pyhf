@@ -138,6 +138,9 @@ def test_inferapi_pyhf_independence():
         def suggested_bounds(self):
             return [[0.0, 10.0], [0.0, 10.0]]
 
+        def suggested_fixed(self):
+            return [False, False]
+
     class NonPyhfModel(object):
         def __init__(self, spec):
             self.sig, self.nominal, self.uncert = spec
@@ -184,7 +187,7 @@ def test_inferapi_pyhf_independence():
 @pytest.mark.parametrize("qtilde", [True, False])
 def test_calculator_distributions_without_teststatistic(qtilde):
     calc = pyhf.infer.AsymptoticCalculator(
-        [0.0], {}, [1.0], [(0.0, 10.0)], qtilde=qtilde
+        [0.0], {}, [1.0], [(0.0, 10.0)], [False], qtilde=qtilde
     )
     with pytest.raises(RuntimeError):
         calc.distributions(1.0)
