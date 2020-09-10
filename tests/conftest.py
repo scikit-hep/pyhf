@@ -98,9 +98,13 @@ def backend(request):
     func_name = request._pyfuncitem.name
 
     # skip backends if specified
-    skip_backend = request.node.get_closest_marker('skip_{param}'.format(param=param_id))
+    skip_backend = request.node.get_closest_marker(
+        'skip_{param}'.format(param=param_id)
+    )
     # allow the specific backend to fail if specified
-    fail_backend = request.node.get_closest_marker('fail_{param}'.format(param=param_id))
+    fail_backend = request.node.get_closest_marker(
+        'fail_{param}'.format(param=param_id)
+    )
     # only look at the specific backends
     only_backends = [
         pid
