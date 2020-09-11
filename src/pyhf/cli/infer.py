@@ -57,7 +57,7 @@ def fit(
     optconf,
 ):
     """
-    Perforam a maximum likelihood fit for a given pyhf workspace.
+    Perform a maximum likelihood fit for a given pyhf workspace.
 
     Example:
 
