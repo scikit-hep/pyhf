@@ -104,19 +104,14 @@ def fit(
 
     fit_result = mle_fit(data, model, return_fitted_val=value)
 
-    bestfit_pars = fit_result
-    if value:
-        bestfit_pars = fit_result[0]
-        bestfit_value = fit_result[-1]
-
-    parameters = {
-        k: tensorlib.tolist(bestfit_pars[v["slice"]])
-        for k, v in model.config.par_map.items()
+    _pars = fit_result if not value else fit_result[0]
+    bestfit_pars = {
+        k: tensorlib.tolist(_pars[v["slice"]]) for k, v in model.config.par_map.items()
     }
 
-    result = {"mle_parameters": parameters}
+    result = {"mle_parameters": bestfit_pars}
     if value:
-        result["twice_nll"] = tensorlib.tolist(bestfit_value)
+        result["twice_nll"] = tensorlib.tolist(fit_result[-1])
 
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
