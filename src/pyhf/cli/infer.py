@@ -6,6 +6,7 @@ import json
 
 from ..utils import EqDelimStringParamType
 from ..infer import hypotest
+from ..infer.mle import fit as mle_fit  # Avoid namespace collision
 from ..workspace import Workspace
 from .. import get_backend, set_backend, optimize
 
@@ -15,6 +16,115 @@ log = logging.getLogger(__name__)
 @click.group(name='infer')
 def cli():
     """Infererence CLI group."""
+
+
+@cli.command()
+@click.argument("workspace", default="-")
+@click.option(
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
+    default=None,
+)
+@click.option("--measurement", default=None)
+@click.option("--value", default=False, is_flag=True)
+@click.option("-p", "--patch", multiple=True)
+@click.option(
+    "--backend",
+    type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
+    help="The tensor backend used for the calculation.",
+    default="numpy",
+)
+@click.option("--optimizer")
+@click.option("--optconf", type=EqDelimStringParamType(), multiple=True)
+def fit(
+    workspace,
+    output_file,
+    measurement,
+    value,
+    patch,
+    backend,
+    optimizer,
+    optconf,
+):
+    """
+    Perforam a maximum likelihood fit for a given pyhf workspace.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://git.io/JJYDE | pyhf fit --value
+
+        \b
+        {
+            "mle_parameters": {
+                "mu": [
+                    0.00017298628839781602
+                ],
+                "uncorr_bkguncrt": [
+                    1.0000015671710816,
+                    0.9999665895859197
+                ]
+            },
+            "twice_nll": 23.19636590468879
+        }
+    """
+    with click.open_file(workspace, "r") as specstream:
+        spec = json.load(specstream)
+
+    # set the backend if not NumPy
+    if backend in ["pytorch", "torch"]:
+        set_backend("pytorch", precision="64b")
+    elif backend in ["tensorflow", "tf"]:
+        set_backend("tensorflow", precision="64b")
+    elif backend in ["jax"]:
+        set_backend("jax")
+    tensorlib, _ = get_backend()
+
+    optconf = {k: v for item in optconf for k, v in item.items()}
+
+    # set the new optimizer
+    if optimizer:
+        new_optimizer = getattr(optimize, optimizer) or getattr(
+            optimize, f"{optimizer}_optimizer"
+        )
+        set_backend(tensorlib, new_optimizer(**optconf))
+
+    ws = Workspace(spec)
+    patches = [json.loads(click.open_file(pfile, "r").read()) for pfile in patch]
+    model = ws.model(
+        measurement_name=measurement,
+        patches=patches,
+        modifier_settings={
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
+        },
+    )
+    data = ws.data(model)
+
+    fit_result = mle_fit(data, model, return_fitted_val=value)
+
+    bestfit_pars = fit_result
+    if value:
+        bestfit_pars = fit_result[0]
+        bestfit_value = fit_result[-1]
+
+    parameters = {
+        k: bestfit_pars[v["slice"]].tolist() for k, v in model.config.par_map.items()
+    }
+
+    result = {
+        "mle_parameters": parameters,
+    }
+    if value:
+        result["twice_nll"] = tensorlib.tolist(bestfit_value)
+
+    if output_file is None:
+        click.echo(json.dumps(result, indent=4, sort_keys=True))
+    else:
+        with open(output_file, "w+") as out_file:
+            json.dump(result, out_file, indent=4, sort_keys=True)
+        log.debug("Written to {0:s}".format(output_file))
 
 
 @cli.command()
