@@ -110,7 +110,8 @@ def fit(
         bestfit_value = fit_result[-1]
 
     parameters = {
-        k: bestfit_pars[v["slice"]].tolist() for k, v in model.config.par_map.items()
+        k: tensorlib.tolist(bestfit_pars[v["slice"]])
+        for k, v in model.config.par_map.items()
     }
 
     result = {
