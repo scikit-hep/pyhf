@@ -306,7 +306,7 @@ def test_fit_optimizer(tmpdir, script_runner, optimizer, opts, success):
     ret = script_runner.run(*shlex.split(command))
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
-    command = f"pyhf fit {temp.strpath} --optimizer {optimizer} {optconf}"
+    command = f"pyhf fit --optimizer {optimizer} {optconf} {temp.strpath}"
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success == success
