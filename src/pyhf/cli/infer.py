@@ -26,7 +26,12 @@ def cli():
     default=None,
 )
 @click.option("--measurement", default=None)
-@click.option("--value", default=False, is_flag=True)
+@click.option(
+    "--value",
+    help="Flag for returning the fitted value of the objective function.",
+    default=False,
+    is_flag=True,
+)
 @click.option("-p", "--patch", multiple=True)
 @click.option(
     "--backend",
