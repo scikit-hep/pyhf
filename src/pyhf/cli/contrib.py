@@ -34,6 +34,7 @@ def download(archive_url, output_directory, verbose, force):
     .. code-block:: shell
 
         $ pyhf download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihood
+
         \b
         3L-likelihoods/patchset.json
         3L-likelihoods/README.md
