@@ -294,9 +294,7 @@ def test_testpoi(tmpdir, script_runner):
     assert len(list(set(results_obs))) == len(pois)
 
 
-@pytest.mark.parametrize(
-    "optimizer", ["scipy", "minuit", "scipy_optimizer", "minuit_optimizer"]
-)
+@pytest.mark.parametrize("optimizer", ["scipy", "minuit"])
 @pytest.mark.parametrize(
     "opts,success", [(["maxiter=1000"], True), (["maxiter=1"], False)]
 )
@@ -314,9 +312,7 @@ def test_fit_optimizer(tmpdir, script_runner, optimizer, opts, success):
     assert ret.success == success
 
 
-@pytest.mark.parametrize(
-    'optimizer', ['scipy', 'minuit', 'scipy_optimizer', 'minuit_optimizer']
-)
+@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
 @pytest.mark.parametrize(
     'opts,success', [(['maxiter=1000'], True), (['maxiter=1'], False)]
 )
