@@ -569,23 +569,23 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
     ],
 )
 def test_patchset_download(datadir, script_runner, archive):
-    command = f'pyhf download {archive} {datadir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download {archive} {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
     # Run with all optional flags
-    command = f'pyhf download --verbose --force {archive} {datadir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose --force {archive} {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = f'pyhf download --verbose https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
         "pyhf.exceptions.InvalidArchiveHost: fail.org is not an approved archive host"
         in ret.stderr
     )
-    command = f'pyhf download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     # Python 3.6 has different return error than 3.7, 3.8

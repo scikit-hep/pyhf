@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 @click.group(name="contrib")
 def cli():
-    """Contrib CLI group."""
+    """Contrib experimental operations"""
 
 
 @cli.command()
@@ -33,7 +33,7 @@ def download(archive_url, output_directory, verbose, force):
 
     .. code-block:: shell
 
-        $ pyhf download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihood
+        $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihood
 
         \b
         3L-likelihoods/patchset.json

@@ -36,5 +36,4 @@ pyhf.add_command(patchset.cli)
 
 pyhf.add_command(complete.cli)
 
-# pyhf.add_command(contrib.cli)
-pyhf.add_command(contrib.download)
+pyhf.add_command(contrib.cli)
