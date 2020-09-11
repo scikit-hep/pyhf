@@ -114,9 +114,7 @@ def fit(
         for k, v in model.config.par_map.items()
     }
 
-    result = {
-        "mle_parameters": parameters,
-    }
+    result = {"mle_parameters": parameters}
     if value:
         result["twice_nll"] = tensorlib.tolist(bestfit_value)
 
