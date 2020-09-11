@@ -29,11 +29,18 @@ def download(archive_url, output_directory, verbose, force):
     """
     Download the patchset archive from the remote URL and extract it in a directory at the path given.
 
+    Example:
+
+    .. code-block:: shell
+
+        $ pyhf download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihood
+        \b
+        3L-likelihoods/patchset.json
+        3L-likelihoods/README.md
+        3L-likelihoods/BkgOnly.json
+
     Raises:
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
-
-    Returns:
-        None
     """
     if not force:
         hostname = archive_url.split("://")[1].split("/")[0].strip("www.")
