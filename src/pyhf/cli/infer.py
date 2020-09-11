@@ -34,7 +34,12 @@ def cli():
     help="The tensor backend used for the calculation.",
     default="numpy",
 )
-@click.option("--optimizer")
+@click.option(
+    "--optimizer",
+    type=click.Choice(["scipy", "minuit"]),
+    help="The optimizer used for the calculation.",
+    default="scipy",
+)
 @click.option("--optconf", type=EqDelimStringParamType(), multiple=True)
 def fit(
     workspace,
@@ -138,7 +143,12 @@ def fit(
     help='The tensor backend used for the calculation.',
     default='numpy',
 )
-@click.option('--optimizer')
+@click.option(
+    "--optimizer",
+    type=click.Choice(["scipy", "minuit"]),
+    help="The optimizer used for the calculation.",
+    default="scipy",
+)
 @click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
 def cls(
     workspace,
