@@ -69,9 +69,6 @@ def fit(
             "twice_nll": 23.19636590468879
         }
     """
-    with click.open_file(workspace, "r") as specstream:
-        spec = json.load(specstream)
-
     # set the backend if not NumPy
     if backend in ["pytorch", "torch"]:
         set_backend("pytorch", precision="64b")
@@ -90,8 +87,11 @@ def fit(
         )
         set_backend(tensorlib, new_optimizer(**optconf))
 
+    with click.open_file(workspace, "r") as specstream:
+        spec = json.load(specstream)
     ws = Workspace(spec)
     patches = [json.loads(click.open_file(pfile, "r").read()) for pfile in patch]
+
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
