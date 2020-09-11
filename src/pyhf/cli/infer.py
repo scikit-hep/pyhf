@@ -26,13 +26,13 @@ def cli():
     default=None,
 )
 @click.option("--measurement", default=None)
+@click.option("-p", "--patch", multiple=True)
 @click.option(
     "--value",
     help="Flag for returning the fitted value of the objective function.",
     default=False,
     is_flag=True,
 )
-@click.option("-p", "--patch", multiple=True)
 @click.option(
     "--backend",
     type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
@@ -50,8 +50,8 @@ def fit(
     workspace,
     output_file,
     measurement,
-    value,
     patch,
+    value,
     backend,
     optimizer,
     optconf,
