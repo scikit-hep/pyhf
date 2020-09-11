@@ -55,6 +55,49 @@ def test_import_prepHistFactory_stdout(tmpdir, script_runner):
     assert d
 
 
+def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
+    temp = tmpdir.join("parsed_output.json")
+    command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}".format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = "pyhf fit {0:s}".format(temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    ret_json = json.loads(ret.stdout)
+    assert ret_json
+    assert "mle_parameters" in ret_json
+    assert "twice_nll" not in ret_json
+
+    for measurement in [
+        "GaussExample",
+        "GammaExample",
+        "LogNormExample",
+        "ConstExample",
+    ]:
+        command = "pyhf fit {0:s} --value --measurement {1:s}".format(
+            temp.strpath, measurement
+        )
+        ret = script_runner.run(*shlex.split(command))
+
+        assert ret.success
+        ret_json = json.loads(ret.stdout)
+        assert ret_json
+        assert "mle_parameters" in ret_json
+        assert "twice_nll" in ret_json
+
+        tmp_out = tmpdir.join("{0:s}_output.json".format(measurement))
+        # make sure output file works too
+        command += " --output-file {0:s}".format(tmp_out.strpath)
+        ret = script_runner.run(*shlex.split(command))
+        assert ret.success
+        ret_json = json.load(tmp_out)
+        assert "mle_parameters" in ret_json
+        assert "twice_nll" in ret_json
+
+
 def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
     command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
@@ -94,6 +137,23 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         d = json.load(tmp_out)
         assert 'CLs_obs' in d
         assert 'CLs_exp' in d
+
+
+@pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
+def test_fit_backend_option(tmpdir, script_runner, backend):
+    temp = tmpdir.join("parsed_output.json")
+    command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}".format(
+        temp.strpath
+    )
+    ret = script_runner.run(*shlex.split(command))
+
+    command = "pyhf fit --backend {0:s} {1:s}".format(backend, temp.strpath)
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    ret_json = json.loads(ret.stdout)
+    assert ret_json
+    assert "mle_parameters" in ret_json
 
 
 @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
