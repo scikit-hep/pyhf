@@ -29,6 +29,7 @@ pyhf.add_command(spec.digest)
 pyhf.add_command(spec.sort)
 
 # pyhf.add_command(infer.cli)
+pyhf.add_command(infer.fit)
 pyhf.add_command(infer.cls)
 
 pyhf.add_command(patchset.cli)
