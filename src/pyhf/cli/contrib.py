@@ -3,10 +3,14 @@ import logging
 
 import click
 from urllib.parse import urlparse
-import requests
 import tarfile
 from io import BytesIO
 from pathlib import Path
+
+try:
+    import requests
+except ModuleNotFoundError:
+    pass
 
 from .. import exceptions
 
@@ -16,7 +20,14 @@ log = logging.getLogger(__name__)
 
 @click.group(name="contrib")
 def cli():
-    """Contrib experimental operations."""
+    """
+    Contrib experimental operations.
+    Requires installation of the ``contrib`` extra.
+
+    .. code-block:: shell
+
+        $ python -m pip install pyhf[contrib]
+    """
 
 
 @cli.command()
