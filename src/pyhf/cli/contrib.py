@@ -16,14 +16,7 @@ log = logging.getLogger(__name__)
 
 @click.group(name="contrib")
 def cli():
-    """
-    Contrib experimental operations.
-    Requires installation of the ``contrib`` ``pyhf`` extra.
-
-    .. code-block:: shell
-
-        $ python -m pip install pyhf[contrib]
-    """
+    """Contrib experimental operations."""
 
 
 @cli.command()
