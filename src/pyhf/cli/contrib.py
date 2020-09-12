@@ -16,7 +16,14 @@ log = logging.getLogger(__name__)
 
 @click.group(name="contrib")
 def cli():
-    """Contrib experimental operations"""
+    """
+    Contrib experimental operations.
+    Requires installation of the ``contrib`` ``pyhf`` extra.
+
+    .. code-block:: shell
+
+        $ python -m pip install pyhf[contrib]
+    """
 
 
 @cli.command()
@@ -28,7 +35,8 @@ def cli():
 )
 def download(archive_url, output_directory, verbose, force):
     """
-    Download the patchset archive from the remote URL and extract it in a directory at the path given.
+    Download the patchset archive from the remote URL and extract it in a
+    directory at the path given.
 
     Example:
 
