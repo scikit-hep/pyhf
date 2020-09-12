@@ -22,11 +22,14 @@ log = logging.getLogger(__name__)
 def cli():
     """
     Contrib experimental operations.
-    Requires installation of the ``contrib`` extra.
 
-    .. code-block:: shell
+    .. note::
 
-        $ python -m pip install pyhf[contrib]
+        Requires installation of the ``contrib`` extra.
+
+        .. code-block:: shell
+
+            $ python -m pip install pyhf[contrib]
     """
 
 
