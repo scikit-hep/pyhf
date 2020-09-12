@@ -3,6 +3,7 @@ import logging
 
 import click
 import urllib.request
+from urllib.parse import urlparse
 import tarfile
 from io import BytesIO
 from pathlib import Path
@@ -33,7 +34,7 @@ def download(archive_url, output_directory, verbose, force):
 
     .. code-block:: shell
 
-        $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihood
+        $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihoods
 
         \b
         3L-likelihoods/patchset.json
@@ -44,11 +45,11 @@ def download(archive_url, output_directory, verbose, force):
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
     """
     if not force:
-        hostname = archive_url.split("://")[1].split("/")[0].strip("www.")
-        valid_hosts = ["hepdata.net", "doi.org"]
-        if hostname not in valid_hosts:
+        valid_hosts = ["www.hepdata.net", "doi.org"]
+        netloc = urlparse(archive_url).netloc
+        if netloc not in valid_hosts:
             raise exceptions.InvalidArchiveHost(
-                f"{hostname} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
+                f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
                 + "To download an archive from this host use the --force option."
             )
 
