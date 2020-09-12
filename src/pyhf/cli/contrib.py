@@ -2,8 +2,8 @@
 import logging
 
 import click
-import urllib.request
 from urllib.parse import urlparse
+import requests
 import tarfile
 from io import BytesIO
 from pathlib import Path
@@ -53,9 +53,8 @@ def download(archive_url, output_directory, verbose, force):
                 + "To download an archive from this host use the --force option."
             )
 
-    req = urllib.request.Request(archive_url)
-    with urllib.request.urlopen(req) as response:
-        with tarfile.open(mode="r|gz", fileobj=BytesIO(response.read())) as archive:
+    with requests.get(archive_url) as response:
+        with tarfile.open(mode="r|gz", fileobj=BytesIO(response.content)) as archive:
             archive.extractall(output_directory)
 
     if verbose:
