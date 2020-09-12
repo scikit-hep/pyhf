@@ -582,7 +582,7 @@ def test_patchset_download(datadir, script_runner, archive):
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
-        "pyhf.exceptions.InvalidArchiveHost: fail.org is not an approved archive host"
+        "pyhf.exceptions.InvalidArchiveHost: www.fail.org is not an approved archive host"
         in ret.stderr
     )
     command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
