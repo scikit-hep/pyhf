@@ -2,6 +2,7 @@ import json
 import shlex
 import pyhf
 import time
+import sys
 import pytest
 
 
@@ -594,6 +595,35 @@ def test_patchset_download(datadir, script_runner, archive):
         or "certificate verify failed: Hostname mismatch, certificate is not valid for 'www.fail.org'."
         in ret.stderr
     )
+
+
+def test_missing_contrib_extra(datadir, script_runner):
+    module_name = "requests"
+
+    # hide
+    CACHE_MODULE, sys.modules[module_name] = sys.modules[module_name], None
+    assert sys.modules[module_name] is None
+
+    archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
+    command = (
+        f'pyhf contrib download {archive_url} {datadir.join("likelihoods").strpath}'
+    )
+    ret = script_runner.run(*shlex.split(command))
+    assert (
+        "import of requests halted; None in sys.modules"
+        + "\nInstallation of the contrib extra is required for: pyhf contrib download"
+        + "\nPlease install with: python -m pip install pyhf[contrib]"
+        in ret.stdout
+    )
+    assert (
+        "ModuleNotFoundError: import of requests halted; None in sys.modules"
+        in ret.stderr
+    )
+    assert not ret.success
+
+    # put back
+    CACHE_MODULE, sys.modules[module_name] = None, CACHE_MODULE
+    assert sys.modules[module_name] is not None
 
 
 @pytest.mark.parametrize('output_file', [False, True])
