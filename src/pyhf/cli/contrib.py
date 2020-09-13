@@ -7,11 +7,6 @@ import tarfile
 from io import BytesIO
 from pathlib import Path
 
-try:
-    import requests
-except ModuleNotFoundError:
-    pass
-
 from .. import exceptions
 
 logging.basicConfig()
@@ -59,6 +54,17 @@ def download(archive_url, output_directory, verbose, force):
     Raises:
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
     """
+    try:
+        import requests
+    except ModuleNotFoundError as excep:
+        exception_info = (
+            str(excep)
+            + "\nInstallation of the contrib extra is required for: pyhf contrib download"
+            + "\nPlease install with: python -m pip install pyhf[contrib]\n"
+        )
+        print(exception_info)
+        raise
+
     if not force:
         valid_hosts = ["www.hepdata.net", "doi.org"]
         netloc = urlparse(archive_url).netloc
