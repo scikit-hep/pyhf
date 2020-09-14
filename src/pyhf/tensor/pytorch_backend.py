@@ -51,6 +51,46 @@ class pytorch_backend(object):
         """
         return torch.clamp(tensor_in, min_value, max_value)
 
+    def erf(self, tensor_in):
+        """
+        The error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erf(a)
+            tensor([-0.9953, -0.8427,  0.0000,  0.8427,  0.9953])
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            PyTorch Tensor: The values of the error function at the given points.
+        """
+        return torch.erf(tensor_in)
+
+    def erfinv(self, tensor_in):
+        """
+        The inverse of the error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
+            tensor([-2.0000, -1.0000,  0.0000,  1.0000,  2.0000])
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            PyTorch Tensor: The values of the inverse of the error function at the given points.
+        """
+        return torch.erfinv(tensor_in)
+
     def conditional(self, predicate, true_callable, false_callable):
         """
         Runs a callable conditional on the boolean value of the evaulation of a predicate
