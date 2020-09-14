@@ -12,6 +12,39 @@ def get_source_1bin_example1():
         return json.load(read_json)
 
 
+def get_source_1bin_normsys():
+    source = {
+        'binning': [2, -0.5, 1.5],
+        'bindata': {'data': [120.0, 180.0], 'bkg': [100.0, 150.0], 'sig': [30.0, 95.0]},
+    }
+    return source
+
+
+def get_source_2bin_histosys_example2():
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        return json.load(read_json)
+
+
+def get_source_2bin_2channel_example1():
+    with open('validation/data/2bin_2channel_example1.json') as read_json:
+        return json.load(read_json)
+
+
+def get_source_2bin_2channel_couplednorm():
+    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
+        return json.load(read_json)
+
+
+def get_source_2bin_2channel_coupledhisto():
+    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
+        return json.load(read_json)
+
+
+def get_source_2bin_2channel_coupledshapefactor():
+    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
+        return json.load(read_json)
+
+
 def get_spec_1bin_shapesys(source=get_source_1bin_example1()):
     spec = {
         'channels': [
@@ -152,14 +185,6 @@ def setup_1bin_lumi():
     return get_setup_1bin_lumi()
 
 
-def get_source_1bin_normsys():
-    source = {
-        'binning': [2, -0.5, 1.5],
-        'bindata': {'data': [120.0, 180.0], 'bkg': [100.0, 150.0], 'sig': [30.0, 95.0]},
-    }
-    return source
-
-
 @pytest.fixture(scope='module')
 def source_1bin_normsys():
     return get_source_1bin_normsys()
@@ -231,11 +256,6 @@ def setup_1bin_normsys():
     return get_setup_1bin_normsys()
 
 
-def get_source_2bin_histosys_example2():
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
-        return json.load(read_json)
-
-
 def get_spec_2bin_histosys(source=get_source_2bin_histosys_example2()):
     spec = {
         'channels': [
@@ -303,11 +323,6 @@ def get_setup_2bin_histosys(
 @pytest.fixture(scope='module')
 def setup_2bin_histosys():
     return get_setup_2bin_histosys()
-
-
-def get_source_2bin_2channel_example1():
-    with open('validation/data/2bin_2channel_example1.json') as read_json:
-        return json.load(read_json)
 
 
 def get_spec_2bin_2channel(source=get_source_2bin_2channel_example1()):
@@ -395,11 +410,6 @@ def get_setup_2bin_2channel(
 @pytest.fixture(scope='module')
 def setup_2bin_2channel():
     return get_setup_2bin_2channel()
-
-
-def get_source_2bin_2channel_couplednorm():
-    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
-        return json.load(read_json)
 
 
 def get_spec_2bin_2channel_couplednorm(source=get_source_2bin_2channel_couplednorm()):
@@ -498,11 +508,6 @@ def get_setup_2bin_2channel_couplednorm(
 @pytest.fixture(scope='module')
 def setup_2bin_2channel_couplednorm():
     return get_setup_2bin_2channel_couplednorm()
-
-
-def get_source_2bin_2channel_coupledhisto():
-    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
-        return json.load(read_json)
 
 
 def get_spec_2bin_2channel_coupledhistosys(
@@ -622,11 +627,6 @@ def get_setup_2bin_2channel_coupledhistosys(
 @pytest.fixture(scope='module')
 def setup_2bin_2channel_coupledhistosys():
     return get_setup_2bin_2channel_coupledhistosys()
-
-
-def get_source_2bin_2channel_coupledshapefactor():
-    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
-        return json.load(read_json)
 
 
 def get_spec_2bin_2channel_coupledshapefactor(
