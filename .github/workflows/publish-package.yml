@@ -45,7 +45,7 @@ jobs:
         wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
         if [[ "${latest_tag_revlist_SHA}" != "${master_SHA}" ]]; then # don't check master push events coming from tags
           if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
-            echo "pep517.build incorrectly named built distribution: ${wheel_name}"
+            echo "build incorrectly named built distribution: ${wheel_name}"
             echo "pep517 is lacking the history and tags required to determine version number"
             echo "intentionally erroring with 'return 1' now"
             return 1
@@ -53,18 +53,18 @@ jobs:
         else
           echo "Push event to origin/master was triggered by push of tag ${latest_tag}"
         fi
-        echo "pep517.build named built distribution: ${wheel_name}"
+        echo "build named built distribution: ${wheel_name}"
     - name: Verify tagged commits don't have dev versions
       if: startsWith(github.ref, 'refs/tags')
       run: |
         wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
         if [[ "${wheel_name}" == *"dev"* ]]; then
-          echo "pep517.build incorrectly named built distribution: ${wheel_name}"
+          echo "build incorrectly named built distribution: ${wheel_name}"
           echo "this is incorrrectly being treated as a dev release"
           echo "intentionally erroring with 'return 1' now"
           return 1
         fi
-        echo "pep517.build named built distribution: ${wheel_name}"
+        echo "build named built distribution: ${wheel_name}"
     - name: Verify the distribution
       run: twine check dist/*
     - name: Publish distribution 📦 to Test PyPI
