@@ -14,172 +14,6 @@ def source_1bin_shapesys():
 
 
 @pytest.fixture(scope='module')
-def source_1bin_lumi():
-    with open('validation/data/1bin_lumi.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_1bin_normsys():
-    with open('validation/data/1bin_normsys.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_histosys():
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel():
-    with open('validation/data/2bin_2channel_example1.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_couplednorm():
-    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_coupledhistosys():
-    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_coupledshapefactor():
-    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
-        return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def expected_result_1bin_shapesys():
-    expected_result = {
-        "exp": [
-            0.06372011644331387,
-            0.1509686618126131,
-            0.3279657430196915,
-            0.604613569829645,
-            0.8662652332047568,
-        ],
-        "obs": 0.45418892944576333,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_1bin_lumi():
-    expected_result = {
-        "exp": [
-            0.01060400765567206,
-            0.04022451457730529,
-            0.13614632580079802,
-            0.37078985531427255,
-            0.7110468540175344,
-        ],
-        "obs": 0.010473144401519705,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_1bin_normsys():
-    expected_result = {
-        "exp": [
-            7.472581399417304e-10,
-            5.741738272450336e-08,
-            3.690120950161796e-06,
-            0.00016966882793076826,
-            0.004392935288879465,
-        ],
-        "obs": 0.0006735336290569807,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_histosys():
-    expected_result = {
-        "exp": [
-            7.133904244038431e-06,
-            0.00012547100627138575,
-            0.001880010666437615,
-            0.02078964907605385,
-            0.13692494523572218,
-        ],
-        "obs": 0.1001463460725534,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel():
-    expected_result = {
-        "exp": [
-            0.0004349234603527283,
-            0.003422361539161119,
-            0.02337454317608372,
-            0.12186650297311125,
-            0.40382274594391104,
-        ],
-        "obs": 0.0563327694384318,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_couplednorm():
-    # NB: mac/linux differ for exp[0]
-    # Mac:   0.055222676184648795
-    # Linux: 0.05522273289103311
-    # Fill with midpoint of both values
-    expected_result = {
-        "exp": [
-            0.05522270453784095,
-            0.1361301880753241,
-            0.30686879632329855,
-            0.5839437910061168,
-            0.8554708284963864,
-        ],
-        "obs": 0.5906216823766879,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledhistosys():
-    expected_result = {
-        "exp": [
-            1.7654378902209275e-05,
-            0.00026266409358853543,
-            0.0033401113778672156,
-            0.03152286332324451,
-            0.17907927340107824,
-        ],
-        "obs": 0.07967400132261188,
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledshapefactor():
-    expected_result = {
-        'obs': 0.5421679124909312,
-        'exp': [
-            0.013753299929451691,
-            0.048887400056355966,
-            0.15555296253957684,
-            0.4007561343326305,
-            0.7357169630955912,
-        ],
-    }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
 def spec_1bin_shapesys(source_1bin_shapesys):
     source = source_1bin_shapesys
     spec = {
@@ -210,6 +44,27 @@ def spec_1bin_shapesys(source_1bin_shapesys):
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_1bin_shapesys():
+    expected_result = {
+        "exp": [
+            0.06372011644331387,
+            0.1509686618126131,
+            0.3279657430196915,
+            0.604613569829645,
+            0.8662652332047568,
+        ],
+        "obs": 0.45418892944576333,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_1bin_lumi():
+    with open('validation/data/1bin_lumi.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -254,6 +109,27 @@ def spec_1bin_lumi(source_1bin_lumi):
 
 
 @pytest.fixture(scope='module')
+def expected_result_1bin_lumi():
+    expected_result = {
+        "exp": [
+            0.01060400765567206,
+            0.04022451457730529,
+            0.13614632580079802,
+            0.37078985531427255,
+            0.7110468540175344,
+        ],
+        "obs": 0.010473144401519705,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_1bin_normsys():
+    with open('validation/data/1bin_normsys.json') as read_json:
+        return json.load(read_json)
+
+
+@pytest.fixture(scope='module')
 def spec_1bin_normsys(source_1bin_normsys):
     source = source_1bin_normsys
     spec = {
@@ -284,6 +160,27 @@ def spec_1bin_normsys(source_1bin_normsys):
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_1bin_normsys():
+    expected_result = {
+        "exp": [
+            7.472581399417304e-10,
+            5.741738272450336e-08,
+            3.690120950161796e-06,
+            0.00016966882793076826,
+            0.004392935288879465,
+        ],
+        "obs": 0.0006735336290569807,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_2bin_histosys():
+    with open('validation/data/2bin_histosys_example2.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -320,6 +217,27 @@ def spec_2bin_histosys(source_2bin_histosys):
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_2bin_histosys():
+    expected_result = {
+        "exp": [
+            7.133904244038431e-06,
+            0.00012547100627138575,
+            0.001880010666437615,
+            0.02078964907605385,
+            0.13692494523572218,
+        ],
+        "obs": 0.1001463460725534,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_2bin_2channel():
+    with open('validation/data/2bin_2channel_example1.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -373,6 +291,27 @@ def spec_2bin_2channel(source_2bin_2channel):
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_2bin_2channel():
+    expected_result = {
+        "exp": [
+            0.0004349234603527283,
+            0.003422361539161119,
+            0.02337454317608372,
+            0.12186650297311125,
+            0.40382274594391104,
+        ],
+        "obs": 0.0563327694384318,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_2bin_2channel_couplednorm():
+    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -433,6 +372,31 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_2bin_2channel_couplednorm():
+    # NB: mac/linux differ for exp[0]
+    # Mac:   0.055222676184648795
+    # Linux: 0.05522273289103311
+    # Fill with midpoint of both values
+    expected_result = {
+        "exp": [
+            0.05522270453784095,
+            0.1361301880753241,
+            0.30686879632329855,
+            0.5839437910061168,
+            0.8554708284963864,
+        ],
+        "obs": 0.5906216823766879,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_2bin_2channel_coupledhistosys():
+    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
@@ -517,6 +481,27 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
 
 
 @pytest.fixture(scope='module')
+def expected_result_2bin_2channel_coupledhistosys():
+    expected_result = {
+        "exp": [
+            1.7654378902209275e-05,
+            0.00026266409358853543,
+            0.0033401113778672156,
+            0.03152286332324451,
+            0.17907927340107824,
+        ],
+        "obs": 0.07967400132261188,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def source_2bin_2channel_coupledshapefactor():
+    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
+        return json.load(read_json)
+
+
+@pytest.fixture(scope='module')
 def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
     source = source_2bin_2channel_coupledshapefactor
     spec = {
@@ -563,6 +548,21 @@ def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefacto
         ]
     }
     return spec
+
+
+@pytest.fixture(scope='module')
+def expected_result_2bin_2channel_coupledshapefactor():
+    expected_result = {
+        'obs': 0.5421679124909312,
+        'exp': [
+            0.013753299929451691,
+            0.048887400056355966,
+            0.15555296253957684,
+            0.4007561343326305,
+            0.7357169630955912,
+        ],
+    }
+    return expected_result
 
 
 def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
