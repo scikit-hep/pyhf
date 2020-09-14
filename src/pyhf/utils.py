@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 import click
 import hashlib
+import ast
 
 from .exceptions import InvalidSpecification
 
@@ -111,3 +112,53 @@ def digest(obj, algorithm='sha256'):
             f"{algorithm} is not an algorithm provided by Python's hashlib library."
         )
     return hash_alg(stringified).hexdigest()
+
+
+def parse_parameter_name(expression):
+    """
+    Convert a parameter name expression to the corresponding parameter index.
+
+    Returns:
+        par_name (`str`): parameter name
+        slice (`slice`): slice/indexing to use
+    """
+    _error = lambda reason: ValueError(
+        f"{expression} is not a valid parameter name expression. {reason}"
+    )
+
+    tree = ast.parse(expression)
+    expr = tree.body[0].value
+    if len(tree.body) > 1 or not isinstance(expr, (ast.Name, ast.Subscript)):
+        raise _error("Expression is too complex.")
+
+    # provided par_name="{name:s}"
+    if isinstance(expr, ast.Name):
+        par_name = expr.id
+        return par_name, slice(None)
+
+    if not isinstance(expr.value, ast.Name):
+        raise _error("Additional subscripts are not supported.")
+
+    par_name = expr.value.id
+    # provided par_name="{name:s}[index]"
+    if isinstance(expr.slice, ast.Index):
+        if not isinstance(expr.slice.value, ast.Num):
+            raise _error("Index must be a number.")
+
+        # provided par_name="{name:s}[{index:num}]"
+        return par_name, expr.slice.value.n
+
+    if isinstance(expr.slice, ast.Slice):
+        # provided par_name="{name:s}[slice]"
+        if not (
+            (expr.slice.lower is None or isinstance(expr.slice.lower, ast.Num))
+            and (expr.slice.upper is None or isinstance(expr.slice.upper, ast.Num))
+            and (expr.slice.step is None or isinstance(expr.slice.step, ast.Num))
+        ):
+            raise _error("Indices must be non-negative numbers.")
+
+        # provided par_name="{name:s}[{index:num}:{index:num}:{index:num}]"
+        lower = getattr(expr.slice.lower, 'n', None)
+        upper = getattr(expr.slice.upper, 'n', None)
+        step = getattr(expr.slice.step, 'n', None)
+        return par_name, slice(lower, upper, step)
