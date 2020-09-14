@@ -43,11 +43,6 @@ def get_spec_1bin_shapesys(source=get_source_1bin_example1()):
     return spec
 
 
-@pytest.fixture(scope='module')
-def spec_1bin_shapesys():
-    return get_spec_1bin_shapesys()
-
-
 def get_expected_result_1bin_shapesys(mu=1.0):
     if mu == 1:
         expected_result = {
@@ -125,11 +120,6 @@ def get_spec_1bin_lumi():
         ],
     }
     return spec
-
-
-@pytest.fixture(scope='module')
-def spec_1bin_lumi():
-    return get_spec_1bin_lumi()
 
 
 def get_expected_result_1bin_lumi(mu=1.0):
@@ -216,11 +206,6 @@ def get_spec_1bin_normsys(source=get_source_1bin_normsys()):
     return spec
 
 
-@pytest.fixture(scope='module')
-def spec_1bin_normsys():
-    return get_spec_1bin_normsys()
-
-
 def get_expected_result_1bin_normsys(mu=1.0):
     if mu == 1:
         expected_result = {
@@ -298,11 +283,6 @@ def get_spec_2bin_histosys(source=get_source_2bin_histosys_example2()):
         ]
     }
     return spec
-
-
-@pytest.fixture(scope='module')
-def spec_2bin_histosys():
-    return get_spec_2bin_histosys()
 
 
 def get_expected_result_2bin_histosys(mu=1):
@@ -399,11 +379,6 @@ def get_spec_2bin_2channel(source=get_source_2bin_2channel_example1()):
         ]
     }
     return spec
-
-
-@pytest.fixture(scope='module')
-def spec_2bin_2channel():
-    return get_spec_2bin_2channel()
 
 
 def get_expected_result_2bin_2channel(mu=1.0):
@@ -508,11 +483,6 @@ def get_spec_2bin_2channel_couplednorm(source=get_source_2bin_2channel_coupledno
         ]
     }
     return spec
-
-
-@pytest.fixture(scope='module')
-def spec_2bin_2channel_couplednorm():
-    return get_spec_2bin_2channel_couplednorm()
 
 
 def get_expected_result_2bin_2channel_couplednorm(mu=1.0):
@@ -646,11 +616,6 @@ def get_spec_2bin_2channel_coupledhistosys(
     return spec
 
 
-@pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledhistosys():
-    return get_spec_2bin_2channel_coupledhistosys()
-
-
 def get_expected_result_2bin_2channel_coupledhistosys(mu=1.0):
     if mu == 1:
         expected_result = {
@@ -746,11 +711,6 @@ def get_spec_2bin_2channel_coupledshapefactor(
         ]
     }
     return spec
-
-
-@pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledshapefactor():
-    return get_spec_2bin_2channel_coupledshapefactor()
 
 
 def get_expected_result_2bin_2channel_coupledshapefactor(mu=1.0):
