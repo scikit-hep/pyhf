@@ -13,11 +13,8 @@ def get_source_1bin_example1():
 
 
 def get_source_1bin_normsys():
-    source = {
-        'binning': [2, -0.5, 1.5],
-        'bindata': {'data': [120.0, 180.0], 'bkg': [100.0, 150.0], 'sig': [30.0, 95.0]},
-    }
-    return source
+    with open('validation/data/1bin_normsys.json') as read_json:
+        return json.load(read_json)
 
 
 def get_source_2bin_histosys_example2():
