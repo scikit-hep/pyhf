@@ -28,56 +28,60 @@ def cli():
     """
 
 
-@cli.command()
-@click.argument("archive-url", default="-")
-@click.argument("output-directory", default="-")
-@click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
-@click.option(
-    "-f", "--force", is_flag=True, help="Force download from non-approved host"
-)
-def download(archive_url, output_directory, verbose, force):
-    """
-    Download the patchset archive from the remote URL and extract it in a
-    directory at the path given.
+try:
+    import requests
 
-    Example:
+    @cli.command()
+    @click.argument("archive-url", default="-")
+    @click.argument("output-directory", default="-")
+    @click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
+    @click.option(
+        "-f", "--force", is_flag=True, help="Force download from non-approved host"
+    )
+    def download(archive_url, output_directory, verbose, force):
+        """
+        Download the patchset archive from the remote URL and extract it in a
+        directory at the path given.
 
-    .. code-block:: shell
+        Example:
 
-        $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihoods
+        .. code-block:: shell
 
-        \b
-        3L-likelihoods/patchset.json
-        3L-likelihoods/README.md
-        3L-likelihoods/BkgOnly.json
+            $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihoods
 
-    Raises:
-        :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
-    """
-    try:
-        import requests
-    except ModuleNotFoundError as excep:
-        exception_info = (
-            str(excep)
-            + "\nInstallation of the contrib extra is required for: pyhf contrib download"
-            + "\nPlease install with: python -m pip install pyhf[contrib]\n"
-        )
-        print(exception_info)
-        raise
+            \b
+            3L-likelihoods/patchset.json
+            3L-likelihoods/README.md
+            3L-likelihoods/BkgOnly.json
 
-    if not force:
-        valid_hosts = ["www.hepdata.net", "doi.org"]
-        netloc = urlparse(archive_url).netloc
-        if netloc not in valid_hosts:
-            raise exceptions.InvalidArchiveHost(
-                f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
-                + "To download an archive from this host use the --force option."
-            )
+        Raises:
+            :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
+        """
 
-    with requests.get(archive_url) as response:
-        with tarfile.open(mode="r|gz", fileobj=BytesIO(response.content)) as archive:
-            archive.extractall(output_directory)
+        if not force:
+            valid_hosts = ["www.hepdata.net", "doi.org"]
+            netloc = urlparse(archive_url).netloc
+            if netloc not in valid_hosts:
+                raise exceptions.InvalidArchiveHost(
+                    f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
+                    + "To download an archive from this host use the --force option."
+                )
 
-    if verbose:
-        file_list = [str(file) for file in list(Path(output_directory).glob("*"))]
-        print("\n".join(file_list))
+        with requests.get(archive_url) as response:
+            with tarfile.open(
+                mode="r|gz", fileobj=BytesIO(response.content)
+            ) as archive:
+                archive.extractall(output_directory)
+
+        if verbose:
+            file_list = [str(file) for file in list(Path(output_directory).glob("*"))]
+            print("\n".join(file_list))
+
+
+except ModuleNotFoundError as excep:
+    exception_info = (
+        str(excep)
+        + "\nInstallation of the contrib extra is required to use the contrib CLI API"
+        + "\nPlease install with: python -m pip install pyhf[contrib]\n"
+    )
+    print(exception_info)
