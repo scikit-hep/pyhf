@@ -12,11 +12,6 @@ def get_source_1bin_example1():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
-def source_1bin_example1():
-    return get_source_1bin_example1()
-
-
 def get_spec_1bin_shapesys(source=get_source_1bin_example1()):
     spec = {
         'channels': [
@@ -271,11 +266,6 @@ def get_source_2bin_histosys_example2():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
-def source_2bin_histosys_example2():
-    return get_source_2bin_histosys_example2()
-
-
 def get_spec_2bin_histosys(source=get_source_2bin_histosys_example2()):
     spec = {
         'channels': [
@@ -358,11 +348,6 @@ def setup_2bin_histosys():
 def get_source_2bin_2channel_example1():
     with open('validation/data/2bin_2channel_example1.json') as read_json:
         return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_example1():
-    return get_source_2bin_2channel_example1()
 
 
 def get_spec_2bin_2channel(source=get_source_2bin_2channel_example1()):
@@ -465,11 +450,6 @@ def setup_2bin_2channel():
 def get_source_2bin_2channel_couplednorm():
     with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
         return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_couplednorm():
-    return get_source_2bin_2channel_couplednorm()
 
 
 def get_spec_2bin_2channel_couplednorm(source=get_source_2bin_2channel_couplednorm()):
@@ -583,11 +563,6 @@ def setup_2bin_2channel_couplednorm():
 def get_source_2bin_2channel_coupledhisto():
     with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
         return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_coupledhisto():
-    return get_source_2bin_2channel_coupledhisto()
 
 
 def get_spec_2bin_2channel_coupledhistosys(
@@ -722,11 +697,6 @@ def setup_2bin_2channel_coupledhistosys():
 def get_source_2bin_2channel_coupledshapefactor():
     with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
         return json.load(read_json)
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_coupledshapefactor():
-    return get_source_2bin_2channel_coupledshapefactor()
 
 
 def get_spec_2bin_2channel_coupledshapefactor(
