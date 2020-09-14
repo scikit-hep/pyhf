@@ -58,11 +58,6 @@ def get_expected_result_1bin_shapesys(mu=1.0):
     return expected_result
 
 
-@pytest.fixture(scope='module')
-def expected_result_1bin_shapesys():
-    return get_expected_result_1bin_shapesys()
-
-
 def get_setup_1bin_shapesys(
     source=get_source_1bin_example1(),
     spec=get_spec_1bin_shapesys(get_source_1bin_example1()),
@@ -135,11 +130,6 @@ def get_expected_result_1bin_lumi(mu=1.0):
             "obs": 0.010473144401519705,
         }
     return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_1bin_lumi():
-    return get_expected_result_1bin_lumi()
 
 
 def get_setup_1bin_lumi(
@@ -221,11 +211,6 @@ def get_expected_result_1bin_normsys(mu=1.0):
     return expected_result
 
 
-@pytest.fixture(scope='module')
-def expected_result_1bin_normsys():
-    return get_expected_result_1bin_normsys()
-
-
 def get_setup_1bin_normsys(
     source=get_source_1bin_normsys(),
     spec=get_spec_1bin_normsys(get_source_1bin_normsys()),
@@ -298,11 +283,6 @@ def get_expected_result_2bin_histosys(mu=1):
             "obs": 0.1001463460725534,
         }
     return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_histosys():
-    return get_expected_result_2bin_histosys()
 
 
 def get_setup_2bin_histosys(
@@ -394,11 +374,6 @@ def get_expected_result_2bin_2channel(mu=1.0):
             "obs": 0.0563327694384318,
         }
     return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel():
-    return get_expected_result_2bin_2channel()
 
 
 def get_setup_2bin_2channel(
@@ -502,11 +477,6 @@ def get_expected_result_2bin_2channel_couplednorm(mu=1.0):
             "obs": 0.5906216823766879,
         }
     return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_couplednorm():
-    return get_expected_result_2bin_2channel_couplednorm()
 
 
 def get_setup_2bin_2channel_couplednorm(
@@ -631,11 +601,6 @@ def get_expected_result_2bin_2channel_coupledhistosys(mu=1.0):
     return expected_result
 
 
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledhistosys():
-    return get_expected_result_2bin_2channel_coupledhistosys()
-
-
 def get_setup_2bin_2channel_coupledhistosys(
     source=get_source_2bin_2channel_coupledhisto(),
     spec=get_spec_2bin_2channel_coupledhistosys(
@@ -726,11 +691,6 @@ def get_expected_result_2bin_2channel_coupledshapefactor(mu=1.0):
             ],
         }
     return expected_result
-
-
-@pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledshapefactor():
-    return get_expected_result_2bin_2channel_coupledshapefactor()
 
 
 def get_setup_2bin_2channel_coupledshapefactor(
