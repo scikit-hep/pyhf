@@ -6,7 +6,7 @@ import json
 
 from ..utils import EqDelimStringParamType
 from ..infer import hypotest
-from ..infer.mle import fit as mle_fit  # Avoid namespace collision
+from ..infer import mle
 from ..workspace import Workspace
 from .. import get_backend, set_backend, optimize
 
@@ -112,7 +112,7 @@ def fit(
     )
     data = ws.data(model)
 
-    fit_result = mle_fit(data, model, return_fitted_val=value)
+    fit_result = mle.fit(data, model, return_fitted_val=value)
 
     _pars = fit_result if not value else fit_result[0]
     bestfit_pars = {
