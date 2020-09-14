@@ -597,28 +597,28 @@ def test_patchset_download(datadir, script_runner, archive):
     )
 
 
-def test_missing_contrib_extra(datadir, script_runner):
+def test_missing_contrib_extra(script_runner):
     module_name = "requests"
 
     # hide
     CACHE_MODULE, sys.modules[module_name] = sys.modules[module_name], None
     assert sys.modules[module_name] is None
 
-    archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
-    command = (
-        f'pyhf contrib download {archive_url} {datadir.join("likelihoods").strpath}'
-    )
+    command = "pyhf contrib --help"
     ret = script_runner.run(*shlex.split(command))
     assert (
         "import of requests halted; None in sys.modules"
-        + "\nInstallation of the contrib extra is required for: pyhf contrib download"
+        + "\nInstallation of the contrib extra is required to use the contrib CLI API"
         + "\nPlease install with: python -m pip install pyhf[contrib]"
         in ret.stdout
     )
-    assert (
-        "ModuleNotFoundError: import of requests halted; None in sys.modules"
-        in ret.stderr
-    )
+    assert "" == ret.stderr
+    assert ret.success
+
+    command = "pyhf contrib download --help"
+    ret = script_runner.run(*shlex.split(command))
+    assert "" == ret.stdout
+    assert "Error: No such command 'download'." in ret.stderr
     assert not ret.success
 
     # put back
