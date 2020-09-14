@@ -185,11 +185,6 @@ def setup_1bin_lumi():
     return get_setup_1bin_lumi()
 
 
-@pytest.fixture(scope='module')
-def source_1bin_normsys():
-    return get_source_1bin_normsys()
-
-
 def get_spec_1bin_normsys(source=get_source_1bin_normsys()):
     spec = {
         'channels': [
