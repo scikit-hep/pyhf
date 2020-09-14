@@ -2,6 +2,7 @@
 import numpy as np
 import logging
 from scipy.special import gammaln
+from scipy import special
 from scipy.stats import norm, poisson
 
 
@@ -74,6 +75,46 @@ class numpy_backend(object):
             NumPy ndarray: A clipped `tensor`
         """
         return np.clip(tensor_in, min_value, max_value)
+
+    def erf(self, tensor_in):
+        """
+        The error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erf(a)
+            array([-0.99532227, -0.84270079,  0.        ,  0.84270079,  0.99532227])
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            NumPy ndarray: The values of the error function at the given points.
+        """
+        return special.erf(tensor_in)
+
+    def erfinv(self, tensor_in):
+        """
+        The inverse of the error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
+            array([-2., -1.,  0.,  1.,  2.])
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            NumPy ndarray: The values of the inverse of the error function at the given points.
+        """
+        return special.erfinv(tensor_in)
 
     def tile(self, tensor_in, repeats):
         """
