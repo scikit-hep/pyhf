@@ -73,32 +73,30 @@ def get_spec_1bin_shapesys(source=get_source_1bin_example1()):
     return spec
 
 
-def get_expected_result_1bin_shapesys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.06372011644331387,
-                0.1509686618126131,
-                0.3279657430196915,
-                0.604613569829645,
-                0.8662652332047568,
-            ],
-            "obs": 0.45418892944576333,
-        }
+def get_expected_result_1bin_shapesys():
+    expected_result = {
+        "exp": [
+            0.06372011644331387,
+            0.1509686618126131,
+            0.3279657430196915,
+            0.604613569829645,
+            0.8662652332047568,
+        ],
+        "obs": 0.45418892944576333,
+    }
     return expected_result
 
 
 def get_setup_1bin_shapesys(
     source=get_source_1bin_example1(),
     spec=get_spec_1bin_shapesys(get_source_1bin_example1()),
-    mu=1,
-    expected_result=get_expected_result_1bin_shapesys(1.0),
+    expected_result=get_expected_result_1bin_shapesys(),
     config={'init_pars': 2, 'par_bounds': 2},
 ):
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -147,32 +145,30 @@ def get_spec_1bin_lumi():
     return spec
 
 
-def get_expected_result_1bin_lumi(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.01060400765567206,
-                0.04022451457730529,
-                0.13614632580079802,
-                0.37078985531427255,
-                0.7110468540175344,
-            ],
-            "obs": 0.010473144401519705,
-        }
+def get_expected_result_1bin_lumi():
+    expected_result = {
+        "exp": [
+            0.01060400765567206,
+            0.04022451457730529,
+            0.13614632580079802,
+            0.37078985531427255,
+            0.7110468540175344,
+        ],
+        "obs": 0.010473144401519705,
+    }
     return expected_result
 
 
 def get_setup_1bin_lumi(
     source=get_source_1bin_example1(),
     spec=get_spec_1bin_lumi(),
-    mu=1,
-    expected_result=get_expected_result_1bin_lumi(1.0),
+    expected_result=get_expected_result_1bin_lumi(),
     config={'init_pars': 2, 'par_bounds': 2},
 ):
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -213,32 +209,30 @@ def get_spec_1bin_normsys(source=get_source_1bin_normsys()):
     return spec
 
 
-def get_expected_result_1bin_normsys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                7.472581399417304e-10,
-                5.741738272450336e-08,
-                3.690120950161796e-06,
-                0.00016966882793076826,
-                0.004392935288879465,
-            ],
-            "obs": 0.0006735336290569807,
-        }
+def get_expected_result_1bin_normsys():
+    expected_result = {
+        "exp": [
+            7.472581399417304e-10,
+            5.741738272450336e-08,
+            3.690120950161796e-06,
+            0.00016966882793076826,
+            0.004392935288879465,
+        ],
+        "obs": 0.0006735336290569807,
+    }
     return expected_result
 
 
 def get_setup_1bin_normsys(
     source=get_source_1bin_normsys(),
     spec=get_spec_1bin_normsys(get_source_1bin_normsys()),
-    mu=1,
-    expected_result=get_expected_result_1bin_normsys(1.0),
+    expected_result=get_expected_result_1bin_normsys(),
     config={'init_pars': 2, 'par_bounds': 2},
 ):
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -282,32 +276,30 @@ def get_spec_2bin_histosys(source=get_source_2bin_histosys_example2()):
     return spec
 
 
-def get_expected_result_2bin_histosys(mu=1):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                7.133904244038431e-06,
-                0.00012547100627138575,
-                0.001880010666437615,
-                0.02078964907605385,
-                0.13692494523572218,
-            ],
-            "obs": 0.1001463460725534,
-        }
+def get_expected_result_2bin_histosys():
+    expected_result = {
+        "exp": [
+            7.133904244038431e-06,
+            0.00012547100627138575,
+            0.001880010666437615,
+            0.02078964907605385,
+            0.13692494523572218,
+        ],
+        "obs": 0.1001463460725534,
+    }
     return expected_result
 
 
 def get_setup_2bin_histosys(
     source=get_source_2bin_histosys_example2(),
     spec=get_spec_2bin_histosys(get_source_2bin_histosys_example2()),
-    mu=1,
-    expected_result=get_expected_result_2bin_histosys(1.0),
+    expected_result=get_expected_result_2bin_histosys(),
     config={'init_pars': 2, 'par_bounds': 2},
 ):
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -368,33 +360,31 @@ def get_spec_2bin_2channel(source=get_source_2bin_2channel_example1()):
     return spec
 
 
-def get_expected_result_2bin_2channel(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.0004349234603527283,
-                0.003422361539161119,
-                0.02337454317608372,
-                0.12186650297311125,
-                0.40382274594391104,
-            ],
-            "obs": 0.0563327694384318,
-        }
+def get_expected_result_2bin_2channel():
+    expected_result = {
+        "exp": [
+            0.0004349234603527283,
+            0.003422361539161119,
+            0.02337454317608372,
+            0.12186650297311125,
+            0.40382274594391104,
+        ],
+        "obs": 0.0563327694384318,
+    }
     return expected_result
 
 
 def get_setup_2bin_2channel(
     source=get_source_2bin_2channel_example1(),
     spec=get_spec_2bin_2channel(get_source_2bin_2channel_example1()),
-    mu=1,
-    expected_result=get_expected_result_2bin_2channel(1.0),
+    expected_result=get_expected_result_2bin_2channel(),
     config={'init_pars': 5, 'par_bounds': 5},
 ):
     # 1 mu + 2 gammas for 2 channels each
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -462,37 +452,35 @@ def get_spec_2bin_2channel_couplednorm(source=get_source_2bin_2channel_coupledno
     return spec
 
 
-def get_expected_result_2bin_2channel_couplednorm(mu=1.0):
+def get_expected_result_2bin_2channel_couplednorm():
     # NB: mac/linux differ for exp[0]
     # Mac:   0.055222676184648795
     # Linux: 0.05522273289103311
     # Fill with midpoint of both values
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.05522270453784095,
-                0.1361301880753241,
-                0.30686879632329855,
-                0.5839437910061168,
-                0.8554708284963864,
-            ],
-            "obs": 0.5906216823766879,
-        }
+    expected_result = {
+        "exp": [
+            0.05522270453784095,
+            0.1361301880753241,
+            0.30686879632329855,
+            0.5839437910061168,
+            0.8554708284963864,
+        ],
+        "obs": 0.5906216823766879,
+    }
     return expected_result
 
 
 def get_setup_2bin_2channel_couplednorm(
     source=get_source_2bin_2channel_couplednorm(),
     spec=get_spec_2bin_2channel_couplednorm(get_source_2bin_2channel_couplednorm()),
-    mu=1,
-    expected_result=get_expected_result_2bin_2channel_couplednorm(1.0),
+    expected_result=get_expected_result_2bin_2channel_couplednorm(),
     config={'init_pars': 2, 'par_bounds': 2},
 ):
     # 1 mu + 1 alpha
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -583,18 +571,17 @@ def get_spec_2bin_2channel_coupledhistosys(
     return spec
 
 
-def get_expected_result_2bin_2channel_coupledhistosys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                1.7654378902209275e-05,
-                0.00026266409358853543,
-                0.0033401113778672156,
-                0.03152286332324451,
-                0.17907927340107824,
-            ],
-            "obs": 0.07967400132261188,
-        }
+def get_expected_result_2bin_2channel_coupledhistosys():
+    expected_result = {
+        "exp": [
+            1.7654378902209275e-05,
+            0.00026266409358853543,
+            0.0033401113778672156,
+            0.03152286332324451,
+            0.17907927340107824,
+        ],
+        "obs": 0.07967400132261188,
+    }
     return expected_result
 
 
@@ -603,15 +590,14 @@ def get_setup_2bin_2channel_coupledhistosys(
     spec=get_spec_2bin_2channel_coupledhistosys(
         get_source_2bin_2channel_coupledhisto()
     ),
-    mu=1,
-    expected_result=get_expected_result_2bin_2channel_coupledhistosys(1.0),
+    expected_result=get_expected_result_2bin_2channel_coupledhistosys(),
     config={'auxdata': 1, 'init_pars': 2, 'par_bounds': 2},
 ):
     # 1 mu 1 shared histosys
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
@@ -670,18 +656,17 @@ def get_spec_2bin_2channel_coupledshapefactor(
     return spec
 
 
-def get_expected_result_2bin_2channel_coupledshapefactor(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            'obs': 0.5421679124909312,
-            'exp': [
-                0.013753299929451691,
-                0.048887400056355966,
-                0.15555296253957684,
-                0.4007561343326305,
-                0.7357169630955912,
-            ],
-        }
+def get_expected_result_2bin_2channel_coupledshapefactor():
+    expected_result = {
+        'obs': 0.5421679124909312,
+        'exp': [
+            0.013753299929451691,
+            0.048887400056355966,
+            0.15555296253957684,
+            0.4007561343326305,
+            0.7357169630955912,
+        ],
+    }
     return expected_result
 
 
@@ -690,15 +675,14 @@ def get_setup_2bin_2channel_coupledshapefactor(
     spec=get_spec_2bin_2channel_coupledshapefactor(
         get_source_2bin_2channel_coupledshapefactor()
     ),
-    mu=1,
-    expected_result=get_expected_result_2bin_2channel_coupledshapefactor(1.0),
+    expected_result=get_expected_result_2bin_2channel_coupledshapefactor(),
     config={'auxdata': 0, 'init_pars': 3, 'par_bounds': 3},
 ):
     # 1 mu 2 shared shapefactors
     return {
         'source': source,
         'spec': spec,
-        'mu': mu,
+        'mu': 1.0,
         'expected': {'result': expected_result, 'config': config},
     }
 
