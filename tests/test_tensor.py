@@ -39,6 +39,19 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
     assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
+    assert tb.tolist(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0]))) == pytest.approx(
+        [
+            -0.99532227,
+            -0.84270079,
+            0.0,
+            0.84270079,
+            0.99532227,
+        ],
+        1e-7,
+    )
+    assert tb.tolist(
+        tb.erfinv(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0])))
+    ) == pytest.approx([-2.0, -1.0, 0.0, 1.0, 2.0], 1e-6)
     a = tb.astensor(1)
     b = tb.astensor(2)
     assert tb.tolist(a < b) is True

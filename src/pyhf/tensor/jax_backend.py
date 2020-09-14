@@ -4,6 +4,7 @@ config.update('jax_enable_x64', True)
 
 import jax.numpy as np
 from jax.scipy.special import gammaln
+from jax.scipy import special
 from jax.scipy.stats import norm, poisson
 import numpy as onp
 import logging
@@ -81,6 +82,47 @@ class jax_backend(object):
             JAX ndarray: A clipped `tensor`
         """
         return np.clip(tensor_in, min_value, max_value)
+
+    def erf(self, tensor_in):
+        """
+        The error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erf(a)
+            DeviceArray([-0.99532227, -0.84270079,  0.        ,  0.84270079,
+                          0.99532227], dtype=float64)
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            JAX ndarray: The values of the error function at the given points.
+        """
+        return special.erf(tensor_in)
+
+    def erfinv(self, tensor_in):
+        """
+        The inverse of the error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
+            DeviceArray([-2., -1.,  0.,  1.,  2.], dtype=float64)
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            JAX ndarray: The values of the inverse of the error function at the given points.
+        """
+        return special.erfinv(tensor_in)
 
     def tile(self, tensor_in, repeats):
         """

@@ -53,6 +53,48 @@ class tensorflow_backend(object):
             max_value = tf.reduce_max(tensor_in)
         return tf.clip_by_value(tensor_in, min_value, max_value)
 
+    def erf(self, tensor_in):
+        """
+        The error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> t = pyhf.tensorlib.erf(a)
+            >>> print(t)
+            tf.Tensor([-0.9953223 -0.8427007  0.         0.8427007  0.9953223], shape=(5,), dtype=float32)
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            TensorFlow Tensor: The values of the error function at the given points.
+        """
+        return tf.math.erf(tensor_in)
+
+    def erfinv(self, tensor_in):
+        """
+        The inverse of the error function of complex argument.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
+            >>> t = pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
+            >>> print(t)
+            tf.Tensor([-2.000001   -0.99999964  0.          0.99999964  1.9999981 ], shape=(5,), dtype=float32)
+
+        Args:
+            tensor_in (`tensor`): The input tensor object
+
+        Returns:
+            TensorFlow Tensor: The values of the inverse of the error function at the given points.
+        """
+        return tf.math.erfinv(tensor_in)
+
     def tile(self, tensor_in, repeats):
         """
         Repeat tensor data along a specific dimension
