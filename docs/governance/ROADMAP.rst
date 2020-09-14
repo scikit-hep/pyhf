@@ -84,7 +84,7 @@ Roadmap
       #518) [2019-Q3]
    -  |check| Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue
       #517) [2019-Q3]
-   -  |uncheck| Investigate rewrite of pytest fixtures to use modern pytest
+   -  |check| Investigate rewrite of pytest fixtures to use modern pytest
       (Issue #370) [2019-Q3 → 2019-Q4]
    -  |check| Factorize out the statistical fitting portion into
       ``pyhf.infer`` (PR #531) [2019-Q3 → 2019-Q4]

@@ -32,3 +32,32 @@ ignore = [
     'CONTRIBUTING.md',
     'AUTHORS',
 ]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--ignore=setup.py --ignore=validation/ --ignore=binder/ --ignore=docs/ --cov=pyhf --cov-report=term-missing --cov-config=.coveragerc --cov-report xml --doctest-modules --doctest-glob='*.rst'"
+testpaths = [
+    "src",
+    "tests",
+]
+markers = [
+    "fail_jax",
+    "fail_numpy",
+    "fail_numpy_minuit",
+    "fail_pytorch",
+    "fail_pytorch64",
+    "fail_tensorflow",
+    "only_jax",
+    "only_numpy",
+    "only_numpy_minuit",
+    "only_pytorch",
+    "only_pytorch64",
+    "only_tensorflow",
+    "skip_jax",
+    "skip_numpy",
+    "skip_numpy_minuit",
+    "skip_pytorch",
+    "skip_pytorch64",
+    "skip_tensorflow",
+]
