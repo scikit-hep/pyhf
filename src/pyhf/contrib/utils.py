@@ -52,10 +52,16 @@ try:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                with tarfile.open(
-                    mode="r|gz", fileobj=BytesIO(response.content)
-                ) as archive:
-                    archive.extractall(output_directory)
+                try:
+                    with tarfile.open(
+                        mode="r|gz", fileobj=BytesIO(response.content)
+                    ) as archive:
+                        archive.extractall(output_directory)
+                except tarfile.ReadError:  # If not a gzip file
+                    with tarfile.open(
+                        mode="r|", fileobj=BytesIO(response.content)
+                    ) as archive:
+                        archive.extractall(output_directory)
 
 
 except ModuleNotFoundError as excep:
