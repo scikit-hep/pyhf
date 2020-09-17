@@ -47,12 +47,12 @@ try:
 
         .. code-block:: shell
 
-            $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 3L-likelihoods
+            $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 1Lbb-likelihoods
 
             \b
-            3L-likelihoods/patchset.json
-            3L-likelihoods/README.md
-            3L-likelihoods/BkgOnly.json
+            1Lbb-likelihoods/patchset.json
+            1Lbb-likelihoods/README.md
+            1Lbb-likelihoods/BkgOnly.json
 
         Raises:
             :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
