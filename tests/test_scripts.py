@@ -608,17 +608,22 @@ def test_missing_contrib_extra(script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert (
         "import of requests halted; None in sys.modules"
-        + "\nInstallation of the contrib extra is required to use the contrib CLI API"
+        + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
         + "\nPlease install with: python -m pip install pyhf[contrib]"
         in ret.stdout
     )
     assert "" == ret.stderr
     assert ret.success
 
-    command = "pyhf contrib download --help"
+    command = "pyhf contrib download"
     ret = script_runner.run(*shlex.split(command))
-    assert "" == ret.stdout
-    assert "Error: No such command 'download'." in ret.stderr
+    assert (
+        "module 'pyhf.contrib.utils' has no attribute 'download'"
+        + "\nInstallation of the contrib extra is required to use the contrib CLI API"
+        + "\nPlease install with: python -m pip install pyhf[contrib]"
+        in ret.stdout
+    )
+    assert "" == ret.stderr
     assert not ret.success
 
     # put back
