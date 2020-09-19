@@ -22,8 +22,8 @@ try:
             >>> from pyhf.contrib.utils import download
             >>> download("https://www.hepdata.net/record/resource/1408476?view=true", "1Lbb-likelihoods")
             >>> import os
-            >>> os.listdir("1Lbb-likelihoods")
-            ['patchset.json', 'README.md', 'BkgOnly.json']
+            >>> sorted(os.listdir("1Lbb-likelihoods"))
+            ['BkgOnly.json', 'README.md', 'patchset.json']
             >>> download("https://www.hepdata.net/record/resource/1408476?view=true", "1Lbb-likelihoods.tar.gz", compress=True)
             >>> import glob
             >>> glob.glob("1Lbb-likelihoods.tar.gz")
