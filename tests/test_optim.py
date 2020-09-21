@@ -46,12 +46,12 @@ def test_scipy_minimize(backend, capsys):
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
     pyhf.set_backend(tensorlib(precision=precision), optimizer())
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
-    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+    model = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
     # numpy does not support grad
     if pyhf.tensorlib.name == 'numpy' and do_grad:
         with pytest.raises(pyhf.exceptions.Unsupported):
-            pyhf.infer.mle.fit(data, m, do_grad=do_grad)
+            pyhf.infer.mle.fit(data, model, do_grad=do_grad)
     else:
         identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
         expected = {
@@ -102,7 +102,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'do_grad-minuit-jax-64b': [0.5002739611532436, 0.9996310135970794],
         }[identifier]
 
-        result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
+        result = pyhf.infer.mle.fit(data, model, do_grad=do_grad, do_stitch=do_stitch)
 
         rtol = 2e-06
         # handle cases where macos and ubuntu provide very different results numerical
