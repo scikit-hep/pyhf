@@ -26,6 +26,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
+        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/iminuit.git@77da94ba794e4dcdb52e5aa6955247a66d4eb02c
         python -m pip list
     - name: Test with pytest
       run: |
