@@ -3,7 +3,6 @@ name: HEAD of dependencies
 on:
   workflow_dispatch:
   # Run daily at 0:01 UTC
-  push:
   schedule:
   - cron:  '1 0 * * *'
 
