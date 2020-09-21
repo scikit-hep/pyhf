@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
         python -m pip install cython
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/iminuit.git@31799ac188798ad8166375cc4c3a0cfcb2825995
+        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/iminuit.git@5259fe9e5ca0444adb9e71660e356176230c2d93
         python -m pip list
     - name: Test with pytest
       run: |
