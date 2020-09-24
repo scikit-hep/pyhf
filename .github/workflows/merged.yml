@@ -3,6 +3,7 @@ name: Merged PR
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
 
 jobs:
   binder:
