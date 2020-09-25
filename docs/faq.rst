@@ -20,6 +20,14 @@ If you have a question about the use of ``pyhf`` not covered in the `documentati
 
 If you believe you have found a bug in ``pyhf``, please report it in the `GitHub Issues <https://github.com/scikit-hep/pyhf/issues/new?template=Bug-Report.md&labels=bug&title=Bug+Report+:+Title+Here>`__.
 
+How can I get updates on ``pyhf``?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you're interested in getting updates from the ``pyhf`` dev team and release
+announcements you can join the |pyhf-announcements mailing list|_.
+
+.. |pyhf-announcements mailing list| replace:: ``pyhf-announcements`` mailing list
+.. _pyhf-announcements mailing list: https://groups.google.com/group/pyhf-announcements/subscribe
+
 Is it possible to set the backend from the CLI?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
