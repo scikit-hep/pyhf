@@ -60,9 +60,7 @@ extensions = [
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
-intersphinx_mapping = {
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
-}
+intersphinx_mapping = {'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None)}
 
 # Github repo
 issues_github_path = 'scikit-hep/pyhf'
