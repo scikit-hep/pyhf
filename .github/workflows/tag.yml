@@ -66,11 +66,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install "bump2version~=1.0"
-    - name: Run bumpversion ${{ env['BV_PART'] }}
+    - name: Run bump2version ${{ env['BV_PART'] }}
       run: |
         OLD_TAG=$(git describe --tags --abbrev=0)
         echo "::set-env name=OLD_TAG::${OLD_TAG}"
-        bumpversion $BV_PART --message "Bump version: {current_version} → {new_version}
+        bump2version $BV_PART --message "Bump version: {current_version} → {new_version}
 
         Triggered by #${PR_NUMBER} via GitHub Actions."
         NEW_TAG=$(git describe --tags --abbrev=0)
