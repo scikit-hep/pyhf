@@ -84,4 +84,4 @@ A release can be created from any PR created by a core developer by adding a
 Once the PR is tagged with the label, the GitHub Actions bot will post a comment
 with information on the actions it will take once the PR is merged. When the PR
 has been reviewed, approved, and merged, the Tag Creator workflow will automatically
-create a new release with ``bumpversion`` and then deploy the release to PyPI.
+create a new release with ``bump2version`` and then deploy the release to PyPI.
