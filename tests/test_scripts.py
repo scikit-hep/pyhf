@@ -4,6 +4,7 @@ import pyhf
 import time
 import sys
 import pytest
+from click.testing import CliRunner
 
 
 def test_version(script_runner):
@@ -597,38 +598,67 @@ def test_patchset_download(datadir, script_runner, archive):
     )
 
 
-def test_missing_contrib_extra(script_runner):
-    module_name = "requests"
+def test_missing_contrib_extra(capsys):
+    sys.modules["requests"] = None
+    # Force clean state
+    _del_modules = [
+        "pyhf.cli",
+        "pyhf.cli.contrib",
+        "pyhf.contrib",
+        "pyhf.contrib.utils",
+    ]
+    for module in _del_modules:
+        if module in sys.modules.keys():
+            del sys.modules[module]
 
-    # hide
-    CACHE_MODULE, sys.modules[module_name] = sys.modules[module_name], None
-    assert sys.modules[module_name] is None
+    import pyhf.cli
 
-    command = "pyhf contrib --help"
-    ret = script_runner.run(*shlex.split(command))
+    # NOTE: Only needed for pyflakes
+    # TODO: Remvoe when moving from pyflakes to flake8
+    pyhf.cli
+
+    captured = capsys.readouterr()
     assert (
         "import of requests halted; None in sys.modules"
         + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
         + "\nPlease install with: python -m pip install pyhf[contrib]"
-        in ret.stdout
+        in captured.out
     )
-    assert "" == ret.stderr
-    assert ret.success
 
-    command = "pyhf contrib download"
-    ret = script_runner.run(*shlex.split(command))
+
+def test_missing_contrib_download():
+    sys.modules["requests"] = None
+    # Force clean state
+    _del_modules = [
+        "pyhf.cli",
+        "pyhf.cli.contrib",
+        "pyhf.contrib",
+        "pyhf.contrib.utils",
+    ]
+    for module in _del_modules:
+        if module in sys.modules.keys():
+            del sys.modules[module]
+
+    from pyhf.cli.contrib import download
+
+    runner = CliRunner(mix_stderr=False)
+    result = runner.invoke(
+        download,
+        [
+            "--verbose",
+            "https://www.hepdata.net/record/resource/1408476?view=true",
+            "1Lbb-likelihoods",
+        ],
+    )
+
     assert (
         "module 'pyhf.contrib.utils' has no attribute 'download'"
         + "\nInstallation of the contrib extra is required to use the contrib CLI API"
         + "\nPlease install with: python -m pip install pyhf[contrib]"
-        in ret.stdout
+        in result.stdout
     )
-    assert "" == ret.stderr
-    assert not ret.success
-
-    # put back
-    CACHE_MODULE, sys.modules[module_name] = None, CACHE_MODULE
-    assert sys.modules[module_name] is not None
+    assert "" == result.stderr
+    assert 0 == result.exit_code
 
 
 @pytest.mark.parametrize('output_file', [False, True])
