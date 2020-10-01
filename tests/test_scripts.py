@@ -614,7 +614,7 @@ def test_missing_contrib_extra(capsys):
     import pyhf.cli
 
     # NOTE: Only needed for pyflakes
-    # TODO: Remvoe when moving from pyflakes to flake8
+    # TODO: Remove when moving from pyflakes to flake8
     pyhf.cli
 
     captured = capsys.readouterr()
