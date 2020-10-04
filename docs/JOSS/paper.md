@@ -29,3 +29,10 @@ bibliography: paper.bib
 ---
 
 # Summary
+
+# Acknowledgements
+
+We would like to thank Kyle Cranmer for discussions on `HistFactory` and guidance in the early stages of `pyhf` development, and thank our fellow developers in the Scikit-HEP community for their continued support and feedback.
+Matthew Feickert has received support to work on `pyhf` provided by NSF cooperative agreement OAC-1836650 (IRIS-HEP) and grant OAC-1450377 (DIANA/HEP).
+
+# References
