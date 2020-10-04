@@ -38,7 +38,7 @@ For measurements based on binned data (histograms), the `HistFactory` family of 
 
 ## Impact on Physics
 
-In addition to enabling the first publication of full likelihoods by an LHC experiment [@ATL-PHYS-PUB-2019-029], `pyhf` has been used by the `SModels` library to improve the reinterpretation of results of searches for new physics at LHC experiments [@Abdallah:2020pec,@Khosa:2020zar,@Alguero:2020grj].
+In addition to enabling the first publication of full likelihoods by an LHC experiment [@ATL-PHYS-PUB-2019-029], `pyhf` has been used by the `SModels` library to improve the reinterpretation of results of searches for new physics at LHC experiments [@Abdallah:2020pec], [@Khosa:2020zar], [@Alguero:2020grj].
 
 # Acknowledgements
 
