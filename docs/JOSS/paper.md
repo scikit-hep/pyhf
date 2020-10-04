@@ -34,7 +34,7 @@ Measurements in High Energy Physics (HEP) rely on determining the compatibility 
 The relationship between them is often formalised in a statistical model $f(\mathbf{x}|\mathbf{\phi})$ describing the probability of data $\mathbf{x}$ given model parameters $\mathbf{\phi}$.
 Given observed data, the likelihood $\mathcal{L}(\mathbf{\phi})$ then serves as the basis to test hypotheses on the parameters $\mathbf{\phi}$.
 For measurements based on binned data (histograms), the `HistFactory` family of statistical models [@Cranmer:1456844] has been widely used in both Standard Model measurements [@HIGG-2013-02] as well as searches for new physics [@ATLAS-CONF-2018-041].
-`pyhf` implements a declarative, plain-text format for describing `HistFactory`-based likelihoods that is targeted for reinterpretation and long-term preservation in analysis data repositories such as HEPData [@Maguire:2017ypu].
+`pyhf` is the first pure-Python implementation of the `HistFactory` model specification, and implements a declarative, plain-text format for describing `HistFactory`-based likelihoods that is targeted for reinterpretation and long-term preservation in analysis data repositories such as HEPData [@Maguire:2017ypu].
 
 Through adoption of open source "tensor" computational Python libraries, `pyhf` decreases the abstractions between a physicist performing an analysis and the statistical modeling without sacrificing computational speed.
 By taking advantage of tensor calculations, `pyhf` outperforms the traditional `C++` implementation of `HistFactory` on data from real LHC analyses.
