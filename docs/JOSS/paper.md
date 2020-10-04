@@ -45,6 +45,11 @@ These alternative backends support hardware acceleration on GPUs, and in the cas
 
 In addition to enabling the first publication of full likelihoods by an LHC experiment [@ATL-PHYS-PUB-2019-029], `pyhf` has been used by the `SModels` library to improve the reinterpretation of results of searches for new physics at LHC experiments [@Abdallah:2020pec], [@Khosa:2020zar], [@Alguero:2020grj].
 
+## Future work
+
+Future development aims to provide support limit setting through pseudoexperiment generation in the regimes in which asymptotic approximations [@Cowan:2010js] are no longer valid.
+Further improvements to the performance of the library as well as API refinement are also planned.
+
 # Acknowledgements
 
 We would like to thank Kyle Cranmer for discussions on `HistFactory` and guidance in the early stages of `pyhf` development, and thank our fellow developers in the Scikit-HEP community for their continued support and feedback.
