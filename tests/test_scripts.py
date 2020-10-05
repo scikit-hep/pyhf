@@ -628,6 +628,7 @@ def test_missing_contrib_download():
         else:
             import_module("pyhf.cli")
 
+        # Force environment for runner
         for module in [
             "pyhf.cli.contrib",
             "pyhf.contrib",
