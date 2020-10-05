@@ -593,6 +593,7 @@ def test_patchset_download(datadir, script_runner, archive):
     command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
+    # TODO: https://github.com/scikit-hep/pyhf/issues/1075
     # Python 3.6 has different return error than 3.7, 3.8
     assert (
         "ssl.CertificateError: hostname 'www.fail.org' doesn't match"
