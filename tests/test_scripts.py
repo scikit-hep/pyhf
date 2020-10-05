@@ -5,6 +5,9 @@ import time
 import sys
 import pytest
 from click.testing import CliRunner
+from unittest import mock
+from importlib import reload
+from importlib import import_module
 
 
 def test_version(script_runner):
@@ -599,66 +602,59 @@ def test_patchset_download(datadir, script_runner, archive):
 
 
 def test_missing_contrib_extra(capsys):
-    sys.modules["requests"] = None
-    # Force clean state
-    _del_modules = [
-        "pyhf.cli",
-        "pyhf.cli.contrib",
-        "pyhf.contrib",
-        "pyhf.contrib.utils",
-    ]
-    for module in _del_modules:
-        if module in sys.modules.keys():
-            del sys.modules[module]
+    with mock.patch.dict(sys.modules):
+        sys.modules["requests"] = None
+        if "pyhf.contrib.utils" in sys.modules:
+            reload(sys.modules["pyhf.contrib.utils"])
+        else:
+            import_module("pyhf.cli")
 
-    import pyhf.cli
-
-    # NOTE: Only needed for pyflakes
-    # TODO: Remove when moving from pyflakes to flake8
-    pyhf.cli
-
-    captured = capsys.readouterr()
+    out, err = capsys.readouterr()
     assert (
         "import of requests halted; None in sys.modules"
         + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
         + "\nPlease install with: python -m pip install pyhf[contrib]"
-        in captured.out
+        in out
     )
+    assert err == ""
 
 
 def test_missing_contrib_download():
-    sys.modules["requests"] = None
-    # Force clean state
-    _del_modules = [
-        "pyhf.cli",
-        "pyhf.cli.contrib",
-        "pyhf.contrib",
-        "pyhf.contrib.utils",
-    ]
-    for module in _del_modules:
-        if module in sys.modules.keys():
-            del sys.modules[module]
+    with mock.patch.dict(sys.modules):
+        sys.modules["requests"] = None
+        if "pyhf.cli" in sys.modules:
+            reload(sys.modules["pyhf.cli"])
+        else:
+            import_module("pyhf.cli")
 
-    from pyhf.cli.contrib import download
+        for module in [
+            "pyhf.cli.contrib",
+            "pyhf.contrib",
+            "pyhf.contrib.utils",
+        ]:
+            if module in sys.modules:
+                del sys.modules[module]
 
-    runner = CliRunner(mix_stderr=False)
-    result = runner.invoke(
-        download,
-        [
-            "--verbose",
-            "https://www.hepdata.net/record/resource/1408476?view=true",
-            "1Lbb-likelihoods",
-        ],
-    )
+        from pyhf.cli.contrib import download
 
-    assert (
-        "module 'pyhf.contrib.utils' has no attribute 'download'"
-        + "\nInstallation of the contrib extra is required to use the contrib CLI API"
-        + "\nPlease install with: python -m pip install pyhf[contrib]"
-        in result.stdout
-    )
-    assert "" == result.stderr
-    assert 0 == result.exit_code
+        runner = CliRunner(mix_stderr=False)
+        result = runner.invoke(
+            download,
+            [
+                "--verbose",
+                "https://www.hepdata.net/record/resource/1408476?view=true",
+                "1Lbb-likelihoods",
+            ],
+        )
+
+        assert (
+            "module 'pyhf.contrib.utils' has no attribute 'download'"
+            + "\nInstallation of the contrib extra is required to use the contrib CLI API"
+            + "\nPlease install with: python -m pip install pyhf[contrib]"
+            in result.stdout
+        )
+        assert "" == result.stderr
+        assert 0 == result.exit_code
 
 
 @pytest.mark.parametrize('output_file', [False, True])
