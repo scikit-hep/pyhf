@@ -40,6 +40,7 @@ Through adoption of open source "tensor" computational Python libraries, `pyhf` 
 By taking advantage of tensor calculations, `pyhf` outperforms the traditional `C++` implementation of `HistFactory` on data from real LHC analyses.
 `pyhf`'s default computational backend is built from NumPy and SciPy, and supports TensorFlow, PyTorch, and JAX as alternative backend choices.
 These alternative backends support hardware acceleration on GPUs, and in the case of JAX JIT compilation, as well as auto-differentiation allowing for calculating the full gradient of the likelihood function &mdash; all contributing to speeding up fits.
+The source code for `pyhf` has been archived on Zenodo with the linked DOI: [@pyhf_zenodo]
 
 ## Impact on Physics
 
