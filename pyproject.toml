@@ -28,6 +28,7 @@ ignore = [
     'pyproject.toml',
     'pytest.ini',
     'codecov.yml',
+    'codemeta.json',
     'CODE_OF_CONDUCT.md',
     'CONTRIBUTING.md',
     'AUTHORS',
