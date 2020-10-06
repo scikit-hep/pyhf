@@ -23,14 +23,14 @@
             "givenName": "Matthew",
             "familyName": "Feickert",
             "email": "matthew.feickert@cern.ch"
-        }
+        },
         {
             "@id": "https://orcid.org/0000-0001-6616-3433",
             "@type": "Person",
             "givenName": "Giordon",
             "familyName": "Stark",
             "email": "gstark@cern.ch"
-        },
+        }
     ],
     "softwareRequirements": [
         {
