@@ -59,6 +59,6 @@ Further improvements to the performance of the library as well as API refinement
 # Acknowledgements
 
 We would like to thank our fellow developers in the Scikit-HEP community for their continued support and feedback.
-Matthew Feickert has received support to work on `pyhf` provided by NSF cooperative agreement OAC-1836650 (IRIS-HEP) and grant OAC-1450377 (DIANA/HEP).
+Matthew Feickert and Kyle Cranmer have received support for work related to `pyhf` provided by NSF cooperative agreement OAC-1836650 (IRIS-HEP) and grant OAC-1450377 (DIANA/HEP).
 
 # References
