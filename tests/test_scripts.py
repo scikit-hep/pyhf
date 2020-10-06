@@ -611,7 +611,7 @@ def test_missing_contrib_extra(caplog):
         else:
             import_module("pyhf.cli")
 
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.ERROR):
         assert (
             "import of requests halted; None in sys.modules"
             + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
@@ -651,7 +651,7 @@ def test_missing_contrib_download(caplog):
         )
         assert result.exit_code == 0
 
-        with caplog.at_level(logging.INFO):
+        with caplog.at_level(logging.ERROR):
             assert (
                 "module 'pyhf.contrib.utils' has no attribute 'download'"
                 + "\nInstallation of the contrib extra is required to use the contrib CLI API"
