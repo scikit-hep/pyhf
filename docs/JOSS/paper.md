@@ -17,6 +17,9 @@ authors:
   - name: Giordon Stark
     orcid: 0000-0001-6616-3433
     affiliation: 3
+  - name: Kyle Cranmer
+    orcid: 0000-0002-5769-7094
+    affiliation: 4
 affiliations:
  - name: CERN
    index: 1
@@ -24,6 +27,8 @@ affiliations:
    index: 2
  - name: SCIPP, University of California, Santa Cruz
    index: 3
+ - name: New York University
+   index: 4
 date: 5 October 2020
 bibliography: paper.bib
 ---
@@ -53,7 +58,7 @@ Further improvements to the performance of the library as well as API refinement
 
 # Acknowledgements
 
-We would like to thank Kyle Cranmer for discussions on `HistFactory` and guidance in the early stages of `pyhf` development, and thank our fellow developers in the Scikit-HEP community for their continued support and feedback.
+We would like to thank our fellow developers in the Scikit-HEP community for their continued support and feedback.
 Matthew Feickert has received support to work on `pyhf` provided by NSF cooperative agreement OAC-1836650 (IRIS-HEP) and grant OAC-1450377 (DIANA/HEP).
 
 # References
