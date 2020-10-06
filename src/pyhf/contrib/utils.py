@@ -59,9 +59,8 @@ try:
 
 
 except ModuleNotFoundError as excep:
-    exception_info = (
+    log.error(
         str(excep)
         + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
         + "\nPlease install with: python -m pip install pyhf[contrib]\n"
     )
-    log.error(exception_info)
