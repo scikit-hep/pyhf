@@ -649,6 +649,7 @@ def test_missing_contrib_download(caplog):
                 "1Lbb-likelihoods",
             ],
         )
+        assert result.exit_code == 0
 
         with caplog.at_level(logging.INFO):
             assert (
