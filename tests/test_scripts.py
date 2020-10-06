@@ -3,6 +3,7 @@ import shlex
 import pyhf
 import time
 import sys
+import logging
 import pytest
 from click.testing import CliRunner
 from unittest import mock
@@ -602,7 +603,7 @@ def test_patchset_download(datadir, script_runner, archive):
     )
 
 
-def test_missing_contrib_extra(capsys):
+def test_missing_contrib_extra(caplog):
     with mock.patch.dict(sys.modules):
         sys.modules["requests"] = None
         if "pyhf.contrib.utils" in sys.modules:
@@ -610,17 +611,17 @@ def test_missing_contrib_extra(capsys):
         else:
             import_module("pyhf.cli")
 
-    out, err = capsys.readouterr()
-    assert (
-        "import of requests halted; None in sys.modules"
-        + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
-        + "\nPlease install with: python -m pip install pyhf[contrib]"
-        in out
-    )
-    assert err == ""
+    with caplog.at_level(logging.INFO):
+        assert (
+            "import of requests halted; None in sys.modules"
+            + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
+            + "\nPlease install with: python -m pip install pyhf[contrib]"
+            in caplog.text
+        )
+        caplog.clear()
 
 
-def test_missing_contrib_download():
+def test_missing_contrib_download(caplog):
     with mock.patch.dict(sys.modules):
         sys.modules["requests"] = None
         if "pyhf.cli" in sys.modules:
@@ -649,14 +650,14 @@ def test_missing_contrib_download():
             ],
         )
 
-        assert (
-            "module 'pyhf.contrib.utils' has no attribute 'download'"
-            + "\nInstallation of the contrib extra is required to use the contrib CLI API"
-            + "\nPlease install with: python -m pip install pyhf[contrib]"
-            in result.stdout
-        )
-        assert "" == result.stderr
-        assert 0 == result.exit_code
+        with caplog.at_level(logging.INFO):
+            assert (
+                "module 'pyhf.contrib.utils' has no attribute 'download'"
+                + "\nInstallation of the contrib extra is required to use the contrib CLI API"
+                + "\nPlease install with: python -m pip install pyhf[contrib]"
+                in caplog.text
+            )
+            caplog.clear()
 
 
 @pytest.mark.parametrize('output_file', [False, True])

@@ -68,4 +68,4 @@ def download(archive_url, output_directory, verbose, force, compress):
             + "\nInstallation of the contrib extra is required to use the contrib CLI API"
             + "\nPlease install with: python -m pip install pyhf[contrib]\n"
         )
-        print(exception_info)
+        log.error(exception_info)
