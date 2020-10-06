@@ -65,7 +65,15 @@ extras_require['develop'] = sorted(
         extras_require['docs']
         + extras_require['lint']
         + extras_require['test']
-        + ['nbdime', 'bump2version', 'ipython', 'pre-commit', 'check-manifest', 'twine']
+        + [
+            'nbdime',
+            'bump2version',
+            'ipython',
+            'pre-commit',
+            'check-manifest',
+            'codemetapy',
+            'twine',
+        ]
     )
 )
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
