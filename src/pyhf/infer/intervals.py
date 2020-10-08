@@ -13,6 +13,25 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using a fixed scan through POI-space.
 
+    Example:
+        >>> import numpy as np
+        >>> import pyhf
+        >>> import pyhf.infer.intervals
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> scan = np.linspace(0, 5, 21)
+        >>> obs_limit, exp_limit, (scan, results) = pyhf.infer.intervals.upperlimit(
+        ...     data, model, scan, return_results=True
+        ... )
+        >>> obs_limit
+        array(1.01764089)
+        >>> exp_limit
+        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
+
     Args:
         data (`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
