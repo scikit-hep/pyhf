@@ -54,10 +54,11 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         hypotest(mu, data, model, qtilde=True, return_expected_set=True) for mu in scan
     ]
     obs = tb.astensor([[r[0]] for r in results])
-    exp = tb.astensor([[r[1][shift] for shift in range(5)] for r in results])
+    exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
     result_arrary = tb.concatenate([obs, exp], axis=1).T
 
-    limits = [_interp(level, result_arrary[i][::-1], scan[::-1]) for i in range(6)]
+    # observed limit and the (0, +-1, +-2)sigma expected limits
+    limits = [_interp(level, result_arrary[idx][::-1], scan[::-1]) for idx in range(6)]
     obs_limit, exp_limits = limits[0], limits[1:]
 
     if return_results:
