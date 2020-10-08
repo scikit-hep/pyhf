@@ -39,7 +39,6 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         scan (`Iterable`): Iterable of POI values.
         level (`float`): The threshold value to evaluate the interpolated results at.
         return_results (`bool`): Whether to return the per-point results.
-                                 Default is ``False``.
 
     Returns:
         Tuple of Tensors:
