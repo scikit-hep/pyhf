@@ -31,7 +31,9 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
               Only returned when ``return_results`` is ``True``.
     """
     tb, _ = get_backend()
-    results = [hypotest(mu, data, model, return_expected_set=True) for mu in scan]
+    results = [
+        hypotest(mu, data, model, qtilde=True, return_expected_set=True) for mu in scan
+    ]
     obs = tb.astensor([[r[0][0]] for r in results])
     exp = tb.astensor([[r[1][shift][0] for shift in range(5)] for r in results])
     result_arary = tb.concatenate([obs, exp], axis=1).T
