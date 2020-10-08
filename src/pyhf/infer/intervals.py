@@ -10,20 +10,24 @@ def _interp(x, xp, fp):
 
 def upperlimit(data, model, scan, level=0.05, return_results=False):
     """
-    Calculate an upper limit interval (0,poi_up) for a single
-    Parameter of Interest (POI) using a fixed scan through
-    POI-space.
+    Calculate an upper limit interval ``(0, poi_up)`` for a single
+    Parameter of Interest (POI) using a fixed scan through POI-space.
 
     Args:
-        data (tensor): the observed data
-        model (pyhf.Model): the statistical model
-        scan (Iterable): iterable of poi values
-        return_results (bool): whether to return the per-point results
+        data (`tensor`): The observed data.
+        model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+        scan (`Iterable`): Iterable of POI values.
+        return_results (`bool`): Whether to return the per-point results.
+                                 Default is ``False``.
 
     Returns:
-        observed limit (tensor)
-        expected limit (tensor)
-        scan results (tuple  (tensor, tensor))
+        Tuple of Tensors:
+
+            - Tensor: The observed upper limit on the POI.
+            - Tensor: The expected upper limit on the POI.
+            - Tuple of Tensors: The given ``scan`` along with the
+              :class:`~pyhf.infer.hypotest` results at each test POI.
+              Only returned when ``return_results`` is ``True``.
     """
     tb, _ = get_backend()
     results = [hypotest(mu, data, model, return_expected_set=True) for mu in scan]
