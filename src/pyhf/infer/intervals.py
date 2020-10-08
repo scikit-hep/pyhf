@@ -10,7 +10,7 @@ def _interp(x, xp, fp):
 
 
 def upperlimit(data, model, scan, level=0.05, return_results=False):
-    '''
+    """
     Calculate an upper limit interval (0,poi_up) for a single
     Parameter of Interest (POI) using a fixed scan through
     POI-space.
@@ -25,7 +25,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         observed limit (tensor)
         expected limit (tensor)
         scan results (tuple  (tensor, tensor))
-    '''
+    """
     tb, _ = get_backend()
     results = [hypotest(mu, data, model, return_expected_set=True) for mu in scan]
     obs = tb.astensor([[r[0][0]] for r in results])
