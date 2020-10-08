@@ -1,10 +1,9 @@
 from . import hypotest
 from .. import get_backend
+import numpy as np
 
 
 def _interp(x, xp, fp):
-    import numpy as np
-
     tb, _ = get_backend()
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
