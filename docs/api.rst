@@ -131,6 +131,7 @@ Inference
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
    calculators.AsymptoticCalculator
+   intervals.upperlimit
 
 Exceptions
 ----------
