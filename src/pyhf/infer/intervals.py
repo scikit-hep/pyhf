@@ -33,11 +33,12 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     tb, _ = get_backend()
     results = [hypotest(mu, data, model, return_expected_set=True) for mu in scan]
     obs = tb.astensor([[r[0][0]] for r in results])
-    exp = tb.astensor([[r[1][i][0] for i in range(5)] for r in results])
-    resarary = tb.concatenate([obs, exp], axis=1).T
+    exp = tb.astensor([[r[1][shift][0] for shift in range(5)] for r in results])
+    result_arary = tb.concatenate([obs, exp], axis=1).T
 
-    limits = [_interp(level, resarary[i][::-1], scan[::-1]) for i in range(6)]
+    limits = [_interp(level, result_arary[i][::-1], scan[::-1]) for i in range(6)]
+    obs_limit, exp_limits = limits[0], limits[1:]
 
     if return_results:
-        return limits[0], limits[1:], (scan, results)
-    return limits[0], limits[1:]
+        return obs_limit, exp_limits, (scan, results)
+    return obs_limit, exp_limits
