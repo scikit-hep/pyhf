@@ -24,12 +24,12 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> scan = np.linspace(0, 5, 21)
-        >>> obs_limit, exp_limit, (scan, results) = pyhf.infer.intervals.upperlimit(
+        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
         ...     data, model, scan, return_results=True
         ... )
         >>> obs_limit
         array(1.01764089)
-        >>> exp_limit
+        >>> exp_limits
         [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
 
     Args:
@@ -44,7 +44,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         Tuple of Tensors:
 
             - Tensor: The observed upper limit on the POI.
-            - Tensor: The expected upper limit on the POI.
+            - Tensor: The expected upper limits on the POI.
             - Tuple of Tensors: The given ``scan`` along with the
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
