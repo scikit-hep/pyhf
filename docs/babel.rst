@@ -99,6 +99,5 @@ which will read all of the XML files and load the histogram data from the histog
 
     There are a few caveats one needs to be aware of with this conversion:
 
-    - Custom parameters cannot be held constant (e.g. lumi), see PR :pr:`846` and Issue :issue:`739`.
     - Uncorrelated shape systematics cannot be pruned, see Issue :issue:`662`.
     - Custom expressions for normalization factors cannot be used, see Issue :issue:`850`.
