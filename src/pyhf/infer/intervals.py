@@ -55,9 +55,9 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     ]
     obs = tb.astensor([[r[0]] for r in results])
     exp = tb.astensor([[r[1][shift] for shift in range(5)] for r in results])
-    result_arary = tb.concatenate([obs, exp], axis=1).T
+    result_arrary = tb.concatenate([obs, exp], axis=1).T
 
-    limits = [_interp(level, result_arary[i][::-1], scan[::-1]) for i in range(6)]
+    limits = [_interp(level, result_arrary[i][::-1], scan[::-1]) for i in range(6)]
     obs_limit, exp_limits = limits[0], limits[1:]
 
     if return_results:
