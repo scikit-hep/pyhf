@@ -16,4 +16,4 @@ Contributors include:
 - Lars Nielsen
 - Kanishk Kalra
 - Nikolai Hartmann
-- Alex Held
+- Alexander Held
