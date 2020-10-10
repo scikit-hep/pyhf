@@ -2,7 +2,13 @@ import json
 import shlex
 import pyhf
 import time
+import sys
+import logging
 import pytest
+from click.testing import CliRunner
+from unittest import mock
+from importlib import reload
+from importlib import import_module
 
 
 def test_version(script_runner):
@@ -559,6 +565,100 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
         assert json.loads(ret.stdout) == {
             algorithm: results[algorithm] for algorithm in algorithms
         }
+
+
+@pytest.mark.parametrize(
+    "archive",
+    [
+        "https://www.hepdata.net/record/resource/1408476?view=true",
+        "https://doi.org/10.17182/hepdata.89408.v1/r2",
+    ],
+)
+def test_patchset_download(datadir, script_runner, archive):
+    command = f'pyhf contrib download {archive} {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    # Run with all optional flags
+    command = f'pyhf contrib download --verbose --force {archive} {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = f'pyhf contrib download --verbose https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    assert (
+        "pyhf.exceptions.InvalidArchiveHost: www.fail.org is not an approved archive host"
+        in ret.stderr
+    )
+    command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {datadir.join("likelihoods").strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    # TODO: https://github.com/scikit-hep/pyhf/issues/1075
+    # Python 3.6 has different return error than 3.7, 3.8
+    assert (
+        "ssl.CertificateError: hostname 'www.fail.org' doesn't match"
+        or "certificate verify failed: Hostname mismatch, certificate is not valid for 'www.fail.org'."
+        in ret.stderr
+    )
+
+
+def test_missing_contrib_extra(caplog):
+    with mock.patch.dict(sys.modules):
+        sys.modules["requests"] = None
+        if "pyhf.contrib.utils" in sys.modules:
+            reload(sys.modules["pyhf.contrib.utils"])
+        else:
+            import_module("pyhf.cli")
+
+    with caplog.at_level(logging.ERROR):
+        for line in [
+            "import of requests halted; None in sys.modules",
+            "Installation of the contrib extra is required to use pyhf.contrib.utils.download",
+            "Please install with: python -m pip install pyhf[contrib]",
+        ]:
+            assert line in caplog.text
+        caplog.clear()
+
+
+def test_missing_contrib_download(caplog):
+    with mock.patch.dict(sys.modules):
+        sys.modules["requests"] = None
+        if "pyhf.cli" in sys.modules:
+            reload(sys.modules["pyhf.cli"])
+        else:
+            import_module("pyhf.cli")
+
+        # Force environment for runner
+        for module in [
+            "pyhf.cli.contrib",
+            "pyhf.contrib",
+            "pyhf.contrib.utils",
+        ]:
+            if module in sys.modules:
+                del sys.modules[module]
+
+        from pyhf.cli.contrib import download
+
+        runner = CliRunner(mix_stderr=False)
+        result = runner.invoke(
+            download,
+            [
+                "--verbose",
+                "https://www.hepdata.net/record/resource/1408476?view=true",
+                "1Lbb-likelihoods",
+            ],
+        )
+        assert result.exit_code == 0
+
+        with caplog.at_level(logging.ERROR):
+            for line in [
+                "module 'pyhf.contrib.utils' has no attribute 'download'",
+                "Installation of the contrib extra is required to use the contrib CLI API",
+                "Please install with: python -m pip install pyhf[contrib]",
+            ]:
+                assert line in caplog.text
+            caplog.clear()
 
 
 @pytest.mark.parametrize('output_file', [False, True])

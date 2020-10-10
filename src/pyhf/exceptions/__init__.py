@@ -40,6 +40,10 @@ class InvalidSpecification(Exception):
         super().__init__(message)
 
 
+class InvalidArchiveHost(Exception):
+    """InvalidArchiveHost is raised when a given patchset archive url is not an approved host."""
+
+
 class InvalidPatchSet(Exception):
     """InvalidPatchSet is raised when a given patchset object does not have the right configuration, even though it validates correctly against the schema."""
 

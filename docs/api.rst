@@ -173,3 +173,14 @@ Utilities
    validate
    options_from_eqdelimstring
    digest
+
+Contrib
+-------
+
+.. currentmodule:: pyhf.contrib
+
+.. autosummary::
+   :toctree: _generated/
+
+   viz.brazil
+   utils.download
