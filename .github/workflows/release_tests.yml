@@ -32,3 +32,8 @@ jobs:
     - name: Canary test public API
       run: |
         python -m pytest -r sx tests/test_public_api.py
+    - name: Verify requirements in codemeta.json
+      run: |
+        python -m pip install jq "codemetapy>=0.3.4"
+        codemetapy --no-extras pyhf > codemeta_generated.json
+        diff <(jq -S .softwareRequirements codemeta_generated.json) <(jq -S .softwareRequirements codemeta.json)
