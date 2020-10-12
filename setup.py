@@ -71,7 +71,7 @@ extras_require['develop'] = sorted(
             'ipython',
             'pre-commit',
             'check-manifest',
-            'codemetapy',
+            'codemetapy>=0.3.4',
             'twine',
         ]
     )
