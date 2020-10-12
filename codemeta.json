@@ -35,27 +35,29 @@
     "softwareRequirements": [
         {
             "@type": "SoftwareApplication",
-            "identifier": "scipy (>=1.4.0)",
-            "name": "scipy (>=1.4.0)",
+            "identifier": "scipy",
+            "name": "scipy",
             "provider": {
                 "@id": "https://pypi.org",
                 "@type": "Organization",
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": ">=1.4.0"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "click (>=6.0)",
-            "name": "click (>=6.0)",
+            "identifier": "click",
+            "name": "click",
             "provider": {
                 "@id": "https://pypi.org",
                 "@type": "Organization",
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": ">=6.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -71,15 +73,16 @@
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "jsonschema (>=3.2.0)",
-            "name": "jsonschema (>=3.2.0)",
+            "identifier": "jsonschema",
+            "name": "jsonschema",
             "provider": {
                 "@id": "https://pypi.org",
                 "@type": "Organization",
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": ">=3.2.0"
         },
         {
             "@type": "SoftwareApplication",
