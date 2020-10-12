@@ -1,5 +1,5 @@
 {
-    "description": "pure-Python implementation of HistFactory models with tensors and autodiff",
+    "description": "pure-Python HistFactory implementation with tensors and autodiff",
     "license": "Apache-2.0",
     "title": "scikit-hep/pyhf: v0.5.2",
     "version": "v0.5.2",
