@@ -55,7 +55,7 @@ Alternatively the statistical model and observational data can be read from its 
 
    >>> import pyhf
    >>> import json
-   >>> wspace = pyhf.Workspace(json.load(open('test.json')))
+   >>> wspace = pyhf.Workspace(json.load(open('likelihood.json')))
    >>> model = wspace.model()
    >>> data = wspace.data(model)
    >>> test_mu = 1.0
