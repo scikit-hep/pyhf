@@ -4,6 +4,7 @@ import pytest
 import pyhf.exceptions
 import json
 import logging
+import pyhf.workspace
 
 
 @pytest.fixture(
