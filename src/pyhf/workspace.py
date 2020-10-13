@@ -757,8 +757,8 @@ def build(model, data, name='measurement'):
         ~pyhf.workspace.Workspace: A new  workspace object
 
     """
-    workspace = copy.deepcopy(model.spec)
-    workspace['version'] = '1.0.0'
+    workspace = dict(channels=copy.deepcopy(model.spec['channels']))
+    workspace['version'] = pyhf.utils.SCHEMA_VERSION
     workspace['measurements'] = [
         {'name': name, 'config': {'poi': model.config.poi_name, 'parameters': []}}
     ]
