@@ -17,7 +17,6 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     Example:
         >>> import numpy as np
         >>> import pyhf
-        >>> import pyhf.infer.intervals
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.hepdata_like(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]

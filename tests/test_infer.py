@@ -1,6 +1,5 @@
 import pytest
 import pyhf
-import pyhf.infer.intervals
 import numpy as np
 import scipy.stats
 
