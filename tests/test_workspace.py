@@ -4,6 +4,7 @@ import pytest
 import pyhf.exceptions
 import json
 import logging
+import pyhf.workspace
 
 
 @pytest.fixture(
@@ -340,9 +341,7 @@ def test_combine_workspace_same_channels_incompatible_structure(
     workspace_factory, join
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(
-        samples={ws.samples[0]: 'sample_other'},
-    )
+    new_ws = ws.rename(samples={ws.samples[0]: 'sample_other'},)
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'channel1' in str(excinfo.value)
@@ -721,3 +720,19 @@ def test_sorted(workspace_factory):
     for channel in new_ws['channels']:
         # check sort
         assert channel['samples'][-1]['name'] == 'zzzzlast'
+
+
+def test_closure_over_workspace_build():
+    model = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48]
+    one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
+
+    workspace = pyhf.workspace.build(model, data)
+    wspace = pyhf.Workspace(json.loads(json.dumps(workspace)))
+    newmodel = wspace.model()
+    newdata = wspace.data(newmodel)
+    two = pyhf.infer.hypotest(1.0, newdata, newmodel)
+
+    assert one == two
