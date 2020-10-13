@@ -35,6 +35,8 @@ and GPU acceleration.
 Hello World
 -----------
 
+This is how you use the ``pyhf`` Python API to build a statistical model and run basic inference:
+
 .. code:: python
 
    >>> import pyhf
@@ -44,6 +46,62 @@ Hello World
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
+
+Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
+
+.. code:: python
+
+   >>> import pyhf
+   >>> import requests
+   >>> wspace = pyhf.Workspace(requests.get('https://git.io/JJYDE').json())
+   >>> model = wspace.model()
+   >>> data = wspace.data(model)
+   >>> test_mu = 1.0
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
+   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
+   Observed: 0.3599840922126626, Expected: 0.3599840922126626
+
+
+Finally, you can also use the command line interface that ``pyhf`` provides which
+should produce the following JSON output:
+
+.. code:: bash
+
+   $ cat << EOF  | tee likelihood.json | pyhf cls
+   {
+       "channels": [
+           { "name": "singlechannel",
+             "samples": [
+               { "name": "signal",
+                 "data": [12.0, 11.0],
+                 "modifiers": [ { "name": "mu", "type": "normfactor", "data": null} ]
+               },
+               { "name": "background",
+                 "data": [50.0, 52.0],
+                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [3.0, 7.0]} ]
+               }
+             ]
+           }
+       ],
+       "observations": [
+           { "name": "singlechannel", "data": [51.0, 48.0] }
+       ],
+       "measurements": [
+           { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
+       ],
+       "version": "1.0.0"
+   }
+   EOF
+   {
+      "CLs_exp": [
+         0.0026062609501074576,
+         0.01382005356161206,
+         0.06445320535890459,
+         0.23525643861460702,
+         0.573036205919389
+      ],
+      "CLs_obs": 0.05251497423736956
+   }
 
 What does it support
 --------------------
