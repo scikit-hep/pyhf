@@ -101,6 +101,7 @@ Finally, you can also use the command line interface that `pyhf` provides:
 which should produce the following JSON output:
 
 .. code:: bash
+
    {
       "CLs_exp": [
          0.0026062609501074576,
