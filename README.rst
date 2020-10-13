@@ -47,7 +47,6 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
-
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
 .. code:: python
@@ -103,7 +102,6 @@ should produce the following JSON output:
       ],
       "CLs_obs": 0.05251497423736956
    }
-
 
 What does it support
 --------------------
