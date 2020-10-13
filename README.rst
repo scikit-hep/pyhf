@@ -35,7 +35,7 @@ and GPU acceleration.
 Hello World
 -----------
 
-This is how you use the `pyhf` python API to build a statistical model and run basic inference:
+This is how you use the ``pyhf`` Python API to build a statistical model and run basic inference:
 
 .. code:: python
 
@@ -47,9 +47,7 @@ This is how you use the `pyhf` python API to build a statistical model and run b
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
-
-
-Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section). 
+Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
 .. code:: python
 
@@ -64,44 +62,36 @@ Alternatively the statistical model and observational data can be read from its 
    Observed: 0.3599840922126626, Expected: 0.3599840922126626
 
 
-Finally, you can also use the command line interface that `pyhf` provides:
+Finally, you can also use the command line interface that ``pyhf`` provides which
+should produce the following JSON output:
 
 .. code:: bash
 
    $ cat << EOF  | tee likelihood.json | pyhf cls
    {
-      "channels": [
-         {
-            "name": "singlechannel",
-            "samples": [
-               {
-                  "name": "signal", "data": [12,11],
-                  "modifiers": [ {"name": "mu","type": "normfactor","data": null } ]
+       "channels": [
+           { "name": "singlechannel",
+             "samples": [
+               { "name": "signal",
+                 "data": [12.0, 11.0],
+                 "modifiers": [ { "name": "mu", "type": "normfactor", "data": null} ]
                },
-               {
-                  "name": "background", "data": [ 50, 52 ],
-                  "modifiers": [ { "name": "uncorr_bkguncrt", "type": "shapesys", "data": [3,7]} ]
+               { "name": "background",
+                 "data": [50.0, 52.0],
+                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [3.0, 7.0]} ]
                }
-            ]
-         }
-      ],
-      "version": "1.0.0",
-      "measurements": [
-         {  "name": "measurement", "config": { "poi": "mu", "parameters": [] } }
-      ],
-      "observations": [
-            {
-               "name": "singlechannel",
-               "data": [ 51, 48 ]
-            }
-      ]
+             ]
+           }
+       ],
+       "observations": [
+           { "name": "singlechannel", "data": [51.0, 48.0] }
+       ],
+       "measurements": [
+           { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
+       ],
+       "version": "1.0.0"
    }
    EOF
-
-which should produce the following JSON output:
-
-.. code:: bash
-
    {
       "CLs_exp": [
          0.0026062609501074576,
@@ -112,7 +102,6 @@ which should produce the following JSON output:
       ],
       "CLs_obs": 0.05251497423736956
    }
-
 
 What does it support
 --------------------
