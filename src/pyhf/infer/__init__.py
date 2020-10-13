@@ -174,7 +174,7 @@ def hypotest(
 
 
 # Make intervals available as top level import
-from pyhf.infer import intervals
+from . import intervals
 
 # TODO: Can remove when switch to flake8 (Issue #863)
 __all__ = ["intervals"]
