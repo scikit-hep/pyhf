@@ -35,7 +35,7 @@ and GPU acceleration.
 Hello World
 -----------
 
-This is how you use the `pyhf` python API to build a statistical model and run basic inference:
+This is how you use the ``pyhf`` Python API to build a statistical model and run basic inference:
 
 .. code:: python
 
@@ -46,7 +46,6 @@ This is how you use the `pyhf` python API to build a statistical model and run b
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
-
 
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
@@ -64,7 +63,8 @@ Alternatively the statistical model and observational data can be read from its 
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
 
-Finally, you can also use the command line interface that `pyhf` provides:
+Finally, you can also use the command line interface that ``pyhf`` provides which
+should produce the following JSON output:
 
 .. code:: bash
 
@@ -93,11 +93,6 @@ Finally, you can also use the command line interface that `pyhf` provides:
        "version": "1.0.0"
    }
    EOF
-
-which should produce the following JSON output:
-
-.. code:: bash
-
    {
       "CLs_exp": [
          0.0026062609501074576,
