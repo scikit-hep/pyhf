@@ -171,3 +171,10 @@ def hypotest(
         _returns.append(tensorlib.astensor(CLs))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
+
+
+# Make intervals available as top level import
+from pyhf.infer import intervals
+
+# TODO: Can remove when switch to flake8 (Issue #863)
+__all__ = ["intervals"]
