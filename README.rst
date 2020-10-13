@@ -49,7 +49,7 @@ This is how you use the `pyhf` python API to build a statistical model and run b
 
 
 
-Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section). 
+Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
 .. code:: python
 
@@ -70,31 +70,27 @@ Finally, you can also use the command line interface that `pyhf` provides:
 
    $ cat << EOF  | tee likelihood.json | pyhf cls
    {
-      "channels": [
-         {
-            "name": "singlechannel",
-            "samples": [
-               {
-                  "name": "signal", "data": [12,11],
-                  "modifiers": [ {"name": "mu","type": "normfactor","data": null } ]
+       "channels": [
+           { "name": "singlechannel",
+             "samples": [
+               { "name": "signal",
+                 "data": [12.0, 11.0],
+                 "modifiers": [ { "name": "mu", "type": "normfactor", "data": null} ]
                },
-               {
-                  "name": "background", "data": [ 50, 52 ],
-                  "modifiers": [ { "name": "uncorr_bkguncrt", "type": "shapesys", "data": [3,7]} ]
+               { "name": "background",
+                 "data": [50.0, 52.0],
+                 "modifiers": [ {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [3.0, 7.0]} ]
                }
-            ]
-         }
-      ],
-      "version": "1.0.0",
-      "measurements": [
-         {  "name": "measurement", "config": { "poi": "mu", "parameters": [] } }
-      ],
-      "observations": [
-            {
-               "name": "singlechannel",
-               "data": [ 51, 48 ]
-            }
-      ]
+             ]
+           }
+       ],
+       "observations": [
+           { "name": "singlechannel", "data": [51.0, 48.0] }
+       ],
+       "measurements": [
+           { "name": "Measurement", "config": {"poi": "mu", "parameters": []} }
+       ],
+       "version": "1.0.0"
    }
    EOF
 
