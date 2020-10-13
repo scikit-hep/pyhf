@@ -25,7 +25,7 @@ def cli():
 
 
 @cli.command()
-@click.argument("archive-url", default="-")
+@click.argument("archive-url")
 @click.argument("output-directory", default="-")
 @click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
 @click.option(
