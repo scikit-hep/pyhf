@@ -45,6 +45,50 @@ Hello World
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
+
+.. code:: bash
+
+   cat << EOF  | pyhf cls
+   {
+      "channels": [
+         {
+            "name": "singlechannel",
+            "samples": [
+               {
+                  "name": "signal", "data": [12,11],
+                  "modifiers": [ {"name": "mu","type": "normfactor","data": null } ]
+               },
+               {
+                  "name": "background", "data": [ 50, 52 ],
+                  "modifiers": [ { "name": "uncorr_bkguncrt", "type": "shapesys", "data": [3,7]} ]
+               }
+            ]
+         }
+      ],
+      "version": "1.0.0",
+      "measurements": [
+         {  "name": "measurement", "config": { "poi": "mu", "parameters": [] } }
+      ],
+      "observations": [
+            {
+               "name": "singlechannel",
+               "data": [ 51, 48 ]
+            }
+      ]
+   }
+   EOF
+   {
+      "CLs_exp": [
+         0.0026062609501074576,
+         0.01382005356161206,
+         0.06445320535890459,
+         0.23525643861460702,
+         0.573036205919389
+      ],
+      "CLs_obs": 0.05251497423736956
+   }
+
+
 What does it support
 --------------------
 
