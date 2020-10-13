@@ -35,6 +35,8 @@ and GPU acceleration.
 Hello World
 -----------
 
+This is how you use the `pyhf` python API to build a statistical model and run basic inference:
+
 .. code:: python
 
    >>> import pyhf
@@ -46,9 +48,28 @@ Hello World
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
 
+
+Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section). 
+
+.. code:: python
+
+   >>> import pyhf
+   >>> import json
+   >>> wspace = pyhf.Workspace('likelihood.json')
+   >>> wspace = pyhf.Workspace(json.load(open('test.json')))
+   >>> model = wspace.model()
+   >>> data = wspace.data(model)
+   >>> test_mu = 1.0
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
+   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
+   Observed: 0.05251497423736956, Expected: 0.06445320535890459
+
+
+Finally, you can also use the command line interface that `pyhf` provides:
+
 .. code:: bash
 
-   cat << EOF  | pyhf cls
+   $ cat << EOF  | pyhf cls
    {
       "channels": [
          {
