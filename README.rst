@@ -68,7 +68,7 @@ Finally, you can also use the command line interface that `pyhf` provides:
 
 .. code:: bash
 
-   $ cat << EOF  | pyhf cls
+   $ cat << EOF  | tee likelihood.json | pyhf cls
    {
       "channels": [
          {
