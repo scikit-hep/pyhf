@@ -746,7 +746,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
 
 def build(model, data, name='measurement'):
-    '''
+    """
     Build a workspace from model and data.
 
     Args:
@@ -755,8 +755,8 @@ def build(model, data, name='measurement'):
 
     Returns:
         ~pyhf.workspace.Workspace: A new  workspace object
-    
-    '''
+
+    """
     workspace = copy.deepcopy(model.spec)
     workspace['version'] = '1.0.0'
     workspace['measurements'] = [

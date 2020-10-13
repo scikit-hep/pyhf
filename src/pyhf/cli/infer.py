@@ -47,7 +47,14 @@ def cli():
 )
 @click.option("--optconf", type=EqDelimStringParamType(), multiple=True)
 def fit(
-    workspace, output_file, measurement, patch, value, backend, optimizer, optconf,
+    workspace,
+    output_file,
+    measurement,
+    patch,
+    value,
+    backend,
+    optimizer,
+    optconf,
 ):
     """
     Perform a maximum likelihood fit for a given pyhf workspace.
