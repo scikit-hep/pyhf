@@ -341,9 +341,7 @@ def test_combine_workspace_same_channels_incompatible_structure(
     workspace_factory, join
 ):
     ws = workspace_factory()
-    new_ws = ws.rename(
-        samples={ws.samples[0]: 'sample_other'},
-    )
+    new_ws = ws.rename(samples={ws.samples[0]: 'sample_other'},)
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation) as excinfo:
         pyhf.Workspace.combine(ws, new_ws, join=join)
     assert 'channel1' in str(excinfo.value)
