@@ -4,7 +4,6 @@ import pytest
 import pyhf.exceptions
 import json
 import logging
-import pyhf.workspace
 
 
 @pytest.fixture(
@@ -731,10 +730,12 @@ def test_closure_over_workspace_build():
     data = [51, 48]
     one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
 
-    workspace = pyhf.workspace.build(model, data)
-    wspace = pyhf.Workspace(json.loads(json.dumps(workspace)))
-    newmodel = wspace.model()
-    newdata = wspace.data(newmodel)
+    workspace = pyhf.Workspace.build(model, data)
+
+    assert json.dumps(workspace)
+
+    newmodel = workspace.model()
+    newdata = workspace.data(newmodel)
     two = pyhf.infer.hypotest(1.0, newdata, newmodel)
 
     assert one == two

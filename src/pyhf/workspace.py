@@ -744,26 +744,26 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         return cls(newspec)
 
+    @classmethod
+    def build(cls, model, data, name='measurement'):
+        """
+        Build a workspace from model and data.
 
-def build(model, data, name='measurement'):
-    """
-    Build a workspace from model and data.
+        Args:
+            model (~pyhf.pdf.Model): A model to store into a workspace
+            model (tensor): A array holding observations to store into a workspace
 
-    Args:
-        model (~pyhf.pdf.Model): A model to store into a workspace
-        model (tensor): A array holding observations to store into a workspace
+        Returns:
+            ~pyhf.workspace.Workspace: A new  workspace object
 
-    Returns:
-        ~pyhf.workspace.Workspace: A new  workspace object
-
-    """
-    workspace = copy.deepcopy(model.spec)
-    workspace['version'] = '1.0.0'
-    workspace['measurements'] = [
-        {'name': name, 'config': {'poi': model.config.poi_name, 'parameters': []}}
-    ]
-    workspace['observations'] = [
-        {'name': k, 'data': data[model.config.channel_slices[k]]}
-        for k in model.config.channels
-    ]
-    return workspace
+        """
+        workspace = copy.deepcopy(model.spec)
+        workspace['version'] = '1.0.0'
+        workspace['measurements'] = [
+            {'name': name, 'config': {'poi': model.config.poi_name, 'parameters': []}}
+        ]
+        workspace['observations'] = [
+            {'name': k, 'data': data[model.config.channel_slices[k]]}
+            for k in model.config.channels
+        ]
+        return cls(workspace)
