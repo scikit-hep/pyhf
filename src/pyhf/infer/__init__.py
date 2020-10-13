@@ -1,6 +1,5 @@
 """Inference for Statistical Models."""
 
-from .test_statistics import qmu
 from .. import get_backend
 from .calculators import AsymptoticCalculator
 
@@ -172,6 +171,3 @@ def hypotest(
         _returns.append(tensorlib.astensor(CLs))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
-
-
-__all__ = ['qmu', 'hypotest']
