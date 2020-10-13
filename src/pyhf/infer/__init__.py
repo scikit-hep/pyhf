@@ -173,7 +173,6 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-# Make intervals available as top level import
 from . import intervals
 
 # TODO: Can remove when switch to flake8 (Issue #863)
