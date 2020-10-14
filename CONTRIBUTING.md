@@ -10,6 +10,11 @@ If you have suggestions, questions that you can't find answers to in the [docume
 
 ## Pull Requests
 
+## Opening an Issue to Discuss
+
+Unless your Pull Request is an obvious 1 line fix, please first open an Issue to discuss your PR with the dev team.
+The Issue allows for discussion on the usefulness and scope of the PR to be publicly discussed and also allows for the PR to then be focused on the code review.
+
 ### Good Examples
 
 If you're looking for some examples of high quality contributed pull requests we recommend you take a look at these:
