@@ -760,10 +760,24 @@ class Workspace(_ChannelSummaryMixin, dict):
         workspace = copy.deepcopy(model.spec)
         workspace['version'] = '1.0.0'
         workspace['measurements'] = [
-            {'name': name, 'config': {'poi': model.config.poi_name, 'parameters': []}}
+            {
+                'name': name,
+                'config': {
+                    'poi': model.config.poi_name,
+                    'parameters': [
+                        {
+                            "bounds": [list(x) for x in v['paramset'].suggested_bounds],
+                            "inits": v['paramset'].suggested_init,
+                            "fixed": v['paramset'].fixed,
+                            "name": k,
+                        }
+                        for k, v in model.config.par_map.items()
+                    ],
+                },
+            }
         ]
         workspace['observations'] = [
-            {'name': k, 'data': data[model.config.channel_slices[k]]}
+            {'name': k, 'data': list(data[model.config.channel_slices[k]])}
             for k in model.config.channels
         ]
         return cls(workspace)
