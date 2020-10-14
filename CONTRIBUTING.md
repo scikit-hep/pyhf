@@ -27,7 +27,7 @@ Many thanks goes out to our contributors!
 
 Unless you are making a single commit pull request please create a draft pull request. Outline the work that will be done in this ongoing pull request. When you are close to being done please tag someone with Approver permissions to follow the pull request.
 
-### Pull Requests Procedure
+### Pull Request Procedure
 
 If you would like to make a pull request please:
 
