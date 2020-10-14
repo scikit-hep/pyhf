@@ -758,7 +758,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new workspace object
 
         """
-        workspace = copy.deepcopy(model.spec)
+        workspace = copy.deepcopy(dict(channels=model.spec['channels']))
         workspace['version'] = '1.0.0'
         workspace['measurements'] = [
             {
