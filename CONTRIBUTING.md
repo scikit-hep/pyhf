@@ -1,6 +1,12 @@
 # Contributing to pyhf
 
-We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub repo. To get started fork the repo.
+We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub repository and welcome Issues.
+To get started fork the repo.
+
+## Issues
+
+Making Issues is very helpful to the project &mdash; they help the dev team form the development roadmap and are where most important discussion takes place.
+If you have suggestions, questions that you can't find answers to in the documentation or on the Stack Overflow tag, or have found a bug please open an Issue!
 
 ## Pull Requests
 
