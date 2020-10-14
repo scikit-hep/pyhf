@@ -1,6 +1,5 @@
 """Inference for Statistical Models."""
 
-from .test_statistics import qmu
 from .. import get_backend
 from .calculators import AsymptoticCalculator
 
@@ -174,4 +173,7 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-__all__ = ['qmu', 'hypotest']
+from . import intervals
+
+# TODO: Can remove intervals when switch to flake8 (Issue #863)
+__all__ = ["hypotest", "intervals"]
