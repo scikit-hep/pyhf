@@ -46,7 +46,7 @@ def download(archive_url, output_directory, verbose, force, compress):
 
     .. code-block:: shell
 
-        $ pyhf contrib download --verbose https://www.hepdata.net/record/resource/1408476?view=true 1Lbb-likelihoods
+        $ pyhf contrib download --verbose https://doi.org/10.17182/hepdata.90607.v3/r3 1Lbb-likelihoods
 
         \b
         1Lbb-likelihoods/patchset.json
