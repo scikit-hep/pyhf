@@ -754,7 +754,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             model (tensor): A array holding observations to store into a workspace
 
         Returns:
-            ~pyhf.workspace.Workspace: A new  workspace object
+            ~pyhf.workspace.Workspace: A new workspace object
 
         """
         workspace = copy.deepcopy(model.spec)
