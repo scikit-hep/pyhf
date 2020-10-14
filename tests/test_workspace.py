@@ -744,6 +744,4 @@ def test_closure_over_workspace_build():
 
     newworkspace = pyhf.Workspace.build(newmodel, newdata)
 
-
-
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
