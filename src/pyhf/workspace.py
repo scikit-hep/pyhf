@@ -759,7 +759,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         workspace = copy.deepcopy(dict(channels=model.spec['channels']))
-        workspace['version'] = '1.0.0'
+        workspace['version'] = utils.SCHEMA_VERSION
         workspace['measurements'] = [
             {
                 'name': name,
