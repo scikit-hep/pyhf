@@ -740,6 +740,10 @@ def test_closure_over_workspace_build():
     newdata = workspace.data(newmodel)
     two = pyhf.infer.hypotest(1.0, newdata, newmodel)
 
+    assert one == two
+
     newworkspace = pyhf.Workspace.build(newmodel, newdata)
+
+
 
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
