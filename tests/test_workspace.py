@@ -4,6 +4,8 @@ import pytest
 import pyhf.exceptions
 import json
 import logging
+import pyhf.workspace
+import pyhf.utils
 
 
 @pytest.fixture(
@@ -721,3 +723,25 @@ def test_sorted(workspace_factory):
     for channel in new_ws['channels']:
         # check sort
         assert channel['samples'][-1]['name'] == 'zzzzlast'
+
+
+def test_closure_over_workspace_build():
+    model = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48]
+    one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
+
+    workspace = pyhf.Workspace.build(model, data)
+
+    assert json.dumps(workspace)
+
+    newmodel = workspace.model()
+    newdata = workspace.data(newmodel)
+    two = pyhf.infer.hypotest(1.0, newdata, newmodel)
+
+    assert one == two
+
+    newworkspace = pyhf.Workspace.build(newmodel, newdata)
+
+    assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)

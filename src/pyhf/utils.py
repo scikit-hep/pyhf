@@ -50,7 +50,7 @@ def validate(spec, schema_name, version=None):
         )
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
-        raise InvalidSpecification(err)
+        raise InvalidSpecification(err, schema_name)
 
 
 def options_from_eqdelimstring(opts):
