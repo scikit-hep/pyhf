@@ -751,7 +751,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model to store into a workspace
-            model (tensor): A array holding observations to store into a workspace
+            data (tensor): A array holding observations to store into a workspace
+            name (str): The name of the workspace measurement
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object
