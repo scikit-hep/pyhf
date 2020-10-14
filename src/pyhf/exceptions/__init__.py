@@ -34,8 +34,7 @@ class InvalidSpecification(Exception):
                 self.path += '.{}'.format(item)
         self.path = self.path.lstrip('.')
         self.instance = ValidationError.instance
-        message = '{0}.\n\tPath: {1}\n\tInstance: {2} Schema: {3}'.format(
-            ValidationError.message, self.path, self.instance, self.schema
+        message = f"{ValidationError.message}.\n\tPath: {self.path}\n\tInstance: {self.instance} Schema: {self.schema}"
         )
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
