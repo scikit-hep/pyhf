@@ -31,15 +31,16 @@ Unless you are making a single commit pull request please create a draft pull re
 
 If you would like to make a pull request please:
 
-1. Make a fork of the project
-2. Start a pull request to let the project maintainers know you're working on it
-3. Commit your changes to a feature branch of your fork push to your branch
-4. Test your changes with `pytest`
-5. Update your fork to make sure your changes don't conflict with the current state of the master branch
-6. Make sure that you've added your name to `docs/contributors.rst`.
+1. Make a fork of the project.
+2. Open an Issue to discuss the planned PR with the project maintainers.
+3. Commit your changes to a feature branch on your fork and push to your branch.
+4. Start a pull request to let the project maintainers know you're working on it.
+5. Test your changes with `pytest`.
+6. Update your fork to make sure your changes don't conflict with the current state of the master branch.
+7. Make sure that you've added your name to `docs/contributors.rst`.
 If you haven't **please** do so by simply appending your name to the bottom of the list.
 We are thankful for and value your contributions to `pyhf`, not matter the size.
-7. Request your changes be accepted
+8. Request your PR be reviewed by the project maintainers.
 
 ## Bug Reports
 
