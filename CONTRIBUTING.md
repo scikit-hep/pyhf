@@ -12,7 +12,7 @@ If you have suggestions, questions that you can't find answers to on the [docume
 
 ## Opening an Issue to Discuss
 
-Unless your Pull Request is an obvious 1 line fix, please first open an Issue to discuss your PR with the dev team.
+Unless your Pull Request is an obvious 1 line fix, please first [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose) to discuss your PR with the dev team.
 The Issue allows for discussion on the usefulness and scope of the PR to be publicly discussed and also allows for the PR to then be focused on the code review.
 
 ### Good Examples
