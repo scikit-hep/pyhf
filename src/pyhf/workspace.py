@@ -17,7 +17,7 @@ from .mixins import _ChannelSummaryMixin
 log = logging.getLogger(__name__)
 
 
-def _join_items(join, left_items, right_items, key='name', deep_merge_key=''):
+def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     """
     Join two lists of dictionaries along the given key.
 
@@ -47,7 +47,7 @@ def _join_items(join, left_items, right_items, key='name', deep_merge_key=''):
         # NB: this will be slow for large numbers of items
         elif join in ['left outer', 'right outer'] and secondary_item[key] in keys:
             # Deeply merge a sublist as well, if we need to
-            if deep_merge_key:
+            if deep_merge_key is not None:
                 _deep_left_items = joined_items[keys.index(secondary_item[key])][
                     deep_merge_key
                 ]
@@ -103,7 +103,7 @@ def _join_channels(join, left_channels, right_channels, merge=False):
     """
 
     joined_channels = _join_items(
-        join, left_channels, right_channels, deep_merge_key='samples' if merge else ''
+        join, left_channels, right_channels, deep_merge_key='samples' if merge else None
     )
     if join == 'none':
         common_channels = set(c['name'] for c in left_channels).intersection(

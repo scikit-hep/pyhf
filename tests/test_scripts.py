@@ -534,12 +534,14 @@ def test_combine_merge_channels(tmpdir, script_runner):
     temp_2 = tmpdir.join("renamed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
+    assert ret.success
 
     command = (
         f'pyhf prune {temp_1.strpath} --sample signal --output-file {temp_2.strpath}'
     )
 
     ret = script_runner.run(*shlex.split(command))
+    assert ret.success
 
     command = f'pyhf combine --merge-channels --join "left outer" {temp_1.strpath} {temp_2.strpath}'
     ret = script_runner.run(*shlex.split(command))
