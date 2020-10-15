@@ -1,7 +1,7 @@
 import logging
 
 from . import modifier
-from .. import get_backend, default_backend, events
+from .. import get_backend, get_default_backend, events
 from ..parameters import unconstrained, ParamViewer
 
 log = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ class shapefactor_combined(object):
 
         and at that point can be used to compute the effect of shapefactor.
         """
-
+        default_backend, _ = get_default_backend()
         self.batch_size = batch_size
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]

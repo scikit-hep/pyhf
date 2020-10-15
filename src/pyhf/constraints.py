@@ -1,4 +1,4 @@
-from . import get_backend, default_backend
+from . import get_backend, get_default_backend
 from . import events
 from . import probability as prob
 from .parameters import ParamViewer
@@ -6,6 +6,9 @@ from .parameters import ParamViewer
 
 class gaussian_constraint_combined(object):
     def __init__(self, pdfconfig, batch_size=None):
+        
+        default_backend, _ = get_default_backend()
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -82,10 +85,10 @@ class gaussian_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def has_pdf(self):
-        """
+        '''
         Returns:
             flag (`bool`): Whether the model has a Gaussian Constraint
-        """
+        '''
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
@@ -138,6 +141,9 @@ class gaussian_constraint_combined(object):
 
 class poisson_constraint_combined(object):
     def __init__(self, pdfconfig, batch_size=None):
+        
+        default_backend, _ = get_default_backend()
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -213,10 +219,10 @@ class poisson_constraint_combined(object):
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
     def has_pdf(self):
-        """
+        '''
         Returns:
             flag (`bool`): Whether the model has a Gaussian Constraint
-        """
+        '''
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):

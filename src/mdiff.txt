@@ -1,0 +1,155 @@
+Only in new_pyhf/modifiers: __pycache__
+diff pyhf/modifiers/histosys.py new_pyhf/modifiers/histosys.py
+23d22
+<             'fixed': False,
+83c82
+<         """
+---
+>         '''
+86c85
+<         """
+---
+>         '''
+diff pyhf/modifiers/lumi.py new_pyhf/modifiers/lumi.py
+23d22
+<             'fixed': False,
+60c59
+<         """
+---
+>         '''
+63c62
+<         """
+---
+>         '''
+diff pyhf/modifiers/normfactor.py new_pyhf/modifiers/normfactor.py
+22d21
+<             'fixed': False,
+61c60
+<         """
+---
+>         '''
+64c63
+<         """
+---
+>         '''
+diff pyhf/modifiers/normsys.py new_pyhf/modifiers/normsys.py
+23d22
+<             'fixed': False,
+84c83
+<         """
+---
+>         '''
+87c86
+<         """
+---
+>         '''
+diff pyhf/modifiers/shapefactor.py new_pyhf/modifiers/shapefactor.py
+4c4
+< from .. import get_backend, default_backend, events
+---
+> from .. import get_backend, get_default_backend, events
+9d8
+< 
+22d20
+<             'fixed': False,
+64a63
+>         default_backend, _ = get_default_backend()
+79,81c78,88
+<         global_concatenated_bin_indices = [
+<             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+<         ]
+---
+>         global_concatenated_bin_indices = default_backend.astensor(
+>             [
+>                 [
+>                     [
+>                         j
+>                         for c in pdfconfig.channels
+>                         for j in range(pdfconfig.channel_nbins[c])
+>                     ]
+>                 ]
+>             ]
+>         )
+134c141
+<         """
+---
+>         '''
+137c144
+<         """
+---
+>         '''
+diff pyhf/modifiers/shapesys.py new_pyhf/modifiers/shapesys.py
+4c4
+< from .. import get_backend, default_backend, events
+---
+> from .. import get_backend, get_default_backend, events
+9d8
+< 
+30d28
+<             'fixed': False,
+39a38,40
+>         
+>         default_backend, _ = get_default_backend()
+> 
+68,70c69,79
+<         global_concatenated_bin_indices = [
+<             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+<         ]
+---
+>         global_concatenated_bin_indices = default_backend.astensor(
+>             [
+>                 [
+>                     [
+>                         j
+>                         for c in pdfconfig.channels
+>                         for j in range(pdfconfig.channel_nbins[c])
+>                     ]
+>                 ]
+>             ]
+>         )
+84a94,95
+>         default_backend, _ = get_default_backend()
+> 
+123a135,136
+>         default_backend, _ = get_default_backend()
+> 
+157c170
+<         """
+---
+>         '''
+160c173
+<         """
+---
+>         '''
+diff pyhf/modifiers/staterror.py new_pyhf/modifiers/staterror.py
+4c4
+< from .. import get_backend, default_backend, events
+---
+> from .. import get_backend, get_default_backend, events
+9d8
+< 
+22d20
+<             'fixed': False,
+28a27,29
+>         
+>         default_backend, _ = get_default_backend()
+> 
+56,58c57,67
+<         global_concatenated_bin_indices = [
+<             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
+<         ]
+---
+>         global_concatenated_bin_indices = default_backend.astensor(
+>             [
+>                 [
+>                     [
+>                         j
+>                         for c in pdfconfig.channels
+>                         for j in range(pdfconfig.channel_nbins[c])
+>                     ]
+>                 ]
+>             ]
+>         )
+88a98,99
+>         default_backend, _ = get_default_backend()
+> 

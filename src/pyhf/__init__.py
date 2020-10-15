@@ -1,169 +1,221 @@
-from .tensor import BackendRetriever as tensor
-from .optimize import OptimizerRetriever as optimize
-from .version import __version__
-from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
-from . import events
+import logging
 
-tensorlib = None
-optimizer = None
+from .. import exceptions
+from .. import get_backend
+
+log = logging.getLogger(__name__)
+
+registry = {}
 
 
-def get_backend():
+def validate_modifier_structure(modifier):
     """
-    Get the current backend and the associated optimizer
-
-    Example:
-        >>> import pyhf
-        >>> backend, optimizer = pyhf.get_backend()
-        >>> backend
-        <pyhf.tensor.numpy_backend.numpy_backend object at 0x...>
-        >>> optimizer
-        <pyhf.optimize.scipy_optimizer object at 0x...>
-
-    Returns:
-        backend, optimizer
+    Check if given object contains the right structure for modifiers
     """
-    global tensorlib
-    global optimizer
-    return tensorlib, optimizer
+    required_methods = ['required_parset']
+
+    for method in required_methods:
+        if not hasattr(modifier, method):
+            raise exceptions.InvalidModifier(
+                'Expected {0:s} method on modifier {1:s}'.format(
+                    method, modifier.__name__
+                )
+            )
+    return True
 
 
-tensorlib = tensor.numpy_backend()
-default_backend = tensorlib
-optimizer = optimize.scipy_optimizer()
-default_optimizer = optimizer
-
-
-@events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, precision=None):
+def add_to_registry(
+    cls, cls_name=None, constrained=False, pdf_type='normal', op_code='addition'
+):
     """
-    Set the backend and the associated optimizer
+    Consistent add_to_registry() function that handles actually adding thing to the registry.
 
-    Example:
-        >>> import pyhf
-        >>> pyhf.set_backend("tensorflow")
-        >>> pyhf.tensorlib.name
-        'tensorflow'
-        >>> pyhf.tensorlib.precision
-        '32b'
-        >>> pyhf.set_backend(b"pytorch", precision="64b")
-        >>> pyhf.tensorlib.name
-        'pytorch'
-        >>> pyhf.tensorlib.precision
-        '64b'
-        >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
-        >>> pyhf.tensorlib.name
-        'numpy'
-        >>> pyhf.tensorlib.precision
-        '64b'
+    Raises an error if the name to register for the modifier already exists in the registry,
+    or if the modifier does not have the right structure.
+    """
+    global registry
+    cls_name = cls_name or cls.__name__
+    if cls_name in registry:
+        raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
+    # validate the structure
+    validate_modifier_structure(cls)
+    # set is_constrained
+    cls.is_constrained = constrained
+    if constrained:
+        tensorlib, _ = get_backend()
+        if not hasattr(tensorlib, pdf_type):
+            raise exceptions.InvalidModifier(
+                'The specified pdf_type "{0:s}" is not valid for {1:s}({2:s}). See pyhf.tensor documentation for available pdfs.'.format(
+                    pdf_type, cls_name, cls.__name__
+                )
+            )
+        cls.pdf_type = pdf_type
+    else:
+        cls.pdf_type = None
+
+    if op_code not in ['addition', 'multiplication']:
+        raise exceptions.InvalidModifier(
+            'The specified op_code "{0:s}" is not valid for {1:s}({2:s}). See pyhf.modifier documentation for available operation codes.'.format(
+                op_code, cls_name, cls.__name__
+            )
+        )
+    cls.op_code = op_code
+
+    registry[cls_name] = cls
+
+
+def modifier(*args, **kwargs):
+    """
+    Decorator for registering modifiers. To flag the modifier as a constrained modifier, add `constrained=True`.
+
 
     Args:
-        backend (`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
-        custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
-        precision (`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
+        name: the name of the modifier to use. Use the class name by default. (default: None)
+        constrained: whether the modifier is constrained or not. (default: False)
+        pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
+        op_code: the name of the operation the modifier performs on the data (e.g. addition, multiplication)
 
     Returns:
-        None
+        modifier
+
+    Raises:
+        ValueError: too many keyword arguments, or too many arguments, or wrong arguments
+        TypeError: provided name is not a string
+        pyhf.exceptions.InvalidModifier: object does not have necessary modifier structure
     """
-    global tensorlib
-    global optimizer
+    #
+    # Examples:
+    #
+    #   >>> @modifiers.modifier
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #
+    #   >>> @modifiers.modifier(name='myCustomNamer')
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #
+    #   >>> @modifiers.modifier(constrained=False)
+    #   >>> ... class myUnconstrainedModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #   >>> ...
+    #   >>> myUnconstrainedModifier.pdf_type
+    #   None
+    #
+    #   >>> @modifiers.modifier(constrained=True, pdf_type='poisson')
+    #   >>> ... class myConstrainedCustomPoissonModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #   >>> ...
+    #   >>> myConstrainedCustomGaussianModifier.pdf_type
+    #   'poisson'
+    #
+    #   >>> @modifiers.modifier(constrained=True)
+    #   >>> ... class myCustomModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #
+    #   >>> @modifiers.modifier(op_code='multiplication')
+    #   >>> ... class myMultiplierModifier(object):
+    #   >>> ...   @classmethod
+    #   >>> ...   def required_parset(cls, sample_data, modifier_data): pass
+    #   >>> ...
+    #   >>> myMultiplierModifier.op_code
+    #   'multiplication'
 
-    _supported_precisions = ["32b", "64b"]
-    backend_kwargs = {}
-
-    if isinstance(precision, (str, bytes)):
-        if isinstance(precision, bytes):
-            precision = precision.decode("utf-8")
-        precision = precision.lower()
-
-    if isinstance(backend, (str, bytes)):
-        if isinstance(backend, bytes):
-            backend = backend.decode("utf-8")
-        backend = backend.lower()
-
-        if precision is not None:
-            backend_kwargs["precision"] = precision
-
-        try:
-            backend = getattr(tensor, f"{backend:s}_backend")(**backend_kwargs)
-        except TypeError:
-            raise InvalidBackend(
-                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
+    def _modifier(name, constrained, pdf_type, op_code):
+        def wrapper(cls):
+            add_to_registry(
+                cls,
+                cls_name=name,
+                constrained=constrained,
+                pdf_type=pdf_type,
+                op_code=op_code,
             )
+            return cls
 
-    _name_supported = getattr(tensor, f"{backend.name:s}_backend")
-    if _name_supported:
-        if not isinstance(backend, _name_supported):
-            raise AttributeError(
-                f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
-            )
-        if backend.precision not in _supported_precisions:
-            raise Unsupported(
-                f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
-            )
-    # If "precision" arg passed, it should always win
-    # If no "precision" arg, defer to tensor backend object API if set there
-    if precision is not None:
-        if backend.precision != precision:
-            backend_kwargs["precision"] = precision
-            backend = getattr(tensor, f"{backend.name:s}_backend")(**backend_kwargs)
+        return wrapper
 
-    # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(
-        (backend.name != tensorlib.name) | (backend.precision != tensorlib.precision)
-    )
-    optimizer_changed = False
+    name = kwargs.pop('name', None)
+    constrained = bool(kwargs.pop('constrained', False))
+    pdf_type = str(kwargs.pop('pdf_type', 'normal'))
+    op_code = str(kwargs.pop('op_code', 'addition'))
+    # check for unparsed keyword arguments
+    if kwargs:
+        raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
+    # check to make sure the given name is a string, if passed in one
+    if not isinstance(name, str) and name is not None:
+        raise TypeError(
+            '@modifier must be given a string. You gave it {}'.format(type(name))
+        )
 
-    if custom_optimizer:
-        if isinstance(custom_optimizer, (str, bytes)):
-            if isinstance(custom_optimizer, bytes):
-                custom_optimizer = custom_optimizer.decode("utf-8")
-            try:
-                new_optimizer = getattr(
-                    optimize, f"{custom_optimizer.lower()}_optimizer"
-                )()
-            except TypeError:
-                raise InvalidOptimizer(
-                    f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
-                )
-        else:
-            _name_supported = getattr(optimize, f"{custom_optimizer.name:s}_optimizer")
-            if _name_supported:
-                if not isinstance(custom_optimizer, _name_supported):
-                    raise AttributeError(
-                        f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
-                    )
-            new_optimizer = custom_optimizer
-
+    if not args:
+        # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
+        return _modifier(name, constrained, pdf_type, op_code)
+    elif len(args) == 1:
+        # called like @modifier
+        if not callable(args[0]):
+            raise ValueError('You must decorate a callable python object')
+        add_to_registry(
+            args[0],
+            cls_name=name,
+            constrained=constrained,
+            pdf_type=pdf_type,
+            op_code=op_code,
+        )
+        return args[0]
     else:
-        new_optimizer = optimize.scipy_optimizer()
-
-    optimizer_changed = bool(optimizer != new_optimizer)
-    # set new backend
-    tensorlib = backend
-    optimizer = new_optimizer
-    # trigger events
-    if tensorlib_changed:
-        events.trigger("tensorlib_changed")()
-    if optimizer_changed:
-        events.trigger("optimizer_changed")()
-    # set up any other globals for backend
-    tensorlib._setup()
+        raise ValueError(
+            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(
+                len(args)
+            )
+        )
 
 
-from .pdf import Model
-from .workspace import Workspace
-from . import simplemodels
-from . import infer
-from .patchset import PatchSet
+from .histosys import histosys, histosys_combined
+from .lumi import lumi, lumi_combined
+from .normfactor import normfactor, normfactor_combined
+from .normsys import normsys, normsys_combined
+from .shapefactor import shapefactor, shapefactor_combined
+from .shapesys import shapesys, shapesys_combined
+from .staterror import staterror, staterror_combined
+
+uncombined = {
+    'histosys': histosys,
+    'lumi': lumi,
+    'normfactor': normfactor,
+    'normsys': normsys,
+    'shapefactor': shapefactor,
+    'shapesys': shapesys,
+    'staterror': staterror,
+}
+
+combined = {
+    'histosys': histosys_combined,
+    'lumi': lumi_combined,
+    'normfactor': normfactor_combined,
+    'normsys': normsys_combined,
+    'shapefactor': shapefactor_combined,
+    'shapesys': shapesys_combined,
+    'staterror': staterror_combined,
+}
 
 __all__ = [
-    'Model',
-    'Workspace',
-    'PatchSet',
-    'infer',
-    'utils',
-    'modifiers',
-    'simplemodels',
-    '__version__',
+    'histosys',
+    'histosys_combined',
+    'lumi',
+    'lumi_combined',
+    'normfactor',
+    'normfactor_combined',
+    'normsys',
+    'normsys_combined',
+    'shapefactor',
+    'shapefactor_combined',
+    'shapesys',
+    'shapesys_combined',
+    'staterror',
+    'staterror_combined',
+    'combined',
 ]

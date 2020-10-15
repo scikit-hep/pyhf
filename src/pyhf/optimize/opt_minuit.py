@@ -1,5 +1,5 @@
 """Minuit Optimizer Class."""
-from .. import default_backend, exceptions
+from .. import get_default_backend, exceptions
 from .mixins import OptimizerMixin
 import scipy
 import iminuit
@@ -91,6 +91,7 @@ class minuit_optimizer(OptimizerMixin):
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
+        default_backend, _ = get_default_backend()
         maxiter = options.pop('maxiter', self.maxiter)
         return_uncertainties = options.pop('return_uncertainties', False)
         if options:

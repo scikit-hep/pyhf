@@ -1,11 +1,10 @@
 """Piecewise-linear Interpolation. (Code 0)."""
 import logging
-from .. import get_backend, default_backend
+from .. import get_backend, get_default_backend
 from .. import events
 from . import _slow_interpolator_looper
 
 log = logging.getLogger(__name__)
-
 
 class code0(object):
     r"""
@@ -26,6 +25,9 @@ class code0(object):
     def __init__(self, histogramssets, subscribe=True):
         """Piecewise-linear Interpolation."""
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
+
+        default_backend, _ = get_default_backend()
+
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
