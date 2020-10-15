@@ -629,7 +629,7 @@ def test_missing_contrib_download(caplog):
         else:
             import_module("pyhf.cli")
 
-        from pyhf.cli.contrib import download
+        from pyhf.contrib.cli import download
 
         runner = CliRunner(mix_stderr=False)
         result = runner.invoke(
