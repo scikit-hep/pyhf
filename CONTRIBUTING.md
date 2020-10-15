@@ -1,8 +1,19 @@
 # Contributing to pyhf
 
-We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub repo. To get started fork the repo.
+We are happy to accept contributions to `pyhf` via Pull Requests to the GitHub repository and welcome Issues.
+To get started fork the repo.
+
+## Issues
+
+Making Issues is very helpful to the project &mdash; they help the dev team form the development roadmap and are where most important discussion takes place.
+If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or on the [Stack Overflow tag](https://stackoverflow.com/questions/tagged/pyhf), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
 
 ## Pull Requests
+
+## Opening an Issue to Discuss
+
+Unless your Pull Request is an obvious 1 line fix, please first [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose) to discuss your PR with the dev team.
+The Issue allows for discussion on the usefulness and scope of the PR to be publicly discussed and also allows for the PR to then be focused on the code review.
 
 ### Good Examples
 
@@ -12,23 +23,24 @@ If you're looking for some examples of high quality contributed pull requests we
 
 Many thanks goes out to our contributors!
 
-### WIP
+### Drafts
 
-Unless you are making a single commit pull request please create a WIP pull request. Outline the work that will be done in this ongoing pull request. When you are close to being done please assign someone with Approver permissions to follow the pull request.
+Unless you are making a single commit pull request please create a draft pull request. Outline the work that will be done in this ongoing pull request. When you are close to being done please tag someone with Approver permissions to follow the pull request.
 
-### Pull Requests Procedure
+### Pull Request Procedure
 
 If you would like to make a pull request please:
 
-1. Make a fork of the project
-2. Start a pull request to let the project maintainers know you're working on it
-3. Commit your changes to a feature branch of your fork push to your branch
-4. Test your changes with `pytest`
-5. Update your fork to make sure your changes don't conflict with the current state of the master branch
-6. Make sure that you've added your name to `docs/contributors.rst`.
+1. Make a fork of the project.
+2. Open an Issue to discuss the planned PR with the project maintainers.
+3. Commit your changes to a feature branch on your fork and push to your branch.
+4. Start a pull request to let the project maintainers know you're working on it.
+5. Test your changes with `pytest`.
+6. Update your fork to make sure your changes don't conflict with the current state of the master branch.
+7. Make sure that you've added your name to `docs/contributors.rst`.
 If you haven't **please** do so by simply appending your name to the bottom of the list.
 We are thankful for and value your contributions to `pyhf`, not matter the size.
-7. Request your changes be accepted
+8. Request your PR be reviewed by the project maintainers.
 
 ## Bug Reports
 
