@@ -105,10 +105,6 @@ def fit(
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
-        modifier_settings={
-            "normsys": {"interpcode": "code4"},
-            "histosys": {"interpcode": "code4p"},
-        },
     )
     data = ws.data(model)
 
