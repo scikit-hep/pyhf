@@ -85,10 +85,10 @@ class gaussian_constraint_combined(object):
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
     def has_pdf(self):
-        '''
+        """
         Returns:
             flag (`bool`): Whether the model has a Gaussian Constraint
-        '''
+        """
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
@@ -219,10 +219,10 @@ class poisson_constraint_combined(object):
         self.batched_factors = tensorlib.astensor(self._batched_factors)
 
     def has_pdf(self):
-        '''
+        """
         Returns:
             flag (`bool`): Whether the model has a Gaussian Constraint
-        '''
+        """
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
