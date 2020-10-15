@@ -698,7 +698,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
-            merge (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "left outer" or "right outer" options.
+            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "left outer" or "right outer" options.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
