@@ -300,14 +300,21 @@ def test_rename_measurement(workspace_factory):
 
 @pytest.fixture(scope='session')
 def join_items():
-    left = [{'name': 'left', 'key': 'value'}, {'name': 'common', 'key': 'left'}]
-    right = [{'name': 'right', 'key': 'value'}, {'name': 'common', 'key': 'right'}]
+    left = [
+        {'name': 'left', 'key': 'value', 'deep': [{'name': 1}]},
+        {'name': 'common', 'key': 'left', 'deep': [{'name': 1}]},
+    ]
+    right = [
+        {'name': 'right', 'key': 'value', 'deep': [{'name': 2}]},
+        {'name': 'common', 'key': 'right', 'deep': [{'name': 2}]},
+    ]
     return (left, right)
 
 
 def test_join_items_none(join_items):
     left_items, right_items = join_items
     joined = pyhf.workspace._join_items('none', left_items, right_items, key='name')
+    breakpoint()
     assert all(left in joined for left in left_items)
     assert all(right in joined for right in right_items)
 
@@ -335,6 +342,28 @@ def test_join_items_right_outer(join_items):
     )
     assert not all(left in joined for left in left_items)
     assert all(right in joined for right in right_items)
+
+
+def test_join_items_left_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'left outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 1},
+        {'name': 2},
+    ]
+
+
+def test_join_items_right_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'right outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 2},
+        {'name': 1},
+    ]
 
 
 @pytest.mark.parametrize("join", ['none', 'outer'])
