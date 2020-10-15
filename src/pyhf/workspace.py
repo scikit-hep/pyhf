@@ -715,7 +715,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         else:
             if merge_channels:
                 raise ValueError(
-                    f"You can only merge channels using the 'left outer' or 'right outer' join operations."
+                    f"You can only merge channels using the 'left outer' or 'right outer' join operations; not {join}"
                 )
 
         new_version = _join_versions(join, left['version'], right['version'])
