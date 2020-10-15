@@ -507,6 +507,17 @@ def test_combine_workspace_invalid_join_operation(workspace_factory, join):
     assert join in str(excinfo.value)
 
 
+@pytest.mark.parametrize("join", ['none', 'outer'])
+def test_combine_workspace_invalid_join_operation_merge(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+    )
+    with pytest.raises(ValueError) as excinfo:
+        pyhf.Workspace.combine(ws, new_ws, join=join, merge_channels=True)
+    assert join in str(excinfo.value)
+
+
 @pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_incompatible_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
@@ -708,6 +719,20 @@ def test_workspace_inheritance(workspace_factory):
 
     combined = FooWorkspace.combine(ws, new_ws)
     assert isinstance(combined, FooWorkspace)
+
+
+@pytest.mark.parametrize("join", ['left outer', 'right outer'])
+def test_combine_workspace_merge_channels(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.prune(samples=ws.samples[1:]).rename(
+        samples={ws.samples[0]: f'renamed_{ws.samples[0]}'}
+    )
+    combined_ws = pyhf.Workspace.combine(ws, new_ws, join=join, merge_channels=True)
+    assert new_ws.samples[0] in combined_ws.samples
+    assert any(
+        sample['name'] == new_ws.samples[0]
+        for sample in combined_ws['channels'][0]['samples']
+    )
 
 
 def test_sorted(workspace_factory):
