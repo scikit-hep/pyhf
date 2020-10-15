@@ -288,7 +288,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         fixed = []
         for name in self.par_order:
             paramset = self.par_map[name]['paramset']
-            fixed = fixed + [paramset.fixed] * paramset.n_parameters
+            fixed = fixed + [paramset.suggested_fixed] * paramset.n_parameters
         return fixed
 
     def set_poi(self, name):
