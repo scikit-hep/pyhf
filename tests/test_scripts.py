@@ -629,15 +629,6 @@ def test_missing_contrib_download(caplog):
         else:
             import_module("pyhf.cli")
 
-        # Force environment for runner
-        for module in [
-            "pyhf.cli.contrib",
-            "pyhf.contrib",
-            "pyhf.contrib.utils",
-        ]:
-            if module in sys.modules:
-                del sys.modules[module]
-
         from pyhf.cli.contrib import download
 
         runner = CliRunner(mix_stderr=False)
