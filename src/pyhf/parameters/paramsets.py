@@ -6,7 +6,7 @@ class paramset(object):
         self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
-        self.fixed = kwargs.pop('fixed')
+        self.suggested_fixed = kwargs.pop('fixed')
 
 
 class unconstrained(paramset):

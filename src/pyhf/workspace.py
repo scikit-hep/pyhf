@@ -769,7 +769,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                         {
                             "bounds": [list(x) for x in v['paramset'].suggested_bounds],
                             "inits": v['paramset'].suggested_init,
-                            "fixed": v['paramset'].fixed,
+                            "fixed": v['paramset'].suggested_fixed,
                             "name": k,
                         }
                         for k, v in model.config.par_map.items()
