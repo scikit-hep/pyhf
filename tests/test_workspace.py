@@ -314,7 +314,6 @@ def join_items():
 def test_join_items_none(join_items):
     left_items, right_items = join_items
     joined = pyhf.workspace._join_items('none', left_items, right_items, key='name')
-    breakpoint()
     assert all(left in joined for left in left_items)
     assert all(right in joined for right in right_items)
 
