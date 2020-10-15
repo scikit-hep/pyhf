@@ -6,7 +6,7 @@ from .parameters import ParamViewer
 
 class gaussian_constraint_combined(object):
     def __init__(self, pdfconfig, batch_size=None):
-        
+
         default_backend, _ = get_default_backend()
 
         self.batch_size = batch_size
@@ -141,7 +141,7 @@ class gaussian_constraint_combined(object):
 
 class poisson_constraint_combined(object):
     def __init__(self, pdfconfig, batch_size=None):
-        
+
         default_backend, _ = get_default_backend()
 
         self.batch_size = batch_size

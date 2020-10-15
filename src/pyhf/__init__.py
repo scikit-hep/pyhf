@@ -9,6 +9,7 @@ optimizer = None
 default_backend = None
 default_optimizer = None
 
+
 def get_backend():
     """
     Get the current backend and the associated optimizer
@@ -170,7 +171,7 @@ def set_backend(backend, custom_optimizer=None, precision=None):
         events.trigger("optimizer_changed")()
     # set up any other globals for backend
     tensorlib._setup()
-    
+
 
 from .pdf import Model
 from .workspace import Workspace

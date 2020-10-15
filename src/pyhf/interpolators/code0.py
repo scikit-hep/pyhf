@@ -6,6 +6,7 @@ from . import _slow_interpolator_looper
 
 log = logging.getLogger(__name__)
 
+
 class code0(object):
     r"""
     The piecewise-linear interpolation strategy.
