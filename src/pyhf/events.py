@@ -72,6 +72,7 @@ def register(event):
     # >>>
 
     def _register(func):
+        @wraps(func)
         def register_wrapper(*args, **kwargs):
             trigger("{0:s}::before".format(event))()
             result = func(*args, **kwargs)
