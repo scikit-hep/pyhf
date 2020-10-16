@@ -430,7 +430,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
-            with_aux (bool): Whether to include auxiliary data from the model or not
+            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not
 
         Returns:
             :obj:`list`: data
