@@ -20,11 +20,11 @@ try:
         Example:
 
             >>> from pyhf.contrib.utils import download
-            >>> download("https://www.hepdata.net/record/resource/1408476?view=true", "1Lbb-likelihoods")
+            >>> download("https://doi.org/10.17182/hepdata.90607.v3/r3", "1Lbb-likelihoods")
             >>> import os
             >>> sorted(os.listdir("1Lbb-likelihoods"))
             ['BkgOnly.json', 'README.md', 'patchset.json']
-            >>> download("https://www.hepdata.net/record/resource/1408476?view=true", "1Lbb-likelihoods.tar.gz", compress=True)
+            >>> download("https://doi.org/10.17182/hepdata.90607.v3/r3", "1Lbb-likelihoods.tar.gz", compress=True)
             >>> import glob
             >>> glob.glob("1Lbb-likelihoods.tar.gz")
             ['1Lbb-likelihoods.tar.gz']

@@ -4,7 +4,8 @@ import logging
 import click
 
 from ..version import __version__
-from . import rootio, spec, infer, patchset, complete, contrib
+from . import rootio, spec, infer, patchset, complete
+from ..contrib import cli as contrib
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
