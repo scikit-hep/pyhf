@@ -33,11 +33,11 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
 
     Args:
-        data (`tensor`): The observed data.
+        data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        scan (`Iterable`): Iterable of POI values.
-        level (`float`): The threshold value to evaluate the interpolated results at.
-        return_results (`bool`): Whether to return the per-point results.
+        scan (:obj:`iterable`): Iterable of POI values.
+        level (:obj:`float`): The threshold value to evaluate the interpolated results at.
+        return_results (:obj:`bool`): Whether to return the per-point results.
 
     Returns:
         Tuple of Tensors:

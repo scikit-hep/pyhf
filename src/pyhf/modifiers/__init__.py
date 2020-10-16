@@ -70,10 +70,10 @@ def modifier(*args, **kwargs):
 
 
     Args:
-        name: the name of the modifier to use. Use the class name by default. (default: None)
-        constrained: whether the modifier is constrained or not. (default: False)
-        pdf_type: the name of the pdf to use from tensorlib if constrained. (default: normal)
-        op_code: the name of the operation the modifier performs on the data (e.g. addition, multiplication)
+        name (:obj:`str`): the name of the modifier to use. Use the class name by default. (default: None)
+        constrained (:obj:`bool`): whether the modifier is constrained or not. (default: False)
+        pdf_type (:obj:`str): the name of the pdf to use from tensorlib if constrained. (default: normal)
+        op_code (:obj:`str`): the name of the operation the modifier performs on the data (e.g. addition, multiplication)
 
     Returns:
         modifier

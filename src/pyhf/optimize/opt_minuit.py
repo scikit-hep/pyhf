@@ -25,8 +25,8 @@ class minuit_optimizer(OptimizerMixin):
 
 
         Args:
-            errordef (`float`): See minuit docs. Default is 1.0.
-            steps (`int`): Number of steps for the bounds. Default is 1000.
+            errordef (:obj:`float`): See minuit docs. Default is 1.0.
+            steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
         """
         self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)
@@ -85,8 +85,8 @@ class minuit_optimizer(OptimizerMixin):
         underlying minimizer.
 
         Minimizer Options:
-            maxiter (`int`): maximum number of iterations. Default is 100000.
-            return_uncertainties (`bool`): Return uncertainties on the fitted parameters. Default is off.
+            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
+            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result

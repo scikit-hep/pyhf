@@ -17,12 +17,12 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
     Args:
-        asimov_mu (`float`): The value for the parameter of interest to be used.
-        data (`tensor`): The observed data.
+        asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
+        data (:obj:`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        init_pars (`tensor`): The initial parameter values to be used for fitting.
-        par_bounds (`tensor`): The parameter value bounds to be used for fitting.
-        fixed_params (`tensor`): Parameters to be held constant in the fit.
+        init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+        par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+        fixed_params (:obj:`tensor`): Parameters to be held constant in the fit.
 
     Returns:
         Tensor: The Asimov dataset.
@@ -53,7 +53,7 @@ class AsymptoticTestStatDistribution(object):
         Asymptotic test statistic distribution.
 
         Args:
-            shift (`float`): The displacement of the test statistic distribution.
+            shift (:obj:`float`): The displacement of the test statistic distribution.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticTestStatDistribution: The asymptotic distribution of test statistic.
@@ -67,7 +67,7 @@ class AsymptoticTestStatDistribution(object):
         Compute the value of the cumulative distribution function for a given value of the test statistic.
 
         Args:
-            value (`float`): The test statistic value.
+            value (:obj:`float`): The test statistic value.
 
         Returns:
             Float: The integrated probability to observe a test statistic less than or equal to the observed ``value``.
@@ -95,7 +95,7 @@ class AsymptoticTestStatDistribution(object):
         given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
 
         Args:
-            value (`float`): The test statistic value.
+            value (:obj:`float`): The test statistic value.
 
         Returns:
             Float: The integrated probability to observe a value at least as large as the observed one.
@@ -110,7 +110,7 @@ class AsymptoticTestStatDistribution(object):
         Return the expected value of the test statistic.
 
         Args:
-            nsigma (`int` or `tensor`): The number of standard deviations.
+            nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
 
         Returns:
             Float: The expected value of the test statistic.
@@ -134,12 +134,12 @@ class AsymptoticCalculator(object):
         Asymptotic Calculator.
 
         Args:
-            data (`tensor`): The observed data.
+            data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (`tensor`): The initial parameter values to be used for fitting.
-            par_bounds (`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (`bool`): Whether to use qtilde as the test statistic.
+            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            qtilde (:obj:`bool`): Whether to use qtilde as the test statistic.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.

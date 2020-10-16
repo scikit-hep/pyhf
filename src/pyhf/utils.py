@@ -91,11 +91,11 @@ def digest(obj, algorithm='sha256'):
         ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
 
     Args:
-        obj (`obj`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
-        algorithm (`str`): The hashing algorithm to use.
+        obj (:obj:`jsonable`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
+        algorithm (:obj:`str`): The hashing algorithm to use.
 
     Returns:
-        digest (`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
+        digest (:obj:`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
     """
 
     try:

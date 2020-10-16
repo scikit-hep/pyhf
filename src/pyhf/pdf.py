@@ -365,7 +365,7 @@ class _ConstraintModel(object):
         Construct a pdf object for a given set of parameter values.
 
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: A distribution object implementing the constraint pdf of HistFactory.
@@ -392,8 +392,8 @@ class _ConstraintModel(object):
         Compute the logarithm of the value of the probability density.
 
         Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            auxdata (:obj:`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             Tensor: The log of the pdf value
@@ -461,8 +461,8 @@ class _MainModel(object):
         Compute the logarithm of the value of the probability density.
 
         Args:
-            maindata (`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            maindata (:obj:`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             Tensor: The log of the pdf value
@@ -547,12 +547,12 @@ class Model(object):
         Construct a HistFactory Model.
 
         Args:
-            spec (`jsonable`): The HistFactory JSON specification
-            batch_size (`None` or `int`): Number of simultaneous (batched) Models to compute.
+            spec (:obj:`jsonable`): The HistFactory JSON specification
+            batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
             config_kwargs: Possible keyword arguments for the model configuration
 
         Returns:
-            model (`Model`): The Model instance.
+            model (:class:`~pyhf.pdf.Model`): The Model instance.
 
         """
         self.batch_size = batch_size
@@ -604,7 +604,7 @@ class Model(object):
         Compute the expected value of the auxiliary measurements.
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the auxiliary pdf
@@ -627,7 +627,7 @@ class Model(object):
         Compute the expected value of the main model.
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the main model (no auxiliary data)
@@ -642,7 +642,7 @@ class Model(object):
         Compute the expected value of the main model
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the main and auxiliary model
@@ -659,8 +659,8 @@ class Model(object):
         Compute the log value of the constraint pdf.
 
         Args:
-            auxdata (`tensor`): The auxiliary measurement data
-            pars (`tensor`): The parameter values
+            auxdata (:obj:`tensor`): The auxiliary measurement data
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The log density value
@@ -673,8 +673,8 @@ class Model(object):
         Compute the log value of the main term.
 
         Args:
-            maindata (`tensor`): The main measurement data
-            pars (`tensor`): The parameter values
+            maindata (:obj:`tensor`): The main measurement data
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The log density value
@@ -687,7 +687,7 @@ class Model(object):
         Construct a pdf object for a given set of parameter values.
 
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: A distribution object implementing the main measurement pdf of HistFactory
@@ -711,8 +711,8 @@ class Model(object):
         Compute the log value of the full density.
 
         Args:
-            pars (`tensor`): The parameter values
-            data (`tensor`): The measurement data
+            pars (:obj:`tensor`): The parameter values
+            data (:obj:`tensor`): The measurement data
 
         Returns:
             Tensor: The log density value
@@ -758,8 +758,8 @@ class Model(object):
         Compute the density at a given observed point in data space of the full model.
 
         Args:
-            pars (`tensor`): The parameter values
-            data (`tensor`): The measurement data
+            pars (:obj:`tensor`): The parameter values
+            data (:obj:`tensor`): The measurement data
 
         Returns:
             Tensor: The density value

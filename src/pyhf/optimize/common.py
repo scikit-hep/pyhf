@@ -13,10 +13,10 @@ def _make_stitch_pars(tv=None, fixed_values=None):
 
     Args:
         tv (~pyhf.tensor.common._TensorViewer): tensor viewer instance
-        fixed_values (`list`): default set of values to stitch parameters with
+        fixed_values (:obj:`list`): default set of values to stitch parameters with
 
     Returns:
-        callable (`func`): a callable that takes nuisance parameter values as input
+        callable (:obj:`func`): a callable that takes nuisance parameter values as input
     """
     if tv is None or fixed_values is None:
         return lambda pars, stitch_with=None: pars
@@ -72,22 +72,22 @@ def shim(
     Prepare Minimization for Optimizer.
 
     Args:
-        objective (`func`): objective function
-        data (`list`): observed data
+        objective (:obj:`func`): objective function
+        data (:obj:`list`): observed data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): initial parameters
-        par_bounds (`list`): parameter boundaries
-        fixed_vals (`list`): fixed parameter values
+        init_pars (:obj:`list`): initial parameters
+        par_bounds (:obj:`list`): parameter boundaries
+        fixed_vals (:obj:`list`): fixed parameter values
 
     .. note::
 
         ``minimizer_kwargs`` is a dictionary containing
 
-          - ``func`` (`func`): backend-wrapped ``objective`` function (potentially with gradient)
-          - ``x0`` (`list`):  modified initializations for minimizer
-          - ``do_grad`` (`bool`): whether or not gradient is used
-          - ``bounds`` (`list`): modified bounds for minimizer
-          - ``fixed_vals`` (`list`): modified fixed values for minimizer
+          - ``func`` (:obj:`func`): backend-wrapped ``objective`` function (potentially with gradient)
+          - ``x0`` (:obj:`list`):  modified initializations for minimizer
+          - ``do_grad`` (:obj:`bool`): whether or not gradient is used
+          - ``bounds`` (:obj:`list`): modified bounds for minimizer
+          - ``fixed_vals`` (:obj:`list`): modified fixed values for minimizer
 
     .. note::
 
@@ -100,8 +100,8 @@ def shim(
         ``do_stitch`` will modify the ``init_pars``, ``par_bounds``, and ``fixed_vals`` by stripping away the entries associated with fixed parameters. The parameters can be stitched back in via ``stitch_pars``.
 
     Returns:
-        minimizer_kwargs (`dict`): arguments to pass to a minimizer following the :func:`scipy.optimize.minimize` API (see notes)
-        stitch_pars (`func`): callable that stitches fixed parameters into the unfixed parameters
+        minimizer_kwargs (:obj:`dict`): arguments to pass to a minimizer following the :func:`scipy.optimize.minimize` API (see notes)
+        stitch_pars (:obj:`func`): callable that stitches fixed parameters into the unfixed parameters
     """
     tensorlib, _ = get_backend()
 

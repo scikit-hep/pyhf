@@ -27,7 +27,7 @@ class Patch(jsonpatch.JsonPatch):
         Construct a Patch.
 
         Args:
-            spec (`jsonable`): The patch JSON specification
+            spec (:obj:`jsonable`): The patch JSON specification
 
         Returns:
             patch (:class:`~pyhf.patchset.Patch`): The Patch instance.
@@ -146,7 +146,7 @@ class PatchSet(object):
         Construct a PatchSet.
 
         Args:
-            spec (`jsonable`): The patchset JSON specification
+            spec (:obj:`jsonable`): The patchset JSON specification
             config_kwargs: Possible keyword arguments for the patchset validation
 
         Returns:

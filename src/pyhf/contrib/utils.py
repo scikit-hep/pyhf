@@ -30,10 +30,10 @@ try:
             ['1Lbb-likelihoods.tar.gz']
 
         Args:
-            archive_url (`str`): The URL of the :class:`~pyhf.patchset.PatchSet` archive to download.
-            output_directory (`str`): Name of the directory to unpack the archive into.
-            force (`Bool`): Force download from non-approved host. Default is ``False``.
-            compress (`Bool`): Keep the archive in a compressed ``tar.gz`` form. Default is ``False``.
+            archive_url (:obj:`str`): The URL of the :class:`~pyhf.patchset.PatchSet` archive to download.
+            output_directory (:obj:`str`): Name of the directory to unpack the archive into.
+            force (:obj:`bool`): Force download from non-approved host. Default is ``False``.
+            compress (:obj:`bool`): Keep the archive in a compressed ``tar.gz`` form. Default is ``False``.
 
         Raises:
             :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
