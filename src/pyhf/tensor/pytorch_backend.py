@@ -42,9 +42,9 @@ class pytorch_backend(object):
             tensor([-1., -1.,  0.,  1.,  1.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             PyTorch tensor: A clipped `tensor`
@@ -64,7 +64,7 @@ class pytorch_backend(object):
             tensor([-0.9953, -0.8427,  0.0000,  0.8427,  0.9953])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             PyTorch Tensor: The values of the error function at the given points.
@@ -84,7 +84,7 @@ class pytorch_backend(object):
             tensor([-2.0000, -1.0000,  0.0000,  1.0000,  2.0000])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             PyTorch Tensor: The values of the inverse of the error function at the given points.
@@ -106,9 +106,9 @@ class pytorch_backend(object):
             tensor([9.])
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             PyTorch Tensor: The output of the callable that was evaluated
@@ -137,8 +137,8 @@ class pytorch_backend(object):
                     [2., 2.]])
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             PyTorch tensor: The tensor with repeated axes
@@ -315,9 +315,9 @@ class pytorch_backend(object):
             tensor([0.1606, 0.1241])
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
@@ -348,9 +348,9 @@ class pytorch_backend(object):
             tensor([0.3521, 0.4648])
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
@@ -373,9 +373,9 @@ class pytorch_backend(object):
             tensor([0.7881, 0.9772])
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch FloatTensor: The CDF
@@ -403,7 +403,7 @@ class pytorch_backend(object):
             tensor([-1.7403, -2.0869])
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             PyTorch Poisson distribution: The Poisson distribution class
@@ -426,8 +426,8 @@ class pytorch_backend(object):
             tensor([-1.4189, -2.2258])
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch Normal distribution: The Normal distribution class

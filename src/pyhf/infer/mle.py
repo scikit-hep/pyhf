@@ -37,8 +37,8 @@ def twice_nll(pars, data, pdf):
         array([ True])
 
     Args:
-        pars (`tensor`): The parameters of the HistFactory model
-        data (`tensor`): The data to be considered
+        pars (:obj:`tensor`): The parameters of the HistFactory model
+        data (:obj:`tensor`): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
 
     Returns:
@@ -83,11 +83,11 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         array([ True])
 
     Args:
-        data (`tensor`): The data
+        data (:obj:`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
@@ -154,9 +154,9 @@ def fixed_poi_fit(
     Args:
         data: The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:

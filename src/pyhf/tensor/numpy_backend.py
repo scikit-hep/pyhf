@@ -67,9 +67,9 @@ class numpy_backend(object):
             array([-1., -1.,  0.,  1.,  1.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             NumPy ndarray: A clipped `tensor`
@@ -89,7 +89,7 @@ class numpy_backend(object):
             array([-0.99532227, -0.84270079,  0.        ,  0.84270079,  0.99532227])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             NumPy ndarray: The values of the error function at the given points.
@@ -109,7 +109,7 @@ class numpy_backend(object):
             array([-2., -1.,  0.,  1.,  2.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             NumPy ndarray: The values of the inverse of the error function at the given points.
@@ -130,8 +130,8 @@ class numpy_backend(object):
                    [2., 2.]])
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             NumPy ndarray: The tensor with repeated axes
@@ -153,9 +153,9 @@ class numpy_backend(object):
             array([9.])
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             NumPy ndarray: The output of the callable that was evaluated
@@ -329,9 +329,9 @@ class numpy_backend(object):
             array([0.16062314, 0.12407692])
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
@@ -373,9 +373,9 @@ class numpy_backend(object):
             array([0.35206533, 0.46481887])
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             NumPy float: Value of Normal(x|mu, sigma)
@@ -397,9 +397,9 @@ class numpy_backend(object):
             array([0.7881446 , 0.97724987])
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             NumPy float: The CDF
@@ -420,7 +420,7 @@ class numpy_backend(object):
             array([-1.74030218, -2.0868536 ])
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             Poisson distribution: The Poisson distribution class
@@ -442,8 +442,8 @@ class numpy_backend(object):
             array([-1.41893853, -2.22579135])
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             Normal distribution: The Normal distribution class

@@ -39,9 +39,9 @@ class tensorflow_backend(object):
             tf.Tensor([-1. -1.  0.  1.  1.], shape=(5,), dtype=float32)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             TensorFlow Tensor: A clipped `tensor`
@@ -67,7 +67,7 @@ class tensorflow_backend(object):
             tf.Tensor([-0.9953223 -0.8427007  0.         0.8427007  0.9953223], shape=(5,), dtype=float32)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             TensorFlow Tensor: The values of the error function at the given points.
@@ -88,7 +88,7 @@ class tensorflow_backend(object):
             tf.Tensor([-2.000001   -0.99999964  0.          0.99999964  1.9999981 ], shape=(5,), dtype=float32)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             TensorFlow Tensor: The values of the inverse of the error function at the given points.
@@ -110,8 +110,8 @@ class tensorflow_backend(object):
              [2. 2.]], shape=(2, 2), dtype=float32)
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             TensorFlow Tensor: The tensor with repeated axes
@@ -141,9 +141,9 @@ class tensorflow_backend(object):
             tf.Tensor([9.], shape=(1,), dtype=float32)
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             TensorFlow Tensor: The output of the callable that was evaluated
@@ -379,9 +379,9 @@ class tensorflow_backend(object):
             tf.Tensor([-1.8286943 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
@@ -408,9 +408,9 @@ class tensorflow_backend(object):
             tf.Tensor([0.16062315 0.12407687], shape=(2,), dtype=float32)
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
@@ -438,9 +438,9 @@ class tensorflow_backend(object):
             tf.Tensor([-1.0439385 -0.7661075], shape=(2,), dtype=float32)
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             TensorFlow Tensor: Value of log(Normal(x|mu, sigma))
@@ -468,9 +468,9 @@ class tensorflow_backend(object):
             tf.Tensor([0.35206532 0.46481887], shape=(2,), dtype=float32)
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             TensorFlow Tensor: Value of Normal(x|mu, sigma)
@@ -494,9 +494,9 @@ class tensorflow_backend(object):
             tf.Tensor([0.7881446  0.97724986], shape=(2,), dtype=float32)
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             TensorFlow Tensor: The CDF
@@ -521,7 +521,7 @@ class tensorflow_backend(object):
             tf.Tensor([-1.7403021 -2.086854 ], shape=(2,), dtype=float32)
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             TensorFlow Probability Poisson distribution: The Poisson distribution class
@@ -545,8 +545,8 @@ class tensorflow_backend(object):
             tf.Tensor([-1.4189385 -2.2257915], shape=(2,), dtype=float32)
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             TensorFlow Probability Normal distribution: The Normal distribution class

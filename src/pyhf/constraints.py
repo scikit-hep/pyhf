@@ -84,14 +84,14 @@ class gaussian_constraint_combined(object):
     def has_pdf(self):
         """
         Returns:
-            flag (`bool`): Whether the model has a Gaussian Constraint
+            flag (:obj:`bool`): Whether the model has a Gaussian Constraint
         """
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: The pdf object for the Normal Constraint
@@ -118,8 +118,8 @@ class gaussian_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         """
         Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            auxdata (:obj:`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             log pdf value: The log of the pdf value of the Normal constraints
@@ -215,14 +215,14 @@ class poisson_constraint_combined(object):
     def has_pdf(self):
         """
         Returns:
-            flag (`bool`): Whether the model has a Gaussian Constraint
+            flag (:obj:`bool`): Whether the model has a Gaussian Constraint
         """
         return bool(self.param_viewer.index_selection)
 
     def make_pdf(self, pars):
         """
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: the pdf object for the Poisson Constraint
@@ -250,8 +250,8 @@ class poisson_constraint_combined(object):
     def logpdf(self, auxdata, pars):
         """
         Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            auxdata (:obj:`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             log pdf value: The log of the pdf value of the Poisson constraints
