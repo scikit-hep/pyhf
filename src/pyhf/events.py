@@ -1,4 +1,5 @@
 import weakref
+from functools import wraps
 
 __events = {}
 __disabled_events = set([])
