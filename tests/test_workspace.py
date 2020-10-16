@@ -140,10 +140,14 @@ def test_workspace_observations(workspace_factory):
     assert w.observations
 
 
-def test_get_workspace_data(workspace_factory):
+@pytest.mark.parametrize(
+    "with_aux",
+    [True, False],
+)
+def test_get_workspace_data(workspace_factory, with_aux):
     w = workspace_factory()
     m = w.model()
-    assert w.data(m)
+    assert w.data(m, with_aux=with_aux)
 
 
 def test_get_workspace_data_bad_model(workspace_factory, caplog):
