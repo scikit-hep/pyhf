@@ -1,4 +1,4 @@
-from . import get_backend, default_backend
+from . import get_backend
 from . import events
 from . import probability as prob
 from .parameters import ParamViewer
@@ -6,6 +6,7 @@ from .parameters import ParamViewer
 
 class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend, _ = get_backend(default=True)
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -138,6 +139,7 @@ class gaussian_constraint_combined:
 
 class poisson_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend, _ = get_backend(default=True)
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 

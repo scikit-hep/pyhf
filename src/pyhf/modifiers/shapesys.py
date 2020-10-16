@@ -1,7 +1,7 @@
 import logging
 
 from . import modifier
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
 from ..parameters import constrained_by_poisson, ParamViewer
 
 log = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ class shapesys:
 
 class shapesys_combined:
     def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
+        default_backend, _ = get_backend(default=True)
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in shapesys_mods]
@@ -81,6 +82,7 @@ class shapesys_combined:
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _reindex_access_field(self, pdfconfig):
+        default_backend, _ = get_backend(default=True)
         for syst_index, syst_access in enumerate(self._access_field):
             if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
                 self._access_field[syst_index] = 0
@@ -119,6 +121,7 @@ class shapesys_combined:
         self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
 
     def finalize(self, pdfconfig):
+        default_backend, _ = get_backend(default=True)
         # self.__shapesys_info: (parameter, sample, [mask, nominal rate, uncertainty], bin)
         for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
             # skip cases where given shapesys modifier affects zero samples

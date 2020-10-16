@@ -1,7 +1,7 @@
 import logging
 
 from . import modifier
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
 from ..parameters import constrained_by_normal, ParamViewer
 
 log = logging.getLogger(__name__)
@@ -25,6 +25,7 @@ class staterror:
 
 class staterror_combined:
     def __init__(self, staterr_mods, pdfconfig, mega_mods, batch_size=None):
+        default_backend, _ = get_backend(default=True)
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in staterr_mods]
@@ -85,6 +86,7 @@ class staterror_combined:
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
 
     def finalize(self, pdfconfig):
+        default_backend, _ = get_backend(default=True)
         staterror_mask = default_backend.astensor(self._staterror_mask)
         for this_mask, uncert_this_mod, mod in zip(
             staterror_mask, self.__staterror_uncrt, self._staterr_mods

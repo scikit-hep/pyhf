@@ -3,7 +3,7 @@
 import copy
 import logging
 
-from . import get_backend, default_backend
+from . import get_backend
 from . import exceptions
 from . import modifiers
 from . import utils
@@ -89,6 +89,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
 
 
 def _nominal_and_modifiers_from_spec(config, spec):
+    default_backend, _ = get_backend(default=True)
     default_data_makers = {
         'histosys': lambda: {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': []},
         'lumi': lambda: {'mask': []},
@@ -397,6 +398,7 @@ class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
+        default_backend, _ = get_backend(default=True)
         self.config = config
         self._factor_mods = [
             modtype

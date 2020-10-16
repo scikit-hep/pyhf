@@ -1,4 +1,4 @@
-from .. import get_backend, default_backend, events
+from .. import get_backend, events
 from ..tensor.common import (
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
@@ -43,7 +43,8 @@ class ParamViewer:
     """
 
     def __init__(self, shape, par_map, par_selection):
-
+        default_backend, _ = get_backend(default=True)
+        
         batch_size = shape[0] if len(shape) > 1 else None
 
         fullsize = default_backend.product(default_backend.astensor(shape))

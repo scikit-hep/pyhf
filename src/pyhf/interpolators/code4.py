@@ -1,7 +1,7 @@
 """Polynomial Interpolation (Code 4)."""
 import logging
 import math
-from .. import get_backend, default_backend
+from .. import get_backend
 from .. import events
 from . import _slow_interpolator_looper
 
@@ -32,6 +32,7 @@ class code4:
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
         """Polynomial Interpolation."""
+        default_backend, _ = get_backend(default=True)
         # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
         # we cannot calculate the coefficients (e.g. determinant == 0)
         assert alpha0 > 0

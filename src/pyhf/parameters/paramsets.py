@@ -1,4 +1,4 @@
-from .. import default_backend
+from .. import get_backend
 
 
 class paramset:
@@ -47,6 +47,7 @@ class constrained_by_poisson(constrained_paramset):
             self.factors = factors
 
     def width(self):
+        default_backend, _ = get_backend(default=True)
         try:
             return default_backend.sqrt(
                 1.0 / default_backend.astensor(self.factors)

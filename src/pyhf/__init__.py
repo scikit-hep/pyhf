@@ -8,7 +8,7 @@ tensorlib = None
 optimizer = None
 
 
-def get_backend():
+def get_backend(default=False):
     """
     Get the current backend and the associated optimizer
 
@@ -23,6 +23,10 @@ def get_backend():
     Returns:
         backend, optimizer
     """
+    if default:
+        global default_backend
+        global default_optimizer
+        return default_backend, default_optimizer
     global tensorlib
     global optimizer
     return tensorlib, optimizer
@@ -35,7 +39,7 @@ default_optimizer = optimizer
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, precision=None):
+def set_backend(backend, custom_optimizer=None, precision=None, default=False):
     """
     Set the backend and the associated optimizer
 
@@ -65,9 +69,6 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     Returns:
         None
     """
-    global tensorlib
-    global optimizer
-
     _supported_precisions = ["32b", "64b"]
     backend_kwargs = {}
 
@@ -108,12 +109,6 @@ def set_backend(backend, custom_optimizer=None, precision=None):
             backend_kwargs["precision"] = precision
             backend = getattr(tensor, f"{backend.name:s}_backend")(**backend_kwargs)
 
-    # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(
-        (backend.name != tensorlib.name) | (backend.precision != tensorlib.precision)
-    )
-    optimizer_changed = False
-
     if custom_optimizer:
         if isinstance(custom_optimizer, (str, bytes)):
             if isinstance(custom_optimizer, bytes):
@@ -134,21 +129,46 @@ def set_backend(backend, custom_optimizer=None, precision=None):
                         f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
                     )
             new_optimizer = custom_optimizer
-
+    
     else:
         new_optimizer = optimize.scipy_optimizer()
 
-    optimizer_changed = bool(optimizer != new_optimizer)
-    # set new backend
-    tensorlib = backend
-    optimizer = new_optimizer
-    # trigger events
-    if tensorlib_changed:
-        events.trigger("tensorlib_changed")()
-    if optimizer_changed:
-        events.trigger("optimizer_changed")()
-    # set up any other globals for backend
-    tensorlib._setup()
+    if default:
+        global default_backend
+        global default_optimizer
+        # need to determine if the default tensorlib changed or the default optimizer changed for events
+        default_backend_changed = bool(
+            (backend.name != default_backend.name) | (backend.precision != default_backend.precision)
+        )
+        default_optimizer_changed = bool(default_optimizer != new_optimizer)
+        # set new default backend
+        default_backend = backend
+        default_optimizer = new_optimizer
+        # trigger events
+        if default_backend_changed:
+            events.trigger("default_tensorlib_changed")()
+        if default_optimizer_changed:
+            events.trigger("default_optimizer_changed")()
+        # set up any other globals for backend
+        default_backend._setup()
+    else:
+        global tensorlib
+        global optimizer
+        # need to determine if the tensorlib changed or the optimizer changed for events
+        tensorlib_changed = bool(
+            (backend.name != tensorlib.name) | (backend.precision != tensorlib.precision)
+        )
+        optimizer_changed = bool(optimizer != new_optimizer)
+        # set new backend
+        tensorlib = backend
+        optimizer = new_optimizer
+        # trigger events
+        if tensorlib_changed:
+            events.trigger("tensorlib_changed")()
+        if optimizer_changed:
+            events.trigger("optimizer_changed")()
+        # set up any other globals for backend
+        tensorlib._setup()
 
 
 from .pdf import Model
