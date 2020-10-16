@@ -129,7 +129,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
                         f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
                     )
             new_optimizer = custom_optimizer
-    
+
     else:
         new_optimizer = optimize.scipy_optimizer()
 
@@ -138,7 +138,8 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
         global default_optimizer
         # need to determine if the default tensorlib changed or the default optimizer changed for events
         default_backend_changed = bool(
-            (backend.name != default_backend.name) | (backend.precision != default_backend.precision)
+            (backend.name != default_backend.name)
+            | (backend.precision != default_backend.precision)
         )
         default_optimizer_changed = bool(default_optimizer != new_optimizer)
         # set new default backend
@@ -156,7 +157,8 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
         global optimizer
         # need to determine if the tensorlib changed or the optimizer changed for events
         tensorlib_changed = bool(
-            (backend.name != tensorlib.name) | (backend.precision != tensorlib.precision)
+            (backend.name != tensorlib.name)
+            | (backend.precision != tensorlib.precision)
         )
         optimizer_changed = bool(optimizer != new_optimizer)
         # set new backend
