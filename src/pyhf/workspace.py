@@ -17,7 +17,7 @@ from .mixins import _ChannelSummaryMixin
 log = logging.getLogger(__name__)
 
 
-def _join_items(join, left_items, right_items, key='name'):
+def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     """
     Join two lists of dictionaries along the given key.
 
@@ -27,6 +27,7 @@ def _join_items(join, left_items, right_items, key='name'):
         join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
         left_items (`list`): A list of dictionaries to join on the left
         right_items (`list`): A list of dictionaries to join on the right
+        deep_merge_key (`str`): A key on which to deeply merge items if set.
 
     Returns:
         :obj:`list`: A joined list of dictionaries.
@@ -37,17 +38,32 @@ def _join_items(join, left_items, right_items, key='name'):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
+    keys = [item[key] for item in joined_items]
     for secondary_item in secondary_items:
-        # outer join: merge primary and secondary, matching where possible
-        if join == 'outer' and secondary_item in primary_items:
-            continue
-        # left/right outer join: only add secondary if existing item (by key value) is not in primary
+        # first, move over whole items where possible:
+        #   - if no join logic
+        #   - if outer join and item on right is not in left
+        #   - if left outer join and item (by name) is on right and not in left
+        #   - if right outer join and item (by name) is on left and not in right
         # NB: this will be slow for large numbers of items
-        elif join in ['left outer', 'right outer'] and secondary_item[key] in [
-            item[key] for item in joined_items
-        ]:
-            continue
-        joined_items.append(copy.deepcopy(secondary_item))
+        if (
+            join == 'none'
+            or (join in ['outer'] and secondary_item not in primary_items)
+            or (
+                join in ['left outer', 'right outer']
+                and secondary_item[key] not in keys
+            )
+        ):
+            joined_items.append(copy.deepcopy(secondary_item))
+        # we've already moved over whole items where possible, so check for deep merging
+        elif secondary_item[key] in keys and deep_merge_key is not None:
+            _deep_left_items = joined_items[keys.index(secondary_item[key])][
+                deep_merge_key
+            ]
+            _deep_right_items = secondary_item[deep_merge_key]
+            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
+                'left outer', _deep_left_items, _deep_right_items
+            )
     return joined_items
 
 
@@ -74,7 +90,7 @@ def _join_versions(join, left_version, right_version):
     return left_version
 
 
-def _join_channels(join, left_channels, right_channels):
+def _join_channels(join, left_channels, right_channels, merge=False):
     """
     Join two workspace channel specifications.
 
@@ -85,13 +101,16 @@ def _join_channels(join, left_channels, right_channels):
         join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
         left_channels (`list`): The left channel specification.
         right_channels (`list`): The right channel specification.
+        merge (`bool`): Whether to deeply merge channels or not.
 
     Returns:
         :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#/definitions/channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
 
     """
 
-    joined_channels = _join_items(join, left_channels, right_channels)
+    joined_channels = _join_items(
+        join, left_channels, right_channels, deep_merge_key='samples' if merge else None
+    )
     if join == 'none':
         common_channels = set(c['name'] for c in left_channels).intersection(
             c['name'] for c in right_channels
@@ -659,7 +678,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right, join='none'):
+    def combine(cls, left, right, join='none', merge_channels=False):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -685,6 +704,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
+            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
@@ -694,13 +714,21 @@ class Workspace(_ChannelSummaryMixin, dict):
             raise ValueError(
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
+
+        if merge_channels and join not in ['outer', 'left outer', 'right outer']:
+            raise ValueError(
+                f"You can only merge channels using the 'outer', 'left outer', or 'right outer' join operations; not {join}"
+            )
+
         if join in ['left outer', 'right outer']:
             log.warning(
                 "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation."
             )
 
         new_version = _join_versions(join, left['version'], right['version'])
-        new_channels = _join_channels(join, left['channels'], right['channels'])
+        new_channels = _join_channels(
+            join, left['channels'], right['channels'], merge=merge_channels
+        )
         new_observations = _join_observations(
             join, left['observations'], right['observations']
         )

@@ -283,7 +283,12 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-def combine(workspace_one, workspace_two, join, output_file):
+@click.option(
+    '--merge-channels/--no-merge-channels',
+    help='Whether or not to deeply merge channels. Can only be done with left/right outer joins.',
+    default=False,
+)
+def combine(workspace_one, workspace_two, join, output_file, merge_channels):
     """
     Combine two workspaces into a single workspace.
 
@@ -297,7 +302,9 @@ def combine(workspace_one, workspace_two, join, output_file):
 
     ws_one = Workspace(spec_one)
     ws_two = Workspace(spec_two)
-    combined_ws = Workspace.combine(ws_one, ws_two, join=join)
+    combined_ws = Workspace.combine(
+        ws_one, ws_two, join=join, merge_channels=merge_channels
+    )
 
     if output_file is None:
         click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))

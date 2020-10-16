@@ -529,6 +529,25 @@ def test_combine_outfile(tmpdir, script_runner):
     assert len(combined_ws.measurement_names) == 8
 
 
+def test_combine_merge_channels(tmpdir, script_runner):
+    temp_1 = tmpdir.join("parsed_output.json")
+    temp_2 = tmpdir.join("renamed_output.json")
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath} --hide-progress'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = (
+        f'pyhf prune {temp_1.strpath} --sample signal --output-file {temp_2.strpath}'
+    )
+
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+    command = f'pyhf combine --merge-channels --join "left outer" {temp_1.strpath} {temp_2.strpath}'
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+
+
 @pytest.mark.parametrize('do_json', [False, True])
 @pytest.mark.parametrize(
     'algorithms', [['md5'], ['sha256'], ['sha256', 'md5'], ['sha256', 'md5']]
