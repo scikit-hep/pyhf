@@ -582,6 +582,25 @@ def test_combine_workspace_incompatible_parameter_configs_outer_join(
     ][0]['name'] in str(excinfo.value)
 
 
+@pytest.mark.parametrize("join", ['outer'])
+def test_combine_workspace_compatible_parameter_configs_outer_join(
+    workspace_factory, join
+):
+    ws = workspace_factory()
+    left_parameters = ws.get_measurement(measurement_name='GaussExample')['config'][
+        'parameters'
+    ]
+    right_parameters = ws.get_measurement(measurement_name='GaussExample')['config'][
+        'parameters'
+    ]
+    assert pyhf.workspace._join_parameter_configs(
+        'GaussExample', left_parameters, right_parameters
+    )
+    assert pyhf.workspace._join_measurements(
+        join, ws['measurements'], ws['measurements']
+    )
+
+
 def test_combine_workspace_incompatible_parameter_configs_left_outer_join(
     workspace_factory,
 ):
