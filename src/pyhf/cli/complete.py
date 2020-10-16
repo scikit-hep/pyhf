@@ -1,4 +1,4 @@
-'''Shell completions for pyhf.'''
+"""Shell completions for pyhf."""
 import click
 
 try:
@@ -13,7 +13,7 @@ try:
         type=click_completion.DocumentedChoice(click_completion.core.shells),
     )
     def cli(shell):
-        '''Generate shell completion code for various shells.'''
+        """Generate shell completion code for various shells."""
         click.echo(click_completion.core.get_code(shell, prog_name='pyhf'))
 
 
@@ -22,7 +22,7 @@ except ImportError:
     @click.command(help='Generate shell completion code.', name='completions')
     @click.argument('shell', default=None)
     def cli(shell):
-        '''Placeholder for shell completion code generatioon function if necessary dependency is missing.'''
+        """Placeholder for shell completion code generatioon function if necessary dependency is missing."""
         click.secho(
             'This requires the click_completion module.\n'
             'You can install it with the shellcomplete extra:\n'

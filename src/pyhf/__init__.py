@@ -6,6 +6,8 @@ from . import events
 
 tensorlib = None
 optimizer = None
+default_backend = None
+default_optimizer = None
 
 
 def get_backend():
@@ -26,6 +28,26 @@ def get_backend():
     global tensorlib
     global optimizer
     return tensorlib, optimizer
+
+
+def get_default_backend():
+    """
+    Get the current default backend and the associated optimizer
+
+    Example:
+        >>> import pyhf
+        >>> backend, optimizer = pyhf.get_default_backend()
+        >>> backend
+        <pyhf.tensor.numpy_backend.numpy_backend object at 0x...>
+        >>> optimizer
+        <pyhf.optimize.scipy_optimizer object at 0x...>
+
+    Returns:
+        default_backend, default_optimizer
+    """
+    global default_backend
+    global default_optimizer
+    return default_backend, default_optimizer
 
 
 tensorlib = tensor.numpy_backend()

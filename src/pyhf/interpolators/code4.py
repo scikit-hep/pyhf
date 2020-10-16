@@ -1,7 +1,7 @@
 """Polynomial Interpolation (Code 4)."""
 import logging
 import math
-from .. import get_backend, default_backend
+from .. import get_backend, get_default_backend
 from .. import events
 from . import _slow_interpolator_looper
 
@@ -34,6 +34,8 @@ class code4(object):
         """Polynomial Interpolation."""
         # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
         # we cannot calculate the coefficients (e.g. determinant == 0)
+        default_backend, _ = get_default_backend()
+
         assert alpha0 > 0
         self.__alpha0 = alpha0
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
