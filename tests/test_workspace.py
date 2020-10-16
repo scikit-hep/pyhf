@@ -539,7 +539,7 @@ def test_combine_workspace_invalid_join_operation(workspace_factory, join):
     assert join in str(excinfo.value)
 
 
-@pytest.mark.parametrize("join", ['none', 'outer'])
+@pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_invalid_join_operation_merge(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(

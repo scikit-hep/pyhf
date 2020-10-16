@@ -38,26 +38,32 @@ def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
+    keys = [item[key] for item in joined_items]
     for secondary_item in secondary_items:
-        # outer join: merge primary and secondary, matching where possible
-        keys = [item[key] for item in joined_items]
-        if join == 'outer' and secondary_item in primary_items:
-            continue
-        # left/right outer join: only add secondary if existing item (by key value) is not in primary
+        # first, move over whole items where possible:
+        #   - if no join logic
+        #   - if outer join and item on right is not in left
+        #   - if left outer join and item (by name) is on right and not in left
+        #   - if right outer join and item (by name) is on left and not in right
         # NB: this will be slow for large numbers of items
-        elif join in ['left outer', 'right outer'] and secondary_item[key] in keys:
-            # Deeply merge a sublist as well, if we need to
-            if deep_merge_key is not None:
-                _deep_left_items = joined_items[keys.index(secondary_item[key])][
-                    deep_merge_key
-                ]
-                _deep_right_items = secondary_item[deep_merge_key]
-                joined_items[keys.index(secondary_item[key])][
-                    deep_merge_key
-                ] = _join_items('left outer', _deep_left_items, _deep_right_items)
-            continue
-
-        joined_items.append(copy.deepcopy(secondary_item))
+        if (
+            join == 'none'
+            or (join in ['outer'] and secondary_item not in primary_items)
+            or (
+                join in ['left outer', 'right outer']
+                and secondary_item[key] not in keys
+            )
+        ):
+            joined_items.append(copy.deepcopy(secondary_item))
+        # we've already moved over whole items where possible, so check for deep merging
+        elif secondary_item[key] in keys and deep_merge_key is not None:
+            _deep_left_items = joined_items[keys.index(secondary_item[key])][
+                deep_merge_key
+            ]
+            _deep_right_items = secondary_item[deep_merge_key]
+            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
+                'left outer', _deep_left_items, _deep_right_items
+            )
     return joined_items
 
 
@@ -698,7 +704,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
-            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "left outer" or "right outer" options.
+            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
@@ -708,15 +714,16 @@ class Workspace(_ChannelSummaryMixin, dict):
             raise ValueError(
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
+
+        if merge_channels and join not in ['outer', 'left outer', 'right outer']:
+            raise ValueError(
+                f"You can only merge channels using the 'outer', 'left outer', or 'right outer' join operations; not {join}"
+            )
+
         if join in ['left outer', 'right outer']:
             log.warning(
                 "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation."
             )
-        else:
-            if merge_channels:
-                raise ValueError(
-                    f"You can only merge channels using the 'left outer' or 'right outer' join operations; not {join}"
-                )
 
         new_version = _join_versions(join, left['version'], right['version'])
         new_channels = _join_channels(
