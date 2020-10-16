@@ -6,6 +6,7 @@ import json
 import logging
 import pyhf.workspace
 import pyhf.utils
+import copy
 
 
 @pytest.fixture(
@@ -602,6 +603,17 @@ def test_combine_workspace_compatible_parameter_configs_outer_join(
     )
     assert pyhf.workspace._join_measurements(
         join, ws['measurements'], ws['measurements']
+    )
+
+
+@pytest.mark.parametrize("join", ['outer'])
+def test_combine_workspace_measurements_outer_join(workspace_factory, join):
+    ws = workspace_factory()
+    left_measurements = ws['measurements']
+    right_measurements = copy.deepcopy(ws['measurements'])
+    right_measurements[0]['config']['parameters'][0]['name'] = 'fake'
+    assert pyhf.workspace._join_measurements(
+        join, left_measurements, right_measurements
     )
 
 
