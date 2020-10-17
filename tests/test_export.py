@@ -159,7 +159,8 @@ def test_export_measurement():
         },
         "name": "NormalMeasurement",
     }
-    m = pyhf.writexml.build_measurement(measurementspec)
+    modifiertypes = {'mu': 'normfactor', 'lumi': 'lumi'}
+    m = pyhf.writexml.build_measurement(measurementspec, modifiertypes)
     assert m is not None
     assert m.attrib['Name'] == measurementspec['name']
     assert m.attrib['Lumi'] == str(
