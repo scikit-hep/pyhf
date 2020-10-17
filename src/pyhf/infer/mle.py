@@ -47,6 +47,14 @@ def twice_nll(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 
+def validate_fit_inputs(pdf, init, bounds, fixed_params):
+    for i, (value, bound) in enumerate(zip(init, bounds)):
+        if not (bound[0] <= value <= bound[1]):
+            raise ValueError(
+                f'parameter {i}  value {value} of hypotest lies outside of bounds: {bound}'
+            )
+
+
 def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs):
     r"""
     Run a maximum likelihood fit.
@@ -98,6 +106,8 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    validate_fit_inputs(pdf, init_pars, par_bounds, fixed_params)
 
     # get fixed vals from the model
     fixed_vals = [
