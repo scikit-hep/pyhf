@@ -8,6 +8,8 @@ import numpy as np
 import uproot
 from uproot_methods.classes import TH1
 
+from .mixins import _ChannelSummaryMixin
+
 _ROOT_DATA_FILE = None
 
 log = logging.getLogger(__name__)
@@ -58,7 +60,15 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def build_measurement(measurementspec):
+def build_measurement(measurementspec, modifiertypes):
+    # need to determine prefixes
+    prefixes = {
+        'normsys': 'alpha_',
+        'histosys': 'alpha_',
+        'shapesys': 'gamma_',
+        'staterror': 'gamma_',
+    }
+
     config = measurementspec['config']
     name = measurementspec['name']
     poi = config['poi']
@@ -74,7 +84,8 @@ def build_measurement(measurementspec):
             if pname == 'lumi':
                 fixed_params.append('Lumi')
             else:
-                fixed_params.append(pname)
+                prefix = prefixes.get(modifiertypes[pname], '')
+                fixed_params.append(f'{prefix}{pname}')
         # we found luminosity, so handle it
         if parameter['name'] == 'lumi':
             lumi = parameter['auxdata'][0]
@@ -269,8 +280,11 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             inp.text = channelfilename
             combination.append(inp)
 
+    # need information about modifier types to get the right prefix in measurement
+    mixin = _ChannelSummaryMixin(channels=spec['channels'])
+
     for measurement in spec['measurements']:
-        combination.append(build_measurement(measurement))
+        combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
     return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
         "utf-8"
