@@ -47,7 +47,7 @@ def twice_nll(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 
-def _validate_fit_inputs(pdf, init, bounds, fixed_params):
+def _validate_fit_inputs(init, bounds, fixed_params):
     for i, (value, bound) in enumerate(zip(init, bounds)):
         if not (bound[0] <= value <= bound[1]):
             raise ValueError(
@@ -107,7 +107,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-    _validate_fit_inputs(pdf, init_pars, par_bounds, fixed_params)
+    _validate_fit_inputs(init_pars, par_bounds, fixed_params)
 
     # get fixed vals from the model
     fixed_vals = [
