@@ -79,7 +79,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
 
 def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
     """
-    Check that the default return structure of pyhf.infer.hypotest is as expected
+    Test for parameter bounds
     """
     pdf = pyhf.simplemodels.hepdata_like(
         signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
