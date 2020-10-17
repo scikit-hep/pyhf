@@ -120,8 +120,8 @@ def remove_prefix(text, prefix):
     Example:
 
         >>> import pyhf
-        >>> pyhf.utils.remove_prefix("alpha_syst1", "alpha")
-        "syst1"
+        >>> pyhf.utils.remove_prefix("alpha_syst1", "alpha_")
+        'syst1'
 
     Args:
         text (:obj:`str`): A provided input to manipulate.
