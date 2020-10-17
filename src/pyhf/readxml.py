@@ -258,6 +258,8 @@ def process_measurements(toplvl, other_parameter_configs=None):
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
                 for param_name in param.text.split(' '):
+                    param_name = utils.remove_prefix(param_name, 'alpha_')
+                    param_name = utils.remove_prefix(param_name, 'gamma_')
                     # lumi will always be the first parameter
                     if param_name == 'Lumi':
                         result['config']['parameters'][0].update(overall_param_obj)
