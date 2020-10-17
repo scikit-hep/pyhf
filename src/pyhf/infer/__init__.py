@@ -4,6 +4,15 @@ from .. import get_backend
 from .calculators import AsymptoticCalculator
 
 
+def validate_hypotest_inputs(pdf, poi_test, init, bounds, fixed_params):
+    if not (
+        bounds[pdf.config.poi_index][0] <= poi_test <= bounds[pdf.config.poi_index][1]
+    ):
+        raise ValueError(
+            f'POI value {poi_test} of hypotest lies outside of bounds: {bounds[pdf.config.poi_index]}'
+        )
+
+
 def hypotest(
     poi_test,
     data,
@@ -126,6 +135,8 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    validate_hypotest_inputs(pdf, poi_test, init_pars, par_bounds, fixed_params)
 
     calc = AsymptoticCalculator(
         data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
