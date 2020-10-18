@@ -51,7 +51,10 @@ def _validate_fit_inputs(init_pars, par_bounds, fixed_params):
     for par_idx, (value, bound) in enumerate(zip(init_pars, par_bounds)):
         if not (bound[0] <= value <= bound[1]):
             raise ValueError(
-                f'parameter {par_idx} value {value} of hypotest lies outside of bounds: {bound}'
+                f"fit initialization parameter (index: {par_idx}, value: {value}) lies outside of its bounds: {bound}"
+                + "\nTo correct this adjust the initialization parameter values in the model spec or those given"
+                + "\nas arguments to pyhf.infer.fit. If this value is intended, adjust the range of the parameter"
+                + "\nbounds."
             )
 
 
