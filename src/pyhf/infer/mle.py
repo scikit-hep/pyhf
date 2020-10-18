@@ -47,11 +47,11 @@ def twice_nll(pars, data, pdf):
     return -2 * pdf.logpdf(pars, data)
 
 
-def _validate_fit_inputs(init, bounds, fixed_params):
-    for i, (value, bound) in enumerate(zip(init, bounds)):
+def _validate_fit_inputs(init_pars, par_bounds, fixed_params):
+    for par_idx, (value, bound) in enumerate(zip(init_pars, par_bounds)):
         if not (bound[0] <= value <= bound[1]):
             raise ValueError(
-                f'parameter {i}  value {value} of hypotest lies outside of bounds: {bound}'
+                f'parameter {par_idx} value {value} of hypotest lies outside of bounds: {bound}'
             )
 
 
