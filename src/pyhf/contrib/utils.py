@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import tarfile
 from io import BytesIO
 import logging
+import re
 from .. import exceptions
 
 logging.basicConfig()
@@ -46,6 +47,12 @@ try:
                     f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
                     + "To download an archive from this host use the --force option."
                 )
+
+        magic_headers = {
+            "gzip": b"\x1f\x8b",
+            "zip": b"PK",
+            "JSON": re.compile(br"^\s*{"),
+        }
 
         with requests.get(archive_url) as response:
             if compress:
