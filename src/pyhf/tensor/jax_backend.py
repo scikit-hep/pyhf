@@ -144,6 +144,8 @@ class jax_backend(object):
         Returns:
             JAX ndarray: The tensor with repeated axes
         """
+        if 0 in repeats:
+            return np.array([]).reshape(np.array(tensor_in.shape) * np.array(repeats))
         return np.tile(tensor_in, repeats)
 
     def conditional(self, predicate, true_callable, false_callable):

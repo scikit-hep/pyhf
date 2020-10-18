@@ -76,9 +76,17 @@ class shapefactor_combined(object):
             [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
-        global_concatenated_bin_indices = [
-            [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
-        ]
+        global_concatenated_bin_indices = default_backend.astensor(
+            [
+                [
+                    [
+                        j
+                        for c in pdfconfig.channels
+                        for j in range(pdfconfig.channel_nbins[c])
+                    ]
+                ]
+            ]
+        )
 
         self._access_field = default_backend.tile(
             global_concatenated_bin_indices,
