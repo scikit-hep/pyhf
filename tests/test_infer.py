@@ -79,7 +79,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
 
 def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
     """
-    Test for parameter bounds
+    Check that the fit errors for POI outside of parameter bounds
     """
     pdf = pyhf.simplemodels.hepdata_like(
         signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
