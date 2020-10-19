@@ -61,6 +61,17 @@ def indent(elem, level=0):
 
 
 def build_measurement(measurementspec, modifiertypes):
+    """
+    Build the XML measurement specification for a given measurement adhering to defs.json/#definitions/measurement.
+
+    Args:
+        measurementspec (:obj:`dict`): The measurements specification from a :class:`~pyhf.workspace.Workspace`.
+        modifiertypes (:obj:`dict`): A mapping from modifier name (:obj:`str`) to modifier type (:obj:`str`).
+
+    Returns:
+        :class:`xml.etree.cElementTree.Element`: The XML measurement specification.
+
+    """
     # need to determine prefixes
     prefixes = {
         'normsys': 'alpha_',
