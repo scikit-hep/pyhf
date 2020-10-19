@@ -49,18 +49,24 @@ try:
                 )
 
         magic_headers = {
-            "gzip": b"\x1f\x8b",
-            "zip": b"PK",
-            "JSON": re.compile(br"^\s*{"),
+            "gz": b"\x1f\x8b",  # gzip
+            "bz2": b"PK",  # zip
+            # "JSON": re.compile(br"^\s*{"),
         }
+        header_len = max(len(header) for header in magic_headers.values())
 
         with requests.get(archive_url) as response:
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
+                fileobj = BytesIO(response.content)
+                file_type = None
+                for _file_type, header in magic_headers.items():
+                    if fileobj.read(header_len) == header:
+                        file_type = _file_type
                 with tarfile.open(
-                    mode="r|gz", fileobj=BytesIO(response.content)
+                    mode=f"r|{file_type}", fileobj=BytesIO(response.content)
                 ) as archive:
                     archive.extractall(output_directory)
 
