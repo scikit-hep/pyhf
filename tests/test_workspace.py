@@ -348,6 +348,17 @@ def test_join_items_right_outer(join_items):
     assert all(right in joined for right in right_items)
 
 
+def test_join_items_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 1},
+        {'name': 2},
+    ]
+
+
 def test_join_items_left_outer_deep(join_items):
     left_items, right_items = join_items
     joined = pyhf.workspace._join_items(
@@ -784,7 +795,7 @@ def test_workspace_inheritance(workspace_factory):
     assert isinstance(combined, FooWorkspace)
 
 
-@pytest.mark.parametrize("join", ['left outer', 'right outer'])
+@pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
 def test_combine_workspace_merge_channels(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.prune(samples=ws.samples[1:]).rename(
