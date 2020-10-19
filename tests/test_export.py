@@ -153,13 +153,24 @@ def test_export_measurement():
                     "inits": [1.0],
                     "name": "lumi",
                     "sigmas": [0.029],
-                }
+                },
+                {"name": "syst1", "fixed": True},
+                {"name": "syst2", "fixed": True},
+                {"name": "syst3", "fixed": True},
+                {"name": "syst4", "fixed": True},
             ],
             "poi": "mu",
         },
         "name": "NormalMeasurement",
     }
-    modifiertypes = {'mu': 'normfactor', 'lumi': 'lumi'}
+    modifiertypes = {
+        'mu': 'normfactor',
+        'lumi': 'lumi',
+        'syst1': 'normsys',
+        'syst2': 'histosys',
+        'syst3': 'shapesys',
+        'syst4': 'staterror',
+    }
     m = pyhf.writexml.build_measurement(measurementspec, modifiertypes)
     assert m is not None
     assert m.attrib['Name'] == measurementspec['name']
@@ -173,7 +184,11 @@ def test_export_measurement():
     assert poi is not None
     assert poi.text == measurementspec['config']['poi']
     paramsetting = m.find('ParamSetting')
-    assert paramsetting is None
+    assert paramsetting is not None
+    assert 'alpha_syst1' in paramsetting.text
+    assert 'alpha_syst2' in paramsetting.text
+    assert 'gamma_syst3' in paramsetting.text
+    assert 'gamma_syst4' in paramsetting.text
 
 
 @pytest.mark.parametrize(
