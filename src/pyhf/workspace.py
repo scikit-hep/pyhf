@@ -40,13 +40,22 @@ def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     joined_items = copy.deepcopy(primary_items)
     keys = [item[key] for item in joined_items]
     for secondary_item in secondary_items:
-        # first, move over whole items where possible:
+        # first, check for deep merging
+        if secondary_item[key] in keys and deep_merge_key is not None:
+            _deep_left_items = joined_items[keys.index(secondary_item[key])][
+                deep_merge_key
+            ]
+            _deep_right_items = secondary_item[deep_merge_key]
+            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
+                'left outer', _deep_left_items, _deep_right_items
+            )
+        # next, move over whole items where possible:
         #   - if no join logic
         #   - if outer join and item on right is not in left
         #   - if left outer join and item (by name) is on right and not in left
         #   - if right outer join and item (by name) is on left and not in right
         # NB: this will be slow for large numbers of items
-        if (
+        elif (
             join == 'none'
             or (join in ['outer'] and secondary_item not in primary_items)
             or (
@@ -55,15 +64,6 @@ def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
             )
         ):
             joined_items.append(copy.deepcopy(secondary_item))
-        # we've already moved over whole items where possible, so check for deep merging
-        elif secondary_item[key] in keys and deep_merge_key is not None:
-            _deep_left_items = joined_items[keys.index(secondary_item[key])][
-                deep_merge_key
-            ]
-            _deep_right_items = secondary_item[deep_merge_key]
-            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
-                'left outer', _deep_left_items, _deep_right_items
-            )
     return joined_items
 
 
