@@ -844,3 +844,23 @@ def test_closure_over_workspace_build():
     newworkspace = pyhf.Workspace.build(newmodel, newdata)
 
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
+
+
+def test_wspace_immutable():
+    model = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48]
+    workspace = pyhf.Workspace.build(model, data)
+
+    spec = json.loads(json.dumps(workspace))
+
+    ws = pyhf.Workspace(spec)
+    model = ws.model()
+    before = model.config.suggested_init()
+    spec["measurements"][0]["config"]["parameters"][0]["inits"] = [1.5]
+
+    model = ws.model()
+    after = model.config.suggested_init()
+
+    assert before == after
