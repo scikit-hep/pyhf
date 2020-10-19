@@ -554,8 +554,8 @@ def test_combine_merge_channels(tmpdir, script_runner):
 )
 def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
     results = {
-        'md5': '202eb7615102c35ba86be47eb6fa5e78',
-        'sha256': '7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec',
+        'md5': '7de8930ff37e5a4f6a31da11bda7813f',
+        'sha256': '6d416ee67a40460499ea2ef596fb1e682a563d7df06e690018a211d35238aecc',
     }
 
     temp = tmpdir.join("parsed_output.json")
