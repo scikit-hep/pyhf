@@ -7,6 +7,7 @@ from jax.scipy.special import gammaln
 from jax.scipy import special
 from jax.scipy.stats import norm, poisson
 import numpy as onp
+import scipy.stats as osp_stats
 import logging
 
 log = logging.getLogger(__name__)
@@ -17,9 +18,7 @@ class _BasicPoisson(object):
         self.rate = rate
 
     def sample(self, sample_shape):
-        return poisson.osp_stats.poisson(self.rate).rvs(
-            size=sample_shape + self.rate.shape
-        )
+        return osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
 
     def log_prob(self, value):
         tensorlib = jax_backend()
@@ -32,7 +31,7 @@ class _BasicNormal(object):
         self.scale = scale
 
     def sample(self, sample_shape):
-        return norm.osp_stats.norm(self.loc, self.scale).rvs(
+        return osp_stats.norm(self.loc, self.scale).rvs(
             size=sample_shape + self.loc.shape
         )
 
