@@ -2,7 +2,7 @@ from jax.config import config
 
 config.update('jax_enable_x64', True)
 
-import jax.numpy as np
+import jax.numpy as jnp
 from jax.scipy.special import gammaln
 from jax.scipy import special
 from jax.scipy.stats import norm
