@@ -19,9 +19,9 @@ class _BasicPoisson(object):
 
     def sample(self, sample_shape):
         # TODO: Support other dtypes
-        return np.asarray(
+        return jnp.asarray(
             osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape),
-            dtype=np.float64,
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
@@ -36,11 +36,11 @@ class _BasicNormal(object):
 
     def sample(self, sample_shape):
         # TODO: Support other dtypes
-        return np.asarray(
+        return jnp.asarray(
             osp_stats.norm(self.loc, self.scale).rvs(
                 size=sample_shape + self.loc.shape
             ),
-            dtype=np.float64,
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
