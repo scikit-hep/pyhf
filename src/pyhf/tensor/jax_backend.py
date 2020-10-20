@@ -5,7 +5,7 @@ config.update('jax_enable_x64', True)
 import jax.numpy as np
 from jax.scipy.special import gammaln
 from jax.scipy import special
-from jax.scipy.stats import norm, poisson
+from jax.scipy.stats import norm
 import numpy as onp
 import scipy.stats as osp_stats
 import logging
