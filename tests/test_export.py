@@ -258,6 +258,18 @@ def test_export_modifier(mocker, caplog, spec, has_root_data, attrs):
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == has_root_data
 
 
+def test_export_bad_modifier(caplog):
+    with caplog.at_level(logging.DEBUG, 'pyhf.writexml'):
+        pyhf.writexml.build_modifier(
+            {'measurements': [{'config': {'parameters': []}}]},
+            {'name': 'fakeModifier', 'type': 'unknown-modifier'},
+            'fakeChannel',
+            'fakeSample',
+            None,
+        )
+    assert "Skipping modifier fakeModifier(unknown-modifier)" in caplog.text
+
+
 @pytest.mark.parametrize(
     "spec, normfactor_config",
     [
