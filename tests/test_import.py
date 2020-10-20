@@ -5,6 +5,7 @@ import uproot
 from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
+import logging
 
 
 def assert_equal_dictionary(d1, d2):
@@ -322,3 +323,87 @@ def test_import_normfactor_bounds():
     assert len(parameters) == 1
     parameter = parameters[0]
     assert parameter['bounds'] == [[0, 10]]
+
+
+def test_import_shapefactor():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input/config/examples/example_DataDriven.xml',
+        'validation/xmlimport_input',
+    )
+
+    # build the spec, strictly checks properties included
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
+    }
+    pdf = pyhf.Model(spec, poi_name='SigXsecOverSM')
+
+    channels = {channel['name']: channel for channel in pdf.spec['channels']}
+
+    assert channels['controlRegion']['samples'][0]['modifiers'][0]['type'] == 'lumi'
+    assert (
+        channels['controlRegion']['samples'][0]['modifiers'][1]['type'] == 'staterror'
+    )
+    assert channels['controlRegion']['samples'][0]['modifiers'][2]['type'] == 'normsys'
+    assert (
+        channels['controlRegion']['samples'][1]['modifiers'][0]['type'] == 'shapefactor'
+    )
+
+
+def test_process_modifiers(mocker, caplog):
+    sample = ET.Element(
+        "Sample", Name='testSample', HistoPath="", HistoName="testSample"
+    )
+    normfactor = ET.Element(
+        'NormFactor', Name="myNormFactor", Val='1', Low="0", High="3"
+    )
+    histosys = ET.Element(
+        'HistoSys', Name='myHistoSys', HistoNameHigh='', HistoNameLow=''
+    )
+    normsys = ET.Element('OverallSys', Name='myNormSys', High='1.05', Low='0.95')
+    shapesys = ET.Element('ShapeSys', Name='myShapeSys', HistoName='')
+    shapefactor = ET.Element(
+        "ShapeFactor",
+        Name='myShapeFactor',
+    )
+    staterror = ET.Element('StatError', Activate='True')
+    unknown_modifier = ET.Element('UnknownSys')
+
+    sample.append(normfactor)
+    sample.append(histosys)
+    sample.append(normsys)
+    sample.append(shapesys)
+    sample.append(shapefactor)
+    sample.append(staterror)
+    sample.append(unknown_modifier)
+
+    _data = [0.0]
+    _err = [1.0]
+    mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
+    with caplog.at_level(logging.DEBUG, 'pyhf.readxml'):
+        result = pyhf.readxml.process_sample(sample, '', '', '', 'myChannel')
+
+    assert "not considering modifier tag <Element 'UnknownSys'" in caplog.text
+    assert len(result['modifiers']) == 6
+    assert {'name': 'myNormFactor', 'type': 'normfactor', 'data': None} in result[
+        'modifiers'
+    ]
+    assert {
+        'name': 'myHistoSys',
+        'type': 'histosys',
+        'data': {'lo_data': _data, 'hi_data': _data},
+    } in result['modifiers']
+    assert {
+        'name': 'myNormSys',
+        'type': 'normsys',
+        'data': {'lo': 0.95, 'hi': 1.05},
+    } in result['modifiers']
+    assert {'name': 'myShapeSys', 'type': 'shapesys', 'data': _data} in result[
+        'modifiers'
+    ]
+    assert {'name': 'myShapeFactor', 'type': 'shapefactor', 'data': None} in result[
+        'modifiers'
+    ]
+    assert {'name': 'staterror_myChannel', 'type': 'staterror', 'data': _err} in result[
+        'modifiers'
+    ]
