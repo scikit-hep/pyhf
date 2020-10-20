@@ -18,9 +18,10 @@ class _BasicPoisson(object):
         self.rate = rate
 
     def sample(self, sample_shape):
-        tensorlib = jax_backend()
-        return tensorlib.astensor(
-            osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+        # TODO: Support other dtypes
+        return np.asarray(
+            osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape),
+            dtype=np.float64,
         )
 
     def log_prob(self, value):
@@ -34,9 +35,12 @@ class _BasicNormal(object):
         self.scale = scale
 
     def sample(self, sample_shape):
-        tensorlib = jax_backend()
-        return tensorlib.astensor(
-            osp_stats.norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
+        # TODO: Support other dtypes
+        return np.asarray(
+            osp_stats.norm(self.loc, self.scale).rvs(
+                size=sample_shape + self.loc.shape
+            ),
+            dtype=np.float64,
         )
 
     def log_prob(self, value):
