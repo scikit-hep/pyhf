@@ -147,6 +147,34 @@ def test_import_measurements():
     assert lumi_param_config['sigmas'] == [0.1]
 
 
+@pytest.mark.parametrize("const", ['False', 'True'])
+def test_import_measurement_gamma_bins(const):
+    toplvl = ET.Element("Combination")
+    meas = ET.Element(
+        "Measurement",
+        Name='NormalMeasurement',
+        Lumi=str(1.0),
+        LumiRelErr=str(0.017),
+        ExportOnly=str(True),
+    )
+    poiel = ET.Element('POI')
+    poiel.text = 'mu_SIG'
+    meas.append(poiel)
+
+    setting = ET.Element('ParamSetting', Const=const)
+    setting.text = ' '.join(['Lumi', 'alpha_mu_both', 'gamma_bin_0'])
+    meas.append(setting)
+
+    setting = ET.Element('ParamSetting', Val='2.0')
+    setting.text = ' '.join(['gamma_bin_0'])
+    meas.append(setting)
+
+    toplvl.append(meas)
+
+    with pytest.raises(ValueError):
+        pyhf.readxml.process_measurements(toplvl)
+
+
 def test_import_prepHistFactory():
     parsed_xml = pyhf.readxml.parse(
         'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'

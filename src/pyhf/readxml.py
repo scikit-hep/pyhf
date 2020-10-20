@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
+import re
 
 log = logging.getLogger(__name__)
 
@@ -270,6 +271,12 @@ def process_measurements(toplvl, other_parameter_configs=None):
             if param.text:
                 for param_name in param.text.split(' '):
                     param_name = utils.remove_prefix(param_name, 'alpha_')
+                    if param_name.startswith('gamma_') and re.search(
+                        '^gamma_.+_\d+$', param_name
+                    ):
+                        raise ValueError(
+                            f'pyhf does not support setting individual gamma parameters constant, such as for {param_name}.'
+                        )
                     param_name = utils.remove_prefix(param_name, 'gamma_')
                     # lumi will always be the first parameter
                     if param_name == 'Lumi':
