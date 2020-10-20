@@ -7,7 +7,7 @@ extras_require = {
         'tensorflow-probability~=0.10.0',
     ],
     'torch': ['torch~=1.2'],
-    'jax': ['jax~=0.1,>0.1.51', 'jaxlib~=0.1,>0.1.33'],
+    'jax': ['jax~=0.2,>=0.2.4', 'jaxlib~=0.1,>=0.1.56'],
     'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
     'minuit': ['iminuit~=1.4.3'],  # v1.5.0 breaks pyhf for 32b TensorFlow and PyTorch
 }
