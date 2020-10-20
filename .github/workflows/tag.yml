@@ -35,12 +35,12 @@ jobs:
       run: |
         if [ $IS_MAJOR == 'true' ]
         then
-          echo "name=BV_PART::major" >> $GITHUB_ENV
+          echo "BV_PART=major" >> $GITHUB_ENV
         elif [ $IS_MINOR == 'true' ]
         then
-          echo "name=BV_PART::minor" >> $GITHUB_ENV
+          echo "BV_PART=minor" >> $GITHUB_ENV
         else
-          echo "name=BV_PART::patch" >> $GITHUB_ENV
+          echo "BV_PART=patch" >> $GITHUB_ENV
         fi
     - name: Checkout repository
       uses: actions/checkout@v2.2.0
@@ -69,20 +69,20 @@ jobs:
     - name: Run bump2version ${{ env['BV_PART'] }}
       run: |
         OLD_TAG=$(git describe --tags --abbrev=0)
-        echo "name=OLD_TAG::${OLD_TAG}" >> $GITHUB_ENV
+        echo "OLD_TAG=${OLD_TAG}" >> $GITHUB_ENV
         bump2version $BV_PART --message "Bump version: {current_version} → {new_version}
 
         Triggered by #${PR_NUMBER} via GitHub Actions."
         NEW_TAG=$(git describe --tags --abbrev=0)
-        echo "name=NEW_TAG::${NEW_TAG}" >> $GITHUB_ENV
+        echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_ENV
         git tag -n99 -l $NEW_TAG
 
         CHANGES=$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):')
         CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
         SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' -e 's/"/'"'"'/g')
-        echo "name=CHANGES::${SANITIZED_CHANGES//$'\n'/}" >> $GITHUB_ENV
+        echo "CHANGES=${SANITIZED_CHANGES//$'\n'/}" >> $GITHUB_ENV
         NUM_CHANGES=$(echo -n "$CHANGES" | grep -c '^')
-        echo "name=NUM_CHANGES::${NUM_CHANGES}" >> $GITHUB_ENV
+        echo "NUM_CHANGES=${NUM_CHANGES}" >> $GITHUB_ENV
         git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES_NEWLINE")"
         git tag -n99 -l $NEW_TAG
     - name: Comment on issue
