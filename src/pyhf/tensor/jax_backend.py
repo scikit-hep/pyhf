@@ -6,7 +6,7 @@ import jax.numpy as jnp
 from jax.scipy.special import gammaln
 from jax.scipy import special
 from jax.scipy.stats import norm
-import numpy as onp
+import numpy as np
 import scipy.stats as osp_stats
 import logging
 
@@ -179,7 +179,7 @@ class jax_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return onp.asarray(tensor_in).tolist()
+            return np.asarray(tensor_in).tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
