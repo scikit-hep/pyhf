@@ -205,12 +205,15 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
                 for a, b in np.array((modifierspec['data'], sampledata)).T
             ],
         )
+    elif modifierspec['type'] == 'shapefactor':
+        pass
     else:
         log.warning(
-            'Skipping {0}({1}) for now'.format(
+            'Skipping modifier {0}({1}) for now'.format(
                 modifierspec['name'], modifierspec['type']
             )
         )
+        return None
 
     modifier = ET.Element(mod_map[modifierspec['type']], **attrs)
     return modifier

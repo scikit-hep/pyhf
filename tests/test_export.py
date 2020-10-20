@@ -3,6 +3,7 @@ import pyhf.writexml
 import pytest
 import json
 import xml.etree.cElementTree as ET
+import logging
 
 
 def spec_staterror():
@@ -143,6 +144,34 @@ def spec_shapesys():
     return spec
 
 
+def spec_shapefactor():
+    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': source['bindata']['sig'],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': source['bindata']['bkg'],
+                        'modifiers': [
+                            {'name': 'bkg_norm', 'type': 'shapefactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    return spec
+
+
 def test_export_measurement():
     measurementspec = {
         "config": {
@@ -198,10 +227,11 @@ def test_export_measurement():
         (spec_histosys(), True, ['HistoNameHigh', 'HistoNameLow']),
         (spec_normsys(), False, ['High', 'Low']),
         (spec_shapesys(), True, ['ConstraintType', 'HistoName']),
+        (spec_shapefactor(), False, []),
     ],
-    ids=['staterror', 'histosys', 'normsys', 'shapesys'],
+    ids=['staterror', 'histosys', 'normsys', 'shapesys', 'shapefactor'],
 )
-def test_export_modifier(mocker, spec, has_root_data, attrs):
+def test_export_modifier(mocker, caplog, spec, has_root_data, attrs):
     channelspec = spec['channels'][0]
     channelname = channelspec['name']
     samplespec = channelspec['samples'][1]
@@ -210,18 +240,34 @@ def test_export_modifier(mocker, spec, has_root_data, attrs):
     modifierspec = samplespec['modifiers'][0]
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
-    modifier = pyhf.writexml.build_modifier(
-        {'measurements': [{'config': {'parameters': []}}]},
-        modifierspec,
-        channelname,
-        samplename,
-        sampledata,
-    )
+
+    with caplog.at_level(logging.DEBUG, 'pyhf.writexml'):
+        modifier = pyhf.writexml.build_modifier(
+            {'measurements': [{'config': {'parameters': []}}]},
+            modifierspec,
+            channelname,
+            samplename,
+            sampledata,
+        )
+    assert "Skipping modifier" not in caplog.text
+
     # if the modifier is a staterror, it has no Name
     if 'Name' in modifier.attrib:
         assert modifier.attrib['Name'] == modifierspec['name']
     assert all(attr in modifier.attrib for attr in attrs)
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == has_root_data
+
+
+def test_export_bad_modifier(caplog):
+    with caplog.at_level(logging.DEBUG, 'pyhf.writexml'):
+        pyhf.writexml.build_modifier(
+            {'measurements': [{'config': {'parameters': []}}]},
+            {'name': 'fakeModifier', 'type': 'unknown-modifier'},
+            'fakeChannel',
+            'fakeSample',
+            None,
+        )
+    assert "Skipping modifier fakeModifier(unknown-modifier)" in caplog.text
 
 
 @pytest.mark.parametrize(

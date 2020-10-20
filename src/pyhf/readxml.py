@@ -171,6 +171,10 @@ def process_sample(
                     'data': [a * b for a, b in zip(data, shapesys_data)],
                 }
             )
+        elif modtag.tag == 'ShapeFactor':
+            modifiers.append(
+                {'name': modtag.attrib['Name'], 'type': 'shapefactor', 'data': None}
+            )
         else:
             log.warning('not considering modifier tag %s', modtag)
 
