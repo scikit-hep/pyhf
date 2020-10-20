@@ -213,6 +213,7 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
                 modifierspec['name'], modifierspec['type']
             )
         )
+        return None
 
     modifier = ET.Element(mod_map[modifierspec['type']], **attrs)
     return modifier
