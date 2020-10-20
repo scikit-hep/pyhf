@@ -2,11 +2,11 @@ from jax.config import config
 
 config.update('jax_enable_x64', True)
 
-import jax.numpy as np
+import jax.numpy as jnp
 from jax.scipy.special import gammaln
 from jax.scipy import special
 from jax.scipy.stats import norm
-import numpy as onp
+import numpy as np
 import scipy.stats as osp_stats
 import logging
 
@@ -19,9 +19,9 @@ class _BasicPoisson(object):
 
     def sample(self, sample_shape):
         # TODO: Support other dtypes
-        return np.asarray(
+        return jnp.asarray(
             osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape),
-            dtype=np.float64,
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
@@ -36,11 +36,11 @@ class _BasicNormal(object):
 
     def sample(self, sample_shape):
         # TODO: Support other dtypes
-        return np.asarray(
+        return jnp.asarray(
             osp_stats.norm(self.loc, self.scale).rvs(
                 size=sample_shape + self.loc.shape
             ),
-            dtype=np.float64,
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
@@ -57,9 +57,9 @@ class jax_backend(object):
         self.name = 'jax'
         self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
-            'float': np.float64 if self.precision == '64b' else np.float32,
-            'int': np.int64 if self.precision == '64b' else np.int32,
-            'bool': np.bool_,
+            'float': jnp.float64 if self.precision == '64b' else jnp.float32,
+            'int': jnp.int64 if self.precision == '64b' else jnp.int32,
+            'bool': jnp.bool_,
         }
         self.default_do_grad = True
 
@@ -88,7 +88,7 @@ class jax_backend(object):
         Returns:
             JAX ndarray: A clipped `tensor`
         """
-        return np.clip(tensor_in, min_value, max_value)
+        return jnp.clip(tensor_in, min_value, max_value)
 
     def erf(self, tensor_in):
         """
@@ -151,7 +151,7 @@ class jax_backend(object):
         Returns:
             JAX ndarray: The tensor with repeated axes
         """
-        return np.tile(tensor_in, repeats)
+        return jnp.tile(tensor_in, repeats)
 
     def conditional(self, predicate, true_callable, false_callable):
         """
@@ -179,14 +179,14 @@ class jax_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return onp.asarray(tensor_in).tolist()
+            return np.asarray(tensor_in).tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
-        return np.outer(tensor_in_1, tensor_in_2)
+        return jnp.outer(tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
         return tensor[indices]
@@ -195,7 +195,7 @@ class jax_backend(object):
         return tensor[mask]
 
     def isfinite(self, tensor):
-        return np.isfinite(tensor)
+        return jnp.isfinite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -224,43 +224,43 @@ class jax_backend(object):
             log.error('Invalid dtype: dtype must be float, int, or bool.')
             raise
 
-        return np.asarray(tensor_in, dtype=dtype)
+        return jnp.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
-        return np.sum(tensor_in, axis=axis)
+        return jnp.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in, axis=None):
-        return np.prod(tensor_in, axis=axis)
+        return jnp.prod(tensor_in, axis=axis)
 
     def abs(self, tensor):
-        return np.abs(tensor)
+        return jnp.abs(tensor)
 
     def ones(self, shape):
-        return np.ones(shape)
+        return jnp.ones(shape)
 
     def zeros(self, shape):
-        return np.zeros(shape)
+        return jnp.zeros(shape)
 
     def power(self, tensor_in_1, tensor_in_2):
-        return np.power(tensor_in_1, tensor_in_2)
+        return jnp.power(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
-        return np.sqrt(tensor_in)
+        return jnp.sqrt(tensor_in)
 
     def divide(self, tensor_in_1, tensor_in_2):
-        return np.divide(tensor_in_1, tensor_in_2)
+        return jnp.divide(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
-        return np.log(tensor_in)
+        return jnp.log(tensor_in)
 
     def exp(self, tensor_in):
-        return np.exp(tensor_in)
+        return jnp.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
-        return np.stack(sequence, axis=axis)
+        return jnp.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return np.where(mask, tensor_in_1, tensor_in_2)
+        return jnp.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -274,7 +274,7 @@ class jax_backend(object):
             output: the concatenated tensor
 
         """
-        return np.concatenate(sequence, axis=axis)
+        return jnp.concatenate(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -296,13 +296,13 @@ class jax_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        return np.broadcast_arrays(*args)
+        return jnp.broadcast_arrays(*args)
 
     def shape(self, tensor):
         return tensor.shape
 
     def reshape(self, tensor, newshape):
-        return np.reshape(tensor, newshape)
+        return jnp.reshape(tensor, newshape)
 
     def einsum(self, subscripts, *operands):
         """
@@ -322,12 +322,12 @@ class jax_backend(object):
             tensor: the calculation based on the Einstein summation convention
         """
         # return contract(subscripts,*operands)
-        return np.einsum(subscripts, *operands)
+        return jnp.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        n = np.asarray(n)
-        lam = np.asarray(lam)
-        return n * np.log(lam) - lam - gammaln(n + 1.0)
+        n = jnp.asarray(n)
+        lam = jnp.asarray(lam)
+        return n * jnp.log(lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -355,18 +355,18 @@ class jax_backend(object):
         Returns:
             JAX ndarray: Value of the continous approximation to Poisson(n|lam)
         """
-        n = np.asarray(n)
-        lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
+        n = jnp.asarray(n)
+        lam = jnp.asarray(lam)
+        return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
         # norm.logpdf(x, loc=mu, scale=sigma)
         # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
-        root2 = np.sqrt(2)
-        root2pi = np.sqrt(2 * np.pi)
-        prefactor = -np.log(sigma * root2pi)
-        summand = -np.square(np.divide((x - mu), (root2 * sigma)))
+        root2 = jnp.sqrt(2)
+        root2pi = jnp.sqrt(2 * jnp.pi)
+        prefactor = -jnp.log(sigma * root2pi)
+        summand = -jnp.square(jnp.divide((x - mu), (root2 * sigma)))
         return prefactor + summand
 
     # def normal_logpdf(self, x, mu, sigma):
