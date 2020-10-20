@@ -283,6 +283,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
+        spec = copy.deepcopy(spec)
         super(Workspace, self).__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
