@@ -20,6 +20,9 @@ def test_poisson(backend):
     )
     assert result.shape == (1, 2)
 
+    sample = probability.Poisson(tb.astensor([10.0, 10.0])).sample((10,))
+    assert sample.shape == (10, 2)
+
 
 def test_normal(backend):
     tb, _ = backend
@@ -42,6 +45,11 @@ def test_normal(backend):
         tb.astensor([10.0, 10.0]), tb.astensor([10.0, 10.0])
     ).log_prob(tb.astensor([[2.0, 3.0]]))
     assert result.shape == (1, 2)
+
+    sample = probability.Normal(
+        tb.astensor([10.0, 10.0]), tb.astensor([10.0, 10.0])
+    ).sample((10,))
+    assert sample.shape == (10, 2)
 
 
 def test_joint(backend):
