@@ -5,8 +5,9 @@ config.update('jax_enable_x64', True)
 import jax.numpy as np
 from jax.scipy.special import gammaln
 from jax.scipy import special
-from jax.scipy.stats import norm, poisson
+from jax.scipy.stats import norm
 import numpy as onp
+import scipy.stats as osp_stats
 import logging
 
 log = logging.getLogger(__name__)
@@ -17,8 +18,10 @@ class _BasicPoisson(object):
         self.rate = rate
 
     def sample(self, sample_shape):
-        return poisson.osp_stats.poisson(self.rate).rvs(
-            size=sample_shape + self.rate.shape
+        # TODO: Support other dtypes
+        return np.asarray(
+            osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape),
+            dtype=np.float64,
         )
 
     def log_prob(self, value):
@@ -32,8 +35,12 @@ class _BasicNormal(object):
         self.scale = scale
 
     def sample(self, sample_shape):
-        return norm.osp_stats.norm(self.loc, self.scale).rvs(
-            size=sample_shape + self.loc.shape
+        # TODO: Support other dtypes
+        return np.asarray(
+            osp_stats.norm(self.loc, self.scale).rvs(
+                size=sample_shape + self.loc.shape
+            ),
+            dtype=np.float64,
         )
 
     def log_prob(self, value):
