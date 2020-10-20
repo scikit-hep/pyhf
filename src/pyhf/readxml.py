@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
+import re
 
 log = logging.getLogger(__name__)
 
@@ -223,6 +224,17 @@ def process_channel(channelxml, rootdir, track_progress=False):
 
 
 def process_measurements(toplvl, other_parameter_configs=None):
+    """
+    For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
+
+    Args:
+        toplvl (:module:`xml.etree.ElementTree`): The top-level XML document to parse.
+        other_parameter_configs (:obj:`list`): A list of other parameter configurations from other non-top-level XML documents to incorporate into the resulting measurement object.
+
+    Returns:
+        :obj:`dict`: A measurement object.
+
+    """
     results = []
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
@@ -258,6 +270,14 @@ def process_measurements(toplvl, other_parameter_configs=None):
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
                 for param_name in param.text.split(' '):
+                    param_name = utils.remove_prefix(param_name, 'alpha_')
+                    if param_name.startswith('gamma_') and re.search(
+                        '^gamma_.+_\d+$', param_name
+                    ):
+                        raise ValueError(
+                            f'pyhf does not support setting individual gamma parameters constant, such as for {param_name}.'
+                        )
+                    param_name = utils.remove_prefix(param_name, 'gamma_')
                     # lumi will always be the first parameter
                     if param_name == 'Lumi':
                         result['config']['parameters'][0].update(overall_param_obj)

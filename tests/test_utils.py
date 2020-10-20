@@ -58,3 +58,9 @@ def test_digest_bad_alg():
     with pytest.raises(ValueError) as excinfo:
         pyhf.utils.digest({}, algorithm='nonexistent_algorithm')
     assert 'nonexistent_algorithm' in str(excinfo.value)
+
+
+def test_remove_prefix():
+    assert pyhf.utils.remove_prefix('abcDEF123', 'abc') == 'DEF123'
+    assert pyhf.utils.remove_prefix('abcDEF123', 'Abc') == 'abcDEF123'
+    assert pyhf.utils.remove_prefix('abcDEF123', '123') == 'abcDEF123'
