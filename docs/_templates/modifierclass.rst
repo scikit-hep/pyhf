@@ -1,4 +1,4 @@
-:github_url: https://github.com/diana-hep/pyhf/blob/master/{{module | replace(".", "/") }}
+:github_url: https://github.com/scikit-hep/pyhf/blob/master/{{module | replace(".", "/") }}
 
 {{ name | escape | underline}}
 
@@ -22,7 +22,9 @@
    .. rubric:: Methods
 
    {% for item in methods %}
+   {% if item not in inherited_members %}
    .. automethod:: {{ name }}.{{ item }}
+   {% endif %}
    {%- endfor %}
    {% endif %}
    {% endblock %}

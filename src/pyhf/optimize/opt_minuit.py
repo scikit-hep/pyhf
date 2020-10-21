@@ -1,64 +1,132 @@
+"""Minuit Optimizer Class."""
+from .. import default_backend, exceptions
+from .mixins import OptimizerMixin
+import scipy
 import iminuit
-import logging
-import numpy as np
-
-log = logging.getLogger(__name__)
 
 
-class minuit_optimizer(object):
-    def __init__(self, verbose=False, ncall=10000, errordef=1, steps=100):
-        self.verbose = 0
-        self.ncall = ncall
-        self.errordef = errordef
-        self.steps = steps
+class minuit_optimizer(OptimizerMixin):
+    """
+    Optimizer that uses iminuit.Minuit.migrad.
+    """
 
-    def _make_minuit(
-        self, objective, data, pdf, init_pars, init_bounds, constrained_mu=None
+    __slots__ = ['name', 'errordef', 'steps']
+
+    def __init__(self, *args, **kwargs):
+        """
+        Create MINUIT Optimizer.
+
+        .. note::
+
+            ``errordef`` should be 1.0 for a least-squares cost function and 0.5
+            for negative log-likelihood function. See page 37 of
+            http://hep.fi.infn.it/minuit.pdf. This parameter is sometimes
+            called ``UP`` in the ``MINUIT`` docs.
+
+
+        Args:
+            errordef (:obj:`float`): See minuit docs. Default is 1.0.
+            steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
+        """
+        self.name = 'minuit'
+        self.errordef = kwargs.pop('errordef', 1)
+        self.steps = kwargs.pop('steps', 1000)
+        super().__init__(*args, **kwargs)
+
+    def _get_minimizer(
+        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
     ):
-        def f(pars):
-            result = objective(pars, data, pdf)
-            logpdf = result[0]
-            return logpdf
 
-        parnames = ['p{}'.format(i) for i in range(len(init_pars))]
-        kw = {'limit_p{}'.format(i): b for i, b in enumerate(init_bounds)}
-        initvals = {'p{}'.format(i): v for i, v in enumerate(init_pars)}
-        step_sizes = {
-            'error_p{}'.format(i): (b[1] - b[0]) / float(self.steps)
-            for i, b in enumerate(init_bounds)
-        }
-        if constrained_mu is not None:
-            constraints = {'fix_p{}'.format(pdf.config.poi_index): True}
-            initvals['p{}'.format(pdf.config.poi_index)] = constrained_mu
+        step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
+        fixed_vals = fixed_vals or []
+        # Minuit wants True/False for each parameter
+        fixed_bools = [False] * len(init_pars)
+        for index, val in fixed_vals:
+            fixed_bools[index] = True
+            init_pars[index] = val
+            step_sizes[index] = 0.0
+
+        # Minuit requires jac=callable
+        if do_grad:
+            wrapped_objective = lambda pars: objective_and_grad(pars)[0]
+            jac = lambda pars: objective_and_grad(pars)[1]
         else:
-            constraints = {}
-        kwargs = {}
-        for d in [kw, constraints, initvals, step_sizes]:
-            kwargs.update(**d)
-        mm = iminuit.Minuit(
-            f,
-            print_level=1 if self.verbose else 0,
-            errordef=1,
-            use_array_call=True,
-            forced_parameters=parnames,
-            **kwargs
+            wrapped_objective = objective_and_grad
+            jac = None
+
+        kwargs = dict(
+            fcn=wrapped_objective,
+            grad=jac,
+            start=init_pars,
+            error=step_sizes,
+            limit=init_bounds,
+            fix=fixed_bools,
+            print_level=self.verbose,
+            errordef=self.errordef,
         )
-        return mm
+        return iminuit.Minuit.from_array_func(**kwargs)
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        # The Global Fit
-        mm = self._make_minuit(objective, data, pdf, init_pars, par_bounds)
-        result = mm.migrad(ncall=self.ncall)
-        assert result
-        return np.asarray([x[1] for x in mm.values.items()])
-
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
+    def _minimize(
+        self,
+        minimizer,
+        func,
+        x0,
+        do_grad=False,
+        bounds=None,
+        fixed_vals=None,
+        return_uncertainties=False,
+        options={},
     ):
-        # The Fit Conditions on a specific POI value
-        mm = self._make_minuit(
-            objective, data, pdf, init_pars, par_bounds, constrained_mu=constrained_mu
+
+        """
+        Same signature as :func:`scipy.optimize.minimize`.
+
+        Note: an additional `minuit` is injected into the fitresult to get the
+        underlying minimizer.
+
+        Minimizer Options:
+            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
+            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
+
+        Returns:
+            fitresult (scipy.optimize.OptimizeResult): the fit result
+        """
+        maxiter = options.pop('maxiter', self.maxiter)
+        return_uncertainties = options.pop('return_uncertainties', False)
+        if options:
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(options.keys())}."
+            )
+
+        minimizer.migrad(ncall=maxiter)
+        # Following lines below come from:
+        # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
+        message = "Optimization terminated successfully."
+        if not minimizer.valid:
+            message = "Optimization failed."
+            fmin = minimizer.fmin
+            if fmin.has_reached_call_limit:
+                message += " Call limit was reached."
+            if fmin.is_above_max_edm:
+                message += " Estimated distance to minimum too large."
+
+        n = len(x0)
+        hess_inv = default_backend.ones((n, n))
+        if minimizer.valid:
+            hess_inv = minimizer.np_covariance()
+
+        unc = None
+        if return_uncertainties:
+            unc = minimizer.np_errors()
+
+        return scipy.optimize.OptimizeResult(
+            x=minimizer.np_values(),
+            unc=unc,
+            success=minimizer.valid,
+            fun=minimizer.fval,
+            hess_inv=hess_inv,
+            message=message,
+            nfev=minimizer.ncalls,
+            njev=minimizer.ngrads,
+            minuit=minimizer,
         )
-        result = mm.migrad(ncall=self.ncall)
-        assert result
-        return np.asarray([x[1] for x in mm.values.items()])

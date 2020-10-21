@@ -1,3 +1,4 @@
+"""Piecewise-Exponential Interpolation (Code 1)."""
 import logging
 import math
 from .. import get_backend, default_backend
@@ -24,6 +25,7 @@ class code1(object):
     """
 
     def __init__(self, histogramssets, subscribe=True):
+        """Piecewise-Exponential Interpolation."""
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
@@ -73,6 +75,7 @@ class code1(object):
         return
 
     def __call__(self, alphasets):
+        """Compute Interpolated Values."""
         tensorlib, _ = get_backend()
         self._precompute_alphasets(tensorlib.shape(alphasets))
         where_alphasets_positive = tensorlib.where(
@@ -86,8 +89,11 @@ class code1(object):
         exponents = tensorlib.einsum(
             'sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper
         )
-        masks = tensorlib.einsum(
-            'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+        masks = tensorlib.astensor(
+            tensorlib.einsum(
+                'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+            ),
+            dtype="bool",
         )
 
         bases = tensorlib.where(masks, self.bases_up, self.bases_dn)

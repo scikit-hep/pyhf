@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normsys', constrained=True, op_code='multiplication')
 class normsys(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
@@ -20,6 +20,7 @@ class normsys(object):
             'is_shared': True,
             'inits': (0.0,),
             'bounds': ((-5.0, 5.0),),
+            'fixed': False,
             'auxdata': (0.0,),
         }
 
@@ -36,21 +37,25 @@ class normsys_combined(object):
 
         self.batch_size = batch_size
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size, pdfconfig.npars)
+            if self.batch_size
+            else (pdfconfig.npars,)
+        )
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, normsys_mods)
         self._normsys_histoset = [
             [
                 [
-                    mega_mods[s][m]['data']['lo'],
-                    mega_mods[s][m]['data']['nom_data'],
-                    mega_mods[s][m]['data']['hi'],
+                    mega_mods[m][s]['data']['lo'],
+                    mega_mods[m][s]['data']['nom_data'],
+                    mega_mods[m][s]['data']['hi'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._normsys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if normsys_mods:
@@ -65,26 +70,29 @@ class normsys_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.normsys_mask = tensorlib.astensor(self._normsys_mask)
         self.normsys_mask = tensorlib.tile(
-            self.normsys_mask, (1, 1, self.batch_size or 1, 1)
+            tensorlib.astensor(self._normsys_mask, dtype="bool"),
+            (1, 1, self.batch_size or 1, 1),
         )
         self.normsys_default = tensorlib.ones(self.normsys_mask.shape)
+        if self.batch_size is None:
+            self.indices = tensorlib.reshape(
+                self.param_viewer.indices_concatenated, (-1, 1)
+            )
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            normsys_alphaset = self.param_viewer.get(pars, self.indices)
         else:
-            batched_pars = pars
-        normsys_alphaset = self.param_viewer.get(batched_pars)
+            normsys_alphaset = self.param_viewer.get(pars)
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below

@@ -1,58 +1,42 @@
-import torch.optim
+"""PyTorch Backend Function Shim."""
+
+from .. import get_backend
+import torch
 
 
-class pytorch_optimizer(object):
-    def __init__(self, **kwargs):
-        self.tensorlib = kwargs['tensorlib']
-        self.maxdelta = kwargs.get('maxdelta', 1e-5)
-        self.maxiter = kwargs.get('maxiter', 100000)
+def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
+    """
+    Wrap the objective function for the minimization.
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        init_pars = self.tensorlib.astensor(init_pars)
-        init_pars.requires_grad = True
-        optimizer = torch.optim.Adam([init_pars])
-        maxdelta = None
-        for i in range(self.maxiter):
-            loss = objective(init_pars, data, pdf)
-            optimizer.zero_grad()
-            loss.backward(retain_graph=True)
-            init_old = init_pars.data.clone()
-            optimizer.step()
-            maxdelta = (init_pars.data - init_old).abs().max()
-            if maxdelta < self.maxdelta:
-                break
-        return init_pars
+    Args:
+        objective (:obj:`func`): objective function
+        data (:obj:`list`): observed data
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
+        stitch_pars (:obj:`func`): callable that stitches parameters, see :func:`pyhf.optimize.common.shim`.
+        do_grad (:obj:`bool`): enable autodifferentiation mode. Default is off.
 
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
-    ):
-        allvars = [
-            self.tensorlib.astensor(
-                [v] if i != pdf.config.poi_index else [constrained_mu]
-            )
-            for i, v in enumerate(init_pars)
-        ]
-        nuis_pars = [v for i, v in enumerate(allvars) if i != pdf.config.poi_index]
-        for np in nuis_pars:
-            np.requires_grad = True
-        poi_par = [v for i, v in enumerate(allvars) if i == pdf.config.poi_index][0]
+    Returns:
+        objective_and_grad (:obj:`func`): tensor backend wrapped objective,gradient pair
+    """
 
-        def assemble(poi_par, nuis_pars):
-            pars = [x for x in nuis_pars]
-            pars.insert(pdf.config.poi_index, poi_par)
-            pars = self.tensorlib.concatenate(pars)
-            return pars
+    tensorlib, _ = get_backend()
 
-        optimizer = torch.optim.Adam(nuis_pars)
-        for i in range(self.maxiter):
-            pars = assemble(poi_par, nuis_pars)
-            loss = objective(pars, data, pdf)
-            optimizer.zero_grad()
-            loss.backward(retain_graph=True)
-            optimizer.step()
+    if do_grad:
 
-            after_pars = assemble(poi_par, nuis_pars)
-            maxdelta = (after_pars.data - pars.data).abs().max()
-            if maxdelta < self.maxdelta:
-                break
-        return pars
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            pars.requires_grad = True
+            constrained_pars = stitch_pars(pars)
+            constr_nll = objective(constrained_pars, data, pdf)
+            grad = torch.autograd.grad(constr_nll, pars)[0]
+            return constr_nll.detach().numpy()[0], grad
+
+    else:
+
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            constrained_pars = stitch_pars(pars)
+            constr_nll = objective(constrained_pars, data, pdf)
+            return constr_nll[0]
+
+    return func

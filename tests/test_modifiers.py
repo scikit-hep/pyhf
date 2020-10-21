@@ -1,6 +1,5 @@
 import pytest
 import inspect
-from six import with_metaclass
 
 import pyhf
 
@@ -37,7 +36,7 @@ def test_modifiers_structure():
     @modifier(name='myUnconstrainedModifier')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -49,7 +48,7 @@ def test_modifiers_structure():
     @modifier(name='myConstrainedModifier', constrained=True)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -66,7 +65,7 @@ def test_modifier_name_auto():
     @modifier
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -82,7 +81,7 @@ def test_modifier_name_auto_withkwargs():
     @modifier(name=None, constrained=False)
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -98,7 +97,7 @@ def test_modifier_name_custom():
     @modifier(name='myCustomName')
     class myCustomModifier(object):
         @classmethod
-        def required_parset(cls, n_parameters):
+        def required_parset(cls, sample_data, modifier_data):
             pass
 
     assert inspect.isclass(myCustomModifier)
@@ -121,13 +120,13 @@ def test_decorate_with_wrong_values():
     with pytest.raises(TypeError):
 
         @modifier(name=1.5)
-        class myCustomModifier(object):
+        class myCustomModifierTypeError(object):
             pass
 
     with pytest.raises(ValueError):
 
         @modifier(unused='arg')
-        class myCustomModifier(object):
+        class myCustomModifierValueError(object):
             pass
 
 
@@ -138,14 +137,14 @@ def test_registry_name_clash():
     with pytest.raises(KeyError):
 
         @modifier(name='histosys')
-        class myCustomModifier(object):
+        class myCustomModifierKeyError(object):
             pass
 
     with pytest.raises(KeyError):
 
         class myCustomModifier(object):
             @classmethod
-            def required_parset(cls, n_parameters):
+            def required_parset(cls, sample_data, modifier_data):
                 pass
 
         pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')

@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(name='normfactor', op_code='multiplication')
 class normfactor(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
             'n_parameters': 1,
@@ -19,6 +19,7 @@ class normfactor(object):
             'is_shared': True,
             'inits': (1.0,),
             'bounds': ((0, 10),),
+            'fixed': False,
         }
 
 
@@ -29,13 +30,17 @@ class normfactor_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
         normfactor_mods = [m for m, _ in normfactor_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size, pdfconfig.npars)
+            if self.batch_size
+            else (pdfconfig.npars,)
+        )
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, normfactor_mods
         )
 
         self._normfactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -44,34 +49,34 @@ class normfactor_combined(object):
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return
-        self.normfactor_mask = tensorlib.astensor(self._normfactor_mask)
         self.normfactor_mask = tensorlib.tile(
-            self.normfactor_mask, (1, 1, self.batch_size or 1, 1)
+            tensorlib.astensor(self._normfactor_mask), (1, 1, self.batch_size or 1, 1)
+        )
+        self.normfactor_mask_bool = tensorlib.astensor(
+            self.normfactor_mask, dtype="bool"
         )
         self.normfactor_default = tensorlib.ones(self.normfactor_mask.shape)
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            normfactors = self.param_viewer.get(pars)
+            results_normfactor = tensorlib.einsum(
+                'msab,m->msab', self.normfactor_mask, normfactors
+            )
         else:
-            batched_pars = pars
-
-        normfactors = self.param_viewer.get(batched_pars)
-
-        # normfactors is (nsys,batch)
-        # mask is (nsys,nsam,batch,gb)
-        results_normfactor = tensorlib.einsum(
-            'msab,ma->msab', self.normfactor_mask, normfactors
-        )
+            normfactors = self.param_viewer.get(pars)
+            results_normfactor = tensorlib.einsum(
+                'msab,ma->msab', self.normfactor_mask, normfactors
+            )
 
         results_normfactor = tensorlib.where(
-            self.normfactor_mask, results_normfactor, self.normfactor_default
+            self.normfactor_mask_bool, results_normfactor, self.normfactor_default
         )
         return results_normfactor

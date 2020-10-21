@@ -1,3 +1,6 @@
+import weakref
+from functools import wraps
+
 __events = {}
 __disabled_events = set([])
 
@@ -6,10 +9,16 @@ def noop(*args, **kwargs):
     pass
 
 
-class Callables(list):
+class WeakList(list):
+    def append(self, item):
+        list.append(self, weakref.WeakMethod(item, self.remove))
+
+
+class Callables(WeakList):
     def __call__(self, *args, **kwargs):
-        for f in self:
-            f(*args, **kwargs)
+        for func in self:
+            # weakref: needs to be de-ref'd first before calling
+            func()(*args, **kwargs)
 
     def __repr__(self):
         return "Callables(%s)" % list.__repr__(self)
@@ -63,6 +72,7 @@ def register(event):
     # >>>
 
     def _register(func):
+        @wraps(func)
         def register_wrapper(*args, **kwargs):
             trigger("{0:s}::before".format(event))()
             result = func(*args, **kwargs)

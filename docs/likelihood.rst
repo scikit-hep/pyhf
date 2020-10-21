@@ -4,7 +4,7 @@ Likelihood Specification
 ========================
 
 The structure of the JSON specification of models follows closely the
-original XML-based specification :cite:`Cranmer:1456844`.
+original XML-based specification :cite:`likelihood-Cranmer:1456844`.
 
 Workspace
 ---------
@@ -29,7 +29,7 @@ check that it conforms to the provided workspace specification as follows:
    import json, requests, jsonschema
    workspace = json.load(open('/path/to/analysis_workspace.json'))
    # if no exception is raised, it found and parsed the schema
-   schema = requests.get('https://diana-hep.org/pyhf/schemas/1.0.0/workspace.json').json()
+   schema = requests.get('https://scikit-hep.org/pyhf/schemas/1.0.0/workspace.json').json()
    # If no exception is raised by validate(), the instance is valid.
    jsonschema.validate(instance=workspace, schema=schema)
 
@@ -39,7 +39,7 @@ check that it conforms to the provided workspace specification as follows:
 Channel
 -------
 
-A channel is defined by a channel name and a list of samples :cite:`schema_defs`.
+A channel is defined by a channel name and a list of samples :cite:`likelihood-schema_defs`.
 
 .. code:: json
 
@@ -68,7 +68,7 @@ modifiers for the sample.
 Sample
 ------
 
-A sample is defined by a sample name, the sample event rate, and a list of modifiers :cite:`schema_defs`.
+A sample is defined by a sample name, the sample event rate, and a list of modifiers :cite:`likelihood-schema_defs`.
 
 .. _lst:schema:sample:
 
@@ -132,7 +132,27 @@ shown below:
 
    { "name": "mod_name", "type": "shapesys", "data": [1.0, 1.5, 2.0] }
 
-An example of an uncorrelated shape modifier with three absolute uncertainty terms for a 3-bin channel.
+An example of an uncorrelated shape modifier with three absolute uncertainty
+terms for a 3-bin channel.
+
+.. warning::
+
+   Nuisance parameters will not be allocated for any bins where either
+
+     * the samples nominal expected rate is zero, or
+     * the absolute uncertainty is zero.
+
+   These values are, in the context of uncorrelated shape uncertainties,
+   unphysical. If this situation occurs, one needs to go back and understand
+   the inputs as this is undefined behavior in HistFactory.
+
+The previous example will allocate three nuisance parameters for ``mod_name``.
+The following example will allocate only two nuisance parameters for a 3-bin
+channel:
+
+.. code:: json
+
+   { "name": "mod_name", "type": "shapesys", "data": [1.0, 0.0, 2.0] }
 
 Correlated Shape (histosys)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,7 +193,7 @@ MC Statistical Uncertainty (staterror)
 
 As the sample counts are often derived from Monte Carlo (MC) datasets, they
 necessarily carry an uncertainty due to the finite sample size of the datasets.
-As explained in detail in :cite:`Cranmer:1456844`, adding uncertainties for
+As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
 each sample would yield a very large number of nuisance parameters with limited
 utility. Therefore a set of bin-wise scale factors :math:`\gamma_b` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
@@ -323,7 +343,7 @@ Toy Example
 -----------
 
 .. # N.B. If the following literalinclude is changed test_examples.py must be changed accordingly
-.. literalinclude:: ../examples/2-bin_1-channel.json
+.. literalinclude:: ./examples/json/2-bin_1-channel.json
    :language: json
 
 In the above example, we demonstrate a simple measurement of a
@@ -359,3 +379,5 @@ Bibliography
 .. bibliography:: bib/docs.bib
    :filter: docname in docnames
    :style: plain
+   :keyprefix: likelihood-
+   :labelprefix: likelihood-

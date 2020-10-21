@@ -1,5 +1,5 @@
-API
-===
+Python API
+==========
 
 Top-Level
 ---------
@@ -16,19 +16,37 @@ Top-Level
    get_backend
    set_backend
 
-Making Probability Distribution Functions (PDFs)
-------------------------------------------------
+Probability Distribution Functions (PDFs)
+-----------------------------------------
 
-.. currentmodule:: pyhf.pdf
+.. currentmodule:: pyhf.probability
 
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
    :template: modifierclass.rst
 
-   Workspace
-   Model
-   _ModelConfig
+   Normal
+   Poisson
+   Independent
+   Simultaneous
+
+Making Models from PDFs
+-----------------------
+
+.. currentmodule:: pyhf
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+   :template: modifierclass.rst
+
+   ~pdf.Model
+   ~pdf._ModelConfig
+   ~workspace.Workspace
+   ~patchset.PatchSet
+   ~patchset.Patch
+   simplemodels.hepdata_like
 
 Backends
 --------
@@ -42,10 +60,10 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
    :nosignatures:
    :template: modifierclass.rst
 
-   mxnet_backend.mxnet_backend
    numpy_backend.numpy_backend
    pytorch_backend.pytorch_backend
    tensorflow_backend.tensorflow_backend
+   jax_backend.jax_backend
 
 Optimizers
 ----------
@@ -57,9 +75,8 @@ Optimizers
    :nosignatures:
    :template: modifierclass.rst
 
-   opt_pytorch.pytorch_optimizer
+   mixins.OptimizerMixin
    opt_scipy.scipy_optimizer
-   opt_tflow.tflow_optimizer
    opt_minuit.minuit_optimizer
 
 Modifiers
@@ -95,6 +112,27 @@ Interpolators
    code4
    code4p
 
+Inference
+---------
+
+.. currentmodule:: pyhf.infer
+
+.. autosummary::
+   :toctree: _generated/
+
+   test_statistics.qmu
+   test_statistics.qmu_tilde
+   test_statistics.tmu
+   test_statistics.tmu_tilde
+   mle.twice_nll
+   mle.fit
+   mle.fixed_poi_fit
+   hypotest
+   calculators.generate_asimov_data
+   calculators.AsymptoticTestStatDistribution
+   calculators.AsymptoticCalculator
+   intervals.upperlimit
+
 Exceptions
 ----------
 
@@ -107,8 +145,21 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    :nosignatures:
    :template: modifierclass.rst
 
-   InvalidInterpCode
+   InvalidMeasurement
+   InvalidNameReuse
+   InvalidSpecification
+   InvalidPatchSet
+   InvalidPatchLookup
+   PatchSetVerificationError
+   InvalidWorkspaceOperation
+   InvalidModel
    InvalidModifier
+   InvalidInterpCode
+   ImportBackendError
+   InvalidBackend
+   InvalidOptimizer
+   InvalidPdfParameters
+   InvalidPdfData
 
 Utilities
 ---------
@@ -118,9 +169,18 @@ Utilities
 .. autosummary::
    :toctree: _generated/
 
-   generate_asimov_data
-   loglambdav
-   pvals_from_teststat
-   pvals_from_teststat_expected
-   qmu
-   hypotest
+   load_schema
+   validate
+   options_from_eqdelimstring
+   digest
+
+Contrib
+-------
+
+.. currentmodule:: pyhf.contrib
+
+.. autosummary::
+   :toctree: _generated/
+
+   viz.brazil
+   utils.download

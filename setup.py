@@ -1,116 +1,85 @@
-from setuptools import setup, find_packages
-from os import path
-import sys
-
-this_directory = path.abspath(path.dirname(__file__))
-if sys.version_info.major < 3:
-    from io import open
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as readme_md:
-    long_description = readme_md.read()
+from setuptools import setup
 
 extras_require = {
+    'shellcomplete': ['click_completion'],
     'tensorflow': [
-        'tensorflow~=1.14',
-        'tensorflow-probability~=0.5',
-        'numpy<=1.14.5,>=1.14.0',  # Lower of 1.14.0 instead of 1.13.3 to ensure doctest pass
+        'tensorflow~=2.2.0',  # TensorFlow minor releases are as volatile as major
+        'tensorflow-probability~=0.10.0',
     ],
     'torch': ['torch~=1.2'],
-    'mxnet': ['mxnet~=1.0', 'numpy<1.15.0,>=1.8.2', 'graphviz<0.9.0,>=0.8.1'],
-    # 'dask': [
-    #     'dask[array]'
-    # ],
-    'xmlio': ['uproot'],
-    'minuit': ['iminuit'],
-    'develop': [
-        'pyflakes',
-        'pytest~=3.5',
-        'pytest-cov>=2.5.1',
-        'pytest-mock',
-        'pytest-benchmark[histogram]',
-        'pytest-console-scripts',
-        'python-coveralls',
-        'coverage>=4.0',  # coveralls
-        'matplotlib',
-        'jupyter',
-        'nbdime',
-        'uproot~=3.3',
-        'papermill~=1.0',
-        'nteract-scrapbook~=0.2',
-        'graphviz',
-        'bumpversion',
-        'sphinx',
-        'sphinxcontrib-bibtex',
-        'sphinxcontrib-napoleon',
-        'sphinx_rtd_theme',
-        'nbsphinx',
-        'sphinx-issues',
-        'm2r',
-        'jsonpatch',
-        'ipython',
-        'pre-commit',
-        'black;python_version>="3.6"',  # Black is Python3 only
-        'twine',
-        'check-manifest',
-    ],
+    'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
+    'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
+    'minuit': ['iminuit~=1.4.3'],  # v1.5.0 breaks pyhf for 32b TensorFlow and PyTorch
 }
+extras_require['backends'] = sorted(
+    set(
+        extras_require['tensorflow']
+        + extras_require['torch']
+        + extras_require['jax']
+        + extras_require['minuit']
+    )
+)
+extras_require['contrib'] = sorted(set(['matplotlib', 'requests']))
+extras_require['lint'] = sorted(set(['pyflakes', 'black']))
+
+extras_require['test'] = sorted(
+    set(
+        extras_require['backends']
+        + extras_require['xmlio']
+        + extras_require['contrib']
+        + extras_require['shellcomplete']
+        + [
+            'pytest~=6.0',
+            'pytest-cov>=2.5.1',
+            'pytest-mock',
+            'pytest-benchmark[histogram]',
+            'pytest-console-scripts',
+            'pytest-mpl',
+            'pydocstyle',
+            'coverage>=4.0',  # coveralls
+            'papermill~=2.0',
+            'nteract-scrapbook~=0.2',
+            'jupyter',
+            'uproot~=3.3',
+            'graphviz',
+            'jsonpatch',
+        ]
+    )
+)
+extras_require['docs'] = sorted(
+    set(
+        [
+            'sphinx>=3.1.2',
+            'sphinxcontrib-bibtex',
+            'sphinx-click',
+            'sphinx_rtd_theme',
+            'nbsphinx',
+            'ipywidgets',
+            'sphinx-issues',
+            'sphinx-copybutton>0.2.9',
+        ]
+    )
+)
+extras_require['develop'] = sorted(
+    set(
+        extras_require['docs']
+        + extras_require['lint']
+        + extras_require['test']
+        + [
+            'nbdime',
+            'bump2version',
+            'ipython',
+            'pre-commit',
+            'check-manifest',
+            'codemetapy>=0.3.4',
+            'twine',
+        ]
+    )
+)
 extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
-def _is_test_pypi():
-    """
-    Determine if the Travis CI environment has TESTPYPI_UPLOAD defined and
-    set to true (c.f. .travis.yml)
-
-    The use_scm_version kwarg accepts a callable for the local_scheme
-    configuration parameter with argument "version". This can be replaced
-    with a lambda as the desired version structure is {next_version}.dev{distance}
-    c.f. https://github.com/pypa/setuptools_scm/#importing-in-setuppy
-
-    As the scm versioning is only desired for TestPyPI, for depolyment to PyPI the version
-    controlled through bumpversion is used.
-    """
-    from os import getenv
-
-    return (
-        {'local_scheme': lambda version: ''}
-        if getenv('TESTPYPI_UPLOAD') == 'true'
-        else False
-    )
-
-
 setup(
-    name='pyhf',
-    version='0.1.2',
-    description='(partial) pure python histfactory implementation',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/diana-hep/pyhf',
-    author='Lukas Heinrich',
-    author_email='lukas.heinrich@cern.ch',
-    license='Apache',
-    keywords='physics fitting numpy scipy tensorflow pytorch mxnet dask',
-    classifiers=[
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-    ],
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
-    include_package_data=True,
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
-    install_requires=[
-        'scipy',  # requires numpy, which is required by pyhf, tensorflow, and mxnet
-        'click>=6.0',  # for console scripts,
-        'tqdm',  # for readxml
-        'six',  # for modifiers
-        'jsonschema>=v3.0.0a2',  # for utils, alpha-release for draft 6
-        'jsonpatch',
-        'pyyaml',  # for parsing CLI equal-delimited options
-    ],
     extras_require=extras_require,
-    entry_points={'console_scripts': ['pyhf=pyhf.commandline:pyhf']},
-    dependency_links=[],
-    use_scm_version=_is_test_pypi(),
+    use_scm_version=lambda: {'local_scheme': lambda version: ''},
 )

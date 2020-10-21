@@ -1,6 +1,6 @@
 import logging
 
-import os
+from pathlib import Path
 import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
@@ -8,9 +8,22 @@ import numpy as np
 import uproot
 from uproot_methods.classes import TH1
 
+from .mixins import _ChannelSummaryMixin
+
 _ROOT_DATA_FILE = None
 
 log = logging.getLogger(__name__)
+
+# 'spec' gets passed through all functions as NormFactor is a unique case of having
+# parameter configurations stored at the modifier-definition-spec level. This means
+# that build_modifier() needs access to the measurements. The call stack is:
+#
+#      writexml
+#          ->build_channel
+#              ->build_sample
+#                  ->build_modifier
+#
+#  Therefore, 'spec' needs to be threaded through all these calls.
 
 
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
@@ -47,7 +60,26 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def build_measurement(measurementspec):
+def build_measurement(measurementspec, modifiertypes):
+    """
+    Build the XML measurement specification for a given measurement adhering to defs.json/#definitions/measurement.
+
+    Args:
+        measurementspec (:obj:`dict`): The measurements specification from a :class:`~pyhf.workspace.Workspace`.
+        modifiertypes (:obj:`dict`): A mapping from modifier name (:obj:`str`) to modifier type (:obj:`str`).
+
+    Returns:
+        :class:`xml.etree.cElementTree.Element`: The XML measurement specification.
+
+    """
+    # need to determine prefixes
+    prefixes = {
+        'normsys': 'alpha_',
+        'histosys': 'alpha_',
+        'shapesys': 'gamma_',
+        'staterror': 'gamma_',
+    }
+
     config = measurementspec['config']
     name = measurementspec['name']
     poi = config['poi']
@@ -63,7 +95,8 @@ def build_measurement(measurementspec):
             if pname == 'lumi':
                 fixed_params.append('Lumi')
             else:
-                fixed_params.append(pname)
+                prefix = prefixes.get(modifiertypes[pname], '')
+                fixed_params.append(f'{prefix}{pname}')
         # we found luminosity, so handle it
         if parameter['name'] == 'lumi':
             lumi = parameter['auxdata'][0]
@@ -89,7 +122,7 @@ def build_measurement(measurementspec):
     return meas
 
 
-def build_modifier(modifierspec, channelname, samplename, sampledata):
+def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
     if modifierspec['name'] == 'lumi':
         return None
     mod_map = {
@@ -115,9 +148,31 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
         attrs['High'] = str(modifierspec['data']['hi'])
         attrs['Low'] = str(modifierspec['data']['lo'])
     elif modifierspec['type'] == 'normfactor':
-        attrs['Val'] = '1'
-        attrs['High'] = '10'
-        attrs['Low'] = '0'
+        # NB: only look at first measurement for normfactor configs. In order
+        # to dump as HistFactory XML, this has to be the same for all
+        # measurements or it will not work correctly. Why?
+        #
+        # Unlike other modifiers, NormFactor has the unique circumstance of
+        # defining its parameter configurations at the modifier level inside
+        # the channel specification, instead of at the measurement level, like
+        # all of the other modifiers.
+        #
+        # However, since I strive for perfection, the "Const" attribute will
+        # never be set here, but at the per-measurement configuration instead
+        # like all other parameters. This is an acceptable compromise.
+        #
+        # Lastly, if a normfactor parameter configuration doesn't exist in the
+        # first measurement parameter configuration, then set defaults.
+        val = 1
+        low = 0
+        high = 10
+        for p in spec['measurements'][0]['config']['parameters']:
+            if p['name'] == modifierspec['name']:
+                val = p['inits'][0]
+                low, high = p['bounds'][0]
+        attrs['Val'] = str(val)
+        attrs['Low'] = str(low)
+        attrs['High'] = str(high)
     elif modifierspec['type'] == 'staterror':
         attrs['Activate'] = 'True'
         attrs['HistoName'] = _make_hist_name(
@@ -150,18 +205,21 @@ def build_modifier(modifierspec, channelname, samplename, sampledata):
                 for a, b in np.array((modifierspec['data'], sampledata)).T
             ],
         )
+    elif modifierspec['type'] == 'shapefactor':
+        pass
     else:
         log.warning(
-            'Skipping {0}({1}) for now'.format(
+            'Skipping modifier {0}({1}) for now'.format(
                 modifierspec['name'], modifierspec['type']
             )
         )
+        return None
 
     modifier = ET.Element(mod_map[modifierspec['type']], **attrs)
     return modifier
 
 
-def build_sample(samplespec, channelname):
+def build_sample(spec, samplespec, channelname):
     histname = _make_hist_name(channelname, samplespec['name'])
     attrs = {
         'Name': samplespec['name'],
@@ -175,7 +233,7 @@ def build_sample(samplespec, channelname):
         if modspec['type'] == 'lumi':
             sample.attrib.update({'NormalizeByTheory': 'True'})
         modifier = build_modifier(
-            modspec, channelname, samplespec['name'], samplespec['data']
+            spec, modspec, channelname, samplespec['name'], samplespec['data']
         )
         if modifier is not None:
             sample.append(modifier)
@@ -192,7 +250,7 @@ def build_data(obsspec, channelname):
     return data
 
 
-def build_channel(channelspec, obsspec):
+def build_channel(spec, channelspec, obsspec):
     channel = ET.Element(
         'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
     )
@@ -200,7 +258,7 @@ def build_channel(channelspec, obsspec):
         data = build_data(obsspec, channelspec['name'])
         channel.append(data)
     for samplespec in channelspec['samples']:
-        channel.append(build_sample(samplespec, channelspec['name']))
+        channel.append(build_sample(spec, samplespec, channelspec['name']))
     return channel
 
 
@@ -209,19 +267,21 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
 
     shutil.copyfile(
         pkg_resources.resource_filename(__name__, 'schemas/HistFactorySchema.dtd'),
-        os.path.join(os.path.dirname(specdir), 'HistFactorySchema.dtd'),
+        Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
-        "Combination", OutputFilePrefix=os.path.join('.', specdir, resultprefix)
+        "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix))
     )
 
-    with uproot.recreate(os.path.join(data_rootdir, 'data.root')) as _ROOT_DATA_FILE:
+    with uproot.recreate(
+        str(Path(data_rootdir).joinpath('data.root'))
+    ) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
-            channelfilename = os.path.join(
-                specdir, '{0:s}_{1:s}.xml'.format(resultprefix, channelspec['name'])
+            channelfilename = str(
+                Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
             )
             with open(channelfilename, 'w') as channelfile:
-                channel = build_channel(channelspec, spec.get('observations'))
+                channel = build_channel(spec, channelspec, spec.get('observations'))
                 indent(channel)
                 channelfile.write(
                     "<!DOCTYPE Channel SYSTEM '../HistFactorySchema.dtd'>\n\n"
@@ -234,8 +294,11 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             inp.text = channelfilename
             combination.append(inp)
 
+    # need information about modifier types to get the right prefix in measurement
+    mixin = _ChannelSummaryMixin(channels=spec['channels'])
+
     for measurement in spec['measurements']:
-        combination.append(build_measurement(measurement))
+        combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
     return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
         "utf-8"

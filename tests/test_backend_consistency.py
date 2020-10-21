@@ -1,5 +1,4 @@
 import pyhf
-import tensorflow as tf
 import numpy as np
 import pytest
 
@@ -59,7 +58,7 @@ bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
 @pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
-def test_hypotest_q_mu(
+def test_hypotest_qmu_tilde(
     n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
 ):
     """
@@ -105,28 +104,25 @@ def test_hypotest_q_mu(
     data = source['bindata']['data'] + pdf.config.auxdata
 
     backends = [
-        pyhf.tensor.numpy_backend(),
-        pyhf.tensor.tensorflow_backend(session=tf.Session()),
-        pyhf.tensor.pytorch_backend(),
-        # mxnet_backend()
+        pyhf.tensor.numpy_backend(precision='64b'),
+        pyhf.tensor.tensorflow_backend(precision='64b'),
+        pyhf.tensor.pytorch_backend(precision='64b'),
+        pyhf.tensor.jax_backend(precision='64b'),
     ]
 
     test_statistic = []
     for backend in backends:
-        if backend.name == 'tensorflow':
-            tf.reset_default_graph()
-            backend.session = tf.Session()
         pyhf.set_backend(backend)
 
-        q_mu = pyhf.utils.hypotest(
+        qmu_tilde = pyhf.infer.test_statistics.qmu_tilde(
             1.0,
             data,
             pdf,
             pdf.config.suggested_init(),
             pdf.config.suggested_bounds(),
-            return_test_statistics=True,
-        )[-1][0]
-        test_statistic.append(pyhf.tensorlib.tolist(q_mu))
+            pdf.config.suggested_fixed(),
+        )
+        test_statistic.append(qmu_tilde)
 
     # compare to NumPy/SciPy
     test_statistic = np.array(test_statistic)

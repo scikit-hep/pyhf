@@ -1,0 +1,29 @@
+{
+    "metadata": {
+        "references": { "hepdata": "ins1234567" },
+        "description": "patchset for validation/xmlimport_input/config/example.xml",
+        "digests": { "sha256": "7c32ca3b8db75cbafcf5cd7ed4672fa2b1fa69e391c9b89068dd947a521866ec" },
+        "labels": ["x"]
+    },
+    "patches": [
+        {
+            "metadata": {
+                "name": "patch_channel1_signal_syst1",
+                "values": [0]
+            },
+            "patch": [
+                {
+                    "op": "replace",
+                    "path": "/channels/0/samples/0/modifiers/0/data/hi",
+                    "value": 1.2
+                },
+                {
+                    "op": "replace",
+                    "path": "/channels/0/samples/0/modifiers/0/data/lo",
+                    "value": 0.8
+                }
+            ]
+        }
+    ],
+    "version": "1.0.0"
+}

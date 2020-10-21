@@ -11,6 +11,7 @@ docs/_*/
 *.py[co]
 __pycache__
 *.egg-info
+*.eggs
 *~
 *.bak
 .ipynb_checkpoints
@@ -19,6 +20,9 @@ __pycache__
 \#*#
 .#*
 .coverage*
+!.coveragerc
+coverage*
+*,cover
 
 *.swp
 *.map

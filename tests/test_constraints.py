@@ -16,6 +16,7 @@ class MockConfig(object):
         for name in self.par_order:
             self.auxdata = self.auxdata + self.par_map[name]['paramset'].auxdata
             self.auxdata_order.append(name)
+        self.npars = len(self.suggested_init())
 
     def suggested_init(self):
         init = []
@@ -140,6 +141,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]],
                     auxdata=[12],
                     factors=[12],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
                 'auxdata': [1],
@@ -151,6 +153,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]] * 2,
                     auxdata=[13, 14],
                     factors=[13, 14],
+                    fixed=False,
                 ),
                 'slice': slice(1, 3),
             },
@@ -161,6 +164,7 @@ def test_batched_constraints(backend):
                     bounds=[[0, 10]] * 2,
                     auxdata=[0, 0],
                     sigmas=[1.5, 2.0],
+                    fixed=False,
                 ),
                 'slice': slice(3, 5),
             },
@@ -170,6 +174,7 @@ def test_batched_constraints(backend):
                     inits=[0] * 3,
                     bounds=[[0, 10]] * 3,
                     auxdata=[0, 0, 0],
+                    fixed=False,
                 ),
                 'slice': slice(5, 8),
             },
@@ -178,10 +183,15 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -189,15 +199,20 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     suggested_pars = [1.1] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = poisson_constraint_combined(config)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
-        result[0],
+        result,
         sum(
             [
                 default_backend.poisson_logpdf(data, rate)
@@ -205,10 +220,13 @@ def test_batched_constraints(backend):
             ]
         ),
     )
-    assert result.shape == (1,)
+    assert result.shape == ()
 
     constraint = poisson_constraint_combined(config, batch_size=10)
-    result = constraint.logpdf(config.auxdata, [suggested_pars] * 10)
+    result = constraint.logpdf(
+        pyhf.tensorlib.astensor(config.auxdata),
+        pyhf.tensorlib.astensor([suggested_pars] * 10),
+    )
     assert result.shape == (10,)
 
     suggested_pars = [
@@ -218,7 +236,12 @@ def test_batched_constraints(backend):
     ]
     constraint = poisson_constraint_combined(config, batch_size=3)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.all(
         np.isclose(
@@ -253,7 +276,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [0.0] * 5  # 2 pois 5 norm
     constraint = gaussian_constraint_combined(config, batch_size=1)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -271,7 +299,12 @@ def test_batched_constraints(backend):
     suggested_pars = [1.0] * 3 + [1, 2, 3, 4, 5]  # 2 pois 5 norm
     constraint = gaussian_constraint_combined(config, batch_size=1)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.isclose(
         result[0],
@@ -293,7 +326,12 @@ def test_batched_constraints(backend):
     ]
     constraint = gaussian_constraint_combined(config, batch_size=3)
     result = default_backend.astensor(
-        pyhf.tensorlib.tolist(constraint.logpdf(config.auxdata, suggested_pars))
+        pyhf.tensorlib.tolist(
+            constraint.logpdf(
+                pyhf.tensorlib.astensor(config.auxdata),
+                pyhf.tensorlib.astensor(suggested_pars),
+            )
+        )
     )
     assert np.all(
         np.isclose(
@@ -330,5 +368,8 @@ def test_batched_constraints(backend):
     assert result.shape == (3,)
 
     constraint = gaussian_constraint_combined(config, batch_size=10)
-    result = constraint.logpdf(config.auxdata, [suggested_pars] * 10)
+    result = constraint.logpdf(
+        pyhf.tensorlib.astensor(config.auxdata),
+        pyhf.tensorlib.astensor([suggested_pars] * 10),
+    )
     assert result.shape == (10,)

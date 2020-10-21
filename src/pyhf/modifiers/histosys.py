@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @modifier(name='histosys', constrained=True, op_code='addition')
 class histosys(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
@@ -20,6 +20,7 @@ class histosys(object):
             'is_shared': True,
             'inits': (0.0,),
             'bounds': ((-5.0, 5.0),),
+            'fixed': False,
             'auxdata': (0.0,),
         }
 
@@ -35,7 +36,11 @@ class histosys_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (
+            (self.batch_size, pdfconfig.npars)
+            if self.batch_size
+            else (pdfconfig.npars,)
+        )
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, histosys_mods
         )
@@ -43,16 +48,16 @@ class histosys_combined(object):
         self._histosys_histoset = [
             [
                 [
-                    mega_mods[s][m]['data']['lo_data'],
-                    mega_mods[s][m]['data']['nom_data'],
-                    mega_mods[s][m]['data']['hi_data'],
+                    mega_mods[m][s]['data']['lo_data'],
+                    mega_mods[m][s]['data']['nom_data'],
+                    mega_mods[m][s]['data']['hi_data'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._histosys_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         if histosys_mods:
@@ -67,23 +72,26 @@ class histosys_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.histosys_mask = tensorlib.astensor(self._histosys_mask)
+        self.histosys_mask = tensorlib.astensor(self._histosys_mask, dtype="bool")
         self.histosys_default = tensorlib.zeros(self.histosys_mask.shape)
+        if self.batch_size is None:
+            self.indices = tensorlib.reshape(
+                self.param_viewer.indices_concatenated, (-1, 1)
+            )
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            histosys_alphaset = self.param_viewer.get(pars, self.indices)
         else:
-            batched_pars = pars
-        histosys_alphaset = self.param_viewer.get(batched_pars)
+            histosys_alphaset = self.param_viewer.get(pars)
 
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below

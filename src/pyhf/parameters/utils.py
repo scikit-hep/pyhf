@@ -12,6 +12,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         'auxdata',
         'factors',
         'sigmas',
+        'fixed',
     ]
 
     # - process all defined paramsets
@@ -27,6 +28,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
         combined_paramset = {}
         for k in paramset_keys:
             for paramset_requirement in paramset_requirements:
+                # undefined: the modifier does not support configuring that property
                 v = paramset_requirement.get(k, 'undefined')
                 combined_paramset.setdefault(k, set([])).add(v)
 

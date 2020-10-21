@@ -10,16 +10,17 @@ log = logging.getLogger(__name__)
 @modifier(name='staterror', constrained=True, op_code='multiplication')
 class staterror(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
-            'n_parameters': n_parameters,
+            'n_parameters': len(sample_data),
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((1e-10, 10.0),) * n_parameters,
-            'auxdata': (1.0,) * n_parameters,
+            'inits': (1.0,) * len(sample_data),
+            'bounds': ((1e-10, 10.0),) * len(sample_data),
+            'fixed': False,
+            'auxdata': (1.0,) * len(sample_data),
         }
 
 
@@ -30,20 +31,20 @@ class staterror_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
         self._staterr_mods = [m for m, _ in staterr_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, self._staterr_mods
         )
 
         self._staterror_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
         self.__staterror_uncrt = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[s][m]['data']['uncrt'],
-                        mega_mods[s][m]['data']['nom_data'],
+                        mega_mods[m][s]['data']['uncrt'],
+                        mega_mods[m][s]['data']['nom_data'],
                     ]
                     for s in pdfconfig.samples
                 ]
@@ -76,7 +77,7 @@ class staterror_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.staterror_mask = tensorlib.astensor(self._staterror_mask)
+        self.staterror_mask = tensorlib.astensor(self._staterror_mask, dtype="bool")
         self.staterror_mask = tensorlib.tile(
             self.staterror_mask, (1, 1, self.batch_size or 1, 1)
         )
@@ -121,11 +122,9 @@ class staterror_combined(object):
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            flat_pars = pars
         else:
-            batched_pars = pars
-
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         statfactors = tensorlib.gather(flat_pars, self.access_field)
         results_staterr = tensorlib.einsum('mab,s->msab', statfactors, self.sample_ones)
         results_staterr = tensorlib.where(

@@ -1,6 +1,7 @@
 import pytest
 import logging
 import numpy as np
+import tensorflow as tf
 import pyhf
 from pyhf.simplemodels import hepdata_like
 
@@ -15,18 +16,59 @@ def test_astensor_dtype(backend, caplog):
 
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.sum([[1, 2, 3], [4, 5, 6]], axis=0)) == [5, 7, 9]
-    assert tb.tolist(tb.product([[1, 2, 3], [4, 5, 6]], axis=0)) == [4, 10, 18]
-    assert tb.tolist(tb.power([1, 2, 3], [1, 2, 3])) == [1, 4, 27]
-    assert tb.tolist(tb.divide([4, 9, 16], [2, 3, 4])) == [2, 3, 4]
-    assert tb.tolist(tb.sqrt([4, 9, 16])) == [2, 3, 4]
-    assert tb.tolist(tb.log(tb.exp([2, 3, 4]))) == [2, 3, 4]
-    assert tb.tolist(tb.abs([-1, -2])) == [1, 2]
+    assert tb.tolist(tb.astensor([1, 2, 3]) + tb.astensor([4, 5, 6])) == [5, 7, 9]
+    assert tb.tolist(tb.astensor([1]) + tb.astensor([4, 5, 6])) == [5, 6, 7]
+    assert tb.tolist(tb.astensor([1, 2, 3]) - tb.astensor([4, 5, 6])) == [-3, -3, -3]
+    assert tb.tolist(tb.astensor([4, 5, 6]) - tb.astensor([1])) == [3, 4, 5]
+    assert tb.tolist(tb.sum(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [5, 7, 9]
+    assert tb.tolist(tb.product(tb.astensor([[1, 2, 3], [4, 5, 6]]), axis=0)) == [
+        4,
+        10,
+        18,
+    ]
+    assert tb.tolist(tb.power(tb.astensor([1, 2, 3]), tb.astensor([1, 2, 3]))) == [
+        1,
+        4,
+        27,
+    ]
+    assert tb.tolist(tb.divide(tb.astensor([4, 9, 16]), tb.astensor([2, 3, 4]))) == [
+        2,
+        3,
+        4,
+    ]
+    assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+    assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
+    assert tb.tolist(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0]))) == pytest.approx(
+        [
+            -0.99532227,
+            -0.84270079,
+            0.0,
+            0.84270079,
+            0.99532227,
+        ],
+        1e-7,
+    )
+    assert tb.tolist(
+        tb.erfinv(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0])))
+    ) == pytest.approx([-2.0, -1.0, 0.0, 1.0, 2.0], 1e-6)
+    a = tb.astensor(1)
+    b = tb.astensor(2)
+    assert tb.tolist(a < b) is True
+    assert tb.tolist(b < a) is False
+    assert tb.tolist(a < a) is False
+    assert tb.tolist(a > b) is False
+    assert tb.tolist(b > a) is True
+    assert tb.tolist(a > a) is False
+    a = tb.astensor(4)
+    b = tb.astensor(5)
+    assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0
+    assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
 
 def test_complex_tensor_ops(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.outer([1, 2, 3], [4, 5, 6])) == [
+    assert tb.tolist(tb.outer(tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6]))) == [
         [4, 5, 6],
         [8, 10, 12],
         [12, 15, 18],
@@ -35,6 +77,9 @@ def test_complex_tensor_ops(backend):
         [1, 2, 3],
         [4, 5, 6],
     ]
+    assert tb.tolist(
+        tb.stack([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])], axis=1)
+    ) == [[1, 4], [2, 5], [3, 6]]
     assert tb.tolist(
         tb.concatenate([tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6])])
     ) == [1, 2, 3, 4, 5, 6]
@@ -45,9 +90,16 @@ def test_complex_tensor_ops(backend):
         1,
         1,
     ]
-    assert tb.tolist(
-        tb.where(tb.astensor([1, 0, 1]), tb.astensor([1, 1, 1]), tb.astensor([2, 2, 2]))
-    ) == [1, 2, 1]
+    assert (
+        tb.tolist(
+            tb.where(
+                tb.astensor([1, 0, 1], dtype="bool"),
+                tb.astensor([1, 1, 1]),
+                tb.astensor([2, 2, 2]),
+            )
+        )
+        == [1, 2, 1]
+    )
 
 
 def test_ones(backend):
@@ -70,26 +122,43 @@ def test_zeros(backend):
 
 def test_broadcasting(backend):
     tb = pyhf.tensorlib
-    assert list(
-        map(
-            tb.tolist,
-            tb.simple_broadcast(
-                tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
-            ),
+    assert (
+        list(
+            map(
+                tb.tolist,
+                tb.simple_broadcast(
+                    tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
+                ),
+            )
         )
-    ) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
-    assert list(map(tb.tolist, tb.simple_broadcast(1, [2, 3, 4], [5, 6, 7]))) == [
-        [1, 1, 1],
-        [2, 3, 4],
-        [5, 6, 7],
-    ]
-    assert list(map(tb.tolist, tb.simple_broadcast([1], [2, 3, 4], [5, 6, 7]))) == [
-        [1, 1, 1],
-        [2, 3, 4],
-        [5, 6, 7],
-    ]
+        == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    )
+    assert (
+        list(
+            map(
+                tb.tolist,
+                tb.simple_broadcast(
+                    tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+                ),
+            )
+        )
+        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    )
+    assert (
+        list(
+            map(
+                tb.tolist,
+                tb.simple_broadcast(
+                    tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+                ),
+            )
+        )
+        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    )
     with pytest.raises(Exception):
-        tb.simple_broadcast([1], [2, 3], [5, 6, 7])
+        tb.simple_broadcast(
+            tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
+        )
 
 
 def test_reshape(backend):
@@ -97,16 +166,54 @@ def test_reshape(backend):
     assert tb.tolist(tb.reshape(tb.ones((1, 2, 3)), (-1,))) == [1, 1, 1, 1, 1, 1]
 
 
+def test_swap(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[1, 2, 3]]))) == [
+        [1],
+        [2],
+        [3],
+    ]
+    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[[1, 2, 3]]]))) == [
+        [[1, 2, 3]]
+    ]
+    assert tb.tolist(tb.einsum('ijk...->kji...', tb.astensor([[[1, 2, 3]]]))) == [
+        [[1]],
+        [[2]],
+        [[3]],
+    ]
+
+
 def test_shape(backend):
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
     assert tb.shape(tb.ones((0, 0))) == (0, 0)
+    assert tb.shape(tb.astensor(1.0)) == ()
     assert tb.shape(tb.astensor([])) == (0,)
     assert tb.shape(tb.astensor([1.0])) == (1,)
-    assert tb.shape(tb.astensor(1.0)) == tb.shape(tb.astensor([1.0]))
-    assert tb.shape(tb.astensor(0.0)) == tb.shape(tb.astensor([0.0]))
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
+    with pytest.raises(
+        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
+    ):
+        _ = tb.astensor([1, 2]) + tb.astensor([3, 4, 5])
+    with pytest.raises(
+        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
+    ):
+        _ = tb.astensor([1, 2]) - tb.astensor([3, 4, 5])
+    with pytest.raises(
+        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
+    ):
+        _ = tb.astensor([1, 2]) < tb.astensor([3, 4, 5])
+    with pytest.raises(
+        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
+    ):
+        _ = tb.astensor([1, 2]) > tb.astensor([3, 4, 5])
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
+        tb.conditional(
+            (tb.astensor([1, 2]) < tb.astensor([3, 4])),
+            lambda: tb.astensor(4) + tb.astensor(5),
+            lambda: tb.astensor(4) - tb.astensor(5),
+        )
 
 
 def test_pdf_calculations(backend):
@@ -134,7 +241,9 @@ def test_pdf_calculations(backend):
         nan_ok=True,
     )
     # poisson(lambda=0) is not defined, should return NaN
-    assert tb.tolist(tb.poisson([0, 0, 1, 1], [0, 1, 0, 1])) == pytest.approx(
+    assert tb.tolist(
+        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+    ) == pytest.approx(
         [np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True
     )
     assert tb.tolist(
@@ -144,22 +253,34 @@ def test_pdf_calculations(backend):
         nan_ok=True,
     )
 
+    # Ensure continous approximation is valid
+    assert tb.tolist(
+        tb.poisson(tb.astensor([0.5, 1.1, 1.5]), tb.astensor(1.0))
+    ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
 
-@pytest.mark.skip_mxnet
+
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(
-        tb.boolean_mask(
-            tb.astensor([1, 2, 3, 4, 5, 6]),
-            tb.astensor([True, True, False, True, False, False], dtype='bool'),
+    assert (
+        tb.tolist(
+            tb.boolean_mask(
+                tb.astensor([1, 2, 3, 4, 5, 6]),
+                tb.astensor([True, True, False, True, False, False], dtype='bool'),
+            )
         )
-    ) == [1, 2, 4]
-    assert tb.tolist(
-        tb.boolean_mask(
-            tb.astensor([[1, 2], [3, 4], [5, 6]]),
-            tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'),
+        == [1, 2, 4]
+    )
+    assert (
+        tb.tolist(
+            tb.boolean_mask(
+                tb.astensor([[1, 2], [3, 4], [5, 6]]),
+                tb.astensor(
+                    [[True, True], [False, True], [False, False]], dtype='bool'
+                ),
+            )
         )
-    ) == [1, 2, 4]
+        == [1, 2, 4]
+    )
 
 
 def test_tensor_tile(backend):
@@ -168,8 +289,18 @@ def test_tensor_tile(backend):
     assert tb.tolist(tb.tile(tb.astensor(a), (1, 2))) == [[1, 1], [2, 2], [3, 3]]
 
     a = [1, 2, 3]
-    tb = pyhf.tensorlib
     assert tb.tolist(tb.tile(tb.astensor(a), (2,))) == [1, 2, 3, 1, 2, 3]
+
+    a = [10, 20]
+    assert tb.tolist(tb.tile(tb.astensor(a), (2, 1))) == [[10, 20], [10, 20]]
+    assert tb.tolist(tb.tile(tb.astensor(a), (2, 1, 3))) == [
+        [[10.0, 20.0, 10.0, 20.0, 10.0, 20.0]],
+        [[10.0, 20.0, 10.0, 20.0, 10.0, 20.0]],
+    ]
+
+    if tb.name == 'tensorflow':
+        with pytest.raises(tf.python.framework.errors_impl.InvalidArgumentError):
+            tb.tile(tb.astensor([[[10, 20, 30]]]), (2, 1))
 
 
 def test_1D_gather(backend):
@@ -196,7 +327,6 @@ def test_ND_gather(backend):
     ) == [[3, 4], [1, 2]]
 
 
-@pytest.mark.fail_mxnet
 def test_isfinite(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.isfinite(tb.astensor([1.0, float("nan"), float("inf")]))) == [
@@ -210,19 +340,13 @@ def test_einsum(backend):
     tb = pyhf.tensorlib
     x = np.arange(20).reshape(5, 4).tolist()
 
-    if isinstance(pyhf.tensorlib, pyhf.tensor.mxnet_backend):
-        with pytest.raises(NotImplementedError):
-            assert tb.einsum('ij->ji', [1, 2, 3])
-    else:
-        assert np.all(
-            tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
-        )
-        assert (
-            tb.tolist(
-                tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3]))
-            )
-            == [[1, 2, 3]] * 3
-        )
+    assert np.all(
+        tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
+    )
+    assert (
+        tb.tolist(tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3])))
+        == [[1, 2, 3]] * 3
+    )
 
 
 def test_list_to_list(backend):
@@ -248,19 +372,6 @@ def test_tensor_list_conversion(backend):
     assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
 
 
-def test_tensorflow_tolist_nosession():
-    pyhf.set_backend(pyhf.tensor.tensorflow_backend())
-    tb = pyhf.tensorlib
-
-    # this isn't covered by test_list_to_list since we need to check if it's ok
-    # without a session explicitly
-    assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
-    with pytest.raises(RuntimeError):
-        # but a tensor shouldn't
-        assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
-
-
-@pytest.mark.skip_mxnet
 def test_pdf_eval(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -309,7 +420,6 @@ def test_pdf_eval(backend):
     )
 
 
-@pytest.mark.fail_mxnet
 def test_pdf_eval_2(backend):
     source = {
         "binning": [2, -0.5, 1.5],
@@ -329,3 +439,64 @@ def test_pdf_eval_2(backend):
     assert pytest.approx([-23.579605171119738], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
     )
+
+
+def test_tensor_precision(backend):
+    tb, _ = backend
+    assert tb.precision in ['32b', '64b']
+
+
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_set_tensor_precision(tensorlib, precision):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+    assert tb.precision == precision
+    # check for float64/int64/float32/int32 in the dtypemap by looking at the class names
+    #   - may break if class names stop including this, but i doubt it
+    assert f'float{precision[:1]}' in str(tb.dtypemap['float'])
+    assert f'int{precision[:1]}' in str(tb.dtypemap['int'])
+
+
+def test_trigger_tensorlib_changed_name(mocker):
+    numpy_64 = pyhf.tensor.numpy_backend(precision='64b')
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+
+    pyhf.set_backend(numpy_64)
+
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
+
+    assert func.call_count == 0
+    pyhf.set_backend(jax_64)
+    assert func.call_count == 1
+
+
+def test_trigger_tensorlib_changed_precision(mocker):
+    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+    jax_32 = pyhf.tensor.jax_backend(precision='32b')
+
+    pyhf.set_backend(jax_64)
+
+    func = mocker.Mock()
+    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
+
+    assert func.call_count == 0
+    pyhf.set_backend(jax_32)
+    assert func.call_count == 1
+
+
+@pytest.mark.parametrize(
+    'tensorlib',
+    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+)
+@pytest.mark.parametrize('precision', ['64b', '32b'])
+def test_tensorlib_setup(tensorlib, precision, mocker):
+    tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
+
+    func = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
+    assert func.call_count == 0
+    pyhf.set_backend(tb)
+    assert func.call_count == 1

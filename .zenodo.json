@@ -1,0 +1,43 @@
+{
+    "description": "pure-Python HistFactory implementation with tensors and autodiff",
+    "license": "Apache-2.0",
+    "title": "scikit-hep/pyhf: v0.5.3",
+    "version": "v0.5.3",
+    "upload_type": "software",
+    "creators": [
+        {
+            "affiliation": "CERN",
+            "name": "Lukas Heinrich",
+            "orcid": "0000-0002-4048-7584"
+        },
+        {
+            "affiliation": "University of Illinois at Urbana-Champaign",
+            "name": "Matthew Feickert",
+            "orcid": "0000-0003-4124-7862"
+        },
+        {
+            "affiliation": "SCIPP, University of California, Santa Cruz",
+            "name": "Giordon Stark",
+            "orcid": "0000-0001-6616-3433"
+        }
+    ],
+    "access_right": "open",
+    "keywords": [
+      "physics",
+      "statistics",
+      "fitting",
+      "scipy",
+      "numpy",
+      "tensorflow",
+      "pytorch",
+      "jax",
+      "auto-differentiation"
+    ],
+    "related_identifiers": [
+        {
+            "scheme": "url",
+            "identifier": "https://github.com/scikit-hep/pyhf/tree/v0.5.3",
+            "relation": "isSupplementTo"
+        }
+    ]
+}

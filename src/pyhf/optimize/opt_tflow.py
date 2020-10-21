@@ -1,76 +1,43 @@
-import logging
-import numpy as np
+"""Tensorflow Backend Function Shim."""
+from .. import get_backend
 import tensorflow as tf
 
-log = logging.getLogger(__name__)
 
+def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
+    """
+    Wrap the objective function for the minimization.
 
-class tflow_optimizer(object):
-    def __init__(self, tensorlib, **kwargs):
-        self.tb = tensorlib
-        self.relax = kwargs.get('relax', 0.1)
-        self.maxiter = kwargs.get('maxiter', 100000)
-        self.eps = kwargs.get('eps', 1e-4)
+    Args:
+        objective (:obj:`func`): objective function
+        data (:obj:`list`): observed data
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
+        stitch_pars (:obj:`func`): callable that stitches parameters, see :func:`pyhf.optimize.common.shim`.
+        do_grad (:obj:`bool`): enable autodifferentiation mode. Default is off.
 
-    def unconstrained_bestfit(self, objective, data, pdf, init_pars, par_bounds):
-        # the graph
-        data = self.tb.astensor(data)
-        parlist = [self.tb.astensor([p]) for p in init_pars]
+    Returns:
+        objective_and_grad (:obj:`func`): tensor backend wrapped objective,gradient pair
+    """
+    tensorlib, _ = get_backend()
 
-        pars = self.tb.concatenate(parlist)
-        objective = objective(pars, data, pdf)
-        hessian = tf.hessians(objective, pars)[0]
-        gradient = tf.gradients(objective, pars)[0]
-        invhess = tf.linalg.inv(hessian)
-        update = tf.transpose(tf.matmul(invhess, tf.transpose(tf.stack([gradient]))))[0]
+    if do_grad:
 
-        # run newton's method
-        best_fit = init_pars
-        for i in range(self.maxiter):
-            up = self.tb.session.run(update, feed_dict={pars: best_fit})
-            best_fit = best_fit - self.relax * up
-            if np.abs(np.max(up)) < self.eps:
-                break
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            with tf.GradientTape() as tape:
+                tape.watch(pars)
+                constrained_pars = stitch_pars(pars)
+                constr_nll = objective(constrained_pars, data, pdf)
+            # NB: tape.gradient can return a sparse gradient (tf.IndexedSlices)
+            # when tf.gather is used and this needs to be converted back to a
+            # tensor to be usable as a value
+            grad = tape.gradient(constr_nll, pars)
+            return constr_nll.numpy()[0], tf.convert_to_tensor(grad)
 
-        return best_fit.tolist()
+    else:
 
-    def constrained_bestfit(
-        self, objective, constrained_mu, data, pdf, init_pars, par_bounds
-    ):
-        # the graph
-        data = self.tb.astensor(data)
+        def func(pars):
+            pars = tensorlib.astensor(pars)
+            constrained_pars = stitch_pars(pars)
+            return objective(constrained_pars, data, pdf)[0]
 
-        nuis_pars = [
-            self.tb.astensor([p])
-            for i, p in enumerate(init_pars)
-            if i != pdf.config.poi_index
-        ]
-        poi_par = self.tb.astensor([constrained_mu])
-
-        nuis_cat = self.tb.concatenate(nuis_pars)
-        pars = self.tb.concatenate(
-            [
-                nuis_cat[: pdf.config.poi_index],
-                poi_par,
-                nuis_cat[pdf.config.poi_index :],
-            ]
-        )
-        objective = objective(pars, data, pdf)
-        hessian = tf.hessians(objective, nuis_cat)[0]
-        gradient = tf.gradients(objective, nuis_cat)[0]
-        invhess = tf.linalg.inv(hessian)
-        update = tf.transpose(tf.matmul(invhess, tf.transpose(tf.stack([gradient]))))[0]
-
-        # run newton's method
-        best_fit_nuis = [
-            x for i, x in enumerate(init_pars) if i != pdf.config.poi_index
-        ]
-        for i in range(self.maxiter):
-            up = self.tb.session.run(update, feed_dict={nuis_cat: best_fit_nuis})
-            best_fit_nuis = best_fit_nuis - self.relax * up
-            if np.abs(np.max(up)) < self.eps:
-                break
-
-        best_fit = best_fit_nuis.tolist()
-        best_fit.insert(pdf.config.poi_index, constrained_mu)
-        return best_fit
+    return func

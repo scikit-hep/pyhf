@@ -20,24 +20,25 @@ import pyhf
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
         [
-            "mxnet",
-            "mxnet_backend",
-            "mxnet_backend",
+            "jax",
+            "jax_backend",
+            "jax_backend",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
     ],
-    ids=["numpy", "pytorch", "tensorflow", "mxnet"],
+    ids=["numpy", "pytorch", "tensorflow", "jax"],
 )
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-    sys.modules.setdefault('pyhf.tensor.{}'.format(import_name), None)
-    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+    sys.modules.setdefault(f'pyhf.tensor.{import_name}', None)
+    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
         sys.modules['pyhf.tensor.{}'.format(module_name)],
         None,
     )
+
     try:
         delattr(pyhf.tensor, module_name)
     except:
@@ -48,7 +49,7 @@ def test_missing_backends(isolate_modules, param):
 
     # put back
     CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-    CACHE_MODULE, sys.modules['pyhf.tensor.{}'.format(module_name)] = (
+    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
         None,
         CACHE_MODULE,
     )
@@ -59,25 +60,13 @@ def test_missing_backends(isolate_modules, param):
     [
         ["scipy", "scipy_optimizer", "opt_scipy", pytest.raises(ImportError)],
         [
-            "torch",
-            "pytorch_optimizer",
-            "opt_pytorch",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
-        [
-            "tensorflow",
-            "tflow_optimizer",
-            "opt_tflow",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
-        [
             "iminuit",
             "minuit_optimizer",
             "opt_minuit",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
     ],
-    ids=["scipy", "pytorch", "tensorflow", "minuit"],
+    ids=["scipy", "minuit"],
 )
 def test_missing_optimizer(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param

@@ -5,6 +5,6 @@ Notebooks:
 
 .. toctree::
    :maxdepth: 2
+   :glob:
 
-   examples/notebooks/learn/InterpolationCodes.ipynb
-   examples/notebooks/learn/TensorizingInterpolations.ipynb
+   examples/notebooks/learn/*

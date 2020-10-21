@@ -10,15 +10,16 @@ log = logging.getLogger(__name__)
 @modifier(name='shapefactor', op_code='multiplication')
 class shapefactor(object):
     @classmethod
-    def required_parset(cls, n_parameters):
+    def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
-            'n_parameters': n_parameters,
+            'n_parameters': len(sample_data),
             'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((0.0, 10.0),) * n_parameters,
+            'inits': (1.0,) * len(sample_data),
+            'bounds': ((0.0, 10.0),) * len(sample_data),
+            'fixed': False,
         }
 
 
@@ -66,13 +67,13 @@ class shapefactor_combined(object):
         keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
-        parfield_shape = (self.batch_size or 1, len(pdfconfig.suggested_init()))
+        parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
             parfield_shape, pdfconfig.par_map, shapefactor_mods
         )
 
         self._shapefactor_mask = [
-            [[mega_mods[s][m]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
         ]
 
         global_concatenated_bin_indices = [
@@ -118,9 +119,9 @@ class shapefactor_combined(object):
         if not self.param_viewer.index_selection:
             return
         tensorlib, _ = get_backend()
-        self.shapefactor_mask = tensorlib.astensor(self._shapefactor_mask)
         self.shapefactor_mask = tensorlib.tile(
-            self.shapefactor_mask, (1, 1, self.batch_size or 1, 1)
+            tensorlib.astensor(self._shapefactor_mask, dtype="bool"),
+            (1, 1, self.batch_size or 1, 1),
         )
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
 
@@ -130,21 +131,18 @@ class shapefactor_combined(object):
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapefactor_mask)[1])
 
     def apply(self, pars):
-        '''
+        """
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
-        '''
+        """
         if not self.param_viewer.index_selection:
             return
 
         tensorlib, _ = get_backend()
-        pars = tensorlib.astensor(pars)
         if self.batch_size is None:
-            batched_pars = tensorlib.reshape(pars, (1,) + tensorlib.shape(pars))
+            flat_pars = pars
         else:
-            batched_pars = pars
-
-        flat_pars = tensorlib.reshape(batched_pars, (-1,))
+            flat_pars = tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
             'mab,s->msab', shapefactors, self.sample_ones

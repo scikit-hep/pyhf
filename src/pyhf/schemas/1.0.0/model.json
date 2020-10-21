@@ -1,11 +1,5 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "https://diana-hep.org/pyhf/schemas/1.0.0/model.json",
-    "type": "object",
-    "properties": {
-        "channels": { "type": "array", "items": {"$ref": "defs.json#/definitions/channel"} },
-        "parameters": { "type": "array", "items": {"$ref": "defs.json#/definitions/parameter"} }
-    },
-    "additionalProperties": false,
-    "required": ["channels"]
+    "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/model.json",
+    "$ref": "defs.json#/definitions/model"
 }

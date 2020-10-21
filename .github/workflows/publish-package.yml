@@ -1,0 +1,77 @@
+name: publish distributions
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - v*
+  pull_request:
+    branches:
+    - master
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    name: Build and publish Python distro to (Test)PyPI
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install python-build, check-manifest, and twine
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install build check-manifest twine
+    - name: Check MANIFEST
+      run: |
+        check-manifest
+    - name: Build a wheel and a sdist
+      run: |
+        python -m build --sdist --wheel --outdir dist/ .
+    - name: Verify untagged commits have dev versions
+      if: "!startsWith(github.ref, 'refs/tags/')"
+      run: |
+        latest_tag=$(git describe --tags)
+        latest_tag_revlist_SHA=$(git rev-list -n 1 ${latest_tag})
+        master_SHA="$(git rev-parse --verify origin/master)"
+        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        if [[ "${latest_tag_revlist_SHA}" != "${master_SHA}" ]]; then # don't check master push events coming from tags
+          if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
+            echo "python-build incorrectly named built distribution: ${wheel_name}"
+            echo "python-build is lacking the history and tags required to determine version number"
+            echo "intentionally erroring with 'return 1' now"
+            return 1
+          fi
+        else
+          echo "Push event to origin/master was triggered by push of tag ${latest_tag}"
+        fi
+        echo "python-build named built distribution: ${wheel_name}"
+    - name: Verify tagged commits don't have dev versions
+      if: startsWith(github.ref, 'refs/tags')
+      run: |
+        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        if [[ "${wheel_name}" == *"dev"* ]]; then
+          echo "python-build incorrectly named built distribution: ${wheel_name}"
+          echo "this is incorrrectly being treated as a dev release"
+          echo "intentionally erroring with 'return 1' now"
+          return 1
+        fi
+        echo "python-build named built distribution: ${wheel_name}"
+    - name: Verify the distribution
+      run: twine check dist/*
+    - name: Publish distribution 📦 to Test PyPI
+      # every PR will trigger a push event on master, so check the push event is actually coming from master
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
+      uses: pypa/gh-action-pypi-publish@v1.3.1
+      with:
+        password: ${{ secrets.test_pypi_password }}
+        repository_url: https://test.pypi.org/legacy/
+    - name: Publish distribution 📦 to PyPI
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/pyhf'
+      uses: pypa/gh-action-pypi-publish@v1.3.1
+      with:
+        password: ${{ secrets.pypi_password }}

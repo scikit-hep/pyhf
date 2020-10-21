@@ -3,17 +3,19 @@ import pyhf.writexml
 import pyhf.readxml
 import json
 import pytest
-import os
+from pathlib import Path
+import numpy as np
 
 
 @pytest.fixture(scope='module')
-def source_1bin_example1():
+def source_1bin_shapesys():
     with open('validation/data/1bin_example1.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_shapesys(source=source_1bin_example1()):
+def spec_1bin_shapesys(source_1bin_shapesys):
+    source = source_1bin_shapesys
     spec = {
         'channels': [
             {
@@ -45,60 +47,50 @@ def spec_1bin_shapesys(source=source_1bin_example1()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_shapesys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.06371799398864626,
-                0.15096503398048894,
-                0.3279606950533305,
-                0.6046087303039118,
-                0.8662627605298466,
-            ],
-            "obs": 0.4541865416107029,
-        }
+def expected_result_1bin_shapesys():
+    expected_result = {
+        "exp": [
+            0.06372011644331387,
+            0.1509686618126131,
+            0.3279657430196915,
+            0.604613569829645,
+            0.8662652332047568,
+        ],
+        "obs": 0.45418892944576333,
+    }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def setup_1bin_shapesys(
-    source=source_1bin_example1(),
-    spec=spec_1bin_shapesys(source_1bin_example1()),
-    mu=1,
-    expected_result=expected_result_1bin_shapesys(1.0),
-    config={'init_pars': 2, 'par_bounds': 2},
-):
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
-    }
+def source_1bin_lumi():
+    with open('validation/data/1bin_lumi.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_lumi(source=source_1bin_example1()):
+def spec_1bin_lumi(source_1bin_lumi):
+    source = source_1bin_lumi
     spec = {
         "channels": [
             {
                 "name": "channel1",
                 "samples": [
                     {
-                        "data": [20.0, 10.0],
+                        "name": "signal",
+                        "data": source['bindata']['sig'],
                         "modifiers": [
                             {"data": None, "name": "mu", "type": "normfactor"}
                         ],
-                        "name": "signal",
                     },
                     {
-                        "data": [100.0, 0.0],
-                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                         "name": "background1",
+                        "data": source['bindata']['bkg1'],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                     },
                     {
-                        "data": [0.0, 100.0],
-                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                         "name": "background2",
+                        "data": source['bindata']['bkg2'],
+                        "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                     },
                 ],
             }
@@ -117,42 +109,29 @@ def spec_1bin_lumi(source=source_1bin_example1()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_lumi(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [0.00905976, 0.0357287, 0.12548957, 0.35338293, 0.69589171],
-            "obs": 0.00941757,
-        }
+def expected_result_1bin_lumi():
+    expected_result = {
+        "exp": [
+            0.01060400765567206,
+            0.04022451457730529,
+            0.13614632580079802,
+            0.37078985531427255,
+            0.7110468540175344,
+        ],
+        "obs": 0.010473144401519705,
+    }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def setup_1bin_lumi(
-    source=source_1bin_example1(),
-    spec=spec_1bin_lumi(source_1bin_example1()),
-    mu=1,
-    expected_result=expected_result_1bin_lumi(1.0),
-    config={'init_pars': 2, 'par_bounds': 2},
-):
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
-    }
-
-
-@pytest.fixture(scope='module')
 def source_1bin_normsys():
-    source = {
-        'binning': [2, -0.5, 1.5],
-        'bindata': {'data': [120.0, 180.0], 'bkg': [100.0, 150.0], 'sig': [30.0, 95.0]},
-    }
-    return source
+    with open('validation/data/1bin_normsys.json') as read_json:
+        return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_normsys(source=source_1bin_normsys()):
+def spec_1bin_normsys(source_1bin_normsys):
+    source = source_1bin_normsys
     spec = {
         'channels': [
             {
@@ -184,45 +163,29 @@ def spec_1bin_normsys(source=source_1bin_normsys()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_normsys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                7.471694618861785e-10,
-                5.7411551509088054e-08,
-                3.6898088058290313e-06,
-                0.000169657315363677,
-                0.004392708998183163,
-            ],
-            "obs": 0.0006735317023683173,
-        }
+def expected_result_1bin_normsys():
+    expected_result = {
+        "exp": [
+            7.472581399417304e-10,
+            5.741738272450336e-08,
+            3.690120950161796e-06,
+            0.00016966882793076826,
+            0.004392935288879465,
+        ],
+        "obs": 0.0006735336290569807,
+    }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def setup_1bin_normsys(
-    source=source_1bin_normsys(),
-    spec=spec_1bin_normsys(source_1bin_normsys()),
-    mu=1,
-    expected_result=expected_result_1bin_normsys(1.0),
-    config={'init_pars': 2, 'par_bounds': 2},
-):
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
-    }
-
-
-@pytest.fixture(scope='module')
-def source_2bin_histosys_example2():
+def source_2bin_histosys():
     with open('validation/data/2bin_histosys_example2.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_histosys(source=source_2bin_histosys_example2()):
+def spec_2bin_histosys(source_2bin_histosys):
+    source = source_2bin_histosys
     spec = {
         'channels': [
             {
@@ -257,45 +220,29 @@ def spec_2bin_histosys(source=source_2bin_histosys_example2()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_histosys(mu=1):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                7.134513306138892e-06,
-                0.00012547100627138575,
-                0.001880010666437615,
-                0.02078964907605385,
-                0.13692494523572218,
-            ],
-            "obs": 0.1001463460725534,
-        }
+def expected_result_2bin_histosys():
+    expected_result = {
+        "exp": [
+            7.133904244038431e-06,
+            0.00012547100627138575,
+            0.001880010666437615,
+            0.02078964907605385,
+            0.13692494523572218,
+        ],
+        "obs": 0.1001463460725534,
+    }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def setup_2bin_histosys(
-    source=source_2bin_histosys_example2(),
-    spec=spec_2bin_histosys(source_2bin_histosys_example2()),
-    mu=1,
-    expected_result=expected_result_2bin_histosys(1.0),
-    config={'init_pars': 2, 'par_bounds': 2},
-):
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
-    }
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_example1():
+def source_2bin_2channel():
     with open('validation/data/2bin_2channel_example1.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel(source=source_2bin_2channel_example1()):
+def spec_2bin_2channel(source_2bin_2channel):
+    source = source_2bin_2channel
     spec = {
         'channels': [
             {
@@ -347,36 +294,18 @@ def spec_2bin_2channel(source=source_2bin_2channel_example1()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.00043491354821983556,
-                0.0034223000502860606,
-                0.02337423265831151,
-                0.1218654225510158,
-                0.40382074249477845,
-            ],
-            "obs": 0.056332621064982304,
-        }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def setup_2bin_2channel(
-    source=source_2bin_2channel_example1(),
-    spec=spec_2bin_2channel(source_2bin_2channel_example1()),
-    mu=1,
-    expected_result=expected_result_2bin_2channel(1.0),
-    config={'init_pars': 5, 'par_bounds': 5},
-):
-    # 1 mu + 2 gammas for 2 channels each
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
+def expected_result_2bin_2channel():
+    expected_result = {
+        "exp": [
+            0.0004349234603527283,
+            0.003422361539161119,
+            0.02337454317608372,
+            0.12186650297311125,
+            0.40382274594391104,
+        ],
+        "obs": 0.0563327694384318,
     }
+    return expected_result
 
 
 @pytest.fixture(scope='module')
@@ -386,7 +315,8 @@ def source_2bin_2channel_couplednorm():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
+def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
+    source = source_2bin_2channel_couplednorm
     spec = {
         'channels': [
             {
@@ -445,46 +375,33 @@ def spec_2bin_2channel_couplednorm(source=source_2bin_2channel_couplednorm()):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_couplednorm(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                0.055223914655538435,
-                0.13613239925395315,
-                0.3068720101493323,
-                0.5839470093910164,
-                0.8554725461337025,
-            ],
-            "obs": 0.5906228034705155,
-        }
+def expected_result_2bin_2channel_couplednorm():
+    # NB: mac/linux differ for exp[0]
+    # Mac:   0.055222676184648795
+    # Linux: 0.05522273289103311
+    # Fill with midpoint of both values
+    expected_result = {
+        "exp": [
+            0.05522270453784095,
+            0.1361301880753241,
+            0.30686879632329855,
+            0.5839437910061168,
+            0.8554708284963864,
+        ],
+        "obs": 0.5906216823766879,
+    }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def setup_2bin_2channel_couplednorm(
-    source=source_2bin_2channel_couplednorm(),
-    spec=spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm()),
-    mu=1,
-    expected_result=expected_result_2bin_2channel_couplednorm(1.0),
-    config={'init_pars': 2, 'par_bounds': 2},
-):
-    # 1 mu + 1 alpha
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
-    }
-
-
-@pytest.fixture(scope='module')
-def source_2bin_2channel_coupledhisto():
+def source_2bin_2channel_coupledhistosys():
     with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto()):
+def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
+    source = source_2bin_2channel_coupledhistosys
     spec = {
         'channels': [
             {
@@ -564,36 +481,18 @@ def spec_2bin_2channel_coupledhistosys(source=source_2bin_2channel_coupledhisto(
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledhistosys(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            "exp": [
-                1.7653746536962154e-05,
-                0.00026265644807799805,
-                0.00334003612780065,
-                0.031522353024659715,
-                0.17907742915143962,
-            ],
-            "obs": 0.07967400132261188,
-        }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def setup_2bin_2channel_coupledhistosys(
-    source=source_2bin_2channel_coupledhisto(),
-    spec=spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhisto()),
-    mu=1,
-    expected_result=expected_result_2bin_2channel_coupledhistosys(1.0),
-    config={'auxdata': 1, 'init_pars': 2, 'par_bounds': 2},
-):
-    # 1 mu 1 shared histosys
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
+def expected_result_2bin_2channel_coupledhistosys():
+    expected_result = {
+        "exp": [
+            1.7654378902209275e-05,
+            0.00026266409358853543,
+            0.0033401113778672156,
+            0.03152286332324451,
+            0.17907927340107824,
+        ],
+        "obs": 0.07967400132261188,
     }
+    return expected_result
 
 
 @pytest.fixture(scope='module')
@@ -603,9 +502,8 @@ def source_2bin_2channel_coupledshapefactor():
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledshapefactor(
-    source=source_2bin_2channel_coupledshapefactor()
-):
+def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
+    source = source_2bin_2channel_coupledshapefactor
     spec = {
         'channels': [
             {
@@ -653,45 +551,25 @@ def spec_2bin_2channel_coupledshapefactor(
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledshapefactor(mu=1.0):
-    if mu == 1:
-        expected_result = {
-            'obs': 0.5421679124909312,
-            'exp': [
-                0.013753299929451691,
-                0.048887400056355966,
-                0.15555296253957684,
-                0.4007561343326305,
-                0.7357169630955912,
-            ],
-        }
-    return expected_result
-
-
-@pytest.fixture(scope='module')
-def setup_2bin_2channel_coupledshapefactor(
-    source=source_2bin_2channel_coupledshapefactor(),
-    spec=spec_2bin_2channel_coupledshapefactor(
-        source_2bin_2channel_coupledshapefactor()
-    ),
-    mu=1,
-    expected_result=expected_result_2bin_2channel_coupledshapefactor(1.0),
-    config={'auxdata': 0, 'init_pars': 3, 'par_bounds': 3},
-):
-    # 1 mu 2 shared shapefactors
-    return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
+def expected_result_2bin_2channel_coupledshapefactor():
+    expected_result = {
+        'obs': 0.5421679124909312,
+        'exp': [
+            0.013753299929451691,
+            0.048887400056355966,
+            0.15555296253957684,
+            0.4007561343326305,
+            0.7357169630955912,
+        ],
     }
+    return expected_result
 
 
 def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    CLs_obs, CLs_exp_set = pyhf.utils.hypotest(
+    CLs_obs, CLs_exp_set = pyhf.infer.hypotest(
         mu_test,
         data,
         pdf,
@@ -700,23 +578,29 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         return_expected_set=True,
         qtilde=False,
     )
-
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
-        assert abs(result - expected) / expected < tolerance
+        assert abs(result - expected) / expected < tolerance, result
 
 
-@pytest.mark.parametrize(
-    'setup_and_tolerance',
-    [
-        (setup_1bin_shapesys(), 1e-6),
-        (setup_1bin_lumi(), 4e-6),
-        (setup_1bin_normsys(), 1e-6),
-        (setup_2bin_histosys(), 8e-5),
-        (setup_2bin_2channel(), 1e-6),
-        (setup_2bin_2channel_couplednorm(), 1e-6),
-        (setup_2bin_2channel_coupledhistosys(), 1e-6),
-        (setup_2bin_2channel_coupledshapefactor(), 2.5e-6),
+@pytest.fixture(
+    params=[
+        ('1bin_shapesys', {'init_pars': 2, 'par_bounds': 2}, 1e-6),
+        ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 4e-6),
+        ('1bin_normsys', {'init_pars': 2, 'par_bounds': 2}, 2e-9),
+        ('2bin_histosys', {'init_pars': 2, 'par_bounds': 2}, 8e-5),
+        ('2bin_2channel', {'init_pars': 5, 'par_bounds': 5}, 1e-6),
+        ('2bin_2channel_couplednorm', {'init_pars': 2, 'par_bounds': 2}, 1e-6),
+        (
+            '2bin_2channel_coupledhistosys',
+            {'auxdata': 1, 'init_pars': 2, 'par_bounds': 2},
+            1e-6,
+        ),
+        (
+            '2bin_2channel_coupledshapefactor',
+            {'auxdata': 0, 'init_pars': 3, 'par_bounds': 3},
+            2.5e-6,
+        ),
     ],
     ids=[
         '1bin_shapesys_mu1',
@@ -729,6 +613,24 @@ def validate_hypotest(pdf, data, mu_test, expected_result, tolerance=1e-6):
         '2bin_2channel_coupledshapefactor_mu1',
     ],
 )
+def setup_and_tolerance(request):
+    _name = request.param[0]
+    source = request.getfixturevalue(f"source_{_name}")
+    spec = request.getfixturevalue(f"spec_{_name}")
+    expected_result = request.getfixturevalue(f"expected_result_{_name}")
+    config = request.param[1]
+    tolerance = request.param[2]
+    return (
+        {
+            'source': source,
+            'spec': spec,
+            'mu': 1.0,
+            'expected': {'result': expected_result, 'config': config},
+        },
+        tolerance,
+    )
+
+
 def test_validation(setup_and_tolerance):
     setup, tolerance = setup_and_tolerance
     source = setup['source']
@@ -779,7 +681,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         'channels': parsed_xml_before['channels'],
         'parameters': parsed_xml_before['measurements'][0]['config']['parameters'],
     }
-    pdf_before = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf_before = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     tmpconfig = tmpdir.mkdir('config')
     tmpdata = tmpdir.mkdir('data')
@@ -789,7 +691,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
             parsed_xml_before,
             tmpconfig.strpath,
             tmpdata.strpath,
-            os.path.join(tmpdir.strpath, 'FitConfig'),
+            Path(tmpdir.strpath).joinpath('FitConfig'),
         ).decode('utf-8')
     )
     parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)
@@ -797,7 +699,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         'channels': parsed_xml_after['channels'],
         'parameters': parsed_xml_after['measurements'][0]['config']['parameters'],
     }
-    pdf_after = pyhf.Model(spec, poiname='SigXsecOverSM')
+    pdf_after = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
     data_before = [
         binvalue
@@ -825,7 +727,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     par_bounds_after = pdf_after.config.suggested_bounds()
     assert par_bounds_before == par_bounds_after
 
-    CLs_obs_before, CLs_exp_set_before = pyhf.utils.hypotest(
+    CLs_obs_before, CLs_exp_set_before = pyhf.infer.hypotest(
         1,
         data_before,
         pdf_before,
@@ -833,7 +735,7 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
         par_bounds_before,
         return_expected_set=True,
     )
-    CLs_obs_after, CLs_exp_set_after = pyhf.utils.hypotest(
+    CLs_obs_after, CLs_exp_set_after = pyhf.infer.hypotest(
         1,
         data_after,
         pdf_after,
@@ -846,3 +748,133 @@ def test_import_roundtrip(tmpdir, toplvl, basedir):
     assert abs(CLs_obs_after - CLs_obs_before) / CLs_obs_before < tolerance
     for result, expected_result in zip(CLs_exp_set_after, CLs_exp_set_before):
         assert abs(result - expected_result) / expected_result < tolerance
+
+
+def test_shapesys_nuisparfilter_validation():
+    reference_root_results = {
+        "CLs_exp": [
+            2.702197937866914e-05,
+            0.00037099917612576155,
+            0.004360634386335687,
+            0.03815031509701916,
+            0.20203027564155074,
+        ],
+        "CLs_obs": 0.004360634405484502,
+    }
+    null = None
+    spec = {
+        "channels": [
+            {
+                "name": "channel1",
+                "samples": [
+                    {
+                        "data": [20, 10],
+                        "modifiers": [
+                            {
+                                "data": null,
+                                "name": "SigXsecOverSM",
+                                "type": "normfactor",
+                            }
+                        ],
+                        "name": "signal",
+                    },
+                    {
+                        "data": [100, 10],
+                        "modifiers": [
+                            {"data": [10, 0], "name": "syst", "type": "shapesys"}
+                        ],
+                        "name": "background1",
+                    },
+                ],
+            }
+        ],
+        "measurements": [
+            {
+                "config": {
+                    "parameters": [
+                        {
+                            "auxdata": [1],
+                            "bounds": [[0.5, 1.5]],
+                            "inits": [1],
+                            "name": "lumi",
+                            "sigmas": [0.1],
+                        }
+                    ],
+                    "poi": "SigXsecOverSM",
+                },
+                "name": "GaussExample",
+            }
+        ],
+        "observations": [{"data": [100, 10], "name": "channel1"}],
+        "version": "1.0.0",
+    }
+    ws = pyhf.Workspace(spec)
+    model = ws.model(
+        modifier_settings={
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        },
+    )
+    data = ws.data(model)
+    obs, exp = pyhf.infer.hypotest(1.0, data, model, return_expected_set=True)
+    pyhf_results = {'CLs_obs': obs, 'CLs_exp': [e for e in exp]}
+
+    assert np.allclose(
+        reference_root_results['CLs_obs'], pyhf_results['CLs_obs'], atol=1e-4, rtol=1e-5
+    )
+    assert np.allclose(
+        reference_root_results['CLs_exp'], pyhf_results['CLs_exp'], atol=1e-4, rtol=1e-5
+    )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.numpy_backend,
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
+def test_optimizer_stitching(backend, optimizer):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
+
+    result_nostitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=False)
+    result_stitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=True)
+
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nostitch),
+        pyhf.tensorlib.tolist(result_stitch),
+        rtol=4e-05,
+    )
+
+
+@pytest.mark.parametrize(
+    'backend',
+    [
+        pyhf.tensor.jax_backend,
+        pyhf.tensor.tensorflow_backend,
+        pyhf.tensor.pytorch_backend,
+    ],
+)
+@pytest.mark.parametrize('optimizer,rtol', [('scipy', 1e-6), ('minuit', 1e-3)])
+def test_optimizer_grad(backend, optimizer, rtol):
+    pyhf.set_backend(backend(precision='64b'), optimizer)
+
+    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    data = [125.0] + pdf.config.auxdata
+
+    result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)
+    result_grad = pyhf.infer.mle.fit(data, pdf, do_grad=True)
+
+    # TODO: let's make this agreement better
+    assert np.allclose(
+        pyhf.tensorlib.tolist(result_nograd),
+        pyhf.tensorlib.tolist(result_grad),
+        rtol=rtol,
+        atol=1e-6,
+    )
