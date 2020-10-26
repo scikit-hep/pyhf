@@ -1,5 +1,5 @@
 """Interval estimation"""
-from . import hypotest
+from .utils import hypotest
 from .. import get_backend
 import numpy as np
 
