@@ -256,6 +256,27 @@ class tensorflow_backend(object):
     def reshape(self, tensor, newshape):
         return tf.reshape(tensor, newshape)
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> t_ravel = pyhf.tensorlib.ravel(tensor)
+            >>> print(t_ravel)
+            tf.Tensor([1. 2. 3. 4. 5. 6.], shape=(6,), dtype=float32)
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `tf.Tensor`: A flattened array.
+        """
+        return self.reshape(tensor, -1)
+
     def divide(self, tensor_in_1, tensor_in_2):
         return tf.divide(tensor_in_1, tensor_in_2)
 

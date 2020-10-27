@@ -189,6 +189,26 @@ class pytorch_backend(object):
     def shape(self, tensor):
         return tuple(map(int, tensor.shape))
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            tensor([1., 2., 3., 4., 5., 6.])
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `torch.Tensor`: A flattened array.
+        """
+        return tensor.view(-1)
+
     def sum(self, tensor_in, axis=None):
         return (
             torch.sum(tensor_in)

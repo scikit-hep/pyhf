@@ -304,6 +304,26 @@ class jax_backend(object):
     def reshape(self, tensor, newshape):
         return jnp.reshape(tensor, newshape)
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            DeviceArray([1., 2., 3., 4., 5., 6.], dtype=float64)
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `jax.interpreters.xla.DeviceArray`: A flattened array.
+        """
+        return jnp.ravel(tensor)
+
     def einsum(self, subscripts, *operands):
         """
         Evaluates the Einstein summation convention on the operands.
