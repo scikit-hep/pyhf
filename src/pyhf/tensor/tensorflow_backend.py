@@ -272,7 +272,7 @@ class tensorflow_backend(object):
             tensor (Tensor): Tensor object
 
         Returns:
-            `numpy.ndarray`: A flattened array.
+            `tf.Tensor`: A flattened array.
         """
         return self.reshape(tensor, -1)
 
