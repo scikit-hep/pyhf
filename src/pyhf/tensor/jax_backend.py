@@ -314,7 +314,7 @@ class jax_backend(object):
         Returns:
             `jax.interpreters.xla.DeviceArray`: A flattened array.
         """
-        return np.ravel(tensor)
+        return jnp.ravel(tensor)
 
     def einsum(self, subscripts, *operands):
         """
