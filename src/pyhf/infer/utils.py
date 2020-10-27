@@ -46,7 +46,7 @@ def hypotest(
     init_pars=None,
     par_bounds=None,
     fixed_params=None,
-    qtilde=False,
+    qtilde=True,
     calctype="asymptotics",
     **kwargs,
 ):

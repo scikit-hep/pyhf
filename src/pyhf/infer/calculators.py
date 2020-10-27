@@ -20,13 +20,14 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
     Example:
 
         >>> import pyhf
+        >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.hepdata_like(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
         >>> mu_test = 1.0
-        >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None)
+        >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
     Args:
@@ -82,6 +83,7 @@ class AsymptoticTestStatDistribution(object):
         Example:
 
             >>> import pyhf
+            >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
             >>> bkg_dist.pvalue(0)
             0.5
@@ -132,6 +134,7 @@ class AsymptoticTestStatDistribution(object):
         Example:
 
             >>> import pyhf
+            >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> bkg_dist.expected_value(n_sigma)
@@ -197,6 +200,7 @@ class AsymptoticCalculator(object):
         Example:
 
             >>> import pyhf
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
@@ -207,7 +211,7 @@ class AsymptoticCalculator(object):
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
-            (0.0021927199297028244, 0.15865525393145707)
+            (0.002192624107163899, 0.15865525393145707)
 
         Args:
             poi_test (`float` or `tensor`): The value for the parameter of interest.
@@ -229,6 +233,7 @@ class AsymptoticCalculator(object):
         Example:
 
             >>> import pyhf
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
@@ -237,7 +242,7 @@ class AsymptoticCalculator(object):
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model)
             >>> asymptotic_calculator.teststatistic(mu_test)
-            0.13548317176320857
+            0.14043184405388176
 
         Args:
             poi_test (`float` or `tensor`): The value for the parameter of interest.
@@ -330,6 +335,7 @@ class EmpiricalDistribution(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> mean = pyhf.tensorlib.astensor([5])
             >>> std = pyhf.tensorlib.astensor([1])
             >>> normal = pyhf.probability.Normal(mean, std)
@@ -341,15 +347,19 @@ class EmpiricalDistribution(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
+            >>> init_pars = model.config.suggested_init()
+            >>> par_bounds = model.config.suggested_bounds()
+            >>> fixed_params = model.config.suggested_fixed()
             >>> mu_test = 1.0
-            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(model.config.suggested_init()))
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))
             >>> samples = pdf.sample((100,))
             >>> test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
             ...     pyhf.tensorlib.astensor(
-            ...         [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+            ...         [pyhf.infer.test_statistics.qmu_tilde(mu_test, sample, model, init_pars, par_bounds, fixed_params) for sample in samples]
             ...     )
             ... )
             >>> test_stat_dist.pvalue(test_stat_dist.samples[9])
@@ -377,6 +387,7 @@ class EmpiricalDistribution(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> mean = pyhf.tensorlib.astensor([5])
             >>> std = pyhf.tensorlib.astensor([1])
             >>> normal = pyhf.probability.Normal(mean, std)
@@ -388,15 +399,24 @@ class EmpiricalDistribution(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
+            >>> init_pars = model.config.suggested_init()
+            >>> par_bounds = model.config.suggested_bounds()
+            >>> fixed_params = model.config.suggested_fixed()
             >>> mu_test = 1.0
-            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(model.config.suggested_init()))
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))
             >>> samples = pdf.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(
             ...     pyhf.tensorlib.astensor(
-            ...         [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+            ...         [
+            ...             pyhf.infer.test_statistics.qmu_tilde(
+            ...                 mu_test, sample, model, init_pars, par_bounds, fixed_params
+            ...             )
+            ...             for sample in samples
+            ...         ]
             ...     )
             ... )
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
@@ -429,7 +449,7 @@ class ToyCalculator(object):
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=False,
+        qtilde=True,
         ntoys=2000,
         track_progress=True,
     ):
@@ -468,6 +488,7 @@ class ToyCalculator(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
@@ -552,6 +573,7 @@ class ToyCalculator(object):
             >>> import pyhf
             >>> import numpy.random as random
             >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
@@ -562,7 +584,7 @@ class ToyCalculator(object):
             ...     data, model, ntoys=100, track_progress=False
             ... )
             >>> toy_calculator.teststatistic(mu_test)
-            3.938244920380498
+            array(3.93824492)
 
         Args:
             poi_test (`float` or `tensor`): The value for the parameter of interest.
