@@ -324,7 +324,8 @@ class EmpiricalDistribution(object):
             ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of the test statistic.
 
         """
-        self.samples = samples.ravel()
+        tensorlib, _ = get_backend()
+        self.samples = tensorlib.ravel(samples)
 
     def pvalue(self, value):
         """
@@ -374,7 +375,7 @@ class EmpiricalDistribution(object):
         """
         tensorlib, _ = get_backend()
         return (
-            tensorlib.where(self.samples >= value, 1, 0).sum()
+            tensorlib.sum(tensorlib.where(self.samples >= value, 1, 0))
             / tensorlib.shape(self.samples)[0]
         )
 
