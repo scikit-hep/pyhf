@@ -207,7 +207,7 @@ class AsymptoticCalculator(object):
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
@@ -240,7 +240,7 @@ class AsymptoticCalculator(object):
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
             >>> asymptotic_calculator.teststatistic(mu_test)
             0.14043184405388176
 
