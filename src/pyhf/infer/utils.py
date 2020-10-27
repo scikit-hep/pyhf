@@ -47,7 +47,7 @@ def hypotest(
     par_bounds=None,
     fixed_params=None,
     qtilde=False,
-    calctype='asymptotics',
+    calctype="asymptotics",
     **kwargs,
 ):
     r"""
@@ -166,6 +166,11 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
+    # Get the hypotest return specific kwargs
+    return_tail_probs = kwargs.pop("return_tail_probs", None)
+    return_expected = kwargs.pop("return_expected", None)
+    return_expected_set = kwargs.pop("return_expected_set", None)
+
     calc = create_calculator(
         calctype,
         data,
@@ -193,9 +198,9 @@ def hypotest(
     )
 
     _returns = [CLs]
-    if kwargs.get('return_tail_probs'):
+    if return_tail_probs:
         _returns.append([CLsb, CLb])
-    if kwargs.get('return_expected_set'):
+    if return_expected_set:
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
 
@@ -205,10 +210,10 @@ def hypotest(
                 expected_bonly_teststat
             ) / b_only_distribution.pvalue(expected_bonly_teststat)
             CLs_exp.append(tensorlib.astensor(CLs))
-        if kwargs.get('return_expected'):
+        if return_expected:
             _returns.append(CLs_exp[2])
         _returns.append(CLs_exp)
-    elif kwargs.get('return_expected'):
+    elif return_expected:
         n_sigma = 0
         expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
 
