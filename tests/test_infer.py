@@ -263,12 +263,17 @@ def test_emperical_distribution(tmpdir, hypotest_args):
     np.random.seed(0)
 
     mu_test, data, model = hypotest_args
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
     pdf = model.make_pdf(tb.astensor(model.config.suggested_init()))
     samples = pdf.sample((10,))
     test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
         tb.astensor(
             [
-                pyhf.infer.test_statistics.qmu_tilde(mu_test, sample, model, None, None)
+                pyhf.infer.test_statistics.qmu_tilde(
+                    mu_test, sample, model, init_pars, par_bounds, fixed_params
+                )
                 for sample in samples
             ]
         )
