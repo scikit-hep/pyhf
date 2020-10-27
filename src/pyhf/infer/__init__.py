@@ -187,8 +187,7 @@ def hypotest(
 
 
 del utils
-
-# TODO: Can remove intervals when switch to flake8 (Issue #863)
 from . import intervals
 
+# TODO: Can remove intervals when switch to flake8 (Issue #863)
 __all__ = ["hypotest", "intervals"]
