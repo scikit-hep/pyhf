@@ -289,6 +289,18 @@ class numpy_backend(object):
     def reshape(self, tensor, newshape):
         return np.reshape(tensor, newshape)
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `numpy.ndarray`: A flattened array.
+        """
+        return np.ravel(tensor)
+
     def einsum(self, subscripts, *operands):
         """
         Evaluates the Einstein summation convention on the operands.

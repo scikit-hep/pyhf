@@ -189,6 +189,18 @@ class pytorch_backend(object):
     def shape(self, tensor):
         return tuple(map(int, tensor.shape))
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `torch.Tensor`: A flattened array.
+        """
+        return tensor.view(-1)
+
     def sum(self, tensor_in, axis=None):
         return (
             torch.sum(tensor_in)
