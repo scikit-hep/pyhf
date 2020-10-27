@@ -46,8 +46,11 @@ def hypotest(
     init_pars=None,
     par_bounds=None,
     fixed_params=None,
-    qtilde=True,
+    qtilde=False,
     calctype="asymptotics",
+    return_tail_probs=False,
+    return_expected=False,
+    return_expected_set=False,
     **kwargs,
 ):
     r"""
@@ -83,8 +86,6 @@ def hypotest(
          test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
          approximation in Equation (62) of :xref:`arXiv:1007.1727`.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
-
-    Keyword Args:
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
@@ -165,11 +166,6 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
-
-    # Get the hypotest return specific kwargs
-    return_tail_probs = kwargs.pop("return_tail_probs", None)
-    return_expected = kwargs.pop("return_expected", None)
-    return_expected_set = kwargs.pop("return_expected_set", None)
 
     calc = create_calculator(
         calctype,
