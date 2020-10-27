@@ -66,6 +66,25 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
 
+def test_tensor_where_scalar(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.where(tb.astensor([1, 0, 1], dtype="bool"), 1, 2)) == [1, 2, 1]
+
+
+def test_tensor_where_tensor(backend):
+    tb = pyhf.tensorlib
+    assert (
+        tb.tolist(
+            tb.where(
+                tb.astensor([1, 0, 1], dtype="bool"),
+                tb.astensor([1, 1, 1]),
+                tb.astensor([2, 2, 2]),
+            )
+        )
+        == [1, 2, 1]
+    )
+
+
 def test_complex_tensor_ops(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.outer(tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6]))) == [
@@ -90,16 +109,6 @@ def test_complex_tensor_ops(backend):
         1,
         1,
     ]
-    assert (
-        tb.tolist(
-            tb.where(
-                tb.astensor([1, 0, 1], dtype="bool"),
-                tb.astensor([1, 1, 1]),
-                tb.astensor([2, 2, 2]),
-            )
-        )
-        == [1, 2, 1]
-    )
 
 
 def test_ones(backend):
