@@ -193,6 +193,14 @@ class pytorch_backend(object):
         """
         Return a flattened view of the tensor, not a copy.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            tensor([1., 2., 3., 4., 5., 6.])
+
         Args:
             tensor (Tensor): Tensor object
 
