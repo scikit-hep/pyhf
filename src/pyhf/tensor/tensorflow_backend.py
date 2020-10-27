@@ -260,6 +260,14 @@ class tensorflow_backend(object):
         """
         Return a flattened view of the tensor, not a copy.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> t_ravel = pyhf.tensorlib.ravel(tensor)
+            <tf.Tensor: shape=(6,), dtype=float32, numpy=array([1., 2., 3., 4., 5., 6.], dtype=float32)>
+
         Args:
             tensor (Tensor): Tensor object
 
