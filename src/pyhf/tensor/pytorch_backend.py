@@ -307,34 +307,20 @@ class pytorch_backend:
 
                 - \\'linear\\': ``i + (j - i) * fraction``, where ``fraction`` is the fractional part of the index surrounded by ``i`` and ``j``
 
-                - \\'lower\\': ``i``
+                - \\'lower\\': Not yet implemented in PyTorch
 
-                - \\'higher\\': ``j``
+                - \\'higher\\': Not yet implemented in PyTorch
 
-                - \\'midpoint\\': ``(i + j) / 2``
+                - \\'midpoint\\': Not yet implemented in PyTorch
 
-                - \\'nearest\\': ``i`` or ``j``, whichever is nearest
+                - \\'nearest\\': Not yet implemented in PyTorch
 
         Returns:
             PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        # TODO: Adopt PyTorch native implimentation when available
-        # c.f. https://github.com/pytorch/pytorch/issues/35977
-        import numpy as np
-
-        np_result = np.percentile(
-            tensor_in.data.numpy(), q, axis=axis, interpolation=interpolation
-        )
-        # Ensure consistent return structure as other backends
-        # Only needed given #TODO above
-        result_tensor = self.astensor(np_result)
-        result = (
-            result_tensor[0]
-            if result_tensor.shape == torch.Size([1])
-            else result_tensor
-        )
-        return result
+        # Interpolation options not yet supported
+        return torch.quantile(tensor_in, q / 100, dim=axis)
 
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
