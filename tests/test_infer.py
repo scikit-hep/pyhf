@@ -267,7 +267,10 @@ def test_emperical_distribution(tmpdir, hypotest_args):
     samples = pdf.sample((10,))
     test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
         tb.astensor(
-            [pyhf.infer.qmu(mu_test, sample, model, None, None) for sample in samples]
+            [
+                pyhf.infer.test_statistics.qmu_tilde(mu_test, sample, model, None, None)
+                for sample in samples
+            ]
         )
     )
 
