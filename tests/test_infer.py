@@ -149,6 +149,22 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     assert check_uniform_type(result[3])
 
 
+@pytest.mark.parametrize(
+    "kwargs",
+    [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
+    ids=lambda x: x['calctype'],
+)
+def test_hypotest_backends(backend, kwargs):
+    """
+    Check that hypotest runs fully across all backends for all calculator types.
+    """
+    pdf = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48] + pdf.config.auxdata
+    assert pyhf.infer.hypotest(1.0, data, pdf, **kwargs) is not None
+
+
 def test_inferapi_pyhf_independence():
     """
     pyhf.infer should eventually be factored out so it should be
