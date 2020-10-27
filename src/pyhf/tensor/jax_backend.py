@@ -300,19 +300,19 @@ class jax_backend:
 
                 - \\'linear\\': ``i + (j - i) * fraction``, where ``fraction`` is the fractional part of the index surrounded by ``i`` and ``j``
 
-                - \\'lower\\': Not yet implemented in JAX
+                - \\'lower\\': ``i``
 
-                - \\'higher\\': Not yet implemented in JAX
+                - \\'higher\\': ``j``
 
-                - \\'midpoint\\': Not yet implemented in JAX
+                - \\'midpoint\\': ``(i + j) / 2``
 
-                - \\'nearest\\': Not yet implemented in JAX
+                - \\'nearest\\': ``i`` or ``j``, whichever is nearest
 
         Returns:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
+        return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)

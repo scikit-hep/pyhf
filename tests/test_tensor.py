@@ -379,7 +379,7 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-# JAX doesn't yet support "nearest" as an interpolation scheme
+# PyTorch doesn't yet support interpolation schemes other than "linear"
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
