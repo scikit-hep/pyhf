@@ -113,8 +113,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
 def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
     r"""
-    The test statistic, :math:`\tilde{q}_{\mu}`, for establishing an upper
-    limit on the strength parameter, :math:`\mu`, for models with
+    The "alternative" test statistic, :math:`\tilde{q}_{\mu}`, for establishing
+    an upper limit on the strength parameter, :math:`\mu`, for models with
     bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`
 
     .. math::

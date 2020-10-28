@@ -635,7 +635,9 @@ def test_validation(setup_and_tolerance):
     setup, tolerance = setup_and_tolerance
     source = setup['source']
 
-    pdf = pyhf.Model(setup['spec'])
+    pdf = pyhf.Model(
+        setup['spec'], modifier_settings={'normsys': {'interpcode': 'code1'}}
+    )
 
     if 'channels' in source:
         data = []

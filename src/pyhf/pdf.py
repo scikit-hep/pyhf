@@ -224,7 +224,11 @@ class _ModelConfig(_ChannelSummaryMixin):
         )
         poi_name = config_kwargs.pop('poi_name', 'mu')
 
-        default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
+        default_modifier_settings = {
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        }
+
         self.modifier_settings = config_kwargs.pop(
             'modifier_settings', default_modifier_settings
         )

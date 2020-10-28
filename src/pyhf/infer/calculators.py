@@ -128,7 +128,7 @@ class AsymptoticCalculator(object):
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=False,
+        qtilde=True,
     ):
         """
         Asymptotic Calculator.
@@ -139,7 +139,9 @@ class AsymptoticCalculator(object):
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (:obj:`bool`): Whether to use qtilde as the test statistic.
+            qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
+             as the test statistic.
+             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
@@ -156,7 +158,9 @@ class AsymptoticCalculator(object):
 
     def distributions(self, poi_test):
         """
-        Probability Distributions of the test statistic value under the signal + background and and background-only hypothesis.
+        Probability distributions of the test statistic, as defined in
+        :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
+        under the signal + background and background-only hypotheses.
 
         Args:
             poi_test: The value for the parameter of interest.
