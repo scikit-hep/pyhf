@@ -159,7 +159,7 @@ class AsymptoticCalculator(object):
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=False,
+        qtilde=True,
     ):
         """
         Asymptotic Calculator.
@@ -450,7 +450,7 @@ class ToyCalculator(object):
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=False,
+        qtilde=True,
         ntoys=2000,
         track_progress=True,
     ):
