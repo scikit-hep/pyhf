@@ -23,7 +23,7 @@ def create_calculator(calctype, *args, **kwargs):
         >>> data = observations + model.config.auxdata
         >>> mu_test = 1.0
         >>> toy_calculator = pyhf.infer.utils.create_calculator(
-        ...     "toybased", data, model, ntoys=100, track_progress=False
+        ...     "toybased", data, model, ntoys=100, qtilde=True, track_progress=False
         ... )
         >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
         >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
