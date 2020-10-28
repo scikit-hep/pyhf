@@ -62,7 +62,6 @@ def test_impactplot(common_kwargs):
     pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
 
 
-@pytest.mark.slow
 def test_toys(common_kwargs):
     pm.execute_notebook('docs/examples/notebooks/toys.ipynb', **common_kwargs)
 
