@@ -28,10 +28,10 @@ def create_calculator(calctype, *args, **kwargs):
         (0.14, 0.76)
 
     Args:
-        calctype (`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
+        calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
 
     Returns:
-        calculator (`object`): A calculator.
+        calculator (:obj:`object`): A calculator.
     """
     return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[
         calctype
