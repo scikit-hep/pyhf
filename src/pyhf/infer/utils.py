@@ -7,7 +7,9 @@ def create_calculator(calctype, *args, **kwargs):
     """
     Creates a calculator object of the specified `calctype`.
 
-    See :py:class:`~pyhf.infer.calculators.AsymptoticCalculator` and :py:class:`~pyhf.infer.calculators.ToyCalculator` on additional arguments to be specified.
+    See :py:class:`~pyhf.infer.calculators.AsymptoticCalculator` and
+    :py:class:`~pyhf.infer.calculators.ToyCalculator` on additional arguments
+    to be specified.
 
     Example:
 
@@ -28,7 +30,8 @@ def create_calculator(calctype, *args, **kwargs):
         (0.14, 0.76)
 
     Args:
-        calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' or 'toybased'.
+        calctype (:obj:`str`): The calculator to create. Choose either
+        'asymptotics' or 'toybased'.
 
     Returns:
         calculator (:obj:`object`): A calculator.
