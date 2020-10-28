@@ -139,7 +139,9 @@ class AsymptoticCalculator(object):
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (:obj:`bool`): Whether to use qtilde as the test statistic.
+            qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
+             as the test statistic.
+             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.

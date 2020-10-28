@@ -41,9 +41,9 @@ def hypotest(
         init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
         par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
         fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-        qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
-         test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-         approximation in Equation (62) of :xref:`arXiv:1007.1727`.
+        qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
+         as the test statistic.
+         When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
     Keyword Args:
         return_tail_probs (bool): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
