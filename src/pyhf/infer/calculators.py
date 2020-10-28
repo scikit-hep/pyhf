@@ -435,6 +435,7 @@ class EmpiricalDistribution(object):
         import numpy as np
 
         # TODO: tensorlib.percentile function
+        # c.f. https://github.com/scikit-hep/pyhf/pull/817
         return np.percentile(
             self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
         )
