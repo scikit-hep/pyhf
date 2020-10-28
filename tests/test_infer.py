@@ -149,6 +149,22 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
     assert check_uniform_type(result[3])
 
 
+@pytest.mark.parametrize(
+    "kwargs",
+    [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
+    ids=lambda x: x['calctype'],
+)
+def test_hypotest_backends(backend, kwargs):
+    """
+    Check that hypotest runs fully across all backends for all calculator types.
+    """
+    pdf = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48] + pdf.config.auxdata
+    assert pyhf.infer.hypotest(1.0, data, pdf, **kwargs) is not None
+
+
 def test_inferapi_pyhf_independence():
     """
     pyhf.infer should eventually be factored out so it should be
@@ -216,7 +232,7 @@ def test_inferapi_pyhf_independence():
 
 @pytest.mark.parametrize("qtilde", [True, False])
 def test_calculator_distributions_without_teststatistic(qtilde):
-    calc = pyhf.infer.AsymptoticCalculator(
+    calc = pyhf.infer.calculators.AsymptoticCalculator(
         [0.0], {}, [1.0], [(0.0, 10.0)], [False], qtilde=qtilde
     )
     with pytest.raises(RuntimeError):
@@ -252,3 +268,94 @@ def test_significance_to_pvalue_roundtrip(backend):
     pvalue = dist.pvalue(pyhf.tensorlib.astensor(sigma))
     back_to_sigma = -scipy.stats.norm.ppf(np.array(pvalue))
     assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)
+
+
+def test_emperical_distribution(tmpdir, hypotest_args):
+    """
+    Check that the empirical distribution of the test statistic gives
+    expected results
+    """
+    tb = pyhf.tensorlib
+    np.random.seed(0)
+
+    mu_test, data, model = hypotest_args
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+    pdf = model.make_pdf(tb.astensor(model.config.suggested_init()))
+    samples = pdf.sample((10,))
+    test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
+        tb.astensor(
+            [
+                pyhf.infer.test_statistics.qmu_tilde(
+                    mu_test, sample, model, init_pars, par_bounds, fixed_params
+                )
+                for sample in samples
+            ]
+        )
+    )
+
+    assert test_stat_dist.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.13298492825293806,
+            0.0,
+            0.7718560148925349,
+            1.814884694401428,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.06586643485326249,
+        ],
+        1e-07,
+    )
+    assert test_stat_dist.pvalue(test_stat_dist.samples[4]) == 0.1
+    assert test_stat_dist.expected_value(nsigma=2) == pytest.approx(
+        1.6013233336403654, 1e-07
+    )
+
+
+def test_toy_calculator(tmpdir, hypotest_args):
+    """
+    Check that the toy calculator is peforming as expected
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    toy_calculator_qtilde_mu = pyhf.infer.calculators.ToyCalculator(
+        data, model, None, None, ntoys=10, track_progress=False
+    )
+    qtilde_mu_sig, qtilde_mu_bkg = toy_calculator_qtilde_mu.distributions(mu_test)
+    assert qtilde_mu_sig.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.13298492825293806,
+            0.0,
+            0.7718560148925349,
+            1.814884694401428,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.06586643485326249,
+        ],
+        1e-07,
+    )
+    assert qtilde_mu_bkg.samples.tolist() == pytest.approx(
+        [
+            2.2664625238298868,
+            1.081660885985002,
+            2.757022090389057,
+            1.3835689306226868,
+            0.4707466955809423,
+            0.0,
+            3.7166483694865065,
+            3.8021896741039427,
+            5.114135403520493,
+            1.35111537136072,
+        ],
+        1e-07,
+    )
+    assert toy_calculator_qtilde_mu.teststatistic(mu_test) == pytest.approx(
+        3.938244920380498, 1e-07
+    )

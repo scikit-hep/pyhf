@@ -10,11 +10,25 @@ Using the calculators hypothesis tests can then be performed.
 from .mle import fixed_poi_fit
 from .. import get_backend
 from .test_statistics import qmu, qmu_tilde
+import tqdm
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> mu_test = 1.0
+        >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
+        array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
@@ -66,6 +80,14 @@ class AsymptoticTestStatDistribution(object):
         """
         Compute the value of the cumulative distribution function for a given value of the test statistic.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> bkg_dist.pvalue(0)
+            0.5
+
         Args:
             value (:obj:`float`): The test statistic value.
 
@@ -109,6 +131,15 @@ class AsymptoticTestStatDistribution(object):
         """
         Return the expected value of the test statistic.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
+            >>> bkg_dist.expected_value(n_sigma)
+            array([-2., -1.,  0.,  1.,  2.])
+
         Args:
             nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
 
@@ -142,6 +173,10 @@ class AsymptoticCalculator(object):
             qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
              as the test statistic.
              When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic,
+             :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
+             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
+             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
@@ -162,8 +197,24 @@ class AsymptoticCalculator(object):
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
         under the signal + background and background-only hypotheses.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> _ = asymptotic_calculator.teststatistic(mu_test)
+            >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
+            >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
+            (0.002192624107163899, 0.15865525393145707)
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
@@ -179,11 +230,25 @@ class AsymptoticCalculator(object):
         """
         Compute the test statistic for the observed data under the studied model.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> asymptotic_calculator.teststatistic(mu_test)
+            0.14043184405388176
+
         Args:
-            poi_test: The value for the parameter of interest.
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: the value of the test statistic.
+            Float: The value of the test statistic.
 
         """
         tensorlib, _ = get_backend()
@@ -236,4 +301,307 @@ class AsymptoticCalculator(object):
             teststat = tensorlib.conditional(
                 (sqrtqmu_v < self.sqrtqmuA_v), _true_case, _false_case
             )
+        return teststat
+
+
+class EmpiricalDistribution(object):
+    """
+    The empirical distribution of the test statistic.
+
+    Unlike :py:class:`~pyhf.infer.calculators.AsymptoticTestStatDistribution` where the
+    distribution for the test statistic is normally distributed, the
+    :math:`p`-values etc are computed from the sampled distribution.
+    """
+
+    def __init__(self, samples):
+        """
+        Empirical distribution.
+
+        Args:
+            samples (:obj:`tensor`): The test statistics sampled from the distribution.
+
+        Returns:
+            ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of the test statistic.
+
+        """
+        tensorlib, _ = get_backend()
+        self.samples = tensorlib.ravel(samples)
+
+    def pvalue(self, value):
+        """
+        Compute the :math:`p`-value for a given value of the test statistic.
+
+        Examples:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> mean = pyhf.tensorlib.astensor([5])
+            >>> std = pyhf.tensorlib.astensor([1])
+            >>> normal = pyhf.probability.Normal(mean, std)
+            >>> samples = normal.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
+            >>> dist.pvalue(7)
+            0.02
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> init_pars = model.config.suggested_init()
+            >>> par_bounds = model.config.suggested_bounds()
+            >>> fixed_params = model.config.suggested_fixed()
+            >>> mu_test = 1.0
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))
+            >>> samples = pdf.sample((100,))
+            >>> test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(
+            ...     pyhf.tensorlib.astensor(
+            ...         [pyhf.infer.test_statistics.qmu_tilde(mu_test, sample, model, init_pars, par_bounds, fixed_params) for sample in samples]
+            ...     )
+            ... )
+            >>> test_stat_dist.pvalue(test_stat_dist.samples[9])
+            0.3
+
+        Args:
+            value (:obj:`float`): The test statistic value.
+
+        Returns:
+            Float: The integrated probability to observe a value at least as large as the observed one.
+
+        """
+        tensorlib, _ = get_backend()
+        return (
+            tensorlib.sum(tensorlib.where(self.samples >= value, 1, 0))
+            / tensorlib.shape(self.samples)[0]
+        )
+
+    def expected_value(self, nsigma):
+        """
+        Return the expected value of the test statistic.
+
+        Examples:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> mean = pyhf.tensorlib.astensor([5])
+            >>> std = pyhf.tensorlib.astensor([1])
+            >>> normal = pyhf.probability.Normal(mean, std)
+            >>> samples = normal.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
+            >>> dist.expected_value(nsigma=1)
+            6.15094381209505
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> init_pars = model.config.suggested_init()
+            >>> par_bounds = model.config.suggested_bounds()
+            >>> fixed_params = model.config.suggested_fixed()
+            >>> mu_test = 1.0
+            >>> pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))
+            >>> samples = pdf.sample((100,))
+            >>> dist = pyhf.infer.calculators.EmpiricalDistribution(
+            ...     pyhf.tensorlib.astensor(
+            ...         [
+            ...             pyhf.infer.test_statistics.qmu_tilde(
+            ...                 mu_test, sample, model, init_pars, par_bounds, fixed_params
+            ...             )
+            ...             for sample in samples
+            ...         ]
+            ...     )
+            ... )
+            >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
+            >>> dist.expected_value(n_sigma)
+            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01,
+                   2.99592664e+00])
+
+        Args:
+            nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
+
+        Returns:
+            Float: The expected value of the test statistic.
+        """
+        tensorlib, _ = get_backend()
+        import numpy as np
+
+        # TODO: tensorlib.percentile function
+        # c.f. https://github.com/scikit-hep/pyhf/pull/817
+        return np.percentile(
+            self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
+        )
+
+
+class ToyCalculator(object):
+    """The Toy-based Calculator."""
+
+    def __init__(
+        self,
+        data,
+        pdf,
+        init_pars=None,
+        par_bounds=None,
+        fixed_params=None,
+        qtilde=True,
+        ntoys=2000,
+        track_progress=True,
+    ):
+        """
+        Toy-based Calculator.
+
+        Args:
+            data (:obj:`tensor`): The observed data.
+            pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic, :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`.
+            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+
+        Returns:
+            ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
+
+        """
+        self.ntoys = ntoys
+        self.data = data
+        self.pdf = pdf
+        self.init_pars = init_pars or pdf.config.suggested_init()
+        self.par_bounds = par_bounds or pdf.config.suggested_bounds()
+        self.fixed_params = fixed_params or pdf.config.suggested_fixed()
+        self.qtilde = qtilde
+        self.track_progress = track_progress
+
+    def distributions(self, poi_test, track_progress=None):
+        """
+        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
+
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
+            >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
+            (0.14, 0.76)
+
+        Args:
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+
+        Returns:
+            Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
+
+        """
+        tensorlib, _ = get_backend()
+        sample_shape = (self.ntoys,)
+
+        signal_pars = self.pdf.config.suggested_init()
+        signal_pars[self.pdf.config.poi_index] = poi_test
+        signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
+        signal_sample = signal_pdf.sample(sample_shape)
+
+        bkg_pars = self.pdf.config.suggested_init()
+        bkg_pars[self.pdf.config.poi_index] = 0.0
+        bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
+        bkg_sample = bkg_pdf.sample(sample_shape)
+
+        teststat_func = qmu_tilde if self.qtilde else qmu
+
+        tqdm_options = dict(
+            total=self.ntoys,
+            leave=False,
+            disable=not (
+                track_progress if track_progress is not None else self.track_progress
+            ),
+            unit='toy',
+        )
+
+        signal_teststat = []
+        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
+            signal_teststat.append(
+                teststat_func(
+                    poi_test,
+                    sample,
+                    self.pdf,
+                    signal_pars,
+                    self.par_bounds,
+                    self.fixed_params,
+                )
+            )
+
+        bkg_teststat = []
+        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
+            bkg_teststat.append(
+                teststat_func(
+                    poi_test,
+                    sample,
+                    self.pdf,
+                    bkg_pars,
+                    self.par_bounds,
+                    self.fixed_params,
+                )
+            )
+
+        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
+        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
+        return s_plus_b, b_only
+
+    def teststatistic(self, poi_test):
+        """
+        Compute the test statistic for the observed data under the studied model.
+
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> toy_calculator.teststatistic(mu_test)
+            array(3.93824492)
+
+        Args:
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+
+        Returns:
+            Float: The value of the test statistic.
+
+        """
+        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat = teststat_func(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
         return teststat
