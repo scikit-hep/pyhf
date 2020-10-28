@@ -158,7 +158,9 @@ class AsymptoticCalculator(object):
 
     def distributions(self, poi_test):
         """
-        Probability Distributions of the test statistic value under the signal + background and and background-only hypothesis.
+        Probability distributions of the test statistic, as defined in
+        :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
+        under the signal + background and background-only hypotheses.
 
         Args:
             poi_test: The value for the parameter of interest.
