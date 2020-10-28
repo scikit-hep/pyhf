@@ -214,7 +214,7 @@ class AsymptoticCalculator(object):
             (0.002192624107163899, 0.15865525393145707)
 
         Args:
-            poi_test (`float` or `tensor`): The value for the parameter of interest.
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
@@ -245,7 +245,7 @@ class AsymptoticCalculator(object):
             0.14043184405388176
 
         Args:
-            poi_test (`float` or `tensor`): The value for the parameter of interest.
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
             Float: The value of the test statistic.
@@ -318,7 +318,7 @@ class EmpiricalDistribution(object):
         Empirical distribution.
 
         Args:
-            samples (Tensor): The test statistics sampled from the distribution.
+            samples (:obj:`tensor`): The test statistics sampled from the distribution.
 
         Returns:
             ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of the test statistic.
@@ -367,7 +367,7 @@ class EmpiricalDistribution(object):
             0.3
 
         Args:
-            value (`float`): The test statistic value.
+            value (:obj:`float`): The test statistic value.
 
         Returns:
             Float: The integrated probability to observe a value at least as large as the observed one.
@@ -426,7 +426,7 @@ class EmpiricalDistribution(object):
                    2.99592664e+00])
 
         Args:
-            nsigma (`int` or `tensor`): The number of standard deviations.
+            nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
 
         Returns:
             Float: The expected value of the test statistic.
@@ -459,14 +459,14 @@ class ToyCalculator(object):
         Toy-based Calculator.
 
         Args:
-            data (`tensor`): The observed data.
+            data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (`tensor`): The initial parameter values to be used for fitting.
-            par_bounds (`tensor`): The parameter value bounds to be used for fitting.
+            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
             qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic, :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`.
-            ntoys (`int`): Number of toys to use (how many times to sample the underlying distributions)
-            track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
@@ -505,8 +505,8 @@ class ToyCalculator(object):
             (0.14, 0.76)
 
         Args:
-            poi_test (`float` or `tensor`): The value for the parameter of interest.
-            track_progress (`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
         Returns:
             Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
@@ -589,7 +589,7 @@ class ToyCalculator(object):
             array(3.93824492)
 
         Args:
-            poi_test (`float` or `tensor`): The value for the parameter of interest.
+            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
             Float: The value of the test statistic.
