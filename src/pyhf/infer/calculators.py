@@ -797,7 +797,7 @@ class ToyCalculator:
         signal_teststat = []
         for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
             signal_teststat.append(
-                executor.submit(
+                self.executor.submit(
                     teststat_func,
                     poi_test,
                     sample,
@@ -811,7 +811,7 @@ class ToyCalculator:
         bkg_teststat = []
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
             bkg_teststat.append(
-                executor.submit(
+                self.executor.submit(
                     teststat_func,
                     poi_test,
                     sample,
