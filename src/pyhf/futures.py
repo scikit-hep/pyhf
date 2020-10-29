@@ -17,7 +17,7 @@ class TrivialExecutor(object):
         qualname = type(self).__qualname__
         return f"<{module}.{qualname} object '{self.name}{self.values}' at {hex(id(self))}>"
 
-    def submit(self, task, *args):
+    def submit(self, task, *args, **kwargs):
         """
         Immediately runs ``task(*args)``.
         """
