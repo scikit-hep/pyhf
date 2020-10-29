@@ -62,7 +62,7 @@ class AsymptoticTestStatDistribution(object):
     the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
-    def __init__(self, shift,sqrtqmuA_v,inclusive_pvalue = True, clip = False):
+    def __init__(self, shift, sqrtqmuA_v, inclusive_pvalue=True, clip=False):
         """
         Asymptotic test statistic distribution.
 
@@ -98,8 +98,8 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        print('cdf',value,shift)
-        v = (value - self.shift)
+        print('cdf', value, shift)
+        v = value - self.shift
         return tensorlib.normal_cdf(v)
 
     def pvalue(self, value):
@@ -169,8 +169,8 @@ class AsymptoticCalculator(object):
         par_bounds=None,
         fixed_params=None,
         qtilde=True,
-        inclusive_pvalue = True,
-        clip = False
+        inclusive_pvalue=True,
+        clip=False,
     ):
         """
         Asymptotic Calculator.
@@ -235,8 +235,12 @@ class AsymptoticCalculator(object):
         """
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v,self.sqrtqmuA_v,self.inclusive_pvalue,self.clip)
-        b_dist = AsymptoticTestStatDistribution(0.0,self.sqrtqmuA_v,self.inclusive_pvalue,self.clip)
+        sb_dist = AsymptoticTestStatDistribution(
+            -self.sqrtqmuA_v, self.sqrtqmuA_v, self.inclusive_pvalue, self.clip
+        )
+        b_dist = AsymptoticTestStatDistribution(
+            0.0, self.sqrtqmuA_v, self.inclusive_pvalue, self.clip
+        )
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
@@ -326,7 +330,7 @@ class EmpiricalDistribution(object):
     :math:`p`-values etc are computed from the sampled distribution.
     """
 
-    def __init__(self, samples, inclusive_pvalue = True):
+    def __init__(self, samples, inclusive_pvalue=True):
         """
         Empirical distribution.
 
@@ -390,8 +394,7 @@ class EmpiricalDistribution(object):
         tensorlib, _ = get_backend()
         arg = self.samples >= value if self.inclusive_pvalue else self.samples > value
         return (
-            tensorlib.sum(tensorlib.where(arg, 1, 0))
-            / tensorlib.shape(self.samples)[0]
+            tensorlib.sum(tensorlib.where(arg, 1, 0)) / tensorlib.shape(self.samples)[0]
         )
 
     def expected_value(self, nsigma):
@@ -469,7 +472,7 @@ class ToyCalculator(object):
         qtilde=True,
         ntoys=2000,
         track_progress=True,
-        inclusive_pvalue = False
+        inclusive_pvalue=False,
     ):
         """
         Toy-based Calculator.
@@ -579,8 +582,12 @@ class ToyCalculator(object):
                 )
             )
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat), self.inclusive_pvalue)
-        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat),self.inclusive_pvalue)
+        s_plus_b = EmpiricalDistribution(
+            tensorlib.astensor(signal_teststat), self.inclusive_pvalue
+        )
+        b_only = EmpiricalDistribution(
+            tensorlib.astensor(bkg_teststat), self.inclusive_pvalue
+        )
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):
