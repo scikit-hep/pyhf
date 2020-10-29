@@ -15,7 +15,7 @@ class TrivialExecutor(futures.Executor):
         """ Representation of the object """
         module = type(self).__module__
         qualname = type(self).__qualname__
-        return f"<{module}.{qualname} object '{self.name}{self.values}' at {hex(id(self))}>"
+        return f"<{module}.{qualname} object at {hex(id(self))}>"
 
     def submit(self, task, *args, **kwargs):
         """
