@@ -794,13 +794,6 @@ class ToyCalculator:
             unit='toy',
         )
 
-        signal_sample = tqdm.tqdm(
-            signal_sample, **tqdm_options, position=0, desc='Signal-like'
-        )
-        bkg_sample = tqdm.tqdm(
-            bkg_sample, **tqdm_options, position=1, desc='Background-like'
-        )
-
         signal_teststat = self.executor.map(
             teststat_func,
             *zip(
@@ -835,7 +828,12 @@ class ToyCalculator:
             ),
         )
 
+        signal_teststat = tqdm.tqdm(signal_teststat, **tqdm_options, desc='Signal-like')
+
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(list(signal_teststat)))
+
+        bkg_teststat = tqdm.tqdm(bkg_teststat, **tqdm_options, desc='Background-like')
+
         b_only = EmpiricalDistribution(tensorlib.astensor(list(bkg_teststat)))
         return s_plus_b, b_only
 
