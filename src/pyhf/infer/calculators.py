@@ -794,11 +794,55 @@ class ToyCalculator:
             unit='toy',
         )
 
-        signal_teststat = self.executor.map(
-            teststat_func,
-            *zip(
-                *(
-                    (
+        if not isinstance(self.executor, futures.TrivialExecutor):
+            signal_teststat = self.executor.map(
+                teststat_func,
+                *zip(
+                    *(
+                        (
+                            poi_test,
+                            sample,
+                            self.pdf,
+                            signal_pars,
+                            self.par_bounds,
+                            self.fixed_params,
+                        )
+                        for sample in signal_sample
+                    )
+                ),
+            )
+
+            bkg_teststat = self.executor.map(
+                teststat_func,
+                *zip(
+                    *(
+                        (
+                            poi_test,
+                            sample,
+                            self.pdf,
+                            bkg_pars,
+                            self.par_bounds,
+                            self.fixed_params,
+                        )
+                        for sample in bkg_sample
+                    )
+                ),
+            )
+
+            signal_teststat = tqdm.tqdm(
+                signal_teststat, **tqdm_options, desc='Signal-like'
+            )
+            s_plus_b = EmpiricalDistribution(tensorlib.astensor(list(signal_teststat)))
+            bkg_teststat = tqdm.tqdm(
+                bkg_teststat, **tqdm_options, desc='Background-like'
+            )
+            b_only = EmpiricalDistribution(tensorlib.astensor(list(bkg_teststat)))
+        else:
+            signal_teststat = []
+            for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
+                signal_teststat.append(
+                    self.executor.submit(
+                        teststat_func,
                         poi_test,
                         sample,
                         self.pdf,
@@ -806,16 +850,13 @@ class ToyCalculator:
                         self.par_bounds,
                         self.fixed_params,
                     )
-                    for sample in signal_sample
                 )
-            ),
-        )
 
-        bkg_teststat = self.executor.map(
-            teststat_func,
-            *zip(
-                *(
-                    (
+            bkg_teststat = []
+            for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
+                bkg_teststat.append(
+                    self.executor.submit(
+                        teststat_func,
                         poi_test,
                         sample,
                         self.pdf,
@@ -823,18 +864,11 @@ class ToyCalculator:
                         self.par_bounds,
                         self.fixed_params,
                     )
-                    for sample in bkg_sample
                 )
-            ),
-        )
 
-        signal_teststat = tqdm.tqdm(signal_teststat, **tqdm_options, desc='Signal-like')
+            s_plus_b = EmpiricalDistribution(tensorlib.astensor(list(signal_teststat)))
+            b_only = EmpiricalDistribution(tensorlib.astensor(list(bkg_teststat)))
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(list(signal_teststat)))
-
-        bkg_teststat = tqdm.tqdm(bkg_teststat, **tqdm_options, desc='Background-like')
-
-        b_only = EmpiricalDistribution(tensorlib.astensor(list(bkg_teststat)))
         return s_plus_b, b_only
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
