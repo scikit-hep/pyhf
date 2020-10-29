@@ -116,6 +116,7 @@ Implemented variations:
   - ☑ ShapeFactor
   - ☑ StatError
   - ☑ Lumi Uncertainty
+  - ☑ Non-asymptotic calculators
 
 Computational Backends:
   - ☑ NumPy
@@ -134,7 +135,6 @@ Todo
 ----
 
 -  ☐ StatConfig
--  ☐ Non-asymptotic calculators
 
 results obtained from this package are validated against output computed
 from HistFactory workspaces
