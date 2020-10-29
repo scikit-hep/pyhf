@@ -169,6 +169,8 @@ class AsymptoticCalculator(object):
         par_bounds=None,
         fixed_params=None,
         qtilde=True,
+        inclusive_pvalue = True,
+        clip = False
     ):
         """
         Asymptotic Calculator.
@@ -199,6 +201,8 @@ class AsymptoticCalculator(object):
 
         self.qtilde = qtilde
         self.sqrtqmuA_v = None
+        self.inclusive_pvalue = inclusive_pvalue
+        self.clip = clip
 
     def distributions(self, poi_test):
         """
@@ -231,8 +235,8 @@ class AsymptoticCalculator(object):
         """
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v,self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(0.0,self.sqrtqmuA_v)
+        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v,self.sqrtqmuA_v,self.inclusive_pvalue,self.clip)
+        b_dist = AsymptoticTestStatDistribution(0.0,self.sqrtqmuA_v,self.inclusive_pvalue,self.clip)
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
@@ -322,7 +326,7 @@ class EmpiricalDistribution(object):
     :math:`p`-values etc are computed from the sampled distribution.
     """
 
-    def __init__(self, samples, inclusive_pvalue):
+    def __init__(self, samples, inclusive_pvalue = True):
         """
         Empirical distribution.
 
@@ -465,6 +469,7 @@ class ToyCalculator(object):
         qtilde=True,
         ntoys=2000,
         track_progress=True,
+        inclusive_pvalue = False
     ):
         """
         Toy-based Calculator.
@@ -491,6 +496,7 @@ class ToyCalculator(object):
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.qtilde = qtilde
         self.track_progress = track_progress
+        self.inclusive_pvalue = inclusive_pvalue
 
     def distributions(self, poi_test, track_progress=None):
         """
@@ -573,8 +579,8 @@ class ToyCalculator(object):
                 )
             )
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
-        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
+        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat), self.inclusive_pvalue)
+        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat),self.inclusive_pvalue)
         return s_plus_b, b_only
 
     def teststatistic(self, poi_test):
