@@ -785,6 +785,10 @@ class ToyCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
+        wrapped_teststat_func = lambda sample: teststat_func(
+            poi_test, sample, self.pdf, self.init_pars, self.par_bounds, self.fixed_params
+        )
+
         tqdm_options = dict(
             total=self.ntoys,
             leave=False,
@@ -794,36 +798,18 @@ class ToyCalculator:
             unit='toy',
         )
 
-        signal_teststat = []
-        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
-            signal_teststat.append(
-                self.executor.submit(
-                    teststat_func,
-                    poi_test,
-                    sample,
-                    self.pdf,
-                    self.init_pars,
-                    self.par_bounds,
-                    self.fixed_params,
-                )
-            )
+        signal_teststat = self.executor.map(
+            wrapped_teststat_func,
+            tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'),
+        )
 
-        bkg_teststat = []
-        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
-            bkg_teststat.append(
-                self.executor.submit(
-                    teststat_func,
-                    poi_test,
-                    sample,
-                    self.pdf,
-                    self.init_pars,
-                    self.par_bounds,
-                    self.fixed_params,
-                )
-            )
+        bkg_teststat = self.executor.map(
+            wrapped_teststat_func,
+            tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'),
+        )
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
-        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
+        s_plus_b = EmpiricalDistribution(tensorlib.astensor(list(signal_teststat)))
+        b_only = EmpiricalDistribution(tensorlib.astensor(list(bkg_teststat)))
         return s_plus_b, b_only
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
