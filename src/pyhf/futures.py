@@ -4,7 +4,7 @@ Defines a synchronous Python-like Executor for pyhf: :class:`TrivialExecutor`
 from concurrent import futures
 
 
-class TrivialExecutor(object):
+class TrivialExecutor(futures.Executor):
     """
     Formally satisfies the interface for a :class:`concurrent.futures.Executor`
     but the :func:`TrivialExecutor.submit` method computes its ``task``
@@ -30,9 +30,3 @@ class TrivialExecutor(object):
         else:
             _f.set_result(result)
         return _f
-
-    def shutdown(self, wait=True):
-        """
-        Does nothing, since this object does not have threads to stop.
-        """
-        pass
