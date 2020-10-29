@@ -11,6 +11,7 @@ Using the calculators hypothesis tests can then be performed.
 from pyhf.infer.mle import fixed_poi_fit
 from pyhf import get_backend
 from pyhf.infer import utils
+from pyhf import futures
 import tqdm
 
 from dataclasses import dataclass
@@ -675,6 +676,7 @@ class ToyCalculator:
         test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
+        executor=None,
     ):
         r"""
         Toy-based Calculator.
@@ -700,6 +702,7 @@ class ToyCalculator:
                 :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).
+            executor (:class:`concurrent.futures.Executor`): Executor for job dispatch. ``None`` by default.
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
@@ -713,6 +716,7 @@ class ToyCalculator:
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.test_stat = test_stat
         self.track_progress = track_progress
+        self.executor = executor or futures.TrivialExecutor()
 
     def distributions(self, poi_test, track_progress=None):
         """
@@ -793,7 +797,8 @@ class ToyCalculator:
         signal_teststat = []
         for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
             signal_teststat.append(
-                teststat_func(
+                executor.submit(
+                    teststat_func,
                     poi_test,
                     sample,
                     self.pdf,
@@ -806,7 +811,8 @@ class ToyCalculator:
         bkg_teststat = []
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
             bkg_teststat.append(
-                teststat_func(
+                executor.submit(
+                    teststat_func,
                     poi_test,
                     sample,
                     self.pdf,
