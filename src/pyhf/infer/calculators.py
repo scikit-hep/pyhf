@@ -98,7 +98,7 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        print('cdf', value, shift)
+        #TODO clip herrer too
         v = value - self.shift
         return tensorlib.normal_cdf(v)
 
@@ -235,17 +235,12 @@ class AsymptoticCalculator(object):
         """
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic(poi_test) first')
-<<<<<<< HEAD
         sb_dist = AsymptoticTestStatDistribution(
             -self.sqrtqmuA_v, self.sqrtqmuA_v, self.inclusive_pvalue, self.clip
         )
         b_dist = AsymptoticTestStatDistribution(
             0.0, self.sqrtqmuA_v, self.inclusive_pvalue, self.clip
         )
-=======
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(0.0, self.sqrtqmuA_v)
->>>>>>> d1254837f6481787e064c007a304ee0730eb0926
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
