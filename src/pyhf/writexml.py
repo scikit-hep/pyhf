@@ -36,7 +36,7 @@ def _export_root_histogram(histname, data):
     h._fName = histname
     # NB: uproot crashes for some reason, figure out why later
     # if histname in _ROOT_DATA_FILE:
-    #    raise KeyError('Duplicate key {0} being written.'.format(histname))
+    #    raise KeyError(f'Duplicate key {histname} being written.')
     _ROOT_DATA_FILE[histname] = h
 
 
