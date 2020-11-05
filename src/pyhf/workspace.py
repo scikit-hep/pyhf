@@ -400,9 +400,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             measurement_name=measurement_name,
             measurement_index=measurement_index,
         )
-        log.debug(
-            'model being created for measurement {:s}'.format(measurement['name'])
-        )
+        log.debug(f"model being created for measurement {measurement['name']:s}")
 
         patches = config_kwargs.pop('patches', [])
 
