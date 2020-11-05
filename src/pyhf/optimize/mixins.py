@@ -7,7 +7,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class OptimizerMixin(object):
+class OptimizerMixin:
     """Mixin Class to build optimizers."""
 
     __slots__ = ['maxiter', 'verbose']

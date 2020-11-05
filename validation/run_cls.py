@@ -39,7 +39,7 @@ c.Draw()
 c.SaveAs('scan.pdf')
 
 
-print('observed: {}'.format(result.UpperLimit()))
+print(f'observed: {result.UpperLimit()}')
 
 for i in [-2, -1, 0, 1, 2]:
     print('expected {}: {}'.format(i, result.GetExpectedUpperLimit(i)))

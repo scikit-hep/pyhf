@@ -209,7 +209,7 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         pass
     else:
         log.warning(
-            'Skipping modifier {0}({1}) for now'.format(
+            'Skipping modifier {}({}) for now'.format(
                 modifierspec['name'], modifierspec['type']
             )
         )
@@ -300,6 +300,4 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     for measurement in spec['measurements']:
         combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
-    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
-        "utf-8"
-    ) + ET.tostring(combination, encoding='utf-8')
+    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode() + ET.tostring(combination, encoding='utf-8')

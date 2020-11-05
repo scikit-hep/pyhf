@@ -7,7 +7,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code4p(object):
+class code4p:
     r"""
     The piecewise-linear interpolation strategy, with polynomial at :math:`\left|a\right| < 1`.
 
@@ -113,7 +113,7 @@ class code4p(object):
         )
 
 
-class _slow_code4p(object):
+class _slow_code4p:
     def summand(self, down, nom, up, alpha):
         delta_up = up - nom
         delta_down = nom - down

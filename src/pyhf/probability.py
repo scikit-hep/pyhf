@@ -2,7 +2,7 @@
 from . import get_backend
 
 
-class _SimpleDistributionMixin(object):
+class _SimpleDistributionMixin:
     """The mixin class for distributions."""
 
     def log_prob(self, value):
@@ -177,12 +177,12 @@ class Independent(_SimpleDistributionMixin):
 
         """
         tensorlib, _ = get_backend()
-        result = super(Independent, self).log_prob(value)
+        result = super().log_prob(value)
         result = tensorlib.sum(result, axis=-1)
         return result
 
 
-class Simultaneous(object):
+class Simultaneous:
     """
     A probability density corresponding to the joint
     distribution of multiple non-identical component distributions
@@ -227,8 +227,7 @@ class Simultaneous(object):
             pdfobj (:class:`Distribution`): A constituent pdf object
 
         """
-        for pdfobj in self._pdfobjs:
-            yield pdfobj
+        yield from self._pdfobjs
 
     def __getitem__(self, index):
         """

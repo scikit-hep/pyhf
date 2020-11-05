@@ -124,7 +124,7 @@ def fit(
     else:
         with open(output_file, "w+") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()
@@ -240,4 +240,4 @@ def cls(
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")

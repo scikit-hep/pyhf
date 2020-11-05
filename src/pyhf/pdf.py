@@ -26,7 +26,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
         for sample in channel['samples']:
             if len(sample['data']) != channel_nbins[channel['name']]:
                 raise exceptions.InvalidModel(
-                    'The sample {0:s} has {1:d} bins, but the channel it belongs to ({2:s}) has {3:d} bins.'.format(
+                    'The sample {:s} has {:d} bins, but the channel it belongs to ({:s}) has {:d} bins.'.format(
                         sample['name'],
                         len(sample['data']),
                         channel['name'],
@@ -42,7 +42,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                     ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
-                        'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
+                        'Modifier not implemented yet (processing {:s}). Available modifiers: {}'.format(
                             modifier_def['type'], modifiers.registry.keys()
                         )
                     )
@@ -121,7 +121,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
     mega_mods = {}
     for m, mtype in config.modifiers:
         for s in config.samples:
-            key = '{}/{}'.format(mtype, m)
+            key = f'{mtype}/{m}'
             mega_mods.setdefault(key, {})[s] = {
                 'type': mtype,
                 'name': m,
@@ -156,7 +156,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                 else {}
             )
             for m, mtype in config.modifiers:
-                key = '{}/{}'.format(mtype, m)
+                key = f'{mtype}/{m}'
                 # this is None if modifier doesn't affect channel/sample.
                 thismod = defined_mods.get(key)
                 # print('key',key,thismod['data'] if thismod else None)
@@ -197,7 +197,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     mega_mods[key][s]['data']['uncrt'] += uncrt
                     mega_mods[key][s]['data']['nom_data'] += nom
 
-        sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
+        sample_dict = {'name': f'mega_{s}', 'nom': mega_nom}
         mega_samples[s] = sample_dict
 
     nominal_rates = default_backend.astensor(
@@ -218,7 +218,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
 
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
-        super(_ModelConfig, self).__init__(channels=spec['channels'])
+        super().__init__(channels=spec['channels'])
         _required_paramsets = _paramset_requirements_from_modelspec(
             spec, self.channel_nbins
         )
@@ -298,7 +298,7 @@ class _ModelConfig(_ChannelSummaryMixin):
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The parameter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
+                "The parameter of interest '{:s}' cannot be fit as it is not declared in the model specification.".format(
                     name
                 )
             )
@@ -323,7 +323,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
 
-class _ConstraintModel(object):
+class _ConstraintModel:
     """Factory class to create pdfs for the constraint terms."""
 
     def __init__(self, config, batch_size):
@@ -407,7 +407,7 @@ class _ConstraintModel(object):
         return simpdf.log_prob(auxdata)
 
 
-class _MainModel(object):
+class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
@@ -543,7 +543,7 @@ class _MainModel(object):
         return newresults
 
 
-class Model(object):
+class Model:
     """The main pyhf model class."""
 
     def __init__(self, spec, batch_size=None, **config_kwargs):
@@ -564,7 +564,7 @@ class Model(object):
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
-        log.info("Validating spec against schema: {0:s}".format(self.schema))
+        log.info(f"Validating spec against schema: {self.schema:s}")
         utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)

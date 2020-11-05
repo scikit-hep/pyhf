@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 @modifier(
     name='shapesys', constrained=True, pdf_type='poisson', op_code='multiplication'
 )
-class shapesys(object):
+class shapesys:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         # count the number of bins with nonzero, positive yields
@@ -35,11 +35,11 @@ class shapesys(object):
         }
 
 
-class shapesys_combined(object):
+class shapesys_combined:
     def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in shapesys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in shapesys_mods]
         self._shapesys_mods = [m for m, _ in shapesys_mods]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)

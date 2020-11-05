@@ -112,7 +112,7 @@ def _join_channels(join, left_channels, right_channels, merge=False):
         join, left_channels, right_channels, deep_merge_key='samples' if merge else None
     )
     if join == 'none':
-        common_channels = set(c['name'] for c in left_channels).intersection(
+        common_channels = {c['name'] for c in left_channels}.intersection(
             c['name'] for c in right_channels
         )
         if common_channels:
@@ -152,9 +152,9 @@ def _join_observations(join, left_observations, right_observations):
     """
     joined_observations = _join_items(join, left_observations, right_observations)
     if join == 'none':
-        common_observations = set(
+        common_observations = {
             obs['name'] for obs in left_observations
-        ).intersection(obs['name'] for obs in right_observations)
+        }.intersection(obs['name'] for obs in right_observations)
         if common_observations:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -226,9 +226,9 @@ def _join_measurements(join, left_measurements, right_measurements):
     """
     joined_measurements = _join_items(join, left_measurements, right_measurements)
     if join == 'none':
-        common_measurements = set(
+        common_measurements = {
             meas['name'] for meas in left_measurements
-        ).intersection(meas['name'] for meas in right_measurements)
+        }.intersection(meas['name'] for meas in right_measurements)
         if common_measurements:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -244,7 +244,7 @@ def _join_measurements(join, left_measurements, right_measurements):
         incompatible_poi = [
             measurement_name
             for measurement_name, measurements in _measurement_mapping.items()
-            if len(set(measurement['config']['poi'] for measurement in measurements))
+            if len({measurement['config']['poi'] for measurement in measurements})
             > 1
         ]
         if incompatible_poi:
@@ -284,7 +284,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
         spec = copy.deepcopy(spec)
-        super(Workspace, self).__init__(spec, channels=spec['channels'])
+        super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
@@ -349,12 +349,12 @@ class Workspace(_ChannelSummaryMixin, dict):
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
                     log.debug(
-                        'measurements defined:\n\t{0:s}'.format(
+                        'measurements defined:\n\t{:s}'.format(
                             '\n\t'.join(self.measurement_names)
                         )
                     )
                     raise exceptions.InvalidMeasurement(
-                        'no measurement by name \'{0:s}\' was found in the workspace, pick from one of the valid ones above'.format(
+                        'no measurement by name \'{:s}\' was found in the workspace, pick from one of the valid ones above'.format(
                             measurement_name
                         )
                     )
@@ -406,7 +406,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             measurement_index=measurement_index,
         )
         log.debug(
-            'model being created for measurement {0:s}'.format(measurement['name'])
+            'model being created for measurement {:s}'.format(measurement['name'])
         )
 
         patches = config_kwargs.pop('patches', [])

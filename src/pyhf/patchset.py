@@ -33,7 +33,7 @@ class Patch(jsonpatch.JsonPatch):
             patch (:class:`~pyhf.patchset.Patch`): The Patch instance.
 
         """
-        super(Patch, self).__init__(spec['patch'])
+        super().__init__(spec['patch'])
         self._metadata = spec['metadata']
 
     @property
@@ -66,7 +66,7 @@ class Patch(jsonpatch.JsonPatch):
         )
 
 
-class PatchSet(object):
+class PatchSet:
     """
     A way to store a collection of patches (:class:`~pyhf.patchset.Patch`).
 

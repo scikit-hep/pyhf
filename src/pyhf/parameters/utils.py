@@ -30,7 +30,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
             for paramset_requirement in paramset_requirements:
                 # undefined: the modifier does not support configuring that property
                 v = paramset_requirement.get(k, 'undefined')
-                combined_paramset.setdefault(k, set([])).add(v)
+                combined_paramset.setdefault(k, set()).add(v)
 
             if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(
@@ -56,7 +56,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                 )
             elif v and default_v == 'undefined':
                 raise exceptions.InvalidModel(
-                    '{} does not use the {} attribute.'.format(paramset_name, k)
+                    f'{paramset_name} does not use the {k} attribute.'
                 )
 
             combined_paramset[k] = v

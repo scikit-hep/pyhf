@@ -48,7 +48,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()

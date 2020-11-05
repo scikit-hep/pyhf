@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='normfactor', op_code='multiplication')
-class normfactor(object):
+class normfactor:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
@@ -23,11 +23,11 @@ class normfactor(object):
         }
 
 
-class normfactor_combined(object):
+class normfactor_combined:
     def __init__(self, normfactor_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in normfactor_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in normfactor_mods]
         normfactor_mods = [m for m, _ in normfactor_mods]
 
         parfield_shape = (

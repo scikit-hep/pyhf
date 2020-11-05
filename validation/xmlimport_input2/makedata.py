@@ -16,9 +16,9 @@ for cname, channel_def in source_data['channels'].iteritems():
     bindata = channel_def['bindata']
 
     for hist, data in bindata.iteritems():
-        print('{}_{}'.format(cname, hist))
+        print(f'{cname}_{hist}')
         h = ROOT.TH1F(
-            '{}_{}'.format(cname, hist), '{}_{}'.format(cname, hist), *binning
+            f'{cname}_{hist}', f'{cname}_{hist}', *binning
         )
         hists += [h]
         for i, v in enumerate(data):

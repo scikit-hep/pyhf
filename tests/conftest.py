@@ -99,17 +99,17 @@ def backend(request):
 
     # skip backends if specified
     skip_backend = request.node.get_closest_marker(
-        'skip_{param}'.format(param=param_id)
+        f'skip_{param_id}'
     )
     # allow the specific backend to fail if specified
     fail_backend = request.node.get_closest_marker(
-        'fail_{param}'.format(param=param_id)
+        f'fail_{param_id}'
     )
     # only look at the specific backends
     only_backends = [
         pid
         for pid in param_ids
-        if request.node.get_closest_marker('only_{param}'.format(param=pid))
+        if request.node.get_closest_marker(f'only_{pid}')
     ]
 
     if skip_backend and (param_id in only_backends):
@@ -120,7 +120,7 @@ def backend(request):
         )
 
     if skip_backend:
-        pytest.skip("skipping {func} as specified".format(func=func_name))
+        pytest.skip(f"skipping {func_name} as specified")
     elif only_backends and param_id not in only_backends:
         pytest.skip(
             "skipping {func} as specified to only look at: {backends}".format(
@@ -129,7 +129,7 @@ def backend(request):
         )
 
     if fail_backend:
-        pytest.xfail("expect {func} to fail as specified".format(func=func_name))
+        pytest.xfail(f"expect {func_name} to fail as specified")
 
     # actual execution here, after all checks is done
     pyhf.set_backend(*request.param)

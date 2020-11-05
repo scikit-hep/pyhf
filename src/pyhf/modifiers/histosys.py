@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='histosys', constrained=True, op_code='addition')
-class histosys(object):
+class histosys:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
@@ -25,7 +25,7 @@ class histosys(object):
         }
 
 
-class histosys_combined(object):
+class histosys_combined:
     def __init__(
         self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size=None
     ):
@@ -33,7 +33,7 @@ class histosys_combined(object):
         self.interpcode = interpcode
         assert self.interpcode in ['code0', 'code2', 'code4p']
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in histosys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in histosys_mods]
         histosys_mods = [m for m, _ in histosys_mods]
 
         parfield_shape = (

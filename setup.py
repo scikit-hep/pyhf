@@ -19,8 +19,8 @@ extras_require['backends'] = sorted(
         + extras_require['minuit']
     )
 )
-extras_require['contrib'] = sorted(set(['matplotlib', 'requests']))
-extras_require['lint'] = sorted(set(['pyflakes', 'black']))
+extras_require['contrib'] = sorted({'matplotlib', 'requests'})
+extras_require['lint'] = sorted({'pyflakes', 'black'})
 
 extras_require['test'] = sorted(
     set(
@@ -47,8 +47,7 @@ extras_require['test'] = sorted(
     )
 )
 extras_require['docs'] = sorted(
-    set(
-        [
+    {
             'sphinx>=3.1.2',
             'sphinxcontrib-bibtex',
             'sphinx-click',
@@ -57,8 +56,7 @@ extras_require['docs'] = sorted(
             'ipywidgets',
             'sphinx-issues',
             'sphinx-copybutton>0.2.9',
-        ]
-    )
+    }
 )
 extras_require['develop'] = sorted(
     set(

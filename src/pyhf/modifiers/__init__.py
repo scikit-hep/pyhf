@@ -17,7 +17,7 @@ def validate_modifier_structure(modifier):
     for method in required_methods:
         if not hasattr(modifier, method):
             raise exceptions.InvalidModifier(
-                'Expected {0:s} method on modifier {1:s}'.format(
+                'Expected {:s} method on modifier {:s}'.format(
                     method, modifier.__name__
                 )
             )
@@ -36,7 +36,7 @@ def add_to_registry(
     global registry
     cls_name = cls_name or cls.__name__
     if cls_name in registry:
-        raise KeyError('The modifier name "{0:s}" is already taken.'.format(cls_name))
+        raise KeyError(f'The modifier name "{cls_name:s}" is already taken.')
     # validate the structure
     validate_modifier_structure(cls)
     # set is_constrained
@@ -45,7 +45,7 @@ def add_to_registry(
         tensorlib, _ = get_backend()
         if not hasattr(tensorlib, pdf_type):
             raise exceptions.InvalidModifier(
-                'The specified pdf_type "{0:s}" is not valid for {1:s}({2:s}). See pyhf.tensor documentation for available pdfs.'.format(
+                'The specified pdf_type "{:s}" is not valid for {:s}({:s}). See pyhf.tensor documentation for available pdfs.'.format(
                     pdf_type, cls_name, cls.__name__
                 )
             )
@@ -55,7 +55,7 @@ def add_to_registry(
 
     if op_code not in ['addition', 'multiplication']:
         raise exceptions.InvalidModifier(
-            'The specified op_code "{0:s}" is not valid for {1:s}({2:s}). See pyhf.modifier documentation for available operation codes.'.format(
+            'The specified op_code "{:s}" is not valid for {:s}({:s}). See pyhf.modifier documentation for available operation codes.'.format(
                 op_code, cls_name, cls.__name__
             )
         )
@@ -144,7 +144,7 @@ def modifier(*args, **kwargs):
     op_code = str(kwargs.pop('op_code', 'addition'))
     # check for unparsed keyword arguments
     if kwargs:
-        raise ValueError('Unparsed keyword arguments {}'.format(kwargs.keys()))
+        raise ValueError(f'Unparsed keyword arguments {kwargs.keys()}')
     # check to make sure the given name is a string, if passed in one
     if not isinstance(name, str) and name is not None:
         raise TypeError(
@@ -168,7 +168,7 @@ def modifier(*args, **kwargs):
         return args[0]
     else:
         raise ValueError(
-            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({0:d} given)'.format(
+            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({:d} given)'.format(
                 len(args)
             )
         )

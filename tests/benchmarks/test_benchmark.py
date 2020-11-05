@@ -66,7 +66,7 @@ def hypotest(pdf, data):
 
 
 bins = [1, 10, 50, 100, 200]
-bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
+bin_ids = [f'{n_bins}_bins' for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)

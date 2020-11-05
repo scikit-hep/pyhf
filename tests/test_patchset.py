@@ -3,7 +3,7 @@ import pytest
 import pyhf.exceptions
 import pyhf.patchset
 import json
-import mock
+from unittest import mock
 
 
 @pytest.fixture(

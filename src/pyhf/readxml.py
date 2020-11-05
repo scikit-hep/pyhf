@@ -80,7 +80,7 @@ def process_sample(
 
     for modtag in modtags:
         modtags.set_description(
-            '  - modifier {0:s}({1:s})'.format(
+            '  - modifier {:s}({:s})'.format(
                 modtag.attrib.get('Name', 'n/a'), modtag.tag
             )
         )
@@ -145,7 +145,7 @@ def process_sample(
                 raise RuntimeError('cannot determine stat error.')
             modifiers.append(
                 {
-                    'name': 'staterror_{}'.format(channelname),
+                    'name': f'staterror_{channelname}',
                     'type': 'staterror',
                     'data': staterr,
                 }
@@ -276,7 +276,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
                 for param_name in param.text.split(' '):
                     param_name = utils.remove_prefix(param_name, 'alpha_')
                     if param_name.startswith('gamma_') and re.search(
-                        '^gamma_.+_\d+$', param_name
+                        r'^gamma_.+_\d+$', param_name
                     ):
                         raise ValueError(
                             f'pyhf does not support setting individual gamma parameters constant, such as for {param_name}.'
@@ -312,7 +312,7 @@ def dedupe_parameters(parameters):
             for p in parameter_list:
                 log.warning(p)
             raise RuntimeError(
-                'cannot import workspace due to incompatible parameter configurations for {0:s}.'.format(
+                'cannot import workspace due to incompatible parameter configurations for {:s}.'.format(
                     parname
                 )
             )
@@ -331,7 +331,7 @@ def parse(configfile, rootdir, track_progress=False):
     channels = {}
     parameter_configs = []
     for inp in inputs:
-        inputs.set_description('Processing {}'.format(inp))
+        inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
             ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
         )
