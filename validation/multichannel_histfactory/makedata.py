@@ -26,9 +26,7 @@ for cname, channel_def in source_data['channels'].iteritems():
     bkg.Sumw2()
 
     if 'bkgerr' in bindata:
-        bkgerr = ROOT.TH1F(
-            f'{cname}_bkgerr', f'{cname}_bkgerr', *binning
-        )
+        bkgerr = ROOT.TH1F(f'{cname}_bkgerr', f'{cname}_bkgerr', *binning)
 
         # shapesys must be as multiplicative factor
         for i, v in enumerate(bindata['bkgerr']):

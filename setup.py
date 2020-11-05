@@ -48,14 +48,14 @@ extras_require['test'] = sorted(
 )
 extras_require['docs'] = sorted(
     {
-            'sphinx>=3.1.2',
-            'sphinxcontrib-bibtex',
-            'sphinx-click',
-            'sphinx_rtd_theme',
-            'nbsphinx',
-            'ipywidgets',
-            'sphinx-issues',
-            'sphinx-copybutton>0.2.9',
+        'sphinx>=3.1.2',
+        'sphinxcontrib-bibtex',
+        'sphinx-click',
+        'sphinx_rtd_theme',
+        'nbsphinx',
+        'ipywidgets',
+        'sphinx-issues',
+        'sphinx-copybutton>0.2.9',
     }
 )
 extras_require['develop'] = sorted(
