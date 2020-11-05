@@ -141,9 +141,7 @@ def modifier(*args, **kwargs):
         raise ValueError(f'Unparsed keyword arguments {kwargs.keys()}')
     # check to make sure the given name is a string, if passed in one
     if not isinstance(name, str) and name is not None:
-        raise TypeError(
-            '@modifier must be given a string. You gave it {}'.format(type(name))
-        )
+        raise TypeError('@modifier must be given a string. You gave it {type(name)}')
 
     if not args:
         # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
