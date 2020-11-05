@@ -209,9 +209,7 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         pass
     else:
         log.warning(
-            'Skipping modifier {}({}) for now'.format(
-                modifierspec['name'], modifierspec['type']
-            )
+            "Skipping modifier {modifierspec['name']}({modifierspec['type']}) for now"
         )
         return None
 
