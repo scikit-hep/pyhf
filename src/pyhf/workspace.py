@@ -347,7 +347,12 @@ class Workspace(_ChannelSummaryMixin, dict):
         elif self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
-                    log.debug(f"measurements defined: {self.measurement_names:s}")
+                    # syntax error with f-strings
+                    log.debug(
+                        'measurements defined:\n\t{:s}'.format(
+                            '\n\t'.join(self.measurement_names)
+                        )
+                    )
                     raise exceptions.InvalidMeasurement(
                         f'no measurement by name \'{measurement_name:s}\' was found in the workspace, pick from one of the valid ones above'
                     )
