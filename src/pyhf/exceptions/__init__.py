@@ -29,9 +29,9 @@ class InvalidSpecification(Exception):
         self.path = ''
         for item in ValidationError.path:
             if isinstance(item, int):
-                self.path += '[{}]'.format(item)
+                self.path += f'[{item}]'
             else:
-                self.path += '.{}'.format(item)
+                self.path += f'.{item}'
         self.path = self.path.lstrip('.')
         self.instance = ValidationError.instance
         message = f"{ValidationError.message}.\n\tPath: {self.path}\n\tInstance: {self.instance} Schema: {self.schema}"

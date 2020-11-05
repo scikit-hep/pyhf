@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='normsys', constrained=True, op_code='multiplication')
-class normsys(object):
+class normsys:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
@@ -25,14 +25,14 @@ class normsys(object):
         }
 
 
-class normsys_combined(object):
+class normsys_combined:
     def __init__(
         self, normsys_mods, pdfconfig, mega_mods, interpcode='code1', batch_size=None
     ):
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in normsys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in normsys_mods]
         normsys_mods = [m for m, _ in normsys_mods]
 
         self.batch_size = batch_size

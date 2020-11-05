@@ -6,7 +6,7 @@ import tensorflow_probability as tfp
 log = logging.getLogger(__name__)
 
 
-class tensorflow_backend(object):
+class tensorflow_backend:
     """TensorFlow backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']

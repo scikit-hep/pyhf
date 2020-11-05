@@ -8,7 +8,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code1(object):
+class code1:
     r"""
     The piecewise-exponential interpolation strategy.
 
@@ -100,7 +100,7 @@ class code1(object):
         return tensorlib.power(bases, exponents)
 
 
-class _slow_code1(object):
+class _slow_code1:
     def product(self, down, nom, up, alpha):
         delta_up = up / nom
         delta_down = down / nom

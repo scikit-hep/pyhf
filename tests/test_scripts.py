@@ -27,9 +27,7 @@ def test_version(script_runner):
 # see test_import.py for the same (detailed) test
 def test_import_prepHistFactory(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert ret.stdout == ''
@@ -42,9 +40,7 @@ def test_import_prepHistFactory(tmpdir, script_runner):
 
 def test_import_prepHistFactory_withProgress(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
     assert ret.stdout == ''
@@ -63,12 +59,10 @@ def test_import_prepHistFactory_stdout(tmpdir, script_runner):
 
 def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}".format(
-        temp.strpath
-    )
+    command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
-    command = "pyhf fit {0:s}".format(temp.strpath)
+    command = f"pyhf fit {temp.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -83,9 +77,7 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
         "LogNormExample",
         "ConstExample",
     ]:
-        command = "pyhf fit {0:s} --value --measurement {1:s}".format(
-            temp.strpath, measurement
-        )
+        command = f"pyhf fit {temp.strpath:s} --value --measurement {measurement:s}"
         ret = script_runner.run(*shlex.split(command))
 
         assert ret.success
@@ -94,9 +86,9 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
         assert "mle_parameters" in ret_json
         assert "twice_nll" in ret_json
 
-        tmp_out = tmpdir.join("{0:s}_output.json".format(measurement))
+        tmp_out = tmpdir.join(f"{measurement:s}_output.json")
         # make sure output file works too
-        command += " --output-file {0:s}".format(tmp_out.strpath)
+        command += f" --output-file {tmp_out.strpath:s}"
         ret = script_runner.run(*shlex.split(command))
         assert ret.success
         ret_json = json.load(tmp_out)
@@ -106,12 +98,10 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
 
 def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls {0:s}'.format(temp.strpath)
+    command = f'pyhf cls {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -126,7 +116,7 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         'LogNormExample',
         'ConstExample',
     ]:
-        command = 'pyhf cls {0:s} --measurement {1:s}'.format(temp.strpath, measurement)
+        command = f'pyhf cls {temp.strpath:s} --measurement {measurement:s}'
         ret = script_runner.run(*shlex.split(command))
 
         assert ret.success
@@ -135,9 +125,9 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_obs' in d
         assert 'CLs_exp' in d
 
-        tmp_out = tmpdir.join('{0:s}_output.json'.format(measurement))
+        tmp_out = tmpdir.join(f'{measurement:s}_output.json')
         # make sure output file works too
-        command += ' --output-file {0:s}'.format(tmp_out.strpath)
+        command += f' --output-file {tmp_out.strpath:s}'
         ret = script_runner.run(*shlex.split(command))
         assert ret.success
         d = json.load(tmp_out)
@@ -148,12 +138,10 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
 @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
 def test_fit_backend_option(tmpdir, script_runner, backend):
     temp = tmpdir.join("parsed_output.json")
-    command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}".format(
-        temp.strpath
-    )
+    command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
-    command = "pyhf fit --backend {0:s} {1:s}".format(backend, temp.strpath)
+    command = f"pyhf fit --backend {backend:s} {temp.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -165,12 +153,10 @@ def test_fit_backend_option(tmpdir, script_runner, backend):
 @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
 def test_cls_backend_option(tmpdir, script_runner, backend):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls --backend {0:s} {1:s}'.format(backend, temp.strpath)
+    command = f'pyhf cls --backend {backend:s} {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -182,14 +168,10 @@ def test_cls_backend_option(tmpdir, script_runner, backend):
 
 def test_import_and_export(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf json2xml {0:s} --output-dir {1:s}'.format(
-        temp.strpath, tmpdir.mkdir('output').strpath
-    )
+    command = f"pyhf json2xml {temp.strpath:s} --output-dir {tmpdir.mkdir('output').strpath:s}"
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -198,24 +180,20 @@ def test_patch(tmpdir, script_runner):
     patch = tmpdir.join('patch.json')
 
     patch.write(
-        u'''
+        '''
 [{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
     '''
     )
 
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath, patch.strpath)
+    command = f'pyhf cls {temp.strpath:s} --patch {patch.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch {2:s}'.format(
-        temp.strpath, tmpdir.mkdir('output_1').strpath, patch.strpath
-    )
+    command = f"pyhf json2xml {temp.strpath:s} --output-dir {tmpdir.mkdir('output_1').strpath:s} --patch {patch.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -235,32 +213,24 @@ def test_patch_fail(tmpdir, script_runner):
     patch.write('''not,json''')
 
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls {0:s} --patch {1:s}'.format(temp.strpath, patch.strpath)
+    command = f'pyhf cls {temp.strpath:s} --patch {patch.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
 
-    command = 'pyhf json2xml {0:s} --output-dir {1:s} --patch {2:s}'.format(
-        temp.strpath, tmpdir.mkdir('output').strpath, patch.strpath
-    )
+    command = f"pyhf json2xml {temp.strpath:s} --output-dir {tmpdir.mkdir('output').strpath:s} --patch {patch.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
 
 
 def test_bad_measurement_name(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf cls {0:s} --measurement "a-fake-measurement-name"'.format(
-        temp.strpath
-    )
+    command = f'pyhf cls {temp.strpath:s} --measurement "a-fake-measurement-name"'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     # assert 'no measurement by name' in ret.stderr  # numpy swallows the log.error() here, dunno why
@@ -268,18 +238,14 @@ def test_bad_measurement_name(tmpdir, script_runner):
 
 def test_testpoi(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
     pois = [1.0, 0.5, 0.0]
     results_exp = []
     results_obs = []
     for testpoi in pois:
-        command = 'pyhf cls {0:s} --testpoi {testpoi:f}'.format(
-            temp.strpath, testpoi=testpoi
-        )
+        command = f'pyhf cls {temp.strpath:s} --testpoi {testpoi:f}'
         ret = script_runner.run(*shlex.split(command))
 
         assert ret.success
@@ -306,9 +272,7 @@ def test_testpoi(tmpdir, script_runner):
 )
 def test_fit_optimizer(tmpdir, script_runner, optimizer, opts, success):
     temp = tmpdir.join("parsed_output.json")
-    command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}".format(
-        temp.strpath
-    )
+    command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
@@ -324,9 +288,7 @@ def test_fit_optimizer(tmpdir, script_runner, optimizer, opts, success):
 )
 def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
@@ -338,27 +300,21 @@ def test_cls_optimizer(tmpdir, script_runner, optimizer, opts, success):
 
 def test_inspect(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf inspect {0:s}'.format(temp.strpath)
+    command = f'pyhf inspect {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
 
 def test_inspect_outfile(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("inspect_output.json")
-    command = 'pyhf inspect {0:s} --output-file {1:s}'.format(
-        temp.strpath, tempout.strpath
-    )
+    command = f'pyhf inspect {temp.strpath:s} --output-file {tempout.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -381,9 +337,7 @@ def test_inspect_outfile(tmpdir, script_runner):
 
 def test_prune(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     command = (
@@ -395,15 +349,11 @@ def test_prune(tmpdir, script_runner):
 
 def test_prune_outfile(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("prune_output.json")
-    command = 'pyhf prune -m staterror_channel1 --measurement GammaExample {0:s} --output-file {1:s}'.format(
-        temp.strpath, tempout.strpath
-    )
+    command = f'pyhf prune -m staterror_channel1 --measurement GammaExample {temp.strpath:s} --output-file {tempout.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -419,29 +369,21 @@ def test_prune_outfile(tmpdir, script_runner):
 
 def test_rename(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s}'.format(
-        temp.strpath
-    )
+    command = f'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
 
 def test_rename_outfile(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("rename_output.json")
-    command = 'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {0:s} --output-file {1:s}'.format(
-        temp.strpath, tempout.strpath
-    )
+    command = f'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {temp.strpath:s} --output-file {tempout.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -462,9 +404,7 @@ def test_rename_outfile(tmpdir, script_runner):
 def test_combine(tmpdir, script_runner):
     temp_1 = tmpdir.join("parsed_output.json")
     temp_2 = tmpdir.join("renamed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp_1.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     rename_channels = {'channel1': 'channel2'}
@@ -475,17 +415,16 @@ def test_combine(tmpdir, script_runner):
         'GammaExample': 'OtherGammaExample',
     }
 
-    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
-        temp_1.strpath,
-        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
-        ''.join(
-            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
-        ),
-        temp_2.strpath,
+    _opts_channels = ''.join(
+        ' -c ' + ' '.join(item) for item in rename_channels.items()
     )
+    _opts_measurements = ''.join(
+        ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+    )
+    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
-    command = 'pyhf combine {0:s} {1:s}'.format(temp_1.strpath, temp_2.strpath)
+    command = f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -493,9 +432,7 @@ def test_combine(tmpdir, script_runner):
 def test_combine_outfile(tmpdir, script_runner):
     temp_1 = tmpdir.join("parsed_output.json")
     temp_2 = tmpdir.join("renamed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp_1.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     rename_channels = {'channel1': 'channel2'}
@@ -506,20 +443,17 @@ def test_combine_outfile(tmpdir, script_runner):
         'GammaExample': 'OtherGammaExample',
     }
 
-    command = 'pyhf rename {0:s} {1:s} {2:s} --output-file {3:s}'.format(
-        temp_1.strpath,
-        ''.join(' -c ' + ' '.join(item) for item in rename_channels.items()),
-        ''.join(
-            ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
-        ),
-        temp_2.strpath,
+    _opts_channels = ''.join(
+        ' -c ' + ' '.join(item) for item in rename_channels.items()
     )
+    _opts_measurements = ''.join(
+        ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+    )
+    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("combined_output.json")
-    command = 'pyhf combine {0:s} {1:s} --output-file {2:s}'.format(
-        temp_1.strpath, temp_2.strpath, tempout.strpath
-    )
+    command = f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s} --output-file {tempout.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
@@ -736,9 +670,7 @@ def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
 
 def test_sort(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     command = f'pyhf sort {temp.strpath}'
@@ -749,9 +681,7 @@ def test_sort(tmpdir, script_runner):
 
 def test_sort_outfile(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
-    command = 'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {0:s} --hide-progress'.format(
-        temp.strpath
-    )
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s} --hide-progress'
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("sort_output.json")

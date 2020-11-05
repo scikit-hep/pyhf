@@ -10,7 +10,7 @@ def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
         'output_path': str(outputnb),
-        'kernel_name': 'python{}'.format(sys.version_info.major),
+        'kernel_name': f'python{sys.version_info.major}',
     }
 
 

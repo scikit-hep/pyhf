@@ -15,7 +15,7 @@ import numpy as np
 import pyhf
 
 
-class MockConfig(object):
+class MockConfig:
     def __init__(self, par_map, par_order, samples, channels=None, channel_nbins=None):
         self.par_order = par_order
         self.par_map = par_map

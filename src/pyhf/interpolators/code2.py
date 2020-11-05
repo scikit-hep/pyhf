@@ -7,7 +7,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code2(object):
+class code2:
     r"""
     The quadratic interpolation and linear extrapolation strategy.
 
@@ -117,7 +117,7 @@ class code2(object):
         return tensorlib.where(masks_not_lt1, results_gt1_btwn, value_lt1)
 
 
-class _slow_code2(object):
+class _slow_code2:
     def summand(self, down, nom, up, alpha):
         a = 0.5 * (up + down) - nom
         b = 0.5 * (up - down)

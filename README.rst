@@ -9,7 +9,8 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 |GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor| |Code style: black|
+|Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor|
+|pre-commit.ci Status| |Code style: black|
 
 |Docs| |Binder|
 
@@ -329,6 +330,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
    :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
+.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg
+  :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/master
+  :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
 .. |Docs| image:: https://img.shields.io/badge/docs-master-blue.svg

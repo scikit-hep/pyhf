@@ -6,7 +6,7 @@ from pyhf import default_backend
 import numpy as np
 
 
-class MockConfig(object):
+class MockConfig:
     def __init__(self, par_map, par_order):
         self.par_order = par_order
         self.par_map = par_map

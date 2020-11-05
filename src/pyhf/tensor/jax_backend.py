@@ -13,7 +13,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class _BasicPoisson(object):
+class _BasicPoisson:
     def __init__(self, rate):
         self.rate = rate
 
@@ -29,7 +29,7 @@ class _BasicPoisson(object):
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class _BasicNormal(object):
+class _BasicNormal:
     def __init__(self, loc, scale):
         self.loc = loc
         self.scale = scale
@@ -48,7 +48,7 @@ class _BasicNormal(object):
         return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
-class jax_backend(object):
+class jax_backend:
     """JAX backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']

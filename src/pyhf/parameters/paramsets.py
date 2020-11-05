@@ -1,7 +1,7 @@
 from .. import default_backend
 
 
-class paramset(object):
+class paramset:
     def __init__(self, **kwargs):
         self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
@@ -11,19 +11,19 @@ class paramset(object):
 
 class unconstrained(paramset):
     def __init__(self, **kwargs):
-        super(unconstrained, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.constrained = False
 
 
 class constrained_paramset(paramset):
     def __init__(self, **kwargs):
-        super(constrained_paramset, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.constrained = True
 
 
 class constrained_by_normal(constrained_paramset):
     def __init__(self, **kwargs):
-        super(constrained_by_normal, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pdf_type = 'normal'
         self.auxdata = kwargs.pop('auxdata')
         sigmas = kwargs.pop('sigmas', None)
@@ -39,7 +39,7 @@ class constrained_by_normal(constrained_paramset):
 
 class constrained_by_poisson(constrained_paramset):
     def __init__(self, **kwargs):
-        super(constrained_by_poisson, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pdf_type = 'poisson'
         self.auxdata = kwargs.pop('auxdata')
         factors = kwargs.pop('factors')

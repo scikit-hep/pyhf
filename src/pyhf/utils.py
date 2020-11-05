@@ -39,9 +39,7 @@ def validate(spec, schema_name, version=None):
     schema = load_schema(schema_name, version=version)
     try:
         resolver = jsonschema.RefResolver(
-            base_uri='file://{0:s}'.format(
-                pkg_resources.resource_filename(__name__, 'schemas/')
-            ),
+            base_uri=f"file://{pkg_resources.resource_filename(__name__, 'schemas/'):s}",
             referrer=schema_name,
             store=SCHEMA_CACHE,
         )
@@ -54,7 +52,9 @@ def validate(spec, schema_name, version=None):
 
 
 def options_from_eqdelimstring(opts):
-    document = '\n'.join('{0}: {1}'.format(*opt.split('=', 1)) for opt in opts)
+    document = '\n'.join(
+        f"{opt.split('=', 1)[0]}: {opt.split('=', 1)[1]}" for opt in opts
+    )
     return yaml.full_load(document)
 
 
@@ -65,9 +65,7 @@ class EqDelimStringParamType(click.ParamType):
         try:
             return options_from_eqdelimstring([value])
         except IndexError:
-            self.fail(
-                '{0:s} is not a valid equal-delimited string'.format(value), param, ctx
-            )
+            self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
 
 
 def digest(obj, algorithm='sha256'):

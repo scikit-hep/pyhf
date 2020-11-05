@@ -8,7 +8,7 @@ import math
 log = logging.getLogger(__name__)
 
 
-class pytorch_backend(object):
+class pytorch_backend:
     """PyTorch backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']

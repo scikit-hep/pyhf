@@ -27,11 +27,8 @@ log = logging.getLogger(__name__)
 
 
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
-    return "{prefix}{middle}{suffix}".format(
-        prefix=prefix,
-        suffix=suffix,
-        middle='_'.join(filter(lambda x: x, [channel, sample, modifier])),
-    )
+    middle = '_'.join(filter(lambda x: x, [channel, sample, modifier]))
+    return f"{prefix}{middle}{suffix}"
 
 
 def _export_root_histogram(histname, data):
@@ -39,7 +36,7 @@ def _export_root_histogram(histname, data):
     h._fName = histname
     # NB: uproot crashes for some reason, figure out why later
     # if histname in _ROOT_DATA_FILE:
-    #    raise KeyError('Duplicate key {0} being written.'.format(histname))
+    #    raise KeyError(f'Duplicate key {histname} being written.')
     _ROOT_DATA_FILE[histname] = h
 
 
@@ -209,9 +206,7 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         pass
     else:
         log.warning(
-            'Skipping modifier {0}({1}) for now'.format(
-                modifierspec['name'], modifierspec['type']
-            )
+            f"Skipping modifier {modifierspec['name']}({modifierspec['type']}) for now"
         )
         return None
 
@@ -300,6 +295,6 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     for measurement in spec['measurements']:
         combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
-    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
-        "utf-8"
-    ) + ET.tostring(combination, encoding='utf-8')
+    return b"<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n" + ET.tostring(
+        combination, encoding='utf-8'
+    )

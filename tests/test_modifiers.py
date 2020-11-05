@@ -34,7 +34,7 @@ def test_modifiers_structure():
     from pyhf.modifiers import modifier
 
     @modifier(name='myUnconstrainedModifier')
-    class myCustomModifier(object):
+    class myCustomModifier:
         @classmethod
         def required_parset(cls, sample_data, modifier_data):
             pass
@@ -46,7 +46,7 @@ def test_modifiers_structure():
     del pyhf.modifiers.registry['myUnconstrainedModifier']
 
     @modifier(name='myConstrainedModifier', constrained=True)
-    class myCustomModifier(object):
+    class myCustomModifier:
         @classmethod
         def required_parset(cls, sample_data, modifier_data):
             pass
@@ -63,7 +63,7 @@ def test_modifier_name_auto():
     from pyhf.modifiers import modifier
 
     @modifier
-    class myCustomModifier(object):
+    class myCustomModifier:
         @classmethod
         def required_parset(cls, sample_data, modifier_data):
             pass
@@ -79,7 +79,7 @@ def test_modifier_name_auto_withkwargs():
     from pyhf.modifiers import modifier
 
     @modifier(name=None, constrained=False)
-    class myCustomModifier(object):
+    class myCustomModifier:
         @classmethod
         def required_parset(cls, sample_data, modifier_data):
             pass
@@ -95,7 +95,7 @@ def test_modifier_name_custom():
     from pyhf.modifiers import modifier
 
     @modifier(name='myCustomName')
-    class myCustomModifier(object):
+    class myCustomModifier:
         @classmethod
         def required_parset(cls, sample_data, modifier_data):
             pass
@@ -114,19 +114,19 @@ def test_decorate_with_wrong_values():
     with pytest.raises(ValueError):
 
         @modifier('too', 'many', 'args')
-        class myCustomModifier(object):
+        class myCustomModifier:
             pass
 
     with pytest.raises(TypeError):
 
         @modifier(name=1.5)
-        class myCustomModifierTypeError(object):
+        class myCustomModifierTypeError:
             pass
 
     with pytest.raises(ValueError):
 
         @modifier(unused='arg')
-        class myCustomModifierValueError(object):
+        class myCustomModifierValueError:
             pass
 
 
@@ -137,12 +137,12 @@ def test_registry_name_clash():
     with pytest.raises(KeyError):
 
         @modifier(name='histosys')
-        class myCustomModifierKeyError(object):
+        class myCustomModifierKeyError:
             pass
 
     with pytest.raises(KeyError):
 
-        class myCustomModifier(object):
+        class myCustomModifier:
             @classmethod
             def required_parset(cls, sample_data, modifier_data):
                 pass

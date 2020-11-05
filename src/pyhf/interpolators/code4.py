@@ -8,7 +8,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code4(object):
+class code4:
     r"""
     The polynomial interpolation and exponential extrapolation strategy.
 
@@ -234,7 +234,7 @@ class code4(object):
         return tensorlib.power(bases, masked_exponents)
 
 
-class _slow_code4(object):
+class _slow_code4:
     """
     Reference Implementation of Code 4.
 

@@ -2,7 +2,7 @@ from .. import default_backend, get_backend
 from .. import events
 
 
-class _TensorViewer(object):
+class _TensorViewer:
     def __init__(self, indices, batch_size=None, names=None):
         # self.partition_indices has the "target" indices
         # of the stitched vector. In order to  .gather()

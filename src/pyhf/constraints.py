@@ -4,7 +4,7 @@ from . import probability as prob
 from .parameters import ParamViewer
 
 
-class gaussian_constraint_combined(object):
+class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
@@ -136,7 +136,7 @@ class gaussian_constraint_combined(object):
         return pdf.log_prob(normal_data)
 
 
-class poisson_constraint_combined(object):
+class poisson_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....

@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='lumi', constrained=True, pdf_type='normal', op_code='multiplication')
-class lumi(object):
+class lumi:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
@@ -26,11 +26,11 @@ class lumi(object):
         }
 
 
-class lumi_combined(object):
+class lumi_combined:
     def __init__(self, lumi_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in lumi_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in lumi_mods]
         lumi_mods = [m for m, _ in lumi_mods]
 
         parfield_shape = (

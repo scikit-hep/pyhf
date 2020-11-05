@@ -1,7 +1,7 @@
 from .. import exceptions
 
 
-class _BackendRetriever(object):
+class _BackendRetriever:
     def __getattr__(self, name):
         if name == 'numpy_backend':
             from .numpy_backend import numpy_backend

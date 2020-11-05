@@ -48,7 +48,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
-class AsymptoticTestStatDistribution(object):
+class AsymptoticTestStatDistribution:
     r"""
     The distribution the test statistic in the asymptotic case.
 
@@ -96,7 +96,7 @@ class AsymptoticTestStatDistribution(object):
 
         """
         tensorlib, _ = get_backend()
-        return tensorlib.normal_cdf((value - self.shift))
+        return tensorlib.normal_cdf(value - self.shift)
 
     def pvalue(self, value):
         r"""
@@ -149,7 +149,7 @@ class AsymptoticTestStatDistribution(object):
         return self.shift + nsigma
 
 
-class AsymptoticCalculator(object):
+class AsymptoticCalculator:
     """The Asymptotic Calculator."""
 
     def __init__(
@@ -192,7 +192,7 @@ class AsymptoticCalculator(object):
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
-        """
+        r"""
         Probability distributions of the test statistic, as defined in
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
         under the signal + background and background-only hypotheses.
@@ -304,7 +304,7 @@ class AsymptoticCalculator(object):
         return teststat
 
 
-class EmpiricalDistribution(object):
+class EmpiricalDistribution:
     """
     The empirical distribution of the test statistic.
 
@@ -441,7 +441,7 @@ class EmpiricalDistribution(object):
         )
 
 
-class ToyCalculator(object):
+class ToyCalculator:
     """The Toy-based Calculator."""
 
     def __init__(

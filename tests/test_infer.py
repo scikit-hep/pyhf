@@ -173,7 +173,7 @@ def test_inferapi_pyhf_independence():
     """
     from pyhf import get_backend
 
-    class _NonPyhfConfig(object):
+    class _NonPyhfConfig:
         def __init__(self):
             self.poi_index = 0
             self.npars = 2
@@ -187,7 +187,7 @@ def test_inferapi_pyhf_independence():
         def suggested_fixed(self):
             return [False, False]
 
-    class NonPyhfModel(object):
+    class NonPyhfModel:
         def __init__(self, spec):
             self.sig, self.nominal, self.uncert = spec
             self.factor = (self.nominal / self.uncert) ** 2
