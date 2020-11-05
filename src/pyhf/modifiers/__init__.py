@@ -17,9 +17,7 @@ def validate_modifier_structure(modifier):
     for method in required_methods:
         if not hasattr(modifier, method):
             raise exceptions.InvalidModifier(
-                'Expected {:s} method on modifier {:s}'.format(
-                    method, modifier.__name__
-                )
+                'Expected {method:s} method on modifier {modifier.__name__:s}'
             )
     return True
 
