@@ -80,9 +80,7 @@ def process_sample(
 
     for modtag in modtags:
         modtags.set_description(
-            '  - modifier {:s}({:s})'.format(
-                modtag.attrib.get('Name', 'n/a'), modtag.tag
-            )
+            "  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})"
         )
         if modtag == sample:
             continue
@@ -312,9 +310,7 @@ def dedupe_parameters(parameters):
             for p in parameter_list:
                 log.warning(p)
             raise RuntimeError(
-                'cannot import workspace due to incompatible parameter configurations for {:s}.'.format(
-                    parname
-                )
+                'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
             )
     # no errors raised, de-dupe and return
     return list({v['name']: v for v in parameters}.values())
