@@ -65,9 +65,7 @@ class EqDelimStringParamType(click.ParamType):
         try:
             return options_from_eqdelimstring([value])
         except IndexError:
-            self.fail(
-                f'{value:s} is not a valid equal-delimited string', param, ctx
-            )
+            self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
 
 
 def digest(obj, algorithm='sha256'):

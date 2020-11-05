@@ -152,9 +152,9 @@ def _join_observations(join, left_observations, right_observations):
     """
     joined_observations = _join_items(join, left_observations, right_observations)
     if join == 'none':
-        common_observations = {
-            obs['name'] for obs in left_observations
-        }.intersection(obs['name'] for obs in right_observations)
+        common_observations = {obs['name'] for obs in left_observations}.intersection(
+            obs['name'] for obs in right_observations
+        )
         if common_observations:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -226,9 +226,9 @@ def _join_measurements(join, left_measurements, right_measurements):
     """
     joined_measurements = _join_items(join, left_measurements, right_measurements)
     if join == 'none':
-        common_measurements = {
-            meas['name'] for meas in left_measurements
-        }.intersection(meas['name'] for meas in right_measurements)
+        common_measurements = {meas['name'] for meas in left_measurements}.intersection(
+            meas['name'] for meas in right_measurements
+        )
         if common_measurements:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -244,8 +244,7 @@ def _join_measurements(join, left_measurements, right_measurements):
         incompatible_poi = [
             measurement_name
             for measurement_name, measurements in _measurement_mapping.items()
-            if len({measurement['config']['poi'] for measurement in measurements})
-            > 1
+            if len({measurement['config']['poi'] for measurement in measurements}) > 1
         ]
         if incompatible_poi:
             raise exceptions.InvalidWorkspaceOperation(
