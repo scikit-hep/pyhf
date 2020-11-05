@@ -26,12 +26,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
         for sample in channel['samples']:
             if len(sample['data']) != channel_nbins[channel['name']]:
                 raise exceptions.InvalidModel(
-                    'The sample {:s} has {:d} bins, but the channel it belongs to ({:s}) has {:d} bins.'.format(
-                        sample['name'],
-                        len(sample['data']),
-                        channel['name'],
-                        channel_nbins[channel['name']],
-                    )
+                    "The sample {sample['name']:s} has {len(sample['data']):d} bins, but the channel it belongs to ({channel['name']:s}) has {channel_nbins[channel['name']]:d} bins."
                 )
             for modifier_def in sample['modifiers']:
                 # get the paramset requirements for the given modifier. If
@@ -42,9 +37,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                     ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
-                        'Modifier not implemented yet (processing {:s}). Available modifiers: {}'.format(
-                            modifier_def['type'], modifiers.registry.keys()
-                        )
+                        "Modifier not implemented yet (processing {modifier_def['type']:s}). Available modifiers: {modifiers.registry.keys()}"
                     )
                     raise exceptions.InvalidModifier()
 
@@ -298,9 +291,7 @@ class _ModelConfig(_ChannelSummaryMixin):
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The parameter of interest '{:s}' cannot be fit as it is not declared in the model specification.".format(
-                    name
-                )
+                "The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
