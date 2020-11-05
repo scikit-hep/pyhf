@@ -301,6 +301,6 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
     return (
-        "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode()
+        b"<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n"
         + ET.tostring(combination, encoding='utf-8')
     )
