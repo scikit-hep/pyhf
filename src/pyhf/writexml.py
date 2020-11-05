@@ -27,11 +27,8 @@ log = logging.getLogger(__name__)
 
 
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
-    return "{prefix}{middle}{suffix}".format(
-        prefix=prefix,
-        suffix=suffix,
-        middle='_'.join(filter(lambda x: x, [channel, sample, modifier])),
-    )
+    middle = '_'.join(filter(lambda x: x, [channel, sample, modifier]))
+    return f"{prefix}{middle}{suffix}"
 
 
 def _export_root_histogram(histname, data):
