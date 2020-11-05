@@ -45,9 +45,7 @@ def add_to_registry(
         tensorlib, _ = get_backend()
         if not hasattr(tensorlib, pdf_type):
             raise exceptions.InvalidModifier(
-                'The specified pdf_type "{:s}" is not valid for {:s}({:s}). See pyhf.tensor documentation for available pdfs.'.format(
-                    pdf_type, cls_name, cls.__name__
-                )
+                'The specified pdf_type "{pdf_type:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.tensor documentation for available pdfs.'
             )
         cls.pdf_type = pdf_type
     else:
@@ -55,9 +53,7 @@ def add_to_registry(
 
     if op_code not in ['addition', 'multiplication']:
         raise exceptions.InvalidModifier(
-            'The specified op_code "{:s}" is not valid for {:s}({:s}). See pyhf.modifier documentation for available operation codes.'.format(
-                op_code, cls_name, cls.__name__
-            )
+            'The specified op_code "{op_code:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.modifier documentation for available operation codes.'
         )
     cls.op_code = op_code
 
@@ -168,9 +164,7 @@ def modifier(*args, **kwargs):
         return args[0]
     else:
         raise ValueError(
-            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({:d} given)'.format(
-                len(args)
-            )
+            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({len(args):d} given)'
         )
 
 
