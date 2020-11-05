@@ -17,7 +17,7 @@ def validate_modifier_structure(modifier):
     for method in required_methods:
         if not hasattr(modifier, method):
             raise exceptions.InvalidModifier(
-                'Expected {method:s} method on modifier {modifier.__name__:s}'
+                f'Expected {method:s} method on modifier {modifier.__name__:s}'
             )
     return True
 
@@ -43,7 +43,7 @@ def add_to_registry(
         tensorlib, _ = get_backend()
         if not hasattr(tensorlib, pdf_type):
             raise exceptions.InvalidModifier(
-                'The specified pdf_type "{pdf_type:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.tensor documentation for available pdfs.'
+                f'The specified pdf_type "{pdf_type:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.tensor documentation for available pdfs.'
             )
         cls.pdf_type = pdf_type
     else:
@@ -51,7 +51,7 @@ def add_to_registry(
 
     if op_code not in ['addition', 'multiplication']:
         raise exceptions.InvalidModifier(
-            'The specified op_code "{op_code:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.modifier documentation for available operation codes.'
+            f'The specified op_code "{op_code:s}" is not valid for {cls_name:s}({cls.__name__:s}). See pyhf.modifier documentation for available operation codes.'
         )
     cls.op_code = op_code
 
@@ -141,7 +141,7 @@ def modifier(*args, **kwargs):
         raise ValueError(f'Unparsed keyword arguments {kwargs.keys()}')
     # check to make sure the given name is a string, if passed in one
     if not isinstance(name, str) and name is not None:
-        raise TypeError('@modifier must be given a string. You gave it {type(name)}')
+        raise TypeError(f'@modifier must be given a string. You gave it {type(name)}')
 
     if not args:
         # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
@@ -160,7 +160,7 @@ def modifier(*args, **kwargs):
         return args[0]
     else:
         raise ValueError(
-            '@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({len(args):d} given)'
+            f'@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({len(args):d} given)'
         )
 
 

@@ -26,7 +26,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
         for sample in channel['samples']:
             if len(sample['data']) != channel_nbins[channel['name']]:
                 raise exceptions.InvalidModel(
-                    "The sample {sample['name']:s} has {len(sample['data']):d} bins, but the channel it belongs to ({channel['name']:s}) has {channel_nbins[channel['name']]:d} bins."
+                    f"The sample {sample['name']:s} has {len(sample['data']):d} bins, but the channel it belongs to ({channel['name']:s}) has {channel_nbins[channel['name']]:d} bins."
                 )
             for modifier_def in sample['modifiers']:
                 # get the paramset requirements for the given modifier. If
@@ -37,7 +37,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                     ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
-                        "Modifier not implemented yet (processing {modifier_def['type']:s}). Available modifiers: {modifiers.registry.keys()}"
+                        f"Modifier not implemented yet (processing {modifier_def['type']:s}). Available modifiers: {modifiers.registry.keys()}"
                     )
                     raise exceptions.InvalidModifier()
 
@@ -71,7 +71,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
     for parameter in spec.get('parameters', []):
         if parameter['name'] in _paramsets_user_configs:
             raise exceptions.InvalidModel(
-                "Multiple parameter configurations for {parameter['name']} were found."
+                f"Multiple parameter configurations for {parameter['name']} were found."
             )
         _paramsets_user_configs[parameter.pop('name')] = parameter
 
@@ -139,7 +139,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
             )
             mega_nom += nom
             defined_mods = (
-                {"{x['type']}/{x['name']}": x for x in defined_samp['modifiers']}
+                {f"{x['type']}/{x['name']}": x for x in defined_samp['modifiers']}
                 if defined_samp
                 else {}
             )
@@ -286,7 +286,7 @@ class _ModelConfig(_ChannelSummaryMixin):
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
+                f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
@@ -714,14 +714,14 @@ class Model:
             # Verify parameter and data shapes
             if pars.shape[-1] != self.config.npars:
                 raise exceptions.InvalidPdfParameters(
-                    'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
+                    f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
                 )
 
             if data.shape[-1] != self.nominal_rates.shape[-1] + len(
                 self.config.auxdata
             ):
                 raise exceptions.InvalidPdfData(
-                    'eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected'
+                    f'eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected'
                 )
 
             result = self.make_pdf(pars).log_prob(data)
@@ -733,7 +733,7 @@ class Model:
             return result
         except:
             log.error(
-                'eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
+                f'eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
             )
             raise
 

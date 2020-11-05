@@ -80,7 +80,7 @@ def process_sample(
 
     for modtag in modtags:
         modtags.set_description(
-            "  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})"
+            f"  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})"
         )
         if modtag == sample:
             continue
@@ -215,7 +215,7 @@ def process_channel(channelxml, rootdir, track_progress=False):
     results = []
     channel_parameter_configs = []
     for sample in samples:
-        samples.set_description("  - sample {sample.attrib.get('Name')}")
+        samples.set_description(f"  - sample {sample.attrib.get('Name')}")
         result = process_sample(
             sample, rootdir, inputfile, histopath, channelname, track_progress
         )
@@ -310,7 +310,7 @@ def dedupe_parameters(parameters):
             for p in parameter_list:
                 log.warning(p)
             raise RuntimeError(
-                'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
+                f'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
             )
     # no errors raised, de-dupe and return
     return list({v['name']: v for v in parameters}.values())

@@ -348,10 +348,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
                     log.debug(
-                        "measurements defined:\n\t{'\n\t'.join(self.measurement_names):s}"
+                        f"measurements defined:\n\t{'\n\t'.join(self.measurement_names):s}"
                     )
                     raise exceptions.InvalidMeasurement(
-                        'no measurement by name \'{measurement_name:s}\' was found in the workspace, pick from one of the valid ones above'
+                        f'no measurement by name \'{measurement_name:s}\' was found in the workspace, pick from one of the valid ones above'
                     )
                 measurement = self['measurements'][
                     self.measurement_names.index(measurement_name)
