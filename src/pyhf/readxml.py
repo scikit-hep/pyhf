@@ -215,7 +215,7 @@ def process_channel(channelxml, rootdir, track_progress=False):
     results = []
     channel_parameter_configs = []
     for sample in samples:
-        samples.set_description('  - sample {}'.format(sample.attrib.get('Name')))
+        samples.set_description("  - sample {sample.attrib.get('Name')}")
         result = process_sample(
             sample, rootdir, inputfile, histopath, channelname, track_progress
         )
