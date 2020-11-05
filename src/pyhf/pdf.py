@@ -71,9 +71,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
     for parameter in spec.get('parameters', []):
         if parameter['name'] in _paramsets_user_configs:
             raise exceptions.InvalidModel(
-                'Multiple parameter configurations for {} were found.'.format(
-                    parameter['name']
-                )
+                "Multiple parameter configurations for {parameter['name']} were found."
             )
         _paramsets_user_configs[parameter.pop('name')] = parameter
 
@@ -141,10 +139,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
             )
             mega_nom += nom
             defined_mods = (
-                {
-                    '{}/{}'.format(x['type'], x['name']): x
-                    for x in defined_samp['modifiers']
-                }
+                {"{x['type']}/{x['name']}": x for x in defined_samp['modifiers']}
                 if defined_samp
                 else {}
             )
@@ -719,18 +714,14 @@ class Model:
             # Verify parameter and data shapes
             if pars.shape[-1] != self.config.npars:
                 raise exceptions.InvalidPdfParameters(
-                    'eval failed as pars has len {} but {} was expected'.format(
-                        pars.shape[-1], self.config.npars
-                    )
+                    'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
                 )
 
             if data.shape[-1] != self.nominal_rates.shape[-1] + len(
                 self.config.auxdata
             ):
                 raise exceptions.InvalidPdfData(
-                    'eval failed as data has len {} but {} was expected'.format(
-                        data.shape[-1], self.config.nmaindata + self.config.nauxdata
-                    )
+                    'eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected'
                 )
 
             result = self.make_pdf(pars).log_prob(data)
@@ -742,9 +733,7 @@ class Model:
             return result
         except:
             log.error(
-                'eval failed for data {} pars: {}'.format(
-                    tensorlib.tolist(data), tensorlib.tolist(pars)
-                )
+                'eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
             )
             raise
 
