@@ -415,10 +415,13 @@ def test_combine(tmpdir, script_runner):
         'GammaExample': 'OtherGammaExample',
     }
 
-    command = f"pyhf rename {temp_1.strpath:s}"
-    +f"{''.join(' -c ' + ' '.join(item) for item in rename_channels.items()):s}"
-    +f"{''.join(' --measurement ' + ' '.join(item) for item in rename_measurements.items()):s}"
-    +f" --output-file {temp_2.strpath:s}"
+    _opts_channels = ''.join(
+        ' -c ' + ' '.join(item) for item in rename_channels.items()
+    )
+    _opts_measurements = ''.join(
+        ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+    )
+    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     command = f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s}'
@@ -440,10 +443,13 @@ def test_combine_outfile(tmpdir, script_runner):
         'GammaExample': 'OtherGammaExample',
     }
 
-    command = f"pyhf rename {temp_1.strpath:s}"
-    +f"{''.join(' -c ' + ' '.join(item) for item in rename_channels.items()):s}"
-    +f"{''.join(' --measurement ' + ' '.join(item) for item in rename_measurements.items()):s}"
-    +f" --output-file {temp_2.strpath:s}"
+    _opts_channels = ''.join(
+        ' -c ' + ' '.join(item) for item in rename_channels.items()
+    )
+    _opts_measurements = ''.join(
+        ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
+    )
+    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
     ret = script_runner.run(*shlex.split(command))
 
     tempout = tmpdir.join("combined_output.json")
