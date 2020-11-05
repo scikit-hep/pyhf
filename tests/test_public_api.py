@@ -45,7 +45,7 @@ def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
     assert isinstance(
         pyhf.tensorlib,
-        getattr(pyhf.tensor, "{:s}_backend".format(backend_name.decode("utf-8"))),
+        getattr(pyhf.tensor, f"{backend_name.decode('utf-8'):s}_backend"),
     )
 
 
@@ -54,7 +54,7 @@ def test_set_optimizer_by_bytestring(optimizer_name):
     pyhf.set_backend(pyhf.tensorlib, optimizer_name)
     assert isinstance(
         pyhf.optimizer,
-        getattr(pyhf.optimize, "{:s}_optimizer".format(optimizer_name.decode("utf-8"))),
+        getattr(pyhf.optimize, f"{optimizer_name.decode('utf-8'):s}_optimizer"),
     )
 
 
