@@ -306,6 +306,23 @@ class AsymptoticCalculator:
             )
         return teststat
 
+    def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+        CLsb = sig_plus_bkg_distribution.pvalue(teststat)
+        CLb = b_only_distribution.pvalue(teststat)
+        CLs = CLsb / CLb
+        return CLsb, CLb, CLs
+
+    def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+        tb, _ = get_backend()
+        return tb.astensor(
+            [
+                self.pvalues(v, sig_plus_bkg_distribution, b_only_distribution)
+                for v in [
+                    b_only_distribution.expected_value(x) for x in [2, 1, 0, -1, -2]
+                ]
+            ]
+        ).T
+
 
 class EmpiricalDistribution:
     """
@@ -378,7 +395,11 @@ class EmpiricalDistribution:
         """
         tensorlib, _ = get_backend()
         return (
-            tensorlib.sum(tensorlib.where(self.samples >= value, 1, 0))
+            tensorlib.sum(
+                tensorlib.where(
+                    self.samples >= value, tensorlib.astensor(1), tensorlib.astensor(0)
+                )
+            )
             / tensorlib.shape(self.samples)[0]
         )
 
@@ -573,6 +594,31 @@ class ToyCalculator:
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
         return s_plus_b, b_only
+
+    def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+        CLsb = sig_plus_bkg_distribution.pvalue(teststat)
+        CLb = b_only_distribution.pvalue(teststat)
+        CLs = CLsb / CLb
+        return CLsb, CLb, CLs
+
+    def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+        tb, _ = get_backend()
+        pvalues = tb.astensor(
+            [
+                self.pvalues(
+                    tb.astensor(x), sig_plus_bkg_distribution, b_only_distribution
+                )
+                for x in b_only_distribution.samples
+            ]
+        )
+        import numpy as np
+
+        pvalues_exp = np.percentile(
+            tb.tolist(pvalues),
+            [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681],
+            axis=0,
+        )
+        return tb.astensor(pvalues_exp).T
 
     def teststatistic(self, poi_test):
         """

@@ -141,57 +141,31 @@ def hypotest(
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
-    CLsb = sig_plus_bkg_distribution.pvalue(teststat)
-    CLb = b_only_distribution.pvalue(teststat)
-    CLs = CLsb / CLb
-
-    tensorlib, _ = get_backend()
-    # Ensure that all CL values are 0-d tensors
-    CLsb, CLb, CLs = (
-        tensorlib.astensor(CLsb),
-        tensorlib.astensor(CLb),
-        tensorlib.astensor(CLs),
+    pvalues = CLsb_obs, CLb_obs, CLs_obs = calc.pvalues(
+        teststat, sig_plus_bkg_distribution, b_only_distribution
+    )
+    tb, _ = get_backend()
+    CLsb_obs, CLb_obs, CLs_obs = tuple(tb.astensor(x) for x in pvalues)
+    CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
+        sig_plus_bkg_distribution, b_only_distribution
     )
 
     is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
 
-    _returns = [CLsb if is_q0 else CLs]
+    _returns = [CLsb_obs if is_q0 else CLs_obs]
     if return_tail_probs:
         if is_q0:
-            _returns.append([CLb])
+            _returns.append([CLb_obs])
         else:
-            _returns.append([CLsb, CLb])
+            _returns.append([CLsb_obs, CLb_obs])
+
+    pvalues_exp = CLsb_exp if is_q0 else CLs_exp
     if return_expected_set:
-        CLs_exp = []
-        for n_sigma in [2, 1, 0, -1, -2]:
-
-            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
-
-            if is_q0:
-                # despite the name in this case this is the discovery p value
-                CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
-            else:
-                CLs = sig_plus_bkg_distribution.pvalue(
-                    expected_bonly_teststat
-                ) / b_only_distribution.pvalue(expected_bonly_teststat)
-            CLs_exp.append(tensorlib.astensor(CLs))
         if return_expected:
-            _returns.append(CLs_exp[2])
-        _returns.append(CLs_exp)
+            _returns.append(tb.astensor(pvalues_exp[2]))
+        _returns.append(pvalues_exp)
     elif return_expected:
-        n_sigma = 0
-        expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
-
-        if is_q0:
-            # despite the name in this case this is the discovery p value
-            CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
-        else:
-            CLs = sig_plus_bkg_distribution.pvalue(
-                expected_bonly_teststat
-            ) / b_only_distribution.pvalue(expected_bonly_teststat)
-
-        _returns.append(tensorlib.astensor(CLs))
-
+        _returns.append(tb.astensor(pvalues_exp[2]))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
