@@ -40,13 +40,10 @@ def StandardHypoTestDemo(
     sampler = hypoCalc.GetTestStatSampler()
     sampler.SetTestStatistic(profll)
 
-    paramPointNull = ROOT.RooArgSet(sbModel.GetParametersOfInterest())
-
     htr = hypoCalc.GetHypoTest()
     htr.SetPValueIsRightTail(True)
     htr.SetBackgroundAsAlt(True)
 
-    cls_obs = htr.CLs()
     ds = htr.GetNullDistribution()
     db = htr.GetAltDistribution()
 
