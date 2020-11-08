@@ -24,7 +24,6 @@ def StandardHypoTestDemo(
     var.setVal(oldval)
 
     var = sbModel.GetParametersOfInterest().first()
-    oldval = var.getVal()
     sbModel.SetSnapshot(ROOT.RooArgSet(var))
 
     profll = ROOT.RooStats.ProfileLikelihoodTestStat(bModel.GetPdf())

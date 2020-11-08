@@ -141,9 +141,7 @@ def hypotest(
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
-    pvalues = CLsb_obs, CLb_obs, CLs_obs = calc.pvalues(
-        teststat, sig_plus_bkg_distribution, b_only_distribution
-    )
+    pvalues = calc.pvalues(teststat, sig_plus_bkg_distribution, b_only_distribution)
     tb, _ = get_backend()
     CLsb_obs, CLb_obs, CLs_obs = tuple(tb.astensor(x) for x in pvalues)
     CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
