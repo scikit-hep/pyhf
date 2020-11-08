@@ -307,12 +307,14 @@ class AsymptoticCalculator:
         return teststat
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+        '''calculate pvalues.'''
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = b_only_distribution.pvalue(teststat)
         CLs = CLsb / CLb
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+        '''calculate expected pvalues.'''
         tb, _ = get_backend()
         return tb.astensor(
             [
@@ -596,12 +598,14 @@ class ToyCalculator:
         return s_plus_b, b_only
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+        '''calculate pvalues.'''
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = b_only_distribution.pvalue(teststat)
         CLs = CLsb / CLb
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+        '''calculate expected pvalues.'''
         tb, _ = get_backend()
         pvalues = tb.astensor(
             [
