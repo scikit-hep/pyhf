@@ -113,7 +113,7 @@ class minuit_optimizer(OptimizerMixin):
         minimizer.tol = tolerance
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
-        # https://github.com/scikit-hep/iminuit/blob/64acac11cfa2fb91ccbd02d1b3c51f8a9e2cc484/src/iminuit/_minimize.py#L102-L121
+        # https://github.com/scikit-hep/iminuit/blob/f12cd519aa08e244ad71f56fe7a97d42117196e4/src/iminuit/_minimize.py#L111-L130
         message = "Optimization terminated successfully."
         if not minimizer.valid:
             message = "Optimization failed."
@@ -141,7 +141,7 @@ class minuit_optimizer(OptimizerMixin):
             fun=minimizer.fval,
             hess_inv=hess_inv,
             message=message,
-            nfev=minimizer.nfcn,
-            njev=minimizer.ngrad,
+            nfev=minimizer.ncalls_total,
+            njev=minimizer.ngrads_total,
             minuit=minimizer,
         )
