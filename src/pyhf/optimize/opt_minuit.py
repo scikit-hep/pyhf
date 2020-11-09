@@ -142,6 +142,6 @@ class minuit_optimizer(OptimizerMixin):
             hess_inv=hess_inv,
             message=message,
             nfev=minimizer.nfcn,
-            njev=minimizer.ngrads,
+            njev=minimizer.ngrad,
             minuit=minimizer,
         )
