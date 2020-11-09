@@ -35,7 +35,7 @@ npoints = 2
 
 calc.RunFixedScan(npoints, 1.0, 1.2)
 
-result = calc.GetInterval() 
+result = calc.GetInterval()
 
 plot = ROOT.RooStats.HypoTestInverterPlot("plot", "plot", result)
 
@@ -45,17 +45,16 @@ for i in range(npoints):
     d = {
         'test_b': list(result.GetAltTestStatDist(i).GetSamplingDistribution()),
         'test_s': list(result.GetNullTestStatDist(i).GetSamplingDistribution()),
-        'pvals': list(result.GetExpectedPValueDist(i).GetSamplingDistribution())
+        'pvals': list(result.GetExpectedPValueDist(i).GetSamplingDistribution()),
     }
     data.append(d)
 
-json.dump(data,open('scan.json','w'))
+json.dump(data, open('scan.json', 'w'))
 
 c = ROOT.TCanvas()
 c.SetLogy(False)
 plot.Draw("OBS EXP CLb 2CL")
-c.GetListOfPrimitives().At(0).GetYaxis().SetRangeUser(0,0.2)
+c.GetListOfPrimitives().At(0).GetYaxis().SetRangeUser(0, 0.2)
 # c.GetYaxis().SetRangeUser(0,0.2)
 c.Draw()
 c.SaveAs('scan.pdf')
-
