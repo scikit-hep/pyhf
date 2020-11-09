@@ -31,6 +31,7 @@ def extract_error(hist):
 
     sumw2 = hist.member("fSumw2", none_if_missing=True)
     err = sumw2 if sumw2 else hist.to_numpy()[0]
+    print(f"\nerr: {err}\n")
     return np.sqrt(err).tolist()
 
 
@@ -48,8 +49,8 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     else:
         f = filecache[fullpath]
     try:
-        print(f)
-        print(f"name: {name}")
+        print(f"\nfile: {f}")
+        print(f"file name: {name}")
         hist = f[name]
     except KeyError or uproot4.deserialization.DeserializationError:
         try:
@@ -58,6 +59,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
             raise KeyError(
                 f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
             )
+    print(f"\nhist.to_numpy(): {hist.to_numpy()}\n")
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
