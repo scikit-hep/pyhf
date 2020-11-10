@@ -1,5 +1,9 @@
-import ROOT
+import sys
 import numpy as np
+import json
+import matplotlib.pyplot as plt
+import ROOT
+import pyhf
 
 
 def StandardHypoTestDemo(
@@ -68,7 +72,50 @@ def StandardHypoTestDemo(
     ROOT.gPad.SaveAs("plot.png")
 
 
-import sys
+def pyhf_version(ntoys=5000, seed=0):
+    np.random.seed(seed)
+    with open("validation/xmlimport_input_bkg.json") as ws_json:
+        workspace = pyhf.Workspace(json.load(ws_json))
+
+    model = workspace.model()
+    data = workspace.data(model)
+    toy_calculator = pyhf.infer.utils.create_calculator(
+        "toybased",
+        data,
+        model,
+        ntoys=ntoys,
+    )
+    test_mu = 1.0
+    sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(test_mu)
+    q_tilde = toy_calculator.teststatistic(test_mu)
+
+    bins = np.linspace(0, 8, 100)
+
+    fig, ax = plt.subplots()
+    ax.hist(
+        bkg_dist.samples / 2.0,
+        alpha=0.2,
+        bins=bins,
+        density=True,
+        label=r"$f(\tilde{q}|0)$ Background",
+    )
+    ax.hist(
+        sig_plus_bkg_dist.samples / 2.0,
+        alpha=0.2,
+        bins=bins,
+        density=True,
+        label=r"$f(\tilde{q}|1)$ Signal",
+    )
+    ax.axvline(q_tilde / 2, color="black", label="Observed test statistic")
+    ax.semilogy()
+
+    ax.set_xlabel(r"$\tilde{q}$")
+    ax.set_ylabel(r"$f(\tilde{q}|\mu')$")
+    ax.legend(loc="best")
+
+    fig.savefig("pyhf_version.png")
+
 
 if __name__ == '__main__':
     StandardHypoTestDemo(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 2000)
+    # pyhf_version()
