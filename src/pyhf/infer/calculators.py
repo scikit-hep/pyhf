@@ -602,8 +602,8 @@ class ToyCalculator:
             >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
             ...     data, model, ntoys=100, track_progress=False
             ... )
-            >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
-            >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
+            >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
+            >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
             (0.14, 0.76)
 
         Args:
@@ -669,14 +669,86 @@ class ToyCalculator:
         return s_plus_b, b_only
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
-        '''calculate pvalues.'''
+        r"""
+        Calculate the :math:`p`-values for the observed test statistic under the
+        signal + background and background-only model hypotheses.
+
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> q_tilde = toy_calculator.teststatistic(mu_test)
+            >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
+            >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
+            >>> CLsb, CLb, CLs
+            (0.01, 0.41, 0.024390243902439025)
+
+        Args:
+            teststat (:obj:`tensor`): The test statistic.
+            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the signal + background hypothesis.
+            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the background-only hypothesis.
+
+        Returns:
+            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            corresponding to the :math:`\mathrm{CL}_{s+b}`,
+            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
+        """
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = b_only_distribution.pvalue(teststat)
         CLs = CLsb / CLb
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
-        '''calculate expected pvalues.'''
+        r"""
+        Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the
+        median significance of variations of the signal strength from the
+        background only hypothesis :math:`\left(\mu=0\right)` at
+        :math:`(-2,-1,0,1,2)\sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> import numpy.random as random
+            >>> random.seed(0)
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+            ...     data, model, ntoys=100, track_progress=False
+            ... )
+            >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
+            >>> CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
+            >>> CLs_exp_band
+            [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]
+
+        Args:
+            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the signal + background hypothesis.
+            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the background-only hypothesis.
+
+        Returns:
+            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            corresponding to the :math:`\mathrm{CL}_{s+b}`,
+            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
+        """
         tb, _ = get_backend()
         pvalues = tb.astensor(
             [
