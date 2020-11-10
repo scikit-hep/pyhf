@@ -348,7 +348,42 @@ class AsymptoticCalculator:
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
-        '''calculate expected pvalues.'''
+        r"""
+        Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the
+        median significance of variations of the signal strength from the
+        background only hypothesis :math:`\left(\mu=0\right)` at
+        :math:`(-2,-1,0,1,2)\sigma`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> observations = [51, 48]
+            >>> data = observations + model.config.auxdata
+            >>> mu_test = 1.0
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(
+            ...     data, model, qtilde=True
+            ... )
+            >>> _ = asymptotic_calculator.teststatistic(mu_test)
+            >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
+            >>> CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
+            >>> CLs_exp_band
+            [0.0026062609501074576, 0.01382005356161206, 0.06445320535890459, 0.23525643861460702, 0.573036205919389]
+
+        Args:
+            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the signal + background hypothesis.
+            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+              The distribution for the background-only hypothesis.
+
+        Returns:
+            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            corresponding to the :math:`\mathrm{CL}_{s+b}`,
+            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
+        """
         tb, _ = get_backend()
         return tb.astensor(
             [
