@@ -117,7 +117,7 @@ def pyhf_version(ntoys=5000, seed=0):
     fig.savefig("pyhf_version.png")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     StandardHypoTestDemo(
         infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
     )
