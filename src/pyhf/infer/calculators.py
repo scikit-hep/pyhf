@@ -753,11 +753,15 @@ class ToyCalculator:
         pvalues = tb.astensor(
             [
                 self.pvalues(
-                    tb.astensor(x), sig_plus_bkg_distribution, b_only_distribution
+                    tb.astensor(test_stat),
+                    sig_plus_bkg_distribution,
+                    b_only_distribution,
                 )
-                for x in b_only_distribution.samples
+                for test_stat in b_only_distribution.samples
             ]
         )
+        # TODO: Add percentile to tensorlib
+        # c.f. Issue #815, PR #817
         import numpy as np
 
         pvalues_exp = np.percentile(
