@@ -141,9 +141,13 @@ def hypotest(
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
-    pvalues = calc.pvalues(teststat, sig_plus_bkg_distribution, b_only_distribution)
     tb, _ = get_backend()
-    CLsb_obs, CLb_obs, CLs_obs = tuple(tb.astensor(x) for x in pvalues)
+    CLsb_obs, CLb_obs, CLs_obs = tuple(
+        tb.astensor(pvalue)
+        for pvalue in calc.pvalues(
+            teststat, sig_plus_bkg_distribution, b_only_distribution
+        )
+    )
     CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
         sig_plus_bkg_distribution, b_only_distribution
     )
@@ -157,13 +161,13 @@ def hypotest(
         else:
             _returns.append([CLsb_obs, CLb_obs])
 
-    pvalues_exp = CLsb_exp if is_q0 else CLs_exp
+    pvalues_exp_band = CLsb_exp if is_q0 else CLs_exp
     if return_expected_set:
         if return_expected:
-            _returns.append(tb.astensor(pvalues_exp[2]))
-        _returns.append(pvalues_exp)
+            _returns.append(tb.astensor(pvalues_exp_band[2]))
+        _returns.append(pvalues_exp_band)
     elif return_expected:
-        _returns.append(tb.astensor(pvalues_exp[2]))
+        _returns.append(tb.astensor(pvalues_exp_band[2]))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
