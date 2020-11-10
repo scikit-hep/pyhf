@@ -768,8 +768,8 @@ class ToyCalculator:
             tb.tolist(pvalues),
             [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681],
             axis=0,
-        )
-        return tb.astensor(pvalues_exp).T
+        ).T.tolist()
+        return pvalues_exp
 
     def teststatistic(self, poi_test):
         """
