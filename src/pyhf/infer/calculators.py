@@ -764,12 +764,13 @@ class ToyCalculator:
         # c.f. Issue #815, PR #817
         import numpy as np
 
-        pvalues_exp = np.percentile(
+        _percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
+        pvalues_exp_band = np.percentile(
             tb.tolist(pvalues),
-            [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681],
+            _percentiles,
             axis=0,
         ).T.tolist()
-        return pvalues_exp
+        return pvalues_exp_band
 
     def teststatistic(self, poi_test):
         """
