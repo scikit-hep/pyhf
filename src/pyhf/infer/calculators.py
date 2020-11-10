@@ -384,12 +384,14 @@ class AsymptoticCalculator:
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
+        # Calling pvalues is easier then repeating the CLs calculation here
         tb, _ = get_backend()
         return tb.astensor(
             [
-                self.pvalues(v, sig_plus_bkg_distribution, b_only_distribution)
-                for v in [
-                    b_only_distribution.expected_value(x) for x in [2, 1, 0, -1, -2]
+                self.pvalues(test_stat, sig_plus_bkg_distribution, b_only_distribution)
+                for test_stat in [
+                    b_only_distribution.expected_value(n_sigma)
+                    for n_sigma in [2, 1, 0, -1, -2]
                 ]
             ]
         ).T
