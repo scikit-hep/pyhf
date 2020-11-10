@@ -696,9 +696,9 @@ class ToyCalculator:
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
-            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            b_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
@@ -739,9 +739,9 @@ class ToyCalculator:
             [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]
 
         Args:
-            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            b_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
