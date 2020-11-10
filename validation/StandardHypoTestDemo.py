@@ -92,6 +92,7 @@ def pyhf_version(ntoys=5000, seed=0):
     bins = np.linspace(0, 8, 100)
 
     fig, ax = plt.subplots()
+    # Compare to ROOT's choice of test stat being NLL instead of 2*NLL
     ax.hist(
         bkg_dist.samples / 2.0,
         alpha=0.2,
@@ -117,5 +118,7 @@ def pyhf_version(ntoys=5000, seed=0):
 
 
 if __name__ == '__main__':
-    StandardHypoTestDemo(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 2000)
+    StandardHypoTestDemo(
+        infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
+    )
     # pyhf_version()
