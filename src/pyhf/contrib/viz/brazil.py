@@ -23,3 +23,6 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     ax.fill_between(mutests, cls_exp[1], cls_exp[-2], facecolor='green')
     ax.plot(mutests, [test_size] * len(mutests), c='red')
     ax.set_ylim(0, 1)
+
+    ax.set_xlabel(r"$\mu$")
+    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
