@@ -3,7 +3,15 @@ import numpy as np
 
 
 def plot_results(ax, mutests, tests, test_size=0.05):
-    """Plot a series of hypothesis tests for various POI values."""
+    """
+    Plot a series of hypothesis tests for various POI values.
+
+    Args:
+        ax (ax):
+        mutests ():
+        tests ():
+        test_size (:obj:`float`):
+    """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
     ax.plot(mutests, cls_obs, c='black')
