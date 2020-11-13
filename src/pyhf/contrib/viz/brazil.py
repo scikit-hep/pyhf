@@ -6,6 +6,26 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     """
     Plot a series of hypothesis tests for various POI values.
 
+    Example:
+
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> import pyhf
+        >>> import pyhf.contrib.viz.brazil
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> results = [
+        ...     pyhf.infer.hypotest(test_poi, data, model, return_expected_set=True)
+        ...     for test_poi in poi_vals
+        ... ]
+        >>> fig, ax = plt.subplots()
+        >>> pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+
     Args:
         ax (ax):
         mutests ():
