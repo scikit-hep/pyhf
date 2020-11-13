@@ -46,5 +46,5 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     ax.plot(mutests, [test_size] * len(mutests), c='red')
     ax.set_ylim(0, 1)
 
-    ax.set_xlabel(r"$\mu$")
+    ax.set_xlabel(r"$\mu$ (POI)")
     ax.set_ylabel(r"$\mathrm{CL}_{s}$")
