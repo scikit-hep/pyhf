@@ -27,10 +27,12 @@ def plot_results(ax, mutests, tests, test_size=0.05):
         >>> pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
     Args:
-        ax (ax):
-        mutests ():
-        tests ():
-        test_size (:obj:`float`):
+        ax (`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
+        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+          hypothesis tests were performed.
+        tests (:obj:`list` or :obj:`array`): The :math:$\\mathrm{CL}_{s}$ values
+          from the hypothesis tests.
+        test_size (:obj:`float`): The size, :math:$\alpha$, of the test.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
