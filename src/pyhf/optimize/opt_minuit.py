@@ -10,7 +10,7 @@ class minuit_optimizer(OptimizerMixin):
     Optimizer that uses iminuit.Minuit.migrad.
     """
 
-    __slots__ = ['name', 'errordef', 'steps']
+    __slots__ = ['name', 'errordef', 'steps', 'strategy']
 
     def __init__(self, *args, **kwargs):
         """
