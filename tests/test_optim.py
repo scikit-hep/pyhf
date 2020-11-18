@@ -93,7 +93,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 32b
             'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
-            'do_grad-minuit-tensorflow-32b': [0.501288652420044, 1.0000219345092773],
+            'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
             #'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
             'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
