@@ -390,3 +390,15 @@ def test_export_data(mocker):
     assert data.attrib['HistoName']
     assert data.attrib['InputFile']
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
+
+
+def test_integer_data(datadir, mocker):
+    """
+    Test that a spec with only integer data will be written correctly
+    """
+    spec = json.load(open(datadir.join("workspace_integer_data.json")))
+    channel_spec = spec["channels"][0]
+    mocker.patch("pyhf.writexml._ROOT_DATA_FILE")
+
+    channel = pyhf.writexml.build_channel(spec, channel_spec, {})
+    assert channel

@@ -199,7 +199,9 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
                 np.divide(
                     a, b, out=np.zeros_like(a), where=np.asarray(b) != 0, dtype='float'
                 )
-                for a, b in np.array((modifierspec['data'], sampledata)).T
+                for a, b in np.array(
+                    (modifierspec['data'], sampledata), dtype="float"
+                ).T
             ],
         )
     elif modifierspec['type'] == 'shapefactor':
