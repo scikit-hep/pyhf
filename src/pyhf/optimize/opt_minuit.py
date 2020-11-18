@@ -27,10 +27,12 @@ class minuit_optimizer(OptimizerMixin):
         Args:
             errordef (:obj:`float`): See minuit docs. Default is 1.0.
             steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is None.
         """
         self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)
         self.steps = kwargs.pop('steps', 1000)
+        self.strategy = kwargs.pop('strategy', None)
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -87,7 +89,7 @@ class minuit_optimizer(OptimizerMixin):
         Minimizer Options:
             maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
             return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
-            strategy: (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
@@ -96,7 +98,7 @@ class minuit_optimizer(OptimizerMixin):
         return_uncertainties = options.pop('return_uncertainties', False)
         # 0: Fast, user-provided gradient
         # 1: Default, no user-provided gradient
-        strategy = options.pop('strategy', not do_grad)
+        strategy = options.pop('strategy', self.strategy if self.strategy else not do_grad)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
