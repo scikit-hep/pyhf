@@ -1,0 +1,82 @@
+{
+    "channels": [
+        {
+            "name": "singlechannel",
+            "samples": [
+                {
+                    "data": [
+                        5
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "mu",
+                            "type": "normfactor"
+                        }
+                    ],
+                    "name": "signal"
+                },
+                {
+                    "data": [
+                        50
+                    ],
+                    "modifiers": [
+                        {
+                            "data": [
+                                6
+                            ],
+                            "name": "uncorr_bkguncrt",
+                            "type": "shapesys"
+                        }
+                    ],
+                    "name": "background"
+                }
+            ]
+        }
+    ],
+    "measurements": [
+        {
+            "config": {
+                "parameters": [
+                    {
+                        "bounds": [
+                            [
+                                0,
+                                10
+                            ]
+                        ],
+                        "fixed": false,
+                        "inits": [
+                            1
+                        ],
+                        "name": "mu"
+                    },
+                    {
+                        "bounds": [
+                            [
+                                1e-10,
+                                10
+                            ]
+                        ],
+                        "fixed": false,
+                        "inits": [
+                            1
+                        ],
+                        "name": "uncorr_bkguncrt"
+                    }
+                ],
+                "poi": "mu"
+            },
+            "name": "measurement"
+        }
+    ],
+    "observations": [
+        {
+            "data": [
+                50
+            ],
+            "name": "singlechannel"
+        }
+    ],
+    "version": "1.0.0"
+}

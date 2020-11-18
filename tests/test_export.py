@@ -172,57 +172,6 @@ def spec_shapefactor():
     return spec
 
 
-def spec_integer_data():
-    spec = {
-        "channels": [
-            {
-                "name": "singlechannel",
-                "samples": [
-                    {
-                        "name": "signal",
-                        "data": [5],
-                        "modifiers": [
-                            {"name": "mu", "type": "normfactor", "data": None}
-                        ],
-                    },
-                    {
-                        "name": "background",
-                        "data": [50],
-                        "modifiers": [
-                            {"name": "uncorr_bkguncrt", "type": "shapesys", "data": [6]}
-                        ],
-                    },
-                ],
-            }
-        ],
-        "version": "1.0.0",
-        "measurements": [
-            {
-                "name": "measurement",
-                "config": {
-                    "poi": "mu",
-                    "parameters": [
-                        {
-                            "bounds": [[0, 10]],
-                            "inits": [1],
-                            "fixed": False,
-                            "name": "mu",
-                        },
-                        {
-                            "bounds": [[1e-10, 10]],
-                            "inits": [1],
-                            "fixed": False,
-                            "name": "uncorr_bkguncrt",
-                        },
-                    ],
-                },
-            }
-        ],
-        "observations": [{"name": "singlechannel", "data": [50]}],
-    }
-    return spec
-
-
 def test_export_measurement():
     measurementspec = {
         "config": {
@@ -443,13 +392,13 @@ def test_export_data(mocker):
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
 
 
-def test_integer_data(mocker):
+def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly
     """
-    spec = spec_integer_data()
+    spec = json.load(open(datadir.join("workspace_integer_data.json")))
     channel_spec = spec["channels"][0]
-    mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
+    mocker.patch("pyhf.writexml._ROOT_DATA_FILE")
 
     channel = pyhf.writexml.build_channel(spec, channel_spec, {})
     assert channel
