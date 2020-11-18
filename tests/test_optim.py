@@ -177,6 +177,25 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
 
 
+def test_minuit_strategy_do_grad(mocker, backend):
+    """
+    ref: gh#1172
+
+    When there is a user-provided gradient, check that one automatically sets
+    the minuit strategy=0. When there is no user-provided gradient, check that
+    one automatically sets the minuit strategy=1.
+    """
+    pyhf.set_backend(pyhf.tensorlib, 'minuit')
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    do_grad = pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert spy.call_count == 1
+    assert spy.spy_return.minuit.strategy == not do_grad
+
+
 @pytest.mark.parametrize(
     'optimizer',
     [pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
