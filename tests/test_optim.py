@@ -195,6 +195,14 @@ def test_minuit_strategy_do_grad(mocker, backend):
     assert spy.call_count == 1
     assert not spy.spy_return.minuit.strategy == do_grad
 
+    pyhf.infer.mle.fit(data, m, strategy=0)
+    assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == 0
+
+    pyhf.infer.mle.fit(data, m, strategy=1)
+    assert spy.call_count == 3
+    assert spy.spy_return.minuit.strategy == 1
+
 
 @pytest.mark.parametrize(
     'optimizer',
