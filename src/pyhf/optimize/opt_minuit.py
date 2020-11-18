@@ -87,7 +87,7 @@ class minuit_optimizer(OptimizerMixin):
         Minimizer Options:
             maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
             return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
-            strategy: (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure based on `do_grad`.
+            strategy: (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
