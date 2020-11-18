@@ -118,6 +118,8 @@ class minuit_optimizer(OptimizerMixin):
         n = len(x0)
         hess_inv = default_backend.ones((n, n))
         if minimizer.valid:
+            # Extra call to hesse() after migrad() is always needed for good error estimates. If you pass a user-provided gradient to MINUIT, convergence is faster.
+            minimizer.hesse()
             hess_inv = minimizer.np_covariance()
 
         unc = None
