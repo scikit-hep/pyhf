@@ -87,17 +87,22 @@ class minuit_optimizer(OptimizerMixin):
         Minimizer Options:
             maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
             return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
+            strategy: (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure based on `do_grad`.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
         return_uncertainties = options.pop('return_uncertainties', False)
+        # 0: Fast, user-provided gradient
+        # 1: Default, no user-provided gradient
+        strategy = options.pop('strategy', not(do_grad))
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
             )
 
+        minimizer.strategy = strategy
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125
