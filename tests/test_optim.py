@@ -193,7 +193,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     do_grad = pyhf.tensorlib.default_do_grad
     pyhf.infer.mle.fit(data, m)
     assert spy.call_count == 1
-    assert spy.spy_return.minuit.strategy == not do_grad
+    assert not spy.spy_return.minuit.strategy == do_grad
 
 
 @pytest.mark.parametrize(
