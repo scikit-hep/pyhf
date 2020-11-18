@@ -96,7 +96,7 @@ class minuit_optimizer(OptimizerMixin):
         return_uncertainties = options.pop('return_uncertainties', False)
         # 0: Fast, user-provided gradient
         # 1: Default, no user-provided gradient
-        strategy = options.pop('strategy', not(do_grad))
+        strategy = options.pop('strategy', not (do_grad))
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
