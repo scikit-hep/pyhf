@@ -22,6 +22,9 @@ def cli():
     """
     from . import utils  # Guard CLI from missing extra
 
+    # TODO: https://github.com/scikit-hep/pyhf/issues/863
+    _ = utils  # Placate pyflakes
+
 
 @cli.command()
 @click.argument("archive-url")
