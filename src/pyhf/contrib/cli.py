@@ -3,7 +3,7 @@ import logging
 import click
 from pathlib import Path
 
-from . import utils
+# from . import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -57,6 +57,8 @@ def download(archive_url, output_directory, verbose, force, compress):
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
     """
     try:
+        from . import utils
+
         utils.download(archive_url, output_directory, force, compress)
 
         if verbose:
