@@ -22,7 +22,6 @@ class shapesys:
         return {
             'paramset_type': constrained_by_poisson,
             'n_parameters': n_parameters,
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': False,
             'inits': (1.0,) * n_parameters,

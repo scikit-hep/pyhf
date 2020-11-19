@@ -15,7 +15,6 @@ class histosys:
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': 1,
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'inits': (0.0,),

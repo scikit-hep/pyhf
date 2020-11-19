@@ -14,7 +14,6 @@ class staterror:
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': len(sample_data),
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'inits': (1.0,) * len(sample_data),

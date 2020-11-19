@@ -14,7 +14,6 @@ class normfactor:
         return {
             'paramset_type': unconstrained,
             'n_parameters': 1,
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'inits': (1.0,),
