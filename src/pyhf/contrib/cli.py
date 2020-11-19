@@ -3,8 +3,6 @@ import logging
 import click
 from pathlib import Path
 
-from . import utils
-
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
@@ -22,6 +20,10 @@ def cli():
 
             $ python -m pip install pyhf[contrib]
     """
+    from . import utils  # Guard CLI from missing extra
+
+    # TODO: https://github.com/scikit-hep/pyhf/issues/863
+    _ = utils  # Placate pyflakes
 
 
 @cli.command()
@@ -57,6 +59,8 @@ def download(archive_url, output_directory, verbose, force, compress):
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
     """
     try:
+        from . import utils
+
         utils.download(archive_url, output_directory, force, compress)
 
         if verbose:
