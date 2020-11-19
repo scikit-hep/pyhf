@@ -10,7 +10,7 @@ class minuit_optimizer(OptimizerMixin):
     Optimizer that uses iminuit.Minuit.migrad.
     """
 
-    __slots__ = ['name', 'errordef', 'steps', 'strategy']
+    __slots__ = ['name', 'errordef', 'steps', 'strategy', 'tolerance']
 
     def __init__(self, *args, **kwargs):
         """
@@ -28,11 +28,13 @@ class minuit_optimizer(OptimizerMixin):
             errordef (:obj:`float`): See minuit docs. Default is 1.0.
             steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
             strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is None.
+            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
         """
         self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)
         self.steps = kwargs.pop('steps', 1000)
         self.strategy = kwargs.pop('strategy', None)
+        self.tolerance = kwargs.pop('tolerance', 0.1)
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -101,12 +103,14 @@ class minuit_optimizer(OptimizerMixin):
         strategy = options.pop(
             'strategy', self.strategy if self.strategy else not do_grad
         )
+        tolerance = options.pop('tolerance', self.tolerance)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
             )
 
         minimizer.strategy = strategy
+        minimizer.tol = tolerance
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
         # https://github.com/scikit-hep/iminuit/blob/22f6ed7146c1d1f3274309656d8c04461dde5ba3/src/iminuit/_minimize.py#L106-L125

@@ -225,6 +225,19 @@ def test_minuit_strategy_global(mocker, backend, strategy):
     assert spy.spy_return.minuit.strategy == 1
 
 
+def test_set_tolerance(backend):
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    assert pyhf.infer.mle.fit(data, m, tolerance=0.01) is not None
+
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.scipy_optimizer(tolerance=0.01))
+    assert pyhf.infer.mle.fit(data, m) is not None
+
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(tolerance=0.01))
+    assert pyhf.infer.mle.fit(data, m) is not None
+
+
 @pytest.mark.parametrize(
     'optimizer',
     [pyhf.optimize.scipy_optimizer, pyhf.optimize.minuit_optimizer],
