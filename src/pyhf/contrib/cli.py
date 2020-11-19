@@ -3,8 +3,6 @@ import logging
 import click
 from pathlib import Path
 
-# from . import utils
-
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
