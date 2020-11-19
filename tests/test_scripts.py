@@ -562,7 +562,7 @@ def test_missing_contrib_extra(caplog):
         if "pyhf.contrib.utils" in sys.modules:
             reload(sys.modules["pyhf.contrib.utils"])
         else:
-            import_module("pyhf.cli")
+            import_module("pyhf.contrib.utils")
 
     with caplog.at_level(logging.ERROR):
         for line in [
@@ -577,10 +577,10 @@ def test_missing_contrib_extra(caplog):
 def test_missing_contrib_download(caplog):
     with mock.patch.dict(sys.modules):
         sys.modules["requests"] = None
-        if "pyhf.cli" in sys.modules:
-            reload(sys.modules["pyhf.cli"])
+        if "pyhf.contrib.utils" in sys.modules:
+            reload(sys.modules["pyhf.contrib.utils"])
         else:
-            import_module("pyhf.cli")
+            import_module("pyhf.contrib.utils")
 
         # Force environment for runner
         for module in [
