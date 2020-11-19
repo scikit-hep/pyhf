@@ -93,7 +93,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 32b
             'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
-            'do_grad-minuit-tensorflow-32b': [0.501288652420044, 1.0000219345092773],
+            'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
             #'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
             'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
@@ -175,6 +175,54 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]['do_grad'] == pyhf.tensorlib.default_do_grad
     pyhf.infer.mle.fit(data, m, do_grad=not (pyhf.tensorlib.default_do_grad))
     assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
+
+
+def test_minuit_strategy_do_grad(mocker, backend):
+    """
+    ref: gh#1172
+
+    When there is a user-provided gradient, check that one automatically sets
+    the minuit strategy=0. When there is no user-provided gradient, check that
+    one automatically sets the minuit strategy=1.
+    """
+    pyhf.set_backend(pyhf.tensorlib, 'minuit')
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    do_grad = pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert spy.call_count == 1
+    assert not spy.spy_return.minuit.strategy == do_grad
+
+    pyhf.infer.mle.fit(data, m, strategy=0)
+    assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == 0
+
+    pyhf.infer.mle.fit(data, m, strategy=1)
+    assert spy.call_count == 3
+    assert spy.spy_return.minuit.strategy == 1
+
+
+@pytest.mark.parametrize('strategy', [0, 1])
+def test_minuit_strategy_global(mocker, backend, strategy):
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy))
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    do_grad = pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert spy.call_count == 1
+    assert spy.spy_return.minuit.strategy == strategy if do_grad else 1
+
+    pyhf.infer.mle.fit(data, m, strategy=0)
+    assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == 0
+
+    pyhf.infer.mle.fit(data, m, strategy=1)
+    assert spy.call_count == 3
+    assert spy.spy_return.minuit.strategy == 1
 
 
 @pytest.mark.parametrize(
