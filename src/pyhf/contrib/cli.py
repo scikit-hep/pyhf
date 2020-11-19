@@ -20,6 +20,7 @@ def cli():
 
             $ python -m pip install pyhf[contrib]
     """
+    from . import utils
 
 
 @cli.command()
@@ -55,8 +56,6 @@ def download(archive_url, output_directory, verbose, force, compress):
         :class:`~pyhf.exceptions.InvalidArchiveHost`: if the provided archive host name is not known to be valid
     """
     try:
-        from . import utils
-
         utils.download(archive_url, output_directory, force, compress)
 
         if verbose:
