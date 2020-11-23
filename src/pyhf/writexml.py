@@ -5,7 +5,7 @@ import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
-import uproot as uproot3
+import uproot3
 from uproot_methods.classes import TH1
 
 # TODO: Move to uproot4 when ROOT file writing is supported
