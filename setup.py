@@ -20,7 +20,7 @@ extras_require['backends'] = sorted(
     )
 )
 extras_require['contrib'] = sorted({'matplotlib', 'requests'})
-extras_require['lint'] = sorted({'pyflakes', 'black'})
+extras_require['lint'] = sorted({'flake8', 'black'})
 
 extras_require['test'] = sorted(
     set(
@@ -29,7 +29,6 @@ extras_require['test'] = sorted(
         + extras_require['contrib']
         + extras_require['shellcomplete']
         + [
-            'flake8',
             'pytest~=6.0',
             'pytest-cov>=2.5.1',
             'pytest-mock',
