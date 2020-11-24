@@ -731,9 +731,10 @@ class Model:
             ):  # force to be not scalar, should we changed with #522
                 return tensorlib.reshape(result, (1,))
             return result
-        except:  # noqa: E722
+        except Exception as excep:
             log.error(
-                f'eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
+                str(excep)
+                + f'\nEval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
             )
             raise
 
