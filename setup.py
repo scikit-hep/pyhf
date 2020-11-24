@@ -8,7 +8,7 @@ extras_require = {
     ],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
-    'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
+    'xmlio': ['uproot3~=3.14'],  # Future proof against uproot4 API changes
     'minuit': ['iminuit~=1.4.3'],  # v1.5.0 breaks pyhf for 32b TensorFlow and PyTorch
 }
 extras_require['backends'] = sorted(
@@ -40,7 +40,6 @@ extras_require['test'] = sorted(
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
             'jupyter',
-            'uproot~=3.3',
             'graphviz',
             'jsonpatch',
         ]
