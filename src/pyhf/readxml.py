@@ -40,7 +40,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     path = path or ''
     path = path.strip('/')
     fullpath = str(Path(rootdir).joinpath(filename))
-    if not fullpath in filecache:
+    if fullpath not in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
     else:
