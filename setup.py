@@ -40,7 +40,6 @@ extras_require['test'] = sorted(
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
             'jupyter',
-            'uproot~=3.3',
             'graphviz',
             'jsonpatch',
         ]
