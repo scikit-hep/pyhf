@@ -733,7 +733,7 @@ class Model:
             return result
         except Exception as excep:
             log.error(
-                str(excep)
+                repr(excep)
                 + f'\nEval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}'
             )
             raise
