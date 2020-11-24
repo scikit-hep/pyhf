@@ -186,7 +186,6 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-from . import intervals
+from . import intervals  # noqa: F401
 
-# TODO: Can remove intervals when switch to flake8 (Issue #863)
-__all__ = ["hypotest", "intervals"]
+__all__ = ["hypotest"]
