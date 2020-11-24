@@ -59,7 +59,7 @@ getattr(w, 'import')(modelConfig)
 w.Print()
 
 
-##### model building complete
+# model building complete
 
 
 sbModel = w.obj('ModelConfig')
