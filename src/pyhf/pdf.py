@@ -731,7 +731,7 @@ class Model:
             ):  # force to be not scalar, should we changed with #522
                 return tensorlib.reshape(result, (1,))
             return result
-        except Exception as excep:
+        except Exception:
             log.error(
                 f"Eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}",
                 exc_info=True,
