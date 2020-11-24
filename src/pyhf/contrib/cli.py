@@ -20,10 +20,7 @@ def cli():
 
             $ python -m pip install pyhf[contrib]
     """
-    from . import utils  # Guard CLI from missing extra
-
-    # TODO: https://github.com/scikit-hep/pyhf/issues/863
-    _ = utils  # Placate pyflakes
+    from . import utils  # Guard CLI from missing extra # noqa: F401
 
 
 @cli.command()

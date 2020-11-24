@@ -21,9 +21,9 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed -U -q --no-cache-dir -e .[lint]
         python -m pip list
-    - name: Lint with Pyflakes
+    - name: Lint with flake8
       run: |
-        python -m pyflakes .
+        python -m flake8 .
     - name: Lint with Black
       run: |
         black --check --diff --verbose .

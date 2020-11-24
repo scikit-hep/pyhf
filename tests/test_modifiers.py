@@ -13,6 +13,7 @@ modifiers_to_test = [
 ]
 modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
 
+
 # we make sure we can import all of our pre-defined modifiers correctly
 @pytest.mark.parametrize(
     "test_modifierPair", zip(modifiers_to_test, modifier_pdf_types)

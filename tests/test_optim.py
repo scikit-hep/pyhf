@@ -7,6 +7,7 @@ from scipy.optimize import minimize, OptimizeResult
 import iminuit
 import itertools
 
+
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
@@ -81,10 +82,10 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # no grad, minuit, 32b - not very consistent for pytorch
             'no_grad-minuit-numpy-32b': [0.49622172117233276, 1.0007264614105225],
             #    nb: macos gives different numerics than CI
-            #'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
+            # 'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
             'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
             'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            #'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
+            # 'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
             'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
@@ -94,7 +95,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # do grad, minuit, 32b
             'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
             'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
-            #'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
+            # 'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
             'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
             'do_grad-minuit-pytorch-64b': [0.500273961181471, 0.9996310135736226],

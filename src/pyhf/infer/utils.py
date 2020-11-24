@@ -36,6 +36,6 @@ def create_calculator(calctype, *args, **kwargs):
     Returns:
         calculator (:obj:`object`): A calculator.
     """
-    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator,}[
-        calctype
-    ](*args, **kwargs)
+    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator}[calctype](
+        *args, **kwargs
+    )
