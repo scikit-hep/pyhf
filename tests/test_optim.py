@@ -406,7 +406,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape[1] == 2
-    assert pyhf.tensorlib.tolist(result)
+    assert pytest.approx([0.0, 0.26418431]) == pyhf.tensorlib.tolist(result[:, 1])
 
 
 @pytest.mark.parametrize(
