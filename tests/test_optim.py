@@ -351,7 +351,7 @@ def test_optim(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
     )
     assert pyhf.tensorlib.tolist(result)
 
@@ -375,7 +375,7 @@ def test_optim_with_value(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
         return_fitted_val=True,
     )
     assert pyhf.tensorlib.tolist(result)
@@ -403,7 +403,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
         return_uncertainties=True,
     )
     assert result.shape[1] == 2
