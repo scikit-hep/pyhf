@@ -278,7 +278,7 @@ def test_pdf_calculations(backend):
         nan_ok=True,
     )
 
-    # Ensure continous approximation is valid
+    # Ensure continuous approximation is valid
     assert tb.tolist(
         tb.poisson(tb.astensor([0.5, 1.1, 1.5]), tb.astensor(1.0))
     ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
