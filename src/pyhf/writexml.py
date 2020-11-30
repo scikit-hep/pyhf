@@ -6,7 +6,7 @@ import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
 import uproot3 as uproot
-from uproot_methods.classes import TH1
+from uproot3_methods.classes import TH1
 
 from .mixins import _ChannelSummaryMixin
 
