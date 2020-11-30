@@ -351,7 +351,7 @@ class jax_backend:
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -373,7 +373,7 @@ class jax_backend:
                                     (the expected number of events)
 
         Returns:
-            JAX ndarray: Value of the continous approximation to Poisson(n|lam)
+            JAX ndarray: Value of the continuous approximation to Poisson(n|lam)
         """
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
