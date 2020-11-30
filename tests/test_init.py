@@ -41,7 +41,7 @@ def test_missing_backends(isolate_modules, param):
 
     try:
         delattr(pyhf.tensor, module_name)
-    except:  # noqa: E722
+    except AttributeError:
         pass
 
     with expectation:
@@ -80,7 +80,7 @@ def test_missing_optimizer(isolate_modules, param):
     )
     try:
         delattr(pyhf.optimize, module_name)
-    except:  # noqa: E722
+    except AttributeError:
         pass
 
     with expectation:
