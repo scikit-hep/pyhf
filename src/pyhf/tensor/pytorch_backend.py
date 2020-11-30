@@ -319,7 +319,7 @@ class pytorch_backend:
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -341,7 +341,7 @@ class pytorch_backend:
                                     (the expected number of events)
 
         Returns:
-            PyTorch FloatTensor: Value of the continous approximation to Poisson(n|lam)
+            PyTorch FloatTensor: Value of the continuous approximation to Poisson(n|lam)
         """
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 

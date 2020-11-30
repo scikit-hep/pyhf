@@ -333,7 +333,7 @@ class numpy_backend:
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -355,7 +355,7 @@ class numpy_backend:
                                     (the expected number of events)
 
         Returns:
-            NumPy float: Value of the continous approximation to Poisson(n|lam)
+            NumPy float: Value of the continuous approximation to Poisson(n|lam)
         """
         n = np.asarray(n)
         lam = np.asarray(lam)

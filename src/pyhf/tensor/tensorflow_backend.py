@@ -383,7 +383,7 @@ class tensorflow_backend:
 
     def poisson_logpdf(self, n, lam):
         r"""
-        The log of the continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The log of the continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -406,13 +406,13 @@ class tensorflow_backend:
                                     (the expected number of events)
 
         Returns:
-            TensorFlow Tensor: Value of the continous approximation to log(Poisson(n|lam))
+            TensorFlow Tensor: Value of the continuous approximation to log(Poisson(n|lam))
         """
         return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -435,7 +435,7 @@ class tensorflow_backend:
                                     (the expected number of events)
 
         Returns:
-            TensorFlow Tensor: Value of the continous approximation to Poisson(n|lam)
+            TensorFlow Tensor: Value of the continuous approximation to Poisson(n|lam)
         """
         return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
