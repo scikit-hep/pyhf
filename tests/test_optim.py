@@ -420,20 +420,20 @@ def test_minuit_failed_optimization(
     monkeypatch, mocker, has_reached_call_limit, is_above_max_edm
 ):
     class BadMinuit(iminuit.Minuit):
-        @classmethod
-        def from_array_func(cls, *args, **kwargs):
-            """
-            from_array_func won't need mocker in a newer version of iminuit
-
-            See scikit-hep/iminuit#464 for more details
-            """
-            self = super().from_array_func(*args, **kwargs)
-            mock = mocker.MagicMock(wraps=self)
-            mock.valid = False
-            mock.fmin.has_reached_call_limit = has_reached_call_limit
-            mock.fmin.is_above_max_edm = is_above_max_edm
-            return mock
-
+        # @classmethod
+        # def from_array_func(cls, *args, **kwargs):
+        #     """
+        #     from_array_func won't need mocker in a newer version of iminuit
+        #
+        #     See scikit-hep/iminuit#464 for more details
+        #     """
+        #     self = super().from_array_func(*args, **kwargs)
+        #     mock = mocker.MagicMock(wraps=self)
+        #     mock.valid = False
+        #     mock.fmin.has_reached_call_limit = has_reached_call_limit
+        #     mock.fmin.is_above_max_edm = is_above_max_edm
+        #     return mock
+        #
         @property
         def valid(self):
             return False
