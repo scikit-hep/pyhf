@@ -9,7 +9,7 @@ extras_require = {
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
     'xmlio': ['uproot3~=3.14'],  # Future proof against uproot4 API changes
-    'minuit': ['iminuit~=1.5.3'],  # v1.5.0 breaks pyhf for 32b TensorFlow and PyTorch
+    'minuit': ['iminuit~=1.5.3'],
 }
 extras_require['backends'] = sorted(
     set(
