@@ -210,13 +210,13 @@ class jax_backend:
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
             >>> type(tensor)
-            <class 'jax.interpreters.xla.DeviceArray'>
+            <class 'jax.interpreters.xla._DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jax.interpreters.xla._DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
         try:
             dtype = self.dtypemap[dtype]
@@ -320,7 +320,7 @@ class jax_backend:
             tensor (Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla.DeviceArray`: A flattened array.
+            `jax.interpreters.xla._DeviceArray`: A flattened array.
         """
         return jnp.ravel(tensor)
 
