@@ -24,6 +24,21 @@ def test_version(script_runner):
     assert elapsed < 1.0
 
 
+@pytest.mark.parametrize("flag", ["--cite", "--citation"])
+def test_citation(script_runner, flag):
+    command = f'pyhf {flag}'
+    start = time.time()
+    ret = script_runner.run(*shlex.split(command))
+    end = time.time()
+    elapsed = end - start
+    assert ret.success
+    assert ret.stdout.startswith('@software{pyhf,')
+    # ensure there's not \n\n at the end
+    assert ret.stdout.endswith('}\n')
+    # make sure it took less than a second
+    assert elapsed < 1.0
+
+
 # see test_import.py for the same (detailed) test
 def test_import_prepHistFactory(tmpdir, script_runner):
     temp = tmpdir.join("parsed_output.json")
