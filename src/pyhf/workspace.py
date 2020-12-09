@@ -434,7 +434,8 @@ class Workspace(_ChannelSummaryMixin, dict):
             )
         except KeyError:
             log.error(
-                "Invalid channel: the workspace does not have observation data for one of the channels in the model."
+                "Invalid channel: the workspace does not have observation data for one of the channels in the model.",
+                exc_info=True,
             )
             raise
         if with_aux:

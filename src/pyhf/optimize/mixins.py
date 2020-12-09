@@ -48,7 +48,7 @@ class OptimizerMixin:
         try:
             assert result.success
         except AssertionError:
-            log.error(result)
+            log.error(result, exc_info=True)
             raise exceptions.FailedMinimization(result)
         return result
 

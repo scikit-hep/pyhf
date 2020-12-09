@@ -206,7 +206,9 @@ class numpy_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
         return np.asarray(tensor_in, dtype=dtype)
