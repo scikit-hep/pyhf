@@ -32,7 +32,7 @@ def cli():
 def xml2json(entrypoint_xml, basedir, output_file, track_progress):
     """Entrypoint XML: The top-level XML file for the PDF definition."""
     try:
-        import uproot
+        import uproot3 as uproot
 
         assert uproot
     except ImportError:
@@ -61,7 +61,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     """Convert pyhf JSON back to XML + ROOT files."""
     try:
-        import uproot
+        import uproot3 as uproot
 
         assert uproot
     except ImportError:

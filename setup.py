@@ -8,8 +8,8 @@ extras_require = {
     ],
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
-    'xmlio': ['uproot~=3.6'],  # Future proof against uproot4 API changes
-    'minuit': ['iminuit~=1.4.3'],  # v1.5.0 breaks pyhf for 32b TensorFlow and PyTorch
+    'xmlio': ['uproot3~=3.14'],  # Future proof against uproot4 API changes
+    'minuit': ['iminuit~=1.5.3'],
 }
 extras_require['backends'] = sorted(
     set(
@@ -19,8 +19,8 @@ extras_require['backends'] = sorted(
         + extras_require['minuit']
     )
 )
-extras_require['contrib'] = sorted(set(['matplotlib', 'requests']))
-extras_require['lint'] = sorted(set(['pyflakes', 'black']))
+extras_require['contrib'] = sorted({'matplotlib', 'requests'})
+extras_require['lint'] = sorted({'flake8', 'black'})
 
 extras_require['test'] = sorted(
     set(
@@ -40,25 +40,22 @@ extras_require['test'] = sorted(
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
             'jupyter',
-            'uproot~=3.3',
             'graphviz',
             'jsonpatch',
         ]
     )
 )
 extras_require['docs'] = sorted(
-    set(
-        [
-            'sphinx>=3.1.2',
-            'sphinxcontrib-bibtex',
-            'sphinx-click',
-            'sphinx_rtd_theme',
-            'nbsphinx',
-            'ipywidgets',
-            'sphinx-issues',
-            'sphinx-copybutton>0.2.9',
-        ]
-    )
+    {
+        'sphinx>=3.1.2',
+        'sphinxcontrib-bibtex',
+        'sphinx-click',
+        'sphinx_rtd_theme',
+        'nbsphinx',
+        'ipywidgets',
+        'sphinx-issues',
+        'sphinx-copybutton>0.2.9',
+    }
 )
 extras_require['develop'] = sorted(
     set(
