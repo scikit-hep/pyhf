@@ -132,3 +132,21 @@ def remove_prefix(text, prefix):
     if text.startswith(prefix):
         return text[len(prefix) :]
     return text
+
+
+def citation(oneline=False):
+    """
+    Get the bibtex citation for pyhf
+    """
+    path = Path(
+        pkg_resources.resource_filename(
+            __name__, str(Path('data').joinpath('citation.bib'))
+        )
+    )
+    with path.open() as fp:
+        # remove end-of-file newline if there is one
+        data = fp.read().strip()
+
+    if oneline:
+        data = ''.join(data.splitlines())
+    return data
