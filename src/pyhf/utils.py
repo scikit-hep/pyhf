@@ -137,6 +137,18 @@ def remove_prefix(text, prefix):
 def citation(oneline=False):
     """
     Get the bibtex citation for pyhf
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.utils.citation(True)
+        '@software{pyhf,  author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",  title = "{pyhf: v0.5.3}",  version = {0.5.3},  doi = {10.5281/zenodo.1169739},  url = {https://github.com/scikit-hep/pyhf},}'
+
+    Keyword Args:
+        oneline (:obj:`bool`): Whether to provide citation with new lines (default) or as a one-liner.
+
+    Returns:
+        citation (:obj:`str`): The citation for this software
     """
     path = Path(
         pkg_resources.resource_filename(
