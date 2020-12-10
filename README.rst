@@ -342,7 +342,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
 .. |Conda-forge version| image:: https://img.shields.io/conda/vn/conda-forge/pyhf.svg
-   :target: https://anaconda.org/conda-forge/pyhf
+   :target: https://github.com/conda-forge/pyhf-feedstock
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
 .. |Docker Stars| image:: https://img.shields.io/docker/stars/pyhf/pyhf.svg
