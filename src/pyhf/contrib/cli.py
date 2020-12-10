@@ -63,10 +63,9 @@ def download(archive_url, output_directory, verbose, force, compress):
         if verbose:
             file_list = [str(file) for file in list(Path(output_directory).glob("*"))]
             print("\n".join(file_list))
-    except AttributeError as excep:
-        exception_info = (
-            str(excep)
-            + "\nInstallation of the contrib extra is required to use the contrib CLI API"
-            + "\nPlease install with: python -m pip install pyhf[contrib]\n"
+    except AttributeError:
+        log.error(
+            "\nInstallation of the contrib extra is required to use the contrib CLI API"
+            + "\nPlease install with: python -m pip install pyhf[contrib]\n",
+            exc_info=True,
         )
-        log.error(exception_info)

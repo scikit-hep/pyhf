@@ -207,7 +207,9 @@ class tensorflow_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
         tensor = tensor_in
@@ -357,11 +359,11 @@ class tensorflow_backend:
         max_dim = max(map(tf.size, args))
         try:
             assert not [arg for arg in args if 1 < tf.size(arg) < max_dim]
-        except AssertionError as error:
+        except AssertionError:
             log.error(
                 'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
             )
-            raise error
+            raise
         return [tf.broadcast_to(arg, (max_dim,)) for arg in args]
 
     def einsum(self, subscripts, *operands):

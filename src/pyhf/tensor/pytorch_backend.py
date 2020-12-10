@@ -172,7 +172,9 @@ class pytorch_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
         return torch.as_tensor(tensor_in, dtype=dtype)
@@ -291,11 +293,13 @@ class pytorch_backend:
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
-        except AssertionError as error:
+        except AssertionError:
             log.error(
-                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
+                'ERROR: The arguments must be of compatible size: 1 or %i',
+                max_dim,
+                exc_info=True,
             )
-            raise error
+            raise
 
         broadcast = [arg if len(arg) > 1 else arg.expand(max_dim) for arg in args]
         return broadcast

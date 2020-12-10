@@ -58,9 +58,9 @@ try:
                     archive.extractall(output_directory)
 
 
-except ModuleNotFoundError as excep:
+except ModuleNotFoundError:
     log.error(
-        str(excep)
-        + "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
-        + "\nPlease install with: python -m pip install pyhf[contrib]\n"
+        "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
+        + "\nPlease install with: python -m pip install pyhf[contrib]\n",
+        exc_info=True,
     )
