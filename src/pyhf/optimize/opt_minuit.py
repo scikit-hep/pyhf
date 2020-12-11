@@ -147,7 +147,7 @@ class minuit_optimizer(OptimizerMixin):
 
         unc = None
         if return_uncertainties:
-            unc = minimizer.np_errors()
+            unc = minimizer.errors
 
         return scipy.optimize.OptimizeResult(
             x=minimizer.values,
