@@ -68,21 +68,21 @@ class minuit_optimizer(OptimizerMixin):
         #     print_level=self.verbose,
         #     errordef=self.errordef,
         # )
-        kwargs = dict(
-            error=step_sizes,
-            limit=init_bounds,
-            fix=fixed_bools,
-            print_level=self.verbose,
-            errordef=self.errordef,
-        )
+        # kwargs = dict(
+        #     error=step_sizes,
+        #     limit=init_bounds,
+        #     fix=fixed_bools,
+        #     print_level=self.verbose,
+        #     errordef=self.errordef,
+        # )
         # minuit = iminuit.Minuit(**kwargs)
-        minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac, **kwargs)
+        minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
         # minuit.start = init_pars
-        # minuit.error = step_sizes
-        # minuit.limit = init_bounds
-        # minuit.fix = fixed_bools
-        # minuit.print_level = self.verbose
-        # minuit.errordef = self.errordef
+        minuit.errors = step_sizes
+        minuit.limits = init_bounds
+        minuit.fixed = fixed_bools
+        minuit.print_level = self.verbose
+        minuit.errordef = self.errordef
         return minuit
 
     def _minimize(
