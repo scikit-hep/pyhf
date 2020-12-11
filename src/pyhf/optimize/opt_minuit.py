@@ -58,26 +58,7 @@ class minuit_optimizer(OptimizerMixin):
             wrapped_objective = objective_and_grad
             jac = None
 
-        # kwargs = dict(
-        #     fcn=wrapped_objective,
-        #     grad=jac,
-        #     start=init_pars,
-        #     error=step_sizes,
-        #     limit=init_bounds,
-        #     fix=fixed_bools,
-        #     print_level=self.verbose,
-        #     errordef=self.errordef,
-        # )
-        # kwargs = dict(
-        #     error=step_sizes,
-        #     limit=init_bounds,
-        #     fix=fixed_bools,
-        #     print_level=self.verbose,
-        #     errordef=self.errordef,
-        # )
-        # minuit = iminuit.Minuit(**kwargs)
         minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
-        # minuit.start = init_pars
         minuit.errors = step_sizes
         minuit.limits = init_bounds
         minuit.fixed = fixed_bools
