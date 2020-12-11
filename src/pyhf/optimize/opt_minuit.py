@@ -58,6 +58,9 @@ class minuit_optimizer(OptimizerMixin):
             wrapped_objective = objective_and_grad
             jac = None
 
+        # FAILING:
+        # * tests/test_optim.py
+        # * tests/test_validation.py
         minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
         minuit.errors = step_sizes
         minuit.limits = init_bounds
