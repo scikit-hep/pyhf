@@ -55,6 +55,16 @@ extensions = [
     'sphinx_copybutton',
     'xref',
 ]
+bibtex_bibfiles = [
+    "bib/docs.bib",
+    "bib/HEPData_likelihoods.bib",
+    "bib/media.bib",
+    "bib/posters.bib",
+    "bib/preferred.bib",
+    "bib/talks.bib",
+    "bib/tutorials.bib",
+    "bib/use_citations.bib",
+]
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
