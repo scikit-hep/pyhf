@@ -57,7 +57,7 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
-  uproot:
+  uproot3:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -75,7 +75,31 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/uproot.git
+        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/uproot3.git
+        python -m pip list
+    - name: Test with pytest
+      run: |
+        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
+  pytest:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip install --upgrade --no-cache-dir git+git://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
       run: |

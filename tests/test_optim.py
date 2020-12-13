@@ -380,7 +380,7 @@ def test_optim_with_value(backend, source, spec, mu):
     )
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.shape(fitted_val) == ()
-    assert pytest.approx(17.52954975, rel=1e-5) == fitted_val
+    assert pytest.approx(17.52954975, rel=1e-5) == pyhf.tensorlib.tolist(fitted_val)
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
