@@ -15,7 +15,7 @@ formats: all
 
 # python -m pip install .[docs]
 python:
-  version: 3.7
+  version: 3.8
   install:
     - method: pip
       path: .
