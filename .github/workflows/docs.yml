@@ -43,9 +43,10 @@ jobs:
     - name: Test and build docs
       run: |
         python -m doctest README.rst
-        python setup.py build_sphinx
+        cd docs
+        make html
+        make html # Second time for sphinxcontrib-bibtex
         touch docs/_build/html/.nojekyll
-        python setup.py build_sphinx
     - name: Check schemas are copied over
       run: |
         # is a directory
