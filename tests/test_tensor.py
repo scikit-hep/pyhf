@@ -85,6 +85,12 @@ def test_tensor_where_tensor(backend):
     )
 
 
+def test_tensor_to_numpy(backend):
+    tb = pyhf.tensorlib
+    array = [[1, 2, 3], [4, 5, 6]]
+    assert np.array_equal(tb.to_numpy(tb.astensor(array)), np.array(array))
+
+
 def test_tensor_ravel(backend):
     tb = pyhf.tensorlib
     assert (
