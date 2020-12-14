@@ -458,3 +458,30 @@ class pytorch_backend:
 
         """
         return torch.distributions.Normal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Convert the PyTorch tensor to a NumPy ``ndarray``.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]], dtype=float32)
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            ``numpy.ndarray``: The tensor conversion to a NumPy ``ndarray``.
+
+        """
+        return tensor_in.numpy()
