@@ -461,7 +461,7 @@ class pytorch_backend:
 
     def to_numpy(self, tensor_in):
         """
-        Convert the PyTorch tensor to a NumPy ``ndarray``.
+        Convert the PyTorch tensor to a :class:`numpy.ndarray`.
 
         Example:
             >>> import pyhf
@@ -481,7 +481,7 @@ class pytorch_backend:
             tensor_in (:obj:`tensor`): The input tensor object.
 
         Returns:
-            ``numpy.ndarray``: The tensor conversion to a NumPy ``ndarray``.
+            :class:`numpy.ndarray`: The tensor conversion to a NumPy ``ndarray``.
 
         """
         return tensor_in.numpy()
