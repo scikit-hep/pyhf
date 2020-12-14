@@ -513,7 +513,7 @@ class jax_backend:
             tensor_in (:obj:`tensor`): The input tensor object.
 
         Returns:
-            :class:`numpy.ndarray`: The tensor conversion to a NumPy ``ndarray``.
+            :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
 
         """
         return np.asarray(tensor_in, dtype=tensor_in.dtype)

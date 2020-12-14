@@ -472,3 +472,31 @@ class numpy_backend:
 
         """
         return _BasicNormal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Return the input tensor as it already is a :class:`numpy.ndarray`.
+        This API exists only for ``pyhf.tensorlib`` compatibility.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
+
+        """
+        return tensor_in
