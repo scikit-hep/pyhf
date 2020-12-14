@@ -490,3 +490,30 @@ class jax_backend:
 
         """
         return _BasicNormal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Convert the TensorFlow tensor to a :class:`numpy.ndarray`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The tensor conversion to a NumPy ``ndarray``.
+
+        """
+        return np.asarray(tensor_in, dtype=tensor_in.dtype)
