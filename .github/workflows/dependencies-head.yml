@@ -25,6 +25,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip uninstall --yes scipy
         python -m pip install --upgrade --no-cache-dir cython
         python -m pip install --upgrade --no-cache-dir git+git://github.com/scipy/scipy.git
         python -m pip list
@@ -50,6 +51,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip uninstall --yes iminuit
         python -m pip install --upgrade --no-cache-dir cython
         python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/iminuit.git
         python -m pip list
@@ -75,6 +77,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip uninstall --yes uproot3
         python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/uproot3.git
         python -m pip list
     - name: Test with pytest
@@ -99,6 +102,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip uninstall --yes pytest
         python -m pip install --upgrade --no-cache-dir git+git://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
