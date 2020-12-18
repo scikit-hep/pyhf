@@ -170,11 +170,9 @@ class AsymptoticCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (:obj:`bool`): When ``True`` use :func:`~pyhf.infer.test_statistics.qmu_tilde`
-             as the test statistic.
-             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
-            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic,
-             :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
+             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
+             approximation in Equation (62) of :xref:`arXiv:1007.1727`
              (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
              When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
 
@@ -464,7 +462,11 @@ class ToyCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative test statistic, :math:`\\tilde{q}`, as defined in Equation (62) of :xref:`arXiv:1007.1727`.
+            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
+             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
+             approximation in Equation (62) of :xref:`arXiv:1007.1727`
+             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
+             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
