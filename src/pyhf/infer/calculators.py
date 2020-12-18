@@ -161,7 +161,7 @@ class AsymptoticCalculator:
         fixed_params=None,
         qtilde=True,
     ):
-        """
+        r"""
         Asymptotic Calculator.
 
         Args:
@@ -453,7 +453,7 @@ class ToyCalculator:
         ntoys=2000,
         track_progress=True,
     ):
-        """
+        r"""
         Toy-based Calculator.
 
         Args:
