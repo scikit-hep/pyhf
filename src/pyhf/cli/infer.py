@@ -192,8 +192,6 @@ def cls(
 
     ws = Workspace(spec)
 
-    is_qtilde = teststat == 'qtilde'
-
     patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
     model = ws.model(
         measurement_name=measurement,
@@ -226,7 +224,7 @@ def cls(
         testpoi,
         ws.data(model),
         model,
-        qtilde=is_qtilde,
+        test_stat=teststat,
         calctype=calctype,
         return_expected_set=True,
     )

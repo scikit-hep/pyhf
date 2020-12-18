@@ -50,7 +50,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     """
     tb, _ = get_backend()
     results = [
-        hypotest(mu, data, model, qtilde=True, return_expected_set=True) for mu in scan
+        hypotest(mu, data, model, test_stat="qtilde", return_expected_set=True) for mu in scan
     ]
     obs = tb.astensor([[r[0]] for r in results])
     exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
