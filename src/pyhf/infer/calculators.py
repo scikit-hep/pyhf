@@ -49,9 +49,27 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
 
 def get_teststat_func(name):
+    """
+    Get the test statistic function by name.
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.infer.calculators.get_teststat_func("q")
+        <function qmu at 0x...>
+        >>> pyhf.infer.calculators.get_teststat_func("qtilde")
+        <function qmu_tilde at 0x...>
+
+    Args:
+        name (:obj:`str`): The name of the test statistic to retrieve
+
+
+    Returns:
+        callable: The test statistic function
+    """
     _mapping = {
         "q": qmu,
-        "qtilde": qtilde,
+        "qtilde": qmu_tilde,
     }
     try:
         return _mapping[name]
