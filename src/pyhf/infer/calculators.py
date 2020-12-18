@@ -301,7 +301,7 @@ class AsymptoticCalculator:
 
         if self.test_stat == "q":
             teststat = sqrtqmu_v - self.sqrtqmuA_v
-        elif self.test_stat == "qtilde":
+        else:  # qtilde
 
             def _true_case():
                 teststat = sqrtqmu_v - self.sqrtqmuA_v
