@@ -9,6 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
+from .. import exceptions
 from .test_statistics import qmu, qmu_tilde
 import tqdm
 
