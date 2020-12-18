@@ -9,8 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from .. import exceptions
-from .test_statistics import qmu, qmu_tilde
+from . import test_statistics
 import tqdm
 
 import logging
@@ -51,35 +50,6 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
     )
     return pdf.expected_data(bestfit_nuisance_asimov)
-
-
-def get_teststat_func(name):
-    """
-    Get the test statistic function by name.
-
-    Example:
-
-        >>> import pyhf
-        >>> pyhf.infer.calculators.get_teststat_func("q")
-        <function qmu at 0x...>
-        >>> pyhf.infer.calculators.get_teststat_func("qtilde")
-        <function qmu_tilde at 0x...>
-
-    Args:
-        name (:obj:`str`): The name of the test statistic to retrieve
-
-
-    Returns:
-        callable: The test statistic function
-    """
-    _mapping = {
-        "q": qmu,
-        "qtilde": qmu_tilde,
-    }
-    try:
-        return _mapping[name]
-    except KeyError:
-        raise exceptions.InvalidTestStatistic
 
 
 class AsymptoticTestStatDistribution:
@@ -298,7 +268,7 @@ class AsymptoticCalculator:
         """
         tensorlib, _ = get_backend()
 
-        teststat_func = get_teststat_func(self.test_stat)
+        teststat_func = test_statistics.get(self.test_stat)
 
         qmu_v = teststat_func(
             poi_test,
@@ -588,7 +558,7 @@ class ToyCalculator:
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
-        teststat_func = get_teststat_func(self.test_stat)
+        teststat_func = test_statistics.get(self.test_stat)
 
         tqdm_options = dict(
             total=self.ntoys,
@@ -658,7 +628,7 @@ class ToyCalculator:
             Float: The value of the test statistic.
 
         """
-        teststat_func = get_teststat_func(self.test_stat)
+        teststat_func = test_statistics.get(self.test_stat)
         teststat = teststat_func(
             poi_test,
             self.data,
