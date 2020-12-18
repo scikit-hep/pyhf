@@ -50,7 +50,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
 def get_teststat_func(name):
     _mapping = {
-        "qmu": qmu,
+        "q": qmu,
         "qtilde": qtilde,
     }
     try:
@@ -205,7 +205,7 @@ class AsymptoticCalculator:
         # handle deprecation for qtilde gracefully
         qtilde = kwargs.pop('qtilde', None)
         if qtilde is not None:
-            test_stat = "qtilde" if qtilde else "qmu"
+            test_stat = "qtilde" if qtilde else "q"
             log.warning(
                 f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
             )
@@ -306,7 +306,7 @@ class AsymptoticCalculator:
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if self.test_stat == "qmu":
+        if self.test_stat == "q":
             teststat = sqrtqmu_v - self.sqrtqmuA_v
         elif self.test_stat == "qtilde":
 
@@ -513,7 +513,7 @@ class ToyCalculator:
         # handle deprecation for qtilde gracefully
         qtilde = kwargs.pop('qtilde', None)
         if qtilde is not None:
-            test_stat = "qtilde" if qtilde else "qmu"
+            test_stat = "qtilde" if qtilde else "q"
             log.warning(
                 f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
             )
