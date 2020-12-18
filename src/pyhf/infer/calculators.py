@@ -12,6 +12,10 @@ from .. import get_backend
 from .test_statistics import qmu, qmu_tilde
 import tqdm
 
+import logging
+
+log = logging.getLogger(__name__)
+
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
