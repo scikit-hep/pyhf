@@ -48,6 +48,17 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
     return pdf.expected_data(bestfit_nuisance_asimov)
 
 
+def get_teststat_func(name):
+    _mapping = {
+        "qmu": qmu,
+        "qtilde": qtilde,
+    }
+    try:
+        return _mapping[name]
+    except KeyError:
+        raise exceptions.InvalidTestStatistic
+
+
 class AsymptoticTestStatDistribution:
     r"""
     The distribution the test statistic in the asymptotic case.
@@ -159,10 +170,14 @@ class AsymptoticCalculator:
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=True,
+        test_stat="qtilde",
+        **kwargs,
     ):
         r"""
         Asymptotic Calculator.
+
+        .. deprecated:: 0.6
+            ``qtilde=True`` has been deprecated in favor of ``test_stat="qtilde"``.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -170,6 +185,7 @@ class AsymptoticCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
             qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
              test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
              approximation in Equation (62) of :xref:`arXiv:1007.1727`
@@ -186,7 +202,15 @@ class AsymptoticCalculator:
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-        self.qtilde = qtilde
+        # handle deprecation for qtilde gracefully
+        qtilde = kwargs.pop('qtilde', None)
+        if qtilde is not None:
+            test_stat = "qtilde" if qtilde else "qmu"
+            log.warning(
+                f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
+            )
+
+        self.test_stat = test_stat
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -205,7 +229,7 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
@@ -238,7 +262,7 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
             0.14043184405388176
 
@@ -251,7 +275,7 @@ class AsymptoticCalculator:
         """
         tensorlib, _ = get_backend()
 
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = get_teststat_func(self.test_stat)
 
         qmu_v = teststat_func(
             poi_test,
@@ -282,9 +306,9 @@ class AsymptoticCalculator:
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if not self.qtilde:  # qmu
+        if self.test_stat == "qmu":
             teststat = sqrtqmu_v - self.sqrtqmuA_v
-        else:  # qtilde
+        elif self.test_stat == "qtilde":
 
             def _true_case():
                 teststat = sqrtqmu_v - self.sqrtqmuA_v
@@ -449,12 +473,16 @@ class ToyCalculator:
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=True,
+        test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
+        **kwargs,
     ):
         r"""
         Toy-based Calculator.
+
+        .. deprecated:: 0.6
+            ``qtilde=True`` has been deprecated in favor of ``test_stat="qtilde"``.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -462,6 +490,7 @@ class ToyCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
             qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
              test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
              approximation in Equation (62) of :xref:`arXiv:1007.1727`
@@ -480,7 +509,16 @@ class ToyCalculator:
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
-        self.qtilde = qtilde
+
+        # handle deprecation for qtilde gracefully
+        qtilde = kwargs.pop('qtilde', None)
+        if qtilde is not None:
+            test_stat = "qtilde" if qtilde else "qmu"
+            log.warning(
+                f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
+            )
+
+        self.test_stat = test_stat
         self.track_progress = track_progress
 
     def distributions(self, poi_test, track_progress=None):
@@ -527,7 +565,7 @@ class ToyCalculator:
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = get_teststat_func(self.test_stat)
 
         tqdm_options = dict(
             total=self.ntoys,
@@ -597,7 +635,7 @@ class ToyCalculator:
             Float: The value of the test statistic.
 
         """
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = get_teststat_func(self.test_stat)
         teststat = teststat_func(
             poi_test,
             self.data,
