@@ -138,7 +138,7 @@ def hypotest(
         **kwargs,
     )
 
-    is_q0 = kwargs.get('test_stat', 'q0') == 'q0'
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
 
     asimov_mu = 1.0 if is_q0 else 0.0
     teststat = calc.teststatistic(poi_test, asimov_mu=asimov_mu)
