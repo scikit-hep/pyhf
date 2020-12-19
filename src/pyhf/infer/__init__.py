@@ -138,7 +138,10 @@ def hypotest(
         **kwargs,
     )
 
-    teststat = calc.teststatistic(poi_test)
+    is_q0 = kwargs.get('test_stat', 'q0') == 'q0'
+
+    asimov_mu = 1.0 if is_q0 else 0.0
+    teststat = calc.teststatistic(poi_test, asimov_mu=asimov_mu)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
