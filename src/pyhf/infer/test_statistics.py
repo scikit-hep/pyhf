@@ -9,15 +9,16 @@ log = logging.getLogger(__name__)
 
 def get_test_stat(name):
     """
-    Get the test statistic function by name.
+    Get the test statistic function, :func:`~pyhf.infer.test_statistics.qmu` or
+    :func:`~pyhf.infer.test_statistics.qmu_tilde`, by name.
 
     Example:
 
-        >>> import pyhf
-        >>> pyhf.infer.test_statistics.get_test_stat("q")
-        <function qmu at 0x...>
-        >>> pyhf.infer.test_statistics.get_test_stat("qtilde")
-        <function qmu_tilde at 0x...>
+        >>> from pyhf.infer import test_statistics
+        >>> test_statistics.get_test_stat("q") == test_statistics.qmu
+        True
+        >>> test_statistics.get_test_stat("qtilde") == test_statistics.qmu_tilde
+        True
 
     Args:
         name (:obj:`str`): The name of the test statistic to retrieve
