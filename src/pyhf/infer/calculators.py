@@ -248,7 +248,7 @@ class AsymptoticCalculator:
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
-            asimov_mu (:obj:`float`): The value for the parameter of interest when generating the asimov dataset. Default: ``1.0``.
+            asimov_mu (:obj:`float`): The value for the parameter of interest when generating the asimov dataset. Default: ``0.0``.
 
         Returns:
             Float: The value of the test statistic.
