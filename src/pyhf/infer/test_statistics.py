@@ -7,16 +7,16 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def get(name):
+def get_test_stat(name):
     """
     Get the test statistic function by name.
 
     Example:
 
         >>> import pyhf
-        >>> pyhf.infer.test_statistics.get("q")
+        >>> pyhf.infer.test_statistics.get_test_stat("q")
         <function qmu at 0x...>
-        >>> pyhf.infer.test_statistics.get("qtilde")
+        >>> pyhf.infer.test_statistics.get_test_stat("qtilde")
         <function qmu_tilde at 0x...>
 
     Args:
