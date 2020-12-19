@@ -319,7 +319,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.q0(data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
 
     Args:
