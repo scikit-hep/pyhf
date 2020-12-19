@@ -124,6 +124,7 @@ Inference
    test_statistics.qmu_tilde
    test_statistics.tmu
    test_statistics.tmu_tilde
+   test_statistics.get_test_stat
    mle.twice_nll
    mle.fit
    mle.fixed_poi_fit
