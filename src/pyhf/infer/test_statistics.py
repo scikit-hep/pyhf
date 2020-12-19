@@ -15,8 +15,12 @@ def get_test_stat(name):
     Example:
 
         >>> from pyhf.infer import test_statistics
+        >>> test_statistics.get_test_stat("q")
+        <function qmu at 0x...>
         >>> test_statistics.get_test_stat("q") == test_statistics.qmu
         True
+        >>> test_statistics.get_test_stat("qtilde")
+        <function qmu_tilde at 0x...>
         >>> test_statistics.get_test_stat("qtilde") == test_statistics.qmu_tilde
         True
 
