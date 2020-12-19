@@ -228,7 +228,7 @@ class AsymptoticCalculator:
         b_dist = AsymptoticTestStatDistribution(0.0)
         return sb_dist, b_dist
 
-    def teststatistic(self, poi_test, asimov_mu=0.0):
+    def teststatistic(self, poi_test):
         """
         Compute the test statistic for the observed data under the studied model.
 
@@ -248,7 +248,6 @@ class AsymptoticCalculator:
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
-            asimov_mu (:obj:`float`): The value for the parameter of interest when generating the asimov dataset. Default: ``0.0``.
 
         Returns:
             Float: The value of the test statistic.
@@ -267,6 +266,8 @@ class AsymptoticCalculator:
             self.fixed_params,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
+
+        asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
 
         asimov_data = generate_asimov_data(
             asimov_mu,

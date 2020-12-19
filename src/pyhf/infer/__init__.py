@@ -138,10 +138,7 @@ def hypotest(
         **kwargs,
     )
 
-    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
-
-    asimov_mu = 1.0 if is_q0 else 0.0
-    teststat = calc.teststatistic(poi_test, asimov_mu=asimov_mu)
+    teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
 
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
@@ -155,6 +152,8 @@ def hypotest(
         tensorlib.astensor(CLb),
         tensorlib.astensor(CLs),
     )
+
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
 
     _returns = [CLsb if is_q0 else CLs]
     if return_tail_probs:
