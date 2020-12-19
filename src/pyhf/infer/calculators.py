@@ -286,7 +286,7 @@ class AsymptoticCalculator:
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if self.test_stat == "q":
+        if self.test_stat in ["q", "q0"]:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v
         else:  # qtilde
 
