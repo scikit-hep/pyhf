@@ -13,7 +13,7 @@ def test_q0(caplog):
     fixed_params = model.config.suggested_fixed()
 
     with caplog.at_level(logging.WARNING, "pyhf.infer.test_statistics"):
-        pyhf.infer.test_statistics.qmu(
+        pyhf.infer.test_statistics.q0(
             mu, data, model, init_pars, par_bounds, fixed_params
         )
         assert (
