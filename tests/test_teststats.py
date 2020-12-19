@@ -14,9 +14,12 @@ def test_q0(caplog):
 
     with caplog.at_level(logging.WARNING, "pyhf.infer.test_statistics"):
         pyhf.infer.test_statistics.qmu(
-            1.0, data, model, init_pars, par_bounds, fixed_params
+            mu, data, model, init_pars, par_bounds, fixed_params
         )
-        assert "q0 test statistic only used for fit configuration with POI set to zero" in caplog.text
+        assert (
+            "q0 test statistic only used for fit configuration with POI set to zero"
+            in caplog.text
+        )
         caplog.clear()
 
 
