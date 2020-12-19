@@ -1,44 +1,10 @@
 from .. import get_backend
 from .mle import fixed_poi_fit, fit
-from ..exceptions import UnspecifiedPOI, InvalidTestStatistic
+from ..exceptions import UnspecifiedPOI
 
 import logging
 
 log = logging.getLogger(__name__)
-
-
-def get_test_stat(name):
-    """
-    Get the test statistic function, :func:`~pyhf.infer.test_statistics.qmu` or
-    :func:`~pyhf.infer.test_statistics.qmu_tilde`, by name.
-
-    Example:
-
-        >>> from pyhf.infer import test_statistics
-        >>> test_statistics.get_test_stat("q")
-        <function qmu at 0x...>
-        >>> test_statistics.get_test_stat("q") == test_statistics.qmu
-        True
-        >>> test_statistics.get_test_stat("qtilde")
-        <function qmu_tilde at 0x...>
-        >>> test_statistics.get_test_stat("qtilde") == test_statistics.qmu_tilde
-        True
-
-    Args:
-        name (:obj:`str`): The name of the test statistic to retrieve
-
-
-    Returns:
-        callable: The test statistic function
-    """
-    _mapping = {
-        "q": qmu,
-        "qtilde": qmu_tilde,
-    }
-    try:
-        return _mapping[name]
-    except KeyError:
-        raise InvalidTestStatistic
 
 
 def _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params):

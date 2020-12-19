@@ -9,7 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from . import test_statistics
+from . import utils
 import tqdm
 
 import logging
@@ -255,7 +255,7 @@ class AsymptoticCalculator:
         """
         tensorlib, _ = get_backend()
 
-        teststat_func = test_statistics.get_test_stat(self.test_stat)
+        teststat_func = utils.get_test_stat(self.test_stat)
 
         qmu_v = teststat_func(
             poi_test,
@@ -532,7 +532,7 @@ class ToyCalculator:
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
-        teststat_func = test_statistics.get_test_stat(self.test_stat)
+        teststat_func = utils.get_test_stat(self.test_stat)
 
         tqdm_options = dict(
             total=self.ntoys,
@@ -602,7 +602,7 @@ class ToyCalculator:
             Float: The value of the test statistic.
 
         """
-        teststat_func = test_statistics.get_test_stat(self.test_stat)
+        teststat_func = utils.get_test_stat(self.test_stat)
         teststat = teststat_func(
             poi_test,
             self.data,

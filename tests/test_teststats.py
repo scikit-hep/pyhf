@@ -138,9 +138,9 @@ def test_no_poi_test_stats():
 
 @pytest.mark.parametrize("test_stat", ["qtilde", "q"])
 def test_get_teststat_by_name(test_stat):
-    assert pyhf.infer.test_statistics.get_test_stat(test_stat)
+    assert pyhf.infer.utils.get_test_stat(test_stat)
 
 
 def test_get_teststat_error():
     with pytest.raises(pyhf.exceptions.InvalidTestStatistic):
-        pyhf.infer.test_statistics.get_test_stat("look at me i'm not real")
+        pyhf.infer.utils.get_test_stat("look at me i'm not real")

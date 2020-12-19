@@ -1,6 +1,12 @@
 """Inference for Statistical Models."""
 
 from .calculators import AsymptoticCalculator, ToyCalculator
+from ..exceptions import InvalidTestStatistic
+from .test_statistics import qmu, qmu_tilde
+
+import logging
+
+log = logging.getLogger(__name__)
 
 
 def create_calculator(calctype, *args, **kwargs):
@@ -39,3 +45,37 @@ def create_calculator(calctype, *args, **kwargs):
     return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator}[calctype](
         *args, **kwargs
     )
+
+
+def get_test_stat(name):
+    """
+    Get the test statistic function, :func:`~pyhf.infer.test_statistics.qmu` or
+    :func:`~pyhf.infer.test_statistics.qmu_tilde`, by name.
+
+    Example:
+
+        >>> from pyhf.infer import utils, test_statistics
+        >>> utils.get_test_stat("q")
+        <function qmu at 0x...>
+        >>> utils.get_test_stat("q") == test_statistics.qmu
+        True
+        >>> utils.get_test_stat("qtilde")
+        <function qmu_tilde at 0x...>
+        >>> utils.get_test_stat("qtilde") == test_statistics.qmu_tilde
+        True
+
+    Args:
+        name (:obj:`str`): The name of the test statistic to retrieve
+
+
+    Returns:
+        callable: The test statistic function
+    """
+    _mapping = {
+        "q": qmu,
+        "qtilde": qmu_tilde,
+    }
+    try:
+        return _mapping[name]
+    except KeyError:
+        raise InvalidTestStatistic
