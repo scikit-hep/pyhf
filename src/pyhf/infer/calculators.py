@@ -9,8 +9,12 @@ Using the calculators hypothesis tests can then be performed.
 """
 from .mle import fixed_poi_fit
 from .. import get_backend
-from .test_statistics import qmu, qmu_tilde
+from . import utils
 import tqdm
+
+import logging
+
+log = logging.getLogger(__name__)
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
@@ -159,7 +163,7 @@ class AsymptoticCalculator:
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=True,
+        test_stat="qtilde",
     ):
         r"""
         Asymptotic Calculator.
@@ -170,6 +174,7 @@ class AsymptoticCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
             qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
              test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
              approximation in Equation (62) of :xref:`arXiv:1007.1727`
@@ -185,8 +190,7 @@ class AsymptoticCalculator:
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
-
-        self.qtilde = qtilde
+        self.test_stat = test_stat
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -205,7 +209,7 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
@@ -238,7 +242,7 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
-            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, qtilde=True)
+            >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
             0.14043184405388176
 
@@ -251,7 +255,7 @@ class AsymptoticCalculator:
         """
         tensorlib, _ = get_backend()
 
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = utils.get_test_stat(self.test_stat)
 
         qmu_v = teststat_func(
             poi_test,
@@ -282,7 +286,7 @@ class AsymptoticCalculator:
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if not self.qtilde:  # qmu
+        if self.test_stat == "q":
             teststat = sqrtqmu_v - self.sqrtqmuA_v
         else:  # qtilde
 
@@ -449,7 +453,7 @@ class ToyCalculator:
         init_pars=None,
         par_bounds=None,
         fixed_params=None,
-        qtilde=True,
+        test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
     ):
@@ -462,6 +466,7 @@ class ToyCalculator:
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
             qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
              test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
              approximation in Equation (62) of :xref:`arXiv:1007.1727`
@@ -480,7 +485,7 @@ class ToyCalculator:
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
-        self.qtilde = qtilde
+        self.test_stat = test_stat
         self.track_progress = track_progress
 
     def distributions(self, poi_test, track_progress=None):
@@ -527,7 +532,7 @@ class ToyCalculator:
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = utils.get_test_stat(self.test_stat)
 
         tqdm_options = dict(
             total=self.ntoys,
@@ -597,7 +602,7 @@ class ToyCalculator:
             Float: The value of the test statistic.
 
         """
-        teststat_func = qmu_tilde if self.qtilde else qmu
+        teststat_func = utils.get_test_stat(self.test_stat)
         teststat = teststat_func(
             poi_test,
             self.data,

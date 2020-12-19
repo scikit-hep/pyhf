@@ -135,6 +135,7 @@ Inference
    calculators.AsymptoticCalculator
    calculators.ToyCalculator
    utils.create_calculator
+   utils.get_test_stat
 
 Exceptions
 ----------

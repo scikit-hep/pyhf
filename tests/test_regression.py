@@ -26,7 +26,7 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
         },
     )
     result = pyhf.infer.hypotest(
-        1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
+        1.0, workspace.data(model), model, test_stat="qtilde", return_expected_set=True
     )
     return result[0].tolist(), result[-1]
 

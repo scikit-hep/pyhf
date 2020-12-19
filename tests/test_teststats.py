@@ -134,3 +134,13 @@ def test_no_poi_test_stats():
         "No POI is defined. A POI is required for profile likelihood based test statistics."
         in str(excinfo.value)
     )
+
+
+@pytest.mark.parametrize("test_stat", ["qtilde", "q"])
+def test_get_teststat_by_name(test_stat):
+    assert pyhf.infer.utils.get_test_stat(test_stat)
+
+
+def test_get_teststat_error():
+    with pytest.raises(pyhf.exceptions.InvalidTestStatistic):
+        pyhf.infer.utils.get_test_stat("look at me i'm not real")

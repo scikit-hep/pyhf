@@ -25,9 +25,9 @@ def test_upperlimit(tmpdir, hypotest_args):
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
     _, data, model = hypotest_args
-    observed_limit, expected_limits = pyhf.infer.intervals.upperlimit(
-        data, model, scan=np.linspace(0, 5, 11)
-    )
+    results = pyhf.infer.intervals.upperlimit(data, model, scan=np.linspace(0, 5, 11))
+    assert len(results) == 2
+    observed_limit, expected_limits = results
     assert observed_limit == pytest.approx(1.0262704738584554)
     assert expected_limits == pytest.approx(
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
@@ -230,10 +230,10 @@ def test_inferapi_pyhf_independence():
     assert np.isclose(cls, 0.7267836451638846)
 
 
-@pytest.mark.parametrize("qtilde", [True, False])
-def test_calculator_distributions_without_teststatistic(qtilde):
+@pytest.mark.parametrize("test_stat", ["qtilde", "q"])
+def test_calculator_distributions_without_teststatistic(test_stat):
     calc = pyhf.infer.calculators.AsymptoticCalculator(
-        [0.0], {}, [1.0], [(0.0, 10.0)], [False], qtilde=qtilde
+        [0.0], {}, [1.0], [(0.0, 10.0)], [False], test_stat=test_stat
     )
     with pytest.raises(RuntimeError):
         calc.distributions(1.0)

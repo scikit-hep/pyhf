@@ -32,7 +32,7 @@ def hypotest(
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> mu_test = 1.0
         >>> CLs_obs, CLs_exp_band = pyhf.infer.hypotest(
-        ...     mu_test, data, model, return_expected_set=True, qtilde=True
+        ...     mu_test, data, model, return_expected_set=True, test_stat="qtilde"
         ... )
         >>> CLs_obs
         array(0.05251497)
