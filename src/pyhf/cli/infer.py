@@ -136,8 +136,8 @@ def fit(
 )
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
-@click.option('--testpoi', default=1.0)
-@click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option('--test-poi', default=1.0)
+@click.option('--test-stat', type=click.Choice(['q', 'qtilde']), default='qtilde')
 @click.option(
     '--calctype', type=click.Choice(['asymptotics', 'toybased']), default='asymptotics'
 )
@@ -159,8 +159,8 @@ def cls(
     output_file,
     measurement,
     patch,
-    testpoi,
-    teststat,
+    test_poi,
+    test_stat,
     backend,
     optimizer,
     calctype,
@@ -221,10 +221,10 @@ def cls(
         set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(
-        testpoi,
+        test_poi,
         ws.data(model),
         model,
-        test_stat=teststat,
+        test_stat=test_stat,
         calctype=calctype,
         return_expected_set=True,
     )

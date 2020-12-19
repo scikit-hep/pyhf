@@ -259,8 +259,8 @@ def test_testpoi(tmpdir, script_runner):
     pois = [1.0, 0.5, 0.0]
     results_exp = []
     results_obs = []
-    for testpoi in pois:
-        command = f'pyhf cls {temp.strpath:s} --testpoi {testpoi:f}'
+    for test_poi in pois:
+        command = f'pyhf cls {temp.strpath:s} --test-poi {test_poi:f}'
         ret = script_runner.run(*shlex.split(command))
 
         assert ret.success
