@@ -101,7 +101,7 @@ def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True}
+    kwargs = {'return_tail_probs': True, 'test_stat': test_stat}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CL_sb, CL_b]
     assert len(list(result)) == 2
@@ -144,6 +144,7 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
         'return_tail_probs': True,
         'return_expected': True,
         'return_expected_set': True,
+        'test_stat': test_stat,
     }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma
