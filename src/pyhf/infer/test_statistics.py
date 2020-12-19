@@ -296,14 +296,16 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
     r"""
     The test statistic, :math:`q_{0}`, for discovery of a positive signal
     as defined in Equation (12) in :xref:`arXiv:1007.1727`, for :math:`\mu=0`.
+
     .. math::
        :nowrap:
-        \begin{equation}
-          q_{0} = \left\{\begin{array}{ll}
-          -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
-          0, & \hat{\mu} < 0,
-          \end{array}\right.
-        \end{equation}
+
+       \begin{equation}
+         q_{0} = \left\{\begin{array}{ll}
+         -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
+         0, & \hat{\mu} < 0,
+         \end{array}\right.
+       \end{equation}
 
     Example:
         >>> import pyhf
