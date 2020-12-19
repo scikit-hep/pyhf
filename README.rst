@@ -43,7 +43,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    >>> model = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
    >>> data = [51, 48] + model.config.auxdata
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
@@ -57,7 +57,7 @@ Alternatively the statistical model and observational data can be read from its 
    >>> model = wspace.model()
    >>> data = wspace.data(model)
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, qtilde=True, return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.3599840922126626, Expected: 0.3599840922126626
 
@@ -157,7 +157,9 @@ A one bin example
 
    poi_vals = np.linspace(0, 5, 41)
    results = [
-       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       pyhf.infer.hypotest(
+           test_poi, data, model, test_stat="qtilde", return_expected_set=True
+       )
        for test_poi in poi_vals
    ]
 
@@ -199,7 +201,9 @@ A two bin example
 
    poi_vals = np.linspace(0, 5, 41)
    results = [
-       pyhf.infer.hypotest(test_poi, data, model, qtilde=True, return_expected_set=True)
+       pyhf.infer.hypotest(
+           test_poi, data, model, test_stat="qtilde", return_expected_set=True
+       )
        for test_poi in poi_vals
    ]
 
