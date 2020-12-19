@@ -164,13 +164,9 @@ class AsymptoticCalculator:
         par_bounds=None,
         fixed_params=None,
         test_stat="qtilde",
-        **kwargs,
     ):
         r"""
         Asymptotic Calculator.
-
-        .. deprecated:: 0.6
-            ``qtilde=True`` has been deprecated in favor of ``test_stat="qtilde"``.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -194,15 +190,6 @@ class AsymptoticCalculator:
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
-
-        # handle deprecation for qtilde gracefully
-        qtilde = kwargs.pop('qtilde', None)
-        if qtilde is not None:
-            test_stat = "qtilde" if qtilde else "q"
-            log.warning(
-                f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
-            )
-
         self.test_stat = test_stat
         self.sqrtqmuA_v = None
 
@@ -469,13 +456,9 @@ class ToyCalculator:
         test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
-        **kwargs,
     ):
         r"""
         Toy-based Calculator.
-
-        .. deprecated:: 0.6
-            ``qtilde=True`` has been deprecated in favor of ``test_stat="qtilde"``.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -502,15 +485,6 @@ class ToyCalculator:
         self.init_pars = init_pars or pdf.config.suggested_init()
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
-
-        # handle deprecation for qtilde gracefully
-        qtilde = kwargs.pop('qtilde', None)
-        if qtilde is not None:
-            test_stat = "qtilde" if qtilde else "q"
-            log.warning(
-                f"Setting qtilde={qtilde} is deprecated. Use test_stat='{test_stat}' instead."
-            )
-
         self.test_stat = test_stat
         self.track_progress = track_progress
 
