@@ -53,7 +53,7 @@ In addition to enabling the first publication of full likelihoods by an LHC expe
 
 ## Future work
 
-Future development aims to provide support limit setting through pseudoexperiment generation in the regimes in which asymptotic approximations @Cowan:2010js are no longer valid.
+Future development aims to provide support for limit setting through pseudoexperiment generation in the regimes in which asymptotic approximations @Cowan:2010js are no longer valid.
 Further improvements to the performance of the library as well as API refinement are also planned.
 
 # Acknowledgements
