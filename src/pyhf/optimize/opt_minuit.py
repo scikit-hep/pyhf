@@ -58,9 +58,6 @@ class minuit_optimizer(OptimizerMixin):
             wrapped_objective = objective_and_grad
             jac = None
 
-        # FAILING:
-        # * tests/test_optim.py
-        # * tests/test_validation.py
         minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
         minuit.errors = step_sizes
         minuit.limits = init_bounds
@@ -112,7 +109,7 @@ class minuit_optimizer(OptimizerMixin):
         minimizer.tol = tolerance
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
-        # https://github.com/scikit-hep/iminuit/blob/f12cd519aa08e244ad71f56fe7a97d42117196e4/src/iminuit/_minimize.py#L111-L130
+        # https://github.com/scikit-hep/iminuit/blob/23bad7697e39d363f259ca8349684df939b1b2e6/src/iminuit/_minimize.py#L111-L130
         message = "Optimization terminated successfully."
         if not minimizer.valid:
             message = "Optimization failed."
