@@ -9,7 +9,7 @@ extras_require = {
     'torch': ['torch~=1.2'],
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
     'xmlio': ['uproot3~=3.14'],  # Future proof against uproot4 API changes
-    'minuit': ['iminuit~=2.0'],
+    'minuit': ['iminuit~=2.1'],
 }
 extras_require['backends'] = sorted(
     set(
