@@ -29,36 +29,45 @@ class scipy_optimizer(OptimizerMixin):
     ):
         return scipy.optimize.minimize
 
-    def _custom_internal_minimize(self,objective, init_pars, maxiter = 500,rtol = 1e-6):
+
+
+    def _custom_internal_minimize(self,objective, init_pars, maxiter = 1000,rtol = 1e-7):
         import jax.experimental.optimizers as optimizers
         import jax
-        opt_init, opt_update, opt_getpars = optimizers.adam(step_size = 1e-3)
+        opt_init, opt_update, opt_getpars = optimizers.adam(step_size = 1e-2)
         state = opt_init(init_pars)
         vold,_ = objective(init_pars)
         def cond(loop_state):
             delta = loop_state['delta']
             i = loop_state['i']
-            # if i > 0 and delta < rtol:
-            #     print(delta,i)
-            #     print('early')
-            #     return False
-            if i > maxiter:
-                return False
-            return True
+            delta_below  = jax.numpy.logical_and(loop_state['delta'] > 0,loop_state['delta'] < rtol)
+            delta_below  = jax.numpy.logical_and(loop_state['i'] > 1, delta_below)
+            maxed_iter = loop_state['i'] > maxiter
+            return ~jax.numpy.logical_or(maxed_iter,delta_below)
             
-        loop_state = {'delta': 0, 'i': 0}
-        while(cond(loop_state)):
+
+
+        def body(loop_state):
+            i = loop_state['i']
+            state = loop_state['state'] 
             pars = opt_getpars(state)
             v,g = objective(pars)
-            state = opt_update(0,g,state)
-            new = opt_getpars(state)
-            vold = v
-            if loop_state['i'] % 100 == 0: 
-                print(loop_state['i'],v)
-            loop_state['delta'] =  jax.numpy.abs(v-vold)/v
-            loop_state['i'] += 1
-        print('max',loop_state['i'])
-        minimized = opt_getpars(state)
+            newopt_state = opt_update(0,g,state)
+
+            vold = loop_state['vold']
+            delta = jax.numpy.abs(v-vold)/v
+            new_state = {}
+            new_state['delta'] =  delta
+            new_state['state'] =  newopt_state
+            new_state['vold'] = v
+            new_state['i'] = i+1
+            return new_state
+
+        loop_state = {'delta': 0, 'i': 0, 'state': state, 'vold': vold}
+        loop_state = jax.lax.while_loop(cond,body,loop_state)
+
+        print('max',loop_state['i'],loop_state['delta'])
+        minimized = opt_getpars(loop_state['state'])
         from collections import namedtuple
         class Result:
             pass
