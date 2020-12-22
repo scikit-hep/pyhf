@@ -45,15 +45,13 @@ class scipy_optimizer(OptimizerMixin):
             maxed_iter = loop_state['i'] > maxiter
             return ~jax.numpy.logical_or(maxed_iter,delta_below)
             
-
-
         def body(loop_state):
             i = loop_state['i']
             state = loop_state['state'] 
             pars = opt_getpars(state)
+
             v,g = objective(pars)
             newopt_state = opt_update(0,g,state)
-
             vold = loop_state['vold']
             delta = jax.numpy.abs(v-vold)/v
             new_state = {}
@@ -66,9 +64,7 @@ class scipy_optimizer(OptimizerMixin):
         loop_state = {'delta': 0, 'i': 0, 'state': state, 'vold': vold}
         loop_state = jax.lax.while_loop(cond,body,loop_state)
 
-        print('max',loop_state['i'],loop_state['delta'])
         minimized = opt_getpars(loop_state['state'])
-        from collections import namedtuple
         class Result:
             pass
         r = Result()
@@ -120,15 +116,6 @@ class scipy_optimizer(OptimizerMixin):
                 x0[idx] = fixed_val
         else:
             constraints = []
-
-        print('bounds', bounds)
-        print('constraints', constraints)
-        print('jac', do_grad)
-        print('init', x0)
-        # import torch
-        # print('init', func(torch.tensor(x0,requires_grad = True))[0])
-
-        # print('init',func(x0)[0])        
 
         result = self._custom_internal_minimize(func,x0)
         return result

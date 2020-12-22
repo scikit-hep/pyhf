@@ -63,9 +63,6 @@ class OptimizerMixin:
 
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
 
-        print('len internal: ', fitresult.x.shape)
-        print('len fitted: ', fitted_pars.shape)
-
         # extract number of fixed parameters
         num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
@@ -122,7 +119,6 @@ class OptimizerMixin:
                 - minimum (:obj:`float`): if ``return_fitted_val`` flagged, return minimized objective value
                 - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
-        print('st',do_stitch)
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()
         do_grad = tensorlib.default_do_grad if do_grad is None else do_grad
