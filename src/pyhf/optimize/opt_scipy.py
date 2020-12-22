@@ -29,6 +29,46 @@ class scipy_optimizer(OptimizerMixin):
     ):
         return scipy.optimize.minimize
 
+    def _custom_internal_minimize(self,objective, init_pars, maxiter = 10000,rtol = 1e-6):
+        import jax.experimental.optimizers as optimizers
+        import jax
+        opt_init, opt_update, opt_getpars = optimizers.adam(step_size = 1e-5)
+        state = opt_init(init_pars)
+        vold,_ = objective(init_pars)
+        def cond(loop_state):
+            delta = loop_state['delta']
+            i = loop_state['i']
+            # if i > 0 and delta < rtol:
+            #     print(delta,i)
+            #     print('early')
+            #     return False
+            if i > maxiter:
+                return False
+            return True
+            
+        loop_state = {'delta': 0, 'i': 0}
+        while(cond(loop_state)):
+            pars = opt_getpars(state)
+            v,g = objective(pars)
+            state = opt_update(0,g,state)
+            new = opt_getpars(state)
+            vold = v
+            if loop_state['i'] % 100 == 0: 
+                print(loop_state['i'],v)
+            loop_state['delta'] =  jax.numpy.abs(v-vold)/v
+            loop_state['i'] += 1
+        print('max',loop_state['i'])
+        minimized = opt_getpars(state)
+        from collections import namedtuple
+        class Result:
+            pass
+        r = Result()
+        r.x = minimized
+        r.success = True
+        r.fun = objective(minimized)[0]
+        return r
+
+        
     def _minimize(
         self,
         minimizer,
@@ -72,13 +112,27 @@ class scipy_optimizer(OptimizerMixin):
         else:
             constraints = []
 
-        return minimizer(
+        print('bounds', bounds)
+        print('constraints', constraints)
+        print('jac', do_grad)
+        print('init', x0)
+        # import torch
+        # print('init', func(torch.tensor(x0,requires_grad = True))[0])
+
+        # print('init',func(x0)[0])        
+
+        result = self._custom_internal_minimize(func,x0)
+        return result
+
+        result =  minimizer(
             func,
             x0,
             method=method,
             jac=do_grad,
-            bounds=bounds,
-            constraints=constraints,
-            tol=tolerance,
-            options=dict(maxiter=maxiter, disp=bool(verbose)),
+            # bounds=bounds,
+            # constraints=constraints,
+            # tol=tolerance,
+            # options=dict(maxiter=maxiter, disp=bool(verbose)),
         )
+        print(result.fun)
+        return result

@@ -31,7 +31,6 @@ class OptimizerMixin:
     def _internal_minimize(
         self, func, x0, do_grad=False, bounds=None, fixed_vals=None, options={}
     ):
-
         minimizer = self._get_minimizer(
             func, x0, bounds, fixed_vals=fixed_vals, do_grad=do_grad
         )
@@ -61,7 +60,12 @@ class OptimizerMixin:
         """
         tensorlib, _ = get_backend()
 
+
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
+
+        print('len internal: ', fitresult.x.shape)
+        print('len fitted: ', fitted_pars.shape)
+
         # extract number of fixed parameters
         num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
@@ -118,6 +122,7 @@ class OptimizerMixin:
                 - minimum (:obj:`float`): if ``return_fitted_val`` flagged, return minimized objective value
                 - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
+        print('st',do_stitch)
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()
         do_grad = tensorlib.default_do_grad if do_grad is None else do_grad

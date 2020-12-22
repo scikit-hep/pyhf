@@ -119,6 +119,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         if is_fixed
     ]
 
+    kwargs['do_stitch'] = True
     return opt.minimize(
         twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
     )

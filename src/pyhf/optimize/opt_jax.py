@@ -8,12 +8,27 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def to_inf(x,bounds):
+    tensorlib, _ = get_backend()
+    lo,hi = bounds.T
+    return tensorlib.arcsin(2*(x-lo)/(hi-lo)-1)
+
+def to_bnd(x,bounds):
+    tensorlib, _ = get_backend()
+    lo,hi = bounds.T
+    return lo + 0.5*(hi-lo)*(tensorlib.sin(x) +1)
+
+
 def _final_objective(
-    pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf
+    pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf, par_bounds
 ):
     log.debug('jitting function')
     tensorlib, _ = get_backend()
     pars = tensorlib.astensor(pars)
+
+    pars = to_bnd(pars,par_bounds)
+
+
     if do_stitch:
         tv = _TensorViewer([fixed_idx, variable_idx])
         constrained_pars = tv.stitch(
@@ -25,10 +40,10 @@ def _final_objective(
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7)
+    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7,8)
 )
 
-_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7))
+_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7,8))
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):
@@ -51,7 +66,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
 
         def func(pars):
             # need to conver to tuple to make args hashable
-            return _jitted_objective_and_grad(
+            result = _jitted_objective_and_grad(
                 pars,
                 data,
                 jit_pieces['fixed_values'],
@@ -60,7 +75,9 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
                 jit_pieces['do_stitch'],
                 objective,
                 pdf,
+                jit_pieces['par_bounds']
             )
+            return result
 
     else:
 
@@ -75,6 +92,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
                 jit_pieces['do_stitch'],
                 objective,
                 pdf,
+                jit_pieces['par_bounds']
             )
 
     return func
