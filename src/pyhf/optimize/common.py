@@ -73,9 +73,8 @@ def _configure_internal_minimize(init_pars,variable_idx,do_stitch,par_bounds,fix
     tensorlib, _ = get_backend()
     if do_stitch:
         all_init = tensorlib.astensor(init_pars)
-        internal_init = tensorlib.tolist(
-            tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype='int'))
-        )
+        internal_init = tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype='int'))
+        
         internal_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
         external_fixed_vals = []
