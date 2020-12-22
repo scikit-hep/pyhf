@@ -40,10 +40,10 @@ def _final_objective(
 
 
 _jitted_objective_and_grad = jax.jit(
-    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7,8)
+    jax.value_and_grad(_final_objective, argnums=0), static_argnums=(3, 4, 5, 6, 7)
 )
 
-_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7,8))
+_jitted_objective = jax.jit(_final_objective, static_argnums=(3, 4, 5, 6, 7))
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):

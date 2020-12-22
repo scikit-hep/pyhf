@@ -29,10 +29,10 @@ class scipy_optimizer(OptimizerMixin):
     ):
         return scipy.optimize.minimize
 
-    def _custom_internal_minimize(self,objective, init_pars, maxiter = 10000,rtol = 1e-6):
+    def _custom_internal_minimize(self,objective, init_pars, maxiter = 500,rtol = 1e-6):
         import jax.experimental.optimizers as optimizers
         import jax
-        opt_init, opt_update, opt_getpars = optimizers.adam(step_size = 1e-5)
+        opt_init, opt_update, opt_getpars = optimizers.adam(step_size = 1e-3)
         state = opt_init(init_pars)
         vold,_ = objective(init_pars)
         def cond(loop_state):
