@@ -28,7 +28,7 @@ def _make_post_processor(tv=None, fixed_values=None):
     return post_processor
 
 
-def _get_internal_objective(*args,**kwargs):
+def _get_internal_objective(*args, **kwargs):
     """
     A shim-retriever to lazy-retrieve the necessary shims as needed.
 
@@ -39,42 +39,47 @@ def _get_internal_objective(*args,**kwargs):
     if tensorlib.name == 'numpy':
         from .opt_numpy import wrap_objective as numpy_shim
 
-        return numpy_shim(*args,**kwargs)
+        return numpy_shim(*args, **kwargs)
 
     if tensorlib.name == 'tensorflow':
         from .opt_tflow import wrap_objective as tflow_shim
 
-        return tflow_shim(*args,**kwargs)
+        return tflow_shim(*args, **kwargs)
 
     if tensorlib.name == 'pytorch':
         from .opt_pytorch import wrap_objective as pytorch_shim
 
-        return pytorch_shim(*args,**kwargs)
+        return pytorch_shim(*args, **kwargs)
 
     if tensorlib.name == 'jax':
         from .opt_jax import wrap_objective as jax_shim
 
-        return jax_shim(*args,**kwargs)
+        return jax_shim(*args, **kwargs)
     raise ValueError(f'No optimizer shim for {tensorlib.name}.')
 
 
-def to_inf(x,bounds):
+def to_inf(x, bounds):
     tensorlib, _ = get_backend()
-    lo,hi = bounds.T
-    return tensorlib.arcsin(2*(x-lo)/(hi-lo)-1)
+    lo, hi = bounds.T
+    return tensorlib.arcsin(2 * (x - lo) / (hi - lo) - 1)
 
-def to_bnd(x,bounds):
+
+def to_bnd(x, bounds):
     tensorlib, _ = get_backend()
-    lo,hi = bounds.T
-    return lo + 0.5*(hi-lo)*(tensorlib.sin(x) +1)
+    lo, hi = bounds.T
+    return lo + 0.5 * (hi - lo) * (tensorlib.sin(x) + 1)
 
 
-def _configure_internal_minimize(init_pars,variable_idx,do_stitch,par_bounds,fixed_idx,fixed_values):
+def _configure_internal_minimize(
+    init_pars, variable_idx, do_stitch, par_bounds, fixed_idx, fixed_values
+):
     tensorlib, _ = get_backend()
     if do_stitch:
         all_init = tensorlib.astensor(init_pars)
-        internal_init = tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype='int'))
-        
+        internal_init = tensorlib.gather(
+            all_init, tensorlib.astensor(variable_idx, dtype='int')
+        )
+
         internal_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
         external_fixed_vals = []
@@ -89,21 +94,24 @@ def _configure_internal_minimize(init_pars,variable_idx,do_stitch,par_bounds,fix
         external_fixed_vals = fixed_vals
         post_processor = _make_post_processor()
 
-    internal_init = to_inf(tensorlib.astensor(internal_init),tensorlib.astensor(internal_bounds))
+    internal_init = to_inf(
+        tensorlib.astensor(internal_init), tensorlib.astensor(internal_bounds)
+    )
+
     def mypostprocessor(x):
-        x = to_bnd(x,tensorlib.astensor(internal_bounds))
+        x = to_bnd(x, tensorlib.astensor(internal_bounds))
         return post_processor(x)
 
     no_internal_bounds = None
 
-
-    kwargs =  dict(
-        x0 =  internal_init,
-        variable_bounds = internal_bounds,
+    kwargs = dict(
+        x0=internal_init,
+        variable_bounds=internal_bounds,
         bounds=no_internal_bounds,
         fixed_vals=external_fixed_vals,
-    )        
+    )
     return kwargs, mypostprocessor
+
 
 def shim(
     objective,
@@ -157,9 +165,9 @@ def shim(
     fixed_values = [x[1] for x in fixed_vals]
     variable_idx = [x for x in range(pdf.config.npars) if x not in fixed_idx]
 
-    minimizer_kwargs,post_processor = _configure_internal_minimize(init_pars,variable_idx,do_stitch,par_bounds,fixed_idx,fixed_values)
-
-
+    minimizer_kwargs, post_processor = _configure_internal_minimize(
+        init_pars, variable_idx, do_stitch, par_bounds, fixed_idx, fixed_values
+    )
 
     internal_objective_maybe_grad = _get_internal_objective(
         objective,
@@ -172,7 +180,7 @@ def shim(
             'variable_idx': variable_idx,
             'fixed_values': fixed_values,
             'do_stitch': do_stitch,
-            'par_bounds': tensorlib.astensor(minimizer_kwargs.pop('variable_bounds'))
+            'par_bounds': tensorlib.astensor(minimizer_kwargs.pop('variable_bounds')),
         },
     )
 
