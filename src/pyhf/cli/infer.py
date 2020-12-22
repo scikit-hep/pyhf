@@ -41,7 +41,7 @@ def cli():
 )
 @click.option(
     "--optimizer",
-    type=click.Choice(["scipy", "minuit"]),
+    type=click.Choice(["scipy", "minuit","customjax"]),
     help="The optimizer used for the calculation.",
     default="scipy",
 )
@@ -149,7 +149,7 @@ def fit(
 )
 @click.option(
     "--optimizer",
-    type=click.Choice(["scipy", "minuit"]),
+    type=click.Choice(["scipy", "minuit","customjax"]),
     help="The optimizer used for the calculation.",
     default="scipy",
 )
