@@ -34,6 +34,7 @@ extras_require['test'] = sorted(
             'pytest-mock',
             'pytest-benchmark[histogram]',
             'pytest-console-scripts',
+            'pytest-picked~=0.4,>=0.4.6',
             'pytest-mpl',
             'pydocstyle',
             'coverage>=4.0',  # coveralls
