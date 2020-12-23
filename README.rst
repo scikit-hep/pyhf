@@ -51,7 +51,7 @@ Alternatively the statistical model and observational data can be read from its 
 
 .. code:: python
 
-   >>> import pyhf
+   >>> import pyhfFAIL
    >>> import requests
    >>> wspace = pyhf.Workspace(requests.get('https://git.io/JJYDE').json())
    >>> model = wspace.model()
