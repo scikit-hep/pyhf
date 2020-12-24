@@ -29,10 +29,8 @@ def extract_error(hist):
         list: The uncertainty for each bin in the histogram
     """
 
-    sumw2 = hist.member("fSumw2", none_if_missing=True)
-    err = sumw2 if sumw2 else hist.to_numpy()[0]
-    print(f"\nerr: {err}\n")
-    return np.sqrt(err).tolist()
+    variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
+    return np.sqrt(variance).tolist()
 
 
 def import_root_histogram(rootdir, filename, path, name, filecache=None):
@@ -49,8 +47,6 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     else:
         f = filecache[fullpath]
     try:
-        print(f"\nfile: {f}")
-        print(f"file name: {name}")
         hist = f[name]
     except KeyError or uproot.deserialization.DeserializationError:
         try:
@@ -59,7 +55,6 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
             raise KeyError(
                 f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
             )
-    print(f"\nhist.to_numpy(): {hist.to_numpy()}\n")
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
@@ -155,9 +150,6 @@ def process_sample(
                 }
             )
         elif modtag.tag == 'ShapeSys':
-            print(modtag.tag)
-            print(modtag.attrib)
-            print(modtag.attrib['HistoName'])
             # NB: ConstraintType is ignored
             if modtag.attrib.get('ConstraintType', 'Poisson') != 'Poisson':
                 log.warning(
