@@ -10,7 +10,7 @@ extras_require = {
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
     'xmlio': [
         'uproot3~=3.14',
-        'uproot4~=4.0',
+        'uproot~=4.0',
     ],  # uproot3 required until writing to ROOT supported in uproot4
     'minuit': ['iminuit~=2.1'],
 }
