@@ -48,7 +48,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
         f = filecache[fullpath]
     try:
         hist = f[name]
-    except KeyError or uproot.deserialization.DeserializationError:
+    except (KeyError, uproot.deserialization.DeserializationError):
         try:
             hist = f[str(Path(path).joinpath(name))]
         except KeyError:
