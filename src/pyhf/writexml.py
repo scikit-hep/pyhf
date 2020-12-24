@@ -5,10 +5,10 @@ import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
-import uproot3
-from uproot3_methods.classes import TH1
 
 # TODO: Move to uproot4 when ROOT file writing is supported
+import uproot3 as uproot
+from uproot3_methods.classes import TH1
 
 from .mixins import _ChannelSummaryMixin
 
@@ -271,7 +271,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix))
     )
 
-    with uproot3.recreate(
+    with uproot.recreate(
         str(Path(data_rootdir).joinpath('data.root'))
     ) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
