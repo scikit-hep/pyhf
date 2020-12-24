@@ -11,7 +11,7 @@ extras_require = {
     'xmlio': [
         'uproot3~=3.14',
         'uproot4~=4.0',
-    ],  # Future proof against uproot4 API changes
+    ],  # uproot3 required until writing to ROOT supported in uproot4
     'minuit': ['iminuit~=2.1'],
 }
 extras_require['backends'] = sorted(
