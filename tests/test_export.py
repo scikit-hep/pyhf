@@ -392,6 +392,14 @@ def test_export_data(mocker):
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
 
 
+def test_export_duplicate_hist_name(mocker):
+    mocker.patch('pyhf.writexml._ROOT_DATA_FILE', new={'duplicate_name': True})
+    mocker.patch.object(pyhf.writexml, 'TH1')
+
+    with pytest.raises(KeyError):
+        pyhf.writexml._export_root_histogram('duplicate_name', [0, 1, 2])
+
+
 def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly

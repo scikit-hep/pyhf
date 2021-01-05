@@ -5,6 +5,8 @@ import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
+
+# TODO: Move to uproot4 when ROOT file writing is supported
 import uproot3 as uproot
 from uproot3_methods.classes import TH1
 
@@ -32,12 +34,11 @@ def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
 
 
 def _export_root_histogram(histname, data):
-    h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
-    h._fName = histname
-    # NB: uproot crashes for some reason, figure out why later
-    # if histname in _ROOT_DATA_FILE:
-    #    raise KeyError(f'Duplicate key {histname} being written.')
-    _ROOT_DATA_FILE[histname] = h
+    hist = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
+    hist._fName = histname
+    if histname in _ROOT_DATA_FILE:
+        raise KeyError(f"Duplicate key {histname} being written.")
+    _ROOT_DATA_FILE[histname] = hist
 
 
 # https://stackoverflow.com/a/4590052

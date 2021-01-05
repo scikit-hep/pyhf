@@ -6,7 +6,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
-import uproot3 as uproot
+import uproot
 import re
 
 log = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 __FILECACHE__ = {}
 
 
-def extract_error(h):
+def extract_error(hist):
     """
     Determine the bin uncertainties for a histogram.
 
@@ -23,13 +23,14 @@ def extract_error(h):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        h (uproot.rootio.TH1 object): The histogram
+        hist (:class:`uproot.behaviors.TH1.TH1`): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = h.variances if h.variances.any() else h.numpy()[0]
-    return np.sqrt(err).tolist()
+
+    variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
+    return np.sqrt(variance).tolist()
 
 
 def import_root_histogram(rootdir, filename, path, name, filecache=None):
@@ -46,15 +47,16 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     else:
         f = filecache[fullpath]
     try:
-        h = f[name]
-    except KeyError:
+        hist = f[name]
+    except (KeyError, uproot.deserialization.DeserializationError):
+        fullname = "/".join([path, name])
         try:
-            h = f[str(Path(path).joinpath(name))]
+            hist = f[fullname]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
+                f'Both {name} and {fullname} were tried and not found in {fullpath}'
             )
-    return h.numpy()[0].tolist(), extract_error(h)
+    return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
 def process_sample(
@@ -230,7 +232,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
     For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
 
     Args:
-        toplvl (:module:`xml.etree.ElementTree`): The top-level XML document to parse.
+        toplvl (:mod:`xml.etree.ElementTree`): The top-level XML document to parse.
         other_parameter_configs (:obj:`list`): A list of other parameter configurations from other non-top-level XML documents to incorporate into the resulting measurement object.
 
     Returns:

@@ -1,7 +1,7 @@
 import pyhf
 import pyhf.readxml
 import numpy as np
-import uproot3 as uproot
+import uproot
 from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
@@ -113,7 +113,7 @@ def test_import_histogram():
         "validation/xmlimport_input/data", "example.root", "", "data"
     )
     assert data == [122.0, 112.0]
-    assert uncert == [11.045361017187261, 10.583005244258363]
+    assert uncert == [11.045360565185547, 10.58300495147705]
 
 
 def test_import_histogram_KeyError():
