@@ -501,9 +501,10 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
 
     minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
     minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-
     assert minuit.called
-    assert minuit.call_args.args[1] == [1, 9, 9]
+    # python 3.6 does not have ::args attribute on ::call_args
+    # assert minuit.call_args.args[1] == [1, 9, 9]
+    assert minuit.call_args[0][1] == [1, 9, 9]
     assert minimizer.fixed == [True, False, False]
 
 
