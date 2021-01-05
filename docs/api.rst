@@ -15,6 +15,8 @@ Top-Level
    optimizer
    get_backend
    set_backend
+   readxml
+   writexml
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
