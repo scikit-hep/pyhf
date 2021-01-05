@@ -58,17 +58,13 @@ class minuit_optimizer(OptimizerMixin):
             wrapped_objective = objective_and_grad
             jac = None
 
-        kwargs = dict(
-            fcn=wrapped_objective,
-            grad=jac,
-            start=init_pars,
-            error=step_sizes,
-            limit=init_bounds,
-            fix=fixed_bools,
-            print_level=self.verbose,
-            errordef=self.errordef,
-        )
-        return iminuit.Minuit.from_array_func(**kwargs)
+        minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
+        minuit.errors = step_sizes
+        minuit.limits = init_bounds
+        minuit.fixed = fixed_bools
+        minuit.print_level = self.verbose
+        minuit.errordef = self.errordef
+        return minuit
 
     def _minimize(
         self,
@@ -113,7 +109,7 @@ class minuit_optimizer(OptimizerMixin):
         minimizer.tol = tolerance
         minimizer.migrad(ncall=maxiter)
         # Following lines below come from:
-        # https://github.com/scikit-hep/iminuit/blob/64acac11cfa2fb91ccbd02d1b3c51f8a9e2cc484/src/iminuit/_minimize.py#L102-L121
+        # https://github.com/scikit-hep/iminuit/blob/23bad7697e39d363f259ca8349684df939b1b2e6/src/iminuit/_minimize.py#L111-L130
         message = "Optimization terminated successfully."
         if not minimizer.valid:
             message = "Optimization failed."
@@ -128,20 +124,20 @@ class minuit_optimizer(OptimizerMixin):
         if minimizer.valid:
             # Extra call to hesse() after migrad() is always needed for good error estimates. If you pass a user-provided gradient to MINUIT, convergence is faster.
             minimizer.hesse()
-            hess_inv = minimizer.np_covariance()
+            hess_inv = minimizer.covariance
 
         unc = None
         if return_uncertainties:
-            unc = minimizer.np_errors()
+            unc = minimizer.errors
 
         return scipy.optimize.OptimizeResult(
-            x=minimizer.np_values(),
+            x=minimizer.values,
             unc=unc,
             success=minimizer.valid,
             fun=minimizer.fval,
             hess_inv=hess_inv,
             message=message,
-            nfev=minimizer.ncalls_total,
-            njev=minimizer.ngrads_total,
+            nfev=minimizer.nfcn,
+            njev=minimizer.ngrad,
             minuit=minimizer,
         )
