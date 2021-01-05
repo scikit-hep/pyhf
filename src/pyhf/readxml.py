@@ -232,7 +232,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
     For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
 
     Args:
-        toplvl (:module:`xml.etree.ElementTree`): The top-level XML document to parse.
+        toplvl (:mod:`xml.etree.ElementTree`): The top-level XML document to parse.
         other_parameter_configs (:obj:`list`): A list of other parameter configurations from other non-top-level XML documents to incorporate into the resulting measurement object.
 
     Returns:
