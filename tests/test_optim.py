@@ -499,10 +499,13 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
     # patch all we need
     from pyhf.optimize import opt_minuit
 
-    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
-    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-    assert minimizer.Minuit.from_array_func.call_args[1]['start'] == [1, 9, 9]
-    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
+    minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
+    minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+    assert minuit.called
+    # python 3.6 does not have ::args attribute on ::call_args
+    # assert minuit.call_args.args[1] == [1, 9, 9]
+    assert minuit.call_args[0][1] == [1, 9, 9]
+    assert minimizer.fixed == [True, False, False]
 
 
 def test_step_sizes_fixed_parameters_minuit(mocker):
@@ -511,7 +514,9 @@ def test_step_sizes_fixed_parameters_minuit(mocker):
     # patch all we need
     from pyhf.optimize import opt_minuit
 
-    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
-    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
-    assert minimizer.Minuit.from_array_func.call_args[1]['error'] == [0.0, 0.01, 0.01]
+    minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
+    minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+
+    assert minuit.called
+    assert minimizer.fixed == [True, False, False]
+    assert minimizer.errors == [0.0, 0.01, 0.01]
