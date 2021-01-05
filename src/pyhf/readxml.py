@@ -23,7 +23,7 @@ def extract_error(hist):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        hist (`<dynamic>.Model_TH1F_v2`): The histogram
+        hist (:class:`uproot.behaviors.TH1.TH1`): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
