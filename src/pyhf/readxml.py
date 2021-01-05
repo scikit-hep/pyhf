@@ -49,12 +49,12 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     try:
         hist = f[name]
     except (KeyError, uproot.deserialization.DeserializationError):
-        key = "/".join([path, name])
+        fullname = "/".join([path, name])
         try:
-            hist = f[key]
+            hist = f[fullname]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {key} were tried and not found in {fullpath}'
+                f'Both {name} and {fullname} were tried and not found in {fullpath}'
             )
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
