@@ -51,7 +51,14 @@ class _BasicNormal:
 class jax_backend:
     """JAX backend for pyhf"""
 
-    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    __slots__ = [
+        "name",
+        "precision",
+        "dtypemap",
+        "default_do_grad",
+        "use_cuda",
+        "device",
+    ]
 
     def __init__(self, **kwargs):
         self.name = 'jax'
@@ -62,6 +69,9 @@ class jax_backend:
             'bool': jnp.bool_,
         }
         self.default_do_grad = True
+        # TODO: These do need to get set eventually to turn GPU on/off
+        self.use_cuda = None  # Need to set
+        self.device = None  # Need to set
 
     def _setup(self):
         """
