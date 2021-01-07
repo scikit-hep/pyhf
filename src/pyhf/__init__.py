@@ -61,7 +61,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, use_gpu=None):
         backend (:obj:`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
         precision (:obj:`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
-        use_gpu (:obj:`bool`): Boolean to enable hardware acceleration using CUDA enabled devices. Default is ``True``.
+        use_gpu (:obj:`bool`): Boolean to enable hardware acceleration using CUDA enabled devices. Default is backend dependent.
 
     Returns:
         None
