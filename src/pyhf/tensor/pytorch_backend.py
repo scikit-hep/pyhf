@@ -207,7 +207,7 @@ class pytorch_backend:
             )
             raise
 
-        return torch.as_tensor(tensor_in, dtype=dtype)
+        return torch.as_tensor(tensor_in, dtype=dtype).to(self.device)
 
     def gather(self, tensor, indices):
         return tensor[indices.type(torch.LongTensor)]
