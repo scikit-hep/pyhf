@@ -11,7 +11,14 @@ log = logging.getLogger(__name__)
 class pytorch_backend:
     """PyTorch backend for pyhf"""
 
-    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    __slots__ = [
+        "name",
+        "precision",
+        "dtypemap",
+        "default_do_grad",
+        "use_cuda",
+        "device",
+    ]
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
@@ -22,6 +29,8 @@ class pytorch_backend:
             'bool': torch.bool,
         }
         self.default_do_grad = True
+        self.use_cuda = kwargs.get("use_gpu", torch.cuda.is_available())
+        self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
     def _setup(self):
         """

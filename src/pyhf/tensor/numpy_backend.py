@@ -37,7 +37,14 @@ class _BasicNormal:
 class numpy_backend:
     """NumPy backend for pyhf"""
 
-    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    __slots__ = [
+        "name",
+        "precision",
+        "dtypemap",
+        "default_do_grad",
+        "use_cuda",
+        "device",
+    ]
 
     def __init__(self, **kwargs):
         self.name = 'numpy'
@@ -48,6 +55,8 @@ class numpy_backend:
             'bool': np.bool_,
         }
         self.default_do_grad = False
+        self.use_cuda = False  # Not applicable to NumPy
+        self.device = "cpu"  # Not applicable to NumPy
 
     def _setup(self):
         """
