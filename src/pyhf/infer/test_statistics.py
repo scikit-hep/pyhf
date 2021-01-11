@@ -324,7 +324,6 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
     Args:
         mu (Number or Tensor): The signal strength parameter (must be set to zero)
-
         data (Tensor): The data to be considered
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
         init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
