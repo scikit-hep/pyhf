@@ -244,7 +244,7 @@ def test_calculator_distributions_without_teststatistic(test_stat):
         [0.0], {}, [1.0], [(0.0, 10.0)], [False], test_stat=test_stat
     )
     with pytest.raises(RuntimeError):
-        calc.distributions(1.0)
+        calc.distributions(1.0, 0.0)
 
 
 @pytest.mark.parametrize(
@@ -330,10 +330,13 @@ def test_toy_calculator(tmpdir, hypotest_args):
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
+    null_mu = 0.0
     toy_calculator_qtilde_mu = pyhf.infer.calculators.ToyCalculator(
         data, model, None, None, ntoys=10, track_progress=False
     )
-    qtilde_mu_sig, qtilde_mu_bkg = toy_calculator_qtilde_mu.distributions(mu_test)
+    qtilde_mu_sig, qtilde_mu_bkg = toy_calculator_qtilde_mu.distributions(
+        mu_test, null_mu
+    )
     assert qtilde_mu_sig.samples.tolist() == pytest.approx(
         [
             0.0,
@@ -364,6 +367,6 @@ def test_toy_calculator(tmpdir, hypotest_args):
         ],
         1e-07,
     )
-    assert toy_calculator_qtilde_mu.teststatistic(mu_test) == pytest.approx(
+    assert toy_calculator_qtilde_mu.teststatistic(mu_test, null_mu) == pytest.approx(
         3.938244920380498, 1e-07
     )
