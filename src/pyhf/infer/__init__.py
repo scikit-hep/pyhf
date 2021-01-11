@@ -15,6 +15,7 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
+    null_mu=None,
     **kwargs,
 ):
     r"""
@@ -50,6 +51,7 @@ def hypotest(
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
+        null_mu (None or :obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis. Default (`None`) is to automatically set based on the test statistic used.
 
     Returns:
         Tuple of Floats and lists of Floats:
@@ -138,8 +140,11 @@ def hypotest(
         **kwargs,
     )
 
-    teststat = calc.teststatistic(alt_mu)
-    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(alt_mu)
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
+    null_mu = null_mu or (1.0 if is_q0 else 0.0)
+
+    teststat = calc.teststatistic(alt_mu, null_mu)
+    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(alt_mu, null_mu)
 
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)
@@ -152,8 +157,6 @@ def hypotest(
         tensorlib.astensor(CLb),
         tensorlib.astensor(CLs),
     )
-
-    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
 
     _returns = [CLsb if is_q0 else CLs]
     if return_tail_probs:
