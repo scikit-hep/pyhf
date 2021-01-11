@@ -340,7 +340,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
         )
     if mu != 0.0:
         log.warning(
-            'q0 test statistic only used for fit configuration with mu (POI) set to zero.'
+            'q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.'
         )
         mu = 0.0
 
