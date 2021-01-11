@@ -17,7 +17,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
+def generate_asimov_data(mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -35,7 +35,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
     Args:
-        asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
+        mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
@@ -47,7 +47,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
-        asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
+        mu, data, pdf, init_pars, par_bounds, fixed_params
     )
     return pdf.expected_data(bestfit_nuisance_asimov)
 
@@ -193,7 +193,7 @@ class AsymptoticCalculator:
         self.test_stat = test_stat
         self.sqrtqmuA_v = None
 
-    def distributions(self, alt_mu):
+    def distributions(self, alt_mu, null_mu):
         r"""
         Probability distributions of the test statistic, as defined in
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
@@ -209,14 +209,16 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
+            >>> null_mu = 0.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
-            >>> _ = asymptotic_calculator.teststatistic(mu_test)
-            >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test)
+            >>> _ = asymptotic_calculator.teststatistic(mu_test, null_mu)
+            >>> qmu_sig, qmu_bkg = asymptotic_calculator.distributions(mu_test, null_mu)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
             (0.002192624107163899, 0.15865525393145707)
 
         Args:
             alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
+            null_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis.
 
         Returns:
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
@@ -225,10 +227,12 @@ class AsymptoticCalculator:
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic first')
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(0.0)
+        b_dist = AsymptoticTestStatDistribution(
+            0.0
+        )  # TODO is this asimov_mu / null_mu?
         return sb_dist, b_dist
 
-    def teststatistic(self, alt_mu):
+    def teststatistic(self, alt_mu, null_mu):
         """
         Compute the test statistic for the observed data under the studied model.
 
@@ -242,12 +246,14 @@ class AsymptoticCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
+            >>> null_mu = 0.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
-            >>> asymptotic_calculator.teststatistic(mu_test)
+            >>> asymptotic_calculator.teststatistic(mu_test, null_mu)
             0.14043184405388176
 
         Args:
             alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
+            null_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis.
 
         Returns:
             Float: The value of the test statistic.
@@ -267,10 +273,8 @@ class AsymptoticCalculator:
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-        asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
-
         asimov_data = generate_asimov_data(
-            asimov_mu,
+            null_mu,
             self.data,
             self.pdf,
             self.init_pars,
@@ -489,7 +493,7 @@ class ToyCalculator:
         self.test_stat = test_stat
         self.track_progress = track_progress
 
-    def distributions(self, alt_mu, track_progress=None):
+    def distributions(self, alt_mu, null_mu, track_progress=None):
         """
         Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
 
@@ -505,15 +509,17 @@ class ToyCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
+            >>> null_mu = 0.0
             >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
             ...     data, model, ntoys=100, track_progress=False
             ... )
-            >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
+            >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test, null_mu)
             >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
             (0.14, 0.76)
 
         Args:
             alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
+            null_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis.
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
         Returns:
@@ -529,7 +535,7 @@ class ToyCalculator:
         signal_sample = signal_pdf.sample(sample_shape)
 
         bkg_pars = self.pdf.config.suggested_init()
-        bkg_pars[self.pdf.config.poi_index] = 1.0 if self.test_stat == 'q0' else 0.0
+        bkg_pars[self.pdf.config.poi_index] = null_mu
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
@@ -574,7 +580,7 @@ class ToyCalculator:
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
         return s_plus_b, b_only
 
-    def teststatistic(self, alt_mu):
+    def teststatistic(self, alt_mu, null_mu):
         """
         Compute the test statistic for the observed data under the studied model.
 
@@ -590,14 +596,16 @@ class ToyCalculator:
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
+            >>> null_mu = 0.0
             >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
             ...     data, model, ntoys=100, track_progress=False
             ... )
-            >>> toy_calculator.teststatistic(mu_test)
+            >>> toy_calculator.teststatistic(mu_test, null_mu)
             array(3.93824492)
 
         Args:
             alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
+            null_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis.
 
         Returns:
             Float: The value of the test statistic.
