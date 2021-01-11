@@ -226,11 +226,11 @@ class AsymptoticCalculator:
         """
         if self.sqrtqmuA_v is None:
             raise RuntimeError('need to call .teststatistic first')
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(
+        distribution_alt = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
+        distribution_null = AsymptoticTestStatDistribution(
             0.0
         )  # TODO is this asimov_mu / null_mu?
-        return sb_dist, b_dist
+        return distribution_alt, distribution_null
 
     def teststatistic(self, alt_mu, null_mu):
         """
@@ -550,9 +550,9 @@ class ToyCalculator:
             unit='toy',
         )
 
-        signal_teststat = []
+        teststat_alt = []
         for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
-            signal_teststat.append(
+            teststat_alt.append(
                 teststat_func(
                     alt_mu,
                     sample,
@@ -563,9 +563,9 @@ class ToyCalculator:
                 )
             )
 
-        bkg_teststat = []
+        teststat_null = []
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
-            bkg_teststat.append(
+            teststat_null.append(
                 teststat_func(
                     alt_mu,
                     sample,
@@ -576,9 +576,9 @@ class ToyCalculator:
                 )
             )
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
-        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
-        return s_plus_b, b_only
+        distribution_alt = EmpiricalDistribution(tensorlib.astensor(teststat_alt))
+        distribution_null = EmpiricalDistribution(tensorlib.astensor(teststat_null))
+        return distribution_alt, distribution_null
 
     def teststatistic(self, alt_mu, null_mu):
         """
