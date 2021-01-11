@@ -5,7 +5,7 @@ from .. import get_backend
 
 
 def hypotest(
-    poi_test,
+    alt_mu,
     data,
     pdf,
     init_pars=None,
@@ -40,7 +40,7 @@ def hypotest(
         [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
 
     Args:
-        poi_test (Number or Tensor): The value of the parameter of interest (POI)
+        alt_mu (Number or Tensor): The value of the parameter of interest (POI) for the alternative hypothesis.
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
         init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
@@ -138,8 +138,8 @@ def hypotest(
         **kwargs,
     )
 
-    teststat = calc.teststatistic(poi_test)
-    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
+    teststat = calc.teststatistic(alt_mu)
+    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(alt_mu)
 
     CLsb = sig_plus_bkg_distribution.pvalue(teststat)
     CLb = b_only_distribution.pvalue(teststat)

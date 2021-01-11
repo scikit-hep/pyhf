@@ -193,7 +193,7 @@ class AsymptoticCalculator:
         self.test_stat = test_stat
         self.sqrtqmuA_v = None
 
-    def distributions(self, poi_test):
+    def distributions(self, alt_mu):
         r"""
         Probability distributions of the test statistic, as defined in
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
@@ -216,19 +216,19 @@ class AsymptoticCalculator:
             (0.002192624107163899, 0.15865525393145707)
 
         Args:
-            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
 
         Returns:
             Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.
 
         """
         if self.sqrtqmuA_v is None:
-            raise RuntimeError('need to call .teststatistic(poi_test) first')
+            raise RuntimeError('need to call .teststatistic first')
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
         b_dist = AsymptoticTestStatDistribution(0.0)
         return sb_dist, b_dist
 
-    def teststatistic(self, poi_test):
+    def teststatistic(self, alt_mu):
         """
         Compute the test statistic for the observed data under the studied model.
 
@@ -247,7 +247,7 @@ class AsymptoticCalculator:
             0.14043184405388176
 
         Args:
-            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
 
         Returns:
             Float: The value of the test statistic.
@@ -258,7 +258,7 @@ class AsymptoticCalculator:
         teststat_func = utils.get_test_stat(self.test_stat)
 
         qmu_v = teststat_func(
-            poi_test,
+            alt_mu,
             self.data,
             self.pdf,
             self.init_pars,
@@ -278,7 +278,7 @@ class AsymptoticCalculator:
             self.fixed_params,
         )
         qmuA_v = teststat_func(
-            poi_test,
+            alt_mu,
             asimov_data,
             self.pdf,
             self.init_pars,
@@ -489,7 +489,7 @@ class ToyCalculator:
         self.test_stat = test_stat
         self.track_progress = track_progress
 
-    def distributions(self, poi_test, track_progress=None):
+    def distributions(self, alt_mu, track_progress=None):
         """
         Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
 
@@ -513,7 +513,7 @@ class ToyCalculator:
             (0.14, 0.76)
 
         Args:
-            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
 
         Returns:
@@ -524,7 +524,7 @@ class ToyCalculator:
         sample_shape = (self.ntoys,)
 
         signal_pars = self.pdf.config.suggested_init()
-        signal_pars[self.pdf.config.poi_index] = poi_test
+        signal_pars[self.pdf.config.poi_index] = alt_mu
         signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
         signal_sample = signal_pdf.sample(sample_shape)
 
@@ -548,7 +548,7 @@ class ToyCalculator:
         for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
             signal_teststat.append(
                 teststat_func(
-                    poi_test,
+                    alt_mu,
                     sample,
                     self.pdf,
                     signal_pars,
@@ -561,7 +561,7 @@ class ToyCalculator:
         for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
             bkg_teststat.append(
                 teststat_func(
-                    poi_test,
+                    alt_mu,
                     sample,
                     self.pdf,
                     bkg_pars,
@@ -574,7 +574,7 @@ class ToyCalculator:
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
         return s_plus_b, b_only
 
-    def teststatistic(self, poi_test):
+    def teststatistic(self, alt_mu):
         """
         Compute the test statistic for the observed data under the studied model.
 
@@ -597,7 +597,7 @@ class ToyCalculator:
             array(3.93824492)
 
         Args:
-            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
+            alt_mu (:obj:`float` or :obj:`tensor`): The value for the parameter of interest for the alternative hypothesis.
 
         Returns:
             Float: The value of the test statistic.
@@ -605,7 +605,7 @@ class ToyCalculator:
         """
         teststat_func = utils.get_test_stat(self.test_stat)
         teststat = teststat_func(
-            poi_test,
+            alt_mu,
             self.data,
             self.pdf,
             self.init_pars,
