@@ -67,6 +67,9 @@ def source_1bin_shapesys_q0():
         return json.load(read_json)
 
 
+source_1bin_shapesys_q0_toys = source_1bin_shapesys_q0
+
+
 @pytest.fixture(scope='module')
 def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
     source = source_1bin_shapesys_q0
@@ -100,6 +103,9 @@ def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
     return spec
 
 
+spec_1bin_shapesys_q0_toys = spec_1bin_shapesys_q0
+
+
 @pytest.fixture(scope='module')
 def expected_result_1bin_shapesys_q0():
     expected_result = {
@@ -111,6 +117,21 @@ def expected_result_1bin_shapesys_q0():
             0.41286079728391695,
         ],
         "obs": 0.003936883191585841,
+    }
+    return expected_result
+
+
+@pytest.fixture(scope='module')
+def expected_result_1bin_shapesys_q0_toys():
+    expected_result = {
+        "exp": [
+            0.0,
+            0.0,
+            0.01,
+            0.0965,
+            0.3865,
+        ],
+        "obs": 0.003,
     }
     return expected_result
 
@@ -620,7 +641,13 @@ def expected_result_2bin_2channel_coupledshapefactor():
 
 
 def validate_hypotest(
-    pdf, data, mu_test, expected_result, test_stat="q", tolerance=1e-6
+    pdf,
+    data,
+    mu_test,
+    expected_result,
+    test_stat="q",
+    tolerance=1e-6,
+    calctype="asymptotics",
 ):
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
@@ -633,7 +660,11 @@ def validate_hypotest(
         par_bounds,
         return_expected_set=True,
         test_stat=test_stat,
+        calctype=calctype,
     )
+
+    breakpoint()
+
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
         assert abs(result - expected) / expected < tolerance, result
@@ -641,18 +672,62 @@ def validate_hypotest(
 
 @pytest.fixture(
     params=[
-        ('1bin_shapesys', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 1e-6),
-        ('1bin_shapesys_q0', {'init_pars': 2, 'par_bounds': 2}, 0.0, "q0", 3e-4),
-        ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 4e-6),
-        ('1bin_normsys', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 2e-9),
-        ('2bin_histosys', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 8e-5),
-        ('2bin_2channel', {'init_pars': 5, 'par_bounds': 5}, 1.0, "q", 1e-6),
+        (
+            '1bin_shapesys',
+            {'init_pars': 2, 'par_bounds': 2},
+            1.0,
+            "q",
+            1e-6,
+            "asymptotics",
+        ),
+        (
+            '1bin_shapesys_q0',
+            {'init_pars': 2, 'par_bounds': 2},
+            0.0,
+            "q0",
+            3e-4,
+            "asymptotics",
+        ),
+        (
+            '1bin_shapesys_q0_toys',
+            {'init_pars': 2, 'par_bounds': 2},
+            0.0,
+            "q0",
+            3e-4,
+            "toybased",
+        ),
+        ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 4e-6, "asymptotics"),
+        (
+            '1bin_normsys',
+            {'init_pars': 2, 'par_bounds': 2},
+            1.0,
+            "q",
+            2e-9,
+            "asymptotics",
+        ),
+        (
+            '2bin_histosys',
+            {'init_pars': 2, 'par_bounds': 2},
+            1.0,
+            "q",
+            8e-5,
+            "asymptotics",
+        ),
+        (
+            '2bin_2channel',
+            {'init_pars': 5, 'par_bounds': 5},
+            1.0,
+            "q",
+            1e-6,
+            "asymptotics",
+        ),
         (
             '2bin_2channel_couplednorm',
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "q",
             1e-6,
+            "asymptotics",
         ),
         (
             '2bin_2channel_coupledhistosys',
@@ -660,6 +735,7 @@ def validate_hypotest(
             1.0,
             "q",
             1e-6,
+            "asymptotics",
         ),
         (
             '2bin_2channel_coupledshapefactor',
@@ -667,11 +743,13 @@ def validate_hypotest(
             1.0,
             "q",
             2.5e-6,
+            "asymptotics",
         ),
     ],
     ids=[
         '1bin_shapesys_mu1',
         '1bin_shapesys_q0_mu1',
+        '1bin_shapesys_q0_mu1_toys',
         '1bin_lumi_mu1',
         '1bin_normsys_mu1',
         '2bin_histosys_mu1',
@@ -690,6 +768,7 @@ def setup(request):
     mu = request.param[2]
     test_stat = request.param[3]
     tolerance = request.param[4]
+    calctype = request.param[5]
     return {
         'source': source,
         'spec': spec,
@@ -697,6 +776,7 @@ def setup(request):
         'expected': {'result': expected_result, 'config': config},
         "test_stat": test_stat,
         "tolerance": tolerance,
+        "calctype": calctype,
     }
 
 
@@ -729,6 +809,7 @@ def test_validation(setup):
         setup['expected']['result'],
         test_stat=setup['test_stat'],
         tolerance=setup['tolerance'],
+        calctype=setup['calctype'],
     )
 
 
