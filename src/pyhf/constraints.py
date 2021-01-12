@@ -197,13 +197,11 @@ class poisson_constraint_combined:
             )
             print('ok')
             try:
-              selection = [x.cpu().numpy() for x in self.param_viewer.index_selection]
+                selection = [x.cpu().numpy() for x in self.param_viewer.index_selection]
             except AttributeError:
-              selection = [x for x in self.param_viewer.index_selection]
-            print('selectioin',selection)
-            access_field = default_backend.concatenate(
-                selection, axis=1
-            )
+                selection = [x for x in self.param_viewer.index_selection]
+            print('selectioin', selection)
+            access_field = default_backend.concatenate(selection, axis=1)
             self._access_field = access_field
 
         self._precompute()
