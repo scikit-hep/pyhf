@@ -691,7 +691,7 @@ def validate_hypotest(
             {'init_pars': 2, 'par_bounds': 2},
             0.0,
             "q0",
-            3e-4,
+            1e-6,
             "toybased",
         ),
         ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 4e-6, "asymptotics"),
