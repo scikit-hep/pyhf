@@ -69,8 +69,10 @@ def test_independent(backend):
 
     p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
-    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
-        result
+    assert np.allclose(
+        tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0],
+        tb.tolist(result),
+        atol=1e-12,
     )
 
 
