@@ -45,7 +45,6 @@ jobs:
         python -m doctest README.rst
         cd docs
         make html
-        make html # Second time for sphinxcontrib-bibtex
         cd ..
         touch docs/_build/html/.nojekyll
     - name: Check schemas are copied over
