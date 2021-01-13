@@ -124,14 +124,8 @@ def expected_result_1bin_shapesys_q0():
 @pytest.fixture(scope='module')
 def expected_result_1bin_shapesys_q0_toys():
     expected_result = {
-        "exp": [
-            0.0,
-            0.0,
-            0.01,
-            0.0965,
-            0.3865,
-        ],
-        "obs": 0.003,
+        "exp": [0.0, 0.0005, 0.0145, 0.1205, 0.403],
+        "obs": 0.005,
     }
     return expected_result
 
@@ -652,20 +646,21 @@ def validate_hypotest(
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
+    kwargs = {'return_expected_set': True, 'test_stat': test_stat, 'calctype': calctype}
+
+    np.random.seed(0)
     CLs_obs, CLs_exp_set = pyhf.infer.hypotest(
         mu_test,
         data,
         pdf,
         init_pars,
         par_bounds,
-        return_expected_set=True,
-        test_stat=test_stat,
-        calctype=calctype,
+        **kwargs,
     )
 
     assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
     for result, expected in zip(CLs_exp_set, expected_result['exp']):
-        assert abs(result - expected) / expected < tolerance, result
+        assert result == pytest.approx(expected, rel=tolerance), result
 
 
 @pytest.fixture(
