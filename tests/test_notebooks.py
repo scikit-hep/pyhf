@@ -76,3 +76,9 @@ def test_learn_tensorizinginterpolations(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/learn/TensorizingInterpolations.ipynb', **common_kwargs
     )
+
+
+def test_learn_batched_eval(common_kwargs):
+    pm.execute_notebook(
+        'docs/examples/notebooks/learn/BatchedEvalDemo.ipynb', **common_kwargs
+    )
