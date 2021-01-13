@@ -37,3 +37,6 @@ config.rst
 .pytest_cache
 htmlcov
 .benchmarks
+
+# text editors
+.vscode/
