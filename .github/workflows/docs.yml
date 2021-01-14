@@ -43,9 +43,9 @@ jobs:
     - name: Test and build docs
       run: |
         python -m doctest README.rst
-        cd docs
+        pushd docs
         make html
-        cd ..
+        popd
         touch docs/_build/html/.nojekyll
     - name: Check schemas are copied over
       run: |
