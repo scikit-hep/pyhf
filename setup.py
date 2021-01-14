@@ -53,7 +53,7 @@ extras_require['docs'] = sorted(
         extras_require['xmlio']
         + [
             'sphinx>=3.1.2',
-            'sphinxcontrib-bibtex~=1.0',
+            'sphinxcontrib-bibtex~=2.1',
             'sphinx-click',
             'sphinx_rtd_theme',
             'nbsphinx',
