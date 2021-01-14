@@ -43,7 +43,9 @@ jobs:
     - name: Test and build docs
       run: |
         python -m doctest README.rst
-        python setup.py build_sphinx
+        pushd docs
+        make html
+        popd
         touch docs/_build/html/.nojekyll
     - name: Check schemas are copied over
       run: |
