@@ -44,7 +44,6 @@ extras_require['test'] = sorted(
             'nteract-scrapbook~=0.2',
             'jupyter',
             'graphviz',
-            'jsonpatch',
         ]
     )
 )
