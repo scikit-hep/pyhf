@@ -39,7 +39,6 @@ extras_require['test'] = sorted(
             'pytest-console-scripts',
             'pytest-mpl',
             'pydocstyle',
-            'coverage>=4.0',  # coveralls
             'papermill~=2.0',
             'nteract-scrapbook~=0.2',
             'jupyter',
