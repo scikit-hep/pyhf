@@ -5,7 +5,7 @@ from .. import get_backend
 
 
 def hypotest(
-    poi_test,
+    alt_mu,
     data,
     pdf,
     init_pars=None,
@@ -15,6 +15,7 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
+    null_mu=None,
     **kwargs,
 ):
     r"""
@@ -40,7 +41,7 @@ def hypotest(
         [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
 
     Args:
-        poi_test (Number or Tensor): The value of the parameter of interest (POI)
+        alt_mu (Number or Tensor): The value of the parameter of interest (POI) for the alternative hypothesis.
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
         init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
@@ -50,6 +51,7 @@ def hypotest(
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
+        null_mu (None or :obj:`float` or :obj:`tensor`): The value for the parameter of interest for the null hypothesis. Default (`None`) is to automatically set based on the test statistic used.
 
     Returns:
         Tuple of Floats and lists of Floats:
@@ -138,61 +140,57 @@ def hypotest(
         **kwargs,
     )
 
-    teststat = calc.teststatistic(poi_test)
-    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
+    null_mu = null_mu or (1.0 if is_q0 else 0.0)
 
-    CLsb = sig_plus_bkg_distribution.pvalue(teststat)
-    CLb = b_only_distribution.pvalue(teststat)
-    CLs = CLsb / CLb
+    teststat = calc.teststatistic(alt_mu, null_mu)
+    alt_distribution, null_distribution = calc.distributions(alt_mu, null_mu)
+
+    pvalue_alt = alt_distribution.pvalue(teststat)
+    pvalue_null = null_distribution.pvalue(teststat)
+    pvalue_mod_alt = pvalue_alt / pvalue_null
 
     tensorlib, _ = get_backend()
-    # Ensure that all CL values are 0-d tensors
-    CLsb, CLb, CLs = (
-        tensorlib.astensor(CLsb),
-        tensorlib.astensor(CLb),
-        tensorlib.astensor(CLs),
+    # Ensure that all p-values are 0-d tensors
+    pvalue_alt, pvalue_null, pvalue_mod_alt = (
+        tensorlib.astensor(pvalue_alt),
+        tensorlib.astensor(pvalue_null),
+        tensorlib.astensor(pvalue_mod_alt),
     )
 
-    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
-
-    _returns = [CLsb if is_q0 else CLs]
+    _returns = [pvalue_alt if is_q0 else pvalue_mod_alt]
     if return_tail_probs:
         if is_q0:
-            _returns.append([CLb])
+            _returns.append([pvalue_null])
         else:
-            _returns.append([CLsb, CLb])
+            _returns.append([pvalue_alt, pvalue_null])
     if return_expected_set:
-        CLs_exp = []
+        pvalue_mod_alt_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
 
-            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+            expected_null_teststat = null_distribution.expected_value(n_sigma)
 
-            if is_q0:
-                # despite the name in this case this is the discovery p value
-                CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
-            else:
-                CLs = sig_plus_bkg_distribution.pvalue(
-                    expected_bonly_teststat
-                ) / b_only_distribution.pvalue(expected_bonly_teststat)
-            CLs_exp.append(tensorlib.astensor(CLs))
+            pvalue_mod_alt_exp_value = alt_distribution.pvalue(expected_null_teststat)
+            if not is_q0:
+                pvalue_mod_alt_exp_value /= null_distribution.pvalue(
+                    expected_null_teststat
+                )
+
+            pvalue_mod_alt_exp.append(tensorlib.astensor(pvalue_mod_alt_exp_value))
         if return_expected:
-            _returns.append(CLs_exp[2])
-        _returns.append(CLs_exp)
+            _returns.append(pvalue_mod_alt_exp[2])
+        _returns.append(pvalue_mod_alt_exp)
     elif return_expected:
         n_sigma = 0
-        expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+        expected_null_teststat = null_distribution.expected_value(n_sigma)
 
-        if is_q0:
-            # despite the name in this case this is the discovery p value
-            CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
-        else:
-            CLs = sig_plus_bkg_distribution.pvalue(
-                expected_bonly_teststat
-            ) / b_only_distribution.pvalue(expected_bonly_teststat)
+        pvalue_mod_alt_exp_value = alt_distribution.pvalue(expected_null_teststat)
+        if not is_q0:
+            pvalue_mod_alt_exp_value /= null_distribution.pvalue(expected_null_teststat)
 
-        _returns.append(tensorlib.astensor(CLs))
+        _returns.append(tensorlib.astensor(pvalue_mod_alt_exp_value))
 
-    # Enforce a consistent return type of the observed CLs
+    # Enforce a consistent return type of the observed pvalue_mod_alt
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
