@@ -122,6 +122,7 @@ Inference
 .. autosummary::
    :toctree: _generated/
 
+   test_statistics.q0
    test_statistics.qmu
    test_statistics.qmu_tilde
    test_statistics.tmu

@@ -2,7 +2,7 @@
 
 from .calculators import AsymptoticCalculator, ToyCalculator
 from ..exceptions import InvalidTestStatistic
-from .test_statistics import qmu, qmu_tilde
+from .test_statistics import q0, qmu, qmu_tilde
 
 import logging
 
@@ -49,12 +49,19 @@ def create_calculator(calctype, *args, **kwargs):
 
 def get_test_stat(name):
     """
-    Get the test statistic function, :func:`~pyhf.infer.test_statistics.qmu` or
-    :func:`~pyhf.infer.test_statistics.qmu_tilde`, by name.
+    Get the test statistic function by name. The following test statistics are supported:
+
+    - :func:`~pyhf.infer.test_statistics.q0`
+    - :func:`~pyhf.infer.test_statistics.qmu`
+    - :func:`~pyhf.infer.test_statistics.qmu_tilde`
 
     Example:
 
         >>> from pyhf.infer import utils, test_statistics
+        >>> utils.get_test_stat("q0")
+        <function q0 at 0x...>
+        >>> utils.get_test_stat("q0") == test_statistics.q0
+        True
         >>> utils.get_test_stat("q")
         <function qmu at 0x...>
         >>> utils.get_test_stat("q") == test_statistics.qmu
@@ -72,6 +79,7 @@ def get_test_stat(name):
         callable: The test statistic function
     """
     _mapping = {
+        "q0": q0,
         "q": qmu,
         "qtilde": qmu_tilde,
     }

@@ -267,7 +267,8 @@ class AsymptoticCalculator:
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-        asimov_mu = 0.0
+        asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
+
         asimov_data = generate_asimov_data(
             asimov_mu,
             self.data,
@@ -286,7 +287,7 @@ class AsymptoticCalculator:
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
 
-        if self.test_stat == "q":
+        if self.test_stat in ["q", "q0"]:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v
         else:  # qtilde
 
@@ -528,7 +529,7 @@ class ToyCalculator:
         signal_sample = signal_pdf.sample(sample_shape)
 
         bkg_pars = self.pdf.config.suggested_init()
-        bkg_pars[self.pdf.config.poi_index] = 0.0
+        bkg_pars[self.pdf.config.poi_index] = 1.0 if self.test_stat == 'q0' else 0.0
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 

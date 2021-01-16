@@ -93,40 +93,47 @@ def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
         pyhf.infer.hypotest(10.1, data, pdf)
 
 
-def test_hypotest_return_tail_probs(tmpdir, hypotest_args):
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     return_tail_probs keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True}
+    kwargs = {'return_tail_probs': True, 'test_stat': test_stat}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CL_sb, CL_b]
     assert len(list(result)) == 2
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
+    assert len(result[1]) == 1 if test_stat == 'q0' else 2
     assert check_uniform_type(result[1])
 
 
-def test_hypotest_return_expected(tmpdir, hypotest_args):
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_expected keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True, 'return_expected': True}
+    kwargs = {
+        'return_tail_probs': True,
+        'return_expected': True,
+        'test_stat': test_stat,
+    }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp
     assert len(list(result)) == 3
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
+    assert len(result[1]) == 1 if test_stat == 'q0' else 2
     assert check_uniform_type(result[1])
     assert isinstance(result[2], type(tb.astensor(result[2])))
 
 
-def test_hypotest_return_expected_set(tmpdir, hypotest_args):
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_expected_set keyword arg is as expected
@@ -137,12 +144,13 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args):
         'return_tail_probs': True,
         'return_expected': True,
         'return_expected_set': True,
+        'test_stat': test_stat,
     }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma
     assert len(list(result)) == 4
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 2
+    assert len(result[1]) == 1 if test_stat == 'q0' else 2
     assert check_uniform_type(result[1])
     assert isinstance(result[2], type(tb.astensor(result[2])))
     assert len(result[3]) == 5

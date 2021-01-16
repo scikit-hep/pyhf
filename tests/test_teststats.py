@@ -4,6 +4,25 @@ import pyhf.infer.test_statistics
 import logging
 
 
+def test_q0(caplog):
+    mu = 1.0
+    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    data = [9] + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+
+    with caplog.at_level(logging.WARNING, "pyhf.infer.test_statistics"):
+        pyhf.infer.test_statistics.q0(
+            mu, data, model, init_pars, par_bounds, fixed_params
+        )
+        assert (
+            "q0 test statistic only used for fit configuration with POI set to zero"
+            in caplog.text
+        )
+        caplog.clear()
+
+
 def test_qmu(caplog):
     mu = 1.0
     model = pyhf.simplemodels.hepdata_like([6], [9], [3])
@@ -98,6 +117,15 @@ def test_no_poi_test_stats():
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
     fixed_params = model.config.suggested_fixed()
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+        pyhf.infer.test_statistics.q0(
+            test_poi, data, model, init_pars, par_bounds, fixed_params
+        )
+    assert (
+        "No POI is defined. A POI is required for profile likelihood based test statistics."
+        in str(excinfo.value)
+    )
 
     with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
         pyhf.infer.test_statistics.qmu(

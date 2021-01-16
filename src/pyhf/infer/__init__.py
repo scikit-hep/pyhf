@@ -153,18 +153,27 @@ def hypotest(
         tensorlib.astensor(CLs),
     )
 
-    _returns = [CLs]
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
+
+    _returns = [CLsb if is_q0 else CLs]
     if return_tail_probs:
-        _returns.append([CLsb, CLb])
+        if is_q0:
+            _returns.append([CLb])
+        else:
+            _returns.append([CLsb, CLb])
     if return_expected_set:
         CLs_exp = []
         for n_sigma in [2, 1, 0, -1, -2]:
 
             expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
 
-            CLs = sig_plus_bkg_distribution.pvalue(
-                expected_bonly_teststat
-            ) / b_only_distribution.pvalue(expected_bonly_teststat)
+            if is_q0:
+                # despite the name in this case this is the discovery p value
+                CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
+            else:
+                CLs = sig_plus_bkg_distribution.pvalue(
+                    expected_bonly_teststat
+                ) / b_only_distribution.pvalue(expected_bonly_teststat)
             CLs_exp.append(tensorlib.astensor(CLs))
         if return_expected:
             _returns.append(CLs_exp[2])
@@ -173,10 +182,16 @@ def hypotest(
         n_sigma = 0
         expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
 
-        CLs = sig_plus_bkg_distribution.pvalue(
-            expected_bonly_teststat
-        ) / b_only_distribution.pvalue(expected_bonly_teststat)
+        if is_q0:
+            # despite the name in this case this is the discovery p value
+            CLs = sig_plus_bkg_distribution.pvalue(expected_bonly_teststat)
+        else:
+            CLs = sig_plus_bkg_distribution.pvalue(
+                expected_bonly_teststat
+            ) / b_only_distribution.pvalue(expected_bonly_teststat)
+
         _returns.append(tensorlib.astensor(CLs))
+
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
