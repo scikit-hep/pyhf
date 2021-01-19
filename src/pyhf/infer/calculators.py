@@ -386,15 +386,15 @@ class AsymptoticCalculator:
         """
         # Calling pvalues is easier then repeating the CLs calculation here
         tb, _ = get_backend()
-        return tb.astensor(
-            [
+        return zip(
+            *[
                 self.pvalues(test_stat, sig_plus_bkg_distribution, b_only_distribution)
                 for test_stat in [
                     b_only_distribution.expected_value(n_sigma)
                     for n_sigma in [2, 1, 0, -1, -2]
                 ]
             ]
-        ).T
+        )
 
 
 class EmpiricalDistribution:

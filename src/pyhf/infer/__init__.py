@@ -161,7 +161,9 @@ def hypotest(
         else:
             _returns.append([CLsb_obs, CLb_obs])
 
-    pvalues_exp_band = CLsb_exp if is_q0 else CLs_exp
+    pvalues_exp_band = [
+        tb.astensor(pvalue) for pvalue in (CLsb_exp if is_q0 else CLs_exp)
+    ]
     if return_expected_set:
         if return_expected:
             _returns.append(tb.astensor(pvalues_exp_band[2]))
