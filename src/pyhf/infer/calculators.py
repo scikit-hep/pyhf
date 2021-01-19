@@ -322,7 +322,7 @@ class AsymptoticCalculator:
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(
-            ...     data, model, qtilde=True
+            ...     data, model, test_stat="qtilde"
             ... )
             >>> q_tilde = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
@@ -365,11 +365,11 @@ class AsymptoticCalculator:
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(
-            ...     data, model, qtilde=True
+            ...     data, model, test_stat="qtilde"
             ... )
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
-            >>> CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
+            >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
             [0.0026062609501074576, 0.01382005356161206, 0.06445320535890459, 0.23525643861460702, 0.573036205919389]
 
@@ -386,14 +386,21 @@ class AsymptoticCalculator:
         """
         # Calling pvalues is easier then repeating the CLs calculation here
         tb, _ = get_backend()
-        return zip(
-            *[
-                self.pvalues(test_stat, sig_plus_bkg_distribution, b_only_distribution)
-                for test_stat in [
-                    b_only_distribution.expected_value(n_sigma)
-                    for n_sigma in [2, 1, 0, -1, -2]
-                ]
-            ]
+        return list(
+            map(
+                list,
+                zip(
+                    *[
+                        self.pvalues(
+                            test_stat, sig_plus_bkg_distribution, b_only_distribution
+                        )
+                        for test_stat in [
+                            b_only_distribution.expected_value(n_sigma)
+                            for n_sigma in [2, 1, 0, -1, -2]
+                        ]
+                    ]
+                ),
+            )
         )
 
 
@@ -734,7 +741,7 @@ class ToyCalculator:
             ...     data, model, ntoys=100, track_progress=False
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
-            >>> CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
+            >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
             [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]
 
