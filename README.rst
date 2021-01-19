@@ -62,8 +62,7 @@ Alternatively the statistical model and observational data can be read from its 
    Observed: 0.3599840922126626, Expected: 0.3599840922126626
 
 
-Finally, you can also use the command line interface that ``pyhf`` provides which
-should produce the following JSON output:
+Finally, you can also use the command line interface that ``pyhf`` provides
 
 .. code:: bash
 
@@ -92,6 +91,11 @@ should produce the following JSON output:
        "version": "1.0.0"
    }
    EOF
+
+which should produce the following JSON output:
+
+.. code:: json
+
    {
       "CLs_exp": [
          0.0026062609501074576,
@@ -168,6 +172,7 @@ A one bin example
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   fig.show()
 
 **pyhf**
 
@@ -212,6 +217,7 @@ A two bin example
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   fig.show()
 
 
 **pyhf**
