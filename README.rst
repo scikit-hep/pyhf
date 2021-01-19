@@ -172,6 +172,7 @@ A one bin example
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   fig.show()
 
 **pyhf**
 
@@ -216,6 +217,7 @@ A two bin example
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   fig.show()
 
 
 **pyhf**
