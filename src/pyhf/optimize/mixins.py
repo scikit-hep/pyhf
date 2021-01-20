@@ -81,7 +81,15 @@ class OptimizerMixin:
 
         correlations = getattr(fitresult, 'corr', None)
         if correlations is not None:
-            correlations = tensorlib.astensor(correlations)
+            _zeros = tensorlib.zeros(num_fixed_pars)
+            # possibly a more elegant way to do this
+            stitched_columns = [
+                stitch_pars(column, stitch_with=_zeros) for column in zip(*correlations)
+            ]
+            stitched_rows = [
+                stitch_pars(row, stitch_with=_zeros) for row in zip(*stitched_columns)
+            ]
+            correlations = tensorlib.concatenate([stitched_rows], axis=1)
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
