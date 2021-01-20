@@ -89,7 +89,9 @@ class OptimizerMixin:
             stitched_rows = [
                 stitch_pars(row, stitch_with=_zeros) for row in zip(*stitched_columns)
             ]
-            correlations = tensorlib.concatenate([stitched_rows], axis=1)
+            correlations = tensorlib.concatenate(
+                tensorlib.astensor([stitched_rows]), axis=1
+            )
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
