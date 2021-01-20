@@ -306,7 +306,7 @@ class AsymptoticCalculator:
             )
         return teststat
 
-    def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+    def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
         Calculate the :math:`p`-values for the observed test statistic under the
         signal + background and background-only model hypotheses.
@@ -334,7 +334,7 @@ class AsymptoticCalculator:
             teststat (:obj:`tensor`): The test statistic.
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            bkg_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
@@ -343,11 +343,11 @@ class AsymptoticCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
-        CLb = b_only_distribution.pvalue(teststat)
+        CLb = bkg_only_distribution.pvalue(teststat)
         CLs = CLsb / CLb
         return CLsb, CLb, CLs
 
-    def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+    def expected_pvalues(self, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
         Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the
         median significance of variations of the signal strength from the
@@ -376,7 +376,7 @@ class AsymptoticCalculator:
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
+            bkg_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
@@ -392,10 +392,10 @@ class AsymptoticCalculator:
                 zip(
                     *[
                         self.pvalues(
-                            test_stat, sig_plus_bkg_distribution, b_only_distribution
+                            test_stat, sig_plus_bkg_distribution, bkg_only_distribution
                         )
                         for test_stat in [
-                            b_only_distribution.expected_value(n_sigma)
+                            bkg_only_distribution.expected_value(n_sigma)
                             for n_sigma in [2, 1, 0, -1, -2]
                         ]
                     ]
@@ -675,7 +675,7 @@ class ToyCalculator:
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
         return s_plus_b, b_only
 
-    def pvalues(self, teststat, sig_plus_bkg_distribution, b_only_distribution):
+    def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
         Calculate the :math:`p`-values for the observed test statistic under the
         signal + background and background-only model hypotheses.
@@ -705,7 +705,7 @@ class ToyCalculator:
             teststat (:obj:`tensor`): The test statistic.
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
+            bkg_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
@@ -714,11 +714,11 @@ class ToyCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
-        CLb = b_only_distribution.pvalue(teststat)
+        CLb = bkg_only_distribution.pvalue(teststat)
         CLs = CLsb / CLb
         return CLsb, CLb, CLs
 
-    def expected_pvalues(self, sig_plus_bkg_distribution, b_only_distribution):
+    def expected_pvalues(self, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
         Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the
         median significance of variations of the signal strength from the
@@ -748,7 +748,7 @@ class ToyCalculator:
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the signal + background hypothesis.
-            b_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
+            bkg_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
               The distribution for the background-only hypothesis.
 
         Returns:
@@ -762,9 +762,9 @@ class ToyCalculator:
                 self.pvalues(
                     tb.astensor(test_stat),
                     sig_plus_bkg_distribution,
-                    b_only_distribution,
+                    bkg_only_distribution,
                 )
-                for test_stat in b_only_distribution.samples
+                for test_stat in bkg_only_distribution.samples
             ]
         )
         # TODO: Add percentile to tensorlib
