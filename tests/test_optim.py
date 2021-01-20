@@ -6,7 +6,7 @@ import pytest
 from scipy.optimize import minimize, OptimizeResult
 import iminuit
 import itertools
-
+import numpy as np
 
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
@@ -437,6 +437,7 @@ def test_optim_correlations(backend, source, spec, mu):
     assert correlations.shape == (2, 2)
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.tolist(correlations)
+    assert np.allclose([[0.0, 0.0], [0.0, 1.0]], pyhf.tensorlib.tolist(correlations))
 
 
 @pytest.mark.parametrize(
