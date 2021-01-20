@@ -121,4 +121,4 @@ if __name__ == "__main__":
     StandardHypoTestDemo(
         infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
     )
-    # pyhf_version()
+    pyhf_version()

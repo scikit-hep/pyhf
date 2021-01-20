@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pyhf
 import pyhf.contrib.viz.brazil as brazil
 import ROOT
+import sys
 
 
 def run_toys_ROOT(infile, ntoys):
@@ -100,8 +101,7 @@ def run_toys_pyhf(ntoys=2_000, seed=0):
 
 
 if __name__ == "__main__":
-    # import sys
-    # run_toys_ROOT(
-    #     infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
-    # )
-    run_toys_pyhf(ntoys=20_000)
+    run_toys_ROOT(
+        infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
+    )
+    run_toys_pyhf(ntoys=2_000)
