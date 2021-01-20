@@ -55,6 +55,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     ]
     obs = tb.astensor([[r[0]] for r in results])
     exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
+
     result_arrary = tb.concatenate([obs, exp], axis=1).T
 
     # observed limit and the (0, +-1, +-2)sigma expected limits
