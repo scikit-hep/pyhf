@@ -1,5 +1,5 @@
 """Minuit Optimizer Class."""
-from .. import default_backend, exceptions
+from .. import exceptions
 from .mixins import OptimizerMixin
 import scipy
 import iminuit
@@ -85,7 +85,6 @@ class minuit_optimizer(OptimizerMixin):
 
         Minimizer Options:
             maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
-            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off.
             strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.
             tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
             return_correlations (`bool`): Return correlations of the fitted parameters. Default is off (``False``).
@@ -100,8 +99,6 @@ class minuit_optimizer(OptimizerMixin):
             'strategy', self.strategy if self.strategy else not do_grad
         )
         tolerance = options.pop('tolerance', self.tolerance)
-        return_uncertainties = options.pop('return_uncertainties', False)
-        return_correlations = options.pop('return_correlations', False)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
@@ -121,18 +118,15 @@ class minuit_optimizer(OptimizerMixin):
             if fmin.is_above_max_edm:
                 message += " Estimated distance to minimum too large."
 
-        n = len(x0)
-        hess_inv = default_backend.ones((n, n))
+        hess_inv = None
         corr = None
         unc = None
         if minimizer.valid:
             # Extra call to hesse() after migrad() is always needed for good error estimates. If you pass a user-provided gradient to MINUIT, convergence is faster.
             minimizer.hesse()
             hess_inv = minimizer.covariance
-            if return_correlations:
-                corr = hess_inv.correlation()
-            if return_uncertainties:
-                unc = minimizer.errors
+            corr = hess_inv.correlation()
+            unc = minimizer.errors
 
         return scipy.optimize.OptimizeResult(
             x=minimizer.values,
