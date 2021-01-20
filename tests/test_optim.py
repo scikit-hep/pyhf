@@ -424,7 +424,7 @@ def test_optim_correlations(backend, source, spec, mu):
     result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
-    result, result_obj = optim.minimize(
+    result, correlations = optim.minimize(
         pyhf.infer.mle.twice_nll,
         data,
         pdf,
@@ -432,11 +432,11 @@ def test_optim_correlations(backend, source, spec, mu):
         par_bounds,
         [(pdf.config.poi_index, mu)],
         return_correlations=True,
-        return_result_obj=True,
     )
     assert result.shape == (2,)
-    assert result_obj.corr.shape == (2, 2)
+    assert correlations.shape == (2, 2)
     assert pyhf.tensorlib.tolist(result)
+    assert pyhf.tensorlib.tolist(correlations)
 
 
 @pytest.mark.parametrize(
