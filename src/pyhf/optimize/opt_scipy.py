@@ -9,15 +9,19 @@ class scipy_optimizer(OptimizerMixin):
     Optimizer that uses :func:`scipy.optimize.minimize`.
     """
 
-    __slots__ = ['name']
+    __slots__ = ['name', 'tolerance']
 
     def __init__(self, *args, **kwargs):
         """
         Initialize the scipy_optimizer.
 
-        See :class:`pyhf.optimize.mixins.OptimizerMixin` for configuration options.
+        See :class:`pyhf.optimize.mixins.OptimizerMixin` for other configuration options.
+
+        Args:
+            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
         """
         self.name = 'scipy'
+        self.tolerance = kwargs.pop('tolerance', None)
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -39,9 +43,10 @@ class scipy_optimizer(OptimizerMixin):
         Same signature as :func:`scipy.optimize.minimize`.
 
         Minimizer Options:
-            maxiter (`int`): maximum number of iterations. Default is 100000.
-            verbose (`bool`): print verbose output during minimization. Default is off.
-            method (`str`): minimization routine. Default is 'SLSQP'.
+            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
+            verbose (:obj:`bool`): print verbose output during minimization. Default is off.
+            method (:obj:`str`): minimization routine. Default is 'SLSQP'.
+            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
@@ -49,6 +54,7 @@ class scipy_optimizer(OptimizerMixin):
         maxiter = options.pop('maxiter', self.maxiter)
         verbose = options.pop('verbose', self.verbose)
         method = options.pop('method', 'SLSQP')
+        tolerance = options.pop('tolerance', self.tolerance)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
@@ -72,5 +78,6 @@ class scipy_optimizer(OptimizerMixin):
             jac=do_grad,
             bounds=bounds,
             constraints=constraints,
+            tol=tolerance,
             options=dict(maxiter=maxiter, disp=bool(verbose)),
         )

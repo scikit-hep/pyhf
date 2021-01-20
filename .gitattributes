@@ -1,1 +1,3 @@
 .git_archival.txt  export-subst
+*.py diff=python
+*.md diff=markdown

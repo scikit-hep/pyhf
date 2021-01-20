@@ -17,16 +17,17 @@ from .mixins import _ChannelSummaryMixin
 log = logging.getLogger(__name__)
 
 
-def _join_items(join, left_items, right_items, key='name'):
+def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     """
     Join two lists of dictionaries along the given key.
 
     This is meant to be as generic as possible for any pairs of lists of dictionaries for many join operations.
 
     Args:
-        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_items (`list`): A list of dictionaries to join on the left
-        right_items (`list`): A list of dictionaries to join on the right
+        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_items (:obj:`list`): A list of dictionaries to join on the left
+        right_items (:obj:`list`): A list of dictionaries to join on the right
+        deep_merge_key (:obj:`str`): A key on which to deeply merge items if set.
 
     Returns:
         :obj:`list`: A joined list of dictionaries.
@@ -37,17 +38,32 @@ def _join_items(join, left_items, right_items, key='name'):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
+    keys = [item[key] for item in joined_items]
     for secondary_item in secondary_items:
-        # outer join: merge primary and secondary, matching where possible
-        if join == 'outer' and secondary_item in primary_items:
-            continue
-        # left/right outer join: only add secondary if existing item (by key value) is not in primary
+        # first, check for deep merging
+        if secondary_item[key] in keys and deep_merge_key is not None:
+            _deep_left_items = joined_items[keys.index(secondary_item[key])][
+                deep_merge_key
+            ]
+            _deep_right_items = secondary_item[deep_merge_key]
+            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
+                'left outer', _deep_left_items, _deep_right_items
+            )
+        # next, move over whole items where possible:
+        #   - if no join logic
+        #   - if outer join and item on right is not in left
+        #   - if left outer join and item (by name) is on right and not in left
+        #   - if right outer join and item (by name) is on left and not in right
         # NB: this will be slow for large numbers of items
-        elif join in ['left outer', 'right outer'] and secondary_item[key] in [
-            item[key] for item in joined_items
-        ]:
-            continue
-        joined_items.append(copy.deepcopy(secondary_item))
+        elif (
+            join == 'none'
+            or (join in ['outer'] and secondary_item not in primary_items)
+            or (
+                join in ['left outer', 'right outer']
+                and secondary_item[key] not in keys
+            )
+        ):
+            joined_items.append(copy.deepcopy(secondary_item))
     return joined_items
 
 
@@ -59,9 +75,9 @@ def _join_versions(join, left_version, right_version):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Versions are incompatible.
 
     Args:
-        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_version (`str`): The left workspace version.
-        right_version (`str`): The right workspace version.
+        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_version (:obj:`str`): The left workspace version.
+        right_version (:obj:`str`): The right workspace version.
 
     Returns:
         :obj:`str`: The workspace version.
@@ -74,7 +90,7 @@ def _join_versions(join, left_version, right_version):
     return left_version
 
 
-def _join_channels(join, left_channels, right_channels):
+def _join_channels(join, left_channels, right_channels, merge=False):
     """
     Join two workspace channel specifications.
 
@@ -82,18 +98,21 @@ def _join_channels(join, left_channels, right_channels):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Channel specifications are incompatible.
 
     Args:
-        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_channels (`list`): The left channel specification.
-        right_channels (`list`): The right channel specification.
+        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_channels (:obj:`list`): The left channel specification.
+        right_channels (:obj:`list`): The right channel specification.
+        merge (:obj:`bool`): Whether to deeply merge channels or not.
 
     Returns:
         :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#/definitions/channel` `schema <https://scikit-hep.org/pyhf/likelihood.html#channel>`__
 
     """
 
-    joined_channels = _join_items(join, left_channels, right_channels)
+    joined_channels = _join_items(
+        join, left_channels, right_channels, deep_merge_key='samples' if merge else None
+    )
     if join == 'none':
-        common_channels = set(c['name'] for c in left_channels).intersection(
+        common_channels = {c['name'] for c in left_channels}.intersection(
             c['name'] for c in right_channels
         )
         if common_channels:
@@ -123,9 +142,9 @@ def _join_observations(join, left_observations, right_observations):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Observation specifications are incompatible.
 
     Args:
-        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_observations (`list`): The left observation specification.
-        right_observations (`list`): The right observation specification.
+        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_observations (:obj:`list`): The left observation specification.
+        right_observations (:obj:`list`): The right observation specification.
 
     Returns:
         :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#/definitions/observation` `schema <https://scikit-hep.org/pyhf/likelihood.html#observations>`__
@@ -133,9 +152,9 @@ def _join_observations(join, left_observations, right_observations):
     """
     joined_observations = _join_items(join, left_observations, right_observations)
     if join == 'none':
-        common_observations = set(
-            obs['name'] for obs in left_observations
-        ).intersection(obs['name'] for obs in right_observations)
+        common_observations = {obs['name'] for obs in left_observations}.intersection(
+            obs['name'] for obs in right_observations
+        )
         if common_observations:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -167,9 +186,9 @@ def _join_parameter_configs(measurement_name, left_parameters, right_parameters)
       ~pyhf.exceptions.InvalidWorkspaceOperation: Parameter configuration specifications are incompatible.
 
     Args:
-        measurement_name (`str`): The name of the measurement being joined (a detail for raising exceptions correctly)
-        left_parameters (`list`): The left parameter configuration specification.
-        right_parameters (`list`): The right parameter configuration specification.
+        measurement_name (:obj:`str`): The name of the measurement being joined (a detail for raising exceptions correctly)
+        left_parameters (:obj:`list`): The left parameter configuration specification.
+        right_parameters (:obj:`list`): The right parameter configuration specification.
 
     Returns:
         :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#/definitions/config` schema
@@ -197,9 +216,9 @@ def _join_measurements(join, left_measurements, right_measurements):
       ~pyhf.exceptions.InvalidWorkspaceOperation: Measurement specifications are incompatible.
 
     Args:
-        join (`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
-        left_measurements (`list`): The left measurement specification.
-        right_measurements (`list`): The right measurement specification.
+        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
+        left_measurements (:obj:`list`): The left measurement specification.
+        right_measurements (:obj:`list`): The right measurement specification.
 
     Returns:
         :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#/definitions/measurement` `schema <https://scikit-hep.org/pyhf/likelihood.html#measurements>`__
@@ -207,9 +226,9 @@ def _join_measurements(join, left_measurements, right_measurements):
     """
     joined_measurements = _join_items(join, left_measurements, right_measurements)
     if join == 'none':
-        common_measurements = set(
-            meas['name'] for meas in left_measurements
-        ).intersection(meas['name'] for meas in right_measurements)
+        common_measurements = {meas['name'] for meas in left_measurements}.intersection(
+            meas['name'] for meas in right_measurements
+        )
         if common_measurements:
             raise exceptions.InvalidWorkspaceOperation(
                 f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
@@ -225,8 +244,7 @@ def _join_measurements(join, left_measurements, right_measurements):
         incompatible_poi = [
             measurement_name
             for measurement_name, measurements in _measurement_mapping.items()
-            if len(set(measurement['config']['poi'] for measurement in measurements))
-            > 1
+            if len({measurement['config']['poi'] for measurement in measurements}) > 1
         ]
         if incompatible_poi:
             raise exceptions.InvalidWorkspaceOperation(
@@ -264,7 +282,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def __init__(self, spec, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
-        super(Workspace, self).__init__(spec, channels=spec['channels'])
+        spec = copy.deepcopy(spec)
+        super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
@@ -311,9 +330,9 @@ class Workspace(_ChannelSummaryMixin, dict):
           ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
-            poi_name (`str`): The name of the parameter of interest to create a new measurement from
-            measurement_name (`str`): The name of the measurement to use
-            measurement_index (`int`): The index of the measurement to use
+            poi_name (:obj:`str`): The name of the parameter of interest to create a new measurement from
+            measurement_name (:obj:`str`): The name of the measurement to use
+            measurement_index (:obj:`int`): The index of the measurement to use
 
         Returns:
             :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement
@@ -328,15 +347,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         elif self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
-                    log.debug(
-                        'measurements defined:\n\t{0:s}'.format(
-                            '\n\t'.join(self.measurement_names)
-                        )
-                    )
+                    log.debug(f"measurements defined: {self.measurement_names}")
                     raise exceptions.InvalidMeasurement(
-                        'no measurement by name \'{0:s}\' was found in the workspace, pick from one of the valid ones above'.format(
-                            measurement_name
-                        )
+                        f'no measurement by name \'{measurement_name:s}\' was found in the workspace, pick from one of the valid ones above'
                     )
                 measurement = self['measurements'][
                     self.measurement_names.index(measurement_name)
@@ -385,9 +398,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             measurement_name=measurement_name,
             measurement_index=measurement_index,
         )
-        log.debug(
-            'model being created for measurement {0:s}'.format(measurement['name'])
-        )
+        log.debug(f"model being created for measurement {measurement['name']:s}")
 
         patches = config_kwargs.pop('patches', [])
 
@@ -411,7 +422,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
-            with_aux (bool): Whether to include auxiliary data from the model or not
+            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not
 
         Returns:
             :obj:`list`: data
@@ -423,7 +434,8 @@ class Workspace(_ChannelSummaryMixin, dict):
             )
         except KeyError:
             log.error(
-                "Invalid channel: the workspace does not have observation data for one of the channels in the model."
+                "Invalid channel: the workspace does not have observation data for one of the channels in the model.",
+                exc_info=True,
             )
             raise
         if with_aux:
@@ -659,7 +671,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right, join='none'):
+    def combine(cls, left, right, join='none', merge_channels=False):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -685,6 +697,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             left (~pyhf.workspace.Workspace): A workspace
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
+            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
@@ -694,13 +707,21 @@ class Workspace(_ChannelSummaryMixin, dict):
             raise ValueError(
                 f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
             )
+
+        if merge_channels and join not in ['outer', 'left outer', 'right outer']:
+            raise ValueError(
+                f"You can only merge channels using the 'outer', 'left outer', or 'right outer' join operations; not {join}"
+            )
+
         if join in ['left outer', 'right outer']:
             log.warning(
                 "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation."
             )
 
         new_version = _join_versions(join, left['version'], right['version'])
-        new_channels = _join_channels(join, left['channels'], right['channels'])
+        new_channels = _join_channels(
+            join, left['channels'], right['channels'], merge=merge_channels
+        )
         new_observations = _join_observations(
             join, left['observations'], right['observations']
         )
@@ -743,3 +764,42 @@ class Workspace(_ChannelSummaryMixin, dict):
         newspec['observations'].sort(key=lambda e: e['name'])
 
         return cls(newspec)
+
+    @classmethod
+    def build(cls, model, data, name='measurement'):
+        """
+        Build a workspace from model and data.
+
+        Args:
+            model (~pyhf.pdf.Model): A model to store into a workspace
+            data (:obj:`tensor`): A array holding observations to store into a workspace
+            name (:obj:`str`): The name of the workspace measurement
+
+        Returns:
+            ~pyhf.workspace.Workspace: A new workspace object
+
+        """
+        workspace = copy.deepcopy(dict(channels=model.spec['channels']))
+        workspace['version'] = utils.SCHEMA_VERSION
+        workspace['measurements'] = [
+            {
+                'name': name,
+                'config': {
+                    'poi': model.config.poi_name,
+                    'parameters': [
+                        {
+                            "bounds": [list(x) for x in v['paramset'].suggested_bounds],
+                            "inits": v['paramset'].suggested_init,
+                            "fixed": v['paramset'].suggested_fixed,
+                            "name": k,
+                        }
+                        for k, v in model.config.par_map.items()
+                    ],
+                },
+            }
+        ]
+        workspace['observations'] = [
+            {'name': k, 'data': list(data[model.config.channel_slices[k]])}
+            for k in model.config.channels
+        ]
+        return cls(workspace)

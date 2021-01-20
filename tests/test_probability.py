@@ -20,6 +20,9 @@ def test_poisson(backend):
     )
     assert result.shape == (1, 2)
 
+    sample = probability.Poisson(tb.astensor([10.0, 10.0])).sample((10,))
+    assert sample.shape == (10, 2)
+
 
 def test_normal(backend):
     tb, _ = backend
@@ -43,13 +46,20 @@ def test_normal(backend):
     ).log_prob(tb.astensor([[2.0, 3.0]]))
     assert result.shape == (1, 2)
 
+    sample = probability.Normal(
+        tb.astensor([10.0, 10.0]), tb.astensor([10.0, 10.0])
+    ).sample((10,))
+    assert sample.shape == (10, 2)
+
 
 def test_joint(backend):
     tb, _ = backend
     p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
-    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2])) == tb.tolist(
-        p1 + p2
+    assert np.allclose(
+        tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2])),
+        tb.tolist(p1 + p2),
+        atol=1e-12,
     )
 
 
@@ -61,11 +71,10 @@ def test_independent(backend):
 
     p1 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(2.0))
     p2 = probability.Poisson(tb.astensor([10.0])).log_prob(tb.astensor(3.0))
-    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
-        result
-    )
-    assert tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0] == tb.tolist(
-        result
+    assert np.allclose(
+        tb.tolist(probability.Simultaneous._joint_logpdf([p1, p2]))[0],
+        tb.tolist(result),
+        atol=1e-12,
     )
 
 

@@ -7,13 +7,14 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
+import re
 
 log = logging.getLogger(__name__)
 
 __FILECACHE__ = {}
 
 
-def extract_error(h):
+def extract_error(hist):
     """
     Determine the bin uncertainties for a histogram.
 
@@ -22,13 +23,14 @@ def extract_error(h):
     bin uncertainties are then Poisson, and so the `sqrt(entries)`.
 
     Args:
-        h (uproot.rootio.TH1 object): The histogram
+        hist (:class:`uproot.behaviors.TH1.TH1`): The histogram
 
     Returns:
         list: The uncertainty for each bin in the histogram
     """
-    err = h.variances if h.variances.any() else h.numpy()[0]
-    return np.sqrt(err).tolist()
+
+    variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
+    return np.sqrt(variance).tolist()
 
 
 def import_root_histogram(rootdir, filename, path, name, filecache=None):
@@ -39,21 +41,22 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     path = path or ''
     path = path.strip('/')
     fullpath = str(Path(rootdir).joinpath(filename))
-    if not fullpath in filecache:
+    if fullpath not in filecache:
         f = uproot.open(fullpath)
         filecache[fullpath] = f
     else:
         f = filecache[fullpath]
     try:
-        h = f[name]
-    except KeyError:
+        hist = f[name]
+    except (KeyError, uproot.deserialization.DeserializationError):
+        fullname = "/".join([path, name])
         try:
-            h = f[str(Path(path).joinpath(name))]
+            hist = f[fullname]
         except KeyError:
             raise KeyError(
-                f'Both {name} and {Path(path).joinpath(name)} were tried and not found in {Path(rootdir).joinpath(filename)}'
+                f'Both {name} and {fullname} were tried and not found in {fullpath}'
             )
-    return h.numpy()[0].tolist(), extract_error(h)
+    return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
 def process_sample(
@@ -79,9 +82,7 @@ def process_sample(
 
     for modtag in modtags:
         modtags.set_description(
-            '  - modifier {0:s}({1:s})'.format(
-                modtag.attrib.get('Name', 'n/a'), modtag.tag
-            )
+            f"  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})"
         )
         if modtag == sample:
             continue
@@ -144,7 +145,7 @@ def process_sample(
                 raise RuntimeError('cannot determine stat error.')
             modifiers.append(
                 {
-                    'name': 'staterror_{}'.format(channelname),
+                    'name': f'staterror_{channelname}',
                     'type': 'staterror',
                     'data': staterr,
                 }
@@ -169,6 +170,10 @@ def process_sample(
                     'type': 'shapesys',
                     'data': [a * b for a, b in zip(data, shapesys_data)],
                 }
+            )
+        elif modtag.tag == 'ShapeFactor':
+            modifiers.append(
+                {'name': modtag.attrib['Name'], 'type': 'shapefactor', 'data': None}
             )
         else:
             log.warning('not considering modifier tag %s', modtag)
@@ -212,7 +217,7 @@ def process_channel(channelxml, rootdir, track_progress=False):
     results = []
     channel_parameter_configs = []
     for sample in samples:
-        samples.set_description('  - sample {}'.format(sample.attrib.get('Name')))
+        samples.set_description(f"  - sample {sample.attrib.get('Name')}")
         result = process_sample(
             sample, rootdir, inputfile, histopath, channelname, track_progress
         )
@@ -223,6 +228,17 @@ def process_channel(channelxml, rootdir, track_progress=False):
 
 
 def process_measurements(toplvl, other_parameter_configs=None):
+    """
+    For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
+
+    Args:
+        toplvl (:mod:`xml.etree.ElementTree`): The top-level XML document to parse.
+        other_parameter_configs (:obj:`list`): A list of other parameter configurations from other non-top-level XML documents to incorporate into the resulting measurement object.
+
+    Returns:
+        :obj:`dict`: A measurement object.
+
+    """
     results = []
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
@@ -258,6 +274,14 @@ def process_measurements(toplvl, other_parameter_configs=None):
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
                 for param_name in param.text.split(' '):
+                    param_name = utils.remove_prefix(param_name, 'alpha_')
+                    if param_name.startswith('gamma_') and re.search(
+                        r'^gamma_.+_\d+$', param_name
+                    ):
+                        raise ValueError(
+                            f'pyhf does not support setting individual gamma parameters constant, such as for {param_name}.'
+                        )
+                    param_name = utils.remove_prefix(param_name, 'gamma_')
                     # lumi will always be the first parameter
                     if param_name == 'Lumi':
                         result['config']['parameters'][0].update(overall_param_obj)
@@ -288,9 +312,7 @@ def dedupe_parameters(parameters):
             for p in parameter_list:
                 log.warning(p)
             raise RuntimeError(
-                'cannot import workspace due to incompatible parameter configurations for {0:s}.'.format(
-                    parname
-                )
+                f'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
             )
     # no errors raised, de-dupe and return
     return list({v['name']: v for v in parameters}.values())
@@ -307,7 +329,7 @@ def parse(configfile, rootdir, track_progress=False):
     channels = {}
     parameter_configs = []
     for inp in inputs:
-        inputs.set_description('Processing {}'.format(inp))
+        inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
             ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
         )

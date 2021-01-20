@@ -22,22 +22,25 @@ class InvalidSpecification(Exception):
     InvalidSpecification is raised when a specification does not validate against the given schema.
     """
 
-    def __init__(self, ValidationError):
+    def __init__(self, ValidationError, schema=None):
         self.exc_info = sys.exc_info()
         self.parent = ValidationError
+        self.schema = schema
         self.path = ''
         for item in ValidationError.path:
             if isinstance(item, int):
-                self.path += '[{}]'.format(item)
+                self.path += f'[{item}]'
             else:
-                self.path += '.{}'.format(item)
+                self.path += f'.{item}'
         self.path = self.path.lstrip('.')
         self.instance = ValidationError.instance
-        message = '{0}.\n\tPath: {1}\n\tInstance: {2}'.format(
-            ValidationError.message, self.path, self.instance
-        )
+        message = f"{ValidationError.message}.\n\tPath: {self.path}\n\tInstance: {self.instance} Schema: {self.schema}"
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
+
+
+class InvalidArchiveHost(Exception):
+    """InvalidArchiveHost is raised when a given patchset archive url is not an approved host."""
 
 
 class InvalidPatchSet(Exception):
@@ -85,6 +88,12 @@ class InvalidModifier(Exception):
 class InvalidInterpCode(Exception):
     """
     InvalidInterpCode is raised when an invalid/unimplemented interpolation code is requested.
+    """
+
+
+class InvalidTestStatistic(Exception):
+    """
+    InvalidTestStatistic is raised when an invalid/unimplemented test statistic is requested.
     """
 
 

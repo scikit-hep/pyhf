@@ -5,8 +5,12 @@ import shutil
 import pkg_resources
 import xml.etree.cElementTree as ET
 import numpy as np
-import uproot
-from uproot_methods.classes import TH1
+
+# TODO: Move to uproot4 when ROOT file writing is supported
+import uproot3 as uproot
+from uproot3_methods.classes import TH1
+
+from .mixins import _ChannelSummaryMixin
 
 _ROOT_DATA_FILE = None
 
@@ -25,20 +29,16 @@ log = logging.getLogger(__name__)
 
 
 def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
-    return "{prefix}{middle}{suffix}".format(
-        prefix=prefix,
-        suffix=suffix,
-        middle='_'.join(filter(lambda x: x, [channel, sample, modifier])),
-    )
+    middle = '_'.join(filter(lambda x: x, [channel, sample, modifier]))
+    return f"{prefix}{middle}{suffix}"
 
 
 def _export_root_histogram(histname, data):
-    h = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
-    h._fName = histname
-    # NB: uproot crashes for some reason, figure out why later
-    # if histname in _ROOT_DATA_FILE:
-    #    raise KeyError('Duplicate key {0} being written.'.format(histname))
-    _ROOT_DATA_FILE[histname] = h
+    hist = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
+    hist._fName = histname
+    if histname in _ROOT_DATA_FILE:
+        raise KeyError(f"Duplicate key {histname} being written.")
+    _ROOT_DATA_FILE[histname] = hist
 
 
 # https://stackoverflow.com/a/4590052
@@ -58,7 +58,26 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def build_measurement(measurementspec):
+def build_measurement(measurementspec, modifiertypes):
+    """
+    Build the XML measurement specification for a given measurement adhering to defs.json/#definitions/measurement.
+
+    Args:
+        measurementspec (:obj:`dict`): The measurements specification from a :class:`~pyhf.workspace.Workspace`.
+        modifiertypes (:obj:`dict`): A mapping from modifier name (:obj:`str`) to modifier type (:obj:`str`).
+
+    Returns:
+        :class:`xml.etree.cElementTree.Element`: The XML measurement specification.
+
+    """
+    # need to determine prefixes
+    prefixes = {
+        'normsys': 'alpha_',
+        'histosys': 'alpha_',
+        'shapesys': 'gamma_',
+        'staterror': 'gamma_',
+    }
+
     config = measurementspec['config']
     name = measurementspec['name']
     poi = config['poi']
@@ -74,7 +93,8 @@ def build_measurement(measurementspec):
             if pname == 'lumi':
                 fixed_params.append('Lumi')
             else:
-                fixed_params.append(pname)
+                prefix = prefixes.get(modifiertypes[pname], '')
+                fixed_params.append(f'{prefix}{pname}')
         # we found luminosity, so handle it
         if parameter['name'] == 'lumi':
             lumi = parameter['auxdata'][0]
@@ -180,15 +200,18 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
                 np.divide(
                     a, b, out=np.zeros_like(a), where=np.asarray(b) != 0, dtype='float'
                 )
-                for a, b in np.array((modifierspec['data'], sampledata)).T
+                for a, b in np.array(
+                    (modifierspec['data'], sampledata), dtype="float"
+                ).T
             ],
         )
+    elif modifierspec['type'] == 'shapefactor':
+        pass
     else:
         log.warning(
-            'Skipping {0}({1}) for now'.format(
-                modifierspec['name'], modifierspec['type']
-            )
+            f"Skipping modifier {modifierspec['name']}({modifierspec['type']}) for now"
         )
+        return None
 
     modifier = ET.Element(mod_map[modifierspec['type']], **attrs)
     return modifier
@@ -269,9 +292,12 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             inp.text = channelfilename
             combination.append(inp)
 
+    # need information about modifier types to get the right prefix in measurement
+    mixin = _ChannelSummaryMixin(channels=spec['channels'])
+
     for measurement in spec['measurements']:
-        combination.append(build_measurement(measurement))
+        combination.append(build_measurement(measurement, dict(mixin.modifiers)))
     indent(combination)
-    return "<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n".encode(
-        "utf-8"
-    ) + ET.tostring(combination, encoding='utf-8')
+    return b"<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>\n\n" + ET.tostring(
+        combination, encoding='utf-8'
+    )

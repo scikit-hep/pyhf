@@ -92,9 +92,9 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
         pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters held constant in the fit
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -113,8 +113,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
 def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
     r"""
-    The test statistic, :math:`\tilde{q}_{\mu}`, for establishing an upper
-    limit on the strength parameter, :math:`\mu`, for models with
+    The "alternative" test statistic, :math:`\tilde{q}_{\mu}`, for establishing
+    an upper limit on the strength parameter, :math:`\mu`, for models with
     bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -156,11 +156,11 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
     Args:
         mu (Number or Tensor): The signal strength parameter
-        data (Tensor): The data to be considered
+        data (:obj:`tensor`): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters held constant in the fit
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
@@ -213,9 +213,9 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         mu (Number or Tensor): The signal strength parameter
         data (Tensor): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters held constant in the fit
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`t_{\mu}`
@@ -271,11 +271,11 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
     Args:
         mu (Number or Tensor): The signal strength parameter
-        data (Tensor): The data to be considered
+        data (:obj:`tensor`): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters held constant in the fit
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters held constant in the fit
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`
@@ -290,3 +290,66 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
             + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
         )
     return _tmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params)
+
+
+def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
+    r"""
+    The test statistic, :math:`q_{0}`, for discovery of a positive signal
+    as defined in Equation (12) in :xref:`arXiv:1007.1727`, for :math:`\mu=0`.
+
+    .. math::
+       :nowrap:
+
+       \begin{equation}
+         q_{0} = \left\{\begin{array}{ll}
+         -2\ln\lambda\left(0\right), &\hat{\mu} \ge 0,\\
+         0, & \hat{\mu} < 0,
+         \end{array}\right.
+       \end{equation}
+
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [60, 65]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> test_mu = 0.0
+        >>> init_pars = model.config.suggested_init()
+        >>> par_bounds = model.config.suggested_bounds()
+        >>> fixed_params = model.config.suggested_fixed()
+        >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        array(2.98339447)
+
+    Args:
+        mu (Number or Tensor): The signal strength parameter (must be set to zero)
+        data (Tensor): The data to be considered
+        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters held constant in the fit
+
+    Returns:
+        Float: The calculated test statistic, :math:`q_{0}`
+    """
+
+    if pdf.config.poi_index is None:
+        raise UnspecifiedPOI(
+            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+        )
+    if mu != 0.0:
+        log.warning(
+            'q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.'
+        )
+        mu = 0.0
+
+    tensorlib, optimizer = get_backend()
+
+    tmu_like_stat, (_, muhatbhat) = _tmu_like(
+        mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+    )
+    q0_stat = tensorlib.where(
+        muhatbhat[pdf.config.poi_index] < 0, tensorlib.astensor(0.0), tmu_like_stat
+    )
+    return q0_stat

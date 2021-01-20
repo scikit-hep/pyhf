@@ -2,7 +2,7 @@
 from . import get_backend
 
 
-class _SimpleDistributionMixin(object):
+class _SimpleDistributionMixin:
     """The mixin class for distributions."""
 
     def log_prob(self, value):
@@ -10,7 +10,7 @@ class _SimpleDistributionMixin(object):
         The log of the probability density function at the given value.
 
         Args:
-            value (`tensor` or `float`): The value at which to evaluate the distribution
+            value (:obj:`tensor` or :obj:`float`): The value at which to evaluate the distribution
 
         Returns:
             Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
@@ -33,7 +33,7 @@ class _SimpleDistributionMixin(object):
         The collection of values sampled from the probability density function.
 
         Args:
-            sample_shape (`tuple`): The shape of the sample to be returned
+            sample_shape (:obj:`tuple`): The shape of the sample to be returned
 
         Returns:
             Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
@@ -57,7 +57,7 @@ class Poisson(_SimpleDistributionMixin):
     def __init__(self, rate):
         """
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
         """
         tensorlib, _ = get_backend()
         self.rate = rate
@@ -96,8 +96,8 @@ class Normal(_SimpleDistributionMixin):
     def __init__(self, loc, scale):
         """
         Args:
-            loc (`tensor` or `float`): The mean of the Normal distribution
-            scale (`tensor` or `float`): The standard deviation of the Normal distribution
+            loc (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            scale (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
         """
 
         tensorlib, _ = get_backend()
@@ -143,8 +143,8 @@ class Independent(_SimpleDistributionMixin):
     def __init__(self, batched_pdf, batch_size=None):
         """
         Args:
-            batched_pdf (`pyhf.probability` distribution): The batch of pdfs of the same type (e.g. Poisson)
-            batch_size (`int`): The size of the batch
+            batched_pdf (:obj:`pyhf.probability` distribution): The batch of pdfs of the same type (e.g. Poisson)
+            batch_size (:obj:`int`): The size of the batch
         """
         self.batch_size = batch_size
         self._pdf = batched_pdf
@@ -170,19 +170,19 @@ class Independent(_SimpleDistributionMixin):
             -4.347743645878765
 
         Args:
-            value (`tensor` or `float`): The value at which to evaluate the distribution
+            value (:obj:`tensor` or :obj:`float`): The value at which to evaluate the distribution
 
         Returns:
             Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`
 
         """
         tensorlib, _ = get_backend()
-        result = super(Independent, self).log_prob(value)
+        result = super().log_prob(value)
         result = tensorlib.sum(result, axis=-1)
         return result
 
 
-class Simultaneous(object):
+class Simultaneous:
     """
     A probability density corresponding to the joint
     distribution of multiple non-identical component distributions
@@ -210,9 +210,9 @@ class Simultaneous(object):
 
         Args:
 
-            pdfobjs (`Distribution`): The constituent pdf objects
-            tensorview (`_TensorViewer`): The :code:`_TensorViewer` defining the data composition
-            batch_size (`int`): The size of the batch
+            pdfobjs (:class:`Distribution`): The constituent pdf objects
+            tensorview (:class:`_TensorViewer`): The :code:`_TensorViewer` defining the data composition
+            batch_size (:obj:`int`): The size of the batch
 
         """
         self.tv = tensorview
@@ -224,11 +224,10 @@ class Simultaneous(object):
         Iterate over the constituent pdf objects
 
         Returns:
-            pdfobj (`Distribution`): A constituent pdf object
+            pdfobj (:class:`Distribution`): A constituent pdf object
 
         """
-        for pdfobj in self._pdfobjs:
-            yield pdfobj
+        yield from self._pdfobjs
 
     def __getitem__(self, index):
         """
@@ -236,10 +235,10 @@ class Simultaneous(object):
 
         Args:
 
-            index (`int`): The index to access the constituent pdf object
+            index (:obj:`int`): The index to access the constituent pdf object
 
         Returns:
-            pdfobj (`Distribution`): A constituent pdf object
+            pdfobj (:class:`Distribution`): A constituent pdf object
 
         """
         return self._pdfobjs[index]
@@ -260,7 +259,7 @@ class Simultaneous(object):
         The collection of values sampled from the probability density function.
 
         Args:
-            sample_shape (`tuple`): The shape of the sample to be returned
+            sample_shape (:obj:`tuple`): The shape of the sample to be returned
 
         Returns:
             Tensor: The values :math:`x \sim f(\theta)` where :math:`x` has shape :code:`sample_shape`
@@ -273,7 +272,7 @@ class Simultaneous(object):
         The log of the probability density function at the given value.
 
         Args:
-            value (`tensor`): The observed value
+            value (:obj:`tensor`): The observed value
 
         Returns:
             Tensor: The value of :math:`\log(f\left(x\middle|\theta\right))` for :math:`x=`:code:`value`

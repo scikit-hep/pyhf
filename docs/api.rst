@@ -15,6 +15,8 @@ Top-Level
    optimizer
    get_backend
    set_backend
+   readxml
+   writexml
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
@@ -119,7 +121,9 @@ Inference
 
 .. autosummary::
    :toctree: _generated/
+   :template: modifierclass.rst
 
+   test_statistics.q0
    test_statistics.qmu
    test_statistics.qmu_tilde
    test_statistics.tmu
@@ -128,9 +132,14 @@ Inference
    mle.fit
    mle.fixed_poi_fit
    hypotest
+   intervals.upperlimit
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
+   calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator
+   calculators.ToyCalculator
+   utils.create_calculator
+   utils.get_test_stat
 
 Exceptions
 ----------
@@ -172,3 +181,14 @@ Utilities
    validate
    options_from_eqdelimstring
    digest
+
+Contrib
+-------
+
+.. currentmodule:: pyhf.contrib
+
+.. autosummary::
+   :toctree: _generated/
+
+   viz.brazil
+   utils.download

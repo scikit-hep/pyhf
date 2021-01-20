@@ -1,0 +1,146 @@
+{
+    "channels": [
+        {
+            "name": "channel1",
+            "samples": [
+                {
+                    "data": [
+                        20.0,
+                        10.0
+                    ],
+                    "modifiers": [
+                        {
+                            "data": {
+                                "hi": 1.05,
+                                "lo": 0.95
+                            },
+                            "name": "syst1",
+                            "type": "normsys"
+                        },
+                        {
+                            "data": null,
+                            "name": "SigXsecOverSM",
+                            "type": "normfactor"
+                        }
+                    ],
+                    "name": "signal"
+                },
+                {
+                    "data": [
+                        100.0,
+                        0.0
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                5.000000074505806,
+                                0.0
+                            ],
+                            "name": "staterror_channel1",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05,
+                                "lo": 0.95
+                            },
+                            "name": "syst2",
+                            "type": "normsys"
+                        }
+                    ],
+                    "name": "background1"
+                },
+                {
+                    "data": [
+                        0.0,
+                        100.0
+                    ],
+                    "modifiers": [
+                        {
+                            "data": null,
+                            "name": "lumi",
+                            "type": "lumi"
+                        },
+                        {
+                            "data": [
+                                0.0,
+                                10.0
+                            ],
+                            "name": "staterror_channel1",
+                            "type": "staterror"
+                        },
+                        {
+                            "data": {
+                                "hi": 1.05,
+                                "lo": 0.95
+                            },
+                            "name": "syst3",
+                            "type": "normsys"
+                        }
+                    ],
+                    "name": "background2"
+                }
+            ]
+        }
+    ],
+    "measurements": [
+        {
+            "config": {
+                "parameters": [
+                    {
+                        "auxdata": [
+                            1.0
+                        ],
+                        "bounds": [
+                            [
+                                0.5,
+                                1.5
+                            ]
+                        ],
+                        "fixed": true,
+                        "inits": [
+                            1.0
+                        ],
+                        "name": "lumi",
+                        "sigmas": [
+                            0.1
+                        ]
+                    },
+                    {
+                        "bounds": [
+                            [
+                                0.0,
+                                3.0
+                            ]
+                        ],
+                        "inits": [
+                            1.0
+                        ],
+                        "name": "SigXsecOverSM"
+                    },
+                    {
+                        "fixed": true,
+                        "name": "syst1"
+                    }
+                ],
+                "poi": "SigXsecOverSM"
+            },
+            "name": "GaussExample"
+        }
+    ],
+    "observations": [
+        {
+            "data": [
+                100.0,
+                100.0
+            ],
+            "name": "channel1"
+        }
+    ],
+    "version": "1.0.0"
+}

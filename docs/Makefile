@@ -2,7 +2,9 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+# W: Turn warnings into errors
+# n: Run in nit-picky mode
+SPHINXOPTS    = -W --keep-going #-n
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build

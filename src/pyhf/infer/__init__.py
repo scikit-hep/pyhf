@@ -1,8 +1,7 @@
 """Inference for Statistical Models."""
 
-from .test_statistics import qmu
+from . import utils
 from .. import get_backend
-from .calculators import AsymptoticCalculator
 
 
 def hypotest(
@@ -12,11 +11,16 @@ def hypotest(
     init_pars=None,
     par_bounds=None,
     fixed_params=None,
-    qtilde=False,
+    calctype="asymptotics",
+    return_tail_probs=False,
+    return_expected=False,
+    return_expected_set=False,
     **kwargs,
 ):
     r"""
     Compute :math:`p`-values and test statistics for a single value of the parameter of interest.
+
+    See :py:class:`~pyhf.infer.calculators.AsymptoticCalculator` and :py:class:`~pyhf.infer.calculators.ToyCalculator` on additional keyword arguments to be specified.
 
     Example:
         >>> import pyhf
@@ -26,9 +30,9 @@ def hypotest(
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-        >>> test_poi = 1.0
+        >>> mu_test = 1.0
         >>> CLs_obs, CLs_exp_band = pyhf.infer.hypotest(
-        ...     test_poi, data, model, qtilde=True, return_expected_set=True
+        ...     mu_test, data, model, return_expected_set=True, test_stat="qtilde"
         ... )
         >>> CLs_obs
         array(0.05251497)
@@ -39,17 +43,13 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (`tensor`): The initial parameter values to be used for minimization
-        par_bounds (`tensor`): The parameter value bounds to be used for minimization
-        fixed_params (`tensor`): Whether to fix the parameter to the init_pars value during minimization
-        qtilde (Bool): When ``True`` perform the calculation using the alternative
-         test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-         approximation in Equation (62) of :xref:`arXiv:1007.1727`.
-
-    Keyword Args:
-        return_tail_probs (bool): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
-        return_expected (bool): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
-        return_expected_set (bool): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
+        init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
+        par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
+        fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+        calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
+        return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
+        return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
+        return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
 
     Returns:
         Tuple of Floats and lists of Floats:
@@ -128,50 +128,52 @@ def hypotest(
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
-    calc = AsymptoticCalculator(
-        data, pdf, init_pars, par_bounds, fixed_params, qtilde=qtilde
+    calc = utils.create_calculator(
+        calctype,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        **kwargs,
     )
+
     teststat = calc.teststatistic(poi_test)
-    sig_plus_bkg_distribution, b_only_distribution = calc.distributions(poi_test)
+    sig_plus_bkg_distribution, bkg_only_distribution = calc.distributions(poi_test)
 
-    CLsb = sig_plus_bkg_distribution.pvalue(teststat)
-    CLb = b_only_distribution.pvalue(teststat)
-    CLs = CLsb / CLb
-
-    tensorlib, _ = get_backend()
-    # Ensure that all CL values are 0-d tensors
-    CLsb, CLb, CLs = (
-        tensorlib.astensor(CLsb),
-        tensorlib.astensor(CLb),
-        tensorlib.astensor(CLs),
+    tb, _ = get_backend()
+    CLsb_obs, CLb_obs, CLs_obs = tuple(
+        tb.astensor(pvalue)
+        for pvalue in calc.pvalues(
+            teststat, sig_plus_bkg_distribution, bkg_only_distribution
+        )
+    )
+    CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
+        sig_plus_bkg_distribution, bkg_only_distribution
     )
 
-    _returns = [CLs]
-    if kwargs.get('return_tail_probs'):
-        _returns.append([CLsb, CLb])
-    if kwargs.get('return_expected_set'):
-        CLs_exp = []
-        for n_sigma in [2, 1, 0, -1, -2]:
+    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
 
-            expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
+    _returns = [CLsb_obs if is_q0 else CLs_obs]
+    if return_tail_probs:
+        if is_q0:
+            _returns.append([CLb_obs])
+        else:
+            _returns.append([CLsb_obs, CLb_obs])
 
-            CLs = sig_plus_bkg_distribution.pvalue(
-                expected_bonly_teststat
-            ) / b_only_distribution.pvalue(expected_bonly_teststat)
-            CLs_exp.append(tensorlib.astensor(CLs))
-        if kwargs.get('return_expected'):
-            _returns.append(CLs_exp[2])
-        _returns.append(CLs_exp)
-    elif kwargs.get('return_expected'):
-        n_sigma = 0
-        expected_bonly_teststat = b_only_distribution.expected_value(n_sigma)
-
-        CLs = sig_plus_bkg_distribution.pvalue(
-            expected_bonly_teststat
-        ) / b_only_distribution.pvalue(expected_bonly_teststat)
-        _returns.append(tensorlib.astensor(CLs))
+    pvalues_exp_band = [
+        tb.astensor(pvalue) for pvalue in (CLsb_exp if is_q0 else CLs_exp)
+    ]
+    if return_expected_set:
+        if return_expected:
+            _returns.append(tb.astensor(pvalues_exp_band[2]))
+        _returns.append(pvalues_exp_band)
+    elif return_expected:
+        _returns.append(tb.astensor(pvalues_exp_band[2]))
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-__all__ = ['qmu', 'hypotest']
+from . import intervals  # noqa: F401
+
+__all__ = ["hypotest"]

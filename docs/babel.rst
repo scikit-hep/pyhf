@@ -37,7 +37,7 @@ Typically, ``prefix = 'FitConfig'`` and ``measurementName = 'NormalMeasurement'`
   from configManager import configMgr
   # ...
   configMgr.analysisName = '3b_tag21.2.27-1_RW_ExpSyst_36100_multibin_bkg'
-  configMgr.histCacheFile = 'cache/{0:s}.root'.format(configMgr.analysisName)
+  configMgr.histCacheFile = f'cache/{configMgr.analysisName:s}.root'
   # ...
   fitConfig = configMgr.addFitConfig("Excl")
   # ...
@@ -99,6 +99,5 @@ which will read all of the XML files and load the histogram data from the histog
 
     There are a few caveats one needs to be aware of with this conversion:
 
-    - Custom parameters cannot be held constant (e.g. lumi), see PR :pr:`846` and Issue :issue:`739`.
     - Uncorrelated shape systematics cannot be pruned, see Issue :issue:`662`.
     - Custom expressions for normalization factors cannot be used, see Issue :issue:`850`.

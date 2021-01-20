@@ -9,7 +9,7 @@ from scipy.stats import norm, poisson
 log = logging.getLogger(__name__)
 
 
-class _BasicPoisson(object):
+class _BasicPoisson:
     def __init__(self, rate):
         self.rate = rate
 
@@ -21,7 +21,7 @@ class _BasicPoisson(object):
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class _BasicNormal(object):
+class _BasicNormal:
     def __init__(self, loc, scale):
         self.loc = loc
         self.scale = scale
@@ -34,7 +34,7 @@ class _BasicNormal(object):
         return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
-class numpy_backend(object):
+class numpy_backend:
     """NumPy backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
@@ -67,9 +67,9 @@ class numpy_backend(object):
             array([-1., -1.,  0.,  1.,  1.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             NumPy ndarray: A clipped `tensor`
@@ -89,7 +89,7 @@ class numpy_backend(object):
             array([-0.99532227, -0.84270079,  0.        ,  0.84270079,  0.99532227])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             NumPy ndarray: The values of the error function at the given points.
@@ -109,7 +109,7 @@ class numpy_backend(object):
             array([-2., -1.,  0.,  1.,  2.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             NumPy ndarray: The values of the inverse of the error function at the given points.
@@ -130,8 +130,8 @@ class numpy_backend(object):
                    [2., 2.]])
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             NumPy ndarray: The tensor with repeated axes
@@ -153,9 +153,9 @@ class numpy_backend(object):
             array([9.])
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             NumPy ndarray: The output of the callable that was evaluated
@@ -206,7 +206,9 @@ class numpy_backend(object):
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
         return np.asarray(tensor_in, dtype=dtype)
@@ -289,6 +291,26 @@ class numpy_backend(object):
     def reshape(self, tensor, newshape):
         return np.reshape(tensor, newshape)
 
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            array([1., 2., 3., 4., 5., 6.])
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `numpy.ndarray`: A flattened array.
+        """
+        return np.ravel(tensor)
+
     def einsum(self, subscripts, *operands):
         """
         Evaluates the Einstein summation convention on the operands.
@@ -313,7 +335,7 @@ class numpy_backend(object):
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -329,13 +351,13 @@ class numpy_backend(object):
             array([0.16062314, 0.12407692])
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
-            NumPy float: Value of the continous approximation to Poisson(n|lam)
+            NumPy float: Value of the continuous approximation to Poisson(n|lam)
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
@@ -373,9 +395,9 @@ class numpy_backend(object):
             array([0.35206533, 0.46481887])
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             NumPy float: Value of Normal(x|mu, sigma)
@@ -397,9 +419,9 @@ class numpy_backend(object):
             array([0.7881446 , 0.97724987])
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             NumPy float: The CDF
@@ -420,7 +442,7 @@ class numpy_backend(object):
             array([-1.74030218, -2.0868536 ])
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             Poisson distribution: The Poisson distribution class
@@ -442,11 +464,39 @@ class numpy_backend(object):
             array([-1.41893853, -2.22579135])
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             Normal distribution: The Normal distribution class
 
         """
         return _BasicNormal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Return the input tensor as it already is a :class:`numpy.ndarray`.
+        This API exists only for ``pyhf.tensorlib`` compatibility.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
+
+        """
+        return tensor_in

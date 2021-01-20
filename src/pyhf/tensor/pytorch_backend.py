@@ -8,7 +8,7 @@ import math
 log = logging.getLogger(__name__)
 
 
-class pytorch_backend(object):
+class pytorch_backend:
     """PyTorch backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
@@ -42,9 +42,9 @@ class pytorch_backend(object):
             tensor([-1., -1.,  0.,  1.,  1.])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             PyTorch tensor: A clipped `tensor`
@@ -64,7 +64,7 @@ class pytorch_backend(object):
             tensor([-0.9953, -0.8427,  0.0000,  0.8427,  0.9953])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             PyTorch Tensor: The values of the error function at the given points.
@@ -84,7 +84,7 @@ class pytorch_backend(object):
             tensor([-2.0000, -1.0000,  0.0000,  1.0000,  2.0000])
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             PyTorch Tensor: The values of the inverse of the error function at the given points.
@@ -106,9 +106,9 @@ class pytorch_backend(object):
             tensor([9.])
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             PyTorch Tensor: The output of the callable that was evaluated
@@ -137,8 +137,8 @@ class pytorch_backend(object):
                     [2., 2.]])
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             PyTorch tensor: The tensor with repeated axes
@@ -172,7 +172,9 @@ class pytorch_backend(object):
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
         return torch.as_tensor(tensor_in, dtype=dtype)
@@ -188,6 +190,26 @@ class pytorch_backend(object):
 
     def shape(self, tensor):
         return tuple(map(int, tensor.shape))
+
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            tensor([1., 2., 3., 4., 5., 6.])
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `torch.Tensor`: A flattened array.
+        """
+        return tensor.view(-1)
 
     def sum(self, tensor_in, axis=None):
         return (
@@ -271,11 +293,13 @@ class pytorch_backend(object):
         max_dim = max(map(len, args))
         try:
             assert not [arg for arg in args if 1 < len(arg) < max_dim]
-        except AssertionError as error:
+        except AssertionError:
             log.error(
-                'ERROR: The arguments must be of compatible size: 1 or %i', max_dim
+                'ERROR: The arguments must be of compatible size: 1 or %i',
+                max_dim,
+                exc_info=True,
             )
-            raise error
+            raise
 
         broadcast = [arg if len(arg) > 1 else arg.expand(max_dim) for arg in args]
         return broadcast
@@ -299,7 +323,7 @@ class pytorch_backend(object):
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -315,13 +339,13 @@ class pytorch_backend(object):
             tensor([0.1606, 0.1241])
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
-            PyTorch FloatTensor: Value of the continous approximation to Poisson(n|lam)
+            PyTorch FloatTensor: Value of the continuous approximation to Poisson(n|lam)
         """
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 
@@ -348,9 +372,9 @@ class pytorch_backend(object):
             tensor([0.3521, 0.4648])
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
@@ -373,9 +397,9 @@ class pytorch_backend(object):
             tensor([0.7881, 0.9772])
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch FloatTensor: The CDF
@@ -403,7 +427,7 @@ class pytorch_backend(object):
             tensor([-1.7403, -2.0869])
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             PyTorch Poisson distribution: The Poisson distribution class
@@ -426,11 +450,38 @@ class pytorch_backend(object):
             tensor([-1.4189, -2.2258])
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             PyTorch Normal distribution: The Normal distribution class
 
         """
         return torch.distributions.Normal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Convert the PyTorch tensor to a :class:`numpy.ndarray`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]], dtype=float32)
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
+
+        """
+        return tensor_in.numpy()

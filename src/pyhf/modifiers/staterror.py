@@ -8,13 +8,12 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='staterror', constrained=True, op_code='multiplication')
-class staterror(object):
+class staterror:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': constrained_by_normal,
             'n_parameters': len(sample_data),
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'inits': (1.0,) * len(sample_data),
@@ -24,11 +23,11 @@ class staterror(object):
         }
 
 
-class staterror_combined(object):
+class staterror_combined:
     def __init__(self, staterr_mods, pdfconfig, mega_mods, batch_size=None):
         self.batch_size = batch_size
 
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in staterr_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in staterr_mods]
         self._staterr_mods = [m for m, _ in staterr_mods]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)

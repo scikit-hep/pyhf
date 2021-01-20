@@ -11,7 +11,7 @@ s = d['bindata']['sig'][0]
 tau = b / deltab / deltab
 mobs = round(tau * b)
 
-print('tau: {}, m: {}'.format(tau, mobs))
+print(f'tau: {tau}, m: {mobs}')
 
 w = ROOT.RooWorkspace("w", True)
 
@@ -59,7 +59,7 @@ getattr(w, 'import')(modelConfig)
 w.Print()
 
 
-##### model building complete
+# model building complete
 
 
 sbModel = w.obj('ModelConfig')
@@ -93,6 +93,6 @@ plot.Draw("OBS EXP CLb 2CL")
 c.Draw()
 c.SaveAs('scan.pdf')
 
-print('observed: {}'.format(result.UpperLimit()))
+print(f'observed: {result.UpperLimit()}')
 for i in [-2, -1, 0, 1, 2]:
-    print('expected {}: {}'.format(i, result.GetExpectedUpperLimit(i)))
+    print(f'expected {i}: {result.GetExpectedUpperLimit(i)}')

@@ -19,7 +19,7 @@ def test_set_backend_by_string(backend_name):
     pyhf.set_backend(backend_name)
     assert isinstance(
         pyhf.tensorlib,
-        getattr(pyhf.tensor, "{0:s}_backend".format(backend_name.lower())),
+        getattr(pyhf.tensor, f"{backend_name.lower():s}_backend"),
     )
 
 
@@ -28,7 +28,7 @@ def test_set_optimizer_by_string(optimizer_name):
     pyhf.set_backend(pyhf.tensorlib, optimizer_name)
     assert isinstance(
         pyhf.optimizer,
-        getattr(pyhf.optimize, "{0:s}_optimizer".format(optimizer_name.lower())),
+        getattr(pyhf.optimize, f"{optimizer_name.lower():s}_optimizer"),
     )
 
 
@@ -45,7 +45,7 @@ def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
     assert isinstance(
         pyhf.tensorlib,
-        getattr(pyhf.tensor, "{0:s}_backend".format(backend_name.decode("utf-8"))),
+        getattr(pyhf.tensor, f"{backend_name.decode('utf-8'):s}_backend"),
     )
 
 
@@ -54,9 +54,7 @@ def test_set_optimizer_by_bytestring(optimizer_name):
     pyhf.set_backend(pyhf.tensorlib, optimizer_name)
     assert isinstance(
         pyhf.optimizer,
-        getattr(
-            pyhf.optimize, "{0:s}_optimizer".format(optimizer_name.decode("utf-8"))
-        ),
+        getattr(pyhf.optimize, f"{optimizer_name.decode('utf-8'):s}_optimizer"),
     )
 
 
@@ -95,7 +93,7 @@ def test_supported_precision(precision_level):
 
 
 def test_custom_backend_name_supported():
-    class custom_backend(object):
+    class custom_backend:
         def __init__(self, **kwargs):
             self.name = "pytorch"
             self.precision = '64b'
@@ -108,7 +106,7 @@ def test_custom_backend_name_supported():
 
 
 def test_custom_optimizer_name_supported():
-    class custom_optimizer(object):
+    class custom_optimizer:
         def __init__(self, **kwargs):
             self.name = "scipy"
 
@@ -117,7 +115,7 @@ def test_custom_optimizer_name_supported():
 
 
 def test_custom_backend_name_notsupported():
-    class custom_backend(object):
+    class custom_backend:
         def __init__(self, **kwargs):
             self.name = "notsupported"
             self.precision = '64b'
@@ -132,7 +130,7 @@ def test_custom_backend_name_notsupported():
 
 
 def test_custom_optimizer_name_notsupported():
-    class custom_optimizer(object):
+    class custom_optimizer:
         def __init__(self, **kwargs):
             self.name = "notsupported"
 

@@ -1,0 +1,130 @@
+{
+    "@context": [
+        "https://doi.org/10.5063/schema/codemeta-2.0",
+        "http://schema.org"
+    ],
+    "@type": "SoftwareSourceCode",
+    "identifier": "pyhf",
+    "name": "pyhf",
+    "version": "0.5.4",
+    "description": "pure-Python HistFactory implementation with tensors and autodiff",
+    "license": "Apache, OSI Approved :: Apache Software License",
+    "author": [
+        {
+            "@id": "https://orcid.org/0000-0002-4048-7584",
+            "@type": "Person",
+            "givenName": "Lukas",
+            "familyName": "Heinrich",
+            "email": "lukas.heinrich@cern.ch"
+        },
+        {
+            "@id": "https://orcid.org/0000-0003-4124-7862",
+            "@type": "Person",
+            "givenName": "Matthew",
+            "familyName": "Feickert",
+            "email": "matthew.feickert@cern.ch"
+        },
+        {
+            "@id": "https://orcid.org/0000-0001-6616-3433",
+            "@type": "Person",
+            "givenName": "Giordon",
+            "familyName": "Stark",
+            "email": "gstark@cern.ch"
+        }
+    ],
+    "softwareRequirements": [
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "scipy",
+            "name": "scipy",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3",
+            "version": ">=1.4.0"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "click",
+            "name": "click",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3",
+            "version": ">=6.0"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "tqdm",
+            "name": "tqdm",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "jsonschema",
+            "name": "jsonschema",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3",
+            "version": ">=3.2.0"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "jsonpatch",
+            "name": "jsonpatch",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "pyyaml",
+            "name": "pyyaml",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3"
+        }
+    ],
+    "audience": [
+        {
+            "@type": "Audience",
+            "audienceType": "Science/Research"
+        }
+    ],
+    "provider": {
+        "@id": "https://pypi.org",
+        "@type": "Organization",
+        "name": "The Python Package Index",
+        "url": "https://pypi.org"
+    },
+    "runtimePlatform": "Python 3",
+    "url": "https://github.com/scikit-hep/pyhf",
+    "keywords": "physics fitting numpy scipy tensorflow pytorch jax",
+    "developmentStatus": "4 - Beta",
+    "applicationCategory": "Scientific/Engineering, Scientific/Engineering :: Physics",
+    "programmingLanguage": "Python 3, Python 3.6, Python 3.7, Python 3.8"
+}

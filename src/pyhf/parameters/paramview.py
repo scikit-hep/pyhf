@@ -37,7 +37,7 @@ def extract_index_access(baseviewer, subviewer, indices):
     return index_selection, stitched, indices_concatenated
 
 
-class ParamViewer(object):
+class ParamViewer:
     """
     Helper class to extract parameter data from possibly batched input
     """

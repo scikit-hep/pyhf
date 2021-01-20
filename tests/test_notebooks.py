@@ -10,7 +10,7 @@ def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
         'output_path': str(outputnb),
-        'kernel_name': 'python{}'.format(sys.version_info.major),
+        'kernel_name': f'python{sys.version_info.major}',
     }
 
 
@@ -62,6 +62,10 @@ def test_impactplot(common_kwargs):
     pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
 
 
+def test_toys(common_kwargs):
+    pm.execute_notebook('docs/examples/notebooks/toys.ipynb', **common_kwargs)
+
+
 def test_learn_interpolationcodes(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs
@@ -71,4 +75,10 @@ def test_learn_interpolationcodes(common_kwargs):
 def test_learn_tensorizinginterpolations(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/learn/TensorizingInterpolations.ipynb', **common_kwargs
+    )
+
+
+def test_learn_using_calculators(common_kwargs):
+    pm.execute_notebook(
+        "docs/examples/notebooks/learn/UsingCalculators.ipynb", **common_kwargs
     )

@@ -2,23 +2,26 @@ from jax.config import config
 
 config.update('jax_enable_x64', True)
 
-import jax.numpy as np
+import jax.numpy as jnp
 from jax.scipy.special import gammaln
 from jax.scipy import special
-from jax.scipy.stats import norm, poisson
-import numpy as onp
+from jax.scipy.stats import norm
+import numpy as np
+import scipy.stats as osp_stats
 import logging
 
 log = logging.getLogger(__name__)
 
 
-class _BasicPoisson(object):
+class _BasicPoisson:
     def __init__(self, rate):
         self.rate = rate
 
     def sample(self, sample_shape):
-        return poisson.osp_stats.poisson(self.rate).rvs(
-            size=sample_shape + self.rate.shape
+        # TODO: Support other dtypes
+        return jnp.asarray(
+            osp_stats.poisson(self.rate).rvs(size=sample_shape + self.rate.shape),
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
@@ -26,14 +29,18 @@ class _BasicPoisson(object):
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class _BasicNormal(object):
+class _BasicNormal:
     def __init__(self, loc, scale):
         self.loc = loc
         self.scale = scale
 
     def sample(self, sample_shape):
-        return norm.osp_stats.norm(self.loc, self.scale).rvs(
-            size=sample_shape + self.loc.shape
+        # TODO: Support other dtypes
+        return jnp.asarray(
+            osp_stats.norm(self.loc, self.scale).rvs(
+                size=sample_shape + self.loc.shape
+            ),
+            dtype=jnp.float64,
         )
 
     def log_prob(self, value):
@@ -41,7 +48,7 @@ class _BasicNormal(object):
         return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
-class jax_backend(object):
+class jax_backend:
     """JAX backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
@@ -50,9 +57,9 @@ class jax_backend(object):
         self.name = 'jax'
         self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
-            'float': np.float64 if self.precision == '64b' else np.float32,
-            'int': np.int64 if self.precision == '64b' else np.int32,
-            'bool': np.bool_,
+            'float': jnp.float64 if self.precision == '64b' else jnp.float32,
+            'int': jnp.int64 if self.precision == '64b' else jnp.int32,
+            'bool': jnp.bool_,
         }
         self.default_do_grad = True
 
@@ -74,14 +81,14 @@ class jax_backend(object):
             DeviceArray([-1., -1.,  0.,  1.,  1.], dtype=float64)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
-            min_value (`scalar` or `tensor` or `None`): The minimum value to be cliped to
-            max_value (`scalar` or `tensor` or `None`): The maximum value to be cliped to
+            tensor_in (:obj:`tensor`): The input tensor object
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
 
         Returns:
             JAX ndarray: A clipped `tensor`
         """
-        return np.clip(tensor_in, min_value, max_value)
+        return jnp.clip(tensor_in, min_value, max_value)
 
     def erf(self, tensor_in):
         """
@@ -97,7 +104,7 @@ class jax_backend(object):
                           0.99532227], dtype=float64)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             JAX ndarray: The values of the error function at the given points.
@@ -117,7 +124,7 @@ class jax_backend(object):
             DeviceArray([-2., -1.,  0.,  1.,  2.], dtype=float64)
 
         Args:
-            tensor_in (`tensor`): The input tensor object
+            tensor_in (:obj:`tensor`): The input tensor object
 
         Returns:
             JAX ndarray: The values of the inverse of the error function at the given points.
@@ -138,13 +145,13 @@ class jax_backend(object):
                          [2., 2.]], dtype=float64)
 
         Args:
-            tensor_in (`Tensor`): The tensor to be repeated
-            repeats (`Tensor`): The tuple of multipliers for each dimension
+            tensor_in (:obj:`tensor`): The tensor to be repeated
+            repeats (:obj:`tensor`): The tuple of multipliers for each dimension
 
         Returns:
             JAX ndarray: The tensor with repeated axes
         """
-        return np.tile(tensor_in, repeats)
+        return jnp.tile(tensor_in, repeats)
 
     def conditional(self, predicate, true_callable, false_callable):
         """
@@ -161,9 +168,9 @@ class jax_backend(object):
             DeviceArray([9.], dtype=float64)
 
         Args:
-            predicate (`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
 
         Returns:
             JAX ndarray: The output of the callable that was evaluated
@@ -172,14 +179,14 @@ class jax_backend(object):
 
     def tolist(self, tensor_in):
         try:
-            return onp.asarray(tensor_in).tolist()
+            return np.asarray(tensor_in).tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
-        return np.outer(tensor_in_1, tensor_in_2)
+        return jnp.outer(tensor_in_1, tensor_in_2)
 
     def gather(self, tensor, indices):
         return tensor[indices]
@@ -188,7 +195,7 @@ class jax_backend(object):
         return tensor[mask]
 
     def isfinite(self, tensor):
-        return np.isfinite(tensor)
+        return jnp.isfinite(tensor)
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -203,57 +210,59 @@ class jax_backend(object):
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
             >>> type(tensor)
-            <class 'jax.interpreters.xla.DeviceArray'>
+            <class 'jax.interpreters.xla._DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jax.interpreters.xla._DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error('Invalid dtype: dtype must be float, int, or bool.')
+            log.error(
+                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+            )
             raise
 
-        return np.asarray(tensor_in, dtype=dtype)
+        return jnp.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
-        return np.sum(tensor_in, axis=axis)
+        return jnp.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in, axis=None):
-        return np.prod(tensor_in, axis=axis)
+        return jnp.prod(tensor_in, axis=axis)
 
     def abs(self, tensor):
-        return np.abs(tensor)
+        return jnp.abs(tensor)
 
     def ones(self, shape):
-        return np.ones(shape)
+        return jnp.ones(shape)
 
     def zeros(self, shape):
-        return np.zeros(shape)
+        return jnp.zeros(shape)
 
     def power(self, tensor_in_1, tensor_in_2):
-        return np.power(tensor_in_1, tensor_in_2)
+        return jnp.power(tensor_in_1, tensor_in_2)
 
     def sqrt(self, tensor_in):
-        return np.sqrt(tensor_in)
+        return jnp.sqrt(tensor_in)
 
     def divide(self, tensor_in_1, tensor_in_2):
-        return np.divide(tensor_in_1, tensor_in_2)
+        return jnp.divide(tensor_in_1, tensor_in_2)
 
     def log(self, tensor_in):
-        return np.log(tensor_in)
+        return jnp.log(tensor_in)
 
     def exp(self, tensor_in):
-        return np.exp(tensor_in)
+        return jnp.exp(tensor_in)
 
     def stack(self, sequence, axis=0):
-        return np.stack(sequence, axis=axis)
+        return jnp.stack(sequence, axis=axis)
 
     def where(self, mask, tensor_in_1, tensor_in_2):
-        return np.where(mask, tensor_in_1, tensor_in_2)
+        return jnp.where(mask, tensor_in_1, tensor_in_2)
 
     def concatenate(self, sequence, axis=0):
         """
@@ -267,7 +276,7 @@ class jax_backend(object):
             output: the concatenated tensor
 
         """
-        return np.concatenate(sequence, axis=axis)
+        return jnp.concatenate(sequence, axis=axis)
 
     def simple_broadcast(self, *args):
         """
@@ -289,13 +298,33 @@ class jax_backend(object):
         Returns:
             list of Tensors: The sequence broadcast together.
         """
-        return np.broadcast_arrays(*args)
+        return jnp.broadcast_arrays(*args)
 
     def shape(self, tensor):
         return tensor.shape
 
     def reshape(self, tensor, newshape):
-        return np.reshape(tensor, newshape)
+        return jnp.reshape(tensor, newshape)
+
+    def ravel(self, tensor):
+        """
+        Return a flattened view of the tensor, not a copy.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> pyhf.tensorlib.ravel(tensor)
+            DeviceArray([1., 2., 3., 4., 5., 6.], dtype=float64)
+
+        Args:
+            tensor (Tensor): Tensor object
+
+        Returns:
+            `jax.interpreters.xla._DeviceArray`: A flattened array.
+        """
+        return jnp.ravel(tensor)
 
     def einsum(self, subscripts, *operands):
         """
@@ -315,16 +344,16 @@ class jax_backend(object):
             tensor: the calculation based on the Einstein summation convention
         """
         # return contract(subscripts,*operands)
-        return np.einsum(subscripts, *operands)
+        return jnp.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        n = np.asarray(n)
-        lam = np.asarray(lam)
-        return n * np.log(lam) - lam - gammaln(n + 1.0)
+        n = jnp.asarray(n)
+        lam = jnp.asarray(lam)
+        return n * jnp.log(lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
-        The continous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
+        The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
@@ -340,26 +369,26 @@ class jax_backend(object):
             DeviceArray([0.16062314, 0.12407692], dtype=float64)
 
         Args:
-            n (`tensor` or `float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+            n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
                                   (the observed number of events)
-            lam (`tensor` or `float`): The mean of the Poisson distribution p.m.f.
+            lam (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution p.m.f.
                                     (the expected number of events)
 
         Returns:
-            JAX ndarray: Value of the continous approximation to Poisson(n|lam)
+            JAX ndarray: Value of the continuous approximation to Poisson(n|lam)
         """
-        n = np.asarray(n)
-        lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
+        n = jnp.asarray(n)
+        lam = jnp.asarray(lam)
+        return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
         # norm.logpdf(x, loc=mu, scale=sigma)
         # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
-        root2 = np.sqrt(2)
-        root2pi = np.sqrt(2 * np.pi)
-        prefactor = -np.log(sigma * root2pi)
-        summand = -np.square(np.divide((x - mu), (root2 * sigma)))
+        root2 = jnp.sqrt(2)
+        root2pi = jnp.sqrt(2 * jnp.pi)
+        prefactor = -jnp.log(sigma * root2pi)
+        summand = -jnp.square(jnp.divide((x - mu), (root2 * sigma)))
         return prefactor + summand
 
     # def normal_logpdf(self, x, mu, sigma):
@@ -384,9 +413,9 @@ class jax_backend(object):
             DeviceArray([0.35206533, 0.46481887], dtype=float64)
 
         Args:
-            x (`tensor` or `float`): The value at which to evaluate the Normal distribution p.d.f.
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             JAX ndarray: Value of Normal(x|mu, sigma)
@@ -408,9 +437,9 @@ class jax_backend(object):
             DeviceArray([0.7881446 , 0.97724987], dtype=float64)
 
         Args:
-            x (`tensor` or `float`): The observed value of the random variable to evaluate the CDF for
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             JAX ndarray: The CDF
@@ -431,7 +460,7 @@ class jax_backend(object):
             DeviceArray([-1.74030218, -2.0868536 ], dtype=float64)
 
         Args:
-            rate (`tensor` or `float`): The mean of the Poisson distribution (the expected number of events)
+            rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
 
         Returns:
             Poisson distribution: The Poisson distribution class
@@ -453,11 +482,38 @@ class jax_backend(object):
             DeviceArray([-1.41893853, -2.22579135], dtype=float64)
 
         Args:
-            mu (`tensor` or `float`): The mean of the Normal distribution
-            sigma (`tensor` or `float`): The standard deviation of the Normal distribution
+            mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
+            sigma (:obj:`tensor` or :obj:`float`): The standard deviation of the Normal distribution
 
         Returns:
             Normal distribution: The Normal distribution class
 
         """
         return _BasicNormal(mu, sigma)
+
+    def to_numpy(self, tensor_in):
+        """
+        Convert the TensorFlow tensor to a :class:`numpy.ndarray`.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
+            >>> numpy_ndarray
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> type(numpy_ndarray)
+            <class 'numpy.ndarray'>
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
+
+        """
+        return np.asarray(tensor_in, dtype=tensor_in.dtype)

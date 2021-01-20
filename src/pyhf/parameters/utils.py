@@ -30,13 +30,11 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
             for paramset_requirement in paramset_requirements:
                 # undefined: the modifier does not support configuring that property
                 v = paramset_requirement.get(k, 'undefined')
-                combined_paramset.setdefault(k, set([])).add(v)
+                combined_paramset.setdefault(k, set()).add(v)
 
             if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(
-                    "Multiple values for '{}' ({}) were found for {}. Use unique modifier names when constructing the pdf.".format(
-                        k, list(combined_paramset[k]), paramset_name
-                    )
+                    f"Multiple values for '{k}' ({list(combined_paramset[k])}) were found for {paramset_name}. Use unique modifier names when constructing the pdf."
                 )
 
             default_v = combined_paramset[k].pop()
@@ -50,13 +48,11 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
             # this implies user-configured, so check that it has the right number of elements
             elif isinstance(v, list) and default_v and len(v) != len(default_v):
                 raise exceptions.InvalidModel(
-                    'Incorrect number of values ({}) for {} were configured by you, expected {}.'.format(
-                        len(v), k, len(default_v)
-                    )
+                    f'Incorrect number of values ({len(v)}) for {k} were configured by you, expected {len(default_v)}.'
                 )
             elif v and default_v == 'undefined':
                 raise exceptions.InvalidModel(
-                    '{} does not use the {} attribute.'.format(paramset_name, k)
+                    f'{paramset_name} does not use the {k} attribute.'
                 )
 
             combined_paramset[k] = v

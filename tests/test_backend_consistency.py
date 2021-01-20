@@ -53,7 +53,7 @@ def generate_source_poisson(n_bins):
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
 bins = [50, 500]
-bin_ids = ['{}_bins'.format(n_bins) for n_bins in bins]
+bin_ids = [f'{n_bins}_bins' for n_bins in bins]
 
 
 @pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
@@ -137,17 +137,13 @@ def test_hypotest_qmu_tilde(
         assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
     except AssertionError:
         print(
-            'Ratio to NumPy+SciPy exceeded tolerance of {}: {}'.format(
-                tolerance['numpy'], numpy_ratio_delta_unity.tolist()
-            )
+            f"Ratio to NumPy+SciPy exceeded tolerance of {tolerance['numpy']}: {numpy_ratio_delta_unity.tolist()}"
         )
         assert False
     try:
         assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
     except AssertionError:
         print(
-            'Ratio between tensor backends exceeded tolerance of {}: {}'.format(
-                tolerance['tensors'], tensors_ratio_delta_unity.tolist()
-            )
+            f"Ratio between tensor backends exceeded tolerance of {tolerance['tensors']}: {tensors_ratio_delta_unity.tolist()}"
         )
         assert False

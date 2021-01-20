@@ -7,7 +7,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class OptimizerMixin(object):
+class OptimizerMixin:
     """Mixin Class to build optimizers."""
 
     __slots__ = ['maxiter', 'verbose']
@@ -17,8 +17,8 @@ class OptimizerMixin(object):
         Create an optimizer.
 
         Args:
-            maxiter (`int`): maximum number of iterations. Default is 100000.
-            verbose (`int`): verbose output level during minimization. Default is off (0).
+            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
+            verbose (:obj:`int`): verbose output level during minimization. Default is off (0).
         """
         self.maxiter = kwargs.pop('maxiter', 100000)
         self.verbose = kwargs.pop('verbose', 0)
@@ -48,7 +48,7 @@ class OptimizerMixin(object):
         try:
             assert result.success
         except AssertionError:
-            log.error(result)
+            log.error(result, exc_info=True)
             raise exceptions.FailedMinimization(result)
         return result
 
@@ -118,23 +118,23 @@ class OptimizerMixin(object):
         Find parameters that minimize the objective.
 
         Args:
-            objective (`func`): objective function
-            data (`list`): observed data
+            objective (:obj:`func`): objective function
+            data (:obj:`list`): observed data
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-            init_pars (`list`): initial parameters
-            par_bounds (`list`): parameter boundaries
-            fixed_vals (`list`): fixed parameter values
-            return_fitted_val (`bool`): return bestfit value of the objective
-            return_result_obj (`bool`): return :class:`scipy.optimize.OptimizeResult`
-            do_grad (`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
-            do_stitch (`bool`): enable splicing/stitching fixed parameter.
+            init_pars (:obj:`list`): initial parameters
+            par_bounds (:obj:`list`): parameter boundaries
+            fixed_vals (:obj:`list`): fixed parameter values
+            return_fitted_val (:obj:`bool`): return bestfit value of the objective
+            return_result_obj (:obj:`bool`): return :class:`scipy.optimize.OptimizeResult`
+            do_grad (:obj:`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
+            do_stitch (:obj:`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
 
         Returns:
             Fitted parameters or tuple of results:
 
-                - parameters (`tensor`): fitted parameters
-                - minimum (`float`): if ``return_fitted_val`` flagged, return minimized objective value
+                - parameters (:obj:`tensor`): fitted parameters
+                - minimum (:obj:`float`): if ``return_fitted_val`` flagged, return minimized objective value
                 - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
         # Configure do_grad based on backend "automagically" if not set by user

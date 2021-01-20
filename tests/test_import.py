@@ -5,6 +5,7 @@ import uproot
 from pathlib import Path
 import pytest
 import xml.etree.cElementTree as ET
+import logging
 
 
 def assert_equal_dictionary(d1, d2):
@@ -47,11 +48,11 @@ def test_process_normfactor_configs():
     meas.append(poiel)
 
     setting = ET.Element('ParamSetting', Const='True')
-    setting.text = ' '.join(['Lumi', 'mu_both', 'mu_paramSettingOnly'])
+    setting.text = ' '.join(['Lumi', 'alpha_mu_both', 'alpha_mu_paramSettingOnly'])
     meas.append(setting)
 
     setting = ET.Element('ParamSetting', Val='2.0')
-    setting.text = ' '.join(['mu_both'])
+    setting.text = ' '.join(['alpha_mu_both'])
     meas.append(setting)
 
     toplvl.append(meas)
@@ -68,7 +69,7 @@ def test_process_normfactor_configs():
     meas.append(poiel)
 
     setting = ET.Element('ParamSetting', Val='3.0')
-    setting.text = ' '.join(['mu_both'])
+    setting.text = ' '.join(['alpha_mu_both'])
     meas.append(setting)
 
     toplvl.append(meas)
@@ -112,7 +113,7 @@ def test_import_histogram():
         "validation/xmlimport_input/data", "example.root", "", "data"
     )
     assert data == [122.0, 112.0]
-    assert uncert == [11.045361017187261, 10.583005244258363]
+    assert uncert == [11.045360565185547, 10.58300495147705]
 
 
 def test_import_histogram_KeyError():
@@ -134,7 +135,7 @@ def test_import_measurements():
     assert 'parameters' in measurement_configs
     assert len(measurement_configs['parameters']) == 3
     parnames = [p['name'] for p in measurement_configs['parameters']]
-    assert sorted(parnames) == sorted(['lumi', 'SigXsecOverSM', 'alpha_syst1'])
+    assert sorted(parnames) == sorted(['lumi', 'SigXsecOverSM', 'syst1'])
 
     lumi_param_config = measurement_configs['parameters'][0]
     assert 'auxdata' in lumi_param_config
@@ -145,6 +146,34 @@ def test_import_measurements():
     assert lumi_param_config['inits'] == [1.0]
     assert 'sigmas' in lumi_param_config
     assert lumi_param_config['sigmas'] == [0.1]
+
+
+@pytest.mark.parametrize("const", ['False', 'True'])
+def test_import_measurement_gamma_bins(const):
+    toplvl = ET.Element("Combination")
+    meas = ET.Element(
+        "Measurement",
+        Name='NormalMeasurement',
+        Lumi=str(1.0),
+        LumiRelErr=str(0.017),
+        ExportOnly=str(True),
+    )
+    poiel = ET.Element('POI')
+    poiel.text = 'mu_SIG'
+    meas.append(poiel)
+
+    setting = ET.Element('ParamSetting', Const=const)
+    setting.text = ' '.join(['Lumi', 'alpha_mu_both', 'gamma_bin_0'])
+    meas.append(setting)
+
+    setting = ET.Element('ParamSetting', Val='2.0')
+    setting.text = ' '.join(['gamma_bin_0'])
+    meas.append(setting)
+
+    toplvl.append(meas)
+
+    with pytest.raises(ValueError):
+        pyhf.readxml.process_measurements(toplvl)
 
 
 def test_import_prepHistFactory():
@@ -294,3 +323,87 @@ def test_import_normfactor_bounds():
     assert len(parameters) == 1
     parameter = parameters[0]
     assert parameter['bounds'] == [[0, 10]]
+
+
+def test_import_shapefactor():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input/config/examples/example_DataDriven.xml',
+        'validation/xmlimport_input',
+    )
+
+    # build the spec, strictly checks properties included
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
+    }
+    pdf = pyhf.Model(spec, poi_name='SigXsecOverSM')
+
+    channels = {channel['name']: channel for channel in pdf.spec['channels']}
+
+    assert channels['controlRegion']['samples'][0]['modifiers'][0]['type'] == 'lumi'
+    assert (
+        channels['controlRegion']['samples'][0]['modifiers'][1]['type'] == 'staterror'
+    )
+    assert channels['controlRegion']['samples'][0]['modifiers'][2]['type'] == 'normsys'
+    assert (
+        channels['controlRegion']['samples'][1]['modifiers'][0]['type'] == 'shapefactor'
+    )
+
+
+def test_process_modifiers(mocker, caplog):
+    sample = ET.Element(
+        "Sample", Name='testSample', HistoPath="", HistoName="testSample"
+    )
+    normfactor = ET.Element(
+        'NormFactor', Name="myNormFactor", Val='1', Low="0", High="3"
+    )
+    histosys = ET.Element(
+        'HistoSys', Name='myHistoSys', HistoNameHigh='', HistoNameLow=''
+    )
+    normsys = ET.Element('OverallSys', Name='myNormSys', High='1.05', Low='0.95')
+    shapesys = ET.Element('ShapeSys', Name='myShapeSys', HistoName='')
+    shapefactor = ET.Element(
+        "ShapeFactor",
+        Name='myShapeFactor',
+    )
+    staterror = ET.Element('StatError', Activate='True')
+    unknown_modifier = ET.Element('UnknownSys')
+
+    sample.append(normfactor)
+    sample.append(histosys)
+    sample.append(normsys)
+    sample.append(shapesys)
+    sample.append(shapefactor)
+    sample.append(staterror)
+    sample.append(unknown_modifier)
+
+    _data = [0.0]
+    _err = [1.0]
+    mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
+    with caplog.at_level(logging.DEBUG, 'pyhf.readxml'):
+        result = pyhf.readxml.process_sample(sample, '', '', '', 'myChannel')
+
+    assert "not considering modifier tag <Element 'UnknownSys'" in caplog.text
+    assert len(result['modifiers']) == 6
+    assert {'name': 'myNormFactor', 'type': 'normfactor', 'data': None} in result[
+        'modifiers'
+    ]
+    assert {
+        'name': 'myHistoSys',
+        'type': 'histosys',
+        'data': {'lo_data': _data, 'hi_data': _data},
+    } in result['modifiers']
+    assert {
+        'name': 'myNormSys',
+        'type': 'normsys',
+        'data': {'lo': 0.95, 'hi': 1.05},
+    } in result['modifiers']
+    assert {'name': 'myShapeSys', 'type': 'shapesys', 'data': _data} in result[
+        'modifiers'
+    ]
+    assert {'name': 'myShapeFactor', 'type': 'shapefactor', 'data': None} in result[
+        'modifiers'
+    ]
+    assert {'name': 'staterror_myChannel', 'type': 'staterror', 'data': _err} in result[
+        'modifiers'
+    ]

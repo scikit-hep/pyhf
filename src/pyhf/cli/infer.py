@@ -105,10 +105,6 @@ def fit(
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
-        modifier_settings={
-            "normsys": {"interpcode": "code4"},
-            "histosys": {"interpcode": "code4p"},
-        },
     )
     data = ws.data(model)
 
@@ -128,7 +124,7 @@ def fit(
     else:
         with open(output_file, "w+") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()
@@ -140,8 +136,11 @@ def fit(
 )
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
-@click.option('--testpoi', default=1.0)
-@click.option('--teststat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option('--test-poi', default=1.0)
+@click.option('--test-stat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option(
+    '--calctype', type=click.Choice(['asymptotics', 'toybased']), default='asymptotics'
+)
 @click.option(
     '--backend',
     type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'jax', 'np', 'torch', 'tf']),
@@ -160,10 +159,11 @@ def cls(
     output_file,
     measurement,
     patch,
-    testpoi,
-    teststat,
+    test_poi,
+    test_stat,
     backend,
     optimizer,
+    calctype,
     optconf,
 ):
     """
@@ -191,8 +191,6 @@ def cls(
         spec = json.load(specstream)
 
     ws = Workspace(spec)
-
-    is_qtilde = teststat == 'qtilde'
 
     patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
     model = ws.model(
@@ -223,7 +221,12 @@ def cls(
         set_backend(tensorlib, new_optimizer(**optconf))
 
     result = hypotest(
-        testpoi, ws.data(model), model, qtilde=is_qtilde, return_expected_set=True
+        test_poi,
+        ws.data(model),
+        model,
+        test_stat=test_stat,
+        calctype=calctype,
+        return_expected_set=True,
     )
     result = {
         'CLs_obs': tensorlib.tolist(result[0]),
@@ -235,4 +238,4 @@ def cls(
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")

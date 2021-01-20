@@ -7,7 +7,7 @@ from . import _slow_interpolator_looper
 log = logging.getLogger(__name__)
 
 
-class code0(object):
+class code0:
     r"""
     The piecewise-linear interpolation strategy.
 
@@ -84,7 +84,7 @@ class code0(object):
         return tensorlib.where(masks, alphas_times_deltas_up, alphas_times_deltas_dn)
 
 
-class _slow_code0(object):
+class _slow_code0:
     def summand(self, down, nom, up, alpha):
         delta_up = up - nom
         delta_down = nom - down

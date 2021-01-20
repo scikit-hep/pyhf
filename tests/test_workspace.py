@@ -4,6 +4,9 @@ import pytest
 import pyhf.exceptions
 import json
 import logging
+import pyhf.workspace
+import pyhf.utils
+import copy
 
 
 @pytest.fixture(
@@ -138,10 +141,14 @@ def test_workspace_observations(workspace_factory):
     assert w.observations
 
 
-def test_get_workspace_data(workspace_factory):
+@pytest.mark.parametrize(
+    "with_aux",
+    [True, False],
+)
+def test_get_workspace_data(workspace_factory, with_aux):
     w = workspace_factory()
     m = w.model()
-    assert w.data(m)
+    assert w.data(m, with_aux=with_aux)
 
 
 def test_get_workspace_data_bad_model(workspace_factory, caplog):
@@ -298,8 +305,14 @@ def test_rename_measurement(workspace_factory):
 
 @pytest.fixture(scope='session')
 def join_items():
-    left = [{'name': 'left', 'key': 'value'}, {'name': 'common', 'key': 'left'}]
-    right = [{'name': 'right', 'key': 'value'}, {'name': 'common', 'key': 'right'}]
+    left = [
+        {'name': 'left', 'key': 'value', 'deep': [{'name': 1}]},
+        {'name': 'common', 'key': 'left', 'deep': [{'name': 1}]},
+    ]
+    right = [
+        {'name': 'right', 'key': 'value', 'deep': [{'name': 2}]},
+        {'name': 'common', 'key': 'right', 'deep': [{'name': 2}]},
+    ]
     return (left, right)
 
 
@@ -333,6 +346,39 @@ def test_join_items_right_outer(join_items):
     )
     assert not all(left in joined for left in left_items)
     assert all(right in joined for right in right_items)
+
+
+def test_join_items_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 1},
+        {'name': 2},
+    ]
+
+
+def test_join_items_left_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'left outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 1},
+        {'name': 2},
+    ]
+
+
+def test_join_items_right_outer_deep(join_items):
+    left_items, right_items = join_items
+    joined = pyhf.workspace._join_items(
+        'right outer', left_items, right_items, key='name', deep_merge_key='deep'
+    )
+    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+        {'name': 2},
+        {'name': 1},
+    ]
 
 
 @pytest.mark.parametrize("join", ['none', 'outer'])
@@ -506,6 +552,17 @@ def test_combine_workspace_invalid_join_operation(workspace_factory, join):
 
 
 @pytest.mark.parametrize("join", ['none'])
+def test_combine_workspace_invalid_join_operation_merge(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+    )
+    with pytest.raises(ValueError) as excinfo:
+        pyhf.Workspace.combine(ws, new_ws, join=join, merge_channels=True)
+    assert join in str(excinfo.value)
+
+
+@pytest.mark.parametrize("join", ['none'])
 def test_combine_workspace_incompatible_parameter_configs(workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(
@@ -539,6 +596,36 @@ def test_combine_workspace_incompatible_parameter_configs_outer_join(
     assert new_ws.get_measurement(measurement_name='GaussExample')['config'][
         'parameters'
     ][0]['name'] in str(excinfo.value)
+
+
+@pytest.mark.parametrize("join", ['outer'])
+def test_combine_workspace_compatible_parameter_configs_outer_join(
+    workspace_factory, join
+):
+    ws = workspace_factory()
+    left_parameters = ws.get_measurement(measurement_name='GaussExample')['config'][
+        'parameters'
+    ]
+    right_parameters = ws.get_measurement(measurement_name='GaussExample')['config'][
+        'parameters'
+    ]
+    assert pyhf.workspace._join_parameter_configs(
+        'GaussExample', left_parameters, right_parameters
+    )
+    assert pyhf.workspace._join_measurements(
+        join, ws['measurements'], ws['measurements']
+    )
+
+
+@pytest.mark.parametrize("join", ['outer'])
+def test_combine_workspace_measurements_outer_join(workspace_factory, join):
+    ws = workspace_factory()
+    left_measurements = ws['measurements']
+    right_measurements = copy.deepcopy(ws['measurements'])
+    right_measurements[0]['config']['parameters'][0]['name'] = 'fake'
+    assert pyhf.workspace._join_measurements(
+        join, left_measurements, right_measurements
+    )
 
 
 def test_combine_workspace_incompatible_parameter_configs_left_outer_join(
@@ -708,6 +795,20 @@ def test_workspace_inheritance(workspace_factory):
     assert isinstance(combined, FooWorkspace)
 
 
+@pytest.mark.parametrize("join", ['outer', 'left outer', 'right outer'])
+def test_combine_workspace_merge_channels(workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.prune(samples=ws.samples[1:]).rename(
+        samples={ws.samples[0]: f'renamed_{ws.samples[0]}'}
+    )
+    combined_ws = pyhf.Workspace.combine(ws, new_ws, join=join, merge_channels=True)
+    assert new_ws.samples[0] in combined_ws.samples
+    assert any(
+        sample['name'] == new_ws.samples[0]
+        for sample in combined_ws['channels'][0]['samples']
+    )
+
+
 def test_sorted(workspace_factory):
     ws = workspace_factory()
     # force the first sample in each channel to be last
@@ -721,3 +822,45 @@ def test_sorted(workspace_factory):
     for channel in new_ws['channels']:
         # check sort
         assert channel['samples'][-1]['name'] == 'zzzzlast'
+
+
+def test_closure_over_workspace_build():
+    model = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48]
+    one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
+
+    workspace = pyhf.Workspace.build(model, data)
+
+    assert json.dumps(workspace)
+
+    newmodel = workspace.model()
+    newdata = workspace.data(newmodel)
+    two = pyhf.infer.hypotest(1.0, newdata, newmodel)
+
+    assert one == two
+
+    newworkspace = pyhf.Workspace.build(newmodel, newdata)
+
+    assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
+
+
+def test_wspace_immutable():
+    model = pyhf.simplemodels.hepdata_like(
+        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    )
+    data = [51, 48]
+    workspace = pyhf.Workspace.build(model, data)
+
+    spec = json.loads(json.dumps(workspace))
+
+    ws = pyhf.Workspace(spec)
+    model = ws.model()
+    before = model.config.suggested_init()
+    spec["measurements"][0]["config"]["parameters"][0]["inits"] = [1.5]
+
+    model = ws.model()
+    after = model.config.suggested_init()
+
+    assert before == after

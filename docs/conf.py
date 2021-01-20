@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pyhf documentation build configuration file, created by
 # sphinx-quickstart on Fri Feb  9 11:58:49 2018.
@@ -56,13 +55,26 @@ extensions = [
     'sphinx_copybutton',
     'xref',
 ]
+bibtex_bibfiles = [
+    "bib/docs.bib",
+    "bib/HEPData_likelihoods.bib",
+    "bib/media.bib",
+    "bib/posters.bib",
+    "bib/preferred.bib",
+    "bib/talks.bib",
+    "bib/tutorials.bib",
+    "bib/use_citations.bib",
+]
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
 intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
+    'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
 }
 
 # Github repo
@@ -89,9 +101,9 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = u'pyhf'
-copyright = u'2018, Lukas Heinrich, Matthew Feickert, Giordon Stark'
-author = u'Lukas Heinrich, Matthew Feickert, Giordon Stark'
+project = 'pyhf'
+copyright = '2018, Lukas Heinrich, Matthew Feickert, Giordon Stark'
+author = 'Lukas Heinrich, Matthew Feickert, Giordon Stark'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -328,8 +340,8 @@ latex_documents = [
     (
         master_doc,
         'pyhf.tex',
-        u'pyhf Documentation',
-        u'Lukas Heinrich, Matthew Feickert, Giordon Stark',
+        'pyhf Documentation',
+        'Lukas Heinrich, Matthew Feickert, Giordon Stark',
         'manual',
     )
 ]
@@ -371,7 +383,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'pyhf', u'pyhf Documentation', [author], 1)]
+man_pages = [(master_doc, 'pyhf', 'pyhf Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -387,7 +399,7 @@ texinfo_documents = [
     (
         master_doc,
         'pyhf',
-        u'pyhf Documentation',
+        'pyhf Documentation',
         author,
         'pyhf',
         'One line description of project.',

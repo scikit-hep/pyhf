@@ -1,7 +1,8 @@
 import weakref
+from functools import wraps
 
 __events = {}
-__disabled_events = set([])
+__disabled_events = set()
 
 
 def noop(*args, **kwargs):
@@ -71,10 +72,11 @@ def register(event):
     # >>>
 
     def _register(func):
+        @wraps(func)
         def register_wrapper(*args, **kwargs):
-            trigger("{0:s}::before".format(event))()
+            trigger(f"{event:s}::before")()
             result = func(*args, **kwargs)
-            trigger("{0:s}::after".format(event))()
+            trigger(f"{event:s}::after")()
             return result
 
         return register_wrapper

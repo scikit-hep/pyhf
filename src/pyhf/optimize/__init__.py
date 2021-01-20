@@ -3,7 +3,7 @@
 from .. import exceptions
 
 
-class _OptimizerRetriever(object):
+class _OptimizerRetriever:
     def __getattr__(self, name):
         if name == 'scipy_optimizer':
             from .opt_scipy import scipy_optimizer

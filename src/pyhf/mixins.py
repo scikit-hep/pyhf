@@ -3,7 +3,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class _ChannelSummaryMixin(object):
+class _ChannelSummaryMixin:
     """
     A mixin that provides summary data of the provided channels.
 
@@ -15,7 +15,7 @@ class _ChannelSummaryMixin(object):
 
     def __init__(self, *args, **kwargs):
         channels = kwargs.pop('channels')
-        super(_ChannelSummaryMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.channels = []
         self.samples = []
         self.parameters = []
@@ -42,3 +42,10 @@ class _ChannelSummaryMixin(object):
         self.samples = sorted(list(set(self.samples)))
         self.parameters = sorted(list(set(self.parameters)))
         self.modifiers = sorted(list(set(self.modifiers)))
+
+        self.channel_slices = {}
+        begin = 0
+        for c in self.channels:
+            end = begin + self.channel_nbins[c]
+            self.channel_slices[c] = slice(begin, end)
+            begin = end

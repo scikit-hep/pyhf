@@ -37,14 +37,25 @@ def twice_nll(pars, data, pdf):
         array([ True])
 
     Args:
-        pars (`tensor`): The parameters of the HistFactory model
-        data (`tensor`): The data to be considered
+        pars (:obj:`tensor`): The parameters of the HistFactory model
+        data (:obj:`tensor`): The data to be considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
 
     Returns:
         Tensor: Two times the negative log-likelihood, :math:`-2\ln L\left(\mu, \boldsymbol{\theta}\right)`
     """
     return -2 * pdf.logpdf(pars, data)
+
+
+def _validate_fit_inputs(init_pars, par_bounds, fixed_params):
+    for par_idx, (value, bound) in enumerate(zip(init_pars, par_bounds)):
+        if not (bound[0] <= value <= bound[1]):
+            raise ValueError(
+                f"fit initialization parameter (index: {par_idx}, value: {value}) lies outside of its bounds: {bound}"
+                + "\nTo correct this adjust the initialization parameter values in the model spec or those given"
+                + "\nas arguments to pyhf.infer.fit. If this value is intended, adjust the range of the parameter"
+                + "\nbounds."
+            )
 
 
 def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs):
@@ -83,11 +94,11 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         array([ True])
 
     Args:
-        data (`tensor`): The data
+        data (:obj:`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
@@ -98,6 +109,8 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    _validate_fit_inputs(init_pars, par_bounds, fixed_params)
 
     # get fixed vals from the model
     fixed_vals = [
@@ -154,9 +167,9 @@ def fixed_poi_fit(
     Args:
         data: The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (`list`): Values to initialize the model parameters at for the fit
-        par_bounds (`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
+        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
+        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:

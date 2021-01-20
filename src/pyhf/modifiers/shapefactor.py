@@ -8,13 +8,12 @@ log = logging.getLogger(__name__)
 
 
 @modifier(name='shapefactor', op_code='multiplication')
-class shapefactor(object):
+class shapefactor:
     @classmethod
     def required_parset(cls, sample_data, modifier_data):
         return {
             'paramset_type': unconstrained,
             'n_parameters': len(sample_data),
-            'modifier': cls.__name__,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
             'inits': (1.0,) * len(sample_data),
@@ -23,7 +22,7 @@ class shapefactor(object):
         }
 
 
-class shapefactor_combined(object):
+class shapefactor_combined:
     def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=None):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
@@ -64,7 +63,7 @@ class shapefactor_combined(object):
         """
 
         self.batch_size = batch_size
-        keys = ['{}/{}'.format(mtype, m) for m, mtype in shapefactor_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in shapefactor_mods]
         shapefactor_mods = [m for m, _ in shapefactor_mods]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)

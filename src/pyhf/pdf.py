@@ -26,12 +26,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
         for sample in channel['samples']:
             if len(sample['data']) != channel_nbins[channel['name']]:
                 raise exceptions.InvalidModel(
-                    'The sample {0:s} has {1:d} bins, but the channel it belongs to ({2:s}) has {3:d} bins.'.format(
-                        sample['name'],
-                        len(sample['data']),
-                        channel['name'],
-                        channel_nbins[channel['name']],
-                    )
+                    f"The sample {sample['name']:s} has {len(sample['data']):d} bins, but the channel it belongs to ({channel['name']:s}) has {channel_nbins[channel['name']]:d} bins."
                 )
             for modifier_def in sample['modifiers']:
                 # get the paramset requirements for the given modifier. If
@@ -42,9 +37,7 @@ def _paramset_requirements_from_channelspec(spec, channel_nbins):
                     ].required_parset(sample['data'], modifier_def['data'])
                 except KeyError:
                     log.exception(
-                        'Modifier not implemented yet (processing {0:s}). Available modifiers: {1}'.format(
-                            modifier_def['type'], modifiers.registry.keys()
-                        )
+                        f"Modifier not implemented yet (processing {modifier_def['type']:s}). Available modifiers: {modifiers.registry.keys()}"
                     )
                     raise exceptions.InvalidModifier()
 
@@ -78,9 +71,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
     for parameter in spec.get('parameters', []):
         if parameter['name'] in _paramsets_user_configs:
             raise exceptions.InvalidModel(
-                'Multiple parameter configurations for {} were found.'.format(
-                    parameter['name']
-                )
+                f"Multiple parameter configurations for {parameter['name']} were found."
             )
         _paramsets_user_configs[parameter.pop('name')] = parameter
 
@@ -121,7 +112,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
     mega_mods = {}
     for m, mtype in config.modifiers:
         for s in config.samples:
-            key = '{}/{}'.format(mtype, m)
+            key = f'{mtype}/{m}'
             mega_mods.setdefault(key, {})[s] = {
                 'type': mtype,
                 'name': m,
@@ -148,15 +139,12 @@ def _nominal_and_modifiers_from_spec(config, spec):
             )
             mega_nom += nom
             defined_mods = (
-                {
-                    '{}/{}'.format(x['type'], x['name']): x
-                    for x in defined_samp['modifiers']
-                }
+                {f"{x['type']}/{x['name']}": x for x in defined_samp['modifiers']}
                 if defined_samp
                 else {}
             )
             for m, mtype in config.modifiers:
-                key = '{}/{}'.format(mtype, m)
+                key = f'{mtype}/{m}'
                 # this is None if modifier doesn't affect channel/sample.
                 thismod = defined_mods.get(key)
                 # print('key',key,thismod['data'] if thismod else None)
@@ -197,7 +185,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     mega_mods[key][s]['data']['uncrt'] += uncrt
                     mega_mods[key][s]['data']['nom_data'] += nom
 
-        sample_dict = {'name': 'mega_{}'.format(s), 'nom': mega_nom}
+        sample_dict = {'name': f'mega_{s}', 'nom': mega_nom}
         mega_samples[s] = sample_dict
 
     nominal_rates = default_backend.astensor(
@@ -218,13 +206,17 @@ def _nominal_and_modifiers_from_spec(config, spec):
 
 class _ModelConfig(_ChannelSummaryMixin):
     def __init__(self, spec, **config_kwargs):
-        super(_ModelConfig, self).__init__(channels=spec['channels'])
+        super().__init__(channels=spec['channels'])
         _required_paramsets = _paramset_requirements_from_modelspec(
             spec, self.channel_nbins
         )
         poi_name = config_kwargs.pop('poi_name', 'mu')
 
-        default_modifier_settings = {'normsys': {'interpcode': 'code1'}}
+        default_modifier_settings = {
+            'normsys': {'interpcode': 'code4'},
+            'histosys': {'interpcode': 'code4p'},
+        }
+
         self.modifier_settings = config_kwargs.pop(
             'modifier_settings', default_modifier_settings
         )
@@ -288,15 +280,13 @@ class _ModelConfig(_ChannelSummaryMixin):
         fixed = []
         for name in self.par_order:
             paramset = self.par_map[name]['paramset']
-            fixed = fixed + [paramset.fixed] * paramset.n_parameters
+            fixed = fixed + [paramset.suggested_fixed] * paramset.n_parameters
         return fixed
 
     def set_poi(self, name):
         if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
-                "The parameter of interest '{0:s}' cannot be fit as it is not declared in the model specification.".format(
-                    name
-                )
+                f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
@@ -319,7 +309,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
 
-class _ConstraintModel(object):
+class _ConstraintModel:
     """Factory class to create pdfs for the constraint terms."""
 
     def __init__(self, config, batch_size):
@@ -365,7 +355,7 @@ class _ConstraintModel(object):
         Construct a pdf object for a given set of parameter values.
 
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: A distribution object implementing the constraint pdf of HistFactory.
@@ -392,8 +382,8 @@ class _ConstraintModel(object):
         Compute the logarithm of the value of the probability density.
 
         Args:
-            auxdata (`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            auxdata (:obj:`tensor`): The auxiliary data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             Tensor: The log of the pdf value
@@ -403,7 +393,7 @@ class _ConstraintModel(object):
         return simpdf.log_prob(auxdata)
 
 
-class _MainModel(object):
+class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, mega_mods, nominal_rates, batch_size):
@@ -461,8 +451,8 @@ class _MainModel(object):
         Compute the logarithm of the value of the probability density.
 
         Args:
-            maindata (`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
-            pars (`tensor`): The model parameters
+            maindata (:obj:`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             Tensor: The log of the pdf value
@@ -539,7 +529,7 @@ class _MainModel(object):
         return newresults
 
 
-class Model(object):
+class Model:
     """The main pyhf model class."""
 
     def __init__(self, spec, batch_size=None, **config_kwargs):
@@ -547,12 +537,12 @@ class Model(object):
         Construct a HistFactory Model.
 
         Args:
-            spec (`jsonable`): The HistFactory JSON specification
-            batch_size (`None` or `int`): Number of simultaneous (batched) Models to compute.
+            spec (:obj:`jsonable`): The HistFactory JSON specification
+            batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
             config_kwargs: Possible keyword arguments for the model configuration
 
         Returns:
-            model (`Model`): The Model instance.
+            model (:class:`~pyhf.pdf.Model`): The Model instance.
 
         """
         self.batch_size = batch_size
@@ -560,7 +550,7 @@ class Model(object):
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
-        log.info("Validating spec against schema: {0:s}".format(self.schema))
+        log.info(f"Validating spec against schema: {self.schema:s}")
         utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
@@ -604,7 +594,7 @@ class Model(object):
         Compute the expected value of the auxiliary measurements.
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the auxiliary pdf
@@ -627,7 +617,7 @@ class Model(object):
         Compute the expected value of the main model.
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the main model (no auxiliary data)
@@ -642,7 +632,7 @@ class Model(object):
         Compute the expected value of the main model
 
         Args:
-            pars (`tensor`): The parameter values
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The expected data of the main and auxiliary model
@@ -659,8 +649,8 @@ class Model(object):
         Compute the log value of the constraint pdf.
 
         Args:
-            auxdata (`tensor`): The auxiliary measurement data
-            pars (`tensor`): The parameter values
+            auxdata (:obj:`tensor`): The auxiliary measurement data
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The log density value
@@ -673,8 +663,8 @@ class Model(object):
         Compute the log value of the main term.
 
         Args:
-            maindata (`tensor`): The main measurement data
-            pars (`tensor`): The parameter values
+            maindata (:obj:`tensor`): The main measurement data
+            pars (:obj:`tensor`): The parameter values
 
         Returns:
             Tensor: The log density value
@@ -687,7 +677,7 @@ class Model(object):
         Construct a pdf object for a given set of parameter values.
 
         Args:
-            pars (`tensor`): The model parameters
+            pars (:obj:`tensor`): The model parameters
 
         Returns:
             pdf: A distribution object implementing the main measurement pdf of HistFactory
@@ -711,8 +701,8 @@ class Model(object):
         Compute the log value of the full density.
 
         Args:
-            pars (`tensor`): The parameter values
-            data (`tensor`): The measurement data
+            pars (:obj:`tensor`): The parameter values
+            data (:obj:`tensor`): The measurement data
 
         Returns:
             Tensor: The log density value
@@ -724,18 +714,14 @@ class Model(object):
             # Verify parameter and data shapes
             if pars.shape[-1] != self.config.npars:
                 raise exceptions.InvalidPdfParameters(
-                    'eval failed as pars has len {} but {} was expected'.format(
-                        pars.shape[-1], self.config.npars
-                    )
+                    f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
                 )
 
             if data.shape[-1] != self.nominal_rates.shape[-1] + len(
                 self.config.auxdata
             ):
                 raise exceptions.InvalidPdfData(
-                    'eval failed as data has len {} but {} was expected'.format(
-                        data.shape[-1], self.config.nmaindata + self.config.nauxdata
-                    )
+                    f'eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected'
                 )
 
             result = self.make_pdf(pars).log_prob(data)
@@ -745,11 +731,10 @@ class Model(object):
             ):  # force to be not scalar, should we changed with #522
                 return tensorlib.reshape(result, (1,))
             return result
-        except:
+        except Exception:
             log.error(
-                'eval failed for data {} pars: {}'.format(
-                    tensorlib.tolist(data), tensorlib.tolist(pars)
-                )
+                f"Eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}",
+                exc_info=True,
             )
             raise
 
@@ -758,8 +743,8 @@ class Model(object):
         Compute the density at a given observed point in data space of the full model.
 
         Args:
-            pars (`tensor`): The parameter values
-            data (`tensor`): The measurement data
+            pars (:obj:`tensor`): The parameter values
+            data (:obj:`tensor`): The measurement data
 
         Returns:
             Tensor: The density value

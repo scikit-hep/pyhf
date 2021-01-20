@@ -39,9 +39,7 @@ def validate(spec, schema_name, version=None):
     schema = load_schema(schema_name, version=version)
     try:
         resolver = jsonschema.RefResolver(
-            base_uri='file://{0:s}'.format(
-                pkg_resources.resource_filename(__name__, 'schemas/')
-            ),
+            base_uri=f"file://{pkg_resources.resource_filename(__name__, 'schemas/'):s}",
             referrer=schema_name,
             store=SCHEMA_CACHE,
         )
@@ -50,11 +48,13 @@ def validate(spec, schema_name, version=None):
         )
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
-        raise InvalidSpecification(err)
+        raise InvalidSpecification(err, schema_name)
 
 
 def options_from_eqdelimstring(opts):
-    document = '\n'.join('{0}: {1}'.format(*opt.split('=', 1)) for opt in opts)
+    document = '\n'.join(
+        f"{opt.split('=', 1)[0]}: {opt.split('=', 1)[1]}" for opt in opts
+    )
     return yaml.full_load(document)
 
 
@@ -65,9 +65,7 @@ class EqDelimStringParamType(click.ParamType):
         try:
             return options_from_eqdelimstring([value])
         except IndexError:
-            self.fail(
-                '{0:s} is not a valid equal-delimited string'.format(value), param, ctx
-            )
+            self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
 
 
 def digest(obj, algorithm='sha256'):
@@ -91,11 +89,11 @@ def digest(obj, algorithm='sha256'):
         ValueError: If the object is not JSON-serializable or if the algorithm is not supported.
 
     Args:
-        obj (`obj`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
-        algorithm (`str`): The hashing algorithm to use.
+        obj (:obj:`jsonable`): A JSON-serializable object to compute the digest of. Usually a :class:`~pyhf.workspace.Workspace` object.
+        algorithm (:obj:`str`): The hashing algorithm to use.
 
     Returns:
-        digest (`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
+        digest (:obj:`str`): The digest for the JSON-serialized object provided and hash algorithm specified.
     """
 
     try:
@@ -111,3 +109,56 @@ def digest(obj, algorithm='sha256'):
             f"{algorithm} is not an algorithm provided by Python's hashlib library."
         )
     return hash_alg(stringified).hexdigest()
+
+
+def remove_prefix(text, prefix):
+    """
+    Remove a prefix from the beginning of the provided text.
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.utils.remove_prefix("alpha_syst1", "alpha_")
+        'syst1'
+
+    Args:
+        text (:obj:`str`): A provided input to manipulate.
+        prefix (:obj:`str`): A prefix to remove from provided input, if it exists.
+
+    Returns:
+        stripped_text (:obj:`str`): Text with the prefix removed.
+    """
+    # NB: python3.9 can be `return text.removeprefix(prefix)`
+    if text.startswith(prefix):
+        return text[len(prefix) :]
+    return text
+
+
+def citation(oneline=False):
+    """
+    Get the bibtex citation for pyhf
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.utils.citation(True)
+        '@software{pyhf,  author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",  title = "{pyhf: v0.5.4}",  version = {0.5.4},  doi = {10.5281/zenodo.1169739},  url = {https://github.com/scikit-hep/pyhf},}'
+
+    Keyword Args:
+        oneline (:obj:`bool`): Whether to provide citation with new lines (default) or as a one-liner.
+
+    Returns:
+        citation (:obj:`str`): The citation for this software
+    """
+    path = Path(
+        pkg_resources.resource_filename(
+            __name__, str(Path('data').joinpath('citation.bib'))
+        )
+    )
+    with path.open() as fp:
+        # remove end-of-file newline if there is one
+        data = fp.read().strip()
+
+    if oneline:
+        data = ''.join(data.splitlines())
+    return data

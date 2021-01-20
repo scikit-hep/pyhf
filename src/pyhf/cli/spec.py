@@ -107,19 +107,19 @@ def inspect(workspace, output_file, measurement):
     fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen + len('Summary'))
     click.echo(fmtStr.format('     Summary     ', ''))
     click.echo(fmtStr.format('-' * 18, ''))
-    fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen)
+    fmtStr = f'{{0: >{maxlen:d}s}}  {{1:s}}'
     for key in ['channels', 'samples', 'parameters', 'modifiers']:
         click.echo(fmtStr.format(key, str(len(result[key]))))
     click.echo()
 
-    fmtStr = '{{0: >{0:d}s}}  {{1: ^5s}}'.format(maxlen)
+    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: ^5s}}'
     click.echo(fmtStr.format('channels', 'nbins'))
     click.echo(fmtStr.format('-' * 10, '-' * 5))
     for channel, nbins in result['channels']:
         click.echo(fmtStr.format(channel, str(nbins)))
     click.echo()
 
-    fmtStr = '{{0: >{0:d}s}}'.format(maxlen)
+    fmtStr = f'{{0: >{maxlen:d}s}}'
     click.echo(fmtStr.format('samples'))
     click.echo(fmtStr.format('-' * 10))
     for sample in result['samples']:
@@ -127,14 +127,14 @@ def inspect(workspace, output_file, measurement):
     click.echo()
 
     # print parameters, constraints, modifiers
-    fmtStr = '{{0: >{0:d}s}}  {{1: <22s}}  {{2:s}}'.format(maxlen)
+    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: <22s}}  {{2:s}}'
     click.echo(fmtStr.format('parameters', 'constraint', 'modifiers'))
     click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for parname, constraint, modtypes in result['systematics']:
         click.echo(fmtStr.format(parname, constraint, ','.join(sorted(set(modtypes)))))
     click.echo()
 
-    fmtStr = '{{0: >{0:d}s}}  {{1: ^22s}}  {{2:s}}'.format(maxlen)
+    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: ^22s}}  {{2:s}}'
     click.echo(fmtStr.format('measurement', 'poi', 'parameters'))
     click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
     for measurement_name, measurement_poi, measurement_parameters in result[
@@ -156,7 +156,7 @@ def inspect(workspace, output_file, measurement):
     if output_file:
         with open(output_file, 'w+') as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()
@@ -202,7 +202,7 @@ def prune(
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(pruned_ws, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()
@@ -265,7 +265,7 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()
@@ -283,7 +283,12 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-def combine(workspace_one, workspace_two, join, output_file):
+@click.option(
+    '--merge-channels/--no-merge-channels',
+    help='Whether or not to deeply merge channels. Can only be done with left/right outer joins.',
+    default=False,
+)
+def combine(workspace_one, workspace_two, join, output_file, merge_channels):
     """
     Combine two workspaces into a single workspace.
 
@@ -297,14 +302,16 @@ def combine(workspace_one, workspace_two, join, output_file):
 
     ws_one = Workspace(spec_one)
     ws_two = Workspace(spec_two)
-    combined_ws = Workspace.combine(ws_one, ws_two, join=join)
+    combined_ws = Workspace.combine(
+        ws_one, ws_two, join=join, merge_channels=merge_channels
+    )
 
     if output_file is None:
         click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))
     else:
         with open(output_file, 'w+') as out_file:
             json.dump(combined_ws, out_file, indent=4, sort_keys=True)
-        log.debug("Written to {0:s}".format(output_file))
+        log.debug(f"Written to {output_file:s}")
 
 
 @cli.command()

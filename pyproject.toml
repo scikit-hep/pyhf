@@ -28,6 +28,7 @@ ignore = [
     'pyproject.toml',
     'pytest.ini',
     'codecov.yml',
+    'codemeta.json',
     'CODE_OF_CONDUCT.md',
     'CONTRIBUTING.md',
     'AUTHORS',
@@ -61,3 +62,13 @@ markers = [
     "skip_pytorch64",
     "skip_tensorflow",
 ]
+
+[tool.nbqa.config]
+black = "pyproject.toml"
+
+[tool.nbqa.mutate]
+black = 1
+pyupgrade = 1
+
+[tool.nbqa.addopts]
+pyupgrade = ["--py36-plus"]

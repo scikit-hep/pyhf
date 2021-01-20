@@ -7,6 +7,7 @@ from scipy.optimize import minimize, OptimizeResult
 import iminuit
 import itertools
 
+
 # from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
@@ -81,10 +82,10 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # no grad, minuit, 32b - not very consistent for pytorch
             'no_grad-minuit-numpy-32b': [0.49622172117233276, 1.0007264614105225],
             #    nb: macos gives different numerics than CI
-            #'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
+            # 'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
             'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
             'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            #'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
+            # 'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
             'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
@@ -93,8 +94,8 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 32b
             'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
-            'do_grad-minuit-tensorflow-32b': [0.501288652420044, 1.0000219345092773],
-            #'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
+            'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
+            # 'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
             'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
             'do_grad-minuit-pytorch-64b': [0.500273961181471, 0.9996310135736226],
@@ -175,6 +176,67 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]['do_grad'] == pyhf.tensorlib.default_do_grad
     pyhf.infer.mle.fit(data, m, do_grad=not (pyhf.tensorlib.default_do_grad))
     assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
+
+
+def test_minuit_strategy_do_grad(mocker, backend):
+    """
+    ref: gh#1172
+
+    When there is a user-provided gradient, check that one automatically sets
+    the minuit strategy=0. When there is no user-provided gradient, check that
+    one automatically sets the minuit strategy=1.
+    """
+    pyhf.set_backend(pyhf.tensorlib, 'minuit')
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    do_grad = pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert spy.call_count == 1
+    assert not spy.spy_return.minuit.strategy == do_grad
+
+    pyhf.infer.mle.fit(data, m, strategy=0)
+    assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == 0
+
+    pyhf.infer.mle.fit(data, m, strategy=1)
+    assert spy.call_count == 3
+    assert spy.spy_return.minuit.strategy == 1
+
+
+@pytest.mark.parametrize('strategy', [0, 1])
+def test_minuit_strategy_global(mocker, backend, strategy):
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy))
+    spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    do_grad = pyhf.tensorlib.default_do_grad
+    pyhf.infer.mle.fit(data, m)
+    assert spy.call_count == 1
+    assert spy.spy_return.minuit.strategy == strategy if do_grad else 1
+
+    pyhf.infer.mle.fit(data, m, strategy=0)
+    assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == 0
+
+    pyhf.infer.mle.fit(data, m, strategy=1)
+    assert spy.call_count == 3
+    assert spy.spy_return.minuit.strategy == 1
+
+
+def test_set_tolerance(backend):
+    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+
+    assert pyhf.infer.mle.fit(data, m, tolerance=0.01) is not None
+
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.scipy_optimizer(tolerance=0.01))
+    assert pyhf.infer.mle.fit(data, m) is not None
+
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(tolerance=0.01))
+    assert pyhf.infer.mle.fit(data, m) is not None
 
 
 @pytest.mark.parametrize(
@@ -289,7 +351,7 @@ def test_optim(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
     )
     assert pyhf.tensorlib.tolist(result)
 
@@ -313,11 +375,12 @@ def test_optim_with_value(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
         return_fitted_val=True,
     )
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.shape(fitted_val) == ()
+    assert pytest.approx(17.52954975, rel=1e-5) == pyhf.tensorlib.tolist(fitted_val)
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -340,11 +403,11 @@ def test_optim_uncerts(backend, source, spec, mu):
         pdf,
         init_pars,
         par_bounds,
-        [(pdf.config.poi_index, mu)],
+        fixed_vals=[(pdf.config.poi_index, mu)],
         return_uncertainties=True,
     )
     assert result.shape[1] == 2
-    assert pyhf.tensorlib.tolist(result)
+    assert pytest.approx([0.0, 0.26418431]) == pyhf.tensorlib.tolist(result[:, 1])
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -386,20 +449,6 @@ def test_minuit_failed_optimization(
     monkeypatch, mocker, has_reached_call_limit, is_above_max_edm
 ):
     class BadMinuit(iminuit.Minuit):
-        @classmethod
-        def from_array_func(cls, *args, **kwargs):
-            """
-            from_array_func won't need mocker in a newer version of iminuit
-
-            See scikit-hep/iminuit#464 for more details
-            """
-            self = super().from_array_func(*args, **kwargs)
-            mock = mocker.MagicMock(wraps=self)
-            mock.valid = False
-            mock.fmin.has_reached_call_limit = has_reached_call_limit
-            mock.fmin.is_above_max_edm = is_above_max_edm
-            return mock
-
         @property
         def valid(self):
             return False
@@ -491,10 +540,13 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
     # patch all we need
     from pyhf.optimize import opt_minuit
 
-    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
-    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-    assert minimizer.Minuit.from_array_func.call_args[1]['start'] == [1, 9, 9]
-    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
+    minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
+    minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+    assert minuit.called
+    # python 3.6 does not have ::args attribute on ::call_args
+    # assert minuit.call_args.args[1] == [1, 9, 9]
+    assert minuit.call_args[0][1] == [1, 9, 9]
+    assert minimizer.fixed == [True, False, False]
 
 
 def test_step_sizes_fixed_parameters_minuit(mocker):
@@ -503,7 +555,9 @@ def test_step_sizes_fixed_parameters_minuit(mocker):
     # patch all we need
     from pyhf.optimize import opt_minuit
 
-    minimizer = mocker.patch.object(opt_minuit, 'iminuit')
-    opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-    assert minimizer.Minuit.from_array_func.call_args[1]['fix'] == [True, False, False]
-    assert minimizer.Minuit.from_array_func.call_args[1]['error'] == [0.0, 0.01, 0.01]
+    minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
+    minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
+
+    assert minuit.called
+    assert minimizer.fixed == [True, False, False]
+    assert minimizer.errors == [0.0, 0.01, 0.01]

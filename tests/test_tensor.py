@@ -66,6 +66,47 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
 
+def test_tensor_where_scalar(backend):
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.where(tb.astensor([1, 0, 1], dtype="bool"), 1, 2)) == [1, 2, 1]
+
+
+def test_tensor_where_tensor(backend):
+    tb = pyhf.tensorlib
+    assert (
+        tb.tolist(
+            tb.where(
+                tb.astensor([1, 0, 1], dtype="bool"),
+                tb.astensor([1, 1, 1]),
+                tb.astensor([2, 2, 2]),
+            )
+        )
+        == [1, 2, 1]
+    )
+
+
+def test_tensor_to_numpy(backend):
+    tb = pyhf.tensorlib
+    array = [[1, 2, 3], [4, 5, 6]]
+    assert np.array_equal(tb.to_numpy(tb.astensor(array)), np.array(array))
+
+
+def test_tensor_ravel(backend):
+    tb = pyhf.tensorlib
+    assert (
+        tb.tolist(
+            tb.ravel(
+                tb.astensor(
+                    [
+                        [1, 2, 3],
+                        [4, 5, 6],
+                    ]
+                )
+            )
+        )
+    ) == [1, 2, 3, 4, 5, 6]
+
+
 def test_complex_tensor_ops(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.outer(tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6]))) == [
@@ -90,16 +131,6 @@ def test_complex_tensor_ops(backend):
         1,
         1,
     ]
-    assert (
-        tb.tolist(
-            tb.where(
-                tb.astensor([1, 0, 1], dtype="bool"),
-                tb.astensor([1, 1, 1]),
-                tb.astensor([2, 2, 2]),
-            )
-        )
-        == [1, 2, 1]
-    )
 
 
 def test_ones(backend):
@@ -253,7 +284,7 @@ def test_pdf_calculations(backend):
         nan_ok=True,
     )
 
-    # Ensure continous approximation is valid
+    # Ensure continuous approximation is valid
     assert tb.tolist(
         tb.poisson(tb.astensor([0.5, 1.1, 1.5]), tb.astensor(1.0))
     ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
