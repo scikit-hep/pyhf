@@ -6,7 +6,9 @@ repos:
     - id: check-case-conflict
     - id: check-merge-conflict
     - id: check-symlinks
+    - id: check-json
     - id: check-yaml
+    - id: check-toml
     - id: debug-statements
     - id: end-of-file-fixer
     - id: mixed-line-ending
