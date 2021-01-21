@@ -157,7 +157,9 @@ class OptimizerMixin:
         )
 
         result = self._internal_minimize(**minimizer_kwargs, options=kwargs)
-        result = self._internal_postprocess(result, stitch_pars)
+        result = self._internal_postprocess(
+            result, stitch_pars, return_uncertainties=return_uncertainties
+        )
 
         _returns = [result.x]
         if return_correlations:
