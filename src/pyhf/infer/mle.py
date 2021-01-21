@@ -131,8 +131,8 @@ def fixed_poi_fit(
     Run a maximum likelihood fit with the POI value fixed.
     This is done by minimizing the objective function of :func:`~pyhf.infer.mle.twice_nll`
     of the model parameters given the observed data, for a given fixed value of :math:`\mu`.
-    This is used to produce the constrained maximal likelihood for the given :math:`\mu`
-    :math:`L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)` in the profile
+    This is used to produce the constrained maximal likelihood for the given :math:`\mu`,
+    :math:`L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)`, in the profile
     likelihood ratio in Equation (7) in :xref:`arXiv:1007.1727`
 
     .. math::
