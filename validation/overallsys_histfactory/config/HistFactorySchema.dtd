@@ -157,3 +157,4 @@ For this element there is no sublemenents so the setting will only have local ef
 <!ATTLIST ShapeFactor
           Name              CDATA            #REQUIRED
 >
+
