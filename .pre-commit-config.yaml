@@ -18,7 +18,7 @@ repos:
     - id: requirements-txt-fixer
     - id: trailing-whitespace
       # exclude generated files
-      exclude: validation/|\.dtd$|\.xml$
+      exclude: ^validation/|\.dtd$|\.xml$
 -   repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
