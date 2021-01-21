@@ -35,17 +35,19 @@ def test_upperlimit_auto(tmpdir, hypotest_args):
         model.config.suggested_init(),
         model.config.suggested_bounds(),
     )
-    expected_cls = [
-        pyhf.infer.hypotest(
-            expected_limits[i],
-            data,
-            model,
-            model.config.suggested_init(),
-            model.config.suggested_bounds(),
-            return_expected_set=True,
-        )[1][i]
-        for i in range(5)
-    ]
+    expected_cls = np.array(
+        [
+            pyhf.infer.hypotest(
+                expected_limits[i],
+                data,
+                model,
+                model.config.suggested_init(),
+                model.config.suggested_bounds(),
+                return_expected_set=True,
+            )[1][i]
+            for i in range(5)
+        ]
+    )
     assert observed_cls == pytest.approx(0.05)
     assert expected_cls == pytest.approx(0.05)
 
