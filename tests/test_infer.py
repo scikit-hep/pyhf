@@ -20,6 +20,36 @@ def check_uniform_type(in_list):
     )
 
 
+def test_upperlimit_auto(tmpdir, hypotest_args):
+    """
+    Check that the upper limit autoscan returns the correct structure and values
+    """
+    _, data, model = hypotest_args
+    results = pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5)
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    observed_cls = pyhf.infer.hypotest(
+        observed_limit,
+        data,
+        model,
+        model.config.suggested_init(),
+        model.config.suggested_bounds(),
+    )
+    expected_cls = [
+        pyhf.infer.hypotest(
+            expected_limit[i],
+            data,
+            model,
+            model.config.suggested_init(),
+            model.config.suggested_bounds(),
+            return_expected_set=True,
+        )[1][i]
+        for i in range(5)
+    ]
+    assert observed_cls == pytest.approx(0.05)
+    assert expected_cls == pytest.approx(0.05)
+
+
 def test_upperlimit(tmpdir, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
