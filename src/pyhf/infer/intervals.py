@@ -2,11 +2,96 @@
 from . import hypotest
 from .. import get_backend
 import numpy as np
+from scipy.optimize import toms748 as _toms748
 
 
 def _interp(x, xp, fp):
     tb, _ = get_backend()
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
+
+
+def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
+    """
+    Calculate an upper limit interval ``(0, poi_up)`` for a single
+    Parameter of Interest (POI) using an automatic scan through
+    POI-space, using the TOMS748 algorithm.
+
+    Example:
+        >>> import numpy as np
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> obs_limit, exp_limits = pyhf.infer.intervals.upperlimit_auto(
+        ...     data, model, 0., 5.
+        ... )
+        >>> obs_limit
+        array(1.01156939)
+        >>> exp_limits
+        [array(0.55988001), array(0.75702336), array(1.06234693), array(1.50116923), array(2.05078596)]
+
+    Args:
+        data (:obj:`tensor`): The observed data.
+        model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+        low (:obj:`float`): Lower boundary of search region
+        high (:obj:`float`): Higher boundary of search region
+        level (:obj:`float`): The threshold value to evaluate the interpolated results at.
+        atol (:obj:`float`): Absolute tolerance
+        rtol (:obj:`float`): Relative tolerance
+
+    Returns:
+        Tuple of Tensors:
+
+            - Tensor: The observed upper limit on the POI.
+            - Tensor: The expected upper limits on the POI.
+    """
+
+    cache = {}
+
+    def f_all(mu):
+        if mu in cache:
+            return cache[mu]
+        else:
+            cache[mu] = hypotest(
+                mu, data, model, test_stat="qtilde", return_expected_set=True
+            )
+            return cache[mu]
+
+    def f(mu, limit=0):
+        # Use integers for limit so we don't need a string comparison
+        if limit == 0:
+            # Obs
+            return f_all(mu)[0] - level
+        else:
+            # Exp
+            # (These are in the order -2, -1, 0, 1, 2 sigma)
+            return f_all(mu)[1][limit - 1] - level
+
+    def best_bracket(limit):
+        # return best bracket
+        ks = np.array(list(cache.keys()))
+        vals = np.array(
+            [
+                v[0] - level if limit == 0 else v[1][limit - 1] - level
+                for v in cache.values()
+            ]
+        )
+        pos = vals >= 0
+        neg = vals < 0
+        lower = ks[pos][np.argmin(vals[pos])]
+        upper = ks[neg][np.argmax(vals[neg])]
+        return (lower, upper)
+
+    tb, _ = get_backend()
+    obs = tb.astensor(_toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
+    exp = [
+        tb.astensor(_toms748(f, *best_bracket(i), args=(i), k=2, xtol=atol, rtol=rtol))
+        for i in range(1, 6)
+    ]
+    return obs, exp
 
 
 def upperlimit(data, model, scan, level=0.05, return_results=False):
