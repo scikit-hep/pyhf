@@ -489,7 +489,7 @@ def test_minuit_set_options(mocker):
     # no need to postprocess in this test
     mocker.patch.object(OptimizerMixin, '_internal_postprocess')
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    pyhf.infer.mle.fit(data, pdf, tol=0.5, strategy=0)
+    pyhf.infer.mle.fit(data, pdf, tolerance=0.5, strategy=0)
     assert spy.spy_return.minuit.tol == 0.5
     assert spy.spy_return.minuit.strategy == 0
 
