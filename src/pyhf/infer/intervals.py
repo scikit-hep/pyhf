@@ -54,21 +54,19 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
     def f_all(mu):
         if mu in cache:
             return cache[mu]
-        else:
-            cache[mu] = hypotest(
-                mu, data, model, test_stat="qtilde", return_expected_set=True
-            )
-            return cache[mu]
+        cache[mu] = hypotest(
+            mu, data, model, test_stat="qtilde", return_expected_set=True
+        )
+        return cache[mu]
 
     def f(mu, limit=0):
         # Use integers for limit so we don't need a string comparison
         if limit == 0:
             # Obs
             return f_all(mu)[0] - level
-        else:
-            # Exp
-            # (These are in the order -2, -1, 0, 1, 2 sigma)
-            return f_all(mu)[1][limit - 1] - level
+        # Exp
+        # (These are in the order -2, -1, 0, 1, 2 sigma)
+        return f_all(mu)[1][limit - 1] - level
 
     def best_bracket(limit):
         # return best bracket
