@@ -74,10 +74,8 @@ class OptimizerMixin:
                 tensorlib.astensor(uncertainties),
                 stitch_with=tensorlib.zeros(num_fixed_pars),
             )
-
-        # check if uncertainties were provided
-        if return_uncertainties:
-            fitted_pars = tensorlib.stack([fitted_pars, uncertainties], axis=1)
+            if return_uncertainties:
+                fitted_pars = tensorlib.stack([fitted_pars, uncertainties], axis=1)
 
         correlations = getattr(fitresult, 'corr', None)
         if correlations is not None:
