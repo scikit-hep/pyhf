@@ -84,10 +84,11 @@ class OptimizerMixin:
             _zeros = tensorlib.zeros(num_fixed_pars)
             # possibly a more elegant way to do this
             stitched_columns = [
-                stitch_pars(column, stitch_with=_zeros) for column in zip(*correlations)
+                stitch_pars(tensorlib.astensor(column), stitch_with=_zeros)
+                for column in zip(*correlations)
             ]
             stitched_rows = [
-                tensorlib.astensor(stitch_pars(row, stitch_with=_zeros))
+                stitch_pars(tensorlib.astensor(row), stitch_with=_zeros)
                 for row in zip(*stitched_columns)
             ]
             correlations = tensorlib.stack(stitched_rows, axis=1)
