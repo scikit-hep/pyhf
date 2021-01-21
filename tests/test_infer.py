@@ -37,7 +37,7 @@ def test_upperlimit_auto(tmpdir, hypotest_args):
     )
     expected_cls = [
         pyhf.infer.hypotest(
-            expected_limit[i],
+            expected_limits[i],
             data,
             model,
             model.config.suggested_init(),
