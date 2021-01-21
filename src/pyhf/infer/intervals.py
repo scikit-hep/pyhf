@@ -14,7 +14,7 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using an automatic scan through
-    POI-space, using the TOMS748 algorithm.
+    POI-space, using the :func:`~scipy.optimize.toms748` algorithm.
 
     Example:
         >>> import numpy as np
