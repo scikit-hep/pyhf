@@ -53,7 +53,7 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=None):
             - Tensor: The observed upper limit on the POI.
             - Tensor: The expected upper limits on the POI.
     """
-    if rtol == None:
+    if rtol is None:
         _warn(
             "upperlimit_auto: rtol not provided, defaulting to 1e-15. "
             "For optimal performance rtol should be set to the highest acceptable relative tolerance."
