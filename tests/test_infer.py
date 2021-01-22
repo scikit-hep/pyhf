@@ -25,7 +25,7 @@ def test_upperlimit_auto(tmpdir, hypotest_args):
     Check that the upper limit autoscan returns the correct structure and values
     """
     _, data, model = hypotest_args
-    results = pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5)
+    results = pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5, rtol=1e-8)
     assert len(results) == 2
     observed_limit, expected_limits = results
     observed_cls = pyhf.infer.hypotest(

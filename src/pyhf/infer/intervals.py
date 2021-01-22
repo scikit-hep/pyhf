@@ -3,6 +3,7 @@ from . import hypotest
 from .. import get_backend
 import numpy as np
 from scipy.optimize import toms748 as _toms748
+from warnings import warn as _warn
 
 
 def _interp(x, xp, fp):
@@ -10,7 +11,7 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
+def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=None):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using an automatic scan through
@@ -39,8 +40,12 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
         low (:obj:`float`): Lower boundary of search region
         high (:obj:`float`): Higher boundary of search region
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
-        atol (:obj:`float`): Absolute tolerance
-        rtol (:obj:`float`): Relative tolerance
+                              Defaults to 0.05.
+        atol (:obj:`float`): Absolute tolerance. Defaults to 1e-12. The iteration will end when the
+                             result is within absolute *or* relative tolerance of the true limit.
+        rtol (:obj:`float`): Relative tolerance. For optimal performance this argument should be set
+                             to the highest acceptable relative tolerance, though it will default
+                             to 1e-15 if not set.
 
     Returns:
         Tuple of Tensors:
@@ -48,6 +53,12 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=1e-15):
             - Tensor: The observed upper limit on the POI.
             - Tensor: The expected upper limits on the POI.
     """
+    if rtol == None:
+        _warn(
+            "upperlimit_auto: rtol not provided, defaulting to 1e-15. "
+            "For optimal performance rtol should be set to the highest acceptable relative tolerance."
+        )
+        rtol = 1e-15
 
     cache = {}
 
