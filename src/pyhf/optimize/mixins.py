@@ -127,7 +127,7 @@ class OptimizerMixin:
             return_fitted_val (:obj:`bool`): Return bestfit value of the objective. Default is off (``False``).
             return_result_obj (:obj:`bool`): Return :class:`scipy.optimize.OptimizeResult`. Default is off (``False``).
             return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
-            return_correlations (`bool`): Return correlations of the fitted parameters. Default is off (``False``).
+            return_correlations (:obj:`bool`): Return correlations of the fitted parameters. Default is off (``False``).
             do_grad (:obj:`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
             do_stitch (:obj:`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
