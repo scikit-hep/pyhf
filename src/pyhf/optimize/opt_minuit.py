@@ -7,7 +7,7 @@ import iminuit
 
 class minuit_optimizer(OptimizerMixin):
     """
-    Optimizer that minimizes via :func:`iminuit.Minuit.migrad`.
+    Optimizer that minimizes via :meth:`iminuit.Minuit.migrad`.
     """
 
     __slots__ = ['name', 'errordef', 'steps', 'strategy', 'tolerance']
