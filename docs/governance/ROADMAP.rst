@@ -66,7 +66,7 @@ Roadmap
       [2019-Q3]
    -  |uncheck| Finalize logo and add it to website (Issue #453) [2019-Q3 →
       2019-Q4]
-   -  |uncheck| Write submission to `JOSS <https://joss.theoj.org/>`__ (Issue
+   -  |check| Write submission to `JOSS <https://joss.theoj.org/>`__ (Issue
       #502) and write submission to
       `pyOpenSci <https://www.pyopensci.org/>`__ [2019-Q4 → 2020-Q2]
    -  |uncheck| Contribute to `IRIS-HEP Analysis Systems
