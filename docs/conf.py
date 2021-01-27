@@ -142,6 +142,7 @@ autodoc_mock_imports = [
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = [
     '_build',
+    'JOSS',
     '**.ipynb_checkpoints',
     'examples/experiments/edwardpyhf.ipynb',
     'examples/notebooks/ImpactPlot.ipynb',
