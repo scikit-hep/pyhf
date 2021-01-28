@@ -31,7 +31,7 @@ class minuit_optimizer(OptimizerMixin):
             tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
         """
         self.name = 'minuit'
-        self.errordef = kwargs.pop('errordef', 1)
+        self.errordef = kwargs.pop('errordef', 0.5)
         self.steps = kwargs.pop('steps', 1000)
         self.strategy = kwargs.pop('strategy', None)
         self.tolerance = kwargs.pop('tolerance', 0.1)

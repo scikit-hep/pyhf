@@ -285,6 +285,12 @@ class numpy_backend:
         """
         return np.broadcast_arrays(*args)
 
+    def arcsin(self, tensor):
+        return np.arcsin(tensor)
+
+    def sin(self, tensor):
+        return np.sin(tensor)
+
     def shape(self, tensor):
         return tensor.shape
 

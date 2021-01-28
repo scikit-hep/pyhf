@@ -381,6 +381,12 @@ class jax_backend:
         lam = jnp.asarray(lam)
         return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
 
+    def arcsin(self, tensor):
+        return jnp.arcsin(tensor)
+
+    def sin(self, tensor):
+        return jnp.sin(tensor)
+
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
         # norm.logpdf(x, loc=mu, scale=sigma)

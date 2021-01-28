@@ -551,7 +551,7 @@ class Model:
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema:s}")
-        utils.validate(self.spec, self.schema, version=self.version)
+        # utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         self.config = _ModelConfig(self.spec, **config_kwargs)
 

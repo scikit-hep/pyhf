@@ -230,6 +230,12 @@ class pytorch_backend:
     def zeros(self, shape):
         return torch.zeros(shape, dtype=self.dtypemap['float'])
 
+    def arcsin(self, tensor):
+        return torch.asin(tensor)
+
+    def sin(self, tensor):
+        return torch.sin(tensor)
+
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
 

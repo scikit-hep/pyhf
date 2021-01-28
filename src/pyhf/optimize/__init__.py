@@ -5,6 +5,11 @@ from .. import exceptions
 
 class _OptimizerRetriever:
     def __getattr__(self, name):
+        if name == 'customjax':
+            from .opt_custom_jax import jaxcustom_optimizer
+
+            self.jaxcustom_optimizer = jaxcustom_optimizer
+            return jaxcustom_optimizer
         if name == 'scipy_optimizer':
             from .opt_scipy import scipy_optimizer
 

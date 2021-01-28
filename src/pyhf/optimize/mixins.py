@@ -31,7 +31,6 @@ class OptimizerMixin:
     def _internal_minimize(
         self, func, x0, do_grad=False, bounds=None, fixed_vals=None, options={}
     ):
-
         minimizer = self._get_minimizer(
             func, x0, bounds, fixed_vals=fixed_vals, do_grad=do_grad
         )
@@ -62,6 +61,7 @@ class OptimizerMixin:
         tensorlib, _ = get_backend()
 
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
+
         # extract number of fixed parameters
         num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
