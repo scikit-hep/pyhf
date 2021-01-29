@@ -546,7 +546,8 @@ class Model:
 
         """
         self.batch_size = batch_size
-        self.spec = copy.deepcopy(spec)  # may get modified by config
+        # deep-copy "spec" as it may be modified by config
+        self.spec = copy.deepcopy(spec)
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
