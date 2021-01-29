@@ -73,7 +73,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
             raise exceptions.InvalidModel(
                 f"Multiple parameter configurations for {parameter['name']} were found."
             )
-        _paramsets_user_configs[parameter.pop('name')] = parameter
+        _paramsets_user_configs[parameter.get('name')] = parameter
 
     _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
