@@ -851,3 +851,42 @@ def test_model_integration_fixed_parameters_shapesys():
     assert len(model.config.suggested_fixed()) == 5
     assert model.config.suggested_fixed() == [False, True, True, True, False]
     assert model.config.poi_index == 4
+
+
+def test_reproducible_model_spec():
+    ws = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [
+                            10.0,
+                        ],
+                        "modifiers": [
+                            {"data": None, "name": "mu", "type": "normfactor"},
+                        ],
+                        "name": "Signal",
+                    }
+                ],
+            }
+        ],
+        "measurements": [
+            {
+                "config": {
+                    "parameters": [{"bounds": [[0, 5]], "inits": [1], "name": "mu"}],
+                    "poi": "mu",
+                },
+                "name": "minimal_example",
+            }
+        ],
+        "observations": [{"data": [12], "name": "SR"}],
+        "version": "1.0.0",
+    }
+    workspace = pyhf.Workspace(ws)
+    model_from_ws = workspace.model()
+
+    assert model_from_ws.spec['parameters'] == [
+        {'bounds': [[0, 5]], 'inits': [1], 'name': 'mu'}
+    ]
+    assert pyhf.Model(model_from_ws.spec)
