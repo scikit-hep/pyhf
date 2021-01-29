@@ -28,9 +28,9 @@ def test_upperlimit(tmpdir, hypotest_args):
     results = pyhf.infer.intervals.upperlimit(data, model, scan=np.linspace(0, 5, 11))
     assert len(results) == 2
     observed_limit, expected_limits = results
-    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert observed_limit == pytest.approx(1.0262717528250018, rel=1e-5)
     assert expected_limits == pytest.approx(
-        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+        [0.65765824, 0.87999803, 1.12454316, 1.50244107, 2.09233767], rel=1e-5
     )
 
 
@@ -306,27 +306,27 @@ def test_emperical_distribution(tmpdir, hypotest_args):
     assert test_stat_dist.samples.tolist() == pytest.approx(
         [
             0.0,
-            0.13298492825293806,
+            0.13298508544818333,
             0.0,
-            0.7718560148925349,
-            1.814884694401428,
-            0.0,
-            0.0,
+            0.7718561591684079,
+            1.8148846519001722,
             0.0,
             0.0,
-            0.06586643485326249,
+            0.0,
+            0.0,
+            0.0658664357855514,
         ],
-        1e-07,
+        rel=1e-06,
     )
     assert test_stat_dist.pvalue(test_stat_dist.samples[4]) == 0.1
     assert test_stat_dist.expected_value(nsigma=2) == pytest.approx(
-        1.6013233336403654, 1e-07
+        1.6013233293819484, rel=1e-07
     )
 
 
 def test_toy_calculator(tmpdir, hypotest_args):
     """
-    Check that the toy calculator is peforming as expected
+    Check that the toy calculator is performing as expected
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
@@ -337,33 +337,33 @@ def test_toy_calculator(tmpdir, hypotest_args):
     assert qtilde_mu_sig.samples.tolist() == pytest.approx(
         [
             0.0,
-            0.13298492825293806,
+            0.13298508544818333,
             0.0,
-            0.7718560148925349,
-            1.814884694401428,
-            0.0,
-            0.0,
+            0.7718561591684079,
+            1.8148846519001722,
             0.0,
             0.0,
-            0.06586643485326249,
+            0.0,
+            0.0,
+            0.0658664357855514,
         ],
-        1e-07,
+        rel=1e-05,
     )
     assert qtilde_mu_bkg.samples.tolist() == pytest.approx(
         [
-            2.2664625749100082,
-            1.081660887453154,
-            2.7570218408936853,
-            1.3835691388297846,
-            0.4707467005909507,
+            2.2664625678345374,
+            1.0816609064021918,
+            2.757021893273645,
+            1.3835695381553137,
+            0.47074742519123447,
             0.0,
-            3.7166483705294127,
-            3.8021896732709592,
-            5.114135391143066,
-            1.3511153731000718,
+            3.716648363429215,
+            3.8021895772130847,
+            5.114135203934609,
+            1.3511153719425124,
         ],
-        1e-07,
+        rel=1e-05,
     )
     assert toy_calculator_qtilde_mu.teststatistic(mu_test) == pytest.approx(
-        3.938244920380498, 1e-07
+        3.938245064259945, rel=1e-07
     )
