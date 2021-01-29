@@ -73,6 +73,7 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
 }
 
