@@ -63,11 +63,11 @@ def test_upperlimit_against_auto(tmpdir, hypotest_args):
         data, model, scan=np.linspace(0, 5, 21)
     )
     obs_linear, exp_linear = results_linear
-    # Can't expect these to be any closer given the low granularity of the linear scan
-    assert obs_auto == pytest.approx(obs_linear, rel=0.25)
+    # Can't expect these to be much closer given the low granularity of the linear scan
+    assert obs_auto == pytest.approx(obs_linear, abs=0.25)
     # For some reason, this isn't working with the full list at once
     for i in range(5):
-        assert exp_auto[i] == pytest.approx(exp_linear[i], rel=0.25)
+        assert exp_auto[i] == pytest.approx(exp_linear[i], abs=0.25)
 
 
 def test_upperlimit(tmpdir, hypotest_args):
