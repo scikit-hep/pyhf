@@ -52,6 +52,24 @@ def test_upperlimit_auto(tmpdir, hypotest_args):
     assert expected_cls == pytest.approx(0.05)
 
 
+def test_upperlimit_against_auto(tmpdir, hypotest_args):
+    """
+    Check that upperlimit and upperlimit_auto return similar results
+    """
+    _, data, model = hypotest_args
+    results_auto = pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5, rtol=1e-3)
+    obs_auto, exp_auto = results_auto
+    results_linear = pyhf.infer.intervals.upperlimit(
+        data, model, scan=np.linspace(0, 5, 21)
+    )
+    obs_linear, exp_linear = results_linear
+    # Can't expect these to be any closer given the low granularity of the linear scan
+    assert obs_auto == pytest.approx(obs_linear, rel=0.25)
+    # For some reason, this isn't working with the full list at once
+    for i in range(5):
+        assert exp_auto[i] == pytest.approx(exp_linear[i], rel=0.25)
+
+
 def test_upperlimit(tmpdir, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
