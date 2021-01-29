@@ -133,6 +133,7 @@ Inference
    mle.fixed_poi_fit
    hypotest
    intervals.upperlimit
+   intervals.upperlimit_auto
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
