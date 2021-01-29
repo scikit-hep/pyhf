@@ -73,7 +73,7 @@ def _paramset_requirements_from_modelspec(spec, channel_nbins):
             raise exceptions.InvalidModel(
                 f"Multiple parameter configurations for {parameter['name']} were found."
             )
-        _paramsets_user_configs[parameter.get('name')] = parameter
+        _paramsets_user_configs[parameter.pop('name')] = parameter
 
     _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
@@ -553,11 +553,9 @@ class Model:
         log.info(f"Validating spec against schema: {self.schema:s}")
         utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
-        self.config = _ModelConfig(self.spec, **config_kwargs)
+        self.config = _ModelConfig(spec, **config_kwargs)
 
-        mega_mods, _nominal_rates = _nominal_and_modifiers_from_spec(
-            self.config, self.spec
-        )
+        mega_mods, _nominal_rates = _nominal_and_modifiers_from_spec(self.config, spec)
         self.main_model = _MainModel(
             self.config,
             mega_mods=mega_mods,
