@@ -11,7 +11,17 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=None):
+def upperlimit_auto(
+    data,
+    model,
+    low,
+    high,
+    level=0.05,
+    atol=2e-12,
+    rtol=None,
+    calctype='asymptotics',
+    test_stat='qtilde',
+):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using an automatic scan through
@@ -46,6 +56,9 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=None):
         rtol (:obj:`float`): Relative tolerance. For optimal performance this argument should be set
                              to the highest acceptable relative tolerance, though it will default
                              to 1e-15 if not set.
+        calctype (:obj:`str`): Calculator to use for hypothesis tests. Choose 'asymptotics' (default)
+                               or 'toybased'.
+        test_stat (:obj:`str`): Test statistic to use. Choose 'qtilde' (default), 'q', or 'q0'.
 
     Returns:
         Tuple of Tensors:
@@ -66,7 +79,12 @@ def upperlimit_auto(data, model, low, high, level=0.05, atol=2e-12, rtol=None):
         if mu in cache:
             return cache[mu]
         cache[mu] = hypotest(
-            mu, data, model, test_stat="qtilde", return_expected_set=True
+            mu,
+            data,
+            model,
+            test_stat=test_stat,
+            calctype=calctype,
+            return_expected_set=True,
         )
         return cache[mu]
 
