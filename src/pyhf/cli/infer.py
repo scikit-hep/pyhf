@@ -69,14 +69,14 @@ def fit(
         {
             "mle_parameters": {
                 "mu": [
-                    0.00017298628839781602
+                    0.00012198211767276228
                 ],
                 "uncorr_bkguncrt": [
-                    1.0000015671710816,
-                    0.9999665895859197
+                    0.9999644178569168,
+                    0.999895631468898
                 ]
             },
-            "twice_nll": 23.19636590468879
+            "nll": 11.598183353771212
         }
     """
     # set the backend if not NumPy
@@ -117,7 +117,7 @@ def fit(
 
     result = {"mle_parameters": bestfit_pars}
     if value:
-        result["twice_nll"] = tensorlib.tolist(fit_result[-1])
+        result["nll"] = tensorlib.tolist(fit_result[-1])
 
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
@@ -178,13 +178,13 @@ def cls(
         \b
         {
             "CLs_exp": [
-                0.07807427911686156,
-                0.17472571775474618,
-                0.35998495263681285,
-                0.6343568235898907,
-                0.8809947004472013
+                0.07807398485749008,
+                0.17472524541749054,
+                0.3599843354244575,
+                0.634356267897945,
+                0.8809944338156985
             ],
-            "CLs_obs": 0.3599845631401915
+            "CLs_obs": 0.3599843354244575
         }
     """
     with click.open_file(workspace, 'r') as specstream:

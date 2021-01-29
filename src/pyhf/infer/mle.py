@@ -3,9 +3,9 @@ from .. import get_backend
 from ..exceptions import UnspecifiedPOI
 
 
-def twice_nll(pars, data, pdf):
+def nll(pars, data, pdf):
     r"""
-    Two times the negative log-likelihood of the model parameters, :math:`\left(\mu, \boldsymbol{\theta}\right)`, given the observed data.
+    The negative log-likelihood of the model parameters, :math:`\left(\mu, \boldsymbol{\theta}\right)`, given the observed data.
     It is used in the calculation of the test statistic, :math:`t_{\mu}`, as defiend in Equation (8) in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -30,10 +30,10 @@ def twice_nll(pars, data, pdf):
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> parameters = model.config.suggested_init()  # nominal parameters
-        >>> twice_nll = pyhf.infer.mle.twice_nll(parameters, data, model)
-        >>> twice_nll
-        array([30.77525435])
-        >>> -2 * model.logpdf(parameters, data) == twice_nll
+        >>> nll = pyhf.infer.mle.nll(parameters, data, model)
+        >>> nll
+        array([15.38762717])
+        >>> -model.logpdf(parameters, data) == nll
         array([ True])
 
     Args:
@@ -42,9 +42,9 @@ def twice_nll(pars, data, pdf):
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
 
     Returns:
-        Tensor: Two times the negative log-likelihood, :math:`-2\ln L\left(\mu, \boldsymbol{\theta}\right)`
+        Tensor: The negative log-likelihood, :math:`-\ln L\left(\mu, \boldsymbol{\theta}\right)`
     """
-    return -2 * pdf.logpdf(pars, data)
+    return -pdf.logpdf(pars, data)
 
 
 def _validate_fit_inputs(init_pars, par_bounds, fixed_params):
@@ -61,7 +61,7 @@ def _validate_fit_inputs(init_pars, par_bounds, fixed_params):
 def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs):
     r"""
     Run a maximum likelihood fit.
-    This is done by minimizing the objective function :func:`~pyhf.infer.mle.twice_nll`
+    This is done by minimizing the objective function :func:`~pyhf.infer.mle.nll`
     of the model parameters given the observed data.
     This is used to produce the maximal likelihood :math:`L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)`
     in the profile likelihood ratio in Equation (7) in :xref:`arXiv:1007.1727`
@@ -73,7 +73,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
 
     .. note::
 
-        :func:`twice_nll` is the objective function given to the optimizer and
+        :func:`nll` is the objective function given to the optimizer and
         is returned evaluated at the best fit model parameters when the optional
         kwarg ``return_fitted_val`` is ``True``.
 
@@ -85,12 +85,12 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-        >>> bestfit_pars, twice_nll = pyhf.infer.mle.fit(data, model, return_fitted_val=True)
+        >>> bestfit_pars, nll = pyhf.infer.mle.fit(data, model, return_fitted_val=True)
         >>> bestfit_pars
-        array([0.        , 1.0030512 , 0.96266961])
-        >>> twice_nll
-        array(24.98393521)
-        >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
+        array([0.        , 1.00305155, 0.96267465])
+        >>> nll
+        array(12.4919676)
+        >>> -model.logpdf(bestfit_pars, data) == nll
         array([ True])
 
     Args:
@@ -119,9 +119,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         if is_fixed
     ]
 
-    return opt.minimize(
-        twice_nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs
-    )
+    return opt.minimize(nll, data, pdf, init_pars, par_bounds, fixed_vals, **kwargs)
 
 
 def fixed_poi_fit(
@@ -129,7 +127,7 @@ def fixed_poi_fit(
 ):
     r"""
     Run a maximum likelihood fit with the POI value fixed.
-    This is done by minimizing the objective function of :func:`~pyhf.infer.mle.twice_nll`
+    This is done by minimizing the objective function of :func:`~pyhf.infer.mle.nll`
     of the model parameters given the observed data, for a given fixed value of :math:`\mu`.
     This is used to produce the constrained maximal likelihood for the given :math:`\mu`,
     :math:`L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)`, in the profile
@@ -141,7 +139,7 @@ def fixed_poi_fit(
 
     .. note::
 
-        :func:`twice_nll` is the objective function given to the optimizer and
+        :func:`nll` is the objective function given to the optimizer and
         is returned evaluated at the best fit model parameters when the optional
         kwarg ``return_fitted_val`` is ``True``.
 
@@ -154,14 +152,14 @@ def fixed_poi_fit(
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> test_poi = 1.0
-        >>> bestfit_pars, twice_nll = pyhf.infer.mle.fixed_poi_fit(
+        >>> bestfit_pars, nll = pyhf.infer.mle.fixed_poi_fit(
         ...     test_poi, data, model, return_fitted_val=True
         ... )
         >>> bestfit_pars
-        array([1.        , 0.97224597, 0.87553894])
-        >>> twice_nll
-        array(28.92218013)
-        >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
+        array([1.        , 0.97226646, 0.87552889])
+        >>> nll
+        array(14.46109013)
+        >>> -model.logpdf(bestfit_pars, data) == nll
         array([ True])
 
     Args:

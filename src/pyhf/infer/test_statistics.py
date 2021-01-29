@@ -43,7 +43,7 @@ def _tmu_like(
     )
     log_likelihood_ratio = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     tmu_like_stat = tensorlib.astensor(
-        tensorlib.clip(log_likelihood_ratio, 0.0, max_value=None)
+        tensorlib.clip(2.0 * log_likelihood_ratio, 0.0, max_value=None)
     )
     if return_fitted_pars:
         return tmu_like_stat, (mubhathat, muhatbhat)
@@ -86,7 +86,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
-        array(3.9549891)
+        array(3.95498935)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -152,7 +152,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
-        array(3.93824492)
+        array(3.93824506)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -207,7 +207,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
-        array(3.9549891)
+        array(3.95498935)
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -267,7 +267,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
-        array(3.93824492)
+        array(3.93824506)
 
     Args:
         mu (Number or Tensor): The signal strength parameter

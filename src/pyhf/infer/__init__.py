@@ -35,9 +35,9 @@ def hypotest(
         ...     mu_test, data, model, return_expected_set=True, test_stat="qtilde"
         ... )
         >>> CLs_obs
-        array(0.05251497)
+        array(0.0525151)
         >>> CLs_exp_band
-        [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
+        [array(0.0026063), array(0.01382019), array(0.06445367), array(0.2352575), array(0.5730375)]
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
