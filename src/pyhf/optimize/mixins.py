@@ -52,7 +52,7 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result)
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars):
+    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):
         """
         Post-process the fit result.
 
@@ -61,23 +61,40 @@ class OptimizerMixin:
         """
         tensorlib, _ = get_backend()
 
+        # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
-        # extract number of fixed parameters
-        num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
-        # check if uncertainties were provided
+        # check if uncertainties were provided (and stitch just in case)
         uncertainties = getattr(fitresult, 'unc', None)
         if uncertainties is not None:
+            # extract number of fixed parameters
+            num_fixed_pars = len(fitted_pars) - len(fitresult.x)
             # stitch in zero-uncertainty for fixed values
-            fitted_uncs = stitch_pars(
+            uncertainties = stitch_pars(
                 tensorlib.astensor(uncertainties),
                 stitch_with=tensorlib.zeros(num_fixed_pars),
             )
-            fitresult.unc = fitted_uncs
-            fitted_pars = tensorlib.stack([fitted_pars, fitted_uncs], axis=1)
+            if return_uncertainties:
+                fitted_pars = tensorlib.stack([fitted_pars, uncertainties], axis=1)
+
+        correlations = getattr(fitresult, 'corr', None)
+        if correlations is not None:
+            _zeros = tensorlib.zeros(num_fixed_pars)
+            # possibly a more elegant way to do this
+            stitched_columns = [
+                stitch_pars(tensorlib.astensor(column), stitch_with=_zeros)
+                for column in zip(*correlations)
+            ]
+            stitched_rows = [
+                stitch_pars(tensorlib.astensor(row), stitch_with=_zeros)
+                for row in zip(*stitched_columns)
+            ]
+            correlations = tensorlib.stack(stitched_rows, axis=1)
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
+        fitresult.unc = uncertainties
+        fitresult.corr = correlations
 
         return fitresult
 
@@ -91,6 +108,8 @@ class OptimizerMixin:
         fixed_vals=None,
         return_fitted_val=False,
         return_result_obj=False,
+        return_uncertainties=False,
+        return_correlations=False,
         do_grad=None,
         do_stitch=False,
         **kwargs,
@@ -105,8 +124,10 @@ class OptimizerMixin:
             init_pars (:obj:`list`): initial parameters
             par_bounds (:obj:`list`): parameter boundaries
             fixed_vals (:obj:`list`): fixed parameter values
-            return_fitted_val (:obj:`bool`): return bestfit value of the objective
-            return_result_obj (:obj:`bool`): return :class:`scipy.optimize.OptimizeResult`
+            return_fitted_val (:obj:`bool`): Return bestfit value of the objective. Default is off (``False``).
+            return_result_obj (:obj:`bool`): Return :class:`scipy.optimize.OptimizeResult`. Default is off (``False``).
+            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
+            return_correlations (:obj:`bool`): Return correlations of the fitted parameters. Default is off (``False``).
             do_grad (:obj:`bool`): enable autodifferentiation mode. Default depends on backend (:attr:`pyhf.tensorlib.default_do_grad`).
             do_stitch (:obj:`bool`): enable splicing/stitching fixed parameter.
             kwargs: other options to pass through to underlying minimizer
@@ -134,9 +155,13 @@ class OptimizerMixin:
         )
 
         result = self._internal_minimize(**minimizer_kwargs, options=kwargs)
-        result = self._internal_postprocess(result, stitch_pars)
+        result = self._internal_postprocess(
+            result, stitch_pars, return_uncertainties=return_uncertainties
+        )
 
         _returns = [result.x]
+        if return_correlations:
+            _returns.append(result.corr)
         if return_fitted_val:
             _returns.append(result.fun)
         if return_result_obj:
