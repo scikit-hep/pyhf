@@ -108,6 +108,25 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         rtol = 2e-06
         # handle cases where macos and ubuntu provide very different results numerical
+        print(identifier)
+        # if "no_grad-scipy-pytorch-64b" in identifier:
+        #     rtol = 1e-4
+        # if "no_grad-scipy-numpy-64b" in identifier:
+        #     rtol = 1e-4
+        # if "no_grad-scipy-tensorflow-64b" in identifier:
+        #     rtol = 1e-4
+        # if "no_grad-scipy-jax-64b" in identifier:
+        #     rtol = 1e-4
+        if "no_grad" in identifier:
+            rtol = 1e-4
+        if "do_grad-scipy-pytorch-64b" in identifier:
+            rtol = 1e-4
+        if "do_grad-scipy-tensorflow-64b" in identifier:
+            rtol = 1e-4
+        if "do_grad-scipy-jax-64b" in identifier:
+            rtol = 1e-4
+        # if "32b" in identifier:
+        #     rtol = 1e-2
         if 'no_grad-minuit-tensorflow-32b' in identifier:
             # not a very large difference, so we bump the relative difference down
             rtol = 3e-02
