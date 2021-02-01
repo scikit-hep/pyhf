@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Installation &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developing" href="development.html" />
+    <link rel="prev" title="Outreach" href="outreach.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-latest-stable-release-from-pypi">Install latest stable release from PyPI…</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#with-numpy-backend">… with NumPy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-tensorflow-backend">… with TensorFlow backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-pytorch-backend">… with PyTorch backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-jax-backend">… with JAX backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-all-backends">… with all backends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-xml-import-export-functionality">… with xml import/export functionality</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#install-latest-development-version-from-github">Install latest development version from GitHub…</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">… with NumPy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">… with TensorFlow backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">… with PyTorch backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">… with JAX backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">… with all backends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">… with xml import/export functionality</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-pyhf">Updating <code class="code docutils literal notranslate"><span class="pre">pyhf</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="installation">
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>To install, we suggest first setting up a <a class="reference external" href="https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments">virtual environment</a></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Python3
+<span class="go">python3 -m venv pyhf</span>
+</pre></div>
+</div>
+<p>and activating it</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">source pyhf/bin/activate</span>
+</pre></div>
+</div>
+<div class="section" id="install-latest-stable-release-from-pypi">
+<h2>Install latest stable release from <a class="reference external" href="https://pypi.org/project/pyhf/">PyPI</a>…<a class="headerlink" href="#install-latest-stable-release-from-pypi" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="with-numpy-backend">
+<h3>… with NumPy backend<a class="headerlink" href="#with-numpy-backend" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with-tensorflow-backend">
+<h3>… with TensorFlow backend<a class="headerlink" href="#with-tensorflow-backend" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf[tensorflow]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with-pytorch-backend">
+<h3>… with PyTorch backend<a class="headerlink" href="#with-pytorch-backend" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf[torch]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with-jax-backend">
+<h3>… with JAX backend<a class="headerlink" href="#with-jax-backend" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf[jax]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with-all-backends">
+<h3>… with all backends<a class="headerlink" href="#with-all-backends" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf[backends]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with-xml-import-export-functionality">
+<h3>… with xml import/export functionality<a class="headerlink" href="#with-xml-import-export-functionality" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install pyhf[xmlio]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="install-latest-development-version-from-github">
+<h2>Install latest development version from <a class="reference external" href="https://github.com/scikit-hep/pyhf">GitHub</a>…<a class="headerlink" href="#install-latest-development-version-from-github" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>… with NumPy backend<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>… with TensorFlow backend<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>… with PyTorch backend<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>… with JAX backend<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>… with all backends<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>… with xml import/export functionality<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install --ignore-installed -U &quot;git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="updating-pyhf">
+<h2>Updating <code class="code docutils literal notranslate"><span class="pre">pyhf</span></code><a class="headerlink" href="#updating-pyhf" title="Permalink to this headline">¶</a></h2>
+<p>Rerun the installation command. As the upgrade flag, <code class="code docutils literal notranslate"><span class="pre">-U</span></code>, is used then the libraries will be updated.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="development.html" class="btn btn-neutral float-right" title="Developing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="outreach.html" class="btn btn-neutral float-left" title="Outreach" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

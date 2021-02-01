@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.patchset &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.patchset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.patchset</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">pyhf patchset provides a user-friendly interface for interacting with patchsets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">jsonpatch</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.workspace</span> <span class="kn">import</span> <span class="n">Workspace</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Patch"><a class="viewcode-back" href="../../_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch">[docs]</a><span class="k">class</span> <span class="nc">Patch</span><span class="p">(</span><span class="n">jsonpatch</span><span class="o">.</span><span class="n">JsonPatch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A way to store a patch definition as part of a patchset (:class:`~pyhf.patchset.PatchSet`).</span>
+
+<span class="sd">    It contains :attr:`~pyhf.patchset.Patch.metadata` about the Patch itself:</span>
+
+<span class="sd">      * a descriptive :attr:`~pyhf.patchset.Patch.name`</span>
+<span class="sd">      * a list of the :attr:`~pyhf.patchset.Patch.values` for each dimension in the phase-space the associated :class:`~pyhf.patchset.PatchSet` is defined for, see :attr:`~pyhf.patchset.PatchSet.labels`</span>
+
+<span class="sd">    In addition to the above metadata, the Patch object behaves like the underlying :class:`jsonpatch.JsonPatch`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Patch.__init__"><a class="viewcode-back" href="../../_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a Patch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spec (:obj:`jsonable`): The patch JSON specification</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            patch (:class:`~pyhf.patchset.Patch`): The Patch instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;patch&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The metadata of the patch &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The name of the patch &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The values of the associated labels for the patch &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Representation of the object &quot;&quot;&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">qualname</span><span class="si">}</span><span class="s2"> object &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">&#39; at </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Equality for subclass with new attributes &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Patch</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonpatch</span><span class="o">.</span><span class="n">JsonPatch</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PatchSet"><a class="viewcode-back" href="../../_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet">[docs]</a><span class="k">class</span> <span class="nc">PatchSet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A way to store a collection of patches (:class:`~pyhf.patchset.Patch`).</span>
+
+<span class="sd">    It contains :attr:`~PatchSet.metadata` about the PatchSet itself:</span>
+
+<span class="sd">      * a high-level :attr:`~pyhf.patchset.PatchSet.description` of what the patches represent or the analysis it is for</span>
+<span class="sd">      * a list of :attr:`~pyhf.patchset.PatchSet.references` where the patchset is sourced from (e.g. hepdata)</span>
+<span class="sd">      * a list of :attr:`~pyhf.patchset.PatchSet.digests` corresponding to the background-only workspace the patchset was made for</span>
+<span class="sd">      * the :attr:`~pyhf.patchset.PatchSet.labels` of the dimensions of the phase-space for what the patches cover</span>
+
+<span class="sd">    In addition to the above metadata, the PatchSet object behaves like a:</span>
+
+<span class="sd">      * smart list allowing you to iterate over all the patches defined</span>
+<span class="sd">      * smart dictionary allowing you to access a patch by the patch name or the patch values</span>
+
+<span class="sd">    The below example shows various ways one can interact with a :class:`PatchSet` object.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; patchset = pyhf.PatchSet({</span>
+<span class="sd">        ...     &quot;metadata&quot;: {</span>
+<span class="sd">        ...         &quot;references&quot;: { &quot;hepdata&quot;: &quot;ins1234567&quot; },</span>
+<span class="sd">        ...         &quot;description&quot;: &quot;example patchset&quot;,</span>
+<span class="sd">        ...         &quot;digests&quot;: { &quot;md5&quot;: &quot;098f6bcd4621d373cade4e832627b4f6&quot; },</span>
+<span class="sd">        ...         &quot;labels&quot;: [&quot;x&quot;, &quot;y&quot;]</span>
+<span class="sd">        ...     },</span>
+<span class="sd">        ...     &quot;patches&quot;: [</span>
+<span class="sd">        ...         {</span>
+<span class="sd">        ...             &quot;metadata&quot;: {</span>
+<span class="sd">        ...                 &quot;name&quot;: &quot;patch_name_for_2100x_800y&quot;,</span>
+<span class="sd">        ...                 &quot;values&quot;: [2100, 800]</span>
+<span class="sd">        ...             },</span>
+<span class="sd">        ...             &quot;patch&quot;: [</span>
+<span class="sd">        ...                 {</span>
+<span class="sd">        ...                     &quot;op&quot;: &quot;add&quot;,</span>
+<span class="sd">        ...                     &quot;path&quot;: &quot;/foo/0/bar&quot;,</span>
+<span class="sd">        ...                     &quot;value&quot;: {</span>
+<span class="sd">        ...                         &quot;foo&quot;: [1.0]</span>
+<span class="sd">        ...                     }</span>
+<span class="sd">        ...                 }</span>
+<span class="sd">        ...             ]</span>
+<span class="sd">        ...         }</span>
+<span class="sd">        ...     ],</span>
+<span class="sd">        ...     &quot;version&quot;: &quot;1.0.0&quot;</span>
+<span class="sd">        ... })</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; patchset.version</span>
+<span class="sd">        &#39;1.0.0&#39;</span>
+<span class="sd">        &gt;&gt;&gt; patchset.references</span>
+<span class="sd">        {&#39;hepdata&#39;: &#39;ins1234567&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; patchset.description</span>
+<span class="sd">        &#39;example patchset&#39;</span>
+<span class="sd">        &gt;&gt;&gt; patchset.digests</span>
+<span class="sd">        {&#39;md5&#39;: &#39;098f6bcd4621d373cade4e832627b4f6&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; patchset.labels</span>
+<span class="sd">        [&#39;x&#39;, &#39;y&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; patchset.patches</span>
+<span class="sd">        [&lt;pyhf.patchset.Patch object &#39;patch_name_for_2100x_800y(2100, 800)&#39; at 0x...&gt;]</span>
+<span class="sd">        &gt;&gt;&gt; patchset[&#39;patch_name_for_2100x_800y&#39;]</span>
+<span class="sd">        &lt;pyhf.patchset.Patch object &#39;patch_name_for_2100x_800y(2100, 800)&#39; at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; patchset[(2100,800)]</span>
+<span class="sd">        &lt;pyhf.patchset.Patch object &#39;patch_name_for_2100x_800y(2100, 800)&#39; at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; patchset[[2100,800]]</span>
+<span class="sd">        &lt;pyhf.patchset.Patch object &#39;patch_name_for_2100x_800y(2100, 800)&#39; at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; patchset[2100,800]</span>
+<span class="sd">        &lt;pyhf.patchset.Patch object &#39;patch_name_for_2100x_800y(2100, 800)&#39; at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; for patch in patchset:</span>
+<span class="sd">        ...     print(patch.name)</span>
+<span class="sd">        ...</span>
+<span class="sd">        patch_name_for_2100x_800y</span>
+<span class="sd">        &gt;&gt;&gt; len(patchset)</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PatchSet.__init__"><a class="viewcode-back" href="../../_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a PatchSet.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spec (:obj:`jsonable`): The patchset JSON specification</span>
+<span class="sd">            config_kwargs: Possible keyword arguments for the patchset validation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            patchset (:class:`~pyhf.patchset.PatchSet`): The PatchSet instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;schema&#39;</span><span class="p">,</span> <span class="s1">&#39;patchset.json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># run jsonschema validation of input specification against the (provided) schema</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validating spec against schema: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="p">)</span>
+
+        <span class="c1"># set properties based on metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
+
+        <span class="c1"># list of all patch objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_patches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># look-up table for retrieving patch by name or values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;values&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+
+        <span class="c1"># inflate all patches</span>
+        <span class="k">for</span> <span class="n">patchspec</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;patches&#39;</span><span class="p">]:</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">Patch</span><span class="p">(</span><span class="n">patchspec</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">patch</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidPatchSet</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Multiple patches were defined by name for </span><span class="si">{</span><span class="n">patch</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">patch</span><span class="o">.</span><span class="n">values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidPatchSet</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Multiple patches were defined by values for </span><span class="si">{</span><span class="n">patch</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidPatchSet</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Incompatible number of values (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">patch</span><span class="si">}</span><span class="s1"> in patchset. Expected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># all good, register patch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_patches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+            <span class="c1"># register lookup keys for the patch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span><span class="p">[</span><span class="n">patch</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">patch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span><span class="p">[</span><span class="n">patch</span><span class="o">.</span><span class="n">values</span><span class="p">]</span> <span class="o">=</span> <span class="n">patch</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The version of the PatchSet &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The metadata of the PatchSet &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">references</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The references in the PatchSet metadata &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;references&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The description in the PatchSet metadata &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">digests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The digests in the PatchSet metadata &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;digests&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The labels in the PatchSet metadata &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">patches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The patches in the PatchSet &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patches</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Representation of the object &quot;&quot;&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">qualname</span><span class="si">}</span><span class="s2"> object with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">patches</span><span class="p">)</span><span class="si">}</span><span class="s2"> patch</span><span class="si">{</span><span class="s1">&#39;es&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">patches</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access the patch in the patchset by the specified key, either by name or by values.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ~pyhf.exceptions.InvalidPatchLookup: if the provided patch name is not in the patchset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            patch (:class:`~pyhf.patchset.Patch`): The patch associated with the specified key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># might be specified as a list, convert to hashable tuple instead for lookup</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patches_by_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidPatchLookup</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;No patch associated with &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot; is defined in patchset.&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate over the defined patches in the patchset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            iterable (:obj:`iter`): An iterable over the list of patches in the patchset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">patches</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The number of patches in the patchset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            quantity (:obj:`int`): The number of patches in the patchset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">patches</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PatchSet.verify"><a class="viewcode-back" href="../../_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify the patchset digests against a background-only workspace specification. Verified if no exception was raised.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ~pyhf.exceptions.PatchSetVerificationError: if the patchset cannot be verified against the workspace specification</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hash_alg</span><span class="p">,</span> <span class="n">digest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">digests</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">digest_calc</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">digest</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">hash_alg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">digest_calc</span> <span class="o">==</span> <span class="n">digest</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PatchSetVerificationError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The digest verification failed for hash algorithm &#39;</span><span class="si">{</span><span class="n">hash_alg</span><span class="si">}</span><span class="s2">&#39;. Expected: </span><span class="si">{</span><span class="n">digest</span><span class="si">}</span><span class="s2">. Got: </span><span class="si">{</span><span class="n">digest_calc</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PatchSet.apply"><a class="viewcode-back" href="../../_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the patch associated with the key to the background-only workspace specificatiom.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spec (:class:`~pyhf.workspace.Workspace`): The workspace specification to verify the patchset against.</span>
+<span class="sd">            key (:obj:`str` or :obj:`tuple` of :obj:`int`/:obj:`float`): The key to look up the associated patch - either a name or a set of values.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ~pyhf.exceptions.InvalidPatchLookup: if the provided patch name is not in the patchset</span>
+<span class="sd">            ~pyhf.exceptions.PatchSetVerificationError: if the patchset cannot be verified against the workspace specification</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            workspace (:class:`~pyhf.workspace.Workspace`): The background-only workspace with the patch applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

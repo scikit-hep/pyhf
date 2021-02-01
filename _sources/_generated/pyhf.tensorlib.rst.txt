@@ -1,0 +1,6 @@
+﻿pyhf.tensorlib
+==============
+
+.. currentmodule:: pyhf
+
+.. autodata:: tensorlib

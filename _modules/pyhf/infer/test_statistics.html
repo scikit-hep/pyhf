@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.infer.test_statistics &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyhf.html">pyhf</a> &raquo;</li>
+        
+          <li><a href="../infer.html">pyhf.infer</a> &raquo;</li>
+        
+      <li>pyhf.infer.test_statistics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.infer.test_statistics</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">get_backend</span>
+<span class="kn">from</span> <span class="nn">.mle</span> <span class="kn">import</span> <span class="n">fixed_poi_fit</span><span class="p">,</span> <span class="n">fit</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">UnspecifiedPOI</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_qmu_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clipped version of _tmu_like where the returned test statistic</span>
+<span class="sd">    is 0 if muhat &gt; 0 else tmu_like_stat.</span>
+
+<span class="sd">    If the lower bound of the POI is 0 this automatically implments</span>
+<span class="sd">    qmu_tilde. Otherwise this is qmu (no tilde).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tensorlib</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+    <span class="n">tmu_like_stat</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">muhatbhat</span><span class="p">)</span> <span class="o">=</span> <span class="n">_tmu_like</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">,</span> <span class="n">return_fitted_pars</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">qmu_like_stat</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">muhatbhat</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">mu</span><span class="p">,</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">tmu_like_stat</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">qmu_like_stat</span>
+
+
+<span class="k">def</span> <span class="nf">_tmu_like</span><span class="p">(</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">,</span> <span class="n">return_fitted_pars</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Basic Profile Likelihood test statistic.</span>
+
+<span class="sd">    If the lower bound of the POI is 0 this automatically implments</span>
+<span class="sd">    tmu_tilde. Otherwise this is tmu (no tilde).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tensorlib</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+    <span class="n">mubhathat</span><span class="p">,</span> <span class="n">fixed_poi_fit_lhood_val</span> <span class="o">=</span> <span class="n">fixed_poi_fit</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">,</span> <span class="n">return_fitted_val</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">muhatbhat</span><span class="p">,</span> <span class="n">unconstrained_fit_lhood_val</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">,</span> <span class="n">return_fitted_val</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">log_likelihood_ratio</span> <span class="o">=</span> <span class="n">fixed_poi_fit_lhood_val</span> <span class="o">-</span> <span class="n">unconstrained_fit_lhood_val</span>
+    <span class="n">tmu_like_stat</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span>
+        <span class="n">tensorlib</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">log_likelihood_ratio</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_fitted_pars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tmu_like_stat</span><span class="p">,</span> <span class="p">(</span><span class="n">mubhathat</span><span class="p">,</span> <span class="n">muhatbhat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmu_like_stat</span>
+
+
+<div class="viewcode-block" id="qmu"><a class="viewcode-back" href="../../../_generated/pyhf.infer.test_statistics.qmu.html#pyhf.infer.test_statistics.qmu">[docs]</a><span class="k">def</span> <span class="nf">qmu</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The test statistic, :math:`q_{\mu}`, for establishing an upper</span>
+<span class="sd">    limit on the strength parameter, :math:`\mu`, as defiend in</span>
+<span class="sd">    Equation (14) in :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       :nowrap:</span>
+
+<span class="sd">       \begin{equation}</span>
+<span class="sd">          q_{\mu} = \left\{\begin{array}{ll}</span>
+<span class="sd">          -2\ln\lambda\left(\mu\right), &amp;\hat{\mu} &lt; \mu,\\</span>
+<span class="sd">          0, &amp; \hat{\mu} &gt; \mu</span>
+<span class="sd">          \end{array}\right.</span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    where :math:`\lambda\left(\mu\right)` is the profile likelihood ratio as defined in Equation (7)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}\,.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; test_mu = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds[model.config.poi_index] = [-10.0, 10.0]</span>
+<span class="sd">        &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)</span>
+<span class="sd">        array(3.9549891)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (Number or Tensor): The signal strength parameter</span>
+<span class="sd">        data (Tensor): The data to be considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation</span>
+<span class="sd">        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit</span>
+<span class="sd">        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit</span>
+<span class="sd">        fixed_params (:obj:`list`): Parameters held constant in the fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float: The calculated test statistic, :math:`q_{\mu}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnspecifiedPOI</span><span class="p">(</span>
+            <span class="s1">&#39;No POI is defined. A POI is required for profile likelihood based test statistics.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">par_bounds</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">&#39;qmu test statistic used for fit configuration with POI bounded at zero.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_qmu_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="qmu_tilde"><a class="viewcode-back" href="../../../_generated/pyhf.infer.test_statistics.qmu_tilde.html#pyhf.infer.test_statistics.qmu_tilde">[docs]</a><span class="k">def</span> <span class="nf">qmu_tilde</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The &quot;alternative&quot; test statistic, :math:`\tilde{q}_{\mu}`, for establishing</span>
+<span class="sd">    an upper limit on the strength parameter, :math:`\mu`, for models with</span>
+<span class="sd">    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       :nowrap:</span>
+
+<span class="sd">       \begin{equation}</span>
+<span class="sd">          \tilde{q}_{\mu} = \left\{\begin{array}{ll}</span>
+<span class="sd">          -2\ln\tilde{\lambda}\left(\mu\right), &amp;\hat{\mu} &lt; \mu,\\</span>
+<span class="sd">          0, &amp; \hat{\mu} &gt; \mu</span>
+<span class="sd">          \end{array}\right.</span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    where :math:`\tilde{\lambda}\left(\mu\right)` is the constrained profile likelihood ratio as defined in Equation (10)</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       :nowrap:</span>
+
+<span class="sd">       \begin{equation}</span>
+<span class="sd">          \tilde{\lambda}\left(\mu\right) = \left\{\begin{array}{ll}</span>
+<span class="sd">          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\hat{\boldsymbol{\theta}}}(0)\right)}, &amp;\hat{\mu} &lt; 0,\\</span>
+<span class="sd">          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}, &amp;\hat{\mu} \geq 0.</span>
+<span class="sd">          \end{array}\right.</span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; test_mu = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">        &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)</span>
+<span class="sd">        array(3.93824492)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (Number or Tensor): The signal strength parameter</span>
+<span class="sd">        data (:obj:`tensor`): The data to be considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json</span>
+<span class="sd">        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit</span>
+<span class="sd">        par_bounds (:obj:`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit</span>
+<span class="sd">        fixed_params (:obj:`list`): Parameters held constant in the fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnspecifiedPOI</span><span class="p">(</span>
+            <span class="s1">&#39;No POI is defined. A POI is required for profile likelihood based test statistics.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">par_bounds</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">&#39;qmu_tilde test statistic used for fit configuration with POI not bounded at zero.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_qmu_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tmu"><a class="viewcode-back" href="../../../_generated/pyhf.infer.test_statistics.tmu.html#pyhf.infer.test_statistics.tmu">[docs]</a><span class="k">def</span> <span class="nf">tmu</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The test statistic, :math:`t_{\mu}`, for establishing a two-sided</span>
+<span class="sd">    interval on the strength parameter, :math:`\mu`, as defiend in Equation (8)</span>
+<span class="sd">    in :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       t_{\mu} = -2\ln\lambda\left(\mu\right)</span>
+
+<span class="sd">    where :math:`\lambda\left(\mu\right)` is the profile likelihood ratio as defined in Equation (7)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \lambda\left(\mu\right) = \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}\,.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; test_mu = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds[model.config.poi_index] = [-10.0, 10.0]</span>
+<span class="sd">        &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)</span>
+<span class="sd">        array(3.9549891)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (Number or Tensor): The signal strength parameter</span>
+<span class="sd">        data (Tensor): The data to be considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json</span>
+<span class="sd">        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit</span>
+<span class="sd">        par_bounds (:obj:`list` of `list`\s or `tuple`\s): The extrema of values the model parameters are allowed to reach in the fit</span>
+<span class="sd">        fixed_params (:obj:`list`): Parameters held constant in the fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float: The calculated test statistic, :math:`t_{\mu}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnspecifiedPOI</span><span class="p">(</span>
+            <span class="s1">&#39;No POI is defined. A POI is required for profile likelihood based test statistics.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">par_bounds</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">&#39;tmu test statistic used for fit configuration with POI bounded at zero.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_tmu_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tmu_tilde"><a class="viewcode-back" href="../../../_generated/pyhf.infer.test_statistics.tmu_tilde.html#pyhf.infer.test_statistics.tmu_tilde">[docs]</a><span class="k">def</span> <span class="nf">tmu_tilde</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The test statistic, :math:`\tilde{t}_{\mu}`, for establishing a two-sided</span>
+<span class="sd">    interval on the strength parameter, :math:`\mu`, for models with</span>
+<span class="sd">    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \tilde{t}_{\mu} = -2\ln\tilde{\lambda}\left(\mu\right)</span>
+
+<span class="sd">    where :math:`\tilde{\lambda}\left(\mu\right)` is the constrained profile likelihood ratio as defined in Equation (10)</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       :nowrap:</span>
+
+<span class="sd">       \begin{equation}</span>
+<span class="sd">          \tilde{\lambda}\left(\mu\right) = \left\{\begin{array}{ll}</span>
+<span class="sd">          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\hat{\boldsymbol{\theta}}}(0)\right)}, &amp;\hat{\mu} &lt; 0,\\</span>
+<span class="sd">          \frac{L\left(\mu, \hat{\hat{\boldsymbol{\theta}}}(\mu)\right)}{L\left(\hat{\mu}, \hat{\boldsymbol{\theta}}\right)}, &amp;\hat{\mu} \geq 0.</span>
+<span class="sd">          \end{array}\right.</span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; test_mu = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">        &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)</span>
+<span class="sd">        array(3.93824492)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (Number or Tensor): The signal strength parameter</span>
+<span class="sd">        data (:obj:`tensor`): The data to be considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json</span>
+<span class="sd">        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit</span>
+<span class="sd">        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit</span>
+<span class="sd">        fixed_params (:obj:`list`): Parameters held constant in the fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnspecifiedPOI</span><span class="p">(</span>
+            <span class="s1">&#39;No POI is defined. A POI is required for profile likelihood based test statistics.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">par_bounds</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">&#39;tmu_tilde test statistic used for fit configuration with POI not bounded at zero.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_tmu_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="q0"><a class="viewcode-back" href="../../../_generated/pyhf.infer.test_statistics.q0.html#pyhf.infer.test_statistics.q0">[docs]</a><span class="k">def</span> <span class="nf">q0</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The test statistic, :math:`q_{0}`, for discovery of a positive signal</span>
+<span class="sd">    as defined in Equation (12) in :xref:`arXiv:1007.1727`, for :math:`\mu=0`.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       :nowrap:</span>
+
+<span class="sd">       \begin{equation}</span>
+<span class="sd">         q_{0} = \left\{\begin{array}{ll}</span>
+<span class="sd">         -2\ln\lambda\left(0\right), &amp;\hat{\mu} \ge 0,\\</span>
+<span class="sd">         0, &amp; \hat{\mu} &lt; 0,</span>
+<span class="sd">         \end{array}\right.</span>
+<span class="sd">       \end{equation}</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [60, 65]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; test_mu = 0.0</span>
+<span class="sd">        &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">        &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">        &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)</span>
+<span class="sd">        array(2.98339447)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (Number or Tensor): The signal strength parameter (must be set to zero)</span>
+<span class="sd">        data (Tensor): The data to be considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The HistFactory statistical model used in the likelihood ratio calculation</span>
+<span class="sd">        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit</span>
+<span class="sd">        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit</span>
+<span class="sd">        fixed_params (:obj:`list`): Parameters held constant in the fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float: The calculated test statistic, :math:`q_{0}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnspecifiedPOI</span><span class="p">(</span>
+            <span class="s1">&#39;No POI is defined. A POI is required for profile likelihood based test statistics.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">mu</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">&#39;q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.&#39;</span>
+        <span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">tensorlib</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+
+    <span class="n">tmu_like_stat</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">muhatbhat</span><span class="p">)</span> <span class="o">=</span> <span class="n">_tmu_like</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">,</span> <span class="n">return_fitted_pars</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">q0_stat</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">muhatbhat</span><span class="p">[</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">tmu_like_stat</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">q0_stat</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

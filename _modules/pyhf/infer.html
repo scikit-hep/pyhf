@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.infer &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.infer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.infer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Inference for Statistical Models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">get_backend</span>
+
+
+<div class="viewcode-block" id="hypotest"><a class="viewcode-back" href="../../_generated/pyhf.infer.hypotest.html#pyhf.infer.hypotest">[docs]</a><span class="k">def</span> <span class="nf">hypotest</span><span class="p">(</span>
+    <span class="n">poi_test</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">pdf</span><span class="p">,</span>
+    <span class="n">init_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">par_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fixed_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">calctype</span><span class="o">=</span><span class="s2">&quot;asymptotics&quot;</span><span class="p">,</span>
+    <span class="n">return_tail_probs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_expected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_expected_set</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute :math:`p`-values and test statistics for a single value of the parameter of interest.</span>
+
+<span class="sd">    See :py:class:`~pyhf.infer.calculators.AsymptoticCalculator` and :py:class:`~pyhf.infer.calculators.ToyCalculator` on additional keyword arguments to be specified.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = pyhf.tensorlib.astensor(observations + model.config.auxdata)</span>
+<span class="sd">        &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; CLs_obs, CLs_exp_band = pyhf.infer.hypotest(</span>
+<span class="sd">        ...     mu_test, data, model, return_expected_set=True, test_stat=&quot;qtilde&quot;</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; CLs_obs</span>
+<span class="sd">        array(0.05251497)</span>
+<span class="sd">        &gt;&gt;&gt; CLs_exp_band</span>
+<span class="sd">        [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        poi_test (Number or Tensor): The value of the parameter of interest (POI)</span>
+<span class="sd">        data (Number or Tensor): The data considered</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``</span>
+<span class="sd">        init_pars (:obj:`tensor`): The initial parameter values to be used for minimization</span>
+<span class="sd">        par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization</span>
+<span class="sd">        fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization</span>
+<span class="sd">        calctype (:obj:`str`): The calculator to create. Choose either &#39;asymptotics&#39; (default) or &#39;toybased&#39;.</span>
+<span class="sd">        return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`</span>
+<span class="sd">        return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`</span>
+<span class="sd">        return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the &quot;Brazil band&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of Floats and lists of Floats:</span>
+
+<span class="sd">            - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to</span>
+<span class="sd">              the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,</span>
+<span class="sd">              defined in :xref:`arXiv:1007.1727` as</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \mathrm{CL}_{s} = \frac{\mathrm{CL}_{s+b}}{\mathrm{CL}_{b}} = \frac{p_{s+b}}{1-p_{b}}</span>
+
+<span class="sd">            to protect against excluding signal models in which there is little</span>
+<span class="sd">            sensitivity. In the case that :math:`\mathrm{CL}_{s} \leq \alpha`</span>
+<span class="sd">            the given signal model is excluded.</span>
+
+<span class="sd">            - :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`: The</span>
+<span class="sd">              signal + background model hypothesis :math:`p`-value</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \mathrm{CL}_{s+b} = p_{s+b}</span>
+<span class="sd">                = p\left(q \geq q_{\mathrm{obs}}\middle|s+b\right)</span>
+<span class="sd">                = \int\limits_{q_{\mathrm{obs}}}^{\infty} f\left(q\,\middle|s+b\right)\,dq</span>
+<span class="sd">                = 1 - F\left(q_{\mathrm{obs}}(\mu)\,\middle|\mu&#39;\right)</span>
+
+<span class="sd">            and 1 minus the background only model hypothesis :math:`p`-value</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \mathrm{CL}_{b} = 1- p_{b}</span>
+<span class="sd">                = p\left(q \geq q_{\mathrm{obs}}\middle|b\right)</span>
+<span class="sd">                = 1 - \int\limits_{-\infty}^{q_{\mathrm{obs}}} f\left(q\,\middle|b\right)\,dq</span>
+<span class="sd">                = 1 - F\left(q_{\mathrm{obs}}(\mu)\,\middle|0\right)</span>
+
+<span class="sd">            for signal strength :math:`\mu` and model hypothesis signal strength</span>
+<span class="sd">            :math:`\mu&#39;`, where the cumulative density functions</span>
+<span class="sd">            :math:`F\left(q(\mu)\,\middle|\mu&#39;\right)` are given by Equations (57)</span>
+<span class="sd">            and (65) of :xref:`arXiv:1007.1727` for upper-limit-like test</span>
+<span class="sd">            statistic :math:`q \in \{q_{\mu}, \tilde{q}_{\mu}\}`.</span>
+<span class="sd">            Only returned when ``return_tail_probs`` is ``True``.</span>
+
+<span class="sd">            .. note::</span>
+
+<span class="sd">                The definitions of the :math:`\mathrm{CL}_{s+b}` and</span>
+<span class="sd">                :math:`\mathrm{CL}_{b}` used are based on profile likelihood</span>
+<span class="sd">                ratio test statistics.</span>
+<span class="sd">                This procedure is common in the LHC-era, but differs from</span>
+<span class="sd">                procedures used in the LEP and Tevatron eras, as briefly</span>
+<span class="sd">                discussed in :math:`\S` 3.8 of :xref:`arXiv:1007.1727`.</span>
+
+<span class="sd">            - :math:`\mathrm{CL}_{s,\mathrm{exp}}`: The expected :math:`\mathrm{CL}_{s}`</span>
+<span class="sd">              value corresponding to the test statistic under the background</span>
+<span class="sd">              only hypothesis :math:`\left(\mu=0\right)`.</span>
+<span class="sd">              Only returned when ``return_expected`` is ``True``.</span>
+
+<span class="sd">            - :math:`\mathrm{CL}_{s,\mathrm{exp}}` band: The set of expected</span>
+<span class="sd">              :math:`\mathrm{CL}_{s}` values corresponding to the median</span>
+<span class="sd">              significance of variations of the signal strength from the</span>
+<span class="sd">              background only hypothesis :math:`\left(\mu=0\right)` at</span>
+<span class="sd">              :math:`(-2,-1,0,1,2)\sigma`.</span>
+<span class="sd">              That is, the :math:`p`-values that satisfy Equation (89) of</span>
+<span class="sd">              :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \mathrm{band}_{N\sigma} = \mu&#39; + \sigma\,\Phi^{-1}\left(1-\alpha\right) \pm N\sigma</span>
+
+<span class="sd">            for :math:`\mu&#39;=0` and :math:`N \in \left\{-2, -1, 0, 1, 2\right\}`.</span>
+<span class="sd">            These values define the boundaries of an uncertainty band sometimes</span>
+<span class="sd">            referred to as the &quot;Brazil band&quot;.</span>
+<span class="sd">            Only returned when ``return_expected_set`` is ``True``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">init_pars</span> <span class="o">=</span> <span class="n">init_pars</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">()</span>
+    <span class="n">par_bounds</span> <span class="o">=</span> <span class="n">par_bounds</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_bounds</span><span class="p">()</span>
+    <span class="n">fixed_params</span> <span class="o">=</span> <span class="n">fixed_params</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_fixed</span><span class="p">()</span>
+
+    <span class="n">calc</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_calculator</span><span class="p">(</span>
+        <span class="n">calctype</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="p">,</span>
+        <span class="n">init_pars</span><span class="p">,</span>
+        <span class="n">par_bounds</span><span class="p">,</span>
+        <span class="n">fixed_params</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">teststat</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">teststatistic</span><span class="p">(</span><span class="n">poi_test</span><span class="p">)</span>
+    <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">distributions</span><span class="p">(</span><span class="n">poi_test</span><span class="p">)</span>
+
+    <span class="n">tb</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+    <span class="n">CLsb_obs</span><span class="p">,</span> <span class="n">CLb_obs</span><span class="p">,</span> <span class="n">CLs_obs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pvalue</span> <span class="ow">in</span> <span class="n">calc</span><span class="o">.</span><span class="n">pvalues</span><span class="p">(</span>
+            <span class="n">teststat</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">CLsb_exp</span><span class="p">,</span> <span class="n">CLb_exp</span><span class="p">,</span> <span class="n">CLs_exp</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">expected_pvalues</span><span class="p">(</span>
+        <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span>
+    <span class="p">)</span>
+
+    <span class="n">is_q0</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;test_stat&#39;</span><span class="p">,</span> <span class="s1">&#39;qtilde&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;q0&#39;</span>
+
+    <span class="n">_returns</span> <span class="o">=</span> <span class="p">[</span><span class="n">CLsb_obs</span> <span class="k">if</span> <span class="n">is_q0</span> <span class="k">else</span> <span class="n">CLs_obs</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">return_tail_probs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_q0</span><span class="p">:</span>
+            <span class="n">_returns</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">CLb_obs</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_returns</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">CLsb_obs</span><span class="p">,</span> <span class="n">CLb_obs</span><span class="p">])</span>
+
+    <span class="n">pvalues_exp_band</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span> <span class="k">for</span> <span class="n">pvalue</span> <span class="ow">in</span> <span class="p">(</span><span class="n">CLsb_exp</span> <span class="k">if</span> <span class="n">is_q0</span> <span class="k">else</span> <span class="n">CLs_exp</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">return_expected_set</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_expected</span><span class="p">:</span>
+            <span class="n">_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">pvalues_exp_band</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pvalues_exp_band</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">return_expected</span><span class="p">:</span>
+        <span class="n">_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">pvalues_exp_band</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="c1"># Enforce a consistent return type of the observed CLs</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_returns</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_returns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">_returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">intervals</span>  <span class="c1"># noqa: F401</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hypotest&quot;</span><span class="p">]</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

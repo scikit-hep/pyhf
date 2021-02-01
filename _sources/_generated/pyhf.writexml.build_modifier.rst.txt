@@ -1,0 +1,6 @@
+pyhf.writexml.build\_modifier
+=============================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: build_modifier

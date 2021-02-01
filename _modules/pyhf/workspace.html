@@ -1,0 +1,1030 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.workspace &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.workspace</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.workspace</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">pyhf workspaces hold the three data items:</span>
+
+<span class="sd">* the statistical model p(data|parameters)</span>
+<span class="sd">* the observed data (optional)</span>
+<span class="sd">* fit configurations (&quot;measurements&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">jsonpatch</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.pdf</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.mixins</span> <span class="kn">import</span> <span class="n">_ChannelSummaryMixin</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_join_items</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_items</span><span class="p">,</span> <span class="n">right_items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">deep_merge_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two lists of dictionaries along the given key.</span>
+
+<span class="sd">    This is meant to be as generic as possible for any pairs of lists of dictionaries for many join operations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.</span>
+<span class="sd">        left_items (:obj:`list`): A list of dictionaries to join on the left</span>
+<span class="sd">        right_items (:obj:`list`): A list of dictionaries to join on the right</span>
+<span class="sd">        deep_merge_key (:obj:`str`): A key on which to deeply merge items if set.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: A joined list of dictionaries.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;right outer&#39;</span><span class="p">:</span>
+        <span class="n">primary_items</span><span class="p">,</span> <span class="n">secondary_items</span> <span class="o">=</span> <span class="n">right_items</span><span class="p">,</span> <span class="n">left_items</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_items</span><span class="p">,</span> <span class="n">secondary_items</span> <span class="o">=</span> <span class="n">left_items</span><span class="p">,</span> <span class="n">right_items</span>
+    <span class="n">joined_items</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">primary_items</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">joined_items</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">secondary_item</span> <span class="ow">in</span> <span class="n">secondary_items</span><span class="p">:</span>
+        <span class="c1"># first, check for deep merging</span>
+        <span class="k">if</span> <span class="n">secondary_item</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">and</span> <span class="n">deep_merge_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_deep_left_items</span> <span class="o">=</span> <span class="n">joined_items</span><span class="p">[</span><span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">secondary_item</span><span class="p">[</span><span class="n">key</span><span class="p">])][</span>
+                <span class="n">deep_merge_key</span>
+            <span class="p">]</span>
+            <span class="n">_deep_right_items</span> <span class="o">=</span> <span class="n">secondary_item</span><span class="p">[</span><span class="n">deep_merge_key</span><span class="p">]</span>
+            <span class="n">joined_items</span><span class="p">[</span><span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">secondary_item</span><span class="p">[</span><span class="n">key</span><span class="p">])][</span><span class="n">deep_merge_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_join_items</span><span class="p">(</span>
+                <span class="s1">&#39;left outer&#39;</span><span class="p">,</span> <span class="n">_deep_left_items</span><span class="p">,</span> <span class="n">_deep_right_items</span>
+            <span class="p">)</span>
+        <span class="c1"># next, move over whole items where possible:</span>
+        <span class="c1">#   - if no join logic</span>
+        <span class="c1">#   - if outer join and item on right is not in left</span>
+        <span class="c1">#   - if left outer join and item (by name) is on right and not in left</span>
+        <span class="c1">#   - if right outer join and item (by name) is on left and not in right</span>
+        <span class="c1"># NB: this will be slow for large numbers of items</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">join</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;outer&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">secondary_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">primary_items</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">join</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left outer&#39;</span><span class="p">,</span> <span class="s1">&#39;right outer&#39;</span><span class="p">]</span>
+                <span class="ow">and</span> <span class="n">secondary_item</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span>
+            <span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">joined_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">secondary_item</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">joined_items</span>
+
+
+<span class="k">def</span> <span class="nf">_join_versions</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_version</span><span class="p">,</span> <span class="n">right_version</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two workspace versions.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ~pyhf.exceptions.InvalidWorkspaceOperation: Versions are incompatible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.</span>
+<span class="sd">        left_version (:obj:`str`): The left workspace version.</span>
+<span class="sd">        right_version (:obj:`str`): The right workspace version.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: The workspace version.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">left_version</span> <span class="o">!=</span> <span class="n">right_version</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Workspaces of different versions cannot be combined: </span><span class="si">{</span><span class="n">left_version</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">right_version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">left_version</span>
+
+
+<span class="k">def</span> <span class="nf">_join_channels</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_channels</span><span class="p">,</span> <span class="n">right_channels</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two workspace channel specifications.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ~pyhf.exceptions.InvalidWorkspaceOperation: Channel specifications are incompatible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.</span>
+<span class="sd">        left_channels (:obj:`list`): The left channel specification.</span>
+<span class="sd">        right_channels (:obj:`list`): The right channel specification.</span>
+<span class="sd">        merge (:obj:`bool`): Whether to deeply merge channels or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: A joined list of channels. Each channel follows the :obj:`defs.json#/definitions/channel` `schema &lt;https://scikit-hep.org/pyhf/likelihood.html#channel&gt;`__</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">joined_channels</span> <span class="o">=</span> <span class="n">_join_items</span><span class="p">(</span>
+        <span class="n">join</span><span class="p">,</span> <span class="n">left_channels</span><span class="p">,</span> <span class="n">right_channels</span><span class="p">,</span> <span class="n">deep_merge_key</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span> <span class="k">if</span> <span class="n">merge</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="n">common_channels</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">left_channels</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+            <span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">right_channels</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">common_channels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have any channels in common with the same name: </span><span class="si">{</span><span class="n">common_channels</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;outer&#39;</span><span class="p">:</span>
+        <span class="n">counted_channels</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span>
+            <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">joined_channels</span>
+        <span class="p">)</span>
+        <span class="n">incompatible_channels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">channel</span> <span class="k">for</span> <span class="n">channel</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counted_channels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">incompatible_channels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have channels in common with incompatible structure: </span><span class="si">{</span><span class="n">incompatible_channels</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">joined_channels</span>
+
+
+<span class="k">def</span> <span class="nf">_join_observations</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_observations</span><span class="p">,</span> <span class="n">right_observations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two workspace observation specifications.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ~pyhf.exceptions.InvalidWorkspaceOperation: Observation specifications are incompatible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.</span>
+<span class="sd">        left_observations (:obj:`list`): The left observation specification.</span>
+<span class="sd">        right_observations (:obj:`list`): The right observation specification.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: A joined list of observations. Each observation follows the :obj:`defs.json#/definitions/observation` `schema &lt;https://scikit-hep.org/pyhf/likelihood.html#observations&gt;`__</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">joined_observations</span> <span class="o">=</span> <span class="n">_join_items</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_observations</span><span class="p">,</span> <span class="n">right_observations</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="n">common_observations</span> <span class="o">=</span> <span class="p">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">left_observations</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+            <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">right_observations</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">common_observations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have any observations in common with the same name: </span><span class="si">{</span><span class="n">common_observations</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;outer&#39;</span><span class="p">:</span>
+        <span class="n">counted_observations</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span>
+            <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">joined_observations</span>
+        <span class="p">)</span>
+        <span class="n">incompatible_observations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">observation</span>
+            <span class="k">for</span> <span class="n">observation</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counted_observations</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">incompatible_observations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have observations in common with incompatible structure: </span><span class="si">{</span><span class="n">incompatible_observations</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">joined_observations</span>
+
+
+<span class="k">def</span> <span class="nf">_join_parameter_configs</span><span class="p">(</span><span class="n">measurement_name</span><span class="p">,</span> <span class="n">left_parameters</span><span class="p">,</span> <span class="n">right_parameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two measurement parameter config specifications.</span>
+
+<span class="sd">    Only uses by :method:`_join_measurements` when join=&#39;outer&#39;.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ~pyhf.exceptions.InvalidWorkspaceOperation: Parameter configuration specifications are incompatible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        measurement_name (:obj:`str`): The name of the measurement being joined (a detail for raising exceptions correctly)</span>
+<span class="sd">        left_parameters (:obj:`list`): The left parameter configuration specification.</span>
+<span class="sd">        right_parameters (:obj:`list`): The right parameter configuration specification.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: A joined list of parameter configurations. Each parameter configuration follows the :obj:`defs.json#/definitions/config` schema</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">joined_parameter_configs</span> <span class="o">=</span> <span class="n">_join_items</span><span class="p">(</span><span class="s1">&#39;outer&#39;</span><span class="p">,</span> <span class="n">left_parameters</span><span class="p">,</span> <span class="n">right_parameters</span><span class="p">)</span>
+    <span class="n">counted_parameter_configs</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span>
+        <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">joined_parameter_configs</span>
+    <span class="p">)</span>
+    <span class="n">incompatible_parameter_configs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">parameter</span> <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counted_parameter_configs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">incompatible_parameter_configs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have a measurement (</span><span class="si">{</span><span class="n">measurement_name</span><span class="si">}</span><span class="s2">) with incompatible parameter configs: </span><span class="si">{</span><span class="n">incompatible_parameter_configs</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">joined_parameter_configs</span>
+
+
+<span class="k">def</span> <span class="nf">_join_measurements</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_measurements</span><span class="p">,</span> <span class="n">right_measurements</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join two workspace measurement specifications.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ~pyhf.exceptions.InvalidWorkspaceOperation: Measurement specifications are incompatible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.</span>
+<span class="sd">        left_measurements (:obj:`list`): The left measurement specification.</span>
+<span class="sd">        right_measurements (:obj:`list`): The right measurement specification.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: A joined list of measurements. Each measurement follows the :obj:`defs.json#/definitions/measurement` `schema &lt;https://scikit-hep.org/pyhf/likelihood.html#measurements&gt;`__</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">joined_measurements</span> <span class="o">=</span> <span class="n">_join_items</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left_measurements</span><span class="p">,</span> <span class="n">right_measurements</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="n">common_measurements</span> <span class="o">=</span> <span class="p">{</span><span class="n">meas</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">meas</span> <span class="ow">in</span> <span class="n">left_measurements</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+            <span class="n">meas</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">meas</span> <span class="ow">in</span> <span class="n">right_measurements</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">common_measurements</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have any measurements in common with the same name: </span><span class="si">{</span><span class="n">common_measurements</span><span class="si">}</span><span class="s2">. You can also try a different join operation: </span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">join</span> <span class="o">==</span> <span class="s1">&#39;outer&#39;</span><span class="p">:</span>
+        <span class="c1"># need to store a mapping of measurement name to all measurement objects with that name</span>
+        <span class="n">_measurement_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="n">joined_measurements</span><span class="p">:</span>
+            <span class="n">_measurement_mapping</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
+        <span class="c1"># first check for incompatible POI</span>
+        <span class="c1"># then merge parameter configs</span>
+        <span class="n">incompatible_poi</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">measurement_name</span>
+            <span class="k">for</span> <span class="n">measurement_name</span><span class="p">,</span> <span class="n">measurements</span> <span class="ow">in</span> <span class="n">_measurement_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">({</span><span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;poi&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="n">measurements</span><span class="p">})</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">incompatible_poi</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces cannot have the same measurements with incompatible POI: </span><span class="si">{</span><span class="n">incompatible_poi</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">joined_measurements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">measurement_name</span><span class="p">,</span> <span class="n">measurements</span> <span class="ow">in</span> <span class="n">_measurement_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">measurements</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">new_measurement</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">measurement_name</span><span class="p">,</span>
+                    <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;poi&#39;</span><span class="p">:</span> <span class="n">measurements</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;poi&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="n">_join_parameter_configs</span><span class="p">(</span>
+                            <span class="n">measurement_name</span><span class="p">,</span>
+                            <span class="o">*</span><span class="p">[</span>
+                                <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="n">measurements</span>
+                            <span class="p">],</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_measurement</span> <span class="o">=</span> <span class="n">measurements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">joined_measurements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_measurement</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">joined_measurements</span>
+
+
+<div class="viewcode-block" id="Workspace"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace">[docs]</a><span class="k">class</span> <span class="nc">Workspace</span><span class="p">(</span><span class="n">_ChannelSummaryMixin</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema &lt;https://scikit-hep.org/pyhf/likelihood.html#workspace&gt;`__.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid_joins</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;outer&#39;</span><span class="p">,</span> <span class="s1">&#39;left outer&#39;</span><span class="p">,</span> <span class="s1">&#39;right outer&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Workspace.__init__"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Workspaces hold the model, data and measurements.&quot;&quot;&quot;</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;schema&#39;</span><span class="p">,</span> <span class="s1">&#39;workspace.json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># run jsonschema validation of input specification against the (provided) schema</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validating spec against schema: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;measurements&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Equality is defined as equal dict representations.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Workspace</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Negation of equality.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation of the Workspace.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Workspace.get_measurement"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.get_measurement">[docs]</a>    <span class="k">def</span> <span class="nf">get_measurement</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">poi_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">measurement_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">measurement_index</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get (or create) a measurement object.</span>
+
+<span class="sd">        The following logic is used:</span>
+
+<span class="sd">          1. if the poi name is given, create a measurement object for that poi</span>
+<span class="sd">          2. if the measurement name is given, find the measurement for the given name</span>
+<span class="sd">          3. if the measurement index is given, return the measurement at that index</span>
+<span class="sd">          4. if there are measurements but none of the above have been specified, return the 0th measurement</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            poi_name (:obj:`str`): The name of the parameter of interest to create a new measurement from</span>
+<span class="sd">            measurement_name (:obj:`str`): The name of the measurement to use</span>
+<span class="sd">            measurement_index (:obj:`int`): The index of the measurement to use</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A measurement object adhering to the schema defs.json#/definitions/measurement</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">measurement</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">poi_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">measurement</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;NormalMeasurement&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;poi&#39;</span><span class="p">:</span> <span class="n">poi_name</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[]},</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">measurement_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">measurement_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;measurements defined: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidMeasurement</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;no measurement by name </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">measurement_name</span><span class="si">:</span><span class="s1">s</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1"> was found in the workspace, pick from one of the valid ones above&#39;</span>
+                    <span class="p">)</span>
+                <span class="n">measurement</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">][</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">measurement_name</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">measurement_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s1">&#39;multiple measurements defined. Taking the first measurement.&#39;</span>
+                    <span class="p">)</span>
+
+                <span class="n">measurement_index</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">measurement_index</span> <span class="k">if</span> <span class="n">measurement_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">measurement</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">][</span><span class="n">measurement_index</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidMeasurement</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The measurement index </span><span class="si">{</span><span class="n">measurement_index</span><span class="si">}</span><span class="s2"> is out of bounds as only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> measurement(s) have been defined.&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidMeasurement</span><span class="p">(</span><span class="s2">&quot;No measurements have been defined.&quot;</span><span class="p">)</span>
+
+        <span class="n">utils</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="s1">&#39;measurement.json&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">measurement</span></div>
+
+<div class="viewcode-block" id="Workspace.model"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.model">[docs]</a>    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a model object with/without patches applied.</span>
+
+<span class="sd">        See :func:`pyhf.workspace.Workspace.get_measurement` and :class:`pyhf.pdf.Model` for possible keyword arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            patches: A list of JSON patches to apply to the model specification</span>
+<span class="sd">            config_kwargs: Possible keyword arguments for the measurement and model configuration</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.pdf.Model: A model object adhering to the schema model.json</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">poi_name</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;poi_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">measurement_name</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;measurement_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">measurement_index</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;measurement_index&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">measurement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurement</span><span class="p">(</span>
+            <span class="n">poi_name</span><span class="o">=</span><span class="n">poi_name</span><span class="p">,</span>
+            <span class="n">measurement_name</span><span class="o">=</span><span class="n">measurement_name</span><span class="p">,</span>
+            <span class="n">measurement_index</span><span class="o">=</span><span class="n">measurement_index</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model being created for measurement </span><span class="si">{</span><span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">patches</span> <span class="o">=</span> <span class="n">config_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;patches&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="n">modelspec</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">patches</span><span class="p">:</span>
+            <span class="n">modelspec</span> <span class="o">=</span> <span class="n">jsonpatch</span><span class="o">.</span><span class="n">JsonPatch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">modelspec</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">modelspec</span><span class="p">,</span> <span class="n">poi_name</span><span class="o">=</span><span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;poi&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Workspace.data"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">with_aux</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the data for the supplied model with or without auxiliary data from the model.</span>
+
+<span class="sd">        The model is needed as the order of the data depends on the order of the channels in the model.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          KeyError: Invalid or missing channel</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (~pyhf.pdf.Model): A model object adhering to the schema model.json</span>
+<span class="sd">            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`list`: data</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">observed_data</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">channels</span><span class="p">),</span> <span class="p">[]</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid channel: the workspace does not have observation data for one of the channels in the model.&quot;</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">with_aux</span><span class="p">:</span>
+            <span class="n">observed_data</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auxdata</span>
+        <span class="k">return</span> <span class="n">observed_data</span></div>
+
+    <span class="k">def</span> <span class="nf">_prune_and_rename</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prune_modifiers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">prune_modifier_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">prune_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">prune_channels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">prune_measurements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rename_modifiers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rename_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rename_channels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rename_measurements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new, pruned, renamed workspace specification. This will not modify the original workspace.</span>
+
+<span class="sd">        Pruning removes pieces of the workspace whose name or type matches the</span>
+<span class="sd">        user-provided lists. The pruned, renamed workspace must also be a valid</span>
+<span class="sd">        workspace.</span>
+
+<span class="sd">        A workspace is composed of many named components, such as channels and</span>
+<span class="sd">        samples, as well as types of systematics (e.g. `histosys`). Components</span>
+<span class="sd">        can be removed (pruned away) filtering on name or be renamed according</span>
+<span class="sd">        to the provided :obj:`dict` mapping. Additionally, modifiers of</span>
+<span class="sd">        specific types can be removed (pruned away).</span>
+
+<span class="sd">        This function also handles specific peculiarities, such as</span>
+<span class="sd">        renaming/removing a channel which needs to rename/remove the</span>
+<span class="sd">        corresponding `observation`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.</span>
+<span class="sd">            prune_modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.</span>
+<span class="sd">            prune_samples: A :obj:`str` or a :obj:`list` of samples to prune.</span>
+<span class="sd">            prune_channels: A :obj:`str` or a :obj:`list` of channels to prune.</span>
+<span class="sd">            prune_measurements: A :obj:`str` or a :obj:`list` of measurements to prune.</span>
+<span class="sd">            rename_modifiers: A :obj:`dict` mapping old modifier name to new modifier name.</span>
+<span class="sd">            rename_samples: A :obj:`dict` mapping old sample name to new sample name.</span>
+<span class="sd">            rename_channels: A :obj:`dict` mapping old channel name to new channel name.</span>
+<span class="sd">            rename_measurements: A :obj:`dict` mapping old measurement name to new measurement name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed or renamed</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to prune or rename does not exist in the workspace.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># avoid mutable defaults</span>
+        <span class="n">prune_modifiers</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">prune_modifiers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prune_modifiers</span>
+        <span class="n">prune_modifier_types</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[]</span> <span class="k">if</span> <span class="n">prune_modifier_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prune_modifier_types</span>
+        <span class="p">)</span>
+        <span class="n">prune_samples</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">prune_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prune_samples</span>
+        <span class="n">prune_channels</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">prune_channels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prune_channels</span>
+        <span class="n">prune_measurements</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">prune_measurements</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prune_measurements</span>
+        <span class="n">rename_modifiers</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">rename_modifiers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rename_modifiers</span>
+        <span class="n">rename_samples</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">rename_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rename_samples</span>
+        <span class="n">rename_channels</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">rename_channels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rename_channels</span>
+        <span class="n">rename_measurements</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">rename_measurements</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rename_measurements</span>
+
+        <span class="k">for</span> <span class="n">modifier_type</span> <span class="ow">in</span> <span class="n">prune_modifier_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modifier_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">modifier_type</span><span class="si">}</span><span class="s2"> is not one of the modifier types in this workspace.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">modifier_name</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="n">prune_modifiers</span><span class="p">,</span> <span class="o">*</span><span class="n">rename_modifiers</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">modifier_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifiers</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">modifier_name</span><span class="si">}</span><span class="s2"> is not one of the modifiers in this workspace.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">sample_name</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="n">prune_samples</span><span class="p">,</span> <span class="o">*</span><span class="n">rename_samples</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">sample_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sample_name</span><span class="si">}</span><span class="s2"> is not one of the samples in this workspace.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">channel_name</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="n">prune_channels</span><span class="p">,</span> <span class="o">*</span><span class="n">rename_channels</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">channel_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_name</span><span class="si">}</span><span class="s2"> is not one of the channels in this workspace.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">measurement_name</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="n">prune_measurements</span><span class="p">,</span> <span class="o">*</span><span class="n">rename_measurements</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">measurement_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidWorkspaceOperation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">measurement_name</span><span class="si">}</span><span class="s2"> is not one of the measurements in this workspace.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">newspec</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">rename_channels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">channel</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">rename_samples</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span>
+                            <span class="s1">&#39;modifiers&#39;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="nb">dict</span><span class="p">(</span>
+                                    <span class="n">modifier</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">rename_modifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                        <span class="n">modifier</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">modifier</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                                    <span class="p">),</span>
+                                <span class="p">)</span>
+                                <span class="k">for</span> <span class="n">modifier</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;modifiers&#39;</span><span class="p">]</span>
+                                <span class="k">if</span> <span class="n">modifier</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_modifiers</span>
+                                <span class="ow">and</span> <span class="n">modifier</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_modifier_types</span>
+                            <span class="p">],</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_samples</span>
+                    <span class="p">],</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_channels</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;measurements&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">rename_measurements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="nb">dict</span><span class="p">(</span>
+                                <span class="n">parameter</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">rename_modifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                    <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                                <span class="p">),</span>
+                            <span class="p">)</span>
+                            <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_modifiers</span>
+                        <span class="p">],</span>
+                        <span class="s1">&#39;poi&#39;</span><span class="p">:</span> <span class="n">rename_modifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                            <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;poi&#39;</span><span class="p">],</span> <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;poi&#39;</span><span class="p">]</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_measurements</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;observations&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">observation</span><span class="p">),</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">rename_channels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">observation</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prune_channels</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Workspace</span><span class="p">(</span><span class="n">newspec</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Workspace.prune"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.prune">[docs]</a>    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">modifiers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">modifier_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">measurements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new, pruned workspace specification. This will not modify the original workspace.</span>
+
+<span class="sd">        The pruned workspace must also be a valid workspace.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.</span>
+<span class="sd">            modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.</span>
+<span class="sd">            samples: A :obj:`str` or a :obj:`list` of samples to prune.</span>
+<span class="sd">            channels: A :obj:`str` or a :obj:`list` of channels to prune.</span>
+<span class="sd">            measurements: A :obj:`str` or a :obj:`list` of measurements to prune.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new workspace object with the specified components removed</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to prune does not exist in the workspace.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># avoid mutable defaults</span>
+        <span class="n">modifiers</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">modifiers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">modifiers</span>
+        <span class="n">modifier_types</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">modifier_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">modifier_types</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">samples</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">channels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">channels</span>
+        <span class="n">measurements</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">measurements</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">measurements</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prune_and_rename</span><span class="p">(</span>
+            <span class="n">prune_modifiers</span><span class="o">=</span><span class="n">modifiers</span><span class="p">,</span>
+            <span class="n">prune_modifier_types</span><span class="o">=</span><span class="n">modifier_types</span><span class="p">,</span>
+            <span class="n">prune_samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="n">prune_channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span>
+            <span class="n">prune_measurements</span><span class="o">=</span><span class="n">measurements</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Workspace.rename"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">measurements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new workspace specification with certain elements renamed.</span>
+
+<span class="sd">        This will not modify the original workspace.</span>
+<span class="sd">        The renamed workspace must also be a valid workspace.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            modifiers: A :obj:`dict` mapping old modifier name to new modifier name.</span>
+<span class="sd">            samples: A :obj:`dict` mapping old sample name to new sample name.</span>
+<span class="sd">            channels: A :obj:`dict` mapping old channel name to new channel name.</span>
+<span class="sd">            measurements: A :obj:`dict` mapping old measurement name to new measurement name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new workspace object with the specified components renamed</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          ~pyhf.exceptions.InvalidWorkspaceOperation: An item name to rename does not exist in the workspace.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># avoid mutable defaults</span>
+        <span class="n">modifiers</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">modifiers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">modifiers</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">samples</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">channels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">channels</span>
+        <span class="n">measurements</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">measurements</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">measurements</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prune_and_rename</span><span class="p">(</span>
+            <span class="n">rename_modifiers</span><span class="o">=</span><span class="n">modifiers</span><span class="p">,</span>
+            <span class="n">rename_samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="n">rename_channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span>
+            <span class="n">rename_measurements</span><span class="o">=</span><span class="n">measurements</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Workspace.combine"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.combine">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">merge_channels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new workspace specification that is the combination of the two workspaces.</span>
+
+<span class="sd">        The new workspace must also be a valid workspace. A combination of</span>
+<span class="sd">        workspaces is done by combining the set of:</span>
+
+<span class="sd">          - channels,</span>
+<span class="sd">          - observations, and</span>
+<span class="sd">          - measurements</span>
+
+<span class="sd">        between the two workspaces. If the two workspaces have modifiers that</span>
+<span class="sd">        follow the same naming convention, then correlations across the two</span>
+<span class="sd">        workspaces may be possible. In particular, the `lumi` modifier will be</span>
+<span class="sd">        fully-correlated.</span>
+
+<span class="sd">        If the two workspaces have the same measurement (with the same POI),</span>
+<span class="sd">        those measurements will get merged.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">          ~pyhf.exceptions.InvalidWorkspaceOperation: The workspaces have common channel names, incompatible measurements, or incompatible schema versions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            left (~pyhf.workspace.Workspace): A workspace</span>
+<span class="sd">            right (~pyhf.workspace.Workspace): Another workspace</span>
+<span class="sd">            join (:obj:`str`): How to join the two workspaces. Pick from &quot;none&quot;, &quot;outer&quot;, &quot;left outer&quot;, or &quot;right outer&quot;.</span>
+<span class="sd">            merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with &quot;outer&quot;, &quot;left outer&quot;, and &quot;right outer&quot; options.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new combined workspace object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">join</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Workspaces must be joined using one of the valid join operations (</span><span class="si">{</span><span class="n">Workspace</span><span class="o">.</span><span class="n">valid_joins</span><span class="si">}</span><span class="s2">); not </span><span class="si">{</span><span class="n">join</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">merge_channels</span> <span class="ow">and</span> <span class="n">join</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;outer&#39;</span><span class="p">,</span> <span class="s1">&#39;left outer&#39;</span><span class="p">,</span> <span class="s1">&#39;right outer&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;You can only merge channels using the &#39;outer&#39;, &#39;left outer&#39;, or &#39;right outer&#39; join operations; not </span><span class="si">{</span><span class="n">join</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">join</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left outer&#39;</span><span class="p">,</span> <span class="s1">&#39;right outer&#39;</span><span class="p">]:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;You are using an unsafe join operation. This will silence exceptions that might be raised during a normal &#39;outer&#39; operation.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">new_version</span> <span class="o">=</span> <span class="n">_join_versions</span><span class="p">(</span><span class="n">join</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">])</span>
+        <span class="n">new_channels</span> <span class="o">=</span> <span class="n">_join_channels</span><span class="p">(</span>
+            <span class="n">join</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">],</span> <span class="n">merge</span><span class="o">=</span><span class="n">merge_channels</span>
+        <span class="p">)</span>
+        <span class="n">new_observations</span> <span class="o">=</span> <span class="n">_join_observations</span><span class="p">(</span>
+            <span class="n">join</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">new_measurements</span> <span class="o">=</span> <span class="n">_join_measurements</span><span class="p">(</span>
+            <span class="n">join</span><span class="p">,</span> <span class="n">left</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">],</span> <span class="n">right</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">newspec</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="n">new_channels</span><span class="p">,</span>
+            <span class="s1">&#39;measurements&#39;</span><span class="p">:</span> <span class="n">new_measurements</span><span class="p">,</span>
+            <span class="s1">&#39;observations&#39;</span><span class="p">:</span> <span class="n">new_observations</span><span class="p">,</span>
+            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">new_version</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">newspec</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Workspace.sorted"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.sorted">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">sorted</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">workspace</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new workspace specification that is sorted.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            workspace (~pyhf.workspace.Workspace): A workspace to sort</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new sorted workspace object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newspec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">workspace</span><span class="p">))</span>
+
+        <span class="n">newspec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">newspec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]:</span>
+            <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">channel</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]:</span>
+                <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;modifiers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]))</span>
+
+        <span class="n">newspec</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="n">newspec</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]:</span>
+            <span class="n">measurement</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="n">newspec</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">newspec</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Workspace.build"><a class="viewcode-back" href="../../_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.build">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;measurement&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a workspace from model and data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (~pyhf.pdf.Model): A model to store into a workspace</span>
+<span class="sd">            data (:obj:`tensor`): A array holding observations to store into a workspace</span>
+<span class="sd">            name (:obj:`str`): The name of the workspace measurement</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.workspace.Workspace: A new workspace object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">workspace</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]))</span>
+        <span class="n">workspace</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">SCHEMA_VERSION</span>
+        <span class="n">workspace</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;poi&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_name</span><span class="p">,</span>
+                    <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;paramset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">suggested_bounds</span><span class="p">],</span>
+                            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;paramset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">,</span>
+                            <span class="s2">&quot;fixed&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;paramset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">suggested_fixed</span><span class="p">,</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">par_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+        <span class="n">workspace</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">channel_slices</span><span class="p">[</span><span class="n">k</span><span class="p">]])}</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">channels</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">workspace</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+pyhf.writexml.build\_sample
+===========================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: build_sample

@@ -1,0 +1,29 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/probability
+
+Poisson
+=======
+
+.. currentmodule:: pyhf.probability
+
+.. autoclass:: Poisson
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: Poisson.__init__
+   
+   
+   .. automethod:: Poisson.expected_data
+   
+   
+   
+   
+   

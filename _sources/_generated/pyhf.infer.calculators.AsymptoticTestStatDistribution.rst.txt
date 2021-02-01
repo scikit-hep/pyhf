@@ -1,0 +1,33 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/calculators
+
+AsymptoticTestStatDistribution
+==============================
+
+.. currentmodule:: pyhf.infer.calculators
+
+.. autoclass:: AsymptoticTestStatDistribution
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: AsymptoticTestStatDistribution.__init__
+   
+   
+   .. automethod:: AsymptoticTestStatDistribution.cdf
+   
+   
+   .. automethod:: AsymptoticTestStatDistribution.expected_value
+   
+   
+   .. automethod:: AsymptoticTestStatDistribution.pvalue
+   
+   
+   

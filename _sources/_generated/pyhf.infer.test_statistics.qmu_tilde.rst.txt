@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/test_statistics
+
+qmu\_tilde
+==========
+
+.. currentmodule:: pyhf.infer.test_statistics
+
+.. autoclass:: qmu_tilde
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,6 @@
+﻿pyhf.optimizer
+==============
+
+.. currentmodule:: pyhf
+
+.. autodata:: optimizer

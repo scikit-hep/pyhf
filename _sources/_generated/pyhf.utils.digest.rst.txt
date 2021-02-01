@@ -1,0 +1,6 @@
+﻿pyhf.utils.digest
+=================
+
+.. currentmodule:: pyhf.utils
+
+.. autofunction:: digest

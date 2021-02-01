@@ -1,0 +1,33 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/optimize/mixins
+
+OptimizerMixin
+==============
+
+.. currentmodule:: pyhf.optimize.mixins
+
+.. autoclass:: OptimizerMixin
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: OptimizerMixin.maxiter
+   .. autoattribute:: OptimizerMixin.verbose
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: OptimizerMixin.__init__
+   
+   
+   .. automethod:: OptimizerMixin.minimize
+   
+   
+   

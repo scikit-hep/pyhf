@@ -1,0 +1,6 @@
+pyhf.readxml.import\_root\_histogram
+====================================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: import_root_histogram

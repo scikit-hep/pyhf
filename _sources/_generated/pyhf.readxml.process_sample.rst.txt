@@ -1,0 +1,6 @@
+pyhf.readxml.process\_sample
+============================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: process_sample

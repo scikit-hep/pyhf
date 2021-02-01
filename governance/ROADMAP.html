@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Roadmap (2019-2020) &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributors" href="../contributors.html" />
+    <link rel="prev" title="Use and Citations" href="../citations.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">Use and Citations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Roadmap (2019-2020)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-and-goals">Overview and Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-scale">Time scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roadmap">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#roadmap-as-gantt-chart">Roadmap as Gantt Chart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#presentations-during-roadmap-timeline">Presentations During Roadmap Timeline</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Roadmap (2019-2020)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/governance/ROADMAP.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="roadmap-2019-2020">
+<h1>Roadmap (2019-2020)<a class="headerlink" href="#roadmap-2019-2020" title="Permalink to this headline">¶</a></h1>
+<p>This is the pyhf 2019 into 2020 Roadmap (Issue
+<a class="reference external" href="https://github.com/scikit-hep/pyhf/issues/561">#561</a>).</p>
+<div class="section" id="overview-and-goals">
+<h2>Overview and Goals<a class="headerlink" href="#overview-and-goals" title="Permalink to this headline">¶</a></h2>
+<p>We will follow loosely Seibert’s <a class="reference external" href="https://twitter.com/FRoscheck/status/1159158552298229763">Heirarchy of
+Needs</a></p>
+<p><img alt="Seibert Heirarchy of Needs SciPy 2019" src="https://pbs.twimg.com/media/EBYojw8XUAERJhZ?format=png" /> (<a class="reference external" href="https://github.com/seibert">Stan
+Seibert</a>, SciPy 2019)</p>
+<p>As a general overview that will include:</p>
+<ul class="simple">
+<li><p>Improvements to docs</p>
+<ul>
+<li><p>Add lots of examples</p></li>
+<li><p>Add at least 5 well documented case studies</p></li>
+</ul>
+</li>
+<li><p>Issue cleanup</p></li>
+<li><p>Adding core feature support</p></li>
+<li><p>“pyhf evolution”: integration with columnar data analysis systems</p></li>
+<li><p>GPU support and testing</p></li>
+<li><p>Publications</p>
+<ul>
+<li><p>Submit pyhf to JOSS</p></li>
+<li><p>Submit pyhf to pyOpenSci</p></li>
+<li><p>Start pyhf paper in 2020</p></li>
+</ul>
+</li>
+<li><p>Align with IRIS-HEP Analysis Systems NSF milestones</p></li>
+</ul>
+</div>
+<div class="section" id="time-scale">
+<h2>Time scale<a class="headerlink" href="#time-scale" title="Permalink to this headline">¶</a></h2>
+<p>The roadmap will be executed over mostly Quarter 3 of 2019 through
+Quarter 1 of 2020, with some projects continuing into Quarter 2 of 2020</p>
+<ul class="simple">
+<li><p>2019-Q3</p></li>
+<li><p>2019-Q4</p></li>
+<li><p>2020-Q1</p></li>
+<li><p>(2020-Q2)</p></li>
+</ul>
+</div>
+<div class="section" id="roadmap">
+<h2>Roadmap<a class="headerlink" href="#roadmap" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Documentation and Deployment</strong></p>
+<ul class="simple">
+<li><p><input type="checkbox" disabled="true"> Add docstrings to all functions and classes (Issues #38, #349)
+[2019-Q3]</p></li>
+<li><p><input type="checkbox" disabled="true"> <a class="reference external" href="https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs">Greatly revise and expand
+examples</a>
+(Issues #168, #202, #212, #325, #342, #349, #367) [2019-Q3 →
+2019-Q4]</p>
+<ul>
+<li><p><input type="checkbox" disabled="true"> Add small case studies with published sbottom likelihood from
+HEPData</p></li>
+</ul>
+</li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Move to <a class="reference external" href="https://github.com/scikit-hep">scikit-hep</a> GitHub
+organization [2019-Q3]</p></li>
+<li><p><input type="checkbox" disabled="true"> Develop a release schedule/criteria [2019-Q4]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Automate deployment with [STRIKEOUT:Azure pipeline (talk with
+Henry Schreiner) (Issue #517)] GitHub Actions (Issue #508)
+[2019-Q3]</p></li>
+<li><p><input type="checkbox" disabled="true"> Finalize logo and add it to website (Issue #453) [2019-Q3 →
+2019-Q4]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Write submission to <a class="reference external" href="https://joss.theoj.org/">JOSS</a> (Issue
+#502) and write submission to
+<a class="reference external" href="https://www.pyopensci.org/">pyOpenSci</a> [2019-Q4 → 2020-Q2]</p></li>
+<li><p><input type="checkbox" disabled="true"> Contribute to <a class="reference external" href="https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304">IRIS-HEP Analysis Systems
+Milestones</a>
+“<a class="reference external" href="https://github.com/iris-hep/project-milestones/issues/8">Initial roadmap for ecosystem
+coherency</a>”
+and “<a class="reference external" href="https://github.com/iris-hep/project-milestones/issues/11">Initial roadmap for high-level cyberinfrastructure
+components of analysis
+system</a>”
+[2019-Q4 → 2020-Q2]</p></li>
+</ul>
+</li>
+<li><p><strong>Revision and Maintenance</strong></p>
+<ul class="simple">
+<li><p><input checked=""  type="checkbox" disabled="true"> Add tests using HEPData published sbottom likelihoods (Issue
+#518) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Add CI with GitHub Actions and Azure Pipelines (PR #527, Issue
+#517) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Investigate rewrite of pytest fixtures to use modern pytest
+(Issue #370) [2019-Q3 → 2019-Q4]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Factorize out the statistical fitting portion into
+<code class="docutils literal notranslate"><span class="pre">pyhf.infer</span></code> (PR #531) [2019-Q3 → 2019-Q4]</p></li>
+<li><p><input type="checkbox" disabled="true"> Bug squashing at large [2019-Q3 → 2020-Q2]</p>
+<ul>
+<li><p><input type="checkbox" disabled="true"> Unexpected use cases (Issues #324, #325, #529)</p></li>
+<li><p><input type="checkbox" disabled="true"> Computational edge cases (Issues #332, #445)</p></li>
+</ul>
+</li>
+<li><p><input type="checkbox" disabled="true"> Make sure that all backends reproduce sbottom results [2019-Q4 →
+2020-Q2]</p></li>
+</ul>
+</li>
+<li><p><strong>Development</strong></p>
+<ul class="simple">
+<li><p><input checked=""  type="checkbox" disabled="true"> Batch support (PR #503) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Add ParamViewer support (PR #519) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Add setting of NPs constant/fixed (PR #653) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Implement pdf as subclass of distributions (PR #551) [2019-Q3]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Add sampling with toys (PR #558) [2019-Q3]</p></li>
+<li><p><input type="checkbox" disabled="true"> Make general modeling choices (e.g., Issue #293) [2019-Q4 →
+2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> Add “discovery” test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> Add better Model creation [2019-Q4 → 2020-Q1]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Add background model support (Issues #514, #946) [2019-Q4 → 2020-Q1]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Develop interface for the optimizers similar to tensor/backend
+(Issue #754, PR #951) [2019-Q4 → 2020-Q1]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Migrate to TensorFlow v2.0 (PR #541) [2019-Q4]</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Drop Python 2.7 support at end of 2019 (Issue #469) [2019-Q4
+(last week of December 2019)]</p></li>
+<li><p><input type="checkbox" disabled="true"> Finalize public API [2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> Integrate pyfitcore/Statisfactory API [2020-Q1]</p></li>
+</ul>
+</li>
+<li><p><strong>Research</strong></p>
+<ul class="simple">
+<li><p><input type="checkbox" disabled="true"> Add pyfitcore/Statisfactory integrations (Issue #344, <a class="reference external" href="https://github.com/zfit/zfit/issues/120">zfit
+Issue 120</a>) [2019-Q4]</p></li>
+<li><p><input type="checkbox" disabled="true"> Hardware acceleration scaling studies (Issues #93, #301)
+[2019-Q4 → 2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> Speedup through Numba (Issue #364) [2019-Q3 → 2019-Q4]</p></li>
+<li><p><input type="checkbox" disabled="true"> Dask backend (Issue #259) [2019-Q3 → 2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> Attempt to use pyhf as fitting tool for full Analysis Systems
+pipeline test in early 2020 [2019-Q4 → 2020-Q1]</p></li>
+<li><p><input type="checkbox" disabled="true"> pyhf should satisfy <a class="reference external" href="https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304">IRIS-HEP Analysis Systems
+Milestone</a>
+“<a class="reference external" href="https://github.com/iris-hep/project-milestones/issues/15">GPU/accelerator-based implementation of statistical and other
+appropriate
+components</a>”
+[2020-Q1 → 2020-Q2] and contributes to “<a class="reference external" href="https://github.com/iris-hep/project-milestones/issues/17">Benchmarking and
+assessment of prototype analysis system
+components</a>”
+[2020-Q3 → 2020-Q4]</p></li>
+</ul>
+</li>
+</ol>
+<div class="section" id="roadmap-as-gantt-chart">
+<h3>Roadmap as Gantt Chart<a class="headerlink" href="#roadmap-as-gantt-chart" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-default">
+<img alt="pyhf_AS_gantt" src="https://user-images.githubusercontent.com/5142394/64583069-53049180-d355-11e9-8b39-8b2a4599e21e.png" />
+</div>
+</div>
+</div>
+<div class="section" id="presentations-during-roadmap-timeline">
+<h2>Presentations During Roadmap Timeline<a class="headerlink" href="#presentations-during-roadmap-timeline" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><input checked=""  type="checkbox" disabled="true"> <a class="reference external" href="https://indico.cern.ch/event/840472/contributions/3564386/">Talk at IRIS-HEP Institute
+Retreat</a>
+(September 12-13th, 2019)</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> Talk at <a class="reference external" href="https://indico.cern.ch/event/833895/">PyHEP 2019</a>
+(October 16-18th, 2019)</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> <a class="reference external" href="https://indico.cern.ch/event/773049/contributions/3476143/">Talk at CHEP
+2019</a>
+(November 4-8th, 2019)</p></li>
+<li><p><input checked=""  type="checkbox" disabled="true"> <a class="reference external" href="https://indico.cern.ch/event/773049/contributions/3476180/">Poster at CHEP
+2019</a>
+(November 4-8th, 2019)</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../contributors.html" class="btn btn-neutral float-right" title="Contributors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../citations.html" class="btn btn-neutral float-left" title="Use and Citations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

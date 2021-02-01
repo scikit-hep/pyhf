@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/exceptions
+
+InvalidOptimizer
+================
+
+.. currentmodule:: pyhf.exceptions
+
+.. autoclass:: InvalidOptimizer
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

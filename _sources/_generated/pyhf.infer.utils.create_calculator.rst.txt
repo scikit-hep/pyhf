@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/utils
+
+create\_calculator
+==================
+
+.. currentmodule:: pyhf.infer.utils
+
+.. autoclass:: create_calculator
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

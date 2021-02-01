@@ -1,0 +1,2088 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Index &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Index</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#Symbols"><strong>Symbols</strong></a>
+ | <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="Symbols">Symbols</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --algorithm &lt;algorithm&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-digest-a">pyhf-digest command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --backend &lt;backend&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-backend">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-backend">pyhf-fit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --basedir &lt;basedir&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-basedir">pyhf-xml2json command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --calctype &lt;calctype&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-calctype">pyhf-cls command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --channel &lt;CHANNEL&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-c">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --channel &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-rename-c">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --citation
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cite">pyhf command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --cite
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cite">pyhf command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --compress
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-c">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --dataroot &lt;dataroot&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-dataroot">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --force
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-f">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --hide-progress
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-track-progress">pyhf-xml2json command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --join &lt;join&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-j">pyhf-combine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --json
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">pyhf-digest command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --measurement &lt;measurement&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-measurement">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-measurement">pyhf-fit command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-measurement">pyhf-inspect command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --measurement &lt;MEASUREMENT&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-measurement">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --measurement &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-rename-measurement">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --merge-channels
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-merge-channels">pyhf-combine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --modifier &lt;MODIFIER&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-m">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --modifier &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-rename-m">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --modifier-type &lt;modifier_type&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-t">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --name &lt;name&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-name">pyhf-patchset-apply command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-name">pyhf-patchset-extract command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no-merge-channels
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-merge-channels">pyhf-combine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --optconf &lt;optconf&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-optconf">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-optconf">pyhf-fit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --optimizer &lt;optimizer&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-optimizer">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-optimizer">pyhf-fit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --output-dir &lt;output_dir&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-output-dir">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --output-file &lt;output_file&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-output-file">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-output-file">pyhf-combine command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-output-file">pyhf-fit command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-output-file">pyhf-inspect command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-output-file">pyhf-patchset-apply command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-output-file">pyhf-patchset-extract command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-output-file">pyhf-prune command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-output-file">pyhf-rename command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-sort-output-file">pyhf-sort command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-output-file">pyhf-xml2json command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --patch &lt;patch&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-p">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-p">pyhf-fit command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-p">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --plaintext
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">pyhf-digest command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --resultprefix &lt;resultprefix&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-resultprefix">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --sample &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-rename-s">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --sample &lt;SAMPLE&gt;...&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-s">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --specroot &lt;specroot&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-specroot">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --test-poi &lt;test_poi&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-test-poi">pyhf-cls command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --test-stat &lt;test_stat&gt;
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-test-stat">pyhf-cls command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --track-progress
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-track-progress">pyhf-xml2json command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --value
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-fit-value">pyhf-fit command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --verbose
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-v">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --version
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-version">pyhf command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --with-metadata
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-with-metadata">pyhf-patchset-extract command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --without-metadata
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-with-metadata">pyhf-patchset-extract command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -a
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-digest-a">pyhf-digest command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -c
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-c">pyhf-contrib-download command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-c">pyhf-prune command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-c">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -f
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-f">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -j
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-j">pyhf-combine command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">pyhf-digest command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -m
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-m">pyhf-prune command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-m">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -p
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-p">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">pyhf-digest command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-p">pyhf-fit command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-p">pyhf-json2xml command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -s
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-s">pyhf-prune command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-s">pyhf-rename command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -t
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-t">pyhf-prune command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -v
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-v">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.__init__">__init__() (pyhf.infer.calculators.AsymptoticCalculator method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.__init__">(pyhf.infer.calculators.AsymptoticTestStatDistribution method)</a>
+</li>
+        <li><a href="_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.__init__">(pyhf.infer.calculators.EmpiricalDistribution method)</a>
+</li>
+        <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.__init__">(pyhf.infer.calculators.ToyCalculator method)</a>
+</li>
+        <li><a href="_generated/pyhf.interpolators.code0.html#pyhf.interpolators.code0.__init__">(pyhf.interpolators.code0 method)</a>
+</li>
+        <li><a href="_generated/pyhf.interpolators.code1.html#pyhf.interpolators.code1.__init__">(pyhf.interpolators.code1 method)</a>
+</li>
+        <li><a href="_generated/pyhf.interpolators.code2.html#pyhf.interpolators.code2.__init__">(pyhf.interpolators.code2 method)</a>
+</li>
+        <li><a href="_generated/pyhf.interpolators.code4.html#pyhf.interpolators.code4.__init__">(pyhf.interpolators.code4 method)</a>
+</li>
+        <li><a href="_generated/pyhf.interpolators.code4p.html#pyhf.interpolators.code4p.__init__">(pyhf.interpolators.code4p method)</a>
+</li>
+        <li><a href="_generated/pyhf.optimize.mixins.OptimizerMixin.html#pyhf.optimize.mixins.OptimizerMixin.__init__">(pyhf.optimize.mixins.OptimizerMixin method)</a>
+</li>
+        <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.__init__">(pyhf.optimize.opt_minuit.minuit_optimizer method)</a>
+</li>
+        <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer.__init__">(pyhf.optimize.opt_scipy.scipy_optimizer method)</a>
+</li>
+        <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.__init__">(pyhf.patchset.Patch method)</a>
+</li>
+        <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.__init__">(pyhf.patchset.PatchSet method)</a>
+</li>
+        <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.__init__">(pyhf.pdf._ModelConfig method)</a>
+</li>
+        <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.__init__">(pyhf.pdf.Model method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Independent.html#pyhf.probability.Independent.__init__">(pyhf.probability.Independent method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Normal.html#pyhf.probability.Normal.__init__">(pyhf.probability.Normal method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Poisson.html#pyhf.probability.Poisson.__init__">(pyhf.probability.Poisson method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Simultaneous.html#pyhf.probability.Simultaneous.__init__">(pyhf.probability.Simultaneous method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.__init__">(pyhf.tensor.jax_backend.jax_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.__init__">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.__init__">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.__init__">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.__init__">(pyhf.workspace.Workspace method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig">_ModelConfig (class in pyhf.pdf)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.abs">abs() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.abs">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.abs">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.abs">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.apply">apply() (pyhf.patchset.PatchSet method)</a>
+</li>
+      <li>
+    ARCHIVE_URL
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-arg-ARCHIVE_URL">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.astensor">astensor() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.astensor">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.astensor">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.astensor">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator">AsymptoticCalculator (class in pyhf.infer.calculators)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution">AsymptoticTestStatDistribution (class in pyhf.infer.calculators)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    BACKGROUND_ONLY
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-arg-BACKGROUND_ONLY">pyhf-patchset-apply command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-verify-arg-BACKGROUND_ONLY">pyhf-patchset-verify command line option</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.boolean_mask">boolean_mask() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.boolean_mask">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.boolean_mask">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.boolean_mask">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.build">build() (pyhf.workspace.Workspace class method)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.build_channel.html#pyhf.writexml.build_channel">build_channel() (in module pyhf.writexml)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.build_data.html#pyhf.writexml.build_data">build_data() (in module pyhf.writexml)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.build_measurement.html#pyhf.writexml.build_measurement">build_measurement() (in module pyhf.writexml)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.build_modifier.html#pyhf.writexml.build_modifier">build_modifier() (in module pyhf.writexml)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.build_sample.html#pyhf.writexml.build_sample">build_sample() (in module pyhf.writexml)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.cdf">cdf() (pyhf.infer.calculators.AsymptoticTestStatDistribution method)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.clear_filecache.html#pyhf.readxml.clear_filecache">clear_filecache() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.clip">clip() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.clip">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.clip">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.clip">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.interpolators.code0.html#pyhf.interpolators.code0">code0 (class in pyhf.interpolators)</a>
+</li>
+      <li><a href="_generated/pyhf.interpolators.code1.html#pyhf.interpolators.code1">code1 (class in pyhf.interpolators)</a>
+</li>
+      <li><a href="_generated/pyhf.interpolators.code2.html#pyhf.interpolators.code2">code2 (class in pyhf.interpolators)</a>
+</li>
+      <li><a href="_generated/pyhf.interpolators.code4.html#pyhf.interpolators.code4">code4 (class in pyhf.interpolators)</a>
+</li>
+      <li><a href="_generated/pyhf.interpolators.code4p.html#pyhf.interpolators.code4p">code4p (class in pyhf.interpolators)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.combine">combine() (pyhf.workspace.Workspace class method)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.concatenate">concatenate() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.concatenate">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.concatenate">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.concatenate">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.conditional">conditional() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.conditional">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.conditional">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.conditional">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.constraint_logpdf">constraint_logpdf() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.utils.create_calculator.html#pyhf.infer.utils.create_calculator">create_calculator (class in pyhf.infer.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.data">data() (pyhf.workspace.Workspace method)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.dedupe_parameters.html#pyhf.readxml.dedupe_parameters">dedupe_parameters() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.default_backend.html#pyhf.default_backend">default_backend (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.default_do_grad">default_do_grad (pyhf.tensor.jax_backend.jax_backend attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.default_do_grad">(pyhf.tensor.numpy_backend.numpy_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.default_do_grad">(pyhf.tensor.pytorch_backend.pytorch_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.default_do_grad">(pyhf.tensor.tensorflow_backend.tensorflow_backend attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.default_optimizer.html#pyhf.default_optimizer">default_optimizer (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.description">description (pyhf.patchset.PatchSet attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.utils.digest.html#pyhf.utils.digest">digest() (in module pyhf.utils)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.digests">digests (pyhf.patchset.PatchSet attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.distributions">distributions() (pyhf.infer.calculators.AsymptoticCalculator method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.distributions">(pyhf.infer.calculators.ToyCalculator method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.divide">divide() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.divide">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.divide">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.divide">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.contrib.utils.download.html#pyhf.contrib.utils.download">download() (in module pyhf.contrib.utils)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.dtypemap">dtypemap (pyhf.tensor.jax_backend.jax_backend attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.dtypemap">(pyhf.tensor.numpy_backend.numpy_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.dtypemap">(pyhf.tensor.pytorch_backend.pytorch_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.dtypemap">(pyhf.tensor.tensorflow_backend.tensorflow_backend attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.einsum">einsum() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.einsum">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.einsum">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.einsum">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution">EmpiricalDistribution (class in pyhf.infer.calculators)</a>
+</li>
+      <li>
+    ENTRYPOINT_XML
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-arg-ENTRYPOINT_XML">pyhf-xml2json command line option</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.erf">erf() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.erf">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.erf">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.erf">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.erfinv">erfinv() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.erfinv">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.erfinv">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.erfinv">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.errordef">errordef (pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.exp">exp() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.exp">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.exp">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.exp">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.expected_actualdata">expected_actualdata() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.expected_auxdata">expected_auxdata() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.expected_data">expected_data() (pyhf.pdf.Model method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.probability.Normal.html#pyhf.probability.Normal.expected_data">(pyhf.probability.Normal method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Poisson.html#pyhf.probability.Poisson.expected_data">(pyhf.probability.Poisson method)</a>
+</li>
+        <li><a href="_generated/pyhf.probability.Simultaneous.html#pyhf.probability.Simultaneous.expected_data">(pyhf.probability.Simultaneous method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.expected_pvalues">expected_pvalues() (pyhf.infer.calculators.AsymptoticCalculator method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.expected_pvalues">(pyhf.infer.calculators.ToyCalculator method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.expected_value">expected_value() (pyhf.infer.calculators.AsymptoticTestStatDistribution method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.expected_value">(pyhf.infer.calculators.EmpiricalDistribution method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.readxml.extract_error.html#pyhf.readxml.extract_error">extract_error() (in module pyhf.readxml)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.mle.fit.html#pyhf.infer.mle.fit">fit (class in pyhf.infer.mle)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.mle.fixed_poi_fit.html#pyhf.infer.mle.fixed_poi_fit">fixed_poi_fit (class in pyhf.infer.mle)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.gather">gather() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.gather">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.gather">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.gather">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.calculators.generate_asimov_data.html#pyhf.infer.calculators.generate_asimov_data">generate_asimov_data (class in pyhf.infer.calculators)</a>
+</li>
+      <li><a href="_generated/pyhf.get_backend.html#pyhf.get_backend">get_backend() (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.get_measurement">get_measurement() (pyhf.workspace.Workspace method)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.utils.get_test_stat.html#pyhf.infer.utils.get_test_stat">get_test_stat (class in pyhf.infer.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.simplemodels.hepdata_like.html#pyhf.simplemodels.hepdata_like">hepdata_like (class in pyhf.simplemodels)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.modifiers.histosys.html#pyhf.modifiers.histosys">histosys (class in pyhf.modifiers)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.hypotest.html#pyhf.infer.hypotest">hypotest (class in pyhf.infer)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.readxml.import_root_histogram.html#pyhf.readxml.import_root_histogram">import_root_histogram() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.ImportBackendError.html#pyhf.exceptions.ImportBackendError">ImportBackendError (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.writexml.indent.html#pyhf.writexml.indent">indent() (in module pyhf.writexml)</a>
+</li>
+      <li><a href="_generated/pyhf.probability.Independent.html#pyhf.probability.Independent">Independent (class in pyhf.probability)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidBackend.html#pyhf.exceptions.InvalidBackend">InvalidBackend (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidInterpCode.html#pyhf.exceptions.InvalidInterpCode">InvalidInterpCode (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidMeasurement.html#pyhf.exceptions.InvalidMeasurement">InvalidMeasurement (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidModel.html#pyhf.exceptions.InvalidModel">InvalidModel (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidModifier.html#pyhf.exceptions.InvalidModifier">InvalidModifier (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidNameReuse.html#pyhf.exceptions.InvalidNameReuse">InvalidNameReuse (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidOptimizer.html#pyhf.exceptions.InvalidOptimizer">InvalidOptimizer (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidPatchLookup.html#pyhf.exceptions.InvalidPatchLookup">InvalidPatchLookup (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidPatchSet.html#pyhf.exceptions.InvalidPatchSet">InvalidPatchSet (class in pyhf.exceptions)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.exceptions.InvalidPdfData.html#pyhf.exceptions.InvalidPdfData">InvalidPdfData (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidPdfParameters.html#pyhf.exceptions.InvalidPdfParameters">InvalidPdfParameters (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidSpecification.html#pyhf.exceptions.InvalidSpecification">InvalidSpecification (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.InvalidWorkspaceOperation.html#pyhf.exceptions.InvalidWorkspaceOperation">InvalidWorkspaceOperation (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.modifiers.histosys.html#pyhf.modifiers.histosys.is_constrained">is_constrained (pyhf.modifiers.histosys attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.modifiers.normfactor.html#pyhf.modifiers.normfactor.is_constrained">(pyhf.modifiers.normfactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.normsys.html#pyhf.modifiers.normsys.is_constrained">(pyhf.modifiers.normsys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapefactor.html#pyhf.modifiers.shapefactor.is_constrained">(pyhf.modifiers.shapefactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys.is_constrained">(pyhf.modifiers.shapesys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.staterror.html#pyhf.modifiers.staterror.is_constrained">(pyhf.modifiers.staterror attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.isfinite">isfinite() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.isfinite">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.isfinite">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.isfinite">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend">jax_backend (class in pyhf.tensor.jax_backend)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.labels">labels (pyhf.patchset.PatchSet attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.utils.load_schema.html#pyhf.utils.load_schema">load_schema() (in module pyhf.utils)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.log">log() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.log">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.log">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.log">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.probability.Independent.html#pyhf.probability.Independent.log_prob">log_prob() (pyhf.probability.Independent method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.probability.Simultaneous.html#pyhf.probability.Simultaneous.log_prob">(pyhf.probability.Simultaneous method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.logpdf">logpdf() (pyhf.pdf.Model method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.mainlogpdf">mainlogpdf() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.make_pdf">make_pdf() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.mixins.OptimizerMixin.html#pyhf.optimize.mixins.OptimizerMixin.maxiter">maxiter (pyhf.optimize.mixins.OptimizerMixin attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.maxiter">(pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer.maxiter">(pyhf.optimize.opt_scipy.scipy_optimizer attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.metadata">metadata (pyhf.patchset.Patch attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.metadata">(pyhf.patchset.PatchSet attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.optimize.mixins.OptimizerMixin.html#pyhf.optimize.mixins.OptimizerMixin.minimize">minimize() (pyhf.optimize.mixins.OptimizerMixin method)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer">minuit_optimizer (class in pyhf.optimize.opt_minuit)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model">Model (class in pyhf.pdf)</a>
+</li>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.model">model() (pyhf.workspace.Workspace method)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="_generated/pyhf.contrib.viz.brazil.html#module-pyhf.contrib.viz.brazil">pyhf.contrib.viz.brazil</a>
+</li>
+        <li><a href="_generated/pyhf.readxml.html#module-pyhf.readxml">pyhf.readxml</a>
+</li>
+        <li><a href="_generated/pyhf.writexml.html#module-pyhf.writexml">pyhf.writexml</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.name">name (pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer.name">(pyhf.optimize.opt_scipy.scipy_optimizer attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.name">(pyhf.patchset.Patch attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.name">(pyhf.tensor.jax_backend.jax_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.name">(pyhf.tensor.numpy_backend.numpy_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.name">(pyhf.tensor.pytorch_backend.pytorch_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.name">(pyhf.tensor.tensorflow_backend.tensorflow_backend attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.nominal_rates">nominal_rates (pyhf.pdf.Model attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.probability.Normal.html#pyhf.probability.Normal">Normal (class in pyhf.probability)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.normal">normal() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.normal">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.normal">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.normal">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.normal_cdf">normal_cdf() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.normal_cdf">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.normal_cdf">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.normal_cdf">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.normal_dist">normal_dist() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.normal_dist">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.normal_dist">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.normal_dist">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.normal_logpdf">normal_logpdf() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.normal_logpdf">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.normal_logpdf">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.normal_logpdf">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.modifiers.normfactor.html#pyhf.modifiers.normfactor">normfactor (class in pyhf.modifiers)</a>
+</li>
+      <li><a href="_generated/pyhf.modifiers.normsys.html#pyhf.modifiers.normsys">normsys (class in pyhf.modifiers)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend">numpy_backend (class in pyhf.tensor.numpy_backend)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.ones">ones() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.ones">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.ones">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.ones">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.modifiers.histosys.html#pyhf.modifiers.histosys.op_code">op_code (pyhf.modifiers.histosys attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.modifiers.normfactor.html#pyhf.modifiers.normfactor.op_code">(pyhf.modifiers.normfactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.normsys.html#pyhf.modifiers.normsys.op_code">(pyhf.modifiers.normsys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapefactor.html#pyhf.modifiers.shapefactor.op_code">(pyhf.modifiers.shapefactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys.op_code">(pyhf.modifiers.shapesys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.staterror.html#pyhf.modifiers.staterror.op_code">(pyhf.modifiers.staterror attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.operations">operations (pyhf.patchset.Patch attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.optimizer.html#pyhf.optimizer">optimizer (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.mixins.OptimizerMixin.html#pyhf.optimize.mixins.OptimizerMixin">OptimizerMixin (class in pyhf.optimize.mixins)</a>
+</li>
+      <li><a href="_generated/pyhf.utils.options_from_eqdelimstring.html#pyhf.utils.options_from_eqdelimstring">options_from_eqdelimstring() (in module pyhf.utils)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.outer">outer() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.outer">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.outer">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.outer">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li>
+    OUTPUT_DIRECTORY
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-arg-OUTPUT_DIRECTORY">pyhf-contrib-download command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.par_slice">par_slice() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.param_set">param_set() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.parse.html#pyhf.readxml.parse">parse() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch">Patch (class in pyhf.patchset)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.patches">patches (pyhf.patchset.PatchSet attribute)</a>
+</li>
+      <li>
+    PATCHSET
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-arg-PATCHSET">pyhf-patchset-apply command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-arg-PATCHSET">pyhf-patchset-extract command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-verify-arg-PATCHSET">pyhf-patchset-verify command line option</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet">PatchSet (class in pyhf.patchset)</a>
+</li>
+      <li><a href="_generated/pyhf.exceptions.PatchSetVerificationError.html#pyhf.exceptions.PatchSetVerificationError">PatchSetVerificationError (class in pyhf.exceptions)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf.Model.html#pyhf.pdf.Model.pdf">pdf() (pyhf.pdf.Model method)</a>
+</li>
+      <li><a href="_generated/pyhf.modifiers.histosys.html#pyhf.modifiers.histosys.pdf_type">pdf_type (pyhf.modifiers.histosys attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.modifiers.normfactor.html#pyhf.modifiers.normfactor.pdf_type">(pyhf.modifiers.normfactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.normsys.html#pyhf.modifiers.normsys.pdf_type">(pyhf.modifiers.normsys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapefactor.html#pyhf.modifiers.shapefactor.pdf_type">(pyhf.modifiers.shapefactor attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys.pdf_type">(pyhf.modifiers.shapesys attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.staterror.html#pyhf.modifiers.staterror.pdf_type">(pyhf.modifiers.staterror attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.contrib.viz.brazil.plot_results.html#pyhf.contrib.viz.brazil.plot_results">plot_results() (in module pyhf.contrib.viz.brazil)</a>
+</li>
+      <li><a href="_generated/pyhf.probability.Poisson.html#pyhf.probability.Poisson">Poisson (class in pyhf.probability)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.poisson">poisson() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.poisson">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.poisson">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.poisson">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.poisson_dist">poisson_dist() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.poisson_dist">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.poisson_dist">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.poisson_dist">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.poisson_logpdf">poisson_logpdf() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.poisson_logpdf">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.poisson_logpdf">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.poisson_logpdf">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.power">power() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.power">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.power">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.power">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.precision">precision (pyhf.tensor.jax_backend.jax_backend attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.precision">(pyhf.tensor.numpy_backend.numpy_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.precision">(pyhf.tensor.pytorch_backend.pytorch_backend attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.precision">(pyhf.tensor.tensorflow_backend.tensorflow_backend attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.readxml.process_channel.html#pyhf.readxml.process_channel">process_channel() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.process_data.html#pyhf.readxml.process_data">process_data() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.process_measurements.html#pyhf.readxml.process_measurements">process_measurements() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.readxml.process_sample.html#pyhf.readxml.process_sample">process_sample() (in module pyhf.readxml)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.product">product() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.product">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.product">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.product">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.prune">prune() (pyhf.workspace.Workspace method)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.pvalue">pvalue() (pyhf.infer.calculators.AsymptoticTestStatDistribution method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.pvalue">(pyhf.infer.calculators.EmpiricalDistribution method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.pvalues">pvalues() (pyhf.infer.calculators.AsymptoticCalculator method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.pvalues">(pyhf.infer.calculators.ToyCalculator method)</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cite">--citation</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cite">--cite</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-version">--version</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-cls command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-backend">--backend &lt;backend&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-calctype">--calctype &lt;calctype&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-measurement">--measurement &lt;measurement&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-optconf">--optconf &lt;optconf&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-optimizer">--optimizer &lt;optimizer&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-p">--patch &lt;patch&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-test-poi">--test-poi &lt;test_poi&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-test-stat">--test-stat &lt;test_stat&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-p">-p</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-cls-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-combine command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-j">--join &lt;join&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-merge-channels">--merge-channels</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-merge-channels">--no-merge-channels</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-j">-j</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-arg-WORKSPACE_ONE">WORKSPACE_ONE</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-combine-arg-WORKSPACE_TWO">WORKSPACE_TWO</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-completions command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-completions-arg-SHELL">SHELL</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-contrib-download command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-c">--compress</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-f">--force</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-v">--verbose</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-c">-c</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-f">-f</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-v">-v</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-arg-ARCHIVE_URL">ARCHIVE_URL</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-contrib-download-arg-OUTPUT_DIRECTORY">OUTPUT_DIRECTORY</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    pyhf-digest command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-digest-a">--algorithm &lt;algorithm&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">--json</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">--plaintext</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-a">-a</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">-j</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-j">-p</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-fit command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-fit-backend">--backend &lt;backend&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-measurement">--measurement &lt;measurement&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-optconf">--optconf &lt;optconf&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-optimizer">--optimizer &lt;optimizer&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-p">--patch &lt;patch&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-value">--value</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-p">-p</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-inspect command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-measurement">--measurement &lt;measurement&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-json2xml command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-dataroot">--dataroot &lt;dataroot&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-output-dir">--output-dir &lt;output_dir&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-p">--patch &lt;patch&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-resultprefix">--resultprefix &lt;resultprefix&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-specroot">--specroot &lt;specroot&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-p">-p</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-patchset-apply command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-name">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-arg-BACKGROUND_ONLY">BACKGROUND_ONLY</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-apply-arg-PATCHSET">PATCHSET</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-patchset-extract command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-name">--name &lt;name&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-with-metadata">--with-metadata</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-with-metadata">--without-metadata</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-extract-arg-PATCHSET">PATCHSET</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-patchset-verify command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-verify-arg-BACKGROUND_ONLY">BACKGROUND_ONLY</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-patchset-verify-arg-PATCHSET">PATCHSET</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-prune command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-prune-c">--channel &lt;CHANNEL&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-measurement">--measurement &lt;MEASUREMENT&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-m">--modifier &lt;MODIFIER&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-t">--modifier-type &lt;modifier_type&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-s">--sample &lt;SAMPLE&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-c">-c</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-m">-m</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-s">-s</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-t">-t</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-rename command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-rename-c">--channel &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-measurement">--measurement &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-m">--modifier &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-s">--sample &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-c">-c</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-m">-m</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-s">-s</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-sort command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-sort-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-sort-arg-WORKSPACE">WORKSPACE</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf-xml2json command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-basedir">--basedir &lt;basedir&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-track-progress">--hide-progress</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-output-file">--output-file &lt;output_file&gt;</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-track-progress">--track-progress</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-xml2json-arg-ENTRYPOINT_XML">ENTRYPOINT_XML</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf.contrib.viz.brazil
+
+      <ul>
+        <li><a href="_generated/pyhf.contrib.viz.brazil.html#module-pyhf.contrib.viz.brazil">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf.readxml
+
+      <ul>
+        <li><a href="_generated/pyhf.readxml.html#module-pyhf.readxml">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyhf.writexml
+
+      <ul>
+        <li><a href="_generated/pyhf.writexml.html#module-pyhf.writexml">module</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend">pytorch_backend (class in pyhf.tensor.pytorch_backend)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.test_statistics.q0.html#pyhf.infer.test_statistics.q0">q0 (class in pyhf.infer.test_statistics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.test_statistics.qmu.html#pyhf.infer.test_statistics.qmu">qmu (class in pyhf.infer.test_statistics)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.test_statistics.qmu_tilde.html#pyhf.infer.test_statistics.qmu_tilde">qmu_tilde (class in pyhf.infer.test_statistics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.ravel">ravel() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.ravel">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.ravel">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.ravel">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.references">references (pyhf.patchset.PatchSet attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.rename">rename() (pyhf.workspace.Workspace method)</a>
+</li>
+      <li><a href="_generated/pyhf.modifiers.histosys.html#pyhf.modifiers.histosys.required_parset">required_parset() (pyhf.modifiers.histosys class method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.modifiers.normfactor.html#pyhf.modifiers.normfactor.required_parset">(pyhf.modifiers.normfactor class method)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.normsys.html#pyhf.modifiers.normsys.required_parset">(pyhf.modifiers.normsys class method)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapefactor.html#pyhf.modifiers.shapefactor.required_parset">(pyhf.modifiers.shapefactor class method)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys.required_parset">(pyhf.modifiers.shapesys class method)</a>
+</li>
+        <li><a href="_generated/pyhf.modifiers.staterror.html#pyhf.modifiers.staterror.required_parset">(pyhf.modifiers.staterror class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.reshape">reshape() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.reshape">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.reshape">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.reshape">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.probability.Simultaneous.html#pyhf.probability.Simultaneous.sample">sample() (pyhf.probability.Simultaneous method)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer">scipy_optimizer (class in pyhf.optimize.opt_scipy)</a>
+</li>
+      <li><a href="_generated/pyhf.set_backend.html#pyhf.set_backend">set_backend() (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.set_poi">set_poi() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.shape">shape() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.shape">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.shape">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.shape">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.modifiers.shapefactor.html#pyhf.modifiers.shapefactor">shapefactor (class in pyhf.modifiers)</a>
+</li>
+      <li><a href="_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys">shapesys (class in pyhf.modifiers)</a>
+</li>
+      <li>
+    SHELL
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-completions-arg-SHELL">pyhf-completions command line option</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.simple_broadcast">simple_broadcast() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.simple_broadcast">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.simple_broadcast">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.simple_broadcast">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.probability.Simultaneous.html#pyhf.probability.Simultaneous">Simultaneous (class in pyhf.probability)</a>
+</li>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.sorted">sorted() (pyhf.workspace.Workspace class method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.sqrt">sqrt() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.sqrt">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.sqrt">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.sqrt">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.stack">stack() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.stack">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.stack">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.stack">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.modifiers.staterror.html#pyhf.modifiers.staterror">staterror (class in pyhf.modifiers)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.steps">steps (pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.strategy">strategy (pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.suggested_bounds">suggested_bounds() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.suggested_fixed">suggested_fixed() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.pdf._ModelConfig.html#pyhf.pdf._ModelConfig.suggested_init">suggested_init() (pyhf.pdf._ModelConfig method)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.sum">sum() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.sum">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.sum">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.sum">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend">tensorflow_backend (class in pyhf.tensor.tensorflow_backend)</a>
+</li>
+      <li><a href="_generated/pyhf.tensorlib.html#pyhf.tensorlib">tensorlib (in module pyhf)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.teststatistic">teststatistic() (pyhf.infer.calculators.AsymptoticCalculator method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.teststatistic">(pyhf.infer.calculators.ToyCalculator method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.tile">tile() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.tile">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.tile">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.tile">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.test_statistics.tmu.html#pyhf.infer.test_statistics.tmu">tmu (class in pyhf.infer.test_statistics)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.test_statistics.tmu_tilde.html#pyhf.infer.test_statistics.tmu_tilde">tmu_tilde (class in pyhf.infer.test_statistics)</a>
+</li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.to_numpy">to_numpy() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.to_numpy">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.to_numpy">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.to_numpy">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.tolerance">tolerance (pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer.tolerance">(pyhf.optimize.opt_scipy.scipy_optimizer attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.tolist">tolist() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.tolist">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.tolist">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.tolist">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator">ToyCalculator (class in pyhf.infer.calculators)</a>
+</li>
+      <li><a href="_generated/pyhf.infer.mle.twice_nll.html#pyhf.infer.mle.twice_nll">twice_nll (class in pyhf.infer.mle)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.infer.intervals.upperlimit.html#pyhf.infer.intervals.upperlimit">upperlimit (class in pyhf.infer.intervals)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.valid_joins">valid_joins (pyhf.workspace.Workspace attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.utils.validate.html#pyhf.utils.validate">validate() (in module pyhf.utils)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.Patch.html#pyhf.patchset.Patch.values">values (pyhf.patchset.Patch attribute)</a>
+</li>
+      <li><a href="_generated/pyhf.optimize.mixins.OptimizerMixin.html#pyhf.optimize.mixins.OptimizerMixin.verbose">verbose (pyhf.optimize.mixins.OptimizerMixin attribute)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.verbose">(pyhf.optimize.opt_minuit.minuit_optimizer attribute)</a>
+</li>
+        <li><a href="_generated/pyhf.optimize.opt_scipy.scipy_optimizer.html#pyhf.optimize.opt_scipy.scipy_optimizer.verbose">(pyhf.optimize.opt_scipy.scipy_optimizer attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.verify">verify() (pyhf.patchset.PatchSet method)</a>
+</li>
+      <li><a href="_generated/pyhf.patchset.PatchSet.html#pyhf.patchset.PatchSet.version">version (pyhf.patchset.PatchSet attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.where">where() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.where">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.where">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.where">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+      <li>
+    WORKSPACE
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-cls-arg-WORKSPACE">pyhf-cls command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-digest-arg-WORKSPACE">pyhf-digest command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-fit-arg-WORKSPACE">pyhf-fit command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-inspect-arg-WORKSPACE">pyhf-inspect command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-json2xml-arg-WORKSPACE">pyhf-json2xml command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-prune-arg-WORKSPACE">pyhf-prune command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-rename-arg-WORKSPACE">pyhf-rename command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-pyhf-sort-arg-WORKSPACE">pyhf-sort command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace">Workspace (class in pyhf.workspace)</a>
+</li>
+      <li>
+    WORKSPACE_ONE
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-arg-WORKSPACE_ONE">pyhf-combine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    WORKSPACE_TWO
+
+      <ul>
+        <li><a href="cli.html#cmdoption-pyhf-combine-arg-WORKSPACE_TWO">pyhf-combine command line option</a>
+</li>
+      </ul></li>
+      <li><a href="_generated/pyhf.writexml.writexml.html#pyhf.writexml.writexml">writexml() (in module pyhf.writexml)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_generated/pyhf.tensor.jax_backend.jax_backend.html#pyhf.tensor.jax_backend.jax_backend.zeros">zeros() (pyhf.tensor.jax_backend.jax_backend method)</a>
+
+      <ul>
+        <li><a href="_generated/pyhf.tensor.numpy_backend.numpy_backend.html#pyhf.tensor.numpy_backend.numpy_backend.zeros">(pyhf.tensor.numpy_backend.numpy_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.pytorch_backend.pytorch_backend.html#pyhf.tensor.pytorch_backend.pytorch_backend.zeros">(pyhf.tensor.pytorch_backend.pytorch_backend method)</a>
+</li>
+        <li><a href="_generated/pyhf.tensor.tensorflow_backend.tensorflow_backend.html#pyhf.tensor.tensorflow_backend.tensorflow_backend.zeros">(pyhf.tensor.tensorflow_backend.tensorflow_backend method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

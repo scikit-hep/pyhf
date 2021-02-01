@@ -1,0 +1,6 @@
+﻿pyhf.default\_optimizer
+=======================
+
+.. currentmodule:: pyhf
+
+.. autodata:: default_optimizer

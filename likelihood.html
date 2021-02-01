@@ -1,0 +1,635 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Likelihood Specification &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fundamentals" href="learn.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Likelihood Specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workspace">Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#channel">Channel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sample">Sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifiers">Modifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uncorrelated-shape-shapesys">Uncorrelated Shape (shapesys)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlated-shape-histosys">Correlated Shape (histosys)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#normalisation-uncertainty-normsys">Normalisation Uncertainty (normsys)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mc-statistical-uncertainty-staterror">MC Statistical Uncertainty (staterror)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luminosity-lumi">Luminosity (lumi)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unconstrained-normalisation-normfactor">Unconstrained Normalisation (normfactor)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-driven-shape-shapefactor">Data-driven Shape (shapefactor)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#measurements">Measurements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#observations">Observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#toy-example">Toy Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-material">Additional Material</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#footnotes">Footnotes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bibliography">Bibliography</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Likelihood Specification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/likelihood.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="likelihood-specification">
+<span id="sec-likelihood"></span><h1>Likelihood Specification<a class="headerlink" href="#likelihood-specification" title="Permalink to this headline">¶</a></h1>
+<p>The structure of the JSON specification of models follows closely the
+original XML-based specification <span id="id1">[<a class="reference internal" href="#id14"><span>likelihood-2</span></a>]</span>.</p>
+<div class="section" id="workspace">
+<h2>Workspace<a class="headerlink" href="#workspace" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;$schema&quot;</span><span class="p">:</span> <span class="s2">&quot;http://json-schema.org/draft-06/schema#&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;$id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://scikit-hep.org/pyhf/schemas/1.0.0/workspace.json&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;defs.json#/definitions/workspace&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The overall document in the above code snippet describes a <em>workspace</em>, which includes</p>
+<ul class="simple">
+<li><p><strong>channels</strong>: The channels in the model, which include a description of the samples
+within each channel and their possible parametrised modifiers.</p></li>
+<li><p><strong>measurements</strong>: A set of measurements, which define among others the parameters of
+interest for a given statistical analysis objective.</p></li>
+<li><p><strong>observations</strong>: The observed data, with which a likelihood can be constructed from the model.</p></li>
+</ul>
+<p>A workspace consists of the channels, one set of observed data, but can
+include multiple measurements. If provided a JSON file, one can quickly
+check that it conforms to the provided workspace specification as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">jsonschema</span>
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/analysis_workspace.json&#39;</span><span class="p">))</span>
+<span class="c1"># if no exception is raised, it found and parsed the schema</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://scikit-hep.org/pyhf/schemas/1.0.0/workspace.json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="c1"># If no exception is raised by validate(), the instance is valid.</span>
+<span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">workspace</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="channel">
+<span id="ssec-channel"></span><h2>Channel<a class="headerlink" href="#channel" title="Permalink to this headline">¶</a></h2>
+<p>A channel is defined by a channel name and a list of samples <span id="id2">[<a class="reference internal" href="#id18"><span>likelihood-1</span></a>]</span>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;channel&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span> <span class="p">},</span>
+            <span class="nt">&quot;samples&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/sample&quot;</span><span class="p">},</span> <span class="nt">&quot;minItems&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The Channel specification consists of a list of channel descriptions.
+Each channel, an analysis region encompassing one or more measurement
+bins, consists of a <code class="docutils literal notranslate"><span class="pre">name</span></code> field and a <code class="docutils literal notranslate"><span class="pre">samples</span></code> field (see <a class="reference internal" href="#ssec-channel"><span class="std std-ref">Channel</span></a>), which
+holds a list of sample definitions (see <a class="reference internal" href="#ssec-sample"><span class="std std-ref">Sample</span></a>). Each sample definition in
+turn has a <code class="docutils literal notranslate"><span class="pre">name</span></code> field, a <code class="docutils literal notranslate"><span class="pre">data</span></code> field for the nominal event rates
+for all bins in the channel, and a <code class="docutils literal notranslate"><span class="pre">modifiers</span></code> field of the list of
+modifiers for the sample.</p>
+</div>
+<div class="section" id="sample">
+<span id="ssec-sample"></span><h2>Sample<a class="headerlink" href="#sample" title="Permalink to this headline">¶</a></h2>
+<p>A sample is defined by a sample name, the sample event rate, and a list of modifiers <span id="id3">[<a class="reference internal" href="#id18"><span>likelihood-1</span></a>]</span>.</p>
+<div class="highlight-json notranslate" id="lst-schema-sample"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;sample&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span> <span class="p">},</span>
+            <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span> <span class="nt">&quot;minItems&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span>
+            <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;anyOf&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/histosys&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/lumi&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/normfactor&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/normsys&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/shapefactor&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/shapesys&quot;</span> <span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/definitions/modifier/staterror&quot;</span> <span class="p">}</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;modifiers&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modifiers">
+<h2>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this headline">¶</a></h2>
+<p>The modifiers that are applicable for a given sample are encoded as a
+list of JSON objects with three fields. A name field, a type field
+denoting the class of the modifier, and a data field which provides the
+necessary input data as denoted in <a class="reference internal" href="intro.html#tab-modifiers-and-constraints"><span class="std std-ref">Modifiers and Constraints</span></a>.</p>
+<p>Based on the declared modifiers, the set of parameters and their
+constraint terms are derived implicitly as each type of modifier
+unambiguously defines the constraint terms it requires. Correlated shape
+modifiers and normalisation uncertainties have compatible constraint
+terms and thus modifiers can be declared that <em>share</em> parameters by
+re-using a name <a class="footnote-reference brackets" href="#id7" id="id4">1</a> for multiple modifiers. That is, a variation of a
+single parameter causes a shift within sample rates due to both shape
+and normalisation variations.</p>
+<p>We review the structure of each modifier type below.</p>
+<div class="section" id="uncorrelated-shape-shapesys">
+<h3>Uncorrelated Shape (shapesys)<a class="headerlink" href="#uncorrelated-shape-shapesys" title="Permalink to this headline">¶</a></h3>
+<p>To construct the constraint term, the relative uncertainties
+<span class="math notranslate nohighlight">\(\sigma_b\)</span> are necessary for each bin. Therefore, we record the
+absolute uncertainty as an array of floats, which combined with the
+nominal sample data yield the desired <span class="math notranslate nohighlight">\(\sigma_b\)</span>. An example is
+shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;shapesys&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of an uncorrelated shape modifier with three absolute uncertainty
+terms for a 3-bin channel.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Nuisance parameters will not be allocated for any bins where either</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>the samples nominal expected rate is zero, or</p></li>
+<li><p>the absolute uncertainty is zero.</p></li>
+</ul>
+</div></blockquote>
+<p>These values are, in the context of uncorrelated shape uncertainties,
+unphysical. If this situation occurs, one needs to go back and understand
+the inputs as this is undefined behavior in HistFactory.</p>
+</div>
+<p>The previous example will allocate three nuisance parameters for <code class="docutils literal notranslate"><span class="pre">mod_name</span></code>.
+The following example will allocate only two nuisance parameters for a 3-bin
+channel:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;shapesys&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="correlated-shape-histosys">
+<h3>Correlated Shape (histosys)<a class="headerlink" href="#correlated-shape-histosys" title="Permalink to this headline">¶</a></h3>
+<p>This modifier represents the same source of uncertainty which has a
+different effect on the various sample shapes, hence a correlated shape.
+To implement an interpolation between sample distribution shapes, the
+distributions with a “downward variation” (“lo”) associated with
+<span class="math notranslate nohighlight">\(\alpha=-1\)</span> and an “upward variation” (“hi”) associated with
+<span class="math notranslate nohighlight">\(\alpha=+1\)</span> are provided as arrays of floats. An example is shown
+below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;histosys&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;hi_data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span> <span class="nt">&quot;lo_data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a correlated shape modifier with absolute shape variations for a 2-bin channel.</p>
+</div>
+<div class="section" id="normalisation-uncertainty-normsys">
+<h3>Normalisation Uncertainty (normsys)<a class="headerlink" href="#normalisation-uncertainty-normsys" title="Permalink to this headline">¶</a></h3>
+<p>The normalisation uncertainty modifies the sample rate by a overall
+factor <span class="math notranslate nohighlight">\(\kappa(\alpha)\)</span> constructed as the interpolation between
+downward (“lo”) and upward (“hi”) as well as the nominal setting, i.e.
+<span class="math notranslate nohighlight">\(\kappa(-1) = \kappa_{\alpha=-1}\)</span>, <span class="math notranslate nohighlight">\(\kappa(0) = 1\)</span> and
+<span class="math notranslate nohighlight">\(\kappa(+1) = \kappa_{\alpha=+1}\)</span>. In the modifier definition we record
+<span class="math notranslate nohighlight">\(\kappa_{\alpha=+1}\)</span> and <span class="math notranslate nohighlight">\(\kappa_{\alpha=-1}\)</span> as floats. An
+example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;normsys&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;hi&quot;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span> <span class="nt">&quot;lo&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">}</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a normalisation uncertainty modifier with scale factors recorded for the up/down variations of an <span class="math notranslate nohighlight">\(n\)</span>-bin channel.</p>
+</div>
+<div class="section" id="mc-statistical-uncertainty-staterror">
+<h3>MC Statistical Uncertainty (staterror)<a class="headerlink" href="#mc-statistical-uncertainty-staterror" title="Permalink to this headline">¶</a></h3>
+<p>As the sample counts are often derived from Monte Carlo (MC) datasets, they
+necessarily carry an uncertainty due to the finite sample size of the datasets.
+As explained in detail in <span id="id5">[<a class="reference internal" href="#id14"><span>likelihood-2</span></a>]</span>, adding uncertainties for
+each sample would yield a very large number of nuisance parameters with limited
+utility. Therefore a set of bin-wise scale factors <span class="math notranslate nohighlight">\(\gamma_b\)</span> is
+introduced to model the overall uncertainty in the bin due to MC statistics.
+The constrained term is constructed as a set of Gaussian constraints with a
+central value equal to unity for each bin in the channel. The scales
+<span class="math notranslate nohighlight">\(\sigma_b\)</span> of the constraint are computed from the individual
+uncertainties of samples defined within the channel relative to the total event
+rate of all samples: <span class="math notranslate nohighlight">\(\delta_{csb} = \sigma_{csb}/\sum_s \nu^0_{scb}\)</span>. As
+not all samples are within a channel are estimated from MC simulations, only
+the samples with a declared statistical uncertainty modifier enter the sum. An
+example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;staterror&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a statistical uncertainty modifier.</p>
+</div>
+<div class="section" id="luminosity-lumi">
+<h3>Luminosity (lumi)<a class="headerlink" href="#luminosity-lumi" title="Permalink to this headline">¶</a></h3>
+<p>Sample rates derived from theory calculations, as opposed to data-driven
+estimates, are scaled to the integrated luminosity corresponding to the
+observed data. As the luminosity measurement is itself subject to an
+uncertainty, it must be reflected in the rate estimates of such samples.  As
+this modifier is of global nature, no additional per-sample information is
+required and thus the data field is nulled. This uncertainty is relevant, in
+particular, when the parameter of interest is a signal cross-section. The
+luminosity uncertainty <span class="math notranslate nohighlight">\(\sigma_\lambda\)</span> is provided as part of the
+parameter configuration included in the measurement specification discussed
+in <a class="reference internal" href="#ssec-measurements"><span class="std std-ref">Measurements</span></a>.  An example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;lumi&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="kc">null</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a luminosity modifier.</p>
+</div>
+<div class="section" id="unconstrained-normalisation-normfactor">
+<h3>Unconstrained Normalisation (normfactor)<a class="headerlink" href="#unconstrained-normalisation-normfactor" title="Permalink to this headline">¶</a></h3>
+<p>The unconstrained normalisation modifier scales the event rates of a
+sample by a free parameter <span class="math notranslate nohighlight">\(\mu\)</span>. Common use cases are the signal
+rate of a possible BSM signal or simultaneous in-situ measurements of
+background samples. Such parameters are frequently the parameters of
+interest of a given measurement. No additional per-sample data is
+required. An example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;normfactor&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="kc">null</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a normalisation modifier.</p>
+</div>
+<div class="section" id="data-driven-shape-shapefactor">
+<h3>Data-driven Shape (shapefactor)<a class="headerlink" href="#data-driven-shape-shapefactor" title="Permalink to this headline">¶</a></h3>
+<p>In order to support data-driven estimation of sample rates (e.g. for
+multijet backgrounds), the data-driven shape modifier adds free,
+bin-wise multiplicative parameters. Similarly to the normalisation
+factors, no additional data is required as no constraint is defined. An
+example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mod_name&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;shapefactor&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="kc">null</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of an uncorrelated shape modifier.</p>
+</div>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p>The data provided by the analysis are the observed data for each channel
+(or region). This data is provided as a mapping from channel name to an
+array of floats, which provide the observed rates in each bin of the
+channel. The auxiliary data is not included as it is an input to the
+likelihood that does not need to be archived and can be determined
+automatically from the specification. An example is shown below:</p>
+<div class="highlight-json notranslate" id="lst-example-data"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;chan_name_one&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="nt">&quot;chan_name_two&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>An example of channel data.</p>
+</div>
+<div class="section" id="measurements">
+<span id="ssec-measurements"></span><h2>Measurements<a class="headerlink" href="#measurements" title="Permalink to this headline">¶</a></h2>
+<p>Given the data and the model definitions, a measurement can be defined.
+In the current schema, the measurements defines the name of the
+parameter of interest as well as parameter set configurations.  <a class="footnote-reference brackets" href="#id8" id="id6">2</a>
+Here, the remaining information not covered through the channel
+definition is provided, e.g. for the luminosity parameter. For all
+modifiers, the default settings can be overridden where possible:</p>
+<ul class="simple">
+<li><p><strong>inits</strong>: Initial value of the parameter.</p></li>
+<li><p><strong>bounds</strong>: Interval bounds of the parameter.</p></li>
+<li><p><strong>auxdata</strong>: Auxiliary data for the associated constraint term.</p></li>
+<li><p><strong>sigmas</strong>: Associated uncertainty of the parameter.</p></li>
+</ul>
+<p>An example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;MyMeasurement&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;poi&quot;</span><span class="p">:</span> <span class="s2">&quot;SignalCrossSection&quot;</span><span class="p">,</span> <span class="nt">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;lumi&quot;</span><span class="p">,</span> <span class="nt">&quot;auxdata&quot;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">],</span><span class="nt">&quot;sigmas&quot;</span><span class="p">:[</span><span class="mf">0.017</span><span class="p">],</span> <span class="nt">&quot;bounds&quot;</span><span class="p">:[[</span><span class="mf">0.915</span><span class="p">,</span><span class="mf">1.085</span><span class="p">]],</span><span class="nt">&quot;inits&quot;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">]</span> <span class="p">},</span>
+            <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;mu_ttbar&quot;</span><span class="p">,</span> <span class="nt">&quot;bounds&quot;</span><span class="p">:[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span> <span class="p">},</span>
+            <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;rw_1CR&quot;</span><span class="p">,</span> <span class="nt">&quot;fixed&quot;</span><span class="p">:</span><span class="kc">true</span> <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of a measurement. This measurement, which scans over the parameter of interest <code class="docutils literal notranslate"><span class="pre">SignalCrossSection</span></code>, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named <code class="docutils literal notranslate"><span class="pre">mu_ttbar</span></code>, and specifying that the modifier <code class="docutils literal notranslate"><span class="pre">rw_1CR</span></code> is held constant (<code class="docutils literal notranslate"><span class="pre">fixed</span></code>).</p>
+</div>
+<div class="section" id="observations">
+<span id="ssec-observations"></span><h2>Observations<a class="headerlink" href="#observations" title="Permalink to this headline">¶</a></h2>
+<p>This is what we evaluate the hypothesis testing against, to determine the
+compatibility of signal+background hypothesis to the background-only
+hypothesis. This is specified as a list of objects, with each object structured
+as</p>
+<ul class="simple">
+<li><p><strong>name</strong>: the channel for which the observations are recorded</p></li>
+<li><p><strong>data</strong>: the bin-by-bin observations for the named channel</p></li>
+</ul>
+<p>An example is shown below:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;channel1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">110.0</span><span class="p">,</span> <span class="mf">120.0</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An example of an observation. This observation recorded for a 2-bin channel <code class="docutils literal notranslate"><span class="pre">channel1</span></code>, has values <code class="docutils literal notranslate"><span class="pre">110.0</span></code> and <code class="docutils literal notranslate"><span class="pre">120.0</span></code>.</p>
+</div>
+<div class="section" id="toy-example">
+<h2>Toy Example<a class="headerlink" href="#toy-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;singlechannel&quot;</span><span class="p">,</span>
+          <span class="nt">&quot;samples&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;signal&quot;</span><span class="p">,</span>
+              <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+              <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;normfactor&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">}</span> <span class="p">]</span>
+            <span class="p">},</span>
+            <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;background&quot;</span><span class="p">,</span>
+              <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">],</span>
+              <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;uncorr_bkguncrt&quot;</span><span class="p">,</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;shapesys&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">]}</span> <span class="p">]</span>
+            <span class="p">}</span>
+          <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;observations&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;singlechannel&quot;</span><span class="p">,</span> <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;measurements&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Measurement&quot;</span><span class="p">,</span> <span class="nt">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;poi&quot;</span><span class="p">:</span> <span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="nt">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[]}</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the above example, we demonstrate a simple measurement of a
+single two-bin channel with two samples: a signal sample and a background
+sample. The signal sample has an unconstrained normalisation factor
+<span class="math notranslate nohighlight">\(\mu\)</span>, while the background sample carries an uncorrelated shape
+systematic controlled by parameters <span class="math notranslate nohighlight">\(\gamma_1\)</span> and <span class="math notranslate nohighlight">\(\gamma_2\)</span>. The
+background uncertainty for the bins is 10% and 20% respectively.</p>
+</div>
+<div class="section" id="additional-material">
+<h2>Additional Material<a class="headerlink" href="#additional-material" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="footnotes">
+<h3>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h3>
+<dl class="footnote brackets">
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id4">1</a></span></dt>
+<dd><p>The name of a modifier specifies the parameter set it is controlled
+by. Modifiers with the same name share parameter sets.</p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id6">2</a></span></dt>
+<dd><p>In this context a parameter set corresponds to a named
+lower-dimensional subspace of the full parameters <span class="math notranslate nohighlight">\(\fullset\)</span>.
+In many cases these are one-dimensional subspaces, e.g. a specific
+interpolation parameter <span class="math notranslate nohighlight">\(\alpha\)</span> or the luminosity parameter
+<span class="math notranslate nohighlight">\(\lambda\)</span>. For multi-bin channels, however, e.g. all bin-wise
+nuisance parameters of the uncorrelated shape modifiers are grouped
+under a single name. Therefore in general a parameter set definition
+provides arrays of initial values, bounds, etc.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="bibliography">
+<h3>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h3>
+<p id="id9"><dl class="citation">
+<dt class="label" id="id18"><span class="brackets">likelihood-1</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Histfactory definitions schema. Accessed: 2019-06-20. URL: <a class="reference external" href="https://scikit-hep.org/pyhf/schemas/1.0.0/defs.json">https://scikit-hep.org/pyhf/schemas/1.0.0/defs.json</a>.</p>
+</dd>
+<dt class="label" id="id14"><span class="brackets">likelihood-2</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id5">2</a>)</span></dt>
+<dd><p>Kyle Cranmer, George Lewis, Lorenzo Moneta, Akira Shibata, and Wouter Verkerke. HistFactory: A tool for creating statistical models for use with RooFit and RooStats. Technical Report CERN-OPEN-2012-016, New York U., New York, Jan 2012. URL: <a class="reference external" href="https://cds.cern.ch/record/1456844">https://cds.cern.ch/record/1456844</a>.</p>
+</dd>
+</dl>
+</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="learn.html" class="btn btn-neutral float-right" title="Fundamentals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

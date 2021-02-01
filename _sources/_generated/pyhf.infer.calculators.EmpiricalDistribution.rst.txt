@@ -1,0 +1,30 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/calculators
+
+EmpiricalDistribution
+=====================
+
+.. currentmodule:: pyhf.infer.calculators
+
+.. autoclass:: EmpiricalDistribution
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: EmpiricalDistribution.__init__
+   
+   
+   .. automethod:: EmpiricalDistribution.expected_value
+   
+   
+   .. automethod:: EmpiricalDistribution.pvalue
+   
+   
+   

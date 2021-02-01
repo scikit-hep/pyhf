@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Introduction &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Likelihood Specification" href="likelihood.html" />
+    <link rel="prev" title="pure-python fitting/limit-setting/interval estimation HistFactory-style" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#histfactory">HistFactory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#declarative-formats">Declarative Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-material">Additional Material</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#footnotes">Footnotes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bibliography">Bibliography</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="introduction">
+<span id="sec-intro"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Measurements in High Energy Physics (HEP) rely on determining the
+compatibility of observed collision events with theoretical predictions.
+The relationship between them is often formalised in a statistical <em>model</em>
+<span class="math notranslate nohighlight">\(f(\bm{x}|\fullset)\)</span> describing the probability of data
+<span class="math notranslate nohighlight">\(\bm{x}\)</span> given model parameters <span class="math notranslate nohighlight">\(\fullset\)</span>. Given observed
+data, the <em>likelihood</em> <span class="math notranslate nohighlight">\(\mathcal{L}(\fullset)\)</span> then serves as the basis to test
+hypotheses on the parameters <span class="math notranslate nohighlight">\(\fullset\)</span>. For measurements based
+on binned data (<em>histograms</em>), the <span class="math notranslate nohighlight">\(\HiFa{}\)</span> family of statistical models has been widely used
+in both Standard Model measurements <span id="id1">[<a class="reference internal" href="#id15"><span>intro-4</span></a>]</span> as
+well as searches for new
+physics <span id="id2">[<a class="reference internal" href="#id17"><span>intro-5</span></a>]</span>. In this package, a
+declarative, plain-text format for describing <span class="math notranslate nohighlight">\(\HiFa{}\)</span>-based likelihoods is
+presented that is targeted for reinterpretation and long-term
+preservation in analysis data repositories such as
+HEPData <span id="id3">[<a class="reference internal" href="#id18"><span>intro-3</span></a>]</span>.</p>
+<div class="section" id="histfactory">
+<h2>HistFactory<a class="headerlink" href="#histfactory" title="Permalink to this headline">¶</a></h2>
+<p>Statistical models described using <span class="math notranslate nohighlight">\(\HiFa{}\)</span> <span id="id4">[<a class="reference internal" href="#id19"><span>intro-2</span></a>]</span>
+center around the simultaneous measurement of disjoint binned
+distributions (<em>channels</em>) observed as event counts <span class="math notranslate nohighlight">\(\channelcounts\)</span>. For
+each channel, the overall expected event rate <a class="footnote-reference brackets" href="#id10" id="id5">1</a> is the sum over a
+number of physics processes (<em>samples</em>). The sample rates may be subject to
+parametrised variations, both to express the effect of <em>free parameters</em>
+<span class="math notranslate nohighlight">\(\freeset\)</span> <a class="footnote-reference brackets" href="#id11" id="id6">2</a> and to account for systematic uncertainties as a
+function of <em>constrained parameters</em> <span class="math notranslate nohighlight">\(\constrset\)</span>. The degree to which the latter can cause
+a deviation of the expected event rates from the nominal rates is
+limited by <em>constraint terms</em>. In a frequentist framework these constraint terms can be
+viewed as <em>auxiliary measurements</em> with additional global observable data <span class="math notranslate nohighlight">\(\auxdata\)</span>, which
+paired with the channel data <span class="math notranslate nohighlight">\(\channelcounts\)</span> completes the
+observation <span class="math notranslate nohighlight">\(\bm{x} =
+(\channelcounts,\auxdata)\)</span>. In addition to the partition of the full
+parameter set into free and constrained parameters <span class="math notranslate nohighlight">\(\fullset =
+(\freeset,\constrset)\)</span>, a separate partition <span class="math notranslate nohighlight">\(\fullset =
+(\poiset,\nuisset)\)</span> will be useful in the context of hypothesis testing,
+where a subset of the parameters are declared <em>parameters of interest</em> <span class="math notranslate nohighlight">\(\poiset\)</span> and the
+remaining ones as <em>nuisance parameters</em> <span class="math notranslate nohighlight">\(\nuisset\)</span>.</p>
+<div class="math notranslate nohighlight" id="equation-eqn-parameters-partitions">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eqn-parameters-partitions" title="Permalink to this equation">¶</a></span>\[f(\bm{x}|\fullset) = f(\bm{x}|\overbrace{\freeset}^{\llap{\text{free}}},\underbrace{\constrset}_{\llap{\text{constrained}}}) = f(\bm{x}|\overbrace{\poiset}^{\rlap{\text{parameters of interest}}},\underbrace{\nuisset}_{\rlap{\text{nuisance parameters}}})\]</div>
+<p>Thus, the overall structure of a <span class="math notranslate nohighlight">\(\HiFa{}\)</span> probability model is a product of the
+analysis-specific model term describing the measurements of the channels
+and the analysis-independent set of constraint terms:</p>
+<div class="math notranslate nohighlight" id="equation-eqn-hifa-template">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eqn-hifa-template" title="Permalink to this equation">¶</a></span>\[\begin{split}f(\channelcounts, \auxdata \,|\,\freeset,\constrset) = \underbrace{\color{blue}{\prod_{c\in\mathrm{\,channels}} \prod_{b \in \mathrm{\,bins}_c}\textrm{Pois}\left(n_{cb} \,\middle|\, \nu_{cb}\left(\freeset,\constrset\right)\right)}}_{\substack{\text{Simultaneous measurement}\\%
+  \text{of multiple channels}}} \underbrace{\color{red}{\prod_{\singleconstr \in \constrset} c_{\singleconstr}(a_{\singleconstr} |\, \singleconstr)}}_{\substack{\text{constraint terms}\\%
+  \text{for }\unicode{x201C}\text{auxiliary measurements}\unicode{x201D}}},\end{split}\]</div>
+<p>where within a certain integrated luminosity we observe <span class="math notranslate nohighlight">\(n_{cb}\)</span>
+events given the expected rate of events
+<span class="math notranslate nohighlight">\(\nu_{cb}(\freeset,\constrset)\)</span> as a function of unconstrained
+parameters <span class="math notranslate nohighlight">\(\freeset\)</span> and constrained parameters
+<span class="math notranslate nohighlight">\(\constrset\)</span>. The latter has corresponding one-dimensional
+constraint terms
+<span class="math notranslate nohighlight">\(c_\singleconstr(a_\singleconstr|\,\singleconstr)\)</span> with auxiliary
+data <span class="math notranslate nohighlight">\(a_\singleconstr\)</span> constraining the parameter
+<span class="math notranslate nohighlight">\(\singleconstr\)</span>. The event rates <span class="math notranslate nohighlight">\(\nu_{cb}\)</span> are defined as</p>
+<div class="math notranslate nohighlight" id="equation-eqn-sample-rates">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eqn-sample-rates" title="Permalink to this equation">¶</a></span>\[\nu_{cb}\left(\fullset\right) = \sum_{s\in\mathrm{\,samples}} \nu_{scb}\left(\freeset,\constrset\right) = \sum_{s\in\mathrm{\,samples}}\underbrace{\left(\prod_{\kappa\in\,\bm{\kappa}} \kappa_{scb}\left(\freeset,\constrset\right)\right)}_{\text{multiplicative modifiers}}\, \Bigg(\nu_{scb}^0\left(\freeset, \constrset\right) + \underbrace{\sum_{\Delta\in\bm{\Delta}} \Delta_{scb}\left(\freeset,\constrset\right)}_{\text{additive modifiers}}\Bigg)\,.\]</div>
+<p>The total rates are the sum over sample rates <span class="math notranslate nohighlight">\(\nu_{csb}\)</span>, each
+determined from a <em>nominal rate</em> <span class="math notranslate nohighlight">\(\nu_{scb}^0\)</span> and a set of multiplicative and
+additive denoted <em>rate modifiers</em> <span class="math notranslate nohighlight">\(\bm{\kappa}(\fullset)\)</span> and
+<span class="math notranslate nohighlight">\(\bm{\Delta}(\fullset)\)</span>. These modifiers are functions of (usually
+a single) model parameters. Starting from constant nominal rates, one
+can derive the per-bin event rate modification by iterating over all
+sample rate modifications as shown in <a class="reference internal" href="#equation-eqn-sample-rates">(3)</a>.</p>
+<p>As summarised in <a class="reference internal" href="#tab-modifiers-and-constraints"><span class="std std-ref">Modifiers and Constraints</span></a>, rate modifications
+are defined in <span class="math notranslate nohighlight">\(\HiFa{}\)</span> for bin <span class="math notranslate nohighlight">\(b\)</span>, sample <span class="math notranslate nohighlight">\(s\)</span>, channel
+<span class="math notranslate nohighlight">\(c\)</span>.  Each modifier is represented by a parameter <span class="math notranslate nohighlight">\(\phi \in
+\{\gamma, \alpha, \lambda, \mu\}\)</span>.  By convention bin-wise parameters are
+denoted with <span class="math notranslate nohighlight">\(\gamma\)</span> and interpolation parameters with <span class="math notranslate nohighlight">\(\alpha\)</span>.
+The luminosity <span class="math notranslate nohighlight">\(\lambda\)</span> and scale factors <span class="math notranslate nohighlight">\(\mu\)</span> affect all bins
+equally.  For constrained modifiers, the implied constraint term is given as
+well as the necessary input data required to construct it.  <span class="math notranslate nohighlight">\(\sigma_b\)</span>
+corresponds to the relative uncertainty of the event rate, whereas
+<span class="math notranslate nohighlight">\(\delta_b\)</span> is the event rate uncertainty of the sample relative to the
+total event rate <span class="math notranslate nohighlight">\(\nu_b = \sum_s \nu^0_{sb}\)</span>.</p>
+<p>Modifiers implementing uncertainties are paired with
+a corresponding default constraint term on the parameter limiting the
+rate modification. The available modifiers may affect only the total
+number of expected events of a sample within a given channel, i.e. only
+change its normalisation, while holding the distribution of events
+across the bins of a channel, i.e. its “shape”, invariant.
+Alternatively, modifiers may change the sample shapes. Here <span class="math notranslate nohighlight">\(\HiFa{}\)</span> supports
+correlated an uncorrelated bin-by-bin shape modifications. In the
+former, a single nuisance parameter affects the expected sample rates
+within the bins of a given channel, while the latter introduces one
+nuisance parameter for each bin, each with their own constraint term.
+For the correlated shape and normalisation uncertainties, <span class="math notranslate nohighlight">\(\HiFa{}\)</span> makes use of
+interpolating functions, <span class="math notranslate nohighlight">\(f_p\)</span> and <span class="math notranslate nohighlight">\(g_p\)</span>, constructed from a
+small number of evaluations of the expected rate at fixed values of the
+parameter <span class="math notranslate nohighlight">\(\alpha\)</span> <a class="footnote-reference brackets" href="#id12" id="id7">3</a>. For the remaining modifiers, the
+parameter directly affects the rate.</p>
+<span id="tab-modifiers-and-constraints"></span><table class="docutils align-default" id="id24">
+<caption><span class="caption-text">Modifiers and Constraints</span><a class="headerlink" href="#id24" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 40%" />
+<col style="width: 37%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Description</p></th>
+<th class="head"><p>Modification</p></th>
+<th class="head"><p>Constraint Term <span class="math notranslate nohighlight">\(c_\singleconstr\)</span></p></th>
+<th class="head"><p>Input</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Uncorrelated Shape</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\gamma_b) = \gamma_b\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\prod_b \mathrm{Pois}\left(r_b = \sigma_b^{-2}\middle|\,\rho_b = \sigma_b^{-2}\gamma_b\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sigma_{b}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Correlated Shape</p></td>
+<td><p><span class="math notranslate nohighlight">\(\Delta_{scb}(\alpha) = f_p\left(\alpha\middle|\,\Delta_{scb,\alpha=-1},\Delta_{scb,\alpha = 1}\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\displaystyle\mathrm{Gaus}\left(a = 0\middle|\,\alpha,\sigma = 1\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\Delta_{scb,\alpha=\pm1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Normalisation Unc.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\alpha) = g_p\left(\alpha\middle|\,\kappa_{scb,\alpha=-1},\kappa_{scb,\alpha=1}\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\displaystyle\mathrm{Gaus}\left(a = 0\middle|\,\alpha,\sigma = 1\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb,\alpha=\pm1}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>MC Stat. Uncertainty</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\gamma_b) = \gamma_b\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\prod_b \mathrm{Gaus}\left(a_{\gamma_b} = 1\middle|\,\gamma_b,\delta_b\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\delta_b^2 = \sum_s\delta^2_{sb}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Luminosity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\lambda) = \lambda\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\displaystyle\mathrm{Gaus}\left(l = \lambda_0\middle|\,\lambda,\sigma_\lambda\right)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\lambda_0,\sigma_\lambda\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Normalisation</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\mu_b) = \mu_b\)</span></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Data-driven Shape</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{scb}(\gamma_b) = \gamma_b\)</span></p></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Given the likelihood <span class="math notranslate nohighlight">\(\mathcal{L}(\fullset)\)</span>, constructed from
+observed data in all channels and the implied auxiliary data, <em>measurements</em> in the
+form of point and interval estimates can be defined. The majority of the
+parameters are <em>nuisance parameters</em> — parameters that are not the main target of the
+measurement but are necessary to correctly model the data. A small
+subset of the unconstrained parameters may be declared as <em>parameters of interest</em> for which
+measurements hypothesis tests are performed, e.g. profile likelihood
+methods <span id="id8">[<a class="reference internal" href="#id20"><span>intro-1</span></a>]</span>. The <a class="reference internal" href="#tab-symbol-summary"><span class="std std-ref">Symbol Notation</span></a> table provides a summary of all the
+notation introduced in this documentation.</p>
+<span id="tab-symbol-summary"></span><table class="docutils align-default" id="id25">
+<caption><span class="caption-text">Symbol Notation</span><a class="headerlink" href="#id25" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(f(\bm{x} | \fullset)\)</span></p></td>
+<td><p>model</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mathcal{L}(\fullset)\)</span></p></td>
+<td><p>likelihood</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\bm{x} = \{\channelcounts, \auxdata\}\)</span></p></td>
+<td><p>full dataset (including auxiliary data)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\channelcounts\)</span></p></td>
+<td><p>channel data (or event counts)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\auxdata\)</span></p></td>
+<td><p>auxiliary data</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\nu(\fullset)\)</span></p></td>
+<td><p>calculated event rates</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\fullset = \{\freeset, \constrset\} = \{\poiset, \nuisset\}\)</span></p></td>
+<td><p>all parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\freeset\)</span></p></td>
+<td><p>free parameters</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\constrset\)</span></p></td>
+<td><p>constrained parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\poiset\)</span></p></td>
+<td><p>parameters of interest</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\nuisset\)</span></p></td>
+<td><p>nuisance parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\bm{\kappa}(\fullset)\)</span></p></td>
+<td><p>multiplicative rate modifier</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\bm{\Delta}(\fullset)\)</span></p></td>
+<td><p>additive rate modifier</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(c_\singleconstr(a_\singleconstr | \singleconstr)\)</span></p></td>
+<td><p>constraint term for constrained parameter <span class="math notranslate nohighlight">\(\singleconstr\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sigma_\singleconstr\)</span></p></td>
+<td><p>relative uncertainty in the constrained parameter</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="declarative-formats">
+<h2>Declarative Formats<a class="headerlink" href="#declarative-formats" title="Permalink to this headline">¶</a></h2>
+<p>While flexible enough to describe a wide range of LHC measurements, the
+design of the <span class="math notranslate nohighlight">\(\HiFa{}\)</span> specification is sufficiently simple to admit a <em>declarative format</em> that fully
+encodes the statistical model of the analysis. This format defines the
+channels, all associated samples, their parameterised rate modifiers and
+implied constraint terms as well as the measurements. Additionally, the
+format represents the mathematical model, leaving the implementation of
+the likelihood minimisation to be analysis-dependent and/or
+language-dependent. Originally XML was chosen as a specification
+language to define the structure of the model while introducing a
+dependence on <span class="math notranslate nohighlight">\(\Root{}\)</span> to encode the nominal rates and required input data of the
+constraint terms <span id="id9">[<a class="reference internal" href="#id19"><span>intro-2</span></a>]</span>. Using this
+specification, a model can be constructed and evaluated within the
+<span class="math notranslate nohighlight">\(\RooFit{}\)</span> framework.</p>
+<p>This package introduces an updated form of the specification based on
+the ubiquitous plain-text JSON format and its schema-language <em>JSON Schema</em>.
+Described in more detail in <a class="reference internal" href="likelihood.html#sec-likelihood"><span class="std std-ref">Likelihood Specification</span></a>, this schema fully specifies both structure
+and necessary constrained data in a single document and thus is
+implementation independent.</p>
+</div>
+<div class="section" id="additional-material">
+<h2>Additional Material<a class="headerlink" href="#additional-material" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="footnotes">
+<h3>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h3>
+<dl class="footnote brackets">
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id5">1</a></span></dt>
+<dd><p>Here rate refers to the number of events expected to be observed
+within a given data-taking interval defined through its integrated
+luminosity. It often appears as the input parameter to the Poisson
+distribution, hence the name “rate”.</p>
+</dd>
+<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id6">2</a></span></dt>
+<dd><p>These <em>free parameters</em> frequently include the of a given process, i.e. its cross-section
+normalised to a particular reference cross-section such as that expected
+from the Standard Model or a given BSM scenario.</p>
+</dd>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id7">3</a></span></dt>
+<dd><p>This is usually constructed from the nominal rate and measurements of the
+event rate at <span class="math notranslate nohighlight">\(\alpha=\pm1\)</span>, where the value of the modifier at
+<span class="math notranslate nohighlight">\(\alpha=\pm1\)</span> must be provided and the value at <span class="math notranslate nohighlight">\(\alpha=0\)</span>
+corresponds to the corresponding identity operation of the modifier, i.e.
+<span class="math notranslate nohighlight">\(f_{p}(\alpha=0) = 0\)</span> and <span class="math notranslate nohighlight">\(g_{p}(\alpha = 0)=1\)</span> for additive and
+multiplicative modifiers respectively. See Section 4.1
+in <span id="id13">[<a class="reference internal" href="#id19"><span>intro-2</span></a>]</span>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="bibliography">
+<h3>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h3>
+<p id="id14"><dl class="citation">
+<dt class="label" id="id20"><span class="brackets"><a class="fn-backref" href="#id8">intro-1</a></span></dt>
+<dd><p>Glen Cowan, Kyle Cranmer, Eilam Gross, and Ofer Vitells. Asymptotic formulae for likelihood-based tests of new physics. <em>Eur. Phys. J. C</em>, 71:1554, 2011. <a class="reference external" href="https://arxiv.org/abs/1007.1727">arXiv:1007.1727</a>, <a class="reference external" href="https://doi.org/10.1140/epjc/s10052-011-1554-0">doi:10.1140/epjc/s10052-011-1554-0</a>.</p>
+</dd>
+<dt class="label" id="id19"><span class="brackets">intro-2</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id9">2</a>,<a href="#id13">3</a>)</span></dt>
+<dd><p>Kyle Cranmer, George Lewis, Lorenzo Moneta, Akira Shibata, and Wouter Verkerke. HistFactory: A tool for creating statistical models for use with RooFit and RooStats. Technical Report CERN-OPEN-2012-016, New York U., New York, Jan 2012. URL: <a class="reference external" href="https://cds.cern.ch/record/1456844">https://cds.cern.ch/record/1456844</a>.</p>
+</dd>
+<dt class="label" id="id18"><span class="brackets"><a class="fn-backref" href="#id3">intro-3</a></span></dt>
+<dd><p>Eamonn Maguire, Lukas Heinrich, and Graeme Watt. HEPData: a repository for high energy physics data. <em>J. Phys. Conf. Ser.</em>, 898(10):102006, 2017. <a class="reference external" href="https://arxiv.org/abs/1704.05473">arXiv:1704.05473</a>, <a class="reference external" href="https://doi.org/10.1088/1742-6596/898/10/102006">doi:10.1088/1742-6596/898/10/102006</a>.</p>
+</dd>
+<dt class="label" id="id15"><span class="brackets"><a class="fn-backref" href="#id1">intro-4</a></span></dt>
+<dd><p>ATLAS Collaboration. Measurements of Higgs boson production and couplings in diboson final states with the ATLAS detector at the LHC. <em>Phys. Lett. B</em>, 726:88, 2013. <a class="reference external" href="https://arxiv.org/abs/1307.1427">arXiv:1307.1427</a>, <a class="reference external" href="https://doi.org/10.1016/j.physletb.2014.05.011">doi:10.1016/j.physletb.2014.05.011</a>.</p>
+</dd>
+<dt class="label" id="id17"><span class="brackets"><a class="fn-backref" href="#id2">intro-5</a></span></dt>
+<dd><p>ATLAS Collaboration. Search for supersymmetry in final states with missing transverse momentum and multiple \(b\)-jets in proton–proton collisions at \(\sqrt s = 13\) \(\TeV \) with the ATLAS detector. ATLAS-CONF-2018-041, 2018. URL: <a class="reference external" href="https://cds.cern.ch/record/2632347">https://cds.cern.ch/record/2632347</a>.</p>
+</dd>
+</dl>
+</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="likelihood.html" class="btn btn-neutral float-right" title="Likelihood Specification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="pure-python fitting/limit-setting/interval estimation HistFactory-style" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+pyhf.readxml.parse
+==================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: parse

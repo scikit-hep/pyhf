@@ -1,0 +1,1048 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.infer.calculators &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyhf.html">pyhf</a> &raquo;</li>
+        
+          <li><a href="../infer.html">pyhf.infer</a> &raquo;</li>
+        
+      <li>pyhf.infer.calculators</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.infer.calculators</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Calculators for Hypothesis Testing.</span>
+
+<span class="sd">The role of the calculators is to compute test statistic and</span>
+<span class="sd">provide distributions of said test statistic under various</span>
+<span class="sd">hypotheses.</span>
+
+<span class="sd">Using the calculators hypothesis tests can then be performed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.mle</span> <span class="kn">import</span> <span class="n">fixed_poi_fit</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">get_backend</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="generate_asimov_data"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.generate_asimov_data.html#pyhf.infer.calculators.generate_asimov_data">[docs]</a><span class="k">def</span> <span class="nf">generate_asimov_data</span><span class="p">(</span><span class="n">asimov_mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">        &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">        &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)</span>
+<span class="sd">        array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asimov_mu (:obj:`float`): The value for the parameter of interest to be used.</span>
+<span class="sd">        data (:obj:`tensor`): The observed data.</span>
+<span class="sd">        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.</span>
+<span class="sd">        init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.</span>
+<span class="sd">        par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.</span>
+<span class="sd">        fixed_params (:obj:`tensor`): Parameters to be held constant in the fit.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tensor: The Asimov dataset.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bestfit_nuisance_asimov</span> <span class="o">=</span> <span class="n">fixed_poi_fit</span><span class="p">(</span>
+        <span class="n">asimov_mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">par_bounds</span><span class="p">,</span> <span class="n">fixed_params</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pdf</span><span class="o">.</span><span class="n">expected_data</span><span class="p">(</span><span class="n">bestfit_nuisance_asimov</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsymptoticTestStatDistribution"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution">[docs]</a><span class="k">class</span> <span class="nc">AsymptoticTestStatDistribution</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The distribution the test statistic in the asymptotic case.</span>
+
+<span class="sd">    Note: These distributions are in :math:`-\hat{\mu}/\sigma` space.</span>
+<span class="sd">    In the ROOT implementation the same sigma is assumed for both hypotheses</span>
+<span class="sd">    and :math:`p`-values etc are computed in that space.</span>
+<span class="sd">    This assumption is necessarily valid, but we keep this for compatibility reasons.</span>
+
+<span class="sd">    In the :math:`-\hat{\mu}/\sigma` space, the test statistic (i.e. :math:`\hat{\mu}/\sigma`) is</span>
+<span class="sd">    normally distributed with unit variance and its mean at</span>
+<span class="sd">    the :math:`-\mu&#39;`, where :math:`\mu&#39;` is the true poi value of the hypothesis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AsymptoticTestStatDistribution.__init__"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asymptotic test statistic distribution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            shift (:obj:`float`): The displacement of the test statistic distribution.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.infer.calculators.AsymptoticTestStatDistribution: The asymptotic distribution of test statistic.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">shift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="AsymptoticTestStatDistribution.cdf"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the value of the cumulative distribution function for a given value of the test statistic.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)</span>
+<span class="sd">            &gt;&gt;&gt; bkg_dist.pvalue(0)</span>
+<span class="sd">            0.5</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (:obj:`float`): The test statistic value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The integrated probability to observe a test statistic less than or equal to the observed ``value``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_cdf</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AsymptoticTestStatDistribution.pvalue"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.pvalue">[docs]</a>    <span class="k">def</span> <span class="nf">pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The :math:`p`-value for a given value of the test statistic corresponding</span>
+<span class="sd">        to signal strength :math:`\mu` and Asimov strength :math:`\mu&#39;` as</span>
+<span class="sd">        defined in Equations (59) and (57) of :xref:`arXiv:1007.1727`</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            p_{\mu} = 1-F\left(q_{\mu}\middle|\mu&#39;\right) = 1- \Phi\left(\sqrt{q_{\mu}} - \frac{\left(\mu-\mu&#39;\right)}{\sigma}\right)</span>
+
+<span class="sd">        with Equation (29)</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \frac{(\mu-\mu&#39;)}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}</span>
+
+<span class="sd">        given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (:obj:`float`): The test statistic value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The integrated probability to observe a value at least as large as the observed one.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="c1"># computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability</span>
+        <span class="k">return</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_cdf</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AsymptoticTestStatDistribution.expected_value"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticTestStatDistribution.html#pyhf.infer.calculators.AsymptoticTestStatDistribution.expected_value">[docs]</a>    <span class="k">def</span> <span class="nf">expected_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the expected value of the test statistic.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)</span>
+<span class="sd">            &gt;&gt;&gt; n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])</span>
+<span class="sd">            &gt;&gt;&gt; bkg_dist.expected_value(n_sigma)</span>
+<span class="sd">            array([-2., -1.,  0.,  1.,  2.])</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The expected value of the test statistic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">+</span> <span class="n">nsigma</span></div></div>
+
+
+<div class="viewcode-block" id="AsymptoticCalculator"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator">[docs]</a><span class="k">class</span> <span class="nc">AsymptoticCalculator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The Asymptotic Calculator.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AsymptoticCalculator.__init__"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="p">,</span>
+        <span class="n">init_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">par_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fixed_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asymptotic Calculator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:obj:`tensor`): The observed data.</span>
+<span class="sd">            pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.</span>
+<span class="sd">            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.</span>
+<span class="sd">            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.</span>
+<span class="sd">            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization</span>
+<span class="sd">            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.</span>
+<span class="sd">            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative</span>
+<span class="sd">             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald</span>
+<span class="sd">             approximation in Equation (62) of :xref:`arXiv:1007.1727`</span>
+<span class="sd">             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).</span>
+<span class="sd">             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">pdf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span> <span class="o">=</span> <span class="n">init_pars</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span> <span class="o">=</span> <span class="n">par_bounds</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_bounds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span> <span class="o">=</span> <span class="n">fixed_params</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_fixed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span> <span class="o">=</span> <span class="n">test_stat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="AsymptoticCalculator.distributions"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.distributions">[docs]</a>    <span class="k">def</span> <span class="nf">distributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poi_test</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Probability distributions of the test statistic, as defined in</span>
+<span class="sd">        :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,</span>
+<span class="sd">        under the signal + background and background-only hypotheses.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat=&quot;qtilde&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; _ = asymptotic_calculator.teststatistic(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)</span>
+<span class="sd">            (0.002192624107163899, 0.15865525393145707)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (~pyhf.infer.calculators.AsymptoticTestStatDistribution): The distributions under the hypotheses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;need to call .teststatistic(poi_test) first&#39;</span><span class="p">)</span>
+        <span class="n">sb_dist</span> <span class="o">=</span> <span class="n">AsymptoticTestStatDistribution</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span><span class="p">)</span>
+        <span class="n">b_dist</span> <span class="o">=</span> <span class="n">AsymptoticTestStatDistribution</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sb_dist</span><span class="p">,</span> <span class="n">b_dist</span></div>
+
+<div class="viewcode-block" id="AsymptoticCalculator.teststatistic"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.teststatistic">[docs]</a>    <span class="k">def</span> <span class="nf">teststatistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poi_test</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the test statistic for the observed data under the studied model.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat=&quot;qtilde&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; asymptotic_calculator.teststatistic(mu_test)</span>
+<span class="sd">            0.14043184405388176</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The value of the test statistic.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+
+        <span class="n">teststat_func</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_test_stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span><span class="p">)</span>
+
+        <span class="n">qmu_v</span> <span class="o">=</span> <span class="n">teststat_func</span><span class="p">(</span>
+            <span class="n">poi_test</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sqrtqmu_v</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qmu_v</span><span class="p">)</span>
+
+        <span class="n">asimov_mu</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span> <span class="o">==</span> <span class="s1">&#39;q0&#39;</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="n">asimov_data</span> <span class="o">=</span> <span class="n">generate_asimov_data</span><span class="p">(</span>
+            <span class="n">asimov_mu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">qmuA_v</span> <span class="o">=</span> <span class="n">teststat_func</span><span class="p">(</span>
+            <span class="n">poi_test</span><span class="p">,</span>
+            <span class="n">asimov_data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qmuA_v</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;q0&quot;</span><span class="p">]:</span>  <span class="c1"># qmu or q0</span>
+            <span class="n">teststat</span> <span class="o">=</span> <span class="n">sqrtqmu_v</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># qtilde</span>
+
+            <span class="k">def</span> <span class="nf">_true_case</span><span class="p">():</span>
+                <span class="n">teststat</span> <span class="o">=</span> <span class="n">sqrtqmu_v</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span>
+                <span class="k">return</span> <span class="n">teststat</span>
+
+            <span class="k">def</span> <span class="nf">_false_case</span><span class="p">():</span>
+                <span class="n">qmu</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sqrtqmu_v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">qmu_A</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">teststat</span> <span class="o">=</span> <span class="p">(</span><span class="n">qmu</span> <span class="o">-</span> <span class="n">qmu_A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">teststat</span>
+
+            <span class="n">teststat</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">conditional</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">sqrtqmu_v</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqrtqmuA_v</span><span class="p">),</span> <span class="n">_true_case</span><span class="p">,</span> <span class="n">_false_case</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">teststat</span></div>
+
+<div class="viewcode-block" id="AsymptoticCalculator.pvalues"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.pvalues">[docs]</a>    <span class="k">def</span> <span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teststat</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the :math:`p`-values for the observed test statistic under the</span>
+<span class="sd">        signal + background and background-only model hypotheses.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(</span>
+<span class="sd">            ...     data, model, test_stat=&quot;qtilde&quot;</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; q_tilde = asymptotic_calculator.teststatistic(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb, CLb, CLs</span>
+<span class="sd">            (0.023325019427864607, 0.4441593996111411, 0.05251497423736956)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            teststat (:obj:`tensor`): The test statistic.</span>
+<span class="sd">            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):</span>
+<span class="sd">              The distribution for the signal + background hypothesis.</span>
+<span class="sd">            bkg_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):</span>
+<span class="sd">              The distribution for the background-only hypothesis.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (:obj:`float`): The :math:`p`-values for the test statistic</span>
+<span class="sd">            corresponding to the :math:`\mathrm{CL}_{s+b}`,</span>
+<span class="sd">            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">CLsb</span> <span class="o">=</span> <span class="n">sig_plus_bkg_distribution</span><span class="o">.</span><span class="n">pvalue</span><span class="p">(</span><span class="n">teststat</span><span class="p">)</span>
+        <span class="n">CLb</span> <span class="o">=</span> <span class="n">bkg_only_distribution</span><span class="o">.</span><span class="n">pvalue</span><span class="p">(</span><span class="n">teststat</span><span class="p">)</span>
+        <span class="n">CLs</span> <span class="o">=</span> <span class="n">CLsb</span> <span class="o">/</span> <span class="n">CLb</span>
+        <span class="k">return</span> <span class="n">CLsb</span><span class="p">,</span> <span class="n">CLb</span><span class="p">,</span> <span class="n">CLs</span></div>
+
+<div class="viewcode-block" id="AsymptoticCalculator.expected_pvalues"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.AsymptoticCalculator.html#pyhf.infer.calculators.AsymptoticCalculator.expected_pvalues">[docs]</a>    <span class="k">def</span> <span class="nf">expected_pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the</span>
+<span class="sd">        median significance of variations of the signal strength from the</span>
+<span class="sd">        background only hypothesis :math:`\left(\mu=0\right)` at</span>
+<span class="sd">        :math:`(-2,-1,0,1,2)\sigma`.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(</span>
+<span class="sd">            ...     data, model, test_stat=&quot;qtilde&quot;</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; _ = asymptotic_calculator.teststatistic(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)</span>
+<span class="sd">            &gt;&gt;&gt; CLs_exp_band</span>
+<span class="sd">            [0.0026062609501074576, 0.01382005356161206, 0.06445320535890459, 0.23525643861460702, 0.573036205919389]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):</span>
+<span class="sd">              The distribution for the signal + background hypothesis.</span>
+<span class="sd">            bkg_only_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):</span>
+<span class="sd">              The distribution for the background-only hypothesis.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (:obj:`float`): The :math:`p`-values for the test statistic</span>
+<span class="sd">            corresponding to the :math:`\mathrm{CL}_{s+b}`,</span>
+<span class="sd">            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calling pvalues is easier then repeating the CLs calculation here</span>
+        <span class="n">tb</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="nb">list</span><span class="p">,</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="o">*</span><span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">(</span>
+                            <span class="n">test_stat</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span>
+                        <span class="p">)</span>
+                        <span class="k">for</span> <span class="n">test_stat</span> <span class="ow">in</span> <span class="p">[</span>
+                            <span class="n">bkg_only_distribution</span><span class="o">.</span><span class="n">expected_value</span><span class="p">(</span><span class="n">n_sigma</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">n_sigma</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="p">]</span>
+                    <span class="p">]</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="EmpiricalDistribution"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution">[docs]</a><span class="k">class</span> <span class="nc">EmpiricalDistribution</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The empirical distribution of the test statistic.</span>
+
+<span class="sd">    Unlike :py:class:`~pyhf.infer.calculators.AsymptoticTestStatDistribution` where the</span>
+<span class="sd">    distribution for the test statistic is normally distributed, the</span>
+<span class="sd">    :math:`p`-values etc are computed from the sampled distribution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EmpiricalDistribution.__init__"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Empirical distribution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            samples (:obj:`tensor`): The test statistics sampled from the distribution.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.infer.calculators.EmpiricalDistribution: The empirical distribution of the test statistic.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EmpiricalDistribution.pvalue"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.pvalue">[docs]</a>    <span class="k">def</span> <span class="nf">pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the :math:`p`-value for a given value of the test statistic.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; mean = pyhf.tensorlib.astensor([5])</span>
+<span class="sd">            &gt;&gt;&gt; std = pyhf.tensorlib.astensor([1])</span>
+<span class="sd">            &gt;&gt;&gt; normal = pyhf.probability.Normal(mean, std)</span>
+<span class="sd">            &gt;&gt;&gt; samples = normal.sample((100,))</span>
+<span class="sd">            &gt;&gt;&gt; dist = pyhf.infer.calculators.EmpiricalDistribution(samples)</span>
+<span class="sd">            &gt;&gt;&gt; dist.pvalue(7)</span>
+<span class="sd">            0.02</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">            &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">            &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))</span>
+<span class="sd">            &gt;&gt;&gt; samples = pdf.sample((100,))</span>
+<span class="sd">            &gt;&gt;&gt; test_stat_dist = pyhf.infer.calculators.EmpiricalDistribution(</span>
+<span class="sd">            ...     pyhf.tensorlib.astensor(</span>
+<span class="sd">            ...         [pyhf.infer.test_statistics.qmu_tilde(mu_test, sample, model, init_pars, par_bounds, fixed_params) for sample in samples]</span>
+<span class="sd">            ...     )</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; test_stat_dist.pvalue(test_stat_dist.samples[9])</span>
+<span class="sd">            0.3</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (:obj:`float`): The test statistic value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The integrated probability to observe a value at least as large as the observed one.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">tensorlib</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">tensorlib</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">,</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">/</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="EmpiricalDistribution.expected_value"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.EmpiricalDistribution.html#pyhf.infer.calculators.EmpiricalDistribution.expected_value">[docs]</a>    <span class="k">def</span> <span class="nf">expected_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the expected value of the test statistic.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; mean = pyhf.tensorlib.astensor([5])</span>
+<span class="sd">            &gt;&gt;&gt; std = pyhf.tensorlib.astensor([1])</span>
+<span class="sd">            &gt;&gt;&gt; normal = pyhf.probability.Normal(mean, std)</span>
+<span class="sd">            &gt;&gt;&gt; samples = normal.sample((100,))</span>
+<span class="sd">            &gt;&gt;&gt; dist = pyhf.infer.calculators.EmpiricalDistribution(samples)</span>
+<span class="sd">            &gt;&gt;&gt; dist.expected_value(nsigma=1)</span>
+<span class="sd">            6.15094381209505</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; init_pars = model.config.suggested_init()</span>
+<span class="sd">            &gt;&gt;&gt; par_bounds = model.config.suggested_bounds()</span>
+<span class="sd">            &gt;&gt;&gt; fixed_params = model.config.suggested_fixed()</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; pdf = model.make_pdf(pyhf.tensorlib.astensor(init_pars))</span>
+<span class="sd">            &gt;&gt;&gt; samples = pdf.sample((100,))</span>
+<span class="sd">            &gt;&gt;&gt; dist = pyhf.infer.calculators.EmpiricalDistribution(</span>
+<span class="sd">            ...     pyhf.tensorlib.astensor(</span>
+<span class="sd">            ...         [</span>
+<span class="sd">            ...             pyhf.infer.test_statistics.qmu_tilde(</span>
+<span class="sd">            ...                 mu_test, sample, model, init_pars, par_bounds, fixed_params</span>
+<span class="sd">            ...             )</span>
+<span class="sd">            ...             for sample in samples</span>
+<span class="sd">            ...         ]</span>
+<span class="sd">            ...     )</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])</span>
+<span class="sd">            &gt;&gt;&gt; dist.expected_value(n_sigma)</span>
+<span class="sd">            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01,</span>
+<span class="sd">                   2.99592664e+00])</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The expected value of the test statistic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="c1"># TODO: tensorlib.percentile function</span>
+        <span class="c1"># c.f. https://github.com/scikit-hep/pyhf/pull/817</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">,</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_cdf</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ToyCalculator"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator">[docs]</a><span class="k">class</span> <span class="nc">ToyCalculator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The Toy-based Calculator.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ToyCalculator.__init__"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">pdf</span><span class="p">,</span>
+        <span class="n">init_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">par_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fixed_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span>
+        <span class="n">ntoys</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+        <span class="n">track_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toy-based Calculator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (:obj:`tensor`): The observed data.</span>
+<span class="sd">            pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.</span>
+<span class="sd">            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.</span>
+<span class="sd">            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.</span>
+<span class="sd">            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization</span>
+<span class="sd">            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.</span>
+<span class="sd">            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative</span>
+<span class="sd">             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald</span>
+<span class="sd">             approximation in Equation (62) of :xref:`arXiv:1007.1727`</span>
+<span class="sd">             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).</span>
+<span class="sd">             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.</span>
+<span class="sd">            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)</span>
+<span class="sd">            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ntoys</span> <span class="o">=</span> <span class="n">ntoys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">pdf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span> <span class="o">=</span> <span class="n">init_pars</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span> <span class="o">=</span> <span class="n">par_bounds</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_bounds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span> <span class="o">=</span> <span class="n">fixed_params</span> <span class="ow">or</span> <span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_fixed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span> <span class="o">=</span> <span class="n">test_stat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_progress</span> <span class="o">=</span> <span class="n">track_progress</span></div>
+
+<div class="viewcode-block" id="ToyCalculator.distributions"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.distributions">[docs]</a>    <span class="k">def</span> <span class="nf">distributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poi_test</span><span class="p">,</span> <span class="n">track_progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; toy_calculator = pyhf.infer.calculators.ToyCalculator(</span>
+<span class="sd">            ...     data, model, ntoys=100, track_progress=False</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)</span>
+<span class="sd">            (0.14, 0.76)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.</span>
+<span class="sd">            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="n">sample_shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntoys</span><span class="p">,)</span>
+
+        <span class="n">signal_pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">()</span>
+        <span class="n">signal_pars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">poi_test</span>
+        <span class="n">signal_pdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">make_pdf</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">signal_pars</span><span class="p">))</span>
+        <span class="n">signal_sample</span> <span class="o">=</span> <span class="n">signal_pdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">sample_shape</span><span class="p">)</span>
+
+        <span class="n">bkg_pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">suggested_init</span><span class="p">()</span>
+        <span class="n">bkg_pars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">poi_index</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span> <span class="o">==</span> <span class="s1">&#39;q0&#39;</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">bkg_pdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">make_pdf</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">bkg_pars</span><span class="p">))</span>
+        <span class="n">bkg_sample</span> <span class="o">=</span> <span class="n">bkg_pdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">sample_shape</span><span class="p">)</span>
+
+        <span class="n">teststat_func</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_test_stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span><span class="p">)</span>
+
+        <span class="n">tqdm_options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ntoys</span><span class="p">,</span>
+            <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span>
+                <span class="n">track_progress</span> <span class="k">if</span> <span class="n">track_progress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_progress</span>
+            <span class="p">),</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;toy&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">signal_teststat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">signal_sample</span><span class="p">,</span> <span class="o">**</span><span class="n">tqdm_options</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Signal-like&#39;</span><span class="p">):</span>
+            <span class="n">signal_teststat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">teststat_func</span><span class="p">(</span>
+                    <span class="n">poi_test</span><span class="p">,</span>
+                    <span class="n">sample</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">bkg_teststat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">bkg_sample</span><span class="p">,</span> <span class="o">**</span><span class="n">tqdm_options</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Background-like&#39;</span><span class="p">):</span>
+            <span class="n">bkg_teststat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">teststat_func</span><span class="p">(</span>
+                    <span class="n">poi_test</span><span class="p">,</span>
+                    <span class="n">sample</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">s_plus_b</span> <span class="o">=</span> <span class="n">EmpiricalDistribution</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">signal_teststat</span><span class="p">))</span>
+        <span class="n">b_only</span> <span class="o">=</span> <span class="n">EmpiricalDistribution</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">bkg_teststat</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">s_plus_b</span><span class="p">,</span> <span class="n">b_only</span></div>
+
+<div class="viewcode-block" id="ToyCalculator.pvalues"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.pvalues">[docs]</a>    <span class="k">def</span> <span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teststat</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the :math:`p`-values for the observed test statistic under the</span>
+<span class="sd">        signal + background and background-only model hypotheses.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; toy_calculator = pyhf.infer.calculators.ToyCalculator(</span>
+<span class="sd">            ...     data, model, ntoys=100, track_progress=False</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; q_tilde = toy_calculator.teststatistic(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb, CLb, CLs</span>
+<span class="sd">            (0.01, 0.41, 0.024390243902439025)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            teststat (:obj:`tensor`): The test statistic.</span>
+<span class="sd">            sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):</span>
+<span class="sd">              The distribution for the signal + background hypothesis.</span>
+<span class="sd">            bkg_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):</span>
+<span class="sd">              The distribution for the background-only hypothesis.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (:obj:`float`): The :math:`p`-values for the test statistic</span>
+<span class="sd">            corresponding to the :math:`\mathrm{CL}_{s+b}`,</span>
+<span class="sd">            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">CLsb</span> <span class="o">=</span> <span class="n">sig_plus_bkg_distribution</span><span class="o">.</span><span class="n">pvalue</span><span class="p">(</span><span class="n">teststat</span><span class="p">)</span>
+        <span class="n">CLb</span> <span class="o">=</span> <span class="n">bkg_only_distribution</span><span class="o">.</span><span class="n">pvalue</span><span class="p">(</span><span class="n">teststat</span><span class="p">)</span>
+        <span class="n">CLs</span> <span class="o">=</span> <span class="n">CLsb</span> <span class="o">/</span> <span class="n">CLb</span>
+        <span class="k">return</span> <span class="n">CLsb</span><span class="p">,</span> <span class="n">CLb</span><span class="p">,</span> <span class="n">CLs</span></div>
+
+<div class="viewcode-block" id="ToyCalculator.expected_pvalues"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.expected_pvalues">[docs]</a>    <span class="k">def</span> <span class="nf">expected_pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span> <span class="n">bkg_only_distribution</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the :math:`\mathrm{CL}_{s}` values corresponding to the</span>
+<span class="sd">        median significance of variations of the signal strength from the</span>
+<span class="sd">        background only hypothesis :math:`\left(\mu=0\right)` at</span>
+<span class="sd">        :math:`(-2,-1,0,1,2)\sigma`.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; toy_calculator = pyhf.infer.calculators.ToyCalculator(</span>
+<span class="sd">            ...     data, model, ntoys=100, track_progress=False</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)</span>
+<span class="sd">            &gt;&gt;&gt; CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)</span>
+<span class="sd">            &gt;&gt;&gt; CLs_exp_band</span>
+<span class="sd">            [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):</span>
+<span class="sd">              The distribution for the signal + background hypothesis.</span>
+<span class="sd">            bkg_only_distribution (~pyhf.infer.calculators.EmpiricalDistribution):</span>
+<span class="sd">              The distribution for the background-only hypothesis.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (:obj:`float`): The :math:`p`-values for the test statistic</span>
+<span class="sd">            corresponding to the :math:`\mathrm{CL}_{s+b}`,</span>
+<span class="sd">            :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tb</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="n">pvalues</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">(</span>
+                    <span class="n">tb</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">test_stat</span><span class="p">),</span>
+                    <span class="n">sig_plus_bkg_distribution</span><span class="p">,</span>
+                    <span class="n">bkg_only_distribution</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">test_stat</span> <span class="ow">in</span> <span class="n">bkg_only_distribution</span><span class="o">.</span><span class="n">samples</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO: Add percentile to tensorlib</span>
+        <span class="c1"># c.f. Issue #815, PR #817</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="c1"># percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution</span>
+        <span class="n">normal_percentiles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.27501319</span><span class="p">,</span> <span class="mf">15.86552539</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">84.13447461</span><span class="p">,</span> <span class="mf">97.72498681</span><span class="p">]</span>
+        <span class="n">pvalues_exp_band</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
+            <span class="n">tb</span><span class="o">.</span><span class="n">tolist</span><span class="p">(</span><span class="n">pvalues</span><span class="p">),</span>
+            <span class="n">normal_percentiles</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pvalues_exp_band</span></div>
+
+<div class="viewcode-block" id="ToyCalculator.teststatistic"><a class="viewcode-back" href="../../../_generated/pyhf.infer.calculators.ToyCalculator.html#pyhf.infer.calculators.ToyCalculator.teststatistic">[docs]</a>    <span class="k">def</span> <span class="nf">teststatistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poi_test</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the test statistic for the observed data under the studied model.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; import pyhf</span>
+<span class="sd">            &gt;&gt;&gt; import numpy.random as random</span>
+<span class="sd">            &gt;&gt;&gt; random.seed(0)</span>
+<span class="sd">            &gt;&gt;&gt; pyhf.set_backend(&quot;numpy&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; model = pyhf.simplemodels.hepdata_like(</span>
+<span class="sd">            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; observations = [51, 48]</span>
+<span class="sd">            &gt;&gt;&gt; data = observations + model.config.auxdata</span>
+<span class="sd">            &gt;&gt;&gt; mu_test = 1.0</span>
+<span class="sd">            &gt;&gt;&gt; toy_calculator = pyhf.infer.calculators.ToyCalculator(</span>
+<span class="sd">            ...     data, model, ntoys=100, track_progress=False</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; toy_calculator.teststatistic(mu_test)</span>
+<span class="sd">            array(3.93824492)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Float: The value of the test statistic.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">teststat_func</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_test_stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_stat</span><span class="p">)</span>
+        <span class="n">teststat</span> <span class="o">=</span> <span class="n">teststat_func</span><span class="p">(</span>
+            <span class="n">poi_test</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_pars</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">par_bounds</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fixed_params</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">teststat</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

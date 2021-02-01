@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/mle
+
+twice\_nll
+==========
+
+.. currentmodule:: pyhf.infer.mle
+
+.. autoclass:: twice_nll
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

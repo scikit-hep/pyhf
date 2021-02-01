@@ -1,0 +1,38 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/patchset
+
+Patch
+=====
+
+.. currentmodule:: pyhf.patchset
+
+.. autoclass:: Patch
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: Patch.metadata
+   .. autoattribute:: Patch.name
+   .. autoattribute:: Patch.operations
+   .. autoattribute:: Patch.values
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: Patch.__init__
+   
+   
+   
+   
+   
+   
+   
+   
+   

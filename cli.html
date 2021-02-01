@@ -1,0 +1,1009 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Command Line API &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python API" href="api.html" />
+    <link rel="prev" title="Translations" href="babel.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyhf">pyhf</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-cls">cls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-combine">combine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-completions">completions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-contrib">contrib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyhf-contrib-download">download</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-digest">digest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-fit">fit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-inspect">inspect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-json2xml">json2xml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-patchset">patchset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyhf-patchset-apply">apply</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyhf-patchset-extract">extract</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyhf-patchset-verify">verify</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-prune">prune</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-rename">rename</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-sort">sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyhf-xml2json">xml2json</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Command Line API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="command-line-api">
+<h1>Command Line API<a class="headerlink" href="#command-line-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pyhf">
+<h2>pyhf<a class="headerlink" href="#pyhf" title="Permalink to this headline">¶</a></h2>
+<p>Top-level CLI entrypoint.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the version and exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cite">
+<code class="sig-name descname">--cite</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--citation</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-cite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the bibtex citation for this software</p>
+</dd></dl>
+
+<div class="section" id="pyhf-cls">
+<h3>cls<a class="headerlink" href="#pyhf-cls" title="Permalink to this headline">¶</a></h3>
+<p>Compute CLs value(s) for a given pyhf workspace.</p>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://git.io/JJYDE <span class="p">|</span> pyhf cls
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;CLs_exp&quot;</span>: <span class="o">[</span>
+        <span class="m">0</span>.07807427911686156,
+        <span class="m">0</span>.17472571775474618,
+        <span class="m">0</span>.35998495263681285,
+        <span class="m">0</span>.6343568235898907,
+        <span class="m">0</span>.8809947004472013
+    <span class="o">]</span>,
+    <span class="s2">&quot;CLs_obs&quot;</span>: <span class="m">0</span>.3599845631401915
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf cls <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-measurement">
+<code class="sig-name descname">--measurement</code><code class="sig-prename descclassname"> &lt;measurement&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--patch</code><code class="sig-prename descclassname"> &lt;patch&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-test-poi">
+<code class="sig-name descname">--test-poi</code><code class="sig-prename descclassname"> &lt;test_poi&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-test-poi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-test-stat">
+<code class="sig-name descname">--test-stat</code><code class="sig-prename descclassname"> &lt;test_stat&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-test-stat" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>q|qtilde</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-calctype">
+<code class="sig-name descname">--calctype</code><code class="sig-prename descclassname"> &lt;calctype&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-calctype" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>asymptotics|toybased</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-backend">
+<code class="sig-name descname">--backend</code><code class="sig-prename descclassname"> &lt;backend&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tensor backend used for the calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>numpy|pytorch|tensorflow|jax|np|torch|tf</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-optimizer">
+<code class="sig-name descname">--optimizer</code><code class="sig-prename descclassname"> &lt;optimizer&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The optimizer used for the calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>scipy|minuit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-optconf">
+<code class="sig-name descname">--optconf</code><code class="sig-prename descclassname"> &lt;optconf&gt;</code><a class="headerlink" href="#cmdoption-pyhf-cls-optconf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-cls-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-cls-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-combine">
+<h3>combine<a class="headerlink" href="#pyhf-combine" title="Permalink to this headline">¶</a></h3>
+<p>Combine two workspaces into a single workspace.</p>
+<p>See <a class="reference internal" href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.combine" title="pyhf.workspace.Workspace.combine"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyhf.workspace.Workspace.combine()</span></code></a> for more information.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf combine <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE_ONE<span class="o">]</span> <span class="o">[</span>WORKSPACE_TWO<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-combine-j">
+<code class="sig-name descname">-j</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--join</code><code class="sig-prename descclassname"> &lt;join&gt;</code><a class="headerlink" href="#cmdoption-pyhf-combine-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>The join operation to apply when combining the two workspaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>none|outer|left outer|right outer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-combine-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-combine-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-combine-merge-channels">
+<code class="sig-name descname">--merge-channels</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--no-merge-channels</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-combine-merge-channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not to deeply merge channels. Can only be done with left/right outer joins.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-combine-arg-WORKSPACE_ONE">
+<code class="sig-name descname">WORKSPACE_ONE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-combine-arg-WORKSPACE_ONE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-combine-arg-WORKSPACE_TWO">
+<code class="sig-name descname">WORKSPACE_TWO</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-combine-arg-WORKSPACE_TWO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-completions">
+<h3>completions<a class="headerlink" href="#pyhf-completions" title="Permalink to this headline">¶</a></h3>
+<p>Generate shell completion code.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf completions <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[[</span>bash<span class="p">|</span>fish<span class="p">|</span>zsh<span class="p">|</span>powershell<span class="o">]]</span>
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-completions-arg-SHELL">
+<code class="sig-name descname">SHELL</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-completions-arg-SHELL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-contrib">
+<h3>contrib<a class="headerlink" href="#pyhf-contrib" title="Permalink to this headline">¶</a></h3>
+<p>Contrib experimental operations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requires installation of the <code class="docutils literal notranslate"><span class="pre">contrib</span></code> extra.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ python -m pip install pyhf<span class="o">[</span>contrib<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf contrib <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<div class="section" id="pyhf-contrib-download">
+<h4>download<a class="headerlink" href="#pyhf-contrib-download" title="Permalink to this headline">¶</a></h4>
+<p>Download the patchset archive from the remote URL and extract it in a
+directory at the path given.</p>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pyhf contrib download --verbose https://doi.org/10.17182/hepdata.90607.v3/r3 1Lbb-likelihoods
+
+
+1Lbb-likelihoods/patchset.json
+1Lbb-likelihoods/README.md
+1Lbb-likelihoods/BkgOnly.json
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Raises:</dt><dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidArchiveHost</span></code>: if the provided archive host name is not known to be valid</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf contrib download <span class="o">[</span>OPTIONS<span class="o">]</span> ARCHIVE_URL OUTPUT_DIRECTORY
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-contrib-download-v">
+<code class="sig-name descname">-v</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--verbose</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-contrib-download-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables verbose mode</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-contrib-download-f">
+<code class="sig-name descname">-f</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--force</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-contrib-download-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force download from non-approved host</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-contrib-download-c">
+<code class="sig-name descname">-c</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--compress</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-contrib-download-c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep the archive in a compressed tar.gz form</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-contrib-download-arg-ARCHIVE_URL">
+<code class="sig-name descname">ARCHIVE_URL</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-contrib-download-arg-ARCHIVE_URL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-contrib-download-arg-OUTPUT_DIRECTORY">
+<code class="sig-name descname">OUTPUT_DIRECTORY</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-contrib-download-arg-OUTPUT_DIRECTORY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="pyhf-digest">
+<h3>digest<a class="headerlink" href="#pyhf-digest" title="Permalink to this headline">¶</a></h3>
+<p>Use hashing algorithm to calculate the workspace digest.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>digests (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>): A mapping of the hashing algorithms used to the computed digest for the workspace.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json <span class="p">|</span> pyhf digest
+sha256:dad8822af55205d60152cbe4303929042dbd9d4839012e055e7c6b6459d68d73
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf digest <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-digest-a">
+<code class="sig-name descname">-a</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--algorithm</code><code class="sig-prename descclassname"> &lt;algorithm&gt;</code><a class="headerlink" href="#cmdoption-pyhf-digest-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>The hashing algorithm used to compute the workspace digest.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-digest-j">
+<code class="sig-name descname">-j</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--json</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--plaintext</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-digest-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the hash values as a JSON dictionary or plaintext strings</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-digest-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-digest-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-fit">
+<h3>fit<a class="headerlink" href="#pyhf-fit" title="Permalink to this headline">¶</a></h3>
+<p>Perform a maximum likelihood fit for a given pyhf workspace.</p>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://git.io/JJYDE <span class="p">|</span> pyhf fit --value
+
+
+<span class="o">{</span>
+    <span class="s2">&quot;mle_parameters&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;mu&quot;</span>: <span class="o">[</span>
+            <span class="m">0</span>.00017298628839781602
+        <span class="o">]</span>,
+        <span class="s2">&quot;uncorr_bkguncrt&quot;</span>: <span class="o">[</span>
+            <span class="m">1</span>.0000015671710816,
+            <span class="m">0</span>.9999665895859197
+        <span class="o">]</span>
+    <span class="o">}</span>,
+    <span class="s2">&quot;twice_nll&quot;</span>: <span class="m">23</span>.19636590468879
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf fit <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-measurement">
+<code class="sig-name descname">--measurement</code><code class="sig-prename descclassname"> &lt;measurement&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--patch</code><code class="sig-prename descclassname"> &lt;patch&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-value">
+<code class="sig-name descname">--value</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-fit-value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag for returning the fitted value of the objective function.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-backend">
+<code class="sig-name descname">--backend</code><code class="sig-prename descclassname"> &lt;backend&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tensor backend used for the calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>numpy|pytorch|tensorflow|jax|np|torch|tf</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-optimizer">
+<code class="sig-name descname">--optimizer</code><code class="sig-prename descclassname"> &lt;optimizer&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The optimizer used for the calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>scipy|minuit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-optconf">
+<code class="sig-name descname">--optconf</code><code class="sig-prename descclassname"> &lt;optconf&gt;</code><a class="headerlink" href="#cmdoption-pyhf-fit-optconf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-fit-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-fit-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-inspect">
+<h3>inspect<a class="headerlink" href="#pyhf-inspect" title="Permalink to this headline">¶</a></h3>
+<p>Inspect a pyhf JSON document.</p>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json <span class="p">|</span> pyhf inspect
+          Summary
+    ------------------
+       channels  <span class="m">1</span>
+        samples  <span class="m">2</span>
+     parameters  <span class="m">2</span>
+      modifiers  <span class="m">2</span>
+
+       channels  nbins
+     ----------  -----
+  singlechannel    <span class="m">2</span>
+
+        samples
+     ----------
+     background
+         signal
+
+     parameters  constraint              modifiers
+     ----------  ----------              ----------
+             mu  unconstrained           normfactor
+uncorr_bkguncrt  constrained_by_poisson  shapesys
+
+    measurement           poi            parameters
+     ----------        ----------        ----------
+<span class="o">(</span>*<span class="o">)</span> Measurement            mu            <span class="o">(</span>none<span class="o">)</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf inspect <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-inspect-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-inspect-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-inspect-measurement">
+<code class="sig-name descname">--measurement</code><code class="sig-prename descclassname"> &lt;measurement&gt;</code><a class="headerlink" href="#cmdoption-pyhf-inspect-measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-inspect-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-inspect-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-json2xml">
+<h3>json2xml<a class="headerlink" href="#pyhf-json2xml" title="Permalink to this headline">¶</a></h3>
+<p>Convert pyhf JSON back to XML + ROOT files.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf json2xml <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-output-dir">
+<code class="sig-name descname">--output-dir</code><code class="sig-prename descclassname"> &lt;output_dir&gt;</code><a class="headerlink" href="#cmdoption-pyhf-json2xml-output-dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-specroot">
+<code class="sig-name descname">--specroot</code><code class="sig-prename descclassname"> &lt;specroot&gt;</code><a class="headerlink" href="#cmdoption-pyhf-json2xml-specroot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-dataroot">
+<code class="sig-name descname">--dataroot</code><code class="sig-prename descclassname"> &lt;dataroot&gt;</code><a class="headerlink" href="#cmdoption-pyhf-json2xml-dataroot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-resultprefix">
+<code class="sig-name descname">--resultprefix</code><code class="sig-prename descclassname"> &lt;resultprefix&gt;</code><a class="headerlink" href="#cmdoption-pyhf-json2xml-resultprefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--patch</code><code class="sig-prename descclassname"> &lt;patch&gt;</code><a class="headerlink" href="#cmdoption-pyhf-json2xml-p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-json2xml-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-json2xml-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-patchset">
+<h3>patchset<a class="headerlink" href="#pyhf-patchset" title="Permalink to this headline">¶</a></h3>
+<p>Operations involving patchsets.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf patchset <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<div class="section" id="pyhf-patchset-apply">
+<h4>apply<a class="headerlink" href="#pyhf-patchset-apply" title="Permalink to this headline">¶</a></h4>
+<p>Apply a patch from patchset to the background-only workspace specification.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p><a class="reference internal" href="_generated/pyhf.exceptions.InvalidPatchLookup.html#pyhf.exceptions.InvalidPatchLookup" title="pyhf.exceptions.InvalidPatchLookup"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidPatchLookup</span></code></a>: if the provided patch name is not in the patchset
+<a class="reference internal" href="_generated/pyhf.exceptions.PatchSetVerificationError.html#pyhf.exceptions.PatchSetVerificationError" title="pyhf.exceptions.PatchSetVerificationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">PatchSetVerificationError</span></code></a>: if the patchset cannot be verified against the workspace specification</p>
+</dd>
+<dt>Returns:</dt><dd><p>workspace (<a class="reference internal" href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace" title="pyhf.workspace.Workspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Workspace</span></code></a>): The patched background-only workspace.</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf patchset apply <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>BACKGROUND_ONLY<span class="o">]</span> <span class="o">[</span>PATCHSET<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-apply-name">
+<code class="sig-name descname">--name</code><code class="sig-prename descclassname"> &lt;name&gt;</code><a class="headerlink" href="#cmdoption-pyhf-patchset-apply-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the patch to extract.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-apply-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-patchset-apply-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-apply-arg-BACKGROUND_ONLY">
+<code class="sig-name descname">BACKGROUND_ONLY</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-apply-arg-BACKGROUND_ONLY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-apply-arg-PATCHSET">
+<code class="sig-name descname">PATCHSET</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-apply-arg-PATCHSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-patchset-extract">
+<h4>extract<a class="headerlink" href="#pyhf-patchset-extract" title="Permalink to this headline">¶</a></h4>
+<p>Extract a patch from a patchset.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p><a class="reference internal" href="_generated/pyhf.exceptions.InvalidPatchLookup.html#pyhf.exceptions.InvalidPatchLookup" title="pyhf.exceptions.InvalidPatchLookup"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidPatchLookup</span></code></a>: if the provided patch name is not in the patchset</p>
+</dd>
+<dt>Returns:</dt><dd><p>jsonpatch (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>): A list of jsonpatch operations to apply to a workspace.</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf patchset extract <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>PATCHSET<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-extract-name">
+<code class="sig-name descname">--name</code><code class="sig-prename descclassname"> &lt;name&gt;</code><a class="headerlink" href="#cmdoption-pyhf-patchset-extract-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the patch to extract.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-extract-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-patchset-extract-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-extract-with-metadata">
+<code class="sig-name descname">--with-metadata</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--without-metadata</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-extract-with-metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Include patchset metadata in output.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-extract-arg-PATCHSET">
+<code class="sig-name descname">PATCHSET</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-extract-arg-PATCHSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-patchset-verify">
+<h4>verify<a class="headerlink" href="#pyhf-patchset-verify" title="Permalink to this headline">¶</a></h4>
+<p>Verify the patchset digests against a background-only workspace specification. Verified if no exception was raised.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p><a class="reference internal" href="_generated/pyhf.exceptions.PatchSetVerificationError.html#pyhf.exceptions.PatchSetVerificationError" title="pyhf.exceptions.PatchSetVerificationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">PatchSetVerificationError</span></code></a>: if the patchset cannot be verified against the workspace specification</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf patchset verify <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>BACKGROUND_ONLY<span class="o">]</span> <span class="o">[</span>PATCHSET<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-verify-arg-BACKGROUND_ONLY">
+<code class="sig-name descname">BACKGROUND_ONLY</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-verify-arg-BACKGROUND_ONLY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-patchset-verify-arg-PATCHSET">
+<code class="sig-name descname">PATCHSET</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-patchset-verify-arg-PATCHSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="pyhf-prune">
+<h3>prune<a class="headerlink" href="#pyhf-prune" title="Permalink to this headline">¶</a></h3>
+<p>Prune components from the workspace.</p>
+<p>See <a class="reference internal" href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.prune" title="pyhf.workspace.Workspace.prune"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyhf.workspace.Workspace.prune()</span></code></a> for more information.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf prune <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-c">
+<code class="sig-name descname">-c</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--channel</code><code class="sig-prename descclassname"> &lt;CHANNEL&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-s">
+<code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--sample</code><code class="sig-prename descclassname"> &lt;SAMPLE&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-m">
+<code class="sig-name descname">-m</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--modifier</code><code class="sig-prename descclassname"> &lt;MODIFIER&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-m" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-t">
+<code class="sig-name descname">-t</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--modifier-type</code><code class="sig-prename descclassname"> &lt;modifier_type&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-t" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Options</dt>
+<dd class="field-odd"><p>histosys|lumi|normfactor|normsys|shapefactor|shapesys|staterror</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-measurement">
+<code class="sig-name descname">--measurement</code><code class="sig-prename descclassname"> &lt;MEASUREMENT&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-prune-measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-prune-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-prune-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-rename">
+<h3>rename<a class="headerlink" href="#pyhf-rename" title="Permalink to this headline">¶</a></h3>
+<p>Rename components of the workspace.</p>
+<p>See <a class="reference internal" href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.rename" title="pyhf.workspace.Workspace.rename"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyhf.workspace.Workspace.rename()</span></code></a> for more information.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf rename <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-rename-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-c">
+<code class="sig-name descname">-c</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--channel</code><code class="sig-prename descclassname"> &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-rename-c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-s">
+<code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--sample</code><code class="sig-prename descclassname"> &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-rename-s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-m">
+<code class="sig-name descname">-m</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--modifier</code><code class="sig-prename descclassname"> &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-rename-m" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-measurement">
+<code class="sig-name descname">--measurement</code><code class="sig-prename descclassname"> &lt;PATTERN&gt; &lt;REPLACE&gt;...&gt;</code><a class="headerlink" href="#cmdoption-pyhf-rename-measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-rename-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-rename-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-sort">
+<h3>sort<a class="headerlink" href="#pyhf-sort" title="Permalink to this headline">¶</a></h3>
+<p>Sort the workspace.</p>
+<p>See <a class="reference internal" href="_generated/pyhf.workspace.Workspace.html#pyhf.workspace.Workspace.sorted" title="pyhf.workspace.Workspace.sorted"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyhf.workspace.Workspace.sorted()</span></code></a> for more information.</p>
+<p>Example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json <span class="p">|</span> pyhf sort <span class="p">|</span> jq <span class="s1">&#39;.&#39;</span> <span class="p">|</span> md5
+8be5186ec249d2704e14dd29ef05ffb0
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json <span class="p">|</span> jq -S <span class="s1">&#39;.channels|=sort_by(.name)|.channels[].samples|=sort_by(.name)|.channels[].samples[].modifiers|=sort_by(.name,.type)|.observations|=sort_by(.name)&#39;</span> <span class="p">|</span> md5
+8be5186ec249d2704e14dd29ef05ffb0
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf sort <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>WORKSPACE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-sort-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-sort-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-sort-arg-WORKSPACE">
+<code class="sig-name descname">WORKSPACE</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-sort-arg-WORKSPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pyhf-xml2json">
+<h3>xml2json<a class="headerlink" href="#pyhf-xml2json" title="Permalink to this headline">¶</a></h3>
+<p>Entrypoint XML: The top-level XML file for the PDF definition.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyhf xml2json <span class="o">[</span>OPTIONS<span class="o">]</span> ENTRYPOINT_XML
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-xml2json-basedir">
+<code class="sig-name descname">--basedir</code><code class="sig-prename descclassname"> &lt;basedir&gt;</code><a class="headerlink" href="#cmdoption-pyhf-xml2json-basedir" title="Permalink to this definition">¶</a></dt>
+<dd><p>The base directory for the XML files to point relative to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-xml2json-output-file">
+<code class="sig-name descname">--output-file</code><code class="sig-prename descclassname"> &lt;output_file&gt;</code><a class="headerlink" href="#cmdoption-pyhf-xml2json-output-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The location of the output json file. If not specified, prints to screen.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt id="cmdoption-pyhf-xml2json-track-progress">
+<code class="sig-name descname">--track-progress</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--hide-progress</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-xml2json-track-progress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt id="cmdoption-pyhf-xml2json-arg-ENTRYPOINT_XML">
+<code class="sig-name descname">ENTRYPOINT_XML</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pyhf-xml2json-arg-ENTRYPOINT_XML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="babel.html" class="btn btn-neutral float-left" title="Translations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer
+
+hypotest
+========
+
+.. currentmodule:: pyhf.infer
+
+.. autoclass:: hypotest
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

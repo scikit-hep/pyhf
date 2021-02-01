@@ -1,0 +1,143 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/tensor/jax_backend
+
+jax\_backend
+============
+
+.. currentmodule:: pyhf.tensor.jax_backend
+
+.. autoclass:: jax_backend
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: jax_backend.default_do_grad
+   .. autoattribute:: jax_backend.dtypemap
+   .. autoattribute:: jax_backend.name
+   .. autoattribute:: jax_backend.precision
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: jax_backend.__init__
+   
+   
+   .. automethod:: jax_backend.abs
+   
+   
+   .. automethod:: jax_backend.astensor
+   
+   
+   .. automethod:: jax_backend.boolean_mask
+   
+   
+   .. automethod:: jax_backend.clip
+   
+   
+   .. automethod:: jax_backend.concatenate
+   
+   
+   .. automethod:: jax_backend.conditional
+   
+   
+   .. automethod:: jax_backend.divide
+   
+   
+   .. automethod:: jax_backend.einsum
+   
+   
+   .. automethod:: jax_backend.erf
+   
+   
+   .. automethod:: jax_backend.erfinv
+   
+   
+   .. automethod:: jax_backend.exp
+   
+   
+   .. automethod:: jax_backend.gather
+   
+   
+   .. automethod:: jax_backend.isfinite
+   
+   
+   .. automethod:: jax_backend.log
+   
+   
+   .. automethod:: jax_backend.normal
+   
+   
+   .. automethod:: jax_backend.normal_cdf
+   
+   
+   .. automethod:: jax_backend.normal_dist
+   
+   
+   .. automethod:: jax_backend.normal_logpdf
+   
+   
+   .. automethod:: jax_backend.ones
+   
+   
+   .. automethod:: jax_backend.outer
+   
+   
+   .. automethod:: jax_backend.poisson
+   
+   
+   .. automethod:: jax_backend.poisson_dist
+   
+   
+   .. automethod:: jax_backend.poisson_logpdf
+   
+   
+   .. automethod:: jax_backend.power
+   
+   
+   .. automethod:: jax_backend.product
+   
+   
+   .. automethod:: jax_backend.ravel
+   
+   
+   .. automethod:: jax_backend.reshape
+   
+   
+   .. automethod:: jax_backend.shape
+   
+   
+   .. automethod:: jax_backend.simple_broadcast
+   
+   
+   .. automethod:: jax_backend.sqrt
+   
+   
+   .. automethod:: jax_backend.stack
+   
+   
+   .. automethod:: jax_backend.sum
+   
+   
+   .. automethod:: jax_backend.tile
+   
+   
+   .. automethod:: jax_backend.to_numpy
+   
+   
+   .. automethod:: jax_backend.tolist
+   
+   
+   .. automethod:: jax_backend.where
+   
+   
+   .. automethod:: jax_backend.zeros
+   
+   
+   

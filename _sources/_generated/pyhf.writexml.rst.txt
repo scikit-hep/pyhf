@@ -1,0 +1,32 @@
+﻿pyhf.writexml
+=============
+
+.. rubric:: Description
+
+.. automodule:: pyhf.writexml
+
+.. currentmodule:: pyhf.writexml
+
+
+
+
+.. rubric:: Functions
+
+.. autosummary::
+    :toctree: .
+    
+    build_channel
+    
+    build_data
+    
+    build_measurement
+    
+    build_modifier
+    
+    build_sample
+    
+    indent
+    
+    writexml
+    
+

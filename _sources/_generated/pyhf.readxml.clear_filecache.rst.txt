@@ -1,0 +1,6 @@
+pyhf.readxml.clear\_filecache
+=============================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: clear_filecache

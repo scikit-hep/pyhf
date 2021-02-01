@@ -1,0 +1,36 @@
+﻿pyhf.readxml
+============
+
+.. rubric:: Description
+
+.. automodule:: pyhf.readxml
+
+.. currentmodule:: pyhf.readxml
+
+
+
+
+.. rubric:: Functions
+
+.. autosummary::
+    :toctree: .
+    
+    clear_filecache
+    
+    dedupe_parameters
+    
+    extract_error
+    
+    import_root_histogram
+    
+    parse
+    
+    process_channel
+    
+    process_data
+    
+    process_measurements
+    
+    process_sample
+    
+

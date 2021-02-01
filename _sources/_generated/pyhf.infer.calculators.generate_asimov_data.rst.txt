@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/calculators
+
+generate\_asimov\_data
+======================
+
+.. currentmodule:: pyhf.infer.calculators
+
+.. autoclass:: generate_asimov_data
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

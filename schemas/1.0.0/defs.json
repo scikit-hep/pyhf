@@ -1,0 +1,305 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/defs.json",
+    "definitions": {
+        "workspace": {
+          "type": "object",
+          "properties": {
+              "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
+              "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
+              "observations": { "type": "array", "items": {"$ref": "#/definitions/observation" }, "minItems": 1 },
+              "version": { "const": "1.0.0" }
+          },
+          "additionalProperties": false,
+          "required": ["channels", "measurements", "observations", "version"]
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+              "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
+              "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+          },
+          "additionalProperties": false,
+          "required": ["channels"]
+        },
+        "observation": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+            },
+            "required": ["name", "data"],
+            "additionalProperties": false
+        },
+        "measurement": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "config": { "$ref": "#/definitions/config" }
+            },
+            "required": ["name", "config"],
+            "additionalProperties": false
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "poi": { "type" : "string" },
+                "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+            },
+            "required": ["poi", "parameters"],
+            "additionalProperties": false
+        },
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
+                "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
+                "fixed": { "type": "boolean" }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+        },
+        "channel": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 }
+            },
+            "required": ["name", "samples"],
+            "additionalProperties": false
+        },
+        "sample": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                "modifiers": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            { "$ref": "#/definitions/modifier/histosys" },
+                            { "$ref": "#/definitions/modifier/lumi" },
+                            { "$ref": "#/definitions/modifier/normfactor" },
+                            { "$ref": "#/definitions/modifier/normsys" },
+                            { "$ref": "#/definitions/modifier/shapefactor" },
+                            { "$ref": "#/definitions/modifier/shapesys" },
+                            { "$ref": "#/definitions/modifier/staterror" }
+                        ]
+                    }
+                }
+            },
+            "required": ["name", "data", "modifiers"],
+            "additionalProperties": false
+        },
+        "modifier": {
+            "histosys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "histosys" },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                            "hi_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                        },
+                        "required": ["lo_data", "hi_data"]
+                    }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "lumi": {
+                "type": "object",
+                "properties": {
+                    "name": { "const": "lumi" },
+                    "type": { "const": "lumi" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "normfactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normfactor" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "normsys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "normsys" },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "lo": { "type": "number" },
+                            "hi": { "type": "number"}
+                        },
+                        "required": ["lo", "hi"]
+                    }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapefactor": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapefactor" },
+                    "data": { "type": "null" }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "shapesys": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "shapesys" },
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            },
+            "staterror": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "type": { "const": "staterror" },
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                },
+                "required": ["name", "type", "data"],
+                "additionalProperties": false
+            }
+        },
+        "jsonpatch": {
+            "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/jsonpatch/operation"
+            },
+            "operation": {
+                "type": "object",
+                "required": [ "op", "path" ],
+                "allOf": [ { "$ref": "#/definitions/jsonpatch/path" } ],
+                "oneOf": [
+                    {
+                        "required": [ "value" ],
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "add", "replace", "test" ]
+                            },
+                            "value": {
+                                "description": "The value to add, replace or test."
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "remove" ]
+                            }
+                        }
+                    },
+                    {
+                        "required": [ "from" ],
+                        "properties": {
+                            "op": {
+                                "description": "The operation to perform.",
+                                "type": "string",
+                                "enum": [ "move", "copy" ]
+                            },
+                            "from": {
+                                "description": "A JSON Pointer path pointing to the location to move/copy from.",
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            },
+            "path": {
+                "properties": {
+                    "path": {
+                        "description": "A JSON Pointer path.",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "patchset": {
+            "description": "A set of JSONPatch patches which modify a pyhf workspace",
+            "type": "object",
+            "properties": {
+                "patches": { "$ref": "#/definitions/patchset/patches" },
+                "metadata": { "$ref": "#/definitions/patchset/metadata" },
+                "version": { "const": "1.0.0" }
+            },
+            "additionalProperties": false,
+            "required": ["patches", "metadata", "version"],
+            "references": {
+                "type": "object",
+                "properties": {
+                    "hepdata": { "type": "string", "pattern": "^ins[0-9]{7}$" }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+            },
+            "digests": {
+                "type": "object",
+                "properties": {
+                    "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+                    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+            },
+            "patches": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/patchset/patch" },
+                "minItems": 1
+            },
+            "patch": {
+                "type": "object",
+                "properties": {
+                    "patch": { "$ref": "#/definitions/jsonpatch" },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                            "values": { "type": "array", "items": { "type": "number" } }
+                        },
+                        "required": ["name", "values"]
+                    }
+                },
+                "required": ["metadata", "patch"]
+            },
+            "metadata": {
+                "type": "object",
+                "properties": {
+                    "digests": { "$ref": "#/definitions/patchset/digests" },
+                    "labels": {
+                        "type": "array",
+                        "items": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                        "minItems": 1
+                    },
+                    "description": { "type": "string" },
+                    "references": { "$ref": "#/definitions/patchset/references" }
+                },
+                "required": ["references", "digests", "labels", "description"]
+            }
+        }
+    }
+}

@@ -1,0 +1,879 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>numpy_backend &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pytorch_backend" href="pyhf.tensor.pytorch_backend.pytorch_backend.html" />
+    <link rel="prev" title="hepdata_like" href="pyhf.simplemodels.hepdata_like.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#top-level">Top-Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#probability-distribution-functions-pdfs">Probability Distribution Functions (PDFs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#making-models-from-pdfs">Making Models from PDFs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#backends">Backends</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">numpy_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.tensor.pytorch_backend.pytorch_backend.html">pytorch_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.tensor.tensorflow_backend.tensorflow_backend.html">tensorflow_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.tensor.jax_backend.jax_backend.html">jax_backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#optimizers">Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#modifiers">Modifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#interpolators">Interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#utilities">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#contrib">Contrib</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">Python API</a> &raquo;</li>
+        
+      <li>numpy_backend</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/scikit-hep/pyhf/blob/master/pyhf/tensor/numpy_backend" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="numpy-backend">
+<h1>numpy_backend<a class="headerlink" href="#numpy-backend" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend">
+<em class="property">class </em><code class="sig-prename descclassname">pyhf.tensor.numpy_backend.</code><code class="sig-name descname">numpy_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>NumPy backend for pyhf</p>
+<p class="rubric">Attributes</p>
+<dl class="py attribute">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.default_do_grad">
+<code class="sig-name descname">default_do_grad</code><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.default_do_grad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.dtypemap">
+<code class="sig-name descname">dtypemap</code><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.dtypemap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.precision">
+<code class="sig-name descname">precision</code><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.precision" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.abs">
+<code class="sig-name descname">abs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.abs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.abs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.astensor">
+<code class="sig-name descname">astensor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'float'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.astensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.astensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a NumPy array.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span>
+<span class="go">array([[1., 2., 3.],</span>
+<span class="go">       [4., 5., 6.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor_in</strong> (<em>Number</em><em> or </em><em>Tensor</em>) – Tensor object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A multi-dimensional, fixed-size homogenous array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.boolean_mask">
+<code class="sig-name descname">boolean_mask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em>, <em class="sig-param"><span class="n">mask</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.boolean_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.boolean_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.clip">
+<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em>, <em class="sig-param"><span class="n">min_value</span></em>, <em class="sig-param"><span class="n">max_value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.clip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.clip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clips (limits) the tensor values to be within a specified min and max.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">array([-1., -1.,  0.,  1.,  1.])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensor_in</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The input tensor object</p></li>
+<li><p><strong>min_value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">scalar</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The minimum value to be cliped to</p></li>
+<li><p><strong>max_value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">scalar</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The maximum value to be cliped to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A clipped <cite>tensor</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.concatenate">
+<code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sequence</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.concatenate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.concatenate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join a sequence of arrays along an existing axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequence</strong> – sequence of tensors</p></li>
+<li><p><strong>axis</strong> – dimension along which to concatenate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the concatenated tensor</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.conditional">
+<code class="sig-name descname">conditional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predicate</span></em>, <em class="sig-param"><span class="n">true_callable</span></em>, <em class="sig-param"><span class="n">false_callable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.conditional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.conditional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a callable conditional on the boolean value of the evaulation of a predicate</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensorlib</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensorlib</span><span class="o">.</span><span class="n">conditional</span><span class="p">((</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">array([9.])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicate</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">scalar</span></code>) – The logical condition that determines which callable to evaluate</p></li>
+<li><p><strong>true_callable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code></a>) – The callable that is evaluated when the <code class="code docutils literal notranslate"><span class="pre">predicate</span></code> evalutes to <code class="code docutils literal notranslate"><span class="pre">true</span></code></p></li>
+<li><p><strong>false_callable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code></a>) – The callable that is evaluated when the <code class="code docutils literal notranslate"><span class="pre">predicate</span></code> evalutes to <code class="code docutils literal notranslate"><span class="pre">false</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output of the callable that was evaluated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.divide">
+<code class="sig-name descname">divide</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in_1</span></em>, <em class="sig-param"><span class="n">tensor_in_2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.divide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.divide" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.einsum">
+<code class="sig-name descname">einsum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subscripts</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">operands</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.einsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.einsum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Einstein summation convention on the operands.</p>
+<p>Using the Einstein summation convention, many common multi-dimensional
+array operations can be represented in a simple fashion. This function
+provides a way to compute such summations. The best way to understand
+this function is to try the examples below, which show how many common
+NumPy functions can be implemented as calls to einsum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subscripts</strong> – str, specifies the subscripts for summation</p></li>
+<li><p><strong>operands</strong> – list of array_like, these are the tensors for the operation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the calculation based on the Einstein summation convention</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.erf">
+<code class="sig-name descname">erf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.erf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.erf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The error function of complex argument.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">array([-0.99532227, -0.84270079,  0.        ,  0.84270079,  0.99532227])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor_in</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The input tensor object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The values of the error function at the given points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.erfinv">
+<code class="sig-name descname">erfinv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.erfinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.erfinv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The inverse of the error function of complex argument.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="go">array([-2., -1.,  0.,  1.,  2.])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor_in</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The input tensor object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The values of the inverse of the error function at the given points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.exp">
+<code class="sig-name descname">exp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.gather">
+<code class="sig-name descname">gather</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em>, <em class="sig-param"><span class="n">indices</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.gather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.gather" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.isfinite">
+<code class="sig-name descname">isfinite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.isfinite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.isfinite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.log">
+<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.normal">
+<code class="sig-name descname">normal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">mu</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.normal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>The probability density function of the Normal distribution evaluated
+at <code class="code docutils literal notranslate"><span class="pre">x</span></code> given parameters of mean of <code class="code docutils literal notranslate"><span class="pre">mu</span></code> and standard deviation
+of <code class="code docutils literal notranslate"><span class="pre">sigma</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="go">0.3520653267642995</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">means</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sigmas</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">)</span>
+<span class="go">array([0.35206533, 0.46481887])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The value at which to evaluate the Normal distribution p.d.f.</p></li>
+<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The mean of the Normal distribution</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The standard deviation of the Normal distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value of Normal(x|mu, sigma)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.normal_cdf">
+<code class="sig-name descname">normal_cdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">mu</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.normal_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.normal_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cumulative distribution function for the Normal distribution</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_cdf</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="go">0.7881446014166034</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_cdf</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="go">array([0.7881446 , 0.97724987])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The observed value of the random variable to evaluate the CDF for</p></li>
+<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The mean of the Normal distribution</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The standard deviation of the Normal distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The CDF</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.normal_dist">
+<code class="sig-name descname">normal_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mu</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.normal_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.normal_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Normal distribution with mean <code class="code docutils literal notranslate"><span class="pre">mu</span></code> and standard deviation <code class="code docutils literal notranslate"><span class="pre">sigma</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">means</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stds</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normals</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">normal_dist</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normals</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="go">array([-1.41893853, -2.22579135])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The mean of the Normal distribution</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The standard deviation of the Normal distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Normal distribution class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Normal distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.normal_logpdf">
+<code class="sig-name descname">normal_logpdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">mu</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.normal_logpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.normal_logpdf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.ones">
+<code class="sig-name descname">ones</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.ones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.ones" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.outer">
+<code class="sig-name descname">outer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in_1</span></em>, <em class="sig-param"><span class="n">tensor_in_2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.outer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.outer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.poisson">
+<code class="sig-name descname">poisson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">lam</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.poisson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.poisson" title="Permalink to this definition">¶</a></dt>
+<dd><p>The continuous approximation, using <span class="math notranslate nohighlight">\(n! = \Gamma\left(n+1\right)\)</span>,
+to the probability mass function of the Poisson distribution evaluated
+at <code class="code docutils literal notranslate"><span class="pre">n</span></code> given the parameter <code class="code docutils literal notranslate"><span class="pre">lam</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">)</span>
+<span class="go">0.16062314104797995</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rates</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">rates</span><span class="p">)</span>
+<span class="go">array([0.16062314, 0.12407692])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The value at which to evaluate the approximation to the Poisson distribution p.m.f.
+(the observed number of events)</p></li>
+<li><p><strong>lam</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The mean of the Poisson distribution p.m.f.
+(the expected number of events)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value of the continuous approximation to Poisson(n|lam)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.poisson_dist">
+<code class="sig-name descname">poisson_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.poisson_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.poisson_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Poisson distribution with rate parameter <code class="code docutils literal notranslate"><span class="pre">rate</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rates</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poissons</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">poisson_dist</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poissons</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="go">array([-1.74030218, -2.0868536 ])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rate</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – The mean of the Poisson distribution (the expected number of events)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Poisson distribution class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Poisson distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.poisson_logpdf">
+<code class="sig-name descname">poisson_logpdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">lam</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.poisson_logpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.poisson_logpdf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.power">
+<code class="sig-name descname">power</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in_1</span></em>, <em class="sig-param"><span class="n">tensor_in_2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.product">
+<code class="sig-name descname">product</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.product"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.product" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.ravel">
+<code class="sig-name descname">ravel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.ravel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.ravel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a flattened view of the tensor, not a copy.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+<span class="go">array([1., 2., 3., 4., 5., 6.])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor</strong> (<em>Tensor</em>) – Tensor object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A flattened array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>numpy.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.reshape">
+<code class="sig-name descname">reshape</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em>, <em class="sig-param"><span class="n">newshape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.reshape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.reshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.shape">
+<code class="sig-name descname">shape</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.simple_broadcast">
+<code class="sig-name descname">simple_broadcast</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.simple_broadcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.simple_broadcast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Broadcast a sequence of 1 dimensional arrays.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">simple_broadcast</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span>
+<span class="gp">... </span>  <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span>
+<span class="gp">... </span>  <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]))</span>
+<span class="go">[array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.])]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>Array of Tensors</em>) – Sequence of arrays</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sequence broadcast together.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of Tensors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.sqrt">
+<code class="sig-name descname">sqrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.sqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.sqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.stack">
+<code class="sig-name descname">stack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sequence</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.stack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.sum">
+<code class="sig-name descname">sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.sum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.tile">
+<code class="sig-name descname">tile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em>, <em class="sig-param"><span class="n">repeats</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.tile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.tile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repeat tensor data along a specific dimension</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">array([[1., 1.],</span>
+<span class="go">       [2., 2.]])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensor_in</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The tensor to be repeated</p></li>
+<li><p><strong>repeats</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The tuple of multipliers for each dimension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The tensor with repeated axes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NumPy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.to_numpy">
+<code class="sig-name descname">to_numpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.to_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the input tensor as it already is a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.
+This API exists only for <code class="docutils literal notranslate"><span class="pre">pyhf.tensorlib</span></code> compatibility.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span>
+<span class="go">array([[1., 2., 3.],</span>
+<span class="go">       [4., 5., 6.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_ndarray</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_ndarray</span>
+<span class="go">array([[1., 2., 3.],</span>
+<span class="go">       [4., 5., 6.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">numpy_ndarray</span><span class="p">)</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor_in</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code>) – The input tensor object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The tensor converted to a NumPy <code class="docutils literal notranslate"><span class="pre">ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.tolist">
+<code class="sig-name descname">tolist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_in</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.tolist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.tolist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.where">
+<code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mask</span></em>, <em class="sig-param"><span class="n">tensor_in_1</span></em>, <em class="sig-param"><span class="n">tensor_in_2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.where"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.where" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyhf.tensor.numpy_backend.numpy_backend.zeros">
+<code class="sig-name descname">zeros</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf/tensor/numpy_backend.html#numpy_backend.zeros"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.tensor.numpy_backend.numpy_backend.zeros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="pyhf.tensor.pytorch_backend.pytorch_backend.html" class="btn btn-neutral float-right" title="pytorch_backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyhf.simplemodels.hepdata_like.html" class="btn btn-neutral float-left" title="hepdata_like" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

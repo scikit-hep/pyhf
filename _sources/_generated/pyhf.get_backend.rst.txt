@@ -1,0 +1,6 @@
+﻿pyhf.get\_backend
+=================
+
+.. currentmodule:: pyhf
+
+.. autofunction:: get_backend

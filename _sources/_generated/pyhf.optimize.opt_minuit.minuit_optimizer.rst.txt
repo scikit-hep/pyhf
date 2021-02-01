@@ -1,0 +1,36 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/optimize/opt_minuit
+
+minuit\_optimizer
+=================
+
+.. currentmodule:: pyhf.optimize.opt_minuit
+
+.. autoclass:: minuit_optimizer
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: minuit_optimizer.errordef
+   .. autoattribute:: minuit_optimizer.maxiter
+   .. autoattribute:: minuit_optimizer.name
+   .. autoattribute:: minuit_optimizer.steps
+   .. autoattribute:: minuit_optimizer.strategy
+   .. autoattribute:: minuit_optimizer.tolerance
+   .. autoattribute:: minuit_optimizer.verbose
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: minuit_optimizer.__init__
+   
+   
+   
+   

@@ -1,0 +1,17 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/exceptions
+
+InvalidPatchSet
+===============
+
+.. currentmodule:: pyhf.exceptions
+
+.. autoclass:: InvalidPatchSet
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   

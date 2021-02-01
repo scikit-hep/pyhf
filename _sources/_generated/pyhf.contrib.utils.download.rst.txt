@@ -1,0 +1,6 @@
+﻿pyhf.contrib.utils.download
+===========================
+
+.. currentmodule:: pyhf.contrib.utils
+
+.. autofunction:: download

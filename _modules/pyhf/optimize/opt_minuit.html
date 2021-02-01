@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.optimize.opt_minuit &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyhf.html">pyhf</a> &raquo;</li>
+        
+          <li><a href="../optimize.html">pyhf.optimize</a> &raquo;</li>
+        
+      <li>pyhf.optimize.opt_minuit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.optimize.opt_minuit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Minuit Optimizer Class.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">.mixins</span> <span class="kn">import</span> <span class="n">OptimizerMixin</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">iminuit</span>
+
+
+<div class="viewcode-block" id="minuit_optimizer"><a class="viewcode-back" href="../../../_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer">[docs]</a><span class="k">class</span> <span class="nc">minuit_optimizer</span><span class="p">(</span><span class="n">OptimizerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimizer that minimizes via :meth:`iminuit.Minuit.migrad`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;errordef&#39;</span><span class="p">,</span> <span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="s1">&#39;strategy&#39;</span><span class="p">,</span> <span class="s1">&#39;tolerance&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="minuit_optimizer.__init__"><a class="viewcode-back" href="../../../_generated/pyhf.optimize.opt_minuit.minuit_optimizer.html#pyhf.optimize.opt_minuit.minuit_optimizer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create :class:`iminuit.Minuit` optimizer.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            ``errordef`` should be 1.0 for a least-squares cost function and 0.5</span>
+<span class="sd">            for negative log-likelihood function. See page 37 of</span>
+<span class="sd">            http://hep.fi.infn.it/minuit.pdf. This parameter is sometimes</span>
+<span class="sd">            called ``UP`` in the ``MINUIT`` docs.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            errordef (:obj:`float`): See minuit docs. Default is 1.0.</span>
+<span class="sd">            steps (:obj:`int`): Number of steps for the bounds. Default is 1000.</span>
+<span class="sd">            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is None.</span>
+<span class="sd">            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;minuit&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errordef</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;errordef&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;strategy&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;tolerance&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_minimizer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">objective_and_grad</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">init_bounds</span><span class="p">,</span> <span class="n">fixed_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_grad</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+
+        <span class="n">step_sizes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">init_bounds</span><span class="p">]</span>
+        <span class="n">fixed_vals</span> <span class="o">=</span> <span class="n">fixed_vals</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="c1"># Minuit wants True/False for each parameter</span>
+        <span class="n">fixed_bools</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">init_pars</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">fixed_vals</span><span class="p">:</span>
+            <span class="n">fixed_bools</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">init_pars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="n">step_sizes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Minuit requires jac=callable</span>
+        <span class="k">if</span> <span class="n">do_grad</span><span class="p">:</span>
+            <span class="n">wrapped_objective</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">pars</span><span class="p">:</span> <span class="n">objective_and_grad</span><span class="p">(</span><span class="n">pars</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># noqa: E731</span>
+            <span class="n">jac</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">pars</span><span class="p">:</span> <span class="n">objective_and_grad</span><span class="p">(</span><span class="n">pars</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># noqa: E731</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wrapped_objective</span> <span class="o">=</span> <span class="n">objective_and_grad</span>
+            <span class="n">jac</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">minuit</span> <span class="o">=</span> <span class="n">iminuit</span><span class="o">.</span><span class="n">Minuit</span><span class="p">(</span><span class="n">wrapped_objective</span><span class="p">,</span> <span class="n">init_pars</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">jac</span><span class="p">)</span>
+        <span class="n">minuit</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">step_sizes</span>
+        <span class="n">minuit</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="n">init_bounds</span>
+        <span class="n">minuit</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="n">fixed_bools</span>
+        <span class="n">minuit</span><span class="o">.</span><span class="n">print_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
+        <span class="n">minuit</span><span class="o">.</span><span class="n">errordef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errordef</span>
+        <span class="k">return</span> <span class="n">minuit</span>
+
+    <span class="k">def</span> <span class="nf">_minimize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">minimizer</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">,</span>
+        <span class="n">x0</span><span class="p">,</span>
+        <span class="n">do_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fixed_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">{},</span>
+    <span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Same signature as :func:`scipy.optimize.minimize`.</span>
+
+<span class="sd">        Note: an additional `minuit` is injected into the fitresult to get the</span>
+<span class="sd">        underlying minimizer.</span>
+
+<span class="sd">        Minimizer Options:</span>
+<span class="sd">            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.</span>
+<span class="sd">            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.</span>
+<span class="sd">            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            fitresult (scipy.optimize.OptimizeResult): the fit result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">maxiter</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;maxiter&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">)</span>
+        <span class="c1"># 0: Fast, user-provided gradient</span>
+        <span class="c1"># 1: Default, no user-provided gradient</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s1">&#39;strategy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="k">else</span> <span class="ow">not</span> <span class="n">do_grad</span>
+        <span class="p">)</span>
+        <span class="n">tolerance</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;tolerance&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">Unsupported</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported options were passed in: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">minimizer</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+        <span class="n">minimizer</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tolerance</span>
+        <span class="n">minimizer</span><span class="o">.</span><span class="n">migrad</span><span class="p">(</span><span class="n">ncall</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span>
+        <span class="c1"># Following lines below come from:</span>
+        <span class="c1"># https://github.com/scikit-hep/iminuit/blob/23bad7697e39d363f259ca8349684df939b1b2e6/src/iminuit/_minimize.py#L111-L130</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Optimization terminated successfully.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Optimization failed.&quot;</span>
+            <span class="n">fmin</span> <span class="o">=</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">fmin</span>
+            <span class="k">if</span> <span class="n">fmin</span><span class="o">.</span><span class="n">has_reached_call_limit</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; Call limit was reached.&quot;</span>
+            <span class="k">if</span> <span class="n">fmin</span><span class="o">.</span><span class="n">is_above_max_edm</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; Estimated distance to minimum too large.&quot;</span>
+
+        <span class="n">hess_inv</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">unc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
+            <span class="c1"># Extra call to hesse() after migrad() is always needed for good error estimates. If you pass a user-provided gradient to MINUIT, convergence is faster.</span>
+            <span class="n">minimizer</span><span class="o">.</span><span class="n">hesse</span><span class="p">()</span>
+            <span class="n">hess_inv</span> <span class="o">=</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">covariance</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="n">hess_inv</span><span class="o">.</span><span class="n">correlation</span><span class="p">()</span>
+            <span class="n">unc</span> <span class="o">=</span> <span class="n">minimizer</span><span class="o">.</span><span class="n">errors</span>
+
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">OptimizeResult</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">minimizer</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">unc</span><span class="o">=</span><span class="n">unc</span><span class="p">,</span>
+            <span class="n">corr</span><span class="o">=</span><span class="n">corr</span><span class="p">,</span>
+            <span class="n">success</span><span class="o">=</span><span class="n">minimizer</span><span class="o">.</span><span class="n">valid</span><span class="p">,</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">minimizer</span><span class="o">.</span><span class="n">fval</span><span class="p">,</span>
+            <span class="n">hess_inv</span><span class="o">=</span><span class="n">hess_inv</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">nfev</span><span class="o">=</span><span class="n">minimizer</span><span class="o">.</span><span class="n">nfcn</span><span class="p">,</span>
+            <span class="n">njev</span><span class="o">=</span><span class="n">minimizer</span><span class="o">.</span><span class="n">ngrad</span><span class="p">,</span>
+            <span class="n">minuit</span><span class="o">=</span><span class="n">minimizer</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

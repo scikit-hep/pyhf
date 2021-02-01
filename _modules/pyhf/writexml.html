@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.writexml &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.writexml</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.writexml</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># TODO: Move to uproot4 when ROOT file writing is supported</span>
+<span class="kn">import</span> <span class="nn">uproot3</span> <span class="k">as</span> <span class="nn">uproot</span>
+<span class="kn">from</span> <span class="nn">uproot3_methods.classes</span> <span class="kn">import</span> <span class="n">TH1</span>
+
+<span class="kn">from</span> <span class="nn">.mixins</span> <span class="kn">import</span> <span class="n">_ChannelSummaryMixin</span>
+
+<span class="n">_ROOT_DATA_FILE</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># &#39;spec&#39; gets passed through all functions as NormFactor is a unique case of having</span>
+<span class="c1"># parameter configurations stored at the modifier-definition-spec level. This means</span>
+<span class="c1"># that build_modifier() needs access to the measurements. The call stack is:</span>
+<span class="c1">#</span>
+<span class="c1">#      writexml</span>
+<span class="c1">#          -&gt;build_channel</span>
+<span class="c1">#              -&gt;build_sample</span>
+<span class="c1">#                  -&gt;build_modifier</span>
+<span class="c1">#</span>
+<span class="c1">#  Therefore, &#39;spec&#39; needs to be threaded through all these calls.</span>
+
+
+<span class="k">def</span> <span class="nf">_make_hist_name</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;hist&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">middle</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">channel</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">modifier</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">middle</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_export_root_histogram</span><span class="p">(</span><span class="n">histname</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">TH1</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">hist</span><span class="o">.</span><span class="n">_fName</span> <span class="o">=</span> <span class="n">histname</span>
+    <span class="k">if</span> <span class="n">histname</span> <span class="ow">in</span> <span class="n">_ROOT_DATA_FILE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate key </span><span class="si">{</span><span class="n">histname</span><span class="si">}</span><span class="s2"> being written.&quot;</span><span class="p">)</span>
+    <span class="n">_ROOT_DATA_FILE</span><span class="p">[</span><span class="n">histname</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span>
+
+
+<span class="c1"># https://stackoverflow.com/a/4590052</span>
+<div class="viewcode-block" id="indent"><a class="viewcode-back" href="../../_generated/pyhf.writexml.indent.html#pyhf.writexml.indent">[docs]</a><span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">level</span> <span class="o">*</span> <span class="s2">&quot;  &quot;</span>
+    <span class="k">if</span> <span class="n">elem</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">for</span> <span class="n">subelem</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">:</span>
+            <span class="n">indent</span><span class="p">(</span><span class="n">subelem</span><span class="p">,</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span></div>
+
+
+<div class="viewcode-block" id="build_measurement"><a class="viewcode-back" href="../../_generated/pyhf.writexml.build_measurement.html#pyhf.writexml.build_measurement">[docs]</a><span class="k">def</span> <span class="nf">build_measurement</span><span class="p">(</span><span class="n">measurementspec</span><span class="p">,</span> <span class="n">modifiertypes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the XML measurement specification for a given measurement adhering to defs.json/#definitions/measurement.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        measurementspec (:obj:`dict`): The measurements specification from a :class:`~pyhf.workspace.Workspace`.</span>
+<span class="sd">        modifiertypes (:obj:`dict`): A mapping from modifier name (:obj:`str`) to modifier type (:obj:`str`).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`xml.etree.cElementTree.Element`: The XML measurement specification.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># need to determine prefixes</span>
+    <span class="n">prefixes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;normsys&#39;</span><span class="p">:</span> <span class="s1">&#39;alpha_&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;histosys&#39;</span><span class="p">:</span> <span class="s1">&#39;alpha_&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;shapesys&#39;</span><span class="p">:</span> <span class="s1">&#39;gamma_&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;staterror&#39;</span><span class="p">:</span> <span class="s1">&#39;gamma_&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">measurementspec</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">measurementspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">poi</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;poi&#39;</span><span class="p">]</span>
+
+    <span class="c1"># we want to know which parameters are fixed (constant)</span>
+    <span class="c1"># and to additionally extract the luminosity information</span>
+    <span class="n">fixed_params</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lumi</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">lumierr</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">pname</span> <span class="o">=</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pname</span> <span class="o">==</span> <span class="s1">&#39;lumi&#39;</span><span class="p">:</span>
+                <span class="n">fixed_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Lumi&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefixes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">modifiertypes</span><span class="p">[</span><span class="n">pname</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">fixed_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">pname</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># we found luminosity, so handle it</span>
+        <span class="k">if</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lumi&#39;</span><span class="p">:</span>
+            <span class="n">lumi</span> <span class="o">=</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;auxdata&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">lumierr</span> <span class="o">=</span> <span class="n">parameter</span><span class="p">[</span><span class="s1">&#39;sigmas&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># define measurement</span>
+    <span class="n">meas</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
+        <span class="s2">&quot;Measurement&quot;</span><span class="p">,</span>
+        <span class="n">Name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">Lumi</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">lumi</span><span class="p">),</span>
+        <span class="n">LumiRelErr</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">lumierr</span><span class="p">),</span>
+        <span class="n">ExportOnly</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">poiel</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;POI&#39;</span><span class="p">)</span>
+    <span class="n">poiel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">poi</span>
+    <span class="n">meas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poiel</span><span class="p">)</span>
+
+    <span class="c1"># add fixed parameters (constant)</span>
+    <span class="k">if</span> <span class="n">fixed_params</span><span class="p">:</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;ParamSetting&#39;</span><span class="p">,</span> <span class="n">Const</span><span class="o">=</span><span class="s1">&#39;True&#39;</span><span class="p">)</span>
+        <span class="n">se</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fixed_params</span><span class="p">)</span>
+        <span class="n">meas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">se</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">meas</span></div>
+
+
+<div class="viewcode-block" id="build_modifier"><a class="viewcode-back" href="../../_generated/pyhf.writexml.build_modifier.html#pyhf.writexml.build_modifier">[docs]</a><span class="k">def</span> <span class="nf">build_modifier</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">modifierspec</span><span class="p">,</span> <span class="n">channelname</span><span class="p">,</span> <span class="n">samplename</span><span class="p">,</span> <span class="n">sampledata</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lumi&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">mod_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;histosys&#39;</span><span class="p">:</span> <span class="s1">&#39;HistoSys&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;staterror&#39;</span><span class="p">:</span> <span class="s1">&#39;StatError&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;normsys&#39;</span><span class="p">:</span> <span class="s1">&#39;OverallSys&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;shapesys&#39;</span><span class="p">:</span> <span class="s1">&#39;ShapeSys&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;normfactor&#39;</span><span class="p">:</span> <span class="s1">&#39;NormFactor&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;shapefactor&#39;</span><span class="p">:</span> <span class="s1">&#39;ShapeFactor&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]}</span>
+    <span class="k">if</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;histosys&#39;</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoNameLow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span>
+            <span class="n">channelname</span><span class="p">,</span> <span class="n">samplename</span><span class="p">,</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span>
+        <span class="p">)</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoNameHigh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span>
+            <span class="n">channelname</span><span class="p">,</span> <span class="n">samplename</span><span class="p">,</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;High&#39;</span>
+        <span class="p">)</span>
+        <span class="n">_export_root_histogram</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoNameLow&#39;</span><span class="p">],</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;lo_data&#39;</span><span class="p">])</span>
+        <span class="n">_export_root_histogram</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoNameHigh&#39;</span><span class="p">],</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;hi_data&#39;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;normsys&#39;</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;High&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;hi&#39;</span><span class="p">])</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;lo&#39;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;normfactor&#39;</span><span class="p">:</span>
+        <span class="c1"># NB: only look at first measurement for normfactor configs. In order</span>
+        <span class="c1"># to dump as HistFactory XML, this has to be the same for all</span>
+        <span class="c1"># measurements or it will not work correctly. Why?</span>
+        <span class="c1">#</span>
+        <span class="c1"># Unlike other modifiers, NormFactor has the unique circumstance of</span>
+        <span class="c1"># defining its parameter configurations at the modifier level inside</span>
+        <span class="c1"># the channel specification, instead of at the measurement level, like</span>
+        <span class="c1"># all of the other modifiers.</span>
+        <span class="c1">#</span>
+        <span class="c1"># However, since I strive for perfection, the &quot;Const&quot; attribute will</span>
+        <span class="c1"># never be set here, but at the per-measurement configuration instead</span>
+        <span class="c1"># like all other parameters. This is an acceptable compromise.</span>
+        <span class="c1">#</span>
+        <span class="c1"># Lastly, if a normfactor parameter configuration doesn&#39;t exist in the</span>
+        <span class="c1"># first measurement parameter configuration, then set defaults.</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">high</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;inits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;High&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;staterror&#39;</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Activate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;True&#39;</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span>
+            <span class="n">channelname</span><span class="p">,</span> <span class="n">samplename</span><span class="p">,</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="c1"># need to make this a relative uncertainty stored in ROOT file</span>
+        <span class="n">_export_root_histogram</span><span class="p">(</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+                <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span>
+                <span class="n">sampledata</span><span class="p">,</span>
+                <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sampledata</span><span class="p">),</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sampledata</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;shapesys&#39;</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;ConstraintType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Poisson&#39;</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span>
+            <span class="n">channelname</span><span class="p">,</span> <span class="n">samplename</span><span class="p">,</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1"># need to make this a relative uncertainty stored in ROOT file</span>
+        <span class="n">_export_root_histogram</span><span class="p">(</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">],</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+                    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">sampledata</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;shapefactor&#39;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Skipping modifier </span><span class="si">{</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) for now&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">modifier</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">mod_map</span><span class="p">[</span><span class="n">modifierspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]],</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modifier</span></div>
+
+
+<div class="viewcode-block" id="build_sample"><a class="viewcode-back" href="../../_generated/pyhf.writexml.build_sample.html#pyhf.writexml.build_sample">[docs]</a><span class="k">def</span> <span class="nf">build_sample</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">samplespec</span><span class="p">,</span> <span class="n">channelname</span><span class="p">):</span>
+    <span class="n">histname</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span><span class="n">channelname</span><span class="p">,</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;HistoName&#39;</span><span class="p">:</span> <span class="n">histname</span><span class="p">,</span>
+        <span class="s1">&#39;InputFile&#39;</span><span class="p">:</span> <span class="n">_ROOT_DATA_FILE</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span>
+        <span class="s1">&#39;NormalizeByTheory&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;Sample&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">modspec</span> <span class="ow">in</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;modifiers&#39;</span><span class="p">]:</span>
+        <span class="c1"># if lumi modifier added for this sample, need to set NormalizeByTheory</span>
+        <span class="k">if</span> <span class="n">modspec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lumi&#39;</span><span class="p">:</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;NormalizeByTheory&#39;</span><span class="p">:</span> <span class="s1">&#39;True&#39;</span><span class="p">})</span>
+        <span class="n">modifier</span> <span class="o">=</span> <span class="n">build_modifier</span><span class="p">(</span>
+            <span class="n">spec</span><span class="p">,</span> <span class="n">modspec</span><span class="p">,</span> <span class="n">channelname</span><span class="p">,</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">modifier</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modifier</span><span class="p">)</span>
+    <span class="n">_export_root_histogram</span><span class="p">(</span><span class="n">histname</span><span class="p">,</span> <span class="n">samplespec</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+
+<div class="viewcode-block" id="build_data"><a class="viewcode-back" href="../../_generated/pyhf.writexml.build_data.html#pyhf.writexml.build_data">[docs]</a><span class="k">def</span> <span class="nf">build_data</span><span class="p">(</span><span class="n">obsspec</span><span class="p">,</span> <span class="n">channelname</span><span class="p">):</span>
+    <span class="n">histname</span> <span class="o">=</span> <span class="n">_make_hist_name</span><span class="p">(</span><span class="n">channelname</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">HistoName</span><span class="o">=</span><span class="n">histname</span><span class="p">,</span> <span class="n">InputFile</span><span class="o">=</span><span class="n">_ROOT_DATA_FILE</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+
+    <span class="n">observation</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">obs</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obsspec</span> <span class="k">if</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">channelname</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_export_root_histogram</span><span class="p">(</span><span class="n">histname</span><span class="p">,</span> <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="build_channel"><a class="viewcode-back" href="../../_generated/pyhf.writexml.build_channel.html#pyhf.writexml.build_channel">[docs]</a><span class="k">def</span> <span class="nf">build_channel</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">channelspec</span><span class="p">,</span> <span class="n">obsspec</span><span class="p">):</span>
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
+        <span class="s1">&#39;Channel&#39;</span><span class="p">,</span> <span class="n">Name</span><span class="o">=</span><span class="n">channelspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">InputFile</span><span class="o">=</span><span class="n">_ROOT_DATA_FILE</span><span class="o">.</span><span class="n">_path</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">obsspec</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">build_data</span><span class="p">(</span><span class="n">obsspec</span><span class="p">,</span> <span class="n">channelspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">samplespec</span> <span class="ow">in</span> <span class="n">channelspec</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]:</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">build_sample</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">samplespec</span><span class="p">,</span> <span class="n">channelspec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">channel</span></div>
+
+
+<div class="viewcode-block" id="writexml"><a class="viewcode-back" href="../../_generated/pyhf.writexml.writexml.html#pyhf.writexml.writexml">[docs]</a><span class="k">def</span> <span class="nf">writexml</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">specdir</span><span class="p">,</span> <span class="n">data_rootdir</span><span class="p">,</span> <span class="n">resultprefix</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_ROOT_DATA_FILE</span>
+
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
+        <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;schemas/HistFactorySchema.dtd&#39;</span><span class="p">),</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">specdir</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;HistFactorySchema.dtd&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">combination</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
+        <span class="s2">&quot;Combination&quot;</span><span class="p">,</span> <span class="n">OutputFilePrefix</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">specdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">resultprefix</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">uproot</span><span class="o">.</span><span class="n">recreate</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">data_rootdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;data.root&#39;</span><span class="p">))</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">_ROOT_DATA_FILE</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">channelspec</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]:</span>
+            <span class="n">channelfilename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">specdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">resultprefix</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">channelspec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.xml&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">channelfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channelfile</span><span class="p">:</span>
+                <span class="n">channel</span> <span class="o">=</span> <span class="n">build_channel</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">channelspec</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">))</span>
+                <span class="n">indent</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                <span class="n">channelfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;&lt;!DOCTYPE Channel SYSTEM &#39;../HistFactorySchema.dtd&#39;&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">channelfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="n">inp</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">)</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">channelfilename</span>
+            <span class="n">combination</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+
+    <span class="c1"># need information about modifier types to get the right prefix in measurement</span>
+    <span class="n">mixin</span> <span class="o">=</span> <span class="n">_ChannelSummaryMixin</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]:</span>
+        <span class="n">combination</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">build_measurement</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mixin</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)))</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&lt;!DOCTYPE Combination  SYSTEM &#39;HistFactorySchema.dtd&#39;&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
+        <span class="n">combination</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

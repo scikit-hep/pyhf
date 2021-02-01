@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.set_backend &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyhf.readxml" href="pyhf.readxml.html" />
+    <link rel="prev" title="pyhf.get_backend" href="pyhf.get_backend.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Python API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#top-level">Top-Level</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyhf.default_backend.html">pyhf.default_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.default_optimizer.html">pyhf.default_optimizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.tensorlib.html">pyhf.tensorlib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.optimizer.html">pyhf.optimizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.get_backend.html">pyhf.get_backend</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyhf.set_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.readxml.html">pyhf.readxml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyhf.writexml.html">pyhf.writexml</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#probability-distribution-functions-pdfs">Probability Distribution Functions (PDFs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#making-models-from-pdfs">Making Models from PDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#backends">Backends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#optimizers">Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#modifiers">Modifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#interpolators">Interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#utilities">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#contrib">Contrib</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">Python API</a> &raquo;</li>
+        
+      <li>pyhf.set_backend</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_generated/pyhf.set_backend.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="pyhf-set-backend">
+<h1>pyhf.set_backend<a class="headerlink" href="#pyhf-set-backend" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="pyhf.set_backend">
+<code class="sig-prename descclassname">pyhf.</code><code class="sig-name descname">set_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em>, <em class="sig-param"><span class="n">custom_optimizer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyhf.html#set_backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyhf.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the backend and the associated optimizer</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;tensorflow&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;tensorflow&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">precision</span>
+<span class="go">&#39;32b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;pytorch&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="s2">&quot;64b&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;pytorch&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">precision</span>
+<span class="go">&#39;64b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">numpy_backend</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;numpy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyhf</span><span class="o">.</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">precision</span>
+<span class="go">&#39;64b&#39;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <cite>pyhf.tensor</cite> backend) – One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX</p></li>
+<li><p><strong>custom_optimizer</strong> (<cite>pyhf.optimize</cite> optimizer) – Optional custom optimizer defined by the user</p></li>
+<li><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Floating point precision to use in the backend: <code class="docutils literal notranslate"><span class="pre">64b</span></code> or <code class="docutils literal notranslate"><span class="pre">32b</span></code>. Default is backend dependent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="pyhf.readxml.html" class="btn btn-neutral float-right" title="pyhf.readxml" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyhf.get_backend.html" class="btn btn-neutral float-left" title="pyhf.get_backend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

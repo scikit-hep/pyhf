@@ -1,0 +1,24 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/interpolators
+
+code4
+=====
+
+.. currentmodule:: pyhf.interpolators
+
+.. autoclass:: code4
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: code4.__init__
+   
+   
+   

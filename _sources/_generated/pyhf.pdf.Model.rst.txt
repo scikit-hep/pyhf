@@ -1,0 +1,53 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/pdf
+
+Model
+=====
+
+.. currentmodule:: pyhf.pdf
+
+.. autoclass:: Model
+   :show-inheritance:
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: Model.nominal_rates
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: Model.__init__
+   
+   
+   .. automethod:: Model.constraint_logpdf
+   
+   
+   .. automethod:: Model.expected_actualdata
+   
+   
+   .. automethod:: Model.expected_auxdata
+   
+   
+   .. automethod:: Model.expected_data
+   
+   
+   .. automethod:: Model.logpdf
+   
+   
+   .. automethod:: Model.mainlogpdf
+   
+   
+   .. automethod:: Model.make_pdf
+   
+   
+   .. automethod:: Model.pdf
+   
+   
+   

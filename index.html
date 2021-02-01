@@ -1,0 +1,522 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pure-python fitting/limit-setting/interval estimation HistFactory-style &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>pure-python fitting/limit-setting/interval estimation HistFactory-style</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="toctree-wrapper compound">
+</div>
+<a class="github-fork-ribbon right-top fixed" href="https://github.com/scikit-hep/pyhf/" data-ribbon="View me on GitHub" title="View me on GitHub">View me on GitHub</a><a class="reference internal image-reference" href="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo-small.png"><img alt="pyhf logo" class="align-center" src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo-small.png" style="width: 320px;" /></a>
+<div class="section" id="pure-python-fitting-limit-setting-interval-estimation-histfactory-style">
+<h1>pure-python fitting/limit-setting/interval estimation HistFactory-style<a class="headerlink" href="#pure-python-fitting-limit-setting-interval-estimation-histfactory-style" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/scikit-hep/pyhf"><img alt="GitHub Project" src="https://img.shields.io/badge/GitHub--blue?style=social&amp;logo=GitHub" /></a> <a class="reference external" href="https://doi.org/10.5281/zenodo.1169739"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg" /></a> <a class="reference external" href="https://scikit-hep.org/"><img alt="Scikit-HEP" src="https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg" /></a> <a class="reference external" href="https://nsf.gov/awardsearch/showAward?AWD_ID=1836650"><img alt="NSF Award Number" src="https://img.shields.io/badge/NSF-1836650-blue.svg" /></a></p>
+<p><a class="reference external" href="https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster"><img alt="GitHub Actions Status: CI" src="https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amaster"><img alt="GitHub Actions Status: Docs" src="https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=master" /></a> <a class="reference external" href="https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster"><img alt="GitHub Actions Status: Publish" src="https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=master" /></a>
+<a class="reference external" href="https://hub.docker.com/r/pyhf/pyhf/"><img alt="Docker Automated" src="https://img.shields.io/docker/automated/pyhf/pyhf.svg" /></a> <a class="reference external" href="https://codecov.io/gh/scikit-hep/pyhf?branch=master"><img alt="Code Coverage" src="https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master" /></a> <a class="reference external" href="https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/scikit-hep/pyhf.svg?logo=lgtm&amp;logoWidth=18" /></a> <a class="reference external" href="https://www.codefactor.io/repository/github/scikit-hep/pyhf"><img alt="CodeFactor" src="https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge" /></a>
+<a class="reference external" href="https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/master"><img alt="pre-commit.ci status" src="https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg" /></a> <a class="reference external" href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a></p>
+<p><a class="reference external" href="https://scikit-hep.github.io/pyhf"><img alt="Docs" src="https://img.shields.io/badge/docs-master-blue.svg" /></a> <a class="reference external" href="https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+<p><a class="reference external" href="https://badge.fury.io/py/pyhf"><img alt="PyPI version" src="https://badge.fury.io/py/pyhf.svg" /></a> <a class="reference external" href="https://github.com/conda-forge/pyhf-feedstock"><img alt="Conda-forge version" src="https://img.shields.io/conda/vn/conda-forge/pyhf.svg" /></a> <a class="reference external" href="https://pypi.org/project/pyhf/"><img alt="Supported Python versions" src="https://img.shields.io/pypi/pyversions/pyhf.svg" /></a> <a class="reference external" href="https://hub.docker.com/r/pyhf/pyhf/"><img alt="Docker Stars" src="https://img.shields.io/docker/stars/pyhf/pyhf.svg" /></a> <a class="reference external" href="https://hub.docker.com/r/pyhf/pyhf/"><img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/pyhf/pyhf.svg" /></a></p>
+<p>The HistFactory p.d.f. template
+[<a class="reference external" href="https://cds.cern.ch/record/1456844">CERN-OPEN-2012-016</a>] is per-se
+independent of its implementation in ROOT and sometimes, it’s useful to
+be able to run statistical analysis outside of ROOT, RooFit, RooStats
+framework.</p>
+<p>This repo is a pure-python implementation of that statistical model for
+multi-bin histogram-based analysis and its interval estimation is based
+on the asymptotic formulas of “Asymptotic formulae for likelihood-based
+tests of new physics”
+[<a class="reference external" href="https://arxiv.org/abs/1007.1727">arXiv:1007.1727</a>]. The aim is also
+to support modern computational graph libraries such as PyTorch and
+TensorFlow in order to make use of features such as autodifferentiation
+and GPU acceleration.</p>
+<div class="section" id="hello-world">
+<h2>Hello World<a class="headerlink" href="#hello-world" title="Permalink to this headline">¶</a></h2>
+<p>This is how you use the <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> Python API to build a statistical model and run basic inference:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">simplemodels</span><span class="o">.</span><span class="n">hepdata_like</span><span class="p">(</span><span class="n">signal_data</span><span class="o">=</span><span class="p">[</span><span class="mf">12.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">],</span> <span class="n">bkg_data</span><span class="o">=</span><span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">52.0</span><span class="p">],</span> <span class="n">bkg_uncerts</span><span class="o">=</span><span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">51</span><span class="p">,</span> <span class="mi">48</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auxdata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_mu</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CLs_obs</span><span class="p">,</span> <span class="n">CLs_exp</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">hypotest</span><span class="p">(</span><span class="n">test_mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span> <span class="n">return_expected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observed: </span><span class="si">{</span><span class="n">CLs_obs</span><span class="si">}</span><span class="s2">, Expected: </span><span class="si">{</span><span class="n">CLs_exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Observed: 0.05251497423736956, Expected: 0.06445320535890459</span>
+</pre></div>
+</div>
+<p>Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wspace</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">Workspace</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://git.io/JJYDE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">wspace</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">wspace</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_mu</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CLs_obs</span><span class="p">,</span> <span class="n">CLs_exp</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">hypotest</span><span class="p">(</span><span class="n">test_mu</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span> <span class="n">return_expected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observed: </span><span class="si">{</span><span class="n">CLs_obs</span><span class="si">}</span><span class="s2">, Expected: </span><span class="si">{</span><span class="n">CLs_exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Observed: 0.3599840922126626, Expected: 0.3599840922126626</span>
+</pre></div>
+</div>
+<p>Finally, you can also use the command line interface that <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> provides</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ cat <span class="s">&lt;&lt; EOF  | tee likelihood.json | pyhf cls</span>
+<span class="s">{</span>
+<span class="s">    &quot;channels&quot;: [</span>
+<span class="s">        { &quot;name&quot;: &quot;singlechannel&quot;,</span>
+<span class="s">          &quot;samples&quot;: [</span>
+<span class="s">            { &quot;name&quot;: &quot;signal&quot;,</span>
+<span class="s">              &quot;data&quot;: [12.0, 11.0],</span>
+<span class="s">              &quot;modifiers&quot;: [ { &quot;name&quot;: &quot;mu&quot;, &quot;type&quot;: &quot;normfactor&quot;, &quot;data&quot;: null} ]</span>
+<span class="s">            },</span>
+<span class="s">            { &quot;name&quot;: &quot;background&quot;,</span>
+<span class="s">              &quot;data&quot;: [50.0, 52.0],</span>
+<span class="s">              &quot;modifiers&quot;: [ {&quot;name&quot;: &quot;uncorr_bkguncrt&quot;, &quot;type&quot;: &quot;shapesys&quot;, &quot;data&quot;: [3.0, 7.0]} ]</span>
+<span class="s">            }</span>
+<span class="s">          ]</span>
+<span class="s">        }</span>
+<span class="s">    ],</span>
+<span class="s">    &quot;observations&quot;: [</span>
+<span class="s">        { &quot;name&quot;: &quot;singlechannel&quot;, &quot;data&quot;: [51.0, 48.0] }</span>
+<span class="s">    ],</span>
+<span class="s">    &quot;measurements&quot;: [</span>
+<span class="s">        { &quot;name&quot;: &quot;Measurement&quot;, &quot;config&quot;: {&quot;poi&quot;: &quot;mu&quot;, &quot;parameters&quot;: []} }</span>
+<span class="s">    ],</span>
+<span class="s">    &quot;version&quot;: &quot;1.0.0&quot;</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>which should produce the following JSON output:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="nt">&quot;CLs_exp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="mf">0.0026062609501074576</span><span class="p">,</span>
+      <span class="mf">0.01382005356161206</span><span class="p">,</span>
+      <span class="mf">0.06445320535890459</span><span class="p">,</span>
+      <span class="mf">0.23525643861460702</span><span class="p">,</span>
+      <span class="mf">0.573036205919389</span>
+   <span class="p">],</span>
+   <span class="nt">&quot;CLs_obs&quot;</span><span class="p">:</span> <span class="mf">0.05251497423736956</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-does-it-support">
+<h2>What does it support<a class="headerlink" href="#what-does-it-support" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Implemented variations:</dt><dd><ul class="simple">
+<li><p>☑ HistoSys</p></li>
+<li><p>☑ OverallSys</p></li>
+<li><p>☑ ShapeSys</p></li>
+<li><p>☑ NormFactor</p></li>
+<li><p>☑ Multiple Channels</p></li>
+<li><p>☑ Import from XML + ROOT via <a class="reference external" href="https://github.com/scikit-hep/uproot">uproot</a></p></li>
+<li><p>☑ ShapeFactor</p></li>
+<li><p>☑ StatError</p></li>
+<li><p>☑ Lumi Uncertainty</p></li>
+<li><p>☑ Non-asymptotic calculators</p></li>
+</ul>
+</dd>
+<dt>Computational Backends:</dt><dd><ul class="simple">
+<li><p>☑ NumPy</p></li>
+<li><p>☑ PyTorch</p></li>
+<li><p>☑ TensorFlow</p></li>
+<li><p>☑ JAX</p></li>
+</ul>
+</dd>
+<dt>Optimizers:</dt><dd><ul class="simple">
+<li><p>☑ SciPy (<code class="docutils literal notranslate"><span class="pre">scipy.optimize</span></code>)</p></li>
+<li><p>☑ MINUIT (<code class="docutils literal notranslate"><span class="pre">iminuit</span></code>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>All backends can be used in combination with all optimizers.
+Custom user backends and optimizers can be used as well.</p>
+</div>
+<div class="section" id="todo">
+<h2>Todo<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>☐ StatConfig</p></li>
+</ul>
+<p>results obtained from this package are validated against output computed
+from HistFactory workspaces</p>
+</div>
+<div class="section" id="a-one-bin-example">
+<h2>A one bin example<a class="headerlink" href="#a-one-bin-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pyhf.contrib.viz.brazil</span>
+
+<span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">simplemodels</span><span class="o">.</span><span class="n">hepdata_like</span><span class="p">(</span>
+    <span class="n">signal_data</span><span class="o">=</span><span class="p">[</span><span class="mf">10.0</span><span class="p">],</span> <span class="n">bkg_data</span><span class="o">=</span><span class="p">[</span><span class="mf">50.0</span><span class="p">],</span> <span class="n">bkg_uncerts</span><span class="o">=</span><span class="p">[</span><span class="mf">7.0</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">55.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auxdata</span>
+
+<span class="n">poi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pyhf</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">hypotest</span><span class="p">(</span>
+        <span class="n">test_poi</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span> <span class="n">return_expected_set</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">test_poi</span> <span class="ow">in</span> <span class="n">poi_vals</span>
+<span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mu$ (POI)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mathrm</span><span class="si">{CL}</span><span class="s2">_</span><span class="si">{s}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">pyhf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">brazil</span><span class="o">.</span><span class="n">plot_results</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">poi_vals</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>pyhf</strong></p>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png"><img alt="manual" class="align-center" src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png" style="width: 500px;" /></a>
+<p><strong>ROOT</strong></p>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png"><img alt="manual" class="align-center" src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="a-two-bin-example">
+<h2>A two bin example<a class="headerlink" href="#a-two-bin-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyhf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pyhf.contrib.viz.brazil</span>
+
+<span class="n">pyhf</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyhf</span><span class="o">.</span><span class="n">simplemodels</span><span class="o">.</span><span class="n">hepdata_like</span><span class="p">(</span>
+    <span class="n">signal_data</span><span class="o">=</span><span class="p">[</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">],</span> <span class="n">bkg_data</span><span class="o">=</span><span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="n">bkg_uncerts</span><span class="o">=</span><span class="p">[</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">145.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auxdata</span>
+
+<span class="n">poi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pyhf</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">hypotest</span><span class="p">(</span>
+        <span class="n">test_poi</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">test_stat</span><span class="o">=</span><span class="s2">&quot;qtilde&quot;</span><span class="p">,</span> <span class="n">return_expected_set</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">test_poi</span> <span class="ow">in</span> <span class="n">poi_vals</span>
+<span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mu$ (POI)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mathrm</span><span class="si">{CL}</span><span class="s2">_</span><span class="si">{s}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">pyhf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">brazil</span><span class="o">.</span><span class="n">plot_results</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">poi_vals</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>pyhf</strong></p>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png"><img alt="manual" class="align-center" src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png" style="width: 500px;" /></a>
+<p><strong>ROOT</strong></p>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png"><img alt="manual" class="align-center" src="https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> from PyPI with the NumPy backend run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install pyhf
+</pre></div>
+</div>
+<p>and to install <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> with all additional backends run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install pyhf<span class="o">[</span>backends<span class="o">]</span>
+</pre></div>
+</div>
+<p>or a subset of the options.</p>
+<p>To uninstall run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip uninstall pyhf
+</pre></div>
+</div>
+</div>
+<div class="section" id="questions">
+<h2>Questions<a class="headerlink" href="#questions" title="Permalink to this headline">¶</a></h2>
+<p>If you have a question about the use of <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> not covered in <a class="reference external" href="https://scikit-hep.org/pyhf/">the
+documentation</a>, please ask a question
+on <a class="reference external" href="https://stackoverflow.com/questions/tagged/pyhf">Stack Overflow</a>
+with the <code class="docutils literal notranslate"><span class="pre">[pyhf]</span></code> tag, which the <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> dev team
+<a class="reference external" href="https://stackoverflow.com/questions/tagged/pyhf?sort=Newest&amp;filters=NoAcceptedAnswer&amp;edited=true">watches</a>.</p>
+<a class="reference external image-reference" href="https://stackoverflow.com/questions/tagged/pyhf"><img alt="Stack Overflow pyhf tag" class="align-center" src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png" style="width: 50%;" /></a>
+<p>If you believe you have found a bug in <code class="docutils literal notranslate"><span class="pre">pyhf</span></code>, please report it in the
+<a class="reference external" href="https://github.com/scikit-hep/pyhf/issues/new?template=Bug-Report.md&amp;labels=bug&amp;title=Bug+Report+:+Title+Here">GitHub
+Issues</a>.
+If you’re interested in getting updates from the <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> dev team and release
+announcements you can join the <a class="reference external" href="https://groups.google.com/group/pyhf-announcements/subscribe"><code class="docutils literal notranslate"><span class="pre">pyhf-announcements</span></code> mailing list</a>.</p>
+</div>
+<div class="section" id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
+<p>As noted in <a class="reference external" href="https://scikit-hep.org/pyhf/citations.html">Use and
+Citations</a>, the preferred
+BibTeX entry for citation of <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> is</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@software</span><span class="p">{</span><span class="nl">pyhf</span><span class="p">,</span>
+  <span class="na">author</span> <span class="p">=</span> <span class="s">&quot;{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}&quot;</span><span class="p">,</span>
+  <span class="na">title</span> <span class="p">=</span> <span class="s">&quot;{pyhf: v0.5.4}&quot;</span><span class="p">,</span>
+  <span class="na">version</span> <span class="p">=</span> <span class="s">{0.5.4}</span><span class="p">,</span>
+  <span class="na">doi</span> <span class="p">=</span> <span class="s">{10.5281/zenodo.1169739}</span><span class="p">,</span>
+  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://github.com/scikit-hep/pyhf}</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pyhf</span></code> is openly developed by Lukas Heinrich, Matthew Feickert, and Giordon Stark.</p>
+<p>Please check the <a class="reference external" href="https://github.com/scikit-hep/pyhf/graphs/contributors">contribution statistics for a list of
+contributors</a>.</p>
+</div>
+<div class="section" id="milestones">
+<h2>Milestones<a class="headerlink" href="#milestones" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>2020-07-28: 1000 GitHub issues and pull requests. (See PR <a class="reference external" href="https://github.com/scikit-hep/pyhf/pull/1000">#1000</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>Matthew Feickert has received support to work on <code class="docutils literal notranslate"><span class="pre">pyhf</span></code> provided by NSF
+cooperative agreement <a class="reference external" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1836650">OAC-1836650</a> (IRIS-HEP)
+and grant <a class="reference external" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377">OAC-1450377</a> (DIANA/HEP).</p>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="intro.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+pyhf.contrib.viz.brazil.plot\_results
+=====================================
+
+.. currentmodule:: pyhf.contrib.viz.brazil
+
+.. autofunction:: plot_results

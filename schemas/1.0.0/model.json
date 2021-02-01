@@ -1,0 +1,5 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://scikit-hep.org/pyhf/schemas/1.0.0/model.json",
+    "$ref": "defs.json#/definitions/model"
+}

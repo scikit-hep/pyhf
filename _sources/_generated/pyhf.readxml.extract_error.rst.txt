@@ -1,0 +1,6 @@
+pyhf.readxml.extract\_error
+===========================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: extract_error

@@ -1,0 +1,36 @@
+﻿:github_url: https://github.com/scikit-hep/pyhf/blob/master/pyhf/infer/calculators
+
+AsymptoticCalculator
+====================
+
+.. currentmodule:: pyhf.infer.calculators
+
+.. autoclass:: AsymptoticCalculator
+   :show-inheritance:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   
+   
+   .. automethod:: AsymptoticCalculator.__init__
+   
+   
+   .. automethod:: AsymptoticCalculator.distributions
+   
+   
+   .. automethod:: AsymptoticCalculator.expected_pvalues
+   
+   
+   .. automethod:: AsymptoticCalculator.pvalues
+   
+   
+   .. automethod:: AsymptoticCalculator.teststatistic
+   
+   
+   

@@ -1,0 +1,6 @@
+pyhf.writexml.build\_measurement
+================================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: build_measurement

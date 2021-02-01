@@ -1,0 +1,6 @@
+pyhf.readxml.dedupe\_parameters
+===============================
+
+.. currentmodule:: pyhf.readxml
+
+.. autofunction:: dedupe_parameters

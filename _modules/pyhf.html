@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>pyhf</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.tensor</span> <span class="kn">import</span> <span class="n">BackendRetriever</span> <span class="k">as</span> <span class="n">tensor</span>
+<span class="kn">from</span> <span class="nn">.optimize</span> <span class="kn">import</span> <span class="n">OptimizerRetriever</span> <span class="k">as</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">InvalidBackend</span><span class="p">,</span> <span class="n">InvalidOptimizer</span><span class="p">,</span> <span class="n">Unsupported</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">events</span>
+
+<span class="n">tensorlib</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="get_backend"><a class="viewcode-back" href="../_generated/pyhf.get_backend.html#pyhf.get_backend">[docs]</a><span class="k">def</span> <span class="nf">get_backend</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current backend and the associated optimizer</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; backend, optimizer = pyhf.get_backend()</span>
+<span class="sd">        &gt;&gt;&gt; backend</span>
+<span class="sd">        &lt;pyhf.tensor.numpy_backend.numpy_backend object at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; optimizer</span>
+<span class="sd">        &lt;pyhf.optimize.scipy_optimizer object at 0x...&gt;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        backend, optimizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">tensorlib</span>
+    <span class="k">global</span> <span class="n">optimizer</span>
+    <span class="k">return</span> <span class="n">tensorlib</span><span class="p">,</span> <span class="n">optimizer</span></div>
+
+
+<span class="n">tensorlib</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">numpy_backend</span><span class="p">()</span>
+<span class="n">default_backend</span> <span class="o">=</span> <span class="n">tensorlib</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">scipy_optimizer</span><span class="p">()</span>
+<span class="n">default_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+
+
+<div class="viewcode-block" id="set_backend"><a class="viewcode-back" href="../_generated/pyhf.set_backend.html#pyhf.set_backend">[docs]</a><span class="nd">@events</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;change_backend&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">set_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">custom_optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the backend and the associated optimizer</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import pyhf</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(&quot;tensorflow&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.name</span>
+<span class="sd">        &#39;tensorflow&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.precision</span>
+<span class="sd">        &#39;32b&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(b&quot;pytorch&quot;, precision=&quot;64b&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.name</span>
+<span class="sd">        &#39;pytorch&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.precision</span>
+<span class="sd">        &#39;64b&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.set_backend(pyhf.tensor.numpy_backend())</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.name</span>
+<span class="sd">        &#39;numpy&#39;</span>
+<span class="sd">        &gt;&gt;&gt; pyhf.tensorlib.precision</span>
+<span class="sd">        &#39;64b&#39;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        backend (:obj:`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX</span>
+<span class="sd">        custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user</span>
+<span class="sd">        precision (:obj:`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">tensorlib</span>
+    <span class="k">global</span> <span class="n">optimizer</span>
+
+    <span class="n">_supported_precisions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;32b&quot;</span><span class="p">,</span> <span class="s2">&quot;64b&quot;</span><span class="p">]</span>
+    <span class="n">backend_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">precision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">backend_kwargs</span><span class="p">[</span><span class="s2">&quot;precision&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">_backend&quot;</span><span class="p">)(</span><span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidBackend</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The backend provided is not supported: </span><span class="si">{</span><span class="n">backend</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">. Select from one of the supported backends: numpy, tensorflow, pytorch&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">_name_supported</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">_backend&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_name_supported</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">_name_supported</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">&#39; is not a valid name attribute for backend type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">                 Custom backends must have names unique from supported backends&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">precision</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_supported_precisions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Unsupported</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The backend precision provided is not supported: </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">precision</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">. Select from one of the supported precisions: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_supported_precisions</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># If &quot;precision&quot; arg passed, it should always win</span>
+    <span class="c1"># If no &quot;precision&quot; arg, defer to tensor backend object API if set there</span>
+    <span class="k">if</span> <span class="n">precision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">backend</span><span class="o">.</span><span class="n">precision</span> <span class="o">!=</span> <span class="n">precision</span><span class="p">:</span>
+            <span class="n">backend_kwargs</span><span class="p">[</span><span class="s2">&quot;precision&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">_backend&quot;</span><span class="p">)(</span><span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># need to determine if the tensorlib changed or the optimizer changed for events</span>
+    <span class="n">tensorlib_changed</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">precision</span> <span class="o">!=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">optimizer_changed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">custom_optimizer</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">custom_optimizer</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">custom_optimizer</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">custom_optimizer</span> <span class="o">=</span> <span class="n">custom_optimizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_optimizer</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+                    <span class="n">optimize</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">custom_optimizer</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_optimizer&quot;</span>
+                <span class="p">)()</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InvalidOptimizer</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The optimizer provided is not supported: </span><span class="si">{</span><span class="n">custom_optimizer</span><span class="si">}</span><span class="s2">. Select from one of the supported optimizers: scipy, minuit&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_name_supported</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">optimize</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">custom_optimizer</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">_optimizer&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_name_supported</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">custom_optimizer</span><span class="p">,</span> <span class="n">_name_supported</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">custom_optimizer</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not a valid name attribute for optimizer type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">custom_optimizer</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">                 Custom optimizers must have names unique from supported optimizers&quot;</span>
+                    <span class="p">)</span>
+            <span class="n">new_optimizer</span> <span class="o">=</span> <span class="n">custom_optimizer</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_optimizer</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">scipy_optimizer</span><span class="p">()</span>
+
+    <span class="n">optimizer_changed</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">optimizer</span> <span class="o">!=</span> <span class="n">new_optimizer</span><span class="p">)</span>
+    <span class="c1"># set new backend</span>
+    <span class="n">tensorlib</span> <span class="o">=</span> <span class="n">backend</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">new_optimizer</span>
+    <span class="c1"># trigger events</span>
+    <span class="k">if</span> <span class="n">tensorlib_changed</span><span class="p">:</span>
+        <span class="n">events</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;tensorlib_changed&quot;</span><span class="p">)()</span>
+    <span class="k">if</span> <span class="n">optimizer_changed</span><span class="p">:</span>
+        <span class="n">events</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;optimizer_changed&quot;</span><span class="p">)()</span>
+    <span class="c1"># set up any other globals for backend</span>
+    <span class="n">tensorlib</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span></div>
+
+
+<span class="kn">from</span> <span class="nn">.pdf</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.workspace</span> <span class="kn">import</span> <span class="n">Workspace</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">simplemodels</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">infer</span>
+<span class="kn">from</span> <span class="nn">.patchset</span> <span class="kn">import</span> <span class="n">PatchSet</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Model&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Workspace&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PatchSet&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;infer&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;utils&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;modifiers&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;simplemodels&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;__version__&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

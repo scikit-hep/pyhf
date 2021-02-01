@@ -1,0 +1,6 @@
+pyhf.writexml.indent
+====================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: indent

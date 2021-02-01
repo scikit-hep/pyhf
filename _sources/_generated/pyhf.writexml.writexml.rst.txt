@@ -1,0 +1,6 @@
+pyhf.writexml.writexml
+======================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: writexml

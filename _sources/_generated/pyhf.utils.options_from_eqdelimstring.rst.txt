@@ -1,0 +1,6 @@
+﻿pyhf.utils.options\_from\_eqdelimstring
+=======================================
+
+.. currentmodule:: pyhf.utils
+
+.. autofunction:: options_from_eqdelimstring

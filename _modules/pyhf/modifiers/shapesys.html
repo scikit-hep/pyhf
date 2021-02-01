@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.modifiers.shapesys &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.modifiers.shapesys</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.modifiers.shapesys</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">modifier</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">get_backend</span><span class="p">,</span> <span class="n">default_backend</span><span class="p">,</span> <span class="n">events</span>
+<span class="kn">from</span> <span class="nn">..parameters</span> <span class="kn">import</span> <span class="n">constrained_by_poisson</span><span class="p">,</span> <span class="n">ParamViewer</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="shapesys"><a class="viewcode-back" href="../../../_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys">[docs]</a><span class="nd">@modifier</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;shapesys&#39;</span><span class="p">,</span> <span class="n">constrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pdf_type</span><span class="o">=</span><span class="s1">&#39;poisson&#39;</span><span class="p">,</span> <span class="n">op_code</span><span class="o">=</span><span class="s1">&#39;multiplication&#39;</span>
+<span class="p">)</span>
+<span class="k">class</span> <span class="nc">shapesys</span><span class="p">:</span>
+<div class="viewcode-block" id="shapesys.required_parset"><a class="viewcode-back" href="../../../_generated/pyhf.modifiers.shapesys.html#pyhf.modifiers.shapesys.required_parset">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">required_parset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sample_data</span><span class="p">,</span> <span class="n">modifier_data</span><span class="p">):</span>
+        <span class="c1"># count the number of bins with nonzero, positive yields</span>
+        <span class="n">valid_bins</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">sample_bin</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">modifier_bin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sample_bin</span><span class="p">,</span> <span class="n">modifier_bin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">modifier_data</span><span class="p">,</span> <span class="n">sample_data</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">n_parameters</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">valid_bins</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;paramset_type&#39;</span><span class="p">:</span> <span class="n">constrained_by_poisson</span><span class="p">,</span>
+            <span class="s1">&#39;n_parameters&#39;</span><span class="p">:</span> <span class="n">n_parameters</span><span class="p">,</span>
+            <span class="s1">&#39;is_constrained&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_constrained</span><span class="p">,</span>
+            <span class="s1">&#39;is_shared&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;inits&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,)</span> <span class="o">*</span> <span class="n">n_parameters</span><span class="p">,</span>
+            <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">1e-10</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),)</span> <span class="o">*</span> <span class="n">n_parameters</span><span class="p">,</span>
+            <span class="s1">&#39;fixed&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="c1"># nb: auxdata/factors set by finalize. Set to non-numeric to crash</span>
+            <span class="c1"># if we fail to set auxdata/factors correctly</span>
+            <span class="s1">&#39;auxdata&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">*</span> <span class="n">n_parameters</span><span class="p">,</span>
+            <span class="s1">&#39;factors&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">*</span> <span class="n">n_parameters</span><span class="p">,</span>
+        <span class="p">}</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">shapesys_combined</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shapesys_mods</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="p">,</span> <span class="n">mega_mods</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="n">shapesys_mods</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mods</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">shapesys_mods</span><span class="p">]</span>
+
+        <span class="n">parfield_shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">npars</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_viewer</span> <span class="o">=</span> <span class="n">ParamViewer</span><span class="p">(</span>
+            <span class="n">parfield_shape</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">par_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mods</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mask</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[[</span><span class="n">mega_mods</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">s</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;mask&#39;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">samples</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">keys</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__shapesys_info</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="n">mega_mods</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">s</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;mask&#39;</span><span class="p">],</span>
+                        <span class="n">mega_mods</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">s</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;nom_data&#39;</span><span class="p">],</span>
+                        <span class="n">mega_mods</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">s</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;uncrt&#39;</span><span class="p">],</span>
+                    <span class="p">]</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">samples</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">keys</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span><span class="n">pdfconfig</span><span class="p">)</span>
+
+        <span class="n">global_concatenated_bin_indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[[</span><span class="n">j</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">channels</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pdfconfig</span><span class="o">.</span><span class="n">channel_nbins</span><span class="p">[</span><span class="n">c</span><span class="p">])]]</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_access_field</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="n">global_concatenated_bin_indices</span><span class="p">,</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shapesys_mods</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="c1"># access field is shape (sys, batch, globalbin)</span>
+
+        <span class="c1"># reindex it based on current masking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reindex_access_field</span><span class="p">(</span><span class="n">pdfconfig</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_precompute</span><span class="p">()</span>
+        <span class="n">events</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s1">&#39;tensorlib_changed&#39;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_precompute</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reindex_access_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">syst_index</span><span class="p">,</span> <span class="n">syst_access</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_access_field</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mods</span><span class="p">[</span><span class="n">syst_index</span><span class="p">])</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_access_field</span><span class="p">[</span><span class="n">syst_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">continue</span>
+
+            <span class="n">singular_sample_index</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">idx</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">syst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">default_backend</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mask</span><span class="p">)[</span><span class="n">syst_index</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">syst</span><span class="p">)</span>
+            <span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">batch_index</span><span class="p">,</span> <span class="n">batch_access</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">syst_access</span><span class="p">):</span>
+                <span class="n">selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_viewer</span><span class="o">.</span><span class="n">index_selection</span><span class="p">[</span><span class="n">syst_index</span><span class="p">][</span><span class="n">batch_index</span><span class="p">]</span>
+                <span class="n">access_field_for_syst_and_batch</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">batch_access</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">sample_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mask</span><span class="p">[</span><span class="n">syst_index</span><span class="p">][</span><span class="n">singular_sample_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">access_field_for_syst_and_batch</span><span class="p">[</span><span class="n">sample_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">selection</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_access_field</span><span class="p">[</span>
+                    <span class="n">syst_index</span><span class="p">,</span> <span class="n">batch_index</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">access_field_for_syst_and_batch</span>
+
+    <span class="k">def</span> <span class="nf">_precompute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_viewer</span><span class="o">.</span><span class="n">index_selection</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bool&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">access_field</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_access_field</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_ones</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_default</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tensorlib</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="p">):</span>
+        <span class="c1"># self.__shapesys_info: (parameter, sample, [mask, nominal rate, uncertainty], bin)</span>
+        <span class="k">for</span> <span class="n">mod_uncert_info</span><span class="p">,</span> <span class="n">pname</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__shapesys_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shapesys_mods</span><span class="p">):</span>
+            <span class="c1"># skip cases where given shapesys modifier affects zero samples</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">pname</span><span class="p">)</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># identify the information for the sample that the given parameter</span>
+            <span class="c1"># affects. shapesys is not shared, so there should only ever be at</span>
+            <span class="c1"># most one sample</span>
+            <span class="c1"># sample_uncert_info: ([mask, nominal rate, uncertainty], bin)</span>
+            <span class="n">sample_uncert_info</span> <span class="o">=</span> <span class="n">mod_uncert_info</span><span class="p">[</span>
+                <span class="n">default_backend</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span>
+                    <span class="n">default_backend</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mod_uncert_info</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span>
+                <span class="p">)</span>
+            <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># bin_mask: ([mask], bin)</span>
+            <span class="n">bin_mask</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">astensor</span><span class="p">(</span><span class="n">sample_uncert_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+            <span class="c1"># nom_unc: ([nominal, uncertainty], bin)</span>
+            <span class="n">nom_unc</span> <span class="o">=</span> <span class="n">sample_uncert_info</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+            <span class="c1"># compute gamma**2 and sigma**2</span>
+            <span class="n">nom_unc_sq</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">nom_unc</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># when the nominal rate = 0 OR uncertainty = 0, set = 1</span>
+            <span class="n">nom_unc_sq</span><span class="p">[</span><span class="n">nom_unc_sq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># divide (gamma**2 / sigma**2) and mask to set factors for only the</span>
+            <span class="c1"># parameters we have allocated</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="p">(</span><span class="n">nom_unc_sq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">nom_unc_sq</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="n">bin_mask</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span> <span class="o">==</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">pname</span><span class="p">)</span><span class="o">.</span><span class="n">n_parameters</span>
+
+            <span class="n">pdfconfig</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">pname</span><span class="p">)</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">tolist</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
+            <span class="n">pdfconfig</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">pname</span><span class="p">)</span><span class="o">.</span><span class="n">auxdata</span> <span class="o">=</span> <span class="n">default_backend</span><span class="o">.</span><span class="n">tolist</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_viewer</span><span class="o">.</span><span class="n">index_selection</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">tensorlib</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">flat_pars</span> <span class="o">=</span> <span class="n">pars</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flat_pars</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+        <span class="n">shapefactors</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">flat_pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_field</span><span class="p">)</span>
+        <span class="n">results_shapesys</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
+            <span class="s1">&#39;mab,s-&gt;msab&#39;</span><span class="p">,</span> <span class="n">shapefactors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_ones</span>
+        <span class="p">)</span>
+
+        <span class="n">results_shapesys</span> <span class="o">=</span> <span class="n">tensorlib</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_mask</span><span class="p">,</span> <span class="n">results_shapesys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapesys_default</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">results_shapesys</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

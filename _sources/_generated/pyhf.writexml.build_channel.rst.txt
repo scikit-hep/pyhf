@@ -1,0 +1,6 @@
+pyhf.writexml.build\_channel
+============================
+
+.. currentmodule:: pyhf.writexml
+
+.. autofunction:: build_channel

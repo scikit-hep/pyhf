@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyhf.readxml &mdash; pyhf 0.5.4.dev62 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]]}, "TeX": {"Macros": {"bm": ["\\boldsymbol{#1}", 1], "HiFa": "\\texttt{HistFactory}", "Root": "\\texttt{ROOT}", "RooStats": "\\texttt{RooStats}", "RooFit": "\\texttt{RooFit}", "pyhf": "\\texttt{pyhf}", "CLs": "\\mathrm{CL}_{s}", "freeset": "\\bm{\\eta}", "constrset": "\\bm{\\chi}", "singleconstr": "\\chi", "channelcounts": "\\bm{n}", "auxdata": "\\bm{a}", "poiset": "\\bm{\\psi}", "nuisset": "\\bm{\\theta}", "fullset": "\\bm{\\phi}", "singlefull": "\\phi", "TeV": "\\textrm{TeV}"}}})</script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyhf
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../likelihood.html">Likelihood Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../learn.html">Fundamentals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outreach.html">Outreach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../babel.html">Translations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command Line API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">Use and Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../governance/ROADMAP.html">Roadmap (2019-2020)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyhf</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pyhf.html">pyhf</a> &raquo;</li>
+        
+      <li>pyhf.readxml</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyhf.readxml</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">uproot</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__FILECACHE__</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="extract_error"><a class="viewcode-back" href="../../_generated/pyhf.readxml.extract_error.html#pyhf.readxml.extract_error">[docs]</a><span class="k">def</span> <span class="nf">extract_error</span><span class="p">(</span><span class="n">hist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine the bin uncertainties for a histogram.</span>
+
+<span class="sd">    If `fSumw2` is not filled, then the histogram must have been</span>
+<span class="sd">    filled with no weights and `.Sumw2()` was never called. The</span>
+<span class="sd">    bin uncertainties are then Poisson, and so the `sqrt(entries)`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        hist (:class:`uproot.behaviors.TH1.TH1`): The histogram</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: The uncertainty for each bin in the histogram</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variance</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">variances</span><span class="p">()</span> <span class="k">if</span> <span class="n">hist</span><span class="o">.</span><span class="n">weighted</span> <span class="k">else</span> <span class="n">hist</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="import_root_histogram"><a class="viewcode-back" href="../../_generated/pyhf.readxml.import_root_histogram.html#pyhf.readxml.import_root_histogram">[docs]</a><span class="k">def</span> <span class="nf">import_root_histogram</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filecache</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">__FILECACHE__</span>
+    <span class="n">filecache</span> <span class="o">=</span> <span class="n">filecache</span> <span class="ow">or</span> <span class="n">__FILECACHE__</span>
+
+    <span class="c1"># strip leading slashes as uproot doesn&#39;t use &quot;/&quot; for top-level</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">fullpath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">fullpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filecache</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">uproot</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span>
+        <span class="n">filecache</span><span class="p">[</span><span class="n">fullpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">filecache</span><span class="p">[</span><span class="n">fullpath</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">uproot</span><span class="o">.</span><span class="n">deserialization</span><span class="o">.</span><span class="n">DeserializationError</span><span class="p">):</span>
+        <span class="n">fullname</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">hist</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Both </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">fullname</span><span class="si">}</span><span class="s1"> were tried and not found in </span><span class="si">{</span><span class="n">fullpath</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">hist</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">extract_error</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="process_sample"><a class="viewcode-back" href="../../_generated/pyhf.readxml.process_sample.html#pyhf.readxml.process_sample">[docs]</a><span class="k">def</span> <span class="nf">process_sample</span><span class="p">(</span>
+    <span class="n">sample</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">,</span> <span class="n">channelname</span><span class="p">,</span> <span class="n">track_progress</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;InputFile&#39;</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+        <span class="n">inputfile</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;InputFile&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;HistoPath&#39;</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+        <span class="n">histopath</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPath&#39;</span><span class="p">)</span>
+    <span class="n">histoname</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">]</span>
+
+    <span class="n">data</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">,</span> <span class="n">histoname</span><span class="p">)</span>
+
+    <span class="n">parameter_configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">modifiers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># first check if we need to add lumi modifier for this sample</span>
+    <span class="k">if</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NormalizeByTheory&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
+        <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;lumi&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lumi&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+
+    <span class="n">modtags</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+        <span class="n">sample</span><span class="o">.</span><span class="n">iter</span><span class="p">(),</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;modifier&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span><span class="n">track_progress</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">modtag</span> <span class="ow">in</span> <span class="n">modtags</span><span class="p">:</span>
+        <span class="n">modtags</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;  - modifier </span><span class="si">{</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;n/a&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">modtag</span><span class="o">.</span><span class="n">tag</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">modtag</span> <span class="o">==</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;OverallSys&#39;</span><span class="p">:</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;normsys&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;lo&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">]),</span>
+                        <span class="s1">&#39;hi&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;High&#39;</span><span class="p">]),</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;NormFactor&#39;</span><span class="p">:</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;normfactor&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">parameter_config</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;High&#39;</span><span class="p">])]],</span>
+                <span class="s1">&#39;inits&#39;</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Val&#39;</span><span class="p">])],</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Const&#39;</span><span class="p">):</span>
+                <span class="n">parameter_config</span><span class="p">[</span><span class="s1">&#39;fixed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Const&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span>
+
+            <span class="n">parameter_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter_config</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;HistoSys&#39;</span><span class="p">:</span>
+            <span class="n">lo</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span>
+                <span class="n">rootdir</span><span class="p">,</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoFileLow&#39;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPathLow&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoNameLow&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">hi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span>
+                <span class="n">rootdir</span><span class="p">,</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoFileHigh&#39;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPathHigh&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoNameHigh&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;histosys&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;lo_data&#39;</span><span class="p">:</span> <span class="n">lo</span><span class="p">,</span> <span class="s1">&#39;hi_data&#39;</span><span class="p">:</span> <span class="n">hi</span><span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;StatError&#39;</span> <span class="ow">and</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Activate&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">staterr</span> <span class="o">=</span> <span class="n">err</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">extstat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span>
+                    <span class="n">rootdir</span><span class="p">,</span>
+                    <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoFile&#39;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">),</span>
+                    <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPath&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                    <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">staterr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">extstat</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">staterr</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;cannot determine stat error.&#39;</span><span class="p">)</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;staterror_</span><span class="si">{</span><span class="n">channelname</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;staterror&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">staterr</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;ShapeSys&#39;</span><span class="p">:</span>
+            <span class="c1"># NB: ConstraintType is ignored</span>
+            <span class="k">if</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ConstraintType&#39;</span><span class="p">,</span> <span class="s1">&#39;Poisson&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;Poisson&#39;</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;shapesys modifier </span><span class="si">%s</span><span class="s1"> has a non-poisson constraint&#39;</span><span class="p">,</span>
+                    <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="n">shapesys_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span>
+                <span class="n">rootdir</span><span class="p">,</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;InputFile&#39;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPath&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="c1"># NB: we convert relative uncertainty to absolute uncertainty</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;shapesys&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shapesys_data</span><span class="p">)],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">modtag</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;ShapeFactor&#39;</span><span class="p">:</span>
+            <span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">modtag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;shapefactor&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;not considering modifier tag </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">modtag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s1">&#39;modifiers&#39;</span><span class="p">:</span> <span class="n">modifiers</span><span class="p">,</span>
+        <span class="s1">&#39;parameter_configs&#39;</span><span class="p">:</span> <span class="n">parameter_configs</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="process_data"><a class="viewcode-back" href="../../_generated/pyhf.readxml.process_data.html#pyhf.readxml.process_data">[docs]</a><span class="k">def</span> <span class="nf">process_data</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;InputFile&#39;</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+        <span class="n">inputfile</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;InputFile&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;HistoPath&#39;</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+        <span class="n">histopath</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPath&#39;</span><span class="p">)</span>
+    <span class="n">histoname</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;HistoName&#39;</span><span class="p">]</span>
+
+    <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">import_root_histogram</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">,</span> <span class="n">histoname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="process_channel"><a class="viewcode-back" href="../../_generated/pyhf.readxml.process_channel.html#pyhf.readxml.process_channel">[docs]</a><span class="k">def</span> <span class="nf">process_channel</span><span class="p">(</span><span class="n">channelxml</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">track_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">channelxml</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+    <span class="n">inputfile</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;InputFile&#39;</span><span class="p">)</span>
+    <span class="n">histopath</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HistoPath&#39;</span><span class="p">)</span>
+
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Sample&#39;</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span><span class="n">track_progress</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Data&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">parsed_data</span> <span class="o">=</span> <span class="n">process_data</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_data</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">channelname</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">channel_parameter_configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
+        <span class="n">samples</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - sample </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">process_sample</span><span class="p">(</span>
+            <span class="n">sample</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">histopath</span><span class="p">,</span> <span class="n">channelname</span><span class="p">,</span> <span class="n">track_progress</span>
+        <span class="p">)</span>
+        <span class="n">channel_parameter_configs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parameter_configs&#39;</span><span class="p">))</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">channelname</span><span class="p">,</span> <span class="n">parsed_data</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">channel_parameter_configs</span></div>
+
+
+<div class="viewcode-block" id="process_measurements"><a class="viewcode-back" href="../../_generated/pyhf.readxml.process_measurements.html#pyhf.readxml.process_measurements">[docs]</a><span class="k">def</span> <span class="nf">process_measurements</span><span class="p">(</span><span class="n">toplvl</span><span class="p">,</span> <span class="n">other_parameter_configs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        toplvl (:mod:`xml.etree.ElementTree`): The top-level XML document to parse.</span>
+<span class="sd">        other_parameter_configs (:obj:`list`): A list of other parameter configurations from other non-top-level XML documents to incorporate into the resulting measurement object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict`: A measurement object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">other_parameter_configs</span> <span class="o">=</span> <span class="n">other_parameter_configs</span> <span class="k">if</span> <span class="n">other_parameter_configs</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">toplvl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Measurement&#39;</span><span class="p">):</span>
+        <span class="n">parameter_configs_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">other_parameter_configs</span><span class="p">}</span>
+        <span class="n">lumi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Lumi&#39;</span><span class="p">])</span>
+        <span class="n">lumierr</span> <span class="o">=</span> <span class="n">lumi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;LumiRelErr&#39;</span><span class="p">])</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;poi&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;POI&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;lumi&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;auxdata&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">lumi</span><span class="p">],</span>
+                        <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="n">lumi</span> <span class="o">-</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">lumierr</span><span class="p">,</span> <span class="n">lumi</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">lumierr</span><span class="p">]],</span>
+                        <span class="s1">&#39;inits&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">lumi</span><span class="p">],</span>
+                        <span class="s1">&#39;sigmas&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">lumierr</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;ParamSetting&#39;</span><span class="p">):</span>
+            <span class="c1"># determine what all parameters in the paramsetting have in common</span>
+            <span class="n">overall_param_obj</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Const&#39;</span><span class="p">):</span>
+                <span class="n">overall_param_obj</span><span class="p">[</span><span class="s1">&#39;fixed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Const&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Val&#39;</span><span class="p">):</span>
+                <span class="n">overall_param_obj</span><span class="p">[</span><span class="s1">&#39;inits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Val&#39;</span><span class="p">])]</span>
+
+            <span class="c1"># might be specifying multiple parameters in the same ParamSetting</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+                    <span class="n">param_name</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_prefix</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="s1">&#39;alpha_&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">param_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;gamma_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                        <span class="sa">r</span><span class="s1">&#39;^gamma_.+_\d+$&#39;</span><span class="p">,</span> <span class="n">param_name</span>
+                    <span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;pyhf does not support setting individual gamma parameters constant, such as for </span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+                        <span class="p">)</span>
+                    <span class="n">param_name</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_prefix</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="s1">&#39;gamma_&#39;</span><span class="p">)</span>
+                    <span class="c1"># lumi will always be the first parameter</span>
+                    <span class="k">if</span> <span class="n">param_name</span> <span class="o">==</span> <span class="s1">&#39;Lumi&#39;</span><span class="p">:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overall_param_obj</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># pop from parameter_configs_map because we don&#39;t want to duplicate</span>
+                        <span class="n">param_obj</span> <span class="o">=</span> <span class="n">parameter_configs_map</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                            <span class="n">param_name</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">param_name</span><span class="p">}</span>
+                        <span class="p">)</span>
+                        <span class="c1"># ParamSetting will always take precedence</span>
+                        <span class="n">param_obj</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overall_param_obj</span><span class="p">)</span>
+                        <span class="c1"># add it back in to the parameter_configs_map</span>
+                        <span class="n">parameter_configs_map</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_obj</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">parameter_configs_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="dedupe_parameters"><a class="viewcode-back" href="../../_generated/pyhf.readxml.dedupe_parameters.html#pyhf.readxml.dedupe_parameters">[docs]</a><span class="k">def</span> <span class="nf">dedupe_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="n">duplicates</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">parname</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">parameter_list</span> <span class="o">=</span> <span class="n">duplicates</span><span class="p">[</span><span class="n">parname</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameter_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span> <span class="o">!=</span> <span class="n">parameter_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameter_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameter_list</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;cannot import workspace due to incompatible parameter configurations for </span><span class="si">{</span><span class="n">parname</span><span class="si">:</span><span class="s1">s</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+    <span class="c1"># no errors raised, de-dupe and return</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../_generated/pyhf.readxml.parse.html#pyhf.readxml.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">configfile</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">track_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">toplvl</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">toplvl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Input&#39;</span><span class="p">)],</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span>
+        <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="p">(</span><span class="n">track_progress</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">parameter_configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+        <span class="n">inputs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Processing </span><span class="si">{</span><span class="n">inp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">channel</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">channel_parameter_configs</span> <span class="o">=</span> <span class="n">process_channel</span><span class="p">(</span>
+            <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">inp</span><span class="p">))),</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">track_progress</span>
+        <span class="p">)</span>
+        <span class="n">channels</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="n">samples</span><span class="p">}</span>
+        <span class="n">parameter_configs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">channel_parameter_configs</span><span class="p">)</span>
+
+    <span class="n">parameter_configs</span> <span class="o">=</span> <span class="n">dedupe_parameters</span><span class="p">(</span><span class="n">parameter_configs</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;measurements&#39;</span><span class="p">:</span> <span class="n">process_measurements</span><span class="p">(</span>
+            <span class="n">toplvl</span><span class="p">,</span> <span class="n">other_parameter_configs</span><span class="o">=</span><span class="n">parameter_configs</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">channels</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span>
+        <span class="s1">&#39;observations&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">channels</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span>
+        <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">SCHEMA_VERSION</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;workspace.json&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="clear_filecache"><a class="viewcode-back" href="../../_generated/pyhf.readxml.clear_filecache.html#pyhf.readxml.clear_filecache">[docs]</a><span class="k">def</span> <span class="nf">clear_filecache</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">__FILECACHE__</span>
+    <span class="n">__FILECACHE__</span> <span class="o">=</span> <span class="p">{}</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018, Lukas Heinrich, Matthew Feickert, Giordon Stark.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
