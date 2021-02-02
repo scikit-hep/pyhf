@@ -262,15 +262,7 @@ Questions
 
 If you have a question about the use of ``pyhf`` not covered in `the
 documentation <https://scikit-hep.org/pyhf/>`__, please ask a question
-on `Stack Overflow <https://stackoverflow.com/questions/tagged/pyhf>`__
-with the ``[pyhf]`` tag, which the ``pyhf`` dev team
-`watches <https://stackoverflow.com/questions/tagged/pyhf?sort=Newest&filters=NoAcceptedAnswer&edited=true>`__.
-
-.. image:: https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png
-   :alt: Stack Overflow pyhf tag
-   :width: 50 %
-   :target: https://stackoverflow.com/questions/tagged/pyhf
-   :align: center
+on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
 `GitHub
