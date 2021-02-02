@@ -6,7 +6,7 @@ To get started fork the repo.
 ## Issues
 
 Making Issues is very helpful to the project &mdash; they help the dev team form the development roadmap and are where most important discussion takes place.
-If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or in the [GitHub Discussions](https://github.com/scikit-hep/pyhf/discussions), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
+If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or on the [GitHub Discussions](https://github.com/scikit-hep/pyhf/discussions), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
 
 ## Pull Requests
 

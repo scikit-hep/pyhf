@@ -262,7 +262,7 @@ Questions
 
 If you have a question about the use of ``pyhf`` not covered in `the
 documentation <https://scikit-hep.org/pyhf/>`__, please ask a question
-on `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
+on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
 `GitHub
