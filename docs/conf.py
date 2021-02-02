@@ -77,7 +77,7 @@ intersphinx_mapping = {
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
 }
 
-# Github repo
+# GitHub repo
 issues_github_path = 'scikit-hep/pyhf'
 
 # Generate the API documentation when building
