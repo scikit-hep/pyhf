@@ -12,7 +12,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 |Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor|
 |pre-commit.ci Status| |Code style: black|
 
-|Docs| |Binder|
+|Docs from latest| |Docs from master| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
