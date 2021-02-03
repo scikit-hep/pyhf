@@ -337,7 +337,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs| image:: https://img.shields.io/badge/docs-master-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.5.4-blue.svg
+   :target: https://pyhf.readthedocs.io/en/v0.5.4/
+.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
