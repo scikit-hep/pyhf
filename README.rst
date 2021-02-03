@@ -9,8 +9,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 |GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor|
-|pre-commit.ci Status| |Code style: black|
+|Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
 
 |Docs from latest| |Docs from master| |Binder|
 
@@ -328,8 +327,6 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master
    :target: https://codecov.io/gh/scikit-hep/pyhf?branch=master
-.. |Language grade: Python| image:: https://img.shields.io/lgtm/grade/python/g/scikit-hep/pyhf.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
    :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg
