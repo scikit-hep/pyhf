@@ -261,7 +261,7 @@ Questions
 ---------
 
 If you have a question about the use of ``pyhf`` not covered in `the
-documentation <https://scikit-hep.org/pyhf/>`__, please ask a question
+documentation <https://pyhf.readthedocs.io/en/v0.5.4/>`__, please ask a question
 on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
@@ -277,7 +277,7 @@ Citation
 --------
 
 As noted in `Use and
-Citations <https://scikit-hep.org/pyhf/citations.html>`__, the preferred
+Citations <https://pyhf.readthedocs.io/en/v0.5.4/citations.html>`__, the preferred
 BibTeX entry for citation of ``pyhf`` is
 
 .. code:: bibtex
