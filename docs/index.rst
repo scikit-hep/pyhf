@@ -25,6 +25,11 @@
 
    <a class="github-fork-ribbon right-top fixed" href="https://github.com/scikit-hep/pyhf/" data-ribbon="View me on GitHub" title="View me on GitHub">View me on GitHub</a>
 
+
+.. raw:: html
+
+   <p id="dev-version"><strong>Warning:</strong> This is a development version. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
+
 .. include:: ../README.rst
 
 Indices and tables
