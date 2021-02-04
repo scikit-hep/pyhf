@@ -57,7 +57,8 @@ TestPyPI
 ``pyhf`` tests packaging and distributing by publishing each commit to
 ``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
 In addition, installation of the latest test release from TestPyPI can be tested
-with
+by first installing ``pyhf`` normally, to ensure all dependencies are installed
+from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI.
 
 .. code-block:: bash
 
