@@ -4,7 +4,9 @@ Use and Citations
 Citation
 --------
 
-The preferred BibTeX entries for citation of ``pyhf`` are
+The preferred BibTeX entries for citation of ``pyhf`` includes both the `JOSS
+<https://joss.theoj.org/>`__ paper and the `Zenodo <https://zenodo.org/>`__
+archive:
 
 .. literalinclude:: bib/preferred.bib
    :language: bibtex
