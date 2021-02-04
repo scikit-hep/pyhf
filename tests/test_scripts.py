@@ -33,6 +33,7 @@ def test_citation(script_runner, flag):
     elapsed = end - start
     assert ret.success
     assert ret.stdout.startswith('@software{pyhf,')
+    assert '@article{pyhf_joss,' in ret.stdout
     # ensure there's not \n\n at the end
     assert ret.stdout.endswith('}\n')
     # make sure it took less than a second
