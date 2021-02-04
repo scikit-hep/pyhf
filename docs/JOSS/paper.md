@@ -40,13 +40,15 @@ The relationship between them is often formalised in a statistical model $f(\mat
 Given observed data, the likelihood $\mathcal{L}(\mathbf{\phi})$ then serves as the basis for inference on the parameters $\mathbf{\phi}$.
 For measurements based on binned data (histograms), the `HistFactory` family of statistical models [@Cranmer:1456844] has been widely used in both Standard Model measurements [@HIGG-2013-02] as well as searches for new physics [@ATLAS-CONF-2018-041].
 `pyhf` is a pure-Python implementation of the `HistFactory` model specification and implements a declarative, plain-text format for describing `HistFactory`-based likelihoods that is targeted for reinterpretation and long-term preservation in analysis data repositories such as HEPData [@Maguire:2017ypu].
+The source code for `pyhf` has been archived on Zenodo with the linked DOI: [@pyhf_zenodo].
+At the time of writing this paper, the most recent release of `pyhf` is [`v0.5.4`](https://doi.org/10.5281/zenodo.4318533).
+
+# Statement of Need
 
 Through adoption of open source "tensor" computational Python libraries, `pyhf` decreases the abstractions between a physicist performing an analysis and the statistical modeling without sacrificing computational speed.
 By taking advantage of tensor calculations, `pyhf` outperforms the traditional `C++` implementation of `HistFactory` on data from real LHC analyses.
 `pyhf`'s default computational backend is built from NumPy and SciPy, and supports TensorFlow, PyTorch, and JAX as alternative backend choices.
 These alternative backends support hardware acceleration on GPUs, and in the case of JAX JIT compilation, as well as auto-differentiation allowing for calculating the full gradient of the likelihood function &mdash; all contributing to speeding up fits.
-The source code for `pyhf` has been archived on Zenodo with the linked DOI: [@pyhf_zenodo].
-At the time of writing this paper the most recent release of `pyhf` is [`v0.5.4`](https://doi.org/10.5281/zenodo.4318533).
 
 ## Impact on Physics
 
