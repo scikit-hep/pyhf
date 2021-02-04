@@ -1,5 +1,3 @@
-let resp = null;
-
 document.addEventListener("DOMContentLoaded", function(event) {
     let dev_version = document.getElementById("dev-version");
     let old_version = document.getElementById("old-version");
@@ -15,12 +13,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
     if(old_version && on_readthedocs){
         // is the readthedocs page not the latest version?
         console.log('making request');
-        resp = $.ajax({type: "GET", url: "https://pyhf.readthedocs.io/"});
-        console.log(resp);
-        const version = resp.getResponseHeader("x-rtd-version") || 'here';
-        if(window.location.href.indexOf(version) === -1){
-            document.getElementById("latest-version-link").text = version;
-            old_version.classList.add("version-warning");
-        }
+        $.ajax({
+            type: "GET",
+            url: "https://pyhf.readthedocs.io/",
+            success: function(data, textStatus, resp){
+                console.log(resp.getAllResponseHeaders());
+                const version = resp.getResponseHeader("x-rtd-version") || 'here';
+                if(window.location.href.indexOf(version) === -1){
+                    document.getElementById("latest-version-link").text = version;
+                    old_version.classList.add("version-warning");
+                }
+            }
+        });
     }
 });
