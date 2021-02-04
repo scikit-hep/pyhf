@@ -260,7 +260,7 @@ Questions
 ---------
 
 If you have a question about the use of ``pyhf`` not covered in `the
-documentation <https://pyhf.readthedocs.io/en/v0.5.4/>`__, please ask a question
+documentation <https://pyhf.readthedocs.io/>`__, please ask a question
 on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
@@ -335,7 +335,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
 .. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.5.4-blue.svg
-   :target: https://pyhf.readthedocs.io/en/v0.5.4/
+   :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
