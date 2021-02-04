@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
 |Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
@@ -275,9 +275,10 @@ announcements you can join the |pyhf-announcements mailing list|_.
 Citation
 --------
 
-As noted in `Use and
-Citations <https://scikit-hep.org/pyhf/citations.html>`__, the preferred
-BibTeX entry for citation of ``pyhf`` is
+As noted in `Use and Citations <https://scikit-hep.org/pyhf/citations.html>`__,
+the preferred BibTeX entry for citation of ``pyhf`` includes both the
+`Zenodo <https://zenodo.org/>`__ archive and the
+`JOSS <https://joss.theoj.org/>`__ paper:
 
 .. code:: bibtex
 
@@ -287,6 +288,19 @@ BibTeX entry for citation of ``pyhf`` is
      version = {0.5.4},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
+   }
+
+   @article{pyhf_joss,
+     doi = {10.21105/joss.02823},
+     url = {https://doi.org/10.21105/joss.02823},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {58},
+     pages = {2823},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
+     title = {pyhf: pure-Python implementation of HistFactory statistical models},
+     journal = {Journal of Open Source Software}
    }
 
 Authors
@@ -313,6 +327,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/scikit-hep/pyhf
 .. |DOI| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg
    :target: https://doi.org/10.5281/zenodo.1169739
+.. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
+   :target: https://doi.org/10.21105/joss.02823
 .. |Scikit-HEP| image:: https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
