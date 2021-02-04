@@ -276,7 +276,7 @@ Citation
 --------
 
 As noted in `Use and
-Citations <https://pyhf.readthedocs.io/en/v0.5.4/citations.html>`__, the preferred
+Citations <https://scikit-hep.org/pyhf/citations.html>`__, the preferred
 BibTeX entry for citation of ``pyhf`` is
 
 .. code:: bibtex
