@@ -61,7 +61,8 @@ with
 
 .. code-block:: bash
 
-  python -m pip install --extra-index-url https://test.pypi.org/simple/ --pre pyhf
+  python -m pip install pyhf
+  python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre pyhf
 
 .. note::
 
