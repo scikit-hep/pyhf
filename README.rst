@@ -301,7 +301,7 @@ archive:
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
      title = {pyhf: pure-Python implementation of HistFactory statistical models},
      journal = {Journal of Open Source Software}
-   :
+   }
 
 Authors
 -------
