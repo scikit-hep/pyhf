@@ -9,7 +9,7 @@ Citation
 --------
 
 The preferred BibTeX entries for citation of ``pyhf`` includes both the  `Zenodo <https://zenodo.org/>`__
-and the `JOSS <https://joss.theoj.org/>`__ paper:
+archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 
 .. literalinclude:: bib/preferred.bib
    :language: bibtex
