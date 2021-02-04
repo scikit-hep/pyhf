@@ -277,7 +277,7 @@ Citation
 
 As noted in `Use and
 Citations <https://scikit-hep.org/pyhf/citations.html>`__, the preferred
-BibTeX entry for citation of ``pyhf`` is
+BibTeX entries for citation of ``pyhf`` are:
 
 .. code:: bibtex
 
@@ -288,6 +288,19 @@ BibTeX entry for citation of ``pyhf`` is
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
    }
+
+   @article{pyhf_joss,
+     doi = {10.21105/joss.02823},
+     url = {https://doi.org/10.21105/joss.02823},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {58},
+     pages = {2823},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
+     title = {pyhf: pure-Python implementation of HistFactory statistical models},
+     journal = {Journal of Open Source Software}
+   :
 
 Authors
 -------
