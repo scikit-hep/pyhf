@@ -1,3 +1,9 @@
+/* 1200px for slightly wider for most monitors */
+.wy-nav-content {
+    max-width: 1200px !important;
+}
+
+/* version warning badge */
 #dev-version {
   display: none;
 }
@@ -37,3 +43,4 @@ p.version-warning a {
 p.version-warning a:hover {
   border-bottom-style: solid;
 }
+/* -------------------------- */
