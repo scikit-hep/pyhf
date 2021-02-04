@@ -276,7 +276,7 @@ Citation
 --------
 
 As noted in `Use and Citations <https://scikit-hep.org/pyhf/citations.html>`__,
-the preferred BibTeX entries for citation of ``pyhf`` includes both the
+the preferred BibTeX entry for citation of ``pyhf`` includes both the
 `Zenodo <https://zenodo.org/>`__ archive and the
 `JOSS <https://joss.theoj.org/>`__ paper:
 

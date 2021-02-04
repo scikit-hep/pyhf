@@ -8,7 +8,7 @@ Use and Citations
 Citation
 --------
 
-The preferred BibTeX entries for citation of ``pyhf`` includes both the  `Zenodo <https://zenodo.org/>`__
+The preferred BibTeX entry for citation of ``pyhf`` includes both the  `Zenodo <https://zenodo.org/>`__
 archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 
 .. literalinclude:: bib/preferred.bib
