@@ -9,10 +9,9 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 |GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor|
-|pre-commit.ci Status| |Code style: black|
+|Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
 
-|Docs| |Binder|
+|Docs from latest| |Docs from master| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
@@ -261,7 +260,7 @@ Questions
 ---------
 
 If you have a question about the use of ``pyhf`` not covered in `the
-documentation <https://scikit-hep.org/pyhf/>`__, please ask a question
+documentation <https://pyhf.readthedocs.io/>`__, please ask a question
 on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
@@ -328,8 +327,6 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master
    :target: https://codecov.io/gh/scikit-hep/pyhf?branch=master
-.. |Language grade: Python| image:: https://img.shields.io/lgtm/grade/python/g/scikit-hep/pyhf.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
    :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg
@@ -337,7 +334,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs| image:: https://img.shields.io/badge/docs-master-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.5.4-blue.svg
+   :target: https://pyhf.readthedocs.io/
+.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
