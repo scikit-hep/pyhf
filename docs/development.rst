@@ -68,9 +68,11 @@ from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI.
 .. note::
 
   This adds TestPyPI as `an additional package index to search <https://pip.pypa.io/en/stable/reference/pip_install/#cmdoption-extra-index-url>`__
-  when installing ``pyhf`` specifically.
+  when installing.
   PyPI will still be the default package index ``pip`` will attempt to install
-  from for all dependencies.
+  from for all dependencies, but if a package has a release on TestPyPI that
+  has a higher release or dev release number the package will be installed from
+  TestPyPI instead.
 
 Publishing
 ----------
