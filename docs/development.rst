@@ -58,7 +58,7 @@ TestPyPI
 ``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
 In addition, installation of the latest test release from TestPyPI can be tested
 by first installing ``pyhf`` normally, to ensure all dependencies are installed
-from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI.
+from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI
 
 .. code-block:: bash
 
