@@ -41,7 +41,7 @@ Given observed data, the likelihood $\mathcal{L}(\mathbf{\phi})$ then serves as 
 For measurements based on binned data (histograms), the `HistFactory` family of statistical models [@Cranmer:1456844] has been widely used in both Standard Model measurements [@HIGG-2013-02] as well as searches for new physics [@ATLAS-CONF-2018-041].
 `pyhf` is a pure-Python implementation of the `HistFactory` model specification and implements a declarative, plain-text format for describing `HistFactory`-based likelihoods that is targeted for reinterpretation and long-term preservation in analysis data repositories such as HEPData [@Maguire:2017ypu].
 The source code for `pyhf` has been archived on Zenodo with the linked DOI: [@pyhf_zenodo].
-At the time of writing this paper the most recent release of `pyhf` is [`v0.5.4`](https://doi.org/10.5281/zenodo.4318533).
+At the time of writing this paper, the most recent release of `pyhf` is [`v0.5.4`](https://doi.org/10.5281/zenodo.4318533).
 
 # Statement of Need
 
