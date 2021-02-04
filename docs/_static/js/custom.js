@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function() {
     let dev_version = document.getElementById("dev-version");
     let old_version = document.getElementById("old-version");
 
