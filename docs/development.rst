@@ -57,18 +57,23 @@ TestPyPI
 ``pyhf`` tests packaging and distributing by publishing each commit to
 ``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
 In addition, installation of the latest test release from TestPyPI can be tested
-with
+by first installing ``pyhf`` normally, to ensure all dependencies are installed
+from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI
 
 .. code-block:: bash
 
-  python -m pip install --extra-index-url https://test.pypi.org/simple/ --pre pyhf
+  python -m pip install pyhf
+  python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre pyhf
 
 .. note::
 
   This adds TestPyPI as `an additional package index to search <https://pip.pypa.io/en/stable/reference/pip_install/#cmdoption-extra-index-url>`__
-  when installing ``pyhf`` specifically.
+  when installing.
   PyPI will still be the default package index ``pip`` will attempt to install
-  from for all dependencies.
+  from for all dependencies, but if a package has a release on TestPyPI that
+  is a more recent release then the package will be installed from TestPyPI instead.
+  Note that dev releases are considered pre-releases, so ``0.1.2`` is a "newer"
+  release than ``0.1.2.dev3``.
 
 Publishing
 ----------
