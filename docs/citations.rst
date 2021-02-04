@@ -1,6 +1,10 @@
 Use and Citations
 =================
 
+.. raw:: html
+
+   <p id="dev-version"><strong>Warning:</strong> This is a development version and should not be cited. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
+
 Citation
 --------
 
