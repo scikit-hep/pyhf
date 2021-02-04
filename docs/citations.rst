@@ -4,7 +4,7 @@ Use and Citations
 Citation
 --------
 
-The preferred BibTeX entry for citation of ``pyhf`` is
+The preferred BibTeX entries for citation of ``pyhf`` are
 
 .. literalinclude:: bib/preferred.bib
    :language: bibtex
