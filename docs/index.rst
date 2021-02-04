@@ -30,8 +30,6 @@
 
    <p id="dev-version"><strong>Warning:</strong> This is a development version. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
 
-   <p id="old-version"><strong>Warning:</strong> This is not the latest stable version. The latest stable version is <a id="latest-version-link" href="https://pyhf.readthedocs.io/">v?.?.?</a>.</p>
-
 .. include:: ../README.rst
 
 Indices and tables

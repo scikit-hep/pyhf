@@ -1,16 +1,14 @@
-/* -- version warning ----------------------------------------------- */
-
-#old-version, #dev-version {
+#dev-version {
   display: none;
 }
 
-#old-version.version-warning, #dev-version.version-warning {
+#dev-version.version-warning {
   display: block;
 }
 
 p.version-warning {
-  top: 10px;
   position: sticky;
+  top: 10px;
 
   margin: 10px 0;
   padding: 5px 10px;
