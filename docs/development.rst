@@ -71,8 +71,9 @@ from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI.
   when installing.
   PyPI will still be the default package index ``pip`` will attempt to install
   from for all dependencies, but if a package has a release on TestPyPI that
-  has a higher release or dev release number the package will be installed from
-  TestPyPI instead.
+  is a more recent release then the package will be installed from TestPyPI instead.
+  Note that dev releases are considered pre-releases, so ``v0.1.2`` is a "newer"
+  release than ``v0.1.2.dev3``.
 
 Publishing
 ----------
