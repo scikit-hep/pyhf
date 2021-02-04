@@ -16,5 +16,4 @@ jobs:
       run: |
         # Use Binder build API to trigger repo2docker to build image on Google Cloud, GESIS Notebooks, and Turing Institute Binder Federation clusters
         bash binder/trigger_binder.sh https://gke.mybinder.org/build/gh/scikit-hep/pyhf/master
-        bash binder/trigger_binder.sh https://gesis.mybinder.org/build/gh/scikit-hep/pyhf/master
         bash binder/trigger_binder.sh https://turing.mybinder.org/build/gh/scikit-hep/pyhf/master
