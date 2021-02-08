@@ -140,6 +140,12 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             rtol = 4e-02
         if 'do_grad-minuit-jax-32b' in identifier:
             rtol = 5e-03
+        if "do_grad-scipy-pytorch-32b" in identifier:
+            rtol = 5e-04
+        if "do_grad-scipy-tensorflow-32b" in identifier:
+            rtol = 5e-04
+        if "do_grad-scipy-jax-32b" in identifier:
+            rtol = 1e-03
 
         # check fitted parameters
         assert pytest.approx(expected, rel=rtol) == pyhf.tensorlib.tolist(
