@@ -32,7 +32,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         >>> data = observations + model.config.auxdata
         >>> mu_test = 1.0
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
-        array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
+        array([ 60.61332311,  56.52750217, 270.07401727,  48.31490026])
 
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
@@ -213,7 +213,7 @@ class AsymptoticCalculator:
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (0.002192624107163899, 0.15865525393145707)
+            (0.0021926462553507452, 0.15865525393145707)
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -244,7 +244,7 @@ class AsymptoticCalculator:
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
-            0.14043184405388176
+            0.1404353407503529
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -328,7 +328,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (0.023325019427864607, 0.4441593996111411, 0.05251497423736956)
+            (0.023325003824589668, 0.44415801831909385, 0.05251510242427374)
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -371,7 +371,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [0.0026062609501074576, 0.01382005356161206, 0.06445320535890459, 0.23525643861460702, 0.573036205919389]
+            [0.002606295139302753, 0.013820193161066205, 0.06445366938143944, 0.23525750131662554, 0.573037502984585]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
@@ -526,8 +526,8 @@ class EmpiricalDistribution:
             ... )
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> dist.expected_value(n_sigma)
-            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01,
-                   2.99592664e+00])
+            array([0.00000000e+00, 0.00000000e+00, 5.54127113e-04, 8.29987224e-01,
+                   2.99592670e+00])
 
         Args:
             nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
@@ -800,7 +800,7 @@ class ToyCalculator:
             ...     data, model, ntoys=100, track_progress=False
             ... )
             >>> toy_calculator.teststatistic(mu_test)
-            array(3.93824492)
+            array(3.93824506)
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
