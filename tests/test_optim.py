@@ -354,11 +354,11 @@ def test_optim(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.minimize(
-        pyhf.infer.mle.twice_nll,
+        pyhf.infer.mle.nll,
         data,
         pdf,
         init_pars,
@@ -378,11 +378,11 @@ def test_optim_with_value(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result, fitted_val = optim.minimize(
-        pyhf.infer.mle.twice_nll,
+        pyhf.infer.mle.nll,
         data,
         pdf,
         init_pars,
@@ -392,7 +392,9 @@ def test_optim_with_value(backend, source, spec, mu):
     )
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.shape(fitted_val) == ()
-    assert pytest.approx(17.52954975, rel=1e-5) == pyhf.tensorlib.tolist(fitted_val)
+    assert pytest.approx(8.764774873246578, rel=1e-5) == pyhf.tensorlib.tolist(
+        fitted_val
+    )
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -406,11 +408,11 @@ def test_optim_uncerts(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result = optim.minimize(
-        pyhf.infer.mle.twice_nll,
+        pyhf.infer.mle.nll,
         data,
         pdf,
         init_pars,
@@ -433,11 +435,11 @@ def test_optim_correlations(backend, source, spec, mu):
 
     optim = pyhf.optimizer
 
-    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    result = optim.minimize(pyhf.infer.mle.nll, data, pdf, init_pars, par_bounds)
     assert pyhf.tensorlib.tolist(result)
 
     result, correlations = optim.minimize(
-        pyhf.infer.mle.twice_nll,
+        pyhf.infer.mle.nll,
         data,
         pdf,
         init_pars,
