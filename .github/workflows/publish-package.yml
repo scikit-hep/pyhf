@@ -66,7 +66,7 @@ jobs:
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
-      uses: pypa/gh-action-pypi-publish@v1.3.1
+      uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
