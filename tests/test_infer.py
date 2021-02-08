@@ -58,7 +58,7 @@ def test_mle_fit_return_fitted_val(tmpdir, hypotest_args):
     _, data, model = hypotest_args
     kwargs = {"return_fitted_val": True}
     result = pyhf.infer.mle.fit(data, model, **kwargs)
-    # bestfit_pars, twice_nll
+    # bestfit_pars, nll
     assert pyhf.tensorlib.shape(result[0]) == (model.config.npars,)
     assert isinstance(result[0], type(tb.astensor(result[0])))
     assert pyhf.tensorlib.shape(result[1]) == ()

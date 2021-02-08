@@ -85,7 +85,7 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
     ret_json = json.loads(ret.stdout)
     assert ret_json
     assert "mle_parameters" in ret_json
-    assert "twice_nll" not in ret_json
+    assert "nll" not in ret_json
 
     for measurement in [
         "GaussExample",
@@ -100,7 +100,7 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
         ret_json = json.loads(ret.stdout)
         assert ret_json
         assert "mle_parameters" in ret_json
-        assert "twice_nll" in ret_json
+        assert "nll" in ret_json
 
         tmp_out = tmpdir.join(f"{measurement:s}_output.json")
         # make sure output file works too
@@ -109,7 +109,7 @@ def test_import_prepHistFactory_and_fit(tmpdir, script_runner):
         assert ret.success
         ret_json = json.load(tmp_out)
         assert "mle_parameters" in ret_json
-        assert "twice_nll" in ret_json
+        assert "nll" in ret_json
 
 
 def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
