@@ -44,7 +44,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    >>> test_mu = 1.0
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.05251497423736956, Expected: 0.06445320535890459
+   Observed: 0.05251510242427374, Expected: 0.06445366938143944
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
@@ -58,7 +58,7 @@ Alternatively the statistical model and observational data can be read from its 
    >>> test_mu = 1.0
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.3599840922126626, Expected: 0.3599840922126626
+   Observed: 0.3599843354244575, Expected: 0.3599843354244575
 
 
 Finally, you can also use the command line interface that ``pyhf`` provides
