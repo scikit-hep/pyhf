@@ -30,7 +30,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         >>> obs_limit
         array(1.01764175)
         >>> exp_limits
-        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
+        [array(0.59577029), array(0.76169362), array(1.08505004), array(1.50170957), array(2.06655571)]
 
     Args:
         data (:obj:`tensor`): The observed data.
