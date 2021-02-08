@@ -28,7 +28,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         ...     data, model, scan, return_results=True
         ... )
         >>> obs_limit
-        array(1.01764089)
+        array(1.01764175)
         >>> exp_limits
         [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
 
