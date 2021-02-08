@@ -43,17 +43,17 @@ def test_sbottom_regionA_1300_205_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.24443627759085326, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.24444183656462842, rel=1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.09022509053507759,
-                    0.1937839194960632,
-                    0.38432344933992,
-                    0.6557757334303531,
-                    0.8910420971601081,
+                    0.09023416633313781,
+                    0.19379784038559986,
+                    0.3843408317367939,
+                    0.655790687844951,
+                    0.8910489537320908,
                 ]
             ),
             rtol=1e-5,
@@ -73,18 +73,19 @@ def test_sbottom_regionA_1400_950_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1400_950_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.021373129575592117, rel=1e-5)
+
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.0026445531093281147,
-                    0.013976126501170727,
-                    0.06497105816950004,
-                    0.23644030478043676,
-                    0.5744785776763938,
-                ],
+                    0.0026445915209657935,
+                    0.013976282781787152,
+                    0.06497157578576944,
+                    0.23644148599230647,
+                    0.5744800142422956,
+                ]
             ),
             rtol=1e-5,
         )
@@ -103,17 +104,18 @@ def test_sbottom_regionA_1500_850_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1500_850_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.045367205665400624, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.04536628480130834, rel=1e-5)
+
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.00598431785676406,
-                    0.026102240062850574,
-                    0.10093641492218848,
-                    0.31019245951964736,
-                    0.6553623337518385,
+                    0.00598364810953375,
+                    0.026100020461594278,
+                    0.10093042667790517,
+                    0.31018132834142287,
+                    0.655351306669138,
                 ]
             ),
             rtol=1e-5,
@@ -133,17 +135,18 @@ def test_sbottom_regionB_1400_550_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionB_bkgonly_json, sbottom_regionB_1400_550_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.9744675266677597, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.9944320696159622, rel=1e-5)
+
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.9338879894557114,
-                    0.9569045303300702,
-                    0.9771296335437559,
-                    0.9916370124133669,
-                    0.9983701133999316,
+                    0.9939882032779436,
+                    0.9961316425804301,
+                    0.9979736724671936,
+                    0.9992686756878328,
+                    0.9998593342137401,
                 ]
             ),
             rtol=1e-5,
@@ -163,17 +166,17 @@ def test_sbottom_regionC_1600_850_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionC_bkgonly_json, sbottom_regionC_1600_850_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.711023707425625, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.711026385080708, rel=1e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
             np.array(
                 [
-                    0.2955492909588046,
-                    0.4446885457298284,
-                    0.6371473864200973,
-                    0.8336149623750603,
-                    0.9585901381554178,
+                    0.29555621162757173,
+                    0.44469567377123215,
+                    0.6371533630019872,
+                    0.8336184150255452,
+                    0.9585912011479805,
                 ]
             ),
             rtol=1e-5,
