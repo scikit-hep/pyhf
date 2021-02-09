@@ -89,7 +89,7 @@ class AsymptoticTestStatDistribution:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
-            >>> bkg_dist.pvalue(0)
+            >>> bkg_dist.cdf(0.0)
             0.5
 
         Args:
@@ -119,6 +119,14 @@ class AsymptoticTestStatDistribution:
             \frac{(\mu-\mu')}{\sigma} = \sqrt{\Lambda}= \sqrt{q_{\mu,A}}
 
         given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> bkg_dist.pvalue(0.0)
+            array(0.5)
 
         Args:
             value (:obj:`float`): The test statistic value.
@@ -227,7 +235,7 @@ class AsymptoticCalculator:
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (0.002192624107163899, 0.15865525393145707)
+            (array(0.00219262), array(0.15865525))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -351,7 +359,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (0.023325019427864607, 0.4441593996111411, 0.05251497423736956)
+            (array(0.02332502), array(0.4441594), 0.05251497423736956)
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
