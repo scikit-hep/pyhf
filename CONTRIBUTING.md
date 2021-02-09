@@ -52,13 +52,13 @@ We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/develop
 
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 
-```
+```bash
 python -m pip install --ignore-installed -U -e .[complete]
 ```
 
 To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Black](https://github.com/psf/black) by running
 
-```
+```bash
 pre-commit install
 ```
 
@@ -68,14 +68,14 @@ This will run `black` over your code each time you attempt to make a commit and 
 
 You can run the unit tests (which should be fast!) via the following command.
 
-```
+```bash
 python -m pytest --ignore=tests/test_notebooks.py
 ```
 
 Note: This ignores the notebook tests (which are run via [papermill](https://github.com/nteract/papermill) which run somewhat slow.
 Make sure to run the complete suite before submitting a PR
 
-```
+```bash
 python -m pytest
 ```
 
@@ -87,6 +87,6 @@ We try to follow [Conventional Commit](https://www.conventionalcommits.org/) for
 
 New baseline visuals can be generated using this command:
 
-```
+```bash
 python -m pytest tests/contrib/test_viz.py --mpl-generate-path=tests/contrib/baseline
 ```
