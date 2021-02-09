@@ -601,15 +601,18 @@ class ToyCalculator:
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
-            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
-             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-             approximation in Equation (62) of :xref:`arXiv:1007.1727`
-             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
-             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
-            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)
-            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
+              during minimization.
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
+              data: ``'qtilde'``, ``'q'``, or ``'q0'``.
+              ``'qtilde'`` (default) performs the calculation using the alternative test statistic,
+              :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
+              of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`), ``'q'``
+              performs the calculation using the test statistic :math:`q_{\mu}`
+              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
+              the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
+            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
