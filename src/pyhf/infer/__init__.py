@@ -15,7 +15,6 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
-    calc_kwargs=None,
     **kwargs,
 ):
     r"""
@@ -139,9 +138,6 @@ def hypotest(
         **kwargs,
     )
 
-    calc = AsymptoticCalculator(
-        data, pdf, init_pars, par_bounds, **(calc_kwargs or {})
-    )
     teststat = calc.teststatistic(poi_test)
     sig_plus_bkg_distribution, bkg_only_distribution = calc.distributions(poi_test)
 

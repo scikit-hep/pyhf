@@ -66,7 +66,7 @@ class AsymptoticTestStatDistribution:
     the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
-    def __init__(self, shift, cutoff=float('-inf')):
+    def __init__(self, shift, cutoff=float("-inf")):
         """
         Asymptotic test statistic distribution.
 
@@ -128,12 +128,12 @@ class AsymptoticTestStatDistribution:
 
         """
         tensorlib, _ = get_backend()
-        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability\\
+        # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability
 
         return_value = tensorlib.normal_cdf(-(value - self.shift))
-        invalid_value = tensorlib.ones(tensorlib.shape(return_value)) * float('nan')
+        invalid_value = tensorlib.ones(tensorlib.shape(return_value)) * float("nan")
         return tensorlib.where(
-            tensorlib.astensor(value >= self.cutoff, dtype='bool'),
+            tensorlib.astensor(value >= self.cutoff, dtype="bool"),
             return_value,
             invalid_value,
         )
@@ -159,7 +159,7 @@ class AsymptoticTestStatDistribution:
         """
         tensorlib, _ = get_backend()
         return tensorlib.where(
-            tensorlib.astensor(self.shift + nsigma > self.cutoff, dtype='bool'),
+            tensorlib.astensor(self.shift + nsigma > self.cutoff, dtype="bool"),
             tensorlib.astensor(self.shift + nsigma),
             tensorlib.astensor(self.cutoff),
         )
@@ -237,15 +237,15 @@ class AsymptoticCalculator:
 
         """
         if self.sqrtqmuA_v is None:
-            raise RuntimeError('need to call .teststatistic(poi_test) first')
+            raise RuntimeError("need to call .teststatistic(poi_test) first")
 
-        if self.base_distr == 'normal':
-            cutoff = float('-inf')
-        elif self.base_distr == 'clipped_normal':
+        if self.base_distr == "normal":
+            cutoff = float("-inf")
+        elif self.base_distr == "clipped_normal":
             cutoff = -self.sqrtqmuA_v
         else:
             raise ValueError(
-                f'unknown base distribution for asymptotics {self.base_distr}'
+                f"unknown base distribution for asymptotics {self.base_distr}"
             )
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
         b_dist = AsymptoticTestStatDistribution(0.0, cutoff)
