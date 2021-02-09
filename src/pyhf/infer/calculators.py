@@ -204,6 +204,14 @@ class AsymptoticCalculator:
               performs the calculation using the test statistic :math:`q_{\mu}`
               (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
               the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
+            calc_base_dist (:obj:`str`): The statistical distribution, ``'normal'`` or
+              ``'clipped_normal'`` to use for calculating the :math:`p`-values.
+              ``'normal'`` (default) corresponds to the common misconception that :math:`p`-values
+              greater than the observed :math:`p`-value are obtainable for POI less than 1.
+              ``'clipped_normal'`` corresponds to limiting the :math:`p`-values for expected limits
+              to a maximum of the observed :math:`p`-value.
+              The choice of ``calc_base_dist`` only affects the :math:`p`-values for expected limits,
+              and the default value will be changed in a future release.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
