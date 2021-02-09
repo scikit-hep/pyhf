@@ -9,14 +9,14 @@ import pyhf.writexml
 
 
 @pytest.fixture(scope='module')
-def source_1bin_shapesys():
+def source_1bin_shapesys_qtilde():
     with open('validation/data/1bin_example1.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_shapesys(source_1bin_shapesys):
-    source = source_1bin_shapesys
+def spec_1bin_shapesys_qtilde(source_1bin_shapesys_qtilde):
+    source = source_1bin_shapesys_qtilde
     spec = {
         'channels': [
             {
@@ -48,7 +48,7 @@ def spec_1bin_shapesys(source_1bin_shapesys):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_shapesys():
+def expected_result_1bin_shapesys_qtilde():
     expected_result = {
         "exp": [
             0.06372011644331387,
@@ -132,14 +132,14 @@ def expected_result_1bin_shapesys_q0_toys():
 
 
 @pytest.fixture(scope='module')
-def source_1bin_lumi():
+def source_1bin_lumi_qtilde():
     with open('validation/data/1bin_lumi.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_lumi(source_1bin_lumi):
-    source = source_1bin_lumi
+def spec_1bin_lumi_qtilde(source_1bin_lumi_qtilde):
+    source = source_1bin_lumi_qtilde
     spec = {
         "channels": [
             {
@@ -179,7 +179,7 @@ def spec_1bin_lumi(source_1bin_lumi):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_lumi():
+def expected_result_1bin_lumi_qtilde():
     expected_result = {
         "exp": [
             0.01060400765567206,
@@ -188,20 +188,20 @@ def expected_result_1bin_lumi():
             0.37078985531427255,
             0.7110468540175344,
         ],
-        "obs": 0.010473144401519705,
+        "obs": 0.0015742775672559072,
     }
     return expected_result
 
 
 @pytest.fixture(scope='module')
-def source_1bin_normsys():
+def source_1bin_normsys_qtilde():
     with open('validation/data/1bin_normsys.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_1bin_normsys(source_1bin_normsys):
-    source = source_1bin_normsys
+def spec_1bin_normsys_qtilde(source_1bin_normsys_qtilde):
+    source = source_1bin_normsys_qtilde
     spec = {
         'channels': [
             {
@@ -233,7 +233,7 @@ def spec_1bin_normsys(source_1bin_normsys):
 
 
 @pytest.fixture(scope='module')
-def expected_result_1bin_normsys():
+def expected_result_1bin_normsys_qtilde():
     expected_result = {
         "exp": [
             7.472581399417304e-10,
@@ -248,14 +248,14 @@ def expected_result_1bin_normsys():
 
 
 @pytest.fixture(scope='module')
-def source_2bin_histosys():
+def source_2bin_histosys_qtilde():
     with open('validation/data/2bin_histosys_example2.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_histosys(source_2bin_histosys):
-    source = source_2bin_histosys
+def spec_2bin_histosys_qtilde(source_2bin_histosys_qtilde):
+    source = source_2bin_histosys_qtilde
     spec = {
         'channels': [
             {
@@ -290,7 +290,7 @@ def spec_2bin_histosys(source_2bin_histosys):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_histosys():
+def expected_result_2bin_histosys_qtilde():
     expected_result = {
         "exp": [
             7.133904244038431e-06,
@@ -305,14 +305,14 @@ def expected_result_2bin_histosys():
 
 
 @pytest.fixture(scope='module')
-def source_2bin_2channel():
+def source_2bin_2channel_qtilde():
     with open('validation/data/2bin_2channel_example1.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel(source_2bin_2channel):
-    source = source_2bin_2channel
+def spec_2bin_2channel_qtilde(source_2bin_2channel_qtilde):
+    source = source_2bin_2channel_qtilde
     spec = {
         'channels': [
             {
@@ -364,7 +364,7 @@ def spec_2bin_2channel(source_2bin_2channel):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel():
+def expected_result_2bin_2channel_qtilde():
     expected_result = {
         "exp": [
             0.0004349234603527283,
@@ -379,14 +379,14 @@ def expected_result_2bin_2channel():
 
 
 @pytest.fixture(scope='module')
-def source_2bin_2channel_couplednorm():
+def source_2bin_2channel_couplednorm_qtilde():
     with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
-    source = source_2bin_2channel_couplednorm
+def spec_2bin_2channel_couplednorm_qtilde(source_2bin_2channel_couplednorm_qtilde):
+    source = source_2bin_2channel_couplednorm_qtilde
     spec = {
         'channels': [
             {
@@ -445,7 +445,7 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_couplednorm():
+def expected_result_2bin_2channel_couplednorm_qtilde():
     # NB: mac/linux differ for exp[0]
     # Mac:   0.055222676184648795
     # Linux: 0.05522273289103311
@@ -464,14 +464,16 @@ def expected_result_2bin_2channel_couplednorm():
 
 
 @pytest.fixture(scope='module')
-def source_2bin_2channel_coupledhistosys():
+def source_2bin_2channel_coupledhistosys_qtilde():
     with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
-    source = source_2bin_2channel_coupledhistosys
+def spec_2bin_2channel_coupledhistosys_qtilde(
+    source_2bin_2channel_coupledhistosys_qtilde,
+):
+    source = source_2bin_2channel_coupledhistosys_qtilde
     spec = {
         'channels': [
             {
@@ -551,7 +553,7 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledhistosys():
+def expected_result_2bin_2channel_coupledhistosys_qtilde():
     expected_result = {
         "exp": [
             1.7654378902209275e-05,
@@ -566,14 +568,16 @@ def expected_result_2bin_2channel_coupledhistosys():
 
 
 @pytest.fixture(scope='module')
-def source_2bin_2channel_coupledshapefactor():
+def source_2bin_2channel_coupledshapefactor_qtilde():
     with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope='module')
-def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
-    source = source_2bin_2channel_coupledshapefactor
+def spec_2bin_2channel_coupledshapefactor_qtilde(
+    source_2bin_2channel_coupledshapefactor_qtilde,
+):
+    source = source_2bin_2channel_coupledshapefactor_qtilde
     spec = {
         'channels': [
             {
@@ -621,7 +625,7 @@ def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefacto
 
 
 @pytest.fixture(scope='module')
-def expected_result_2bin_2channel_coupledshapefactor():
+def expected_result_2bin_2channel_coupledshapefactor_qtilde():
     expected_result = {
         'obs': 0.5421679124909312,
         'exp': [
@@ -667,7 +671,7 @@ def validate_hypotest(
 @pytest.fixture(
     params=[
         (
-            '1bin_shapesys',
+            '1bin_shapesys_qtilde',
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "qtilde",
@@ -690,9 +694,16 @@ def validate_hypotest(
             1e-6,
             "toybased",
         ),
-        ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 4e-6, "asymptotics"),
         (
-            '1bin_normsys',
+            '1bin_lumi_qtilde',
+            {'init_pars': 2, 'par_bounds': 2},
+            1.0,
+            "qtilde",
+            4e-6,
+            "asymptotics",
+        ),
+        (
+            '1bin_normsys_qtilde',
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "qtilde",
@@ -700,7 +711,7 @@ def validate_hypotest(
             "asymptotics",
         ),
         (
-            '2bin_histosys',
+            '2bin_histosys_qtilde',
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "qtilde",
@@ -708,7 +719,7 @@ def validate_hypotest(
             "asymptotics",
         ),
         (
-            '2bin_2channel',
+            '2bin_2channel_qtilde',
             {'init_pars': 5, 'par_bounds': 5},
             1.0,
             "qtilde",
@@ -716,7 +727,7 @@ def validate_hypotest(
             "asymptotics",
         ),
         (
-            '2bin_2channel_couplednorm',
+            '2bin_2channel_couplednorm_qtilde',
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "qtilde",
@@ -724,7 +735,7 @@ def validate_hypotest(
             "asymptotics",
         ),
         (
-            '2bin_2channel_coupledhistosys',
+            '2bin_2channel_coupledhistosys_qtilde',
             {'auxdata': 1, 'init_pars': 2, 'par_bounds': 2},
             1.0,
             "qtilde",
@@ -732,7 +743,7 @@ def validate_hypotest(
             "asymptotics",
         ),
         (
-            '2bin_2channel_coupledshapefactor',
+            '2bin_2channel_coupledshapefactor_qtilde',
             {'auxdata': 0, 'init_pars': 3, 'par_bounds': 3},
             1.0,
             "qtilde",
@@ -741,16 +752,16 @@ def validate_hypotest(
         ),
     ],
     ids=[
-        '1bin_shapesys_mu1',
+        '1bin_shapesys_qtilde_mu1',
         '1bin_shapesys_q0_mu1',
         '1bin_shapesys_q0_mu1_toys',
-        '1bin_lumi_mu1',
-        '1bin_normsys_mu1',
-        '2bin_histosys_mu1',
-        '2bin_2channel_mu1',
-        '2bin_2channel_couplednorm_mu1',
-        '2bin_2channel_coupledhistosys_mu1',
-        '2bin_2channel_coupledshapefactor_mu1',
+        '1bin_lumi_qtilde_mu1',
+        '1bin_normsys_qtilde_mu1',
+        '2bin_histosys_qtilde_mu1',
+        '2bin_2channel_qtilde_mu1',
+        '2bin_2channel_couplednorm_qtilde_mu1',
+        '2bin_2channel_coupledhistosys_qtilde_mu1',
+        '2bin_2channel_coupledshapefactor_qtilde_mu1',
     ],
 )
 def setup(request):
