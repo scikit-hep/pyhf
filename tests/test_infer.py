@@ -240,29 +240,29 @@ def test_inferapi_pyhf_independence():
 
 def test_clipped_normal_calc(hypotest_args):
     mu_test, data, pdf = hypotest_args
-    _, exp1 = pyhf.infer.hypotest(
-        0.2,
+    _, expected_clipped_normal = pyhf.infer.hypotest(
+        mu_test,
         data,
         pdf,
+        return_expected_set=True,
         calc_base_dist="clipped_normal",
-        return_expected_set=True,
     )
-    _, exp2 = pyhf.infer.hypotest(
-        0.2,
+    _, expected_normal = pyhf.infer.hypotest(
+        mu_test,
         data,
         pdf,
-        calc_base_dist="normal",
         return_expected_set=True,
+        calc_base_dist="normal",
     )
-    assert exp1[-1] < exp2[-1]
+    assert expected_clipped_normal[-1] < expected_normal[-1]
 
     with pytest.raises(ValueError):
-        _, exp2 = pyhf.infer.hypotest(
-            0.2,
+        _ = pyhf.infer.hypotest(
+            mu_test,
             data,
             pdf,
-            calc_base_dist="unknown",
             return_expected_set=True,
+            calc_base_dist="unknown",
         )
 
 
