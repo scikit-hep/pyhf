@@ -244,14 +244,14 @@ def test_clipped_normal_calc(hypotest_args):
         0.2,
         data,
         pdf,
-        base_distr="clipped_normal",
+        calc_base_dist="clipped_normal",
         return_expected_set=True,
     )
     _, exp2 = pyhf.infer.hypotest(
         0.2,
         data,
         pdf,
-        base_distr="normal",
+        calc_base_dist="normal",
         return_expected_set=True,
     )
     assert exp1[-1] < exp2[-1]
@@ -261,7 +261,7 @@ def test_clipped_normal_calc(hypotest_args):
             0.2,
             data,
             pdf,
-            base_distr="unknown",
+            calc_base_dist="unknown",
             return_expected_set=True,
         )
 

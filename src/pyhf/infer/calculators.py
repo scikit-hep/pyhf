@@ -176,7 +176,7 @@ class AsymptoticCalculator:
         par_bounds=None,
         fixed_params=None,
         test_stat="qtilde",
-        base_distr="normal",
+        calc_base_dist="normal",
     ):
         r"""
         Asymptotic Calculator.
@@ -204,7 +204,7 @@ class AsymptoticCalculator:
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.test_stat = test_stat
-        self.base_distr = base_distr
+        self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -239,13 +239,13 @@ class AsymptoticCalculator:
         if self.sqrtqmuA_v is None:
             raise RuntimeError("need to call .teststatistic(poi_test) first")
 
-        if self.base_distr == "normal":
+        if self.calc_base_dist == "normal":
             cutoff = float("-inf")
-        elif self.base_distr == "clipped_normal":
+        elif self.calc_base_dist == "clipped_normal":
             cutoff = -self.sqrtqmuA_v
         else:
             raise ValueError(
-                f"unknown base distribution for asymptotics {self.base_distr}"
+                f"unknown base distribution for asymptotics {self.calc_base_dist}"
             )
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
         b_dist = AsymptoticTestStatDistribution(0.0, cutoff)
