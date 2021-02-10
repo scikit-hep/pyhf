@@ -5,7 +5,7 @@ Release Notes
 |release v0.5.4|_
 =================
 
-This is a patch release from v0.5.3 → v0.5.4.
+This is a patch release from ``v0.5.3`` → ``v0.5.4``.
 
 Fixes
 -----
@@ -56,7 +56,7 @@ this is resolved in ``v0.5.4`` with the requirement of ``uproot3``
 |release v0.5.3|_
 =================
 
-This is a patch release from v0.5.2 → v0.5.3.
+This is a patch release from ``v0.5.2`` → ``v0.5.3``.
 
 Fixes
 -----
