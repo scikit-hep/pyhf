@@ -19,6 +19,7 @@
    api
    citations
    governance/ROADMAP
+   release-notes
    contributors
 
 .. raw:: html
