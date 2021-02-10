@@ -83,6 +83,11 @@ CLI API
 * pyhf combine now allows for merging channels: ``pyhf combine --merge-channels --join <join option>``
 * Added utility to download archived pyhf pallets (workspaces + patchsets) to contrib module: ``pyhf contrib download``
 
+Contributors
+------------
+
+* Karthikeyan Singaravelan
+
 .. |release v0.5.4| replace:: ``v0.5.4``
 .. _`release v0.5.4`: https://github.com/scikit-hep/pyhf/releases/tag/v0.5.4
 
