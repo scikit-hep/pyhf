@@ -199,12 +199,12 @@ class AsymptoticCalculator:
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
 
-              * ``'qtilde'`` (default) performs the calculation using the alternative test statistic,
+              * ``'qtilde'``: (default) performs the calculation using the alternative test statistic,
                 :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
                 of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
-              * ``'q'`` performs the calculation using the test statistic :math:`q_{\mu}`
+              * ``'q'``: performs the calculation using the test statistic :math:`q_{\mu}`
                 (:func:`~pyhf.infer.test_statistics.qmu`).
-              * ``'q0'`` performs the calculation using the discovery test statistic
+              * ``'q0'``: performs the calculation using the discovery test statistic
                 :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             calc_base_dist (:obj:`str`): The statistical distribution, ``'normal'`` or
               ``'clipped_normal'``, to use for calculating the :math:`p`-values.
