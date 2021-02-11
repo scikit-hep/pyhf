@@ -189,7 +189,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     the minuit strategy=0. When there is no user-provided gradient, check that
     one automatically sets the minuit strategy=1.
     """
-    pyhf.set_backend(pyhf.tensorlib, 'minuit')
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(tolerance=0.2))
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
     m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
@@ -210,7 +210,9 @@ def test_minuit_strategy_do_grad(mocker, backend):
 
 @pytest.mark.parametrize('strategy', [0, 1])
 def test_minuit_strategy_global(mocker, backend, strategy):
-    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy))
+    pyhf.set_backend(
+        pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
+    )
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
     m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
