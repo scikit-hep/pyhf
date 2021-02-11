@@ -209,11 +209,13 @@ class AsymptoticCalculator:
             calc_base_dist (:obj:`str`): The statistical distribution, ``'normal'`` or
               ``'clipped_normal'``, to use for calculating the :math:`p`-values.
 
-              * ``'normal'``: (default) use the full Normal distribution in :math:`\mu/\sigma` space.
+              * ``'normal'``: (default) use the full Normal distribution in :math:`\hat{\mu}/\sigma`
+                space.
                 Note that expected limits may correspond to unphysical test statistics from scenarios
                 with the expected :math:`\hat{\mu} > \mu`.
-              * ``'clipped_normal'``: use a clipped Normal distribution in :math:`\mu/\sigma` space to
-                avoid expected limits that correspond to scenarios with the expected :math:`\hat{\mu} > \mu`.
+              * ``'clipped_normal'``: use a clipped Normal distribution in :math:`\hat{\mu}/\sigma`
+                space to avoid expected limits that correspond to scenarios with the expected
+                :math:`\hat{\mu} > \mu`.
                 This will properly cap the test statistic at ``0``, as noted in Equation (14) and
                 Equation (16) in :xref:`arXiv:1007.1727`.
 
