@@ -205,11 +205,16 @@ class AsymptoticCalculator:
               (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
               the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             calc_base_dist (:obj:`str`): The statistical distribution, ``'normal'`` or
-              ``'clipped_normal'`` to use for calculating the :math:`p`-values.
-              ``'normal'`` (default) corresponds to the common misconception that :math:`p`-values
-              greater than the observed :math:`p`-value are obtainable for POI less than 1.
-              ``'clipped_normal'`` corresponds to limiting the :math:`p`-values for expected limits
-              to a maximum of the observed :math:`p`-value.
+              ``'clipped_normal'``, to use for calculating the :math:`p`-values.
+
+              * ``'normal'``: (default) use the full Normal distribution in :math:`\mu/\sigma` space.
+                Note that expected limits may correspond to unphysical test statistics from scenarios
+                with the expected :math:`\hat{\mu} > \mu`.
+              * ``'clipped_normal'``: use a clipped Normal distribution in :math:`\mu/\sigma` space to
+                avoid expected limits that correspond to scenarios with the expected :math:`\hat{\mu} > \mu`.
+                This will properly cap the test statistic at ``0``, as noted in Equation (14) and
+                Equation (16) in :xref:`arXiv:1007.1727`.
+
               The choice of ``calc_base_dist`` only affects the :math:`p`-values for expected limits,
               and the default value will be changed in a future release.
 
