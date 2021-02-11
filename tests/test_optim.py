@@ -106,24 +106,26 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         rel_tol = 1e-6
         # Fluctuations beyond precision shouldn't matter
-        abs_tol = 1e-6 if "32b" in identifier else 1e-8
+        abs_tol = 1e-5 if "32b" in identifier else 1e-8
 
         # handle cases where macos and ubuntu provide very different results numerical
-        if "no_grad" or "32b" in identifier:
+        if "no_grad" in identifier:
             rel_tol = 1e-5
             if "minuit-pytorch-32b" in identifier:
-                # quite a large difference between local and CI
+                # large difference between local and CI
                 rel_tol = 3e-1
             if "minuit-tensorflow-32b" in identifier:
                 # not a very large difference, so we bump the relative difference down
                 rel_tol = 3e-2
             if "minuit-jax-32b" in identifier:
                 rel_tol = 4e-2
-        # NB: ubuntu and macos give different results for 32b
-        if "do_grad-scipy-jax-32b" in identifier:
+        elif all(part in identifier for part in ["do_grad", "32b"]):
+            # NB: ubuntu and macos give different results for 32b
             rel_tol = 5e-03
-        if 'do_grad-minuit-jax-32b' in identifier:
-            rel_tol = 5e-03
+            if "minuit-tensorflow" in identifier:
+                rel_tol = 4e-2
+            if "minuit-jax" in identifier:
+                rel_tol = 4e-2
 
         # check fitted parameters
         assert pytest.approx(
