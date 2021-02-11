@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 88
-target-version = ['py36', 'py37', 'py38']
+target-version = ['py37', 'py38']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''
@@ -71,4 +71,4 @@ black = 1
 pyupgrade = 1
 
 [tool.nbqa.addopts]
-pyupgrade = ["--py36-plus"]
+pyupgrade = ["--py37-plus"]
