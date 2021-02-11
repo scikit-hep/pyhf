@@ -12,7 +12,7 @@ extras_require = {
         'uproot3>=3.14.1',
         'uproot~=4.0',
     ],  # uproot3 required until writing to ROOT supported in uproot4
-    'minuit': ['iminuit~=2.1,<2.4'],  # iminuit v2.4.0 behavior needs to be understood
+    'minuit': ['iminuit~=2.4'],
 }
 extras_require['backends'] = sorted(
     set(
