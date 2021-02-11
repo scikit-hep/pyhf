@@ -109,7 +109,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         abs_tol = 1e-6 if "32b" in identifier else 1e-8
 
         # handle cases where macos and ubuntu provide very different results numerical
-        if "no_grad" in identifier:
+        if "no_grad" or "32b" in identifier:
             rel_tol = 1e-5
             if "minuit-pytorch-32b" in identifier:
                 # quite a large difference between local and CI
