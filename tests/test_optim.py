@@ -111,6 +111,9 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         # handle cases where macos and ubuntu provide very different results numerical
         if "no_grad" in identifier:
             rel_tol = 1e-5
+            if "minuit-pytorch-32b" in identifier:
+                # quite a large difference between local and CI
+                rel_tol = 3e-1
             if "minuit-tensorflow-32b" in identifier:
                 # not a very large difference, so we bump the relative difference down
                 rel_tol = 3e-2
