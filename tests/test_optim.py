@@ -83,10 +83,8 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # no grad, minuit, 32b - not very consistent for pytorch
             'no_grad-minuit-numpy-32b': [0.7465415000915527, 0.8796938061714172],
             #    nb: macos gives different numerics than CI
-            # 'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
             'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
             'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            # 'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
             'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
@@ -94,18 +92,13 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'no_grad-minuit-tensorflow-64b': [0.5000493563645547, 1.0000043833598657],
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 32b
-            # 'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
+            # large divergence by tensorflow and pytorch
             'do_grad-minuit-pytorch-32b': [0.9731879234313965, 0.9999999403953552],
-            # 'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
             'do_grad-minuit-tensorflow-32b': [0.9366918206214905, 0.9126002788543701],
-            # 'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
             'do_grad-minuit-jax-32b': [0.5003563165664673, 0.9998618364334106],
             # do grad, minuit, 64b
-            # 'do_grad-minuit-pytorch-64b': [0.500273961181471, 0.9996310135736226],
             'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
-            # 'do_grad-minuit-tensorflow-64b': [0.500273961167223, 0.9996310135864218],
             'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
-            # 'do_grad-minuit-jax-64b': [0.5002739611532436, 0.9996310135970794],
             'do_grad-minuit-jax-64b': [0.500049321731032, 1.0000044174002167],
         }[identifier]
 
