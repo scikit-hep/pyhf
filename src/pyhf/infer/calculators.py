@@ -66,7 +66,7 @@ class AsymptoticTestStatDistribution:
     the :math:`-\mu'`, where :math:`\mu'` is the true poi value of the hypothesis.
     """
 
-    def __init__(self, shift):
+    def __init__(self, shift, cutoff=float("-inf")):
         """
         Asymptotic test statistic distribution.
 
@@ -78,7 +78,7 @@ class AsymptoticTestStatDistribution:
 
         """
         self.shift = shift
-        self.sqrtqmuA_v = None
+        self.cutoff = cutoff
 
     def cdf(self, value):
         """
@@ -89,7 +89,7 @@ class AsymptoticTestStatDistribution:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
-            >>> bkg_dist.pvalue(0)
+            >>> bkg_dist.cdf(0.0)
             0.5
 
         Args:
@@ -120,6 +120,14 @@ class AsymptoticTestStatDistribution:
 
         given the observed test statistics :math:`q_{\mu}` and :math:`q_{\mu,A}`.
 
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
+            >>> bkg_dist.pvalue(0.0)
+            array(0.5)
+
         Args:
             value (:obj:`float`): The test statistic value.
 
@@ -129,7 +137,14 @@ class AsymptoticTestStatDistribution:
         """
         tensorlib, _ = get_backend()
         # computing cdf(-x) instead of 1-cdf(x) for right-tail p-value for improved numerical stability
-        return tensorlib.normal_cdf(-(value - self.shift))
+
+        return_value = tensorlib.normal_cdf(-(value - self.shift))
+        invalid_value = tensorlib.ones(tensorlib.shape(return_value)) * float("nan")
+        return tensorlib.where(
+            tensorlib.astensor(value >= self.cutoff, dtype="bool"),
+            return_value,
+            invalid_value,
+        )
 
     def expected_value(self, nsigma):
         """
@@ -150,7 +165,12 @@ class AsymptoticTestStatDistribution:
         Returns:
             Float: The expected value of the test statistic.
         """
-        return self.shift + nsigma
+        tensorlib, _ = get_backend()
+        return tensorlib.where(
+            tensorlib.astensor(self.shift + nsigma > self.cutoff, dtype="bool"),
+            tensorlib.astensor(self.shift + nsigma),
+            tensorlib.astensor(self.cutoff),
+        )
 
 
 class AsymptoticCalculator:
@@ -164,6 +184,7 @@ class AsymptoticCalculator:
         par_bounds=None,
         fixed_params=None,
         test_stat="qtilde",
+        calc_base_dist="normal",
     ):
         r"""
         Asymptotic Calculator.
@@ -173,13 +194,33 @@ class AsymptoticCalculator:
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
-            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
-             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-             approximation in Equation (62) of :xref:`arXiv:1007.1727`
-             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
-             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
+              during minimization.
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
+              data: ``'qtilde'``, ``'q'``, or ``'q0'``.
+
+              * ``'qtilde'``: (default) performs the calculation using the alternative test statistic,
+                :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
+                of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
+              * ``'q'``: performs the calculation using the test statistic :math:`q_{\mu}`
+                (:func:`~pyhf.infer.test_statistics.qmu`).
+              * ``'q0'``: performs the calculation using the discovery test statistic
+                :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
+            calc_base_dist (:obj:`str`): The statistical distribution, ``'normal'`` or
+              ``'clipped_normal'``, to use for calculating the :math:`p`-values.
+
+              * ``'normal'``: (default) use the full Normal distribution in :math:`\hat{\mu}/\sigma`
+                space.
+                Note that expected limits may correspond to unphysical test statistics from scenarios
+                with the expected :math:`\hat{\mu} > \mu`.
+              * ``'clipped_normal'``: use a clipped Normal distribution in :math:`\hat{\mu}/\sigma`
+                space to avoid expected limits that correspond to scenarios with the expected
+                :math:`\hat{\mu} > \mu`.
+                This will properly cap the test statistic at ``0``, as noted in Equation (14) and
+                Equation (16) in :xref:`arXiv:1007.1727`.
+
+              The choice of ``calc_base_dist`` only affects the :math:`p`-values for expected limits,
+              and the default value will be changed in a future release.
 
         Returns:
             ~pyhf.infer.calculators.AsymptoticCalculator: The calculator for asymptotic quantities.
@@ -191,6 +232,7 @@ class AsymptoticCalculator:
         self.par_bounds = par_bounds or pdf.config.suggested_bounds()
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.test_stat = test_stat
+        self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
 
     def distributions(self, poi_test):
@@ -213,7 +255,7 @@ class AsymptoticCalculator:
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (0.002192624107163899, 0.15865525393145707)
+            (array(0.00219262), array(0.15865525))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -223,9 +265,18 @@ class AsymptoticCalculator:
 
         """
         if self.sqrtqmuA_v is None:
-            raise RuntimeError('need to call .teststatistic(poi_test) first')
-        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v)
-        b_dist = AsymptoticTestStatDistribution(0.0)
+            raise RuntimeError("need to call .teststatistic(poi_test) first")
+
+        if self.calc_base_dist == "normal":
+            cutoff = float("-inf")
+        elif self.calc_base_dist == "clipped_normal":
+            cutoff = -self.sqrtqmuA_v
+        else:
+            raise ValueError(
+                f"unknown base distribution for asymptotics {self.calc_base_dist}"
+            )
+        sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
+        b_dist = AsymptoticTestStatDistribution(0.0, cutoff)
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
@@ -328,7 +379,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (0.023325019427864607, 0.4441593996111411, 0.05251497423736956)
+            (array(0.02332502), array(0.4441594), 0.05251497423736956)
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -567,15 +618,18 @@ class ToyCalculator:
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
-            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the data.
-            qtilde (:obj:`bool`): When ``True`` perform the calculation using the alternative
-             test statistic, :math:`\tilde{q}_{\mu}`, as defined under the Wald
-             approximation in Equation (62) of :xref:`arXiv:1007.1727`
-             (:func:`~pyhf.infer.test_statistics.qmu_tilde`).
-             When ``False`` use :func:`~pyhf.infer.test_statistics.qmu`.
-            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions)
-            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
+              during minimization.
+            test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
+              data: ``'qtilde'``, ``'q'``, or ``'q0'``.
+              ``'qtilde'`` (default) performs the calculation using the alternative test statistic,
+              :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
+              of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`), ``'q'``
+              performs the calculation using the test statistic :math:`q_{\mu}`
+              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
+              the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
+            ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
+            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
