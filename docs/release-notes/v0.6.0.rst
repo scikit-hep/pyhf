@@ -6,9 +6,14 @@ This is a minor release from ``v0.5.4`` → ``v0.6.0``.
 Important Notes
 ---------------
 
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.6.0`` API.
+  Perhaps most relevant is the changes to the |hypotest API|_ API now uses a
+  ``test_stat`` kwarg to specify which test statistic to use and relies more
+  heavily on using kwargs to pass options through to the optimizer.
+* Support for the discovery test statistic, :math:`q_{0}`, has now been added through
+  the |q0 API|_ API.
 * toys
-* API breaking change
-* Discovery test stat
 * new requirements for ``iminuit`` and ``uproot``
 * Transitioning away from Stack Overflow to GitHub Discussions
 * Versioned docs --- don't go to ``master`` docs unless you want unstable
@@ -58,8 +63,15 @@ CLI API
      journal = {Journal of Open Source Software}
    }
 
+Changes
+-------
+
+* The hypotest API has changed since v0.5.4 and that this should be largely highlighted.
+
 Contributors
 ------------
+
+``v0.6.0`` benefited from contributions from:
 
 * Pradyumna Rahul K
 * Eric Schanet
@@ -67,3 +79,9 @@ Contributors
 
 .. |release v0.6.0| replace:: ``v0.6.0``
 .. _`release v0.6.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.0
+
+.. |hypotest API| replace:: ``pyhf.infer.hypotest``
+.. _`hypotest API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.hypotest.html
+
+.. |q0 API| replace:: ``pyhf.infer.test_statistics.q0``
+.. _`q0 API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.test_statistics.q0.html
