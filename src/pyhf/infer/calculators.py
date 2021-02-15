@@ -817,7 +817,7 @@ class ToyCalculator:
         tb, _ = get_backend()
         pvalues = [
             self.pvalues(
-                tb.astensor(test_stat),
+                test_stat,
                 sig_plus_bkg_distribution,
                 bkg_only_distribution,
             )
