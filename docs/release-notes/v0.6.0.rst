@@ -20,8 +20,13 @@ Important Notes
   of the API.
 
 * new requirements for ``iminuit`` and ``uproot``
-* Transitioning away from Stack Overflow to GitHub Discussions
-* Versioned docs --- don't go to ``master`` docs unless you want unstable
+* The documentation will now be versioned with releases at ReadTheDocs.
+  Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
+  stable realease of ``pyhf``.
+* ``pyhf`` is transtioning away from Stak Overflow to `GitHub Discussions`_ for
+  resolving user questions not covered in the documentation.
+  Please check the `GitHub Discussions`_ page to search for discussions addressing
+  your questions and to open up a new discussion if your question is not covered.
 * ``pyhf`` has published a paper in the Journal of Open Source Software. |JOSS DOI|
   Please make sure to include the paper reference in all citations of ``pyhf``, as
   documented in the `Use and Citations`_ section of the documentation.
@@ -98,6 +103,10 @@ Contributors
 .. _`ToyCalculator API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.calculators.ToyCalculator.html
 
 .. _`example notebook`: https://pyhf.readthedocs.io/en/latest/examples/notebooks/toys.html
+
+.. _`pyhf.readthedocs.io`: https://pyhf.readthedocs.io/
+
+.. _`GitHub Discussions`: https://github.com/scikit-hep/pyhf/discussions
 
 .. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
    :target: https://doi.org/10.21105/joss.02823
