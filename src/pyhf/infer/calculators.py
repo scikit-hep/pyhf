@@ -496,7 +496,7 @@ class EmpiricalDistribution:
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
             >>> dist.pvalue(7)
-            0.02
+            array(0.02)
 
             >>> import pyhf
             >>> import numpy.random as random
@@ -517,7 +517,7 @@ class EmpiricalDistribution:
             ...     )
             ... )
             >>> test_stat_dist.pvalue(test_stat_dist.samples[9])
-            0.3
+            array(0.3)
 
         Args:
             value (:obj:`float`): The test statistic value.
@@ -667,7 +667,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (0.14, 0.76)
+            (array(0.14), array(0.76))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -755,7 +755,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (0.01, 0.41, 0.024390243902439025)
+            (array(0.01), array(0.41), array(0.02439024))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -801,7 +801,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]
+            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
@@ -815,16 +815,14 @@ class ToyCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         tb, _ = get_backend()
-        pvalues = tb.astensor(
-            [
-                self.pvalues(
-                    tb.astensor(test_stat),
-                    sig_plus_bkg_distribution,
-                    bkg_only_distribution,
-                )
-                for test_stat in bkg_only_distribution.samples
-            ]
-        )
+        pvalues = [
+            self.pvalues(
+                tb.astensor(test_stat),
+                sig_plus_bkg_distribution,
+                bkg_only_distribution,
+            )
+            for test_stat in bkg_only_distribution.samples
+        ]
         # TODO: Add percentile to tensorlib
         # c.f. Issue #815, PR #817
         import numpy as np
@@ -832,11 +830,11 @@ class ToyCalculator:
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
         normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
         pvalues_exp_band = np.percentile(
-            tb.tolist(pvalues),
+            pvalues,
             normal_percentiles,
             axis=0,
         ).T.tolist()
-        return pvalues_exp_band
+        return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
     def teststatistic(self, poi_test):
         """
