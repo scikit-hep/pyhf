@@ -132,7 +132,7 @@ class AsymptoticTestStatDistribution:
             value (:obj:`float`): The test statistic value.
 
         Returns:
-            Float: The integrated probability to observe a value at least as large as the observed one.
+            Tensor: The integrated probability to observe a value at least as large as the observed one.
 
         """
         tensorlib, _ = get_backend()
@@ -295,13 +295,13 @@ class AsymptoticCalculator:
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
-            0.14043184405388176
+            array(0.14043184)
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: The value of the test statistic.
+            Tensor: The value of the test statistic.
 
         """
         tensorlib, _ = get_backend()
@@ -355,7 +355,7 @@ class AsymptoticCalculator:
             teststat = tensorlib.conditional(
                 (sqrtqmu_v < self.sqrtqmuA_v), _true_case, _false_case
             )
-        return teststat
+        return tensorlib.astensor(teststat)
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
@@ -379,7 +379,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (array(0.02332502), array(0.4441594), 0.05251497423736956)
+            (array(0.02332502), array(0.4441594), array(0.05251497))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -389,13 +389,15 @@ class AsymptoticCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
+        tensorlib, _ = get_backend()
+
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = bkg_only_distribution.pvalue(teststat)
-        CLs = CLsb / CLb
+        CLs = tensorlib.astensor(CLsb / CLb)
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, bkg_only_distribution):
@@ -422,7 +424,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [0.0026062609501074576, 0.01382005356161206, 0.06445320535890459, 0.23525643861460702, 0.573036205919389]
+            [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
@@ -431,7 +433,7 @@ class AsymptoticCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
@@ -494,7 +496,7 @@ class EmpiricalDistribution:
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
             >>> dist.pvalue(7)
-            0.02
+            array(0.02)
 
             >>> import pyhf
             >>> import numpy.random as random
@@ -515,17 +517,17 @@ class EmpiricalDistribution:
             ...     )
             ... )
             >>> test_stat_dist.pvalue(test_stat_dist.samples[9])
-            0.3
+            array(0.3)
 
         Args:
             value (:obj:`float`): The test statistic value.
 
         Returns:
-            Float: The integrated probability to observe a value at least as large as the observed one.
+            Tensor: The integrated probability to observe a value at least as large as the observed one.
 
         """
         tensorlib, _ = get_backend()
-        return (
+        return tensorlib.astensor(
             tensorlib.sum(
                 tensorlib.where(
                     self.samples >= value, tensorlib.astensor(1), tensorlib.astensor(0)
@@ -665,7 +667,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (0.14, 0.76)
+            (array(0.14), array(0.76))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -753,7 +755,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (0.01, 0.41, 0.024390243902439025)
+            (array(0.01), array(0.41), array(0.02439024))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -763,13 +765,15 @@ class ToyCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
+        tensorlib, _ = get_backend()
+
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = bkg_only_distribution.pvalue(teststat)
-        CLs = CLsb / CLb
+        CLs = tensorlib.astensor(CLsb / CLb)
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, bkg_only_distribution):
@@ -797,7 +801,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [0.0, 0.0, 0.06186224489795918, 0.2845003327965815, 1.0]
+            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
@@ -806,21 +810,19 @@ class ToyCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         tb, _ = get_backend()
-        pvalues = tb.astensor(
-            [
-                self.pvalues(
-                    tb.astensor(test_stat),
-                    sig_plus_bkg_distribution,
-                    bkg_only_distribution,
-                )
-                for test_stat in bkg_only_distribution.samples
-            ]
-        )
+        pvalues = [
+            self.pvalues(
+                test_stat,
+                sig_plus_bkg_distribution,
+                bkg_only_distribution,
+            )
+            for test_stat in bkg_only_distribution.samples
+        ]
         # TODO: Add percentile to tensorlib
         # c.f. Issue #815, PR #817
         import numpy as np
@@ -828,11 +830,11 @@ class ToyCalculator:
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
         normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
         pvalues_exp_band = np.percentile(
-            tb.tolist(pvalues),
+            pvalues,
             normal_percentiles,
             axis=0,
         ).T.tolist()
-        return pvalues_exp_band
+        return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
     def teststatistic(self, poi_test):
         """
@@ -860,7 +862,7 @@ class ToyCalculator:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: The value of the test statistic.
+            Tensor: The value of the test statistic.
 
         """
         teststat_func = utils.get_test_stat(self.test_stat)
