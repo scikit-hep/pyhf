@@ -38,16 +38,14 @@ Important Notes
 Fixes
 -----
 
-* Correct bug on pyhf contrib
-* writexml: float-like values used
+* Fix bug where all extras triggered warning for installation of the ``contrib`` extra.
+* ``float``-like values are used in division for :func:`pyhf.writexml`.
 * ``Model.spec`` now supports build new models from existing models.
 * :math:`p`-values are now reported based on their quantiles, instead of interpolating
   test statistics and converting to :math:`p`-values.
 * Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed.
 * The ``normsys`` modifier now uses the ``code4`` interpolation method by default.
 * The ``histosys`` modifier now uses the ``code4p`` interpolation method by default.
-
-* qtilde test statistic is now the default
 
 Features
 --------
@@ -72,6 +70,9 @@ Python API
   between using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg
   to specify which test statistic to use.
   It also relies more heavily on using kwargs to pass options through to the optimizer.
+* The default ``test_stat`` kwarg for :func:`pyhf.infer.hypotest` and the calculator
+  APIs is ``'qtilde'``, which corresponds to the alternative test statistic
+  :func:`pyhf.infer.test_statistics.qmu_tilde`.
 * The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
   (with shape ``()``) instead of a ``float``.
   This is required to support end-to-end automatic differenation in future releases.
@@ -111,6 +112,8 @@ Contributors
 
 ``v0.6.0`` benefited from contributions from:
 
+* Alexander Held
+* Marco Gorelli
 * Pradyumna Rahul K
 * Eric Schanet
 * Henry Schreiner
