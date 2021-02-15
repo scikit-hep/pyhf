@@ -1,0 +1,34 @@
+|release v0.6.0|_
+=================
+
+This is a minor release from ``v0.5.4`` → ``v0.6.0``.
+
+Fixes
+-----
+
+* Blah
+* Blah
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* Blah
+* Blah
+
+CLI API
+~~~~~~~
+
+* Blah
+* Blah
+
+Contributors
+------------
+
+* Blah
+* Blah
+
+.. |release v0.6.0| replace:: ``v0.6.0``
+.. _`release v0.6.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.0
