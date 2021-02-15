@@ -31,6 +31,8 @@ CLI API
 Contributors
 ------------
 
+``v0.5.3`` benefited from contributions from:
+
 * Karthikeyan Singaravelan
 
 .. |release v0.5.3| replace:: ``v0.5.3``

@@ -17,6 +17,9 @@ Important Notes
 * new requirements for ``iminuit`` and ``uproot``
 * Transitioning away from Stack Overflow to GitHub Discussions
 * Versioned docs --- don't go to ``master`` docs unless you want unstable
+* ``pyhf`` has published a paper in the Journal of Open Source Software. |JOSS DOI|
+  Please make sure to include the paper reference in all citations of ``pyhf``, as
+  documented in the `Use and Citations`_ section of the documentation.
 
 Fixes
 -----
@@ -85,3 +88,8 @@ Contributors
 
 .. |q0 API| replace:: ``pyhf.infer.test_statistics.q0``
 .. _`q0 API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.test_statistics.q0.html
+
+.. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
+   :target: https://doi.org/10.21105/joss.02823
+
+.. _`Use and Citations`: https://pyhf.readthedocs.io/en/latest/citations.html
