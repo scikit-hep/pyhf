@@ -45,8 +45,10 @@ Fixes
   test statistics and converting to :math:`p`-values.
 * Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed
   for the ``xmlio`` extra.
-* The ``normsys`` modifier now uses the ``code4`` interpolation method by default.
-* The ``histosys`` modifier now uses the ``code4p`` interpolation method by default.
+* The ``normsys`` modifier now uses the :mod:`pyhf.interpolators.code4` interpolation
+  method by default.
+* The ``histosys`` modifier now uses the :mod:`pyhf.interpolators.code4p` interpolation
+  method by default.
 
 Features
 --------
