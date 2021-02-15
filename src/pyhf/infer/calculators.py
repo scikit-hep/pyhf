@@ -355,7 +355,7 @@ class AsymptoticCalculator:
             teststat = tensorlib.conditional(
                 (sqrtqmu_v < self.sqrtqmuA_v), _true_case, _false_case
             )
-        return teststat
+        return tensorlib.astensor(teststat)
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
         r"""
