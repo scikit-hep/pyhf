@@ -8,7 +8,7 @@ Important Notes
 
 * Please note this release has **API breaking changes** and carefully read these
   notes while updating your code to the ``v0.6.0`` API.
-  Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API now
+  Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API, which now
   uses a ``calctype`` argument to differentiate between using an asymptotic calculator
   or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
   the calculator should use, with ``'qtilde'``, coresponding to
@@ -24,7 +24,7 @@ Important Notes
   the |iminuit docs|_ ``v2.X`` release series and API.
   Note that ``iminuit`` ``v2.X`` can result in slight differences in minimization
   results from ``iminuit`` ``v1.X``.
-* The documentation will now be versioned with releases at ReadTheDocs.
+* The documentation will now be versioned with releases on ReadTheDocs.
   Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
   stable realease of ``pyhf``.
 * ``pyhf`` is transtioning away from Stack Overflow to `GitHub Discussions`_ for
