@@ -33,7 +33,7 @@ def create_calculator(calctype, *args, **kwargs):
         ... )
         >>> qmu_sig, qmu_bkg = toy_calculator.distributions(mu_test)
         >>> qmu_sig.pvalue(mu_test), qmu_bkg.pvalue(mu_test)
-        (0.14, 0.76)
+        (array(0.14), array(0.76))
 
     Args:
         calctype (:obj:`str`): The calculator to create. Choose either
