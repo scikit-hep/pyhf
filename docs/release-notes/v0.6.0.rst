@@ -8,14 +8,16 @@ Important Notes
 
 * Please note this release has **API breaking changes** and carefully read these
   notes while updating your code to the ``v0.6.0`` API.
-  Perhaps most relevant is the changes to the |hypotest API|_ API now uses a
-  ``calctype`` argument to differentiate between using an asymptotic calculator
+  Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API now
+  uses a ``calctype`` argument to differentiate between using an asymptotic calculator
   or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
-  to use.
+  the calculator should use, with ``'qtilde'``, coresponding to
+  :func:`pyhf.infer.test_statistics.qmu_tilde`, now the default option.
   It also relies more heavily on using kwargs to pass options through to the optimizer.
 * Support for the discovery test statistic, :math:`q_{0}`, has now been added through
-  the |q0 API|_ API.
-* Support for pseudoexperiments (toys) has been added through the |ToyCalculator API|_.
+  the :func:`pyhf.infer.test_statistics.q0` API.
+* Support for pseudoexperiments (toys) has been added through the
+  :func:`pyhf.infer.calculators.ToyCalculator`.
   Please see the corresponding `example notebook`_ for more detailed exploration
   of the API.
 * The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requries
@@ -38,9 +40,14 @@ Fixes
 
 * Correct bug on pyhf contrib
 * writexml: float-like values used
-* Model.spec: was missing attribute needed to build new models from existing ones
-* p-values reported based on their quantiles, instead of interpolating test statistics and converting to p-values
-* uproot3/4 namespace collisions
+* ``Model.spec`` now supports build new models from existing models.
+* :math:`p`-values are now reported based on their quantiles, instead of interpolating
+  test statistics and converting to :math:`p`-values.
+* Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed.
+* The ``normsys`` modifier now uses the ``code4`` interpolation method by default.
+* The ``histosys`` modifier now uses the ``code4p`` interpolation method by default.
+
+* qtilde test statistic is now the default
 
 Features
 --------
@@ -48,8 +55,10 @@ Features
 Python API
 ~~~~~~~~~~
 
-* The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and ``tensorlib.ravel`` API.
-* The |ToyCalculator API|_ API has been added to support pseudoexperiments (toys).
+* The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and
+  ``tensorlib.ravel`` API.
+* The :func:`pyhf.infer.calculators.ToyCalculator` API has been added to support
+  pseudoexperiments (toys).
 * The emperical test statistic distribution API has been added to help support the
   ``ToyCalculator`` API.
 * Add a ``tolerance`` kwarg to the optimizer API to set a ``float`` value as a
@@ -59,9 +68,9 @@ Python API
 * Add the ``pyhf.utils.citation`` API to get a ``str`` of the preferred BibTeX entry
   for citation of the version of ``pyhf`` installed.
   See the example for the CLI API for more information.
-* The |hypotest API|_ API now uses a ``calctype`` argument to differentiate between
-  using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg to
-  specify which test statistic to use.
+* The :func:`pyhf.infer.hypotest` API now uses a ``calctype`` argument to differentiate
+  between using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg
+  to specify which test statistic to use.
   It also relies more heavily on using kwargs to pass options through to the optimizer.
 * The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
   (with shape ``()``) instead of a ``float``.
@@ -108,15 +117,6 @@ Contributors
 
 .. |release v0.6.0| replace:: ``v0.6.0``
 .. _`release v0.6.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.0
-
-.. |hypotest API| replace:: ``pyhf.infer.hypotest``
-.. _`hypotest API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.hypotest.html
-
-.. |q0 API| replace:: ``pyhf.infer.test_statistics.q0``
-.. _`q0 API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.test_statistics.q0.html
-
-.. |ToyCalculator API| replace:: ``pyhf.infer.calculators.ToyCalculator``
-.. _`ToyCalculator API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.calculators.ToyCalculator.html
 
 .. _`example notebook`: https://pyhf.readthedocs.io/en/latest/examples/notebooks/toys.html
 
