@@ -36,8 +36,11 @@ Important Notes
 Fixes
 -----
 
-* Blah
 * Correct bug on pyhf contrib
+* writexml: float-like values used
+* Model.spec: was missing attribute needed to build new models from existing ones
+* p-values reported based on their quantiles, instead of interpolating test statistics and converting to p-values
+* uproot3/4 namespace collisions
 
 Features
 --------
@@ -45,14 +48,19 @@ Features
 Python API
 ~~~~~~~~~~
 
-* Blah
-* Blah
+* tensorlib.to_numpy, tensorlib.ravel
+* toy calculator
+* empirical test statistic distribution
+* get current citation
+* optimizer tolerance
+* return correlations (minuit)
+* test statistic specified by string instead of using `qtilde=True`, use `test_stat="qtilde"`
 
 CLI API
 ~~~~~~~
 
-* Blah
-* Blah
+* The CLI API now suppoerts a ``--citation`` or ``--cite`` option to print the
+  preferred BibTeX entry for citation of the version of ``pyhf`` installed.
 
 .. code-block:: shell
 
@@ -81,7 +89,13 @@ CLI API
 Changes
 -------
 
-* The hypotest API has changed since v0.5.4 and that this should be largely highlighted.
+* The |hypotest API|_ API now uses a ``calctype`` argument to differentiate between
+  using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg to
+  specify which test statistic to use.
+  It also relies more heavily on using kwargs to pass options through to the optimizer.
+* The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
+  (with shape ``()``) instead of a ``float``.
+  This is required to support end-to-end automatic differenation in future releases.
 
 Contributors
 ------------
