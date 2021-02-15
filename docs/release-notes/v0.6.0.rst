@@ -3,11 +3,21 @@
 
 This is a minor release from ``v0.5.4`` → ``v0.6.0``.
 
+Important Notes
+---------------
+
+* toys
+* API breaking change
+* Discovery test stat
+* new requirements for ``iminuit`` and ``uproot``
+* Transitioning away from Stack Overflow to GitHub Discussions
+* Versioned docs --- don't go to ``master`` docs unless you want unstable
+
 Fixes
 -----
 
 * Blah
-* Blah
+* Correct bug on pyhf contrib
 
 Features
 --------
@@ -24,11 +34,36 @@ CLI API
 * Blah
 * Blah
 
+.. code-block:: shell
+
+   $ pyhf --citation
+   @software{pyhf,
+     author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
+     title = "{pyhf: v0.6.0}",
+     version = {0.6.0},
+     doi = {10.5281/zenodo.1169739},
+     url = {https://github.com/scikit-hep/pyhf},
+   }
+
+   @article{pyhf_joss,
+     doi = {10.21105/joss.02823},
+     url = {https://doi.org/10.21105/joss.02823},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {58},
+     pages = {2823},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
+     title = {pyhf: pure-Python implementation of HistFactory statistical models},
+     journal = {Journal of Open Source Software}
+   }
+
 Contributors
 ------------
 
-* Blah
-* Blah
+* Pradyumna Rahul K
+* Eric Schanet
+* Henry Schreiner
 
 .. |release v0.6.0| replace:: ``v0.6.0``
 .. _`release v0.6.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.0
