@@ -40,10 +40,11 @@ Fixes
 
 * Fix bug where all extras triggered warning for installation of the ``contrib`` extra.
 * ``float``-like values are used in division for :func:`pyhf.writexml`.
-* ``Model.spec`` now supports build new models from existing models.
+* ``Model.spec`` now supports building new models from existing models.
 * :math:`p`-values are now reported based on their quantiles, instead of interpolating
   test statistics and converting to :math:`p`-values.
-* Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed.
+* Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed
+  for the ``xmlio`` extra.
 * The ``normsys`` modifier now uses the ``code4`` interpolation method by default.
 * The ``histosys`` modifier now uses the ``code4p`` interpolation method by default.
 
@@ -61,8 +62,9 @@ Python API
   ``ToyCalculator`` API.
 * Add a ``tolerance`` kwarg to the optimizer API to set a ``float`` value as a
   tolerance for termination of the fit.
-* The ``minuit`` optimizer now can return correlations of the fitted parameters
-  through use of the ``return_correlation`` Boolean kwarg.
+* The :func:`pyhf.optimize.opt_minuit.minuit_optimizer` optimizer now can return
+  correlations of the fitted parameters through use of the ``return_correlation``
+  Boolean kwarg.
 * Add the ``pyhf.utils.citation`` API to get a ``str`` of the preferred BibTeX entry
   for citation of the version of ``pyhf`` installed.
   See the example for the CLI API for more information.
