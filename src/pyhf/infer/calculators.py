@@ -132,7 +132,7 @@ class AsymptoticTestStatDistribution:
             value (:obj:`float`): The test statistic value.
 
         Returns:
-            Float: The integrated probability to observe a value at least as large as the observed one.
+            Tensor: The integrated probability to observe a value at least as large as the observed one.
 
         """
         tensorlib, _ = get_backend()
@@ -301,7 +301,7 @@ class AsymptoticCalculator:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: The value of the test statistic.
+            Tensor: The value of the test statistic.
 
         """
         tensorlib, _ = get_backend()
@@ -389,7 +389,7 @@ class AsymptoticCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
@@ -433,7 +433,7 @@ class AsymptoticCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
@@ -523,7 +523,7 @@ class EmpiricalDistribution:
             value (:obj:`float`): The test statistic value.
 
         Returns:
-            Float: The integrated probability to observe a value at least as large as the observed one.
+            Tensor: The integrated probability to observe a value at least as large as the observed one.
 
         """
         tensorlib, _ = get_backend()
@@ -765,7 +765,7 @@ class ToyCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
@@ -810,7 +810,7 @@ class ToyCalculator:
               The distribution for the background-only hypothesis.
 
         Returns:
-            Tuple (:obj:`float`): The :math:`p`-values for the test statistic
+            Tuple (:obj:`tensor`): The :math:`p`-values for the test statistic
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
@@ -862,7 +862,7 @@ class ToyCalculator:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
         Returns:
-            Float: The value of the test statistic.
+            Tensor: The value of the test statistic.
 
         """
         teststat_func = utils.get_test_stat(self.test_stat)
