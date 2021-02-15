@@ -393,9 +393,11 @@ class AsymptoticCalculator:
             corresponding to the :math:`\mathrm{CL}_{s+b}`,
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
+        tensorlib, _ = get_backend()
+
         CLsb = sig_plus_bkg_distribution.pvalue(teststat)
         CLb = bkg_only_distribution.pvalue(teststat)
-        CLs = CLsb / CLb
+        CLs = tensorlib.astensor(CLsb / CLb)
         return CLsb, CLb, CLs
 
     def expected_pvalues(self, sig_plus_bkg_distribution, bkg_only_distribution):
