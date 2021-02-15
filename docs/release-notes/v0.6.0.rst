@@ -9,11 +9,16 @@ Important Notes
 * Please note this release has **API breaking changes** and carefully read these
   notes while updating your code to the ``v0.6.0`` API.
   Perhaps most relevant is the changes to the |hypotest API|_ API now uses a
-  ``test_stat`` kwarg to specify which test statistic to use and relies more
-  heavily on using kwargs to pass options through to the optimizer.
+  ``calctype`` argument to differentiate between using an asymptotic calculator
+  or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
+  to use.
+  It also relies more heavily on using kwargs to pass options through to the optimizer.
 * Support for the discovery test statistic, :math:`q_{0}`, has now been added through
   the |q0 API|_ API.
-* toys
+* Support for pseudoexperiments (toys) has been added through the |ToyCalculator API|_.
+  Please see the corresponding `example notebook`_ for more detailed exploration
+  of the API.
+
 * new requirements for ``iminuit`` and ``uproot``
 * Transitioning away from Stack Overflow to GitHub Discussions
 * Versioned docs --- don't go to ``master`` docs unless you want unstable
@@ -88,6 +93,11 @@ Contributors
 
 .. |q0 API| replace:: ``pyhf.infer.test_statistics.q0``
 .. _`q0 API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.test_statistics.q0.html
+
+.. |ToyCalculator API| replace:: ``pyhf.infer.calculators.ToyCalculator``
+.. _`ToyCalculator API`: https://pyhf.readthedocs.io/en/v0.6.0/_generated/pyhf.infer.calculators.ToyCalculator.html
+
+.. _`example notebook`: https://pyhf.readthedocs.io/en/latest/examples/notebooks/toys.html
 
 .. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
    :target: https://doi.org/10.21105/joss.02823
