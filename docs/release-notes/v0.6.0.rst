@@ -17,7 +17,7 @@ Important Notes
 * Support for the discovery test statistic, :math:`q_{0}`, has now been added through
   the :func:`pyhf.infer.test_statistics.q0` API.
 * Support for pseudoexperiments (toys) has been added through the
-  :func:`pyhf.infer.calculators.ToyCalculator`.
+  :func:`pyhf.infer.calculators.ToyCalculator` API.
   Please see the corresponding `example notebook`_ for more detailed exploration
   of the API.
 * The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requries
