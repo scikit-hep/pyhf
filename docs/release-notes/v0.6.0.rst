@@ -11,7 +11,7 @@ Important Notes
   Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API, which now
   uses a ``calctype`` argument to differentiate between using an asymptotic calculator
   or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
-  the calculator should use, with ``'qtilde'``, coresponding to
+  the calculator should use, with ``'qtilde'``, corresponding to
   :func:`pyhf.infer.test_statistics.qmu_tilde`, now the default option.
   It also relies more heavily on using kwargs to pass options through to the optimizer.
 * Support for the discovery test statistic, :math:`q_{0}`, has now been added through
