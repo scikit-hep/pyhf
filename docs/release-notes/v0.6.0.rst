@@ -14,6 +14,10 @@ Important Notes
   the calculator should use, with ``'qtilde'``, corresponding to
   :func:`pyhf.infer.test_statistics.qmu_tilde`, now the default option.
   It also relies more heavily on using kwargs to pass options through to the optimizer.
+* Following the recommendations of |NEP 29|_ ``pyhf`` ``v0.6.0`` drops support for
+  Python 3.6.
+  |PEP 494|_ also notes that Python 3.6 will be end of life in December 2021, so
+  ``pyhf`` is moving forward with a minimum required runtime of Python 3.7.
 * Support for the discovery test statistic, :math:`q_{0}`, has now been added through
   the :func:`pyhf.infer.test_statistics.q0` API.
 * Support for pseudoexperiments (toys) has been added through the
