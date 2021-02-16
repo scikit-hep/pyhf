@@ -57,7 +57,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": ">=6.0"
+            "version": "~=7.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -69,7 +69,8 @@
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": "~=4.56"
         },
         {
             "@type": "SoftwareApplication",
@@ -82,7 +83,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": ">=3.2.0"
+            "version": "~=3.2"
         },
         {
             "@type": "SoftwareApplication",
@@ -94,7 +95,8 @@
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": "~=1.23"
         },
         {
             "@type": "SoftwareApplication",
@@ -106,7 +108,8 @@
                 "name": "The Python Package Index",
                 "url": "https://pypi.org"
             },
-            "runtimePlatform": "Python 3"
+            "runtimePlatform": "Python 3",
+            "version": "~=5.1"
         }
     ],
     "audience": [
