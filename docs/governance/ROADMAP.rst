@@ -69,7 +69,7 @@ Roadmap
    -  |check| Write submission to `JOSS <https://joss.theoj.org/>`__ (Issue
       #502) and write submission to
       `pyOpenSci <https://www.pyopensci.org/>`__ [2019-Q4 → 2020-Q2]
-   -  |uncheck| Contribute to `IRIS-HEP Analysis Systems
+   -  |check| Contribute to `IRIS-HEP Analysis Systems
       Milestones <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
       "`Initial roadmap for ecosystem
       coherency <https://github.com/iris-hep/project-milestones/issues/8>`__"
@@ -105,7 +105,7 @@ Roadmap
    -  |check| Add sampling with toys (PR #558) [2019-Q3]
    -  |uncheck| Make general modeling choices (e.g., Issue #293) [2019-Q4 →
       2020-Q1]
-   -  |uncheck| Add "discovery" test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
+   -  |check| Add "discovery" test stats (p0) (PR #520) [2019-Q4 → 2020-Q1]
    -  |uncheck| Add better Model creation [2019-Q4 → 2020-Q1]
    -  |check| Add background model support (Issues #514, #946) [2019-Q4 → 2020-Q1]
    -  |check| Develop interface for the optimizers similar to tensor/backend
