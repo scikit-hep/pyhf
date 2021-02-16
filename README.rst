@@ -284,8 +284,8 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
-     title = "{pyhf: v0.5.4}",
-     version = {0.5.4},
+     title = "{pyhf: v0.6.0}",
+     version = {0.6.0},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
    }
@@ -350,7 +350,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.5.4-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.0-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf

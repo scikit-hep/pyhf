@@ -1,8 +1,8 @@
 {
     "description": "pure-Python HistFactory implementation with tensors and autodiff",
     "license": "Apache-2.0",
-    "title": "scikit-hep/pyhf: v0.5.4",
-    "version": "v0.5.4",
+    "title": "scikit-hep/pyhf: v0.6.0",
+    "version": "v0.6.0",
     "upload_type": "software",
     "creators": [
         {
@@ -36,7 +36,7 @@
     "related_identifiers": [
         {
             "scheme": "url",
-            "identifier": "https://github.com/scikit-hep/pyhf/tree/v0.5.4",
+            "identifier": "https://github.com/scikit-hep/pyhf/tree/v0.6.0",
             "relation": "isSupplementTo"
         }
     ]
