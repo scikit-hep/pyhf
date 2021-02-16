@@ -20,13 +20,13 @@ Important Notes
   :func:`pyhf.infer.calculators.ToyCalculator` API.
   Please see the corresponding `example notebook`_ for more detailed exploration
   of the API.
-* The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requries
+* The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requires
   the |iminuit docs|_ ``v2.X`` release series and API.
   Note that ``iminuit`` ``v2.X`` can result in slight differences in minimization
   results from ``iminuit`` ``v1.X``.
 * The documentation will now be versioned with releases on ReadTheDocs.
   Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
-  stable realease of ``pyhf``.
+  stable release of ``pyhf``.
 * ``pyhf`` is transtioning away from Stack Overflow to `GitHub Discussions`_ for
   resolving user questions not covered in the documentation.
   Please check the `GitHub Discussions`_ page to search for discussions addressing
@@ -60,7 +60,7 @@ Python API
   ``tensorlib.ravel`` API.
 * The :func:`pyhf.infer.calculators.ToyCalculator` API has been added to support
   pseudoexperiments (toys).
-* The emperical test statistic distribution API has been added to help support the
+* The empirical test statistic distribution API has been added to help support the
   ``ToyCalculator`` API.
 * Add a ``tolerance`` kwarg to the optimizer API to set a ``float`` value as a
   tolerance for termination of the fit.
@@ -79,12 +79,12 @@ Python API
   :func:`pyhf.infer.test_statistics.qmu_tilde`.
 * The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
   (with shape ``()``) instead of a ``float``.
-  This is required to support end-to-end automatic differenation in future releases.
+  This is required to support end-to-end automatic differentiation in future releases.
 
 CLI API
 ~~~~~~~
 
-* The CLI API now suppoerts a ``--citation`` or ``--cite`` option to print the
+* The CLI API now supports a ``--citation`` or ``--cite`` option to print the
   preferred BibTeX entry for citation of the version of ``pyhf`` installed.
 
 .. code-block:: shell
