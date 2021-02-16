@@ -304,7 +304,7 @@ def dedupe_parameters(parameters):
     duplicates = {}
     for p in parameters:
         duplicates.setdefault(p['name'], []).append(p)
-    for parname in duplicates.keys():
+    for parname in duplicates:
         parameter_list = duplicates[parname]
         if len(parameter_list) == 1:
             continue

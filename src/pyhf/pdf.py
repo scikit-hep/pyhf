@@ -151,7 +151,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                 if mtype == 'histosys':
                     lo_data = thismod['data']['lo_data'] if thismod else nom
                     hi_data = thismod['data']['hi_data'] if thismod else nom
-                    maskval = True if thismod else False
+                    maskval = bool(thismod)
                     mega_mods[key][s]['data']['lo_data'] += lo_data
                     mega_mods[key][s]['data']['hi_data'] += hi_data
                     mega_mods[key][s]['data']['nom_data'] += nom
@@ -159,7 +159,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                         nom
                     )  # broadcasting
                 elif mtype == 'normsys':
-                    maskval = True if thismod else False
+                    maskval = bool(thismod)
                     lo_factor = thismod['data']['lo'] if thismod else 1.0
                     hi_factor = thismod['data']['hi'] if thismod else 1.0
                     mega_mods[key][s]['data']['nom_data'] += [1.0] * len(nom)
@@ -171,7 +171,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                         nom
                     )  # broadcasting
                 elif mtype in ['normfactor', 'shapefactor', 'lumi']:
-                    maskval = True if thismod else False
+                    maskval = bool(thismod)
                     mega_mods[key][s]['data']['mask'] += [maskval] * len(
                         nom
                     )  # broadcasting
@@ -180,7 +180,7 @@ def _nominal_and_modifiers_from_spec(config, spec):
                     if mtype == 'shapesys':
                         maskval = [(x > 0 and y > 0) for x, y in zip(uncrt, nom)]
                     else:
-                        maskval = [True if thismod else False] * len(nom)
+                        maskval = [bool(thismod)] * len(nom)
                     mega_mods[key][s]['data']['mask'] += maskval
                     mega_mods[key][s]['data']['uncrt'] += uncrt
                     mega_mods[key][s]['data']['nom_data'] += nom

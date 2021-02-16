@@ -146,7 +146,7 @@ def modifier(*args, **kwargs):
     if not args:
         # called like @modifier(name='foo', constrained=False, pdf_type='normal', op_code='addition')
         return _modifier(name, constrained, pdf_type, op_code)
-    elif len(args) == 1:
+    if len(args) == 1:
         # called like @modifier
         if not callable(args[0]):
             raise ValueError('You must decorate a callable python object')
@@ -158,10 +158,9 @@ def modifier(*args, **kwargs):
             op_code=op_code,
         )
         return args[0]
-    else:
-        raise ValueError(
-            f'@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({len(args):d} given)'
-        )
+    raise ValueError(
+        f'@modifier must be called with only keyword arguments, @modifier(name=\'foo\'), or no arguments, @modifier; ({len(args):d} given)'
+    )
 
 
 from .histosys import histosys, histosys_combined
