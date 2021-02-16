@@ -44,7 +44,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": ">=1.4.0"
+            "version": "~=1.4"
         },
         {
             "@type": "SoftwareApplication",
