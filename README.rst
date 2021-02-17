@@ -283,7 +283,7 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 .. code:: bibtex
 
    @software{pyhf,
-     author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
      title = "{pyhf: v0.6.0}",
      version = {0.6.0},
      doi = {10.5281/zenodo.1169739},
