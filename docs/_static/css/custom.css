@@ -1,0 +1,46 @@
+/* 1200px for slightly wider for most monitors */
+.wy-nav-content {
+    max-width: 1200px !important;
+}
+
+/* version warning badge */
+#dev-version {
+  display: none;
+}
+
+#dev-version.version-warning {
+  display: block;
+}
+
+p.version-warning {
+  position: sticky;
+  top: 10px;
+
+  margin: 10px 0;
+  padding: 5px 10px;
+  border-radius: 4px;
+
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 2px #000;
+  text-align: center;
+
+  background: #900 repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 56px,
+    rgba(255, 255, 255, 0.35) 56px,
+    rgba(255, 255, 255, 0.35) 112px
+  );
+}
+
+p.version-warning a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dotted #fff;
+}
+
+p.version-warning a:hover {
+  border-bottom-style: solid;
+}
+/* -------------------------- */

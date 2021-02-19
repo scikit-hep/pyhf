@@ -142,7 +142,7 @@ def citation(oneline=False):
 
         >>> import pyhf
         >>> pyhf.utils.citation(True)
-        '@software{pyhf,  author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",  title = "{pyhf: v0.5.4}",  version = {0.5.4},  doi = {10.5281/zenodo.1169739},  url = {https://github.com/scikit-hep/pyhf},}'
+        '@software{pyhf,  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},  title = "{pyhf: v0.6.0}",  version = {0.6.0},  doi = {10.5281/zenodo.1169739},  url = {https://github.com/scikit-hep/pyhf},}@article{pyhf_joss,  doi = {10.21105/joss.02823},  url = {https://doi.org/10.21105/joss.02823},  year = {2021},  publisher = {The Open Journal},  volume = {6},  number = {58},  pages = {2823},  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},  title = {pyhf: pure-Python implementation of HistFactory statistical models},  journal = {Journal of Open Source Software}}'
 
     Keyword Args:
         oneline (:obj:`bool`): Whether to provide citation with new lines (default) or as a one-liner.

@@ -6,7 +6,7 @@ To get started fork the repo.
 ## Issues
 
 Making Issues is very helpful to the project &mdash; they help the dev team form the development roadmap and are where most important discussion takes place.
-If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or on the [Stack Overflow tag](https://stackoverflow.com/questions/tagged/pyhf), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
+If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or on the [GitHub Discussions](https://github.com/scikit-hep/pyhf/discussions), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
 
 ## Pull Requests
 
@@ -52,13 +52,13 @@ We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/develop
 
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 
-```
+```bash
 python -m pip install --ignore-installed -U -e .[complete]
 ```
 
 To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Black](https://github.com/psf/black) by running
 
-```
+```bash
 pre-commit install
 ```
 
@@ -68,14 +68,14 @@ This will run `black` over your code each time you attempt to make a commit and 
 
 You can run the unit tests (which should be fast!) via the following command.
 
-```
+```bash
 python -m pytest --ignore=tests/test_notebooks.py
 ```
 
 Note: This ignores the notebook tests (which are run via [papermill](https://github.com/nteract/papermill) which run somewhat slow.
 Make sure to run the complete suite before submitting a PR
 
-```
+```bash
 python -m pytest
 ```
 
@@ -87,6 +87,6 @@ We try to follow [Conventional Commit](https://www.conventionalcommits.org/) for
 
 New baseline visuals can be generated using this command:
 
-```
+```bash
 python -m pytest tests/contrib/test_viz.py --mpl-generate-path=tests/contrib/baseline
 ```

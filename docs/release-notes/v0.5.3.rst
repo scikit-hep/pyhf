@@ -1,0 +1,39 @@
+|release v0.5.3|_
+=================
+
+This is a patch release from ``v0.5.2`` → ``v0.5.3``.
+
+Fixes
+-----
+
+* Workspaces are now immutable
+* ShapeFactor support added to XML reading and writing
+* An error is raised if a fit initialization parameter is outside of its bounds
+  (preventing hypotest with POI outside of bounds)
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* Inverting hypothesis tests to get upper limits now has an API with
+  ``pyhf.infer.intervals.upperlimit``
+* Building workspaces from a model and data added with ``pyhf.workspace.build``
+
+CLI API
+~~~~~~~
+
+* Added CLI API for ``pyhf.infer.fit``: ``pyhf fit``
+* pyhf combine now allows for merging channels: ``pyhf combine --merge-channels --join <join option>``
+* Added utility to download archived pyhf pallets (workspaces + patchsets) to contrib module: ``pyhf contrib download``
+
+Contributors
+------------
+
+``v0.5.3`` benefited from contributions from:
+
+* Karthikeyan Singaravelan
+
+.. |release v0.5.3| replace:: ``v0.5.3``
+.. _`release v0.5.3`: https://github.com/scikit-hep/pyhf/releases/tag/v0.5.3

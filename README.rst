@@ -6,13 +6,12 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |Scikit-HEP| |NSF Award Number|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |Language grade: Python| |CodeFactor|
-|pre-commit.ci Status| |Code style: black|
+|Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
 
-|Docs| |Binder|
+|Docs from latest| |Docs from master| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
 Pulls|
@@ -261,16 +260,8 @@ Questions
 ---------
 
 If you have a question about the use of ``pyhf`` not covered in `the
-documentation <https://scikit-hep.org/pyhf/>`__, please ask a question
-on `Stack Overflow <https://stackoverflow.com/questions/tagged/pyhf>`__
-with the ``[pyhf]`` tag, which the ``pyhf`` dev team
-`watches <https://stackoverflow.com/questions/tagged/pyhf?sort=Newest&filters=NoAcceptedAnswer&edited=true>`__.
-
-.. image:: https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png
-   :alt: Stack Overflow pyhf tag
-   :width: 50 %
-   :target: https://stackoverflow.com/questions/tagged/pyhf
-   :align: center
+documentation <https://pyhf.readthedocs.io/>`__, please ask a question
+on the `GitHub Discussions <https://github.com/scikit-hep/pyhf/discussions>`__.
 
 If you believe you have found a bug in ``pyhf``, please report it in the
 `GitHub
@@ -284,18 +275,32 @@ announcements you can join the |pyhf-announcements mailing list|_.
 Citation
 --------
 
-As noted in `Use and
-Citations <https://scikit-hep.org/pyhf/citations.html>`__, the preferred
-BibTeX entry for citation of ``pyhf`` is
+As noted in `Use and Citations <https://scikit-hep.org/pyhf/citations.html>`__,
+the preferred BibTeX entry for citation of ``pyhf`` includes both the
+`Zenodo <https://zenodo.org/>`__ archive and the
+`JOSS <https://joss.theoj.org/>`__ paper:
 
 .. code:: bibtex
 
    @software{pyhf,
-     author = "{Heinrich, Lukas and Feickert, Matthew and Stark, Giordon}",
-     title = "{pyhf: v0.5.4}",
-     version = {0.5.4},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
+     title = "{pyhf: v0.6.0}",
+     version = {0.6.0},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
+   }
+
+   @article{pyhf_joss,
+     doi = {10.21105/joss.02823},
+     url = {https://doi.org/10.21105/joss.02823},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {58},
+     pages = {2823},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
+     title = {pyhf: pure-Python implementation of HistFactory statistical models},
+     journal = {Journal of Open Source Software}
    }
 
 Authors
@@ -322,6 +327,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/scikit-hep/pyhf
 .. |DOI| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg
    :target: https://doi.org/10.5281/zenodo.1169739
+.. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
+   :target: https://doi.org/10.21105/joss.02823
 .. |Scikit-HEP| image:: https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
@@ -336,8 +343,6 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master
    :target: https://codecov.io/gh/scikit-hep/pyhf?branch=master
-.. |Language grade: Python| image:: https://img.shields.io/lgtm/grade/python/g/scikit-hep/pyhf.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/scikit-hep/pyhf/latest/files/
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
    :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg
@@ -345,7 +350,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs| image:: https://img.shields.io/badge/docs-master-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.0-blue.svg
+   :target: https://pyhf.readthedocs.io/
+.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb

@@ -1,10 +1,15 @@
 Use and Citations
 =================
 
+.. raw:: html
+
+   <p id="dev-version"><strong>Warning:</strong> This is a development version and should not be cited. To find the specific version to cite, please go to <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
+
 Citation
 --------
 
-The preferred BibTeX entry for citation of ``pyhf`` is
+The preferred BibTeX entry for citation of ``pyhf`` includes both the  `Zenodo <https://zenodo.org/>`__
+archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 
 .. literalinclude:: bib/preferred.bib
    :language: bibtex

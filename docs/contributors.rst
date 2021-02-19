@@ -20,3 +20,5 @@ Contributors include:
 - Karthikeyan Singaravelan
 - Marco Gorelli
 - Pradyumna Rahul K
+- Eric Schanet
+- Henry Schreiner
