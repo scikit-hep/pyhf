@@ -7,7 +7,6 @@ To get started fork the repo.
 
 Making Issues is very helpful to the project &mdash; they help the dev team form the development roadmap and are where most important discussion takes place.
 If you have suggestions, questions that you can't find answers to on the [documentation website](https://scikit-hep.org/pyhf/) or on the [GitHub Discussions](https://github.com/scikit-hep/pyhf/discussions), or have found a bug please [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose)!
-The `pyhf` dev team wants to encourage contributions and community involvement in the project and also avoid low quality PRs that don't actually fix an issue or contribute towards the current roadmap.
 
 ## Pull Requests
 
@@ -15,6 +14,8 @@ The `pyhf` dev team wants to encourage contributions and community involvement i
 
 Unless your Pull Request is an obvious 1 line fix, please first [open an Issue](https://github.com/scikit-hep/pyhf/issues/new/choose) to discuss your PR with the dev team.
 The Issue allows for discussion on the usefulness and scope of the PR to be publicly discussed and also allows for the PR to then be focused on the code review.
+The `pyhf` dev team wants to encourage contributions and community involvement in the project and also avoid low quality PRs that don't actually fix an issue or contribute towards the current roadmap.
+PRs that don't follow these guidelines might be rejected.
 
 ### Good Examples
 
