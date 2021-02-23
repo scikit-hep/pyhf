@@ -26,7 +26,6 @@ Probability Distribution Functions (PDFs)
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :recursive:
 
    Normal
    Poisson
@@ -41,7 +40,6 @@ Making Models from PDFs
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :recursive:
 
    ~pdf.Model
    ~pdf._ModelConfig
