@@ -26,7 +26,7 @@ Probability Distribution Functions (PDFs)
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
+   :recursive:
 
    Normal
    Poisson
@@ -41,7 +41,7 @@ Making Models from PDFs
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
+   :recursive:
 
    ~pdf.Model
    ~pdf._ModelConfig
@@ -60,7 +60,6 @@ The computational backends that :code:`pyhf` provides interfacing for the vector
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
 
    numpy_backend.numpy_backend
    pytorch_backend.pytorch_backend
@@ -75,7 +74,6 @@ Optimizers
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
 
    mixins.OptimizerMixin
    opt_scipy.scipy_optimizer
@@ -89,7 +87,6 @@ Modifiers
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
 
    histosys
    normfactor
@@ -106,7 +103,6 @@ Interpolators
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
 
    code0
    code1
@@ -121,7 +117,6 @@ Inference
 
 .. autosummary::
    :toctree: _generated/
-   :template: modifierclass.rst
 
    test_statistics.q0
    test_statistics.qmu
@@ -151,7 +146,6 @@ Various exceptions, apart from standard python exceptions, that are raised from 
 .. autosummary::
    :toctree: _generated/
    :nosignatures:
-   :template: modifierclass.rst
 
    InvalidMeasurement
    InvalidNameReuse
