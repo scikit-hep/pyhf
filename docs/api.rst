@@ -8,6 +8,7 @@ Top-Level
 
 .. autosummary::
    :toctree: _generated/
+   :nosignatures:
 
    default_backend
    default_optimizer
@@ -113,26 +114,47 @@ Inference
 
 .. currentmodule:: pyhf.infer
 
+
+Test Statistics
+~~~~~~~~~~~~~~~
+
 .. autosummary::
    :toctree: _generated/
+   :nosignatures:
 
    test_statistics.q0
    test_statistics.qmu
    test_statistics.qmu_tilde
    test_statistics.tmu
    test_statistics.tmu_tilde
-   mle.twice_nll
-   mle.fit
-   mle.fixed_poi_fit
-   hypotest
-   intervals.upperlimit
+   utils.get_test_stat
+
+Calculators
+~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
    calculators.generate_asimov_data
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator
    calculators.ToyCalculator
    utils.create_calculator
-   utils.get_test_stat
+
+Fits and Tests
+~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
+   mle.twice_nll
+   mle.fit
+   mle.fixed_poi_fit
+   hypotest
+   intervals.upperlimit
 
 Exceptions
 ----------
@@ -168,6 +190,7 @@ Utilities
 
 .. autosummary::
    :toctree: _generated/
+   :nosignatures:
 
    load_schema
    validate
@@ -181,6 +204,7 @@ Contrib
 
 .. autosummary::
    :toctree: _generated/
+   :nosignatures:
 
    viz.brazil
    utils.download
