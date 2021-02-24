@@ -25,10 +25,12 @@ class minuit_optimizer(OptimizerMixin):
 
 
         Args:
-            errordef (:obj:`float`): See minuit docs. Default is 1.0.
-            steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
-            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is None.
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
+            errordef (:obj:`float`): See minuit docs. Default is ``1.0``.
+            steps (:obj:`int`): Number of steps for the bounds. Default is ``1000``.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is ``None``.
+            tolerance (:obj:`float`): Tolerance for termination.
+              See specific optimizer for detailed meaning.
+              Default is ``0.1``.
         """
         self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)
@@ -84,9 +86,12 @@ class minuit_optimizer(OptimizerMixin):
         underlying minimizer.
 
         Minimizer Options:
-            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
-            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is to configure in response to `do_grad`.
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
+          * maxiter (:obj:`int`): Maximum number of iterations. Default is ``100000``.
+          * strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`.
+            Default is to configure in response to ``do_grad``.
+          * tolerance (:obj:`float`): Tolerance for termination.
+            See specific optimizer for detailed meaning.
+            Default is ``0.1``.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
