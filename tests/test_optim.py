@@ -563,3 +563,46 @@ def test_step_sizes_fixed_parameters_minuit(mocker):
     assert minuit.called
     assert minimizer.fixed == [True, False, False]
     assert minimizer.errors == [0.0, 0.01, 0.01]
+
+
+def test_solver_options_behavior_scipy(mocker):
+    opt = pyhf.optimize.scipy_optimizer(solver_options={'arbitrary_option': 'foobar'})
+
+    minimizer = mocker.MagicMock()
+    opt._minimize(minimizer, None, [9, 9, 9], fixed_vals=[(0, 1)])
+    assert 'arbitrary_option' in minimizer.call_args[1]['options']
+    assert minimizer.call_args[1]['options']['arbitrary_option'] == 'foobar'
+
+    opt._minimize(
+        minimizer,
+        None,
+        [9, 9, 9],
+        fixed_vals=[(0, 1)],
+        options={'solver_options': {'arbitrary_option': 'baz'}},
+    )
+    assert 'arbitrary_option' in minimizer.call_args[1]['options']
+    assert minimizer.call_args[1]['options']['arbitrary_option'] == 'baz'
+
+
+def test_solver_options_scipy(mocker):
+    optimizer = pyhf.optimize.scipy_optimizer(solver_options={'ftol': 1e-5})
+    pyhf.set_backend('numpy', optimizer)
+    assert pyhf.optimizer.solver_options == {'ftol': 1e-5}
+
+    model = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
+    assert pyhf.infer.mle.fit(data, model).tolist()
+
+
+# Note: in this case, scipy won't usually raise errors for arbitrary options
+# so this test exists as a sanity reminder that scipy is not perfect
+def test_bad_solver_options_scipy(mocker):
+    optimizer = pyhf.optimize.scipy_optimizer(
+        solver_options={'arbitrary_option': 'foobar'}
+    )
+    pyhf.set_backend('numpy', optimizer)
+    assert pyhf.optimizer.solver_options == {'arbitrary_option': 'foobar'}
+
+    model = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
+    assert pyhf.infer.mle.fit(data, model).tolist()
