@@ -25,10 +25,12 @@ class minuit_optimizer(OptimizerMixin):
 
 
         Args:
-            errordef (:obj:`float`): See minuit docs. Default is 1.0.
-            steps (:obj:`int`): Number of steps for the bounds. Default is 1000.
-            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is None.
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is 0.1.
+            errordef (:obj:`float`): See minuit docs. Default is ``1.0``.
+            steps (:obj:`int`): Number of steps for the bounds. Default is ``1000``.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is ``None``.
+            tolerance (:obj:`float`): Tolerance for termination.
+              See specific optimizer for detailed meaning.
+              Default is ``0.1``.
         """
         self.name = 'minuit'
         self.errordef = kwargs.pop('errordef', 1)

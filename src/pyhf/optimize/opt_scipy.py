@@ -18,7 +18,9 @@ class scipy_optimizer(OptimizerMixin):
         See :class:`pyhf.optimize.mixins.OptimizerMixin` for other configuration options.
 
         Args:
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
+            tolerance (:obj:`float`): Tolerance for termination.
+              See specific optimizer for detailed meaning.
+              Default is ``None``.
         """
         self.name = 'scipy'
         self.tolerance = kwargs.pop('tolerance', None)
