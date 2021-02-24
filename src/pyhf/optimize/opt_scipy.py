@@ -43,10 +43,13 @@ class scipy_optimizer(OptimizerMixin):
         Same signature as :func:`scipy.optimize.minimize`.
 
         Minimizer Options:
-            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
-            verbose (:obj:`bool`): print verbose output during minimization. Default is off.
-            method (:obj:`str`): minimization routine. Default is 'SLSQP'.
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
+          * maxiter (:obj:`int`): Maximum number of iterations. Default is ``100000``.
+          * verbose (:obj:`bool`): Print verbose output during minimization.
+            Default is ``False``.
+          * method (:obj:`str`): Minimization routine. Default is ``'SLSQP'``.
+          * tolerance (:obj:`float`): Tolerance for termination. See specific optimizer
+            for detailed meaning.
+            Default is ``None``.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
