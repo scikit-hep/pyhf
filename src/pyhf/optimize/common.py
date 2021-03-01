@@ -78,6 +78,7 @@ def shim(
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_vals (:obj:`list` of :obj:`list`/:obj:`tuple`): The pairs of index and constant value for a constant
             model parameter during minimization. Set to ``None`` to allow all parameters to float.
 
