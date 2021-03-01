@@ -95,8 +95,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Float: The calculated test statistic, :math:`q_{\mu}`
@@ -163,8 +163,8 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
@@ -220,8 +220,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Float: The calculated test statistic, :math:`t_{\mu}`
@@ -282,8 +282,8 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`
@@ -337,8 +337,8 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Float: The calculated test statistic, :math:`q_{0}`

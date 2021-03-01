@@ -46,8 +46,8 @@ def hypotest(
         init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`tensor` of shape Nx2): The extrema of values the model parameters
             are allowed to reach in the fit.
-        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
-            ``init_pars`` value during minimization.
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
