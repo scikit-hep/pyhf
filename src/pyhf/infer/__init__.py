@@ -43,9 +43,12 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
-        par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
-        fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+        init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
+        par_bounds (:obj:`tensor`): The extrema of values the model parameters
+            are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
