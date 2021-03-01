@@ -44,7 +44,8 @@ def hypotest(
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
         init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
-        par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
+        par_bounds (:obj:`tensor` of shape Nx2): The extrema of values the model parameters
+            are allowed to reach in the fit.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
             ``init_pars`` value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.

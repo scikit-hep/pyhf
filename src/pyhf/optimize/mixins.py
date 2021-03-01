@@ -122,7 +122,8 @@ class OptimizerMixin:
             data (:obj:`list`): observed data
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
             init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
-            par_bounds (:obj:`list`): parameter boundaries
+            par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
+                are allowed to reach in the fit.
             fixed_vals (:obj:`list`): fixed parameter values
             return_fitted_val (:obj:`bool`): Return bestfit value of the objective. Default is off (``False``).
             return_result_obj (:obj:`bool`): Return :class:`scipy.optimize.OptimizeResult`. Default is off (``False``).

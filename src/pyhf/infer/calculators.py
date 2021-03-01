@@ -39,7 +39,8 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         data (:obj:`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
-        par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+        par_bounds (:obj:`tensor` of shape Nx2): The extrema of values the model parameters
+            are allowed to reach in the fit.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
             ``init_pars`` value during minimization.
 
@@ -194,7 +195,8 @@ class AsymptoticCalculator:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
-            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+            par_bounds (:obj:`tensor` of shape Nx2): The extrema of values the model parameters
+                are allowed to reach in the fit.
             fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
                 ``init_pars`` value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
@@ -620,7 +622,8 @@ class ToyCalculator:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
-            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
+            par_bounds (:obj:`tensor` of shape Nx2): The extrema of values the model parameters
+                are allowed to reach in the fit.
             fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
                 ``init_pars`` value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the

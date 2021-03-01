@@ -76,7 +76,8 @@ def shim(
         data (:obj:`list`): observed data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
         init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
-        par_bounds (:obj:`list`): parameter boundaries
+        par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
+            are allowed to reach in the fit.
         fixed_vals (:obj:`list`): fixed parameter values
 
     .. note::
