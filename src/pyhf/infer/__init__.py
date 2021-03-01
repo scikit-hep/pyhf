@@ -45,7 +45,8 @@ def hypotest(
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
         init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
         par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
-        fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
+            ``init_pars`` value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`

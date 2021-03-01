@@ -40,7 +40,8 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
         par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-        fixed_params (:obj:`tensor`): Parameters to be held constant in the fit.
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
+            ``init_pars`` value during minimization.
 
     Returns:
         Tensor: The Asimov dataset.
@@ -194,8 +195,8 @@ class AsymptoticCalculator:
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
-              during minimization.
+            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
+                ``init_pars`` value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
 
@@ -620,8 +621,8 @@ class ToyCalculator:
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
             init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
-              during minimization.
+            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
+                ``init_pars`` value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
               ``'qtilde'`` (default) performs the calculation using the alternative test statistic,
