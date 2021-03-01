@@ -43,7 +43,7 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
+        init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
             ``init_pars`` value during minimization.

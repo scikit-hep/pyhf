@@ -38,7 +38,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+        init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
         par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
             ``init_pars`` value during minimization.
@@ -193,7 +193,7 @@ class AsymptoticCalculator:
         Args:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+            init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
                 ``init_pars`` value during minimization.
@@ -619,7 +619,7 @@ class ToyCalculator:
         Args:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
+            init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
             par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
             fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to the value
                 ``init_pars`` value during minimization.
