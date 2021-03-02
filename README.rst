@@ -36,7 +36,7 @@ Hello World
 
 This is how you use the ``pyhf`` Python API to build a statistical model and run basic inference:
 
-.. code:: python
+.. code:: pycon
 
    >>> import pyhf
    >>> model = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
@@ -48,7 +48,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
-.. code:: python
+.. code:: pycon
 
    >>> import pyhf
    >>> import requests
