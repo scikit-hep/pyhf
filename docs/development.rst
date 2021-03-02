@@ -44,7 +44,7 @@ available by the ``datadir`` fixture. Therefore, one can do:
 .. code-block:: python
 
     def test_patchset(datadir):
-        data_file = open(datadir.join('test.txt'))
+        data_file = open(datadir.join("test.txt"))
         ...
 
 which will load the copy of ``text.txt`` in the temporary directory. This also
