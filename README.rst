@@ -39,10 +39,14 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 .. code:: pycon
 
    >>> import pyhf
-   >>> model = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
+   >>> model = pyhf.simplemodels.hepdata_like(
+   ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+   ... )
    >>> data = [51, 48] + model.config.auxdata
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
+   ...     test_mu, data, model, test_stat="qtilde", return_expected=True
+   ... )
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
@@ -52,11 +56,13 @@ Alternatively the statistical model and observational data can be read from its 
 
    >>> import pyhf
    >>> import requests
-   >>> wspace = pyhf.Workspace(requests.get('https://git.io/JJYDE').json())
+   >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
+   ...     test_mu, data, model, test_stat="qtilde", return_expected=True
+   ... )
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.3599840922126626, Expected: 0.3599840922126626
 
