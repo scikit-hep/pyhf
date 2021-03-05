@@ -350,6 +350,10 @@ class pytorch_backend:
         return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -379,6 +383,10 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
         """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
