@@ -1,5 +1,5 @@
 # core
-scipy==1.4.1
+scipy==1.4.1  # c.f. Issue #1001
 click==7.0.0
 tqdm==4.56.0
 jsonschema==3.2.0
@@ -11,8 +11,8 @@ uproot==4.0.0
 # minuit
 iminuit==2.1.0
 # tensorflow
-tensorflow==2.2.0
-tensorflow-probability==0.10.0
+tensorflow==2.2.0  # c.f. Issue #1001
+tensorflow-probability==0.10.1
 # torch
 torch==1.2.0
 # jax
