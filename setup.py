@@ -6,7 +6,7 @@ extras_require = {
         'tensorflow~=2.2.0',  # TensorFlow minor releases are as volatile as major
         'tensorflow-probability~=0.10.0',
     ],
-    'torch': ['torch~=1.8'],
+    'torch': ['torch~=1.2'],
     'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
     'xmlio': [
         'uproot3~=3.14',
