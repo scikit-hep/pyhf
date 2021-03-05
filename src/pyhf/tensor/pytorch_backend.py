@@ -146,7 +146,7 @@ class pytorch_backend:
         return tensor_in.tile(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):
-        return torch.ger(tensor_in_1, tensor_in_2)
+        return torch.outer(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype='float'):
         """
