@@ -12,8 +12,10 @@ jobs:
   test:
 
     runs-on: ${{ matrix.os }}
-    os: [ubuntu-latest]
-    python-version: [3.8]
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
