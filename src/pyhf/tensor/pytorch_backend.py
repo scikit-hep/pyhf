@@ -143,7 +143,7 @@ class pytorch_backend:
         Returns:
             PyTorch tensor: The tensor with repeated axes
         """
-        return tensor_in.repeat(repeats)
+        return tensor_in.tile(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):
         return torch.ger(tensor_in_1, tensor_in_2)
