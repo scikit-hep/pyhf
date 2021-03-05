@@ -15,7 +15,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        # minimum supported Python
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v2
