@@ -343,9 +343,11 @@ def test_pdf_calculations(backend):
         )
 
     # Ensure continuous approximation is valid
-    assert tb.tolist(
-        tb.poisson(tb.astensor([0.5, 1.1, 1.5]), tb.astensor(1.0))
-    ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
+    values = tb.astensor([0.5, 1.1, 1.5])
+    rates = tb.astensor(1.0)
+    assert tb.tolist(tb.poisson(values, rates)) == pytest.approx(
+        [0.4151074974205947, 0.3515379040027489, 0.2767383316137298]
+    )
 
 
 def test_boolean_mask(backend):
