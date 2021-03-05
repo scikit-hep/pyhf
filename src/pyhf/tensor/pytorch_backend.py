@@ -146,6 +146,28 @@ class pytorch_backend:
         return tensor_in.tile(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):
+        """
+        Outer product of the input tensors.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([1.0, 2.0, 3.0])
+            >>> b = pyhf.tensorlib.astensor([1.0, 2.0, 3.0, 4.0])
+            >>> pyhf.tensorlib.outer(a, b)
+            >>> pyhf.tensorlib.outer(a, b)
+            tensor([[ 1.,  2.,  3.,  4.],
+                    [ 2.,  4.,  6.,  8.],
+                    [ 3.,  6.,  9., 12.]])
+
+        Args:
+            tensor_in_1 (:obj:`tensor`): 1-D input tensor.
+            tensor_in_2 (:obj:`tensor`): 1-D input tensor.
+
+        Returns:
+            PyTorch tensor: The outer product.
+        """
         return torch.outer(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype='float'):
