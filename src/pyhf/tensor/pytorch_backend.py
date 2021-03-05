@@ -209,7 +209,7 @@ class pytorch_backend:
         Returns:
             `torch.Tensor`: A flattened array.
         """
-        return tensor.view(-1)
+        return torch.ravel(tensor)
 
     def sum(self, tensor_in, axis=None):
         return (
