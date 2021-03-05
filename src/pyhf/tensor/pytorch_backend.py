@@ -319,7 +319,8 @@ class pytorch_backend:
         return torch.einsum(subscripts, operands)
 
     def poisson_logpdf(self, n, lam):
-        return torch.distributions.Poisson(lam).log_prob(n)
+        # validate_args=True disallows continuous approximation
+        return torch.distributions.Poisson(lam, validate_args=False).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
@@ -347,9 +348,16 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: Value of the continuous approximation to Poisson(n|lam)
         """
-        return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
+        # validate_args=True disallows continuous approximation
+        return torch.exp(
+            torch.distributions.Poisson(lam, validate_args=False).log_prob(n)
+        )
 
     def normal_logpdf(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -379,6 +387,10 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
         """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
@@ -433,7 +445,8 @@ class pytorch_backend:
             PyTorch Poisson distribution: The Poisson distribution class
 
         """
-        return torch.distributions.Poisson(rate)
+        # validate_args=True disallows continuous approximation
+        return torch.distributions.Poisson(rate, validate_args=False)
 
     def normal_dist(self, mu, sigma):
         r"""
