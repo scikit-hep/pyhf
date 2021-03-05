@@ -247,70 +247,77 @@ def test_shape(backend):
         )
 
 
+@pytest.mark.skip_pytorch
+@pytest.mark.skip_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
         [0.7881446014166034], 1e-07
     )
-    if tb.name == "pytorch":
-        with pytest.raises(ValueError):
-            _ = tb.normal_logpdf(
-                tb.astensor([0]),
-                tb.astensor([0]),
-                tb.astensor([0]),
-            )
-        with pytest.raises(ValueError):
-            _ = tb.normal_logpdf(
-                tb.astensor([0]),
-                tb.astensor([1]),
-                tb.astensor([0]),
-            )
-        with pytest.raises(ValueError):
-            _ = tb.normal_logpdf(
-                tb.astensor([1]),
-                tb.astensor([0]),
-                tb.astensor([0]),
-            )
-        with pytest.raises(ValueError):
-            _ = tb.normal_logpdf(
-                tb.astensor([1]),
-                tb.astensor([1]),
-                tb.astensor([0]),
-            )
-        assert tb.tolist(
-            tb.normal_logpdf(
-                tb.astensor([0, 0, 1, 1]),
-                tb.astensor([0, 1, 0, 1]),
-                tb.astensor([1, 1, 1, 1]),
-            )
-        ) == pytest.approx(
-            [
-                -0.91893853,
-                -1.41893853,
-                -1.41893853,
-                -0.91893853,
-            ],
+    assert tb.tolist(
+        tb.normal_logpdf(
+            tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
+            tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
+            tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
         )
-    else:
-        assert tb.tolist(
-            tb.normal_logpdf(
-                tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
-                tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
-                tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
-            )
-        ) == pytest.approx(
-            [
-                np.nan,
-                np.nan,
-                np.nan,
-                np.nan,
-                -0.91893853,
-                -1.41893853,
-                -1.41893853,
-                -0.91893853,
-            ],
-            nan_ok=True,
+    ) == pytest.approx(
+        [
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            -0.91893853,
+            -1.41893853,
+            -1.41893853,
+            -0.91893853,
+        ],
+        nan_ok=True,
+    )
+    # poisson(lambda=0) is not defined, should return NaN
+    assert tb.tolist(
+        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+    ) == pytest.approx(
+        [np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True
+    )
+    assert tb.tolist(
+        tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+    ) == pytest.approx(
+        np.log([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(),
+        nan_ok=True,
+    )
+
+    # Ensure continuous approximation is valid
+    assert tb.tolist(
+        tb.poisson(n=tb.astensor([0.5, 1.1, 1.5]), lam=tb.astensor(1.0))
+    ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
+
+
+@pytest.mark.only_pytorch
+@pytest.mark.only_pytorch64
+def test_pdf_calculations_pytorch(backend):
+    tb = pyhf.tensorlib
+
+    values = tb.astensor([0, 0, 1, 1])
+    mus = tb.astensor([0, 1, 0, 1])
+    sigmas = tb.astensor([0, 0, 0, 0])
+    for x, mu, sigma in zip(values, mus, sigmas):
+        with pytest.raises(ValueError):
+            _ = tb.normal_logpdf(x, mu, sigma)
+    assert tb.tolist(
+        tb.normal_logpdf(
+            tb.astensor([0, 0, 1, 1]),
+            tb.astensor([0, 1, 0, 1]),
+            tb.astensor([1, 1, 1, 1]),
         )
+    ) == pytest.approx(
+        [
+            -0.91893853,
+            -1.41893853,
+            -1.41893853,
+            -0.91893853,
+        ],
+    )
+
     # poisson(lambda=0) is not defined, should return NaN
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
