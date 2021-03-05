@@ -292,6 +292,7 @@ def test_pdf_calculations(backend):
     ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
 
 
+# validate_args in torch.distributions raises ValueError not nan
 @pytest.mark.only_pytorch
 @pytest.mark.only_pytorch64
 def test_pdf_calculations_pytorch(backend):
