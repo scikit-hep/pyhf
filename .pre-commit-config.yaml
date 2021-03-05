@@ -16,6 +16,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.json$|\.xml$
     - id: mixed-line-ending
     - id: requirements-txt-fixer
+      exclude: lower-bound-requirements.txt
     - id: trailing-whitespace
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
