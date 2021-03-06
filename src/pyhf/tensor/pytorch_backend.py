@@ -156,7 +156,6 @@ class pytorch_backend:
             >>> a = pyhf.tensorlib.astensor([1.0, 2.0, 3.0])
             >>> b = pyhf.tensorlib.astensor([1.0, 2.0, 3.0, 4.0])
             >>> pyhf.tensorlib.outer(a, b)
-            >>> pyhf.tensorlib.outer(a, b)
             tensor([[ 1.,  2.,  3.,  4.],
                     [ 2.,  4.,  6.,  8.],
                     [ 3.,  6.,  9., 12.]])
