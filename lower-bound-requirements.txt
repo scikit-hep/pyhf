@@ -12,7 +12,7 @@ uproot==4.0.0
 iminuit==2.1.0
 # tensorflow
 tensorflow==2.2.1  # c.f. PR #1001
-# tensorflow-probability==0.10.1
+tensorflow-probability==0.10.1
 # torch
 torch==1.8.0
 # jax
