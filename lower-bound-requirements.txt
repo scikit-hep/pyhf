@@ -16,5 +16,5 @@ iminuit==2.1.0
 # torch
 torch==1.8.0
 # jax
-jax==0.2.5
-jaxlib==0.1.59
+jax==0.2.8
+jaxlib==0.1.58
