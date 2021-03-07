@@ -4,7 +4,7 @@ extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
         'tensorflow~=2.2.1',  # TensorFlow minor releases are as volatile as major
-        'tensorflow-probability~=0.10.1',
+        'tensorflow-probability~=0.10.0',
     ],
     'torch': ['torch~=1.8'],
     'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58'],
