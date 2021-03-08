@@ -1,0 +1,150 @@
+|release v0.6.0|_
+=================
+
+This is a minor release from ``v0.5.4`` → ``v0.6.0``.
+
+Important Notes
+---------------
+
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.6.0`` API.
+  Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API, which now
+  uses a ``calctype`` argument to differentiate between using an asymptotic calculator
+  or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
+  the calculator should use, with ``'qtilde'``, corresponding to
+  :func:`pyhf.infer.test_statistics.qmu_tilde`, now the default option.
+  It also relies more heavily on using kwargs to pass options through to the optimizer.
+* Following the recommendations of |NEP 29|_ ``pyhf`` ``v0.6.0`` drops support for
+  Python 3.6.
+  |PEP 494|_ also notes that Python 3.6 will be end of life in December 2021, so
+  ``pyhf`` is moving forward with a minimum required runtime of Python 3.7.
+* Support for the discovery test statistic, :math:`q_{0}`, has now been added through
+  the :func:`pyhf.infer.test_statistics.q0` API.
+* Support for pseudoexperiments (toys) has been added through the
+  :func:`pyhf.infer.calculators.ToyCalculator` API.
+  Please see the corresponding `example notebook`_ for more detailed exploration
+  of the API.
+* The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requires
+  the |iminuit docs|_ ``v2.X`` release series and API.
+  Note that ``iminuit`` ``v2.X`` can result in slight differences in minimization
+  results from ``iminuit`` ``v1.X``.
+* The documentation will now be versioned with releases on ReadTheDocs.
+  Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
+  stable release of ``pyhf``.
+* ``pyhf`` is transtioning away from Stack Overflow to `GitHub Discussions`_ for
+  resolving user questions not covered in the documentation.
+  Please check the `GitHub Discussions`_ page to search for discussions addressing
+  your questions and to open up a new discussion if your question is not covered.
+* ``pyhf`` has published a paper in the Journal of Open Source Software. |JOSS DOI|
+  Please make sure to include the paper reference in all citations of ``pyhf``, as
+  documented in the `Use and Citations`_ section of the documentation.
+
+Fixes
+-----
+
+* Fix bug where all extras triggered warning for installation of the ``contrib`` extra.
+* ``float``-like values are used in division for :func:`pyhf.writexml`.
+* ``Model.spec`` now supports building new models from existing models.
+* :math:`p`-values are now reported based on their quantiles, instead of interpolating
+  test statistics and converting to :math:`p`-values.
+* Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed
+  for the ``xmlio`` extra.
+* The ``normsys`` modifier now uses the :mod:`pyhf.interpolators.code4` interpolation
+  method by default.
+* The ``histosys`` modifier now uses the :mod:`pyhf.interpolators.code4p` interpolation
+  method by default.
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and
+  ``tensorlib.ravel`` API.
+* The :func:`pyhf.infer.calculators.ToyCalculator` API has been added to support
+  pseudoexperiments (toys).
+* The empirical test statistic distribution API has been added to help support the
+  ``ToyCalculator`` API.
+* Add a ``tolerance`` kwarg to the optimizer API to set a ``float`` value as a
+  tolerance for termination of the fit.
+* The :func:`pyhf.optimize.opt_minuit.minuit_optimizer` optimizer now can return
+  correlations of the fitted parameters through use of the ``return_correlation``
+  Boolean kwarg.
+* Add the ``pyhf.utils.citation`` API to get a ``str`` of the preferred BibTeX entry
+  for citation of the version of ``pyhf`` installed.
+  See the example for the CLI API for more information.
+* The :func:`pyhf.infer.hypotest` API now uses a ``calctype`` argument to differentiate
+  between using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg
+  to specify which test statistic to use.
+  It also relies more heavily on using kwargs to pass options through to the optimizer.
+* The default ``test_stat`` kwarg for :func:`pyhf.infer.hypotest` and the calculator
+  APIs is ``'qtilde'``, which corresponds to the alternative test statistic
+  :func:`pyhf.infer.test_statistics.qmu_tilde`.
+* The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
+  (with shape ``()``) instead of a ``float``.
+  This is required to support end-to-end automatic differentiation in future releases.
+
+CLI API
+~~~~~~~
+
+* The CLI API now supports a ``--citation`` or ``--cite`` option to print the
+  preferred BibTeX entry for citation of the version of ``pyhf`` installed.
+
+.. code-block:: shell
+
+   $ pyhf --citation
+   @software{pyhf,
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
+     title = "{pyhf: v0.6.0}",
+     version = {0.6.0},
+     doi = {10.5281/zenodo.1169739},
+     url = {https://github.com/scikit-hep/pyhf},
+   }
+
+   @article{pyhf_joss,
+     doi = {10.21105/joss.02823},
+     url = {https://doi.org/10.21105/joss.02823},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {58},
+     pages = {2823},
+     author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},
+     title = {pyhf: pure-Python implementation of HistFactory statistical models},
+     journal = {Journal of Open Source Software}
+   }
+
+Contributors
+------------
+
+``v0.6.0`` benefited from contributions from:
+
+* Alexander Held
+* Marco Gorelli
+* Pradyumna Rahul K
+* Eric Schanet
+* Henry Schreiner
+
+.. |release v0.6.0| replace:: ``v0.6.0``
+.. _`release v0.6.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.0
+
+.. |NEP 29| replace:: NEP 29 — Recommend Python and NumPy version support as a community policy standard
+.. _`NEP 29`: https://numpy.org/neps/nep-0029-deprecation_policy.html
+
+.. |PEP 494| replace:: PEP 494 -- Python 3.6 Release Schedule
+.. _`PEP 494`: https://www.python.org/dev/peps/pep-0494/
+
+.. _`example notebook`: https://pyhf.readthedocs.io/en/latest/examples/notebooks/toys.html
+
+.. |iminuit docs| replace:: ``iminuit``
+.. _`iminuit docs`: https://iminuit.readthedocs.io/
+
+.. _`pyhf.readthedocs.io`: https://pyhf.readthedocs.io/
+
+.. _`GitHub Discussions`: https://github.com/scikit-hep/pyhf/discussions
+
+.. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
+   :target: https://doi.org/10.21105/joss.02823
+
+.. _`Use and Citations`: https://pyhf.readthedocs.io/en/latest/citations.html
