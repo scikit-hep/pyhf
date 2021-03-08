@@ -6,59 +6,27 @@ This is a patch release from ``v0.6.0`` → ``v0.6.1``.
 Important Notes
 ---------------
 
-* Please note this release has **API breaking changes** and carefully read these
-  notes while updating your code to the ``v0.6.1`` API.
-  Perhaps most relevant is the changes to the :func:`pyhf.infer.hypotest` API, which now
-  uses a ``calctype`` argument to differentiate between using an asymptotic calculator
-  or a toy calculator, and a ``test_stat`` kwarg to specify which test statistic
-  the calculator should use, with ``'qtilde'``, corresponding to
-  :func:`pyhf.infer.test_statistics.qmu_tilde`, now the default option.
-  It also relies more heavily on using kwargs to pass options through to the optimizer.
-* Following the recommendations of |NEP 29|_ ``pyhf`` ``v0.6.1`` drops support for
-  Python 3.6.
-  |PEP 494|_ also notes that Python 3.6 will be end of life in December 2021, so
-  ``pyhf`` is moving forward with a minimum required runtime of Python 3.7.
-* Support for the discovery test statistic, :math:`q_{0}`, has now been added through
-  the :func:`pyhf.infer.test_statistics.q0` API.
-* Support for pseudoexperiments (toys) has been added through the
-  :func:`pyhf.infer.calculators.ToyCalculator` API.
-  Please see the corresponding `example notebook`_ for more detailed exploration
-  of the API.
-* The ``minuit`` extra, ``python -m pip install pyhf[minuit]``, now uses and requires
-  the |iminuit docs|_ ``v2.X`` release series and API.
-  Note that ``iminuit`` ``v2.X`` can result in slight differences in minimization
-  results from ``iminuit`` ``v1.X``.
-* The documentation will now be versioned with releases on ReadTheDocs.
-  Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
-  stable release of ``pyhf``.
-* ``pyhf`` is transtioning away from Stack Overflow to `GitHub Discussions`_ for
-  resolving user questions not covered in the documentation.
-  Please check the `GitHub Discussions`_ page to search for discussions addressing
-  your questions and to open up a new discussion if your question is not covered.
-* ``pyhf`` has published a paper in the Journal of Open Source Software. |JOSS DOI|
-  Please make sure to include the paper reference in all citations of ``pyhf``, as
-  documented in the `Use and Citations`_ section of the documentation.
+* As a result of changes to the default behavior of ``torch.distributions`` in
+  PyTorch ``v1.8.0``, accomodating changes have been made in
+  ``pyhf.tensor.pytorch_backend``.
+  These changes require a new lower bound of ``torch`` ``v1.8.0`` for use of the
+  PyTorch backend.
 
 Fixes
 -----
 
-* Fix bug where all extras triggered warning for installation of the ``contrib`` extra.
-* ``float``-like values are used in division for :func:`pyhf.writexml`.
-* ``Model.spec`` now supports building new models from existing models.
-* :math:`p`-values are now reported based on their quantiles, instead of interpolating
-  test statistics and converting to :math:`p`-values.
-* Namespace collisions between ``uproot3`` and ``uproot``/``uproot4`` have been fixed
-  for the ``xmlio`` extra.
-* The ``normsys`` modifier now uses the :mod:`pyhf.interpolators.code4` interpolation
-  method by default.
-* The ``histosys`` modifier now uses the :mod:`pyhf.interpolators.code4p` interpolation
-  method by default.
+* In the PyTorch backend the ``validate_args`` kwarg is used with ``torch.distributions``
+  to ensure a continuous approximation of the Poisson distribution in ``torch`` ``v1.8.0+``.
+* The ``torch`` API is now used to provide the ``ravel``, ``tile``, and ``outer``
+  tensorlib methods for the PyTorch backend.
 
 Features
 --------
 
 Python API
 ~~~~~~~~~~
+
+* ``solver_options`` for ``scipy``
 
 * The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and
   ``tensorlib.ravel`` API.
