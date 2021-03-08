@@ -11,7 +11,7 @@ uproot==4.0.0
 # minuit
 iminuit==2.1.0
 # tensorflow
-tensorflow==2.2.1  # c.f. PR #1001
+tensorflow==2.4.0  # c.f. PR #1001
 tensorflow-probability==0.10.1
 # torch
 torch==1.8.0
