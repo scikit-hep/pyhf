@@ -17,8 +17,6 @@ Fixes
 
 * In the PyTorch backend the ``validate_args`` kwarg is used with ``torch.distributions``
   to ensure a continuous approximation of the Poisson distribution in ``torch`` ``v1.8.0+``.
-* The ``torch`` API is now used to provide the ``ravel``, ``tile``, and ``outer``
-  tensorlib methods for the PyTorch backend.
 
 Features
 --------
@@ -27,6 +25,8 @@ Python API
 ~~~~~~~~~~
 
 * ``solver_options`` for ``scipy``
+* The ``torch`` API is now used to provide the ``ravel``, ``tile``, and ``outer``
+  tensorlib methods for the PyTorch backend.
 
 * The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and
   ``tensorlib.ravel`` API.
@@ -55,23 +55,3 @@ Python API
 
 .. |release v0.6.1| replace:: ``v0.6.1``
 .. _`release v0.6.1`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.1
-
-.. |NEP 29| replace:: NEP 29 — Recommend Python and NumPy version support as a community policy standard
-.. _`NEP 29`: https://numpy.org/neps/nep-0029-deprecation_policy.html
-
-.. |PEP 494| replace:: PEP 494 -- Python 3.6 Release Schedule
-.. _`PEP 494`: https://www.python.org/dev/peps/pep-0494/
-
-.. _`example notebook`: https://pyhf.readthedocs.io/en/latest/examples/notebooks/toys.html
-
-.. |iminuit docs| replace:: ``iminuit``
-.. _`iminuit docs`: https://iminuit.readthedocs.io/
-
-.. _`pyhf.readthedocs.io`: https://pyhf.readthedocs.io/
-
-.. _`GitHub Discussions`: https://github.com/scikit-hep/pyhf/discussions
-
-.. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
-   :target: https://doi.org/10.21105/joss.02823
-
-.. _`Use and Citations`: https://pyhf.readthedocs.io/en/latest/citations.html
