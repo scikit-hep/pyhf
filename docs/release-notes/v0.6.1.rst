@@ -8,15 +8,16 @@ Important Notes
 
 * As a result of changes to the default behavior of ``torch.distributions`` in
   PyTorch ``v1.8.0``, accomodating changes have been made in
-  ``pyhf.tensor.pytorch_backend``.
+  :func:``pyhf.tensor.pytorch_backend``.
   These changes require a new lower bound of ``torch`` ``v1.8.0`` for use of the
   PyTorch backend.
 
 Fixes
 -----
 
-* In the PyTorch backend the ``validate_args`` kwarg is used with ``torch.distributions``
-  to ensure a continuous approximation of the Poisson distribution in ``torch`` ``v1.8.0+``.
+* In the PyTorch backend the ``validate_args`` kwarg is used with
+  ``torch.distributions`` to ensure a continuous approximation of the Poisson
+  distribution in ``torch`` ``v1.8.0+``.
 
 Features
 --------
@@ -24,34 +25,13 @@ Features
 Python API
 ~~~~~~~~~~
 
-* ``solver_options`` for ``scipy``
+* The ``solver_options`` kwarg can be passed to the
+  :func:``pyhf.optimize.opt_scipy.scipy_optimizer`` optimizer for additional
+  configuration of the minimization.
+  See :func:`scipy.optimize.show_options` for additional options of optimization
+  solvers.
 * The ``torch`` API is now used to provide the ``ravel``, ``tile``, and ``outer``
   tensorlib methods for the PyTorch backend.
-
-* The ``tensorlib`` API now supports a ``tensorlib.to_numpy`` and
-  ``tensorlib.ravel`` API.
-* The :func:`pyhf.infer.calculators.ToyCalculator` API has been added to support
-  pseudoexperiments (toys).
-* The empirical test statistic distribution API has been added to help support the
-  ``ToyCalculator`` API.
-* Add a ``tolerance`` kwarg to the optimizer API to set a ``float`` value as a
-  tolerance for termination of the fit.
-* The :func:`pyhf.optimize.opt_minuit.minuit_optimizer` optimizer now can return
-  correlations of the fitted parameters through use of the ``return_correlation``
-  Boolean kwarg.
-* Add the ``pyhf.utils.citation`` API to get a ``str`` of the preferred BibTeX entry
-  for citation of the version of ``pyhf`` installed.
-  See the example for the CLI API for more information.
-* The :func:`pyhf.infer.hypotest` API now uses a ``calctype`` argument to differentiate
-  between using an asymptotic calculator or a toy calculator, and a ``test_stat`` kwarg
-  to specify which test statistic to use.
-  It also relies more heavily on using kwargs to pass options through to the optimizer.
-* The default ``test_stat`` kwarg for :func:`pyhf.infer.hypotest` and the calculator
-  APIs is ``'qtilde'``, which corresponds to the alternative test statistic
-  :func:`pyhf.infer.test_statistics.qmu_tilde`.
-* The return type of :math:`p`-value like functions is now a 0-dimensional ``tensor``
-  (with shape ``()``) instead of a ``float``.
-  This is required to support end-to-end automatic differentiation in future releases.
 
 .. |release v0.6.1| replace:: ``v0.6.1``
 .. _`release v0.6.1`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.1
