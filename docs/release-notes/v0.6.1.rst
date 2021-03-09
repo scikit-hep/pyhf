@@ -1,0 +1,37 @@
+|release v0.6.1|_
+=================
+
+This is a patch release from ``v0.6.0`` → ``v0.6.1``.
+
+Important Notes
+---------------
+
+* As a result of changes to the default behavior of ``torch.distributions`` in
+  PyTorch ``v1.8.0``, accommodating changes have been made in the underlying
+  implementations for :func:`pyhf.tensor.pytorch_backend.pytorch_backend`.
+  These changes require a new lower bound of ``torch`` ``v1.8.0`` for use of the
+  PyTorch backend.
+
+Fixes
+-----
+
+* In the PyTorch backend the ``validate_args`` kwarg is used with
+  ``torch.distributions`` to ensure a continuous approximation of the Poisson
+  distribution in ``torch`` ``v1.8.0+``.
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* The ``solver_options`` kwarg can be passed to the
+  :func:`pyhf.optimize.opt_scipy.scipy_optimizer` optimizer for additional
+  configuration of the minimization.
+  See :func:`scipy.optimize.show_options` for additional options of optimization
+  solvers.
+* The ``torch`` API is now used to provide the implementations of the ``ravel``,
+  ``tile``, and ``outer`` tensorlib methods for the PyTorch backend.
+
+.. |release v0.6.1| replace:: ``v0.6.1``
+.. _`release v0.6.1`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.1
