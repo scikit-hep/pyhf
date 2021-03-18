@@ -56,7 +56,7 @@ def test_sbottom_regionA_1300_205_60(
                     0.8910420971601081,
                 ]
             ),
-            rtol=1e-5,
+            rtol=2e-5,
         )
     )
 
