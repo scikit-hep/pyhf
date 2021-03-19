@@ -18,7 +18,6 @@ class _ChannelSummaryMixin:
         super().__init__(*args, **kwargs)
         self.channels = []
         self.samples = []
-        self.parameters = []
         self.modifiers = []
         # keep track of the width of each channel (how many bins)
         self.channel_nbins = {}
@@ -30,7 +29,6 @@ class _ChannelSummaryMixin:
             for sample in channel['samples']:
                 self.samples.append(sample['name'])
                 for modifier_def in sample['modifiers']:
-                    self.parameters.append(modifier_def['name'])
                     self.modifiers.append(
                         (
                             modifier_def['name'],  # mod name
@@ -40,7 +38,6 @@ class _ChannelSummaryMixin:
 
         self.channels = sorted(list(set(self.channels)))
         self.samples = sorted(list(set(self.samples)))
-        self.parameters = sorted(list(set(self.parameters)))
         self.modifiers = sorted(list(set(self.modifiers)))
 
         self.channel_slices = {}

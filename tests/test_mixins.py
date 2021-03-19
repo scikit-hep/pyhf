@@ -27,14 +27,6 @@ def test_channel_summary_mixin(spec):
         ('syst2', 'normsys'),
         ('syst3', 'normsys'),
     ]
-    assert mixin.parameters == [
-        'SigXsecOverSM',
-        'lumi',
-        'staterror_channel1',
-        'syst1',
-        'syst2',
-        'syst3',
-    ]
     assert mixin.samples == ['background1', 'background2', 'signal']
 
 
@@ -43,5 +35,4 @@ def test_channel_summary_mixin_empty():
     assert mixin.channel_nbins == {}
     assert mixin.channels == []
     assert mixin.modifiers == []
-    assert mixin.parameters == []
     assert mixin.samples == []

@@ -1,29 +1,55 @@
 import logging
 
-from . import modifier
 from .. import get_backend, default_backend, events
 from ..parameters import unconstrained, ParamViewer
 
 log = logging.getLogger(__name__)
 
 
-@modifier(name='shapefactor', op_code='multiplication')
-class shapefactor:
-    @classmethod
-    def required_parset(cls, sample_data, modifier_data):
-        return {
-            'paramset_type': unconstrained,
-            'n_parameters': len(sample_data),
-            'is_constrained': cls.is_constrained,
-            'is_shared': True,
-            'inits': (1.0,) * len(sample_data),
-            'bounds': ((0.0, 10.0),) * len(sample_data),
-            'fixed': False,
-        }
+def required_parset(sample_data, modifier_data):
+    return {
+        'paramset_type': unconstrained,
+        'n_parameters': len(sample_data),
+        'is_shared': True,
+        'inits': (1.0,) * len(sample_data),
+        'bounds': ((0.0, 10.0),) * len(sample_data),
+        'fixed': False,
+    }
+
+
+class shapefactor_builder:
+    def __init__(self, config):
+        self._mega_mods = {}
+        self.config = config
+        self.required_parsets = {}
+
+    def collect(self, thismod, nom):
+        maskval = True if thismod else False
+        mask = [maskval] * len(nom)
+        return {'mask': mask}
+
+    def append(self, key, channel, sample, thismod, defined_samp):
+        self._mega_mods.setdefault(key, {}).setdefault(sample, {}).setdefault(
+            'data', {'mask': []}
+        )
+        nom = (
+            defined_samp['data']
+            if defined_samp
+            else [0.0] * self.config.channel_nbins[channel]
+        )
+        moddata = self.collect(thismod, nom)
+        self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
+        if thismod:
+            self.required_parsets.setdefault(thismod['name'], []).append(
+                required_parset(defined_samp['data'], thismod['data'])
+            )
+
+    def finalize(self):
+        return self._mega_mods
 
 
 class shapefactor_combined:
-    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=None):
+    def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
         bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
@@ -61,10 +87,12 @@ class shapefactor_combined:
 
         and at that point can be used to compute the effect of shapefactor.
         """
+        self.name = 'shapefactor'
+        self.op_code = 'multiplication'
 
         self.batch_size = batch_size
-        keys = [f'{mtype}/{m}' for m, mtype in shapefactor_mods]
-        shapefactor_mods = [m for m, _ in shapefactor_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        shapefactor_mods = [m for m, _ in modifiers]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
@@ -72,7 +100,8 @@ class shapefactor_combined:
         )
 
         self._shapefactor_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            for m in keys
         ]
 
         global_concatenated_bin_indices = [
