@@ -559,7 +559,7 @@ class EmpiricalDistribution:
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
             >>> dist.expected_value(nsigma=1)
-            6.15094381209505
+            6.150943812095049
 
             >>> import pyhf
             >>> import numpy.random as random
