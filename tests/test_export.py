@@ -350,7 +350,7 @@ def test_export_sample_zerodata(mocker, spec):
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
     # make sure no RuntimeWarning, https://stackoverflow.com/a/45671804
-    with pytest.warns(None) as record:
+    with pytest.warns(DeprecationWarning) as record:
         for modifierspec in samplespec['modifiers']:
             pyhf.writexml.build_modifier(
                 {'measurements': [{'config': {'parameters': []}}]},
@@ -359,7 +359,6 @@ def test_export_sample_zerodata(mocker, spec):
                 samplename,
                 sampledata,
             )
-    assert not record.list
 
 
 @pytest.mark.parametrize(
