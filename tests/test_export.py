@@ -359,6 +359,7 @@ def test_export_sample_zerodata(mocker, spec):
                 samplename,
                 sampledata,
             )
+    assert record
 
 
 @pytest.mark.parametrize(

@@ -24,7 +24,10 @@ def test_xml_importexport(common_kwargs):
     )
 
 
-# def test_statisticalanalysis(common_kwargs):
+def test_statisticalanalysis(common_kwargs):
+    assert os
+
+
 #     # The Binder example uses specific relative paths
 #     cwd = os.getcwd()
 #     os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
