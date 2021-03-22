@@ -75,13 +75,13 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # do grad, scipy, 32b
             'do_grad-scipy-pytorch-32b': [0.49993881583213806, 1.0001085996627808],
             'do_grad-scipy-tensorflow-32b': [0.4999384582042694, 1.0001084804534912],
-            'do_grad-scipy-jax-32b': [0.4999389052391052, 1.0001085996627808],
+            'do_grad-scipy-jax-32b': [0.4978247582912445, 1.0006263256072998],
             # do grad, scipy, 64b
             'do_grad-scipy-pytorch-64b': [0.49998837853531425, 0.9999696648069287],
             'do_grad-scipy-tensorflow-64b': [0.4999883785353142, 0.9999696648069278],
             'do_grad-scipy-jax-64b': [0.49998837853531414, 0.9999696648069285],
             # no grad, minuit, 32b - not very consistent for pytorch
-            'no_grad-minuit-numpy-32b': [0.49622172117233276, 1.0007264614105225],
+            'no_grad-minuit-numpy-32b': [0.7465415000915527, 0.8796938061714172],
             #    nb: macos gives different numerics than CI
             # 'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
             'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
