@@ -245,7 +245,7 @@ class tensorflow_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.", exc_info=True
             )
             raise
 
@@ -256,7 +256,7 @@ class tensorflow_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.", exc_info=True
             )
             raise
 
