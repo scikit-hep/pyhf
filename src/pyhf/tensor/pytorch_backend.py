@@ -245,11 +245,27 @@ class pytorch_backend:
     def abs(self, tensor):
         return torch.abs(tensor)
 
-    def ones(self, shape):
-        return torch.ones(shape, dtype=self.dtypemap['float'])
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
+            )
+            raise
 
-    def zeros(self, shape):
-        return torch.zeros(shape, dtype=self.dtypemap['float'])
+        return torch.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
+            )
+            raise
+
+        return torch.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
