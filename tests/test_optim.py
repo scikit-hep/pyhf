@@ -120,7 +120,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         if 'no_grad-minuit-jax-32b' in identifier:
             rtol = 4e-02
         if "do_grad-scipy-jax-32b" in identifier:
-            rtol = 4e-03
+            rtol = 5e-03
         if "do_grad-minuit-jax-32b" in identifier:
             rtol = 5e-03
 
