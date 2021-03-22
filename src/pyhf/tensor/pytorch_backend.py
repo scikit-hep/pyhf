@@ -250,7 +250,8 @@ class pytorch_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.", exc_info=True
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
             )
             raise
 
@@ -261,7 +262,8 @@ class pytorch_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.", exc_info=True
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
             )
             raise
 
