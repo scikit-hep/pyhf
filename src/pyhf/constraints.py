@@ -195,10 +195,13 @@ class poisson_constraint_combined:
             self._batched_factors = default_backend.tile(
                 factors, (self.batch_size or 1, 1)
             )
-
-            access_field = default_backend.concatenate(
-                self.param_viewer.index_selection, axis=1
-            )
+            print('ok')
+            try:
+                selection = [x.cpu().numpy() for x in self.param_viewer.index_selection]
+            except AttributeError:
+                selection = [x for x in self.param_viewer.index_selection]
+            print('selectioin', selection)
+            access_field = default_backend.concatenate(selection, axis=1)
             self._access_field = access_field
 
         self._precompute()

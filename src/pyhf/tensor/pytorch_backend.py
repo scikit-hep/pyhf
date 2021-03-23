@@ -4,6 +4,7 @@ import torch.autograd
 from torch.distributions.utils import broadcast_all
 import logging
 import math
+import torch_xla.core.xla_model as xm
 
 log = logging.getLogger(__name__)
 
@@ -198,7 +199,7 @@ class pytorch_backend:
             )
             raise
 
-        return torch.as_tensor(tensor_in, dtype=dtype)
+        return torch.as_tensor(tensor_in, dtype=dtype, device=xm.xla_device())
 
     def gather(self, tensor, indices):
         return tensor[indices.type(torch.LongTensor)]
@@ -246,10 +247,10 @@ class pytorch_backend:
         return torch.abs(tensor)
 
     def ones(self, shape):
-        return torch.ones(shape, dtype=self.dtypemap['float'])
+        return torch.ones(shape, dtype=self.dtypemap['float'], device=xm.xla_device())
 
     def zeros(self, shape):
-        return torch.zeros(shape, dtype=self.dtypemap['float'])
+        return torch.zeros(shape, dtype=self.dtypemap['float'], device=xm.xla_device())
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
