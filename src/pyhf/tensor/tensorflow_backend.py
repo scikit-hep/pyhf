@@ -240,11 +240,29 @@ class tensorflow_backend:
     def abs(self, tensor):
         return tf.abs(tensor)
 
-    def ones(self, shape):
-        return tf.ones(shape, dtype=self.dtypemap['float'])
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
 
-    def zeros(self, shape):
-        return tf.zeros(shape, dtype=self.dtypemap['float'])
+        return tf.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
+
+        return tf.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return tf.pow(tensor_in_1, tensor_in_2)
