@@ -216,7 +216,7 @@ class jax_backend:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla._DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
         try:
             dtype = self.dtypemap[dtype]
