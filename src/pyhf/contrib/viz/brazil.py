@@ -36,7 +36,7 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
-    ax.plot(mutests, cls_obs, c='black')
+    ax.plot(mutests, cls_obs, c='black', label=r"$\mathrm{CL}_{s}$")
     for idx, color in zip(range(5), 5 * ['black']):
         ax.plot(
             mutests, cls_exp[idx], c=color, linestyle='dotted' if idx != 2 else 'dashed'
@@ -51,11 +51,44 @@ def plot_results(ax, mutests, tests, test_size=0.05):
 
 
 def plot_components(
-    ax, mutests, tests, test_size=0.05, clsb_only=False, clb_only=False
+    ax, mutests, tests, test_size=0.05, clsb_only=False, clb_only=False, **kwargs
 ):
     """
     x
     """
+
+    assert len(tests[0]) == 3
     # tests: CLs_obs, [CLsb, CLb], CLs_exp @[-2, -1, 0, +1, +2]sigma
-    cls_results = [tests[0], tests[1]]
-    plot_results(ax, mutests, cls_results, test_size)
+    # split into components
+    CLs_obs = np.array([test[0] for test in tests])
+    tail_probs_obs = np.array([test[1] for test in tests])
+    CLs_exp_set = np.array([test[2] for test in tests])
+
+    # zip CLs_obs and CLs_exp_set back into format for plot_results
+    CLs_results = [(obs, exp_set) for obs, exp_set in zip(CLs_obs, CLs_exp_set)]
+
+    # plot CLs_obs and CLs_expected set
+    plot_results(ax, mutests, CLs_results, test_size)
+
+    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs_obs])
+    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs_obs])
+
+    linewidth = kwargs.pop("linewidth", 2)
+    if not clb_only:
+        CLsb_color = kwargs.pop("CLsb_color", "blue")
+        ax.plot(
+            mutests,
+            CLsb_obs,
+            color=CLsb_color,
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{s+b}$",
+        )
+    if not clsb_only:
+        ax.plot(
+            mutests,
+            CLb_obs,
+            color="red",
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{b}$",
+        )
+    ax.legend(loc="best")
