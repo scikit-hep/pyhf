@@ -99,11 +99,15 @@ def plot_cls_components(
           component.
     """
 
-    assert len(tests[0]) == 3
-    # tests: CLs_obs, [CLsb, CLb], CLs_exp @[-2, -1, 0, +1, +2]sigma
+    if len(tests[0]) != 3:
+        raise ValueError(
+            f"The components of 'tests' should have len of 3 but have len {len(tests[0])}."
+            + "\n'tests' should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]"
+        )
+
     # split into components
     CLs_obs = np.array([test[0] for test in tests])
-    tail_probs_obs = np.array([test[1] for test in tests])
+    tail_probs = np.array([test[1] for test in tests])
     CLs_exp_set = np.array([test[2] for test in tests])
 
     # zip CLs_obs and CLs_exp_set back into format for plot_results
@@ -112,8 +116,8 @@ def plot_cls_components(
     # plot CLs_obs and CLs_expected set
     plot_results(ax, mutests, CLs_results, test_size)
 
-    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs_obs])
-    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs_obs])
+    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
+    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
 
     linewidth = kwargs.pop("linewidth", 2)
     if not clb_only:
