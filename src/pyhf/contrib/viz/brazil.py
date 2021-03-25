@@ -50,11 +50,51 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     ax.set_ylabel(r"$\mathrm{CL}_{s}$")
 
 
-def plot_components(
-    ax, mutests, tests, test_size=0.05, clsb_only=False, clb_only=False, **kwargs
+def plot_cls_components(
+    ax, mutests, tests, test_size=0.05, clb_only=False, clsb_only=False, **kwargs
 ):
     """
-    x
+    Plot the values of :math:`\\mathrm{CL}_{s+b}` and :math:`\\mathrm{CL}_{b}`
+    --- the components of the :math:`\\mathrm{CL}_{s}` ratio --- on top of the
+    :math:`\\mathrm{CL}_{s}` values for a series of hypothesis tests for various
+    POI values.
+
+    Example:
+
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> import pyhf
+        >>> import pyhf.contrib.viz.brazil
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> results = [
+        ...     pyhf.infer.hypotest(
+        ...         test_poi, data, model, return_expected_set=True, return_tail_probs=True
+        ...     )
+        ...     for test_poi in poi_vals
+        ... ]
+        >>> fig, ax = plt.subplots()
+        >>> pyhf.contrib.viz.brazil.plot_cls_components(ax, poi_vals, results)
+
+    Args:
+        ax (`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
+        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+          hypothesis tests were performed.
+        tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-values
+          from the hypothesis tests.
+          It is expected that ``tests`` has the same structure as
+          :func:`pyhf.infer.hypotest`'s return when using ``return_expected_set=True``
+          and ``return_tail_probs=True``: :math:`\\mathrm{CL}_{s}` values
+        test_size (:obj:`float`): The size, :math:`\\alpha`, of the test.
+        clb_only (:obj:`bool`): Bool for plotting only the :math:`\\mathrm{CL}_{b}`
+          component.
+        clsb_only (:obj:`bool`): Bool for plotting only the :math:`\\mathrm{CL}_{s+b}`
+          component.
     """
 
     assert len(tests[0]) == 3
