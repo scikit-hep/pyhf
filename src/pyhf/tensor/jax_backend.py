@@ -340,7 +340,7 @@ class jax_backend:
             tensor (Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla._DeviceArray`: A flattened array.
+            `jaxlib.xla_extension.DeviceArray`: A flattened array.
         """
         return jnp.ravel(tensor)
 
