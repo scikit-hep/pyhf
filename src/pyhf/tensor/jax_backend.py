@@ -210,7 +210,7 @@ class jax_backend:
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
             >>> type(tensor)
-            <class 'jax.interpreters.xla._DeviceArray'>
+            <class 'jaxlib.xla_extension.DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
