@@ -121,7 +121,7 @@ def plot_cls_components(
 
     linewidth = kwargs.pop("linewidth", 2)
     if not clb_only:
-        CLsb_color = kwargs.pop("CLsb_color", "blue")
+        CLsb_color = kwargs.pop("clsb_color", "blue")
         ax.plot(
             mutests,
             CLsb_obs,
@@ -130,10 +130,11 @@ def plot_cls_components(
             label=r"$\mathrm{CL}_{s+b}$",
         )
     if not clsb_only:
+        CLb_color = kwargs.pop("clb_color", "red")
         ax.plot(
             mutests,
             CLb_obs,
-            color="red",
+            color=CLb_color,
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{b}$",
         )
