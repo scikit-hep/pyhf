@@ -48,3 +48,14 @@ def plot_results(ax, mutests, tests, test_size=0.05):
 
     ax.set_xlabel(r"$\mu$ (POI)")
     ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+
+
+def plot_components(
+    ax, mutests, tests, test_size=0.05, clsb_only=False, clb_only=False
+):
+    """
+    x
+    """
+    # tests: CLs_obs, [CLsb, CLb], CLs_exp @[-2, -1, 0, +1, +2]sigma
+    cls_results = [tests[0], tests[1]]
+    plot_results(ax, mutests, cls_results, test_size)
