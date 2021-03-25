@@ -53,10 +53,10 @@ def plot_results(ax, mutests, tests, test_size=0.05):
 def plot_cls_components(
     ax, mutests, tests, test_size=0.05, clb_only=False, clsb_only=False, **kwargs
 ):
-    """
-    Plot the values of :math:`\\mathrm{CL}_{s+b}` and :math:`\\mathrm{CL}_{b}`
-    --- the components of the :math:`\\mathrm{CL}_{s}` ratio --- on top of the
-    :math:`\\mathrm{CL}_{s}` values for a series of hypothesis tests for various
+    r"""
+    Plot the values of :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
+    --- the components of the :math:`\mathrm{CL}_{s}` ratio --- on top of the
+    :math:`\mathrm{CL}_{s}` values for a series of hypothesis tests for various
     POI values.
 
     Example:
@@ -87,13 +87,15 @@ def plot_cls_components(
           hypothesis tests were performed.
         tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-values
           from the hypothesis tests.
-          It is expected that ``tests`` has the same structure as
+          ``tests`` is required to have the same structure as
           :func:`pyhf.infer.hypotest`'s return when using ``return_expected_set=True``
-          and ``return_tail_probs=True``: :math:`\\mathrm{CL}_{s}` values
-        test_size (:obj:`float`): The size, :math:`\\alpha`, of the test.
-        clb_only (:obj:`bool`): Bool for plotting only the :math:`\\mathrm{CL}_{b}`
+          and ``return_tail_probs=True``: a tuple of :math:`\mathrm{CL}_{s}`,
+          :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`,
+          :math:`\mathrm{CL}_{s,\mathrm{exp}}` band.
+        test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
+        clb_only (:obj:`bool`): Bool for plotting only the :math:`\mathrm{CL}_{b}`
           component.
-        clsb_only (:obj:`bool`): Bool for plotting only the :math:`\\mathrm{CL}_{s+b}`
+        clsb_only (:obj:`bool`): Bool for plotting only the :math:`\mathrm{CL}_{s+b}`
           component.
     """
 
