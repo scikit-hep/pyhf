@@ -95,7 +95,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # large divergence by tensorflow and pytorch
             'do_grad-minuit-pytorch-32b': [0.9731879234313965, 0.9999999403953552],
             'do_grad-minuit-tensorflow-32b': [0.9366918206214905, 0.9126002788543701],
-            'do_grad-minuit-jax-32b': [0.5003563165664673, 0.9998618364334106],
+            'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
             'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
             'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
@@ -120,13 +120,14 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             if "minuit-jax-32b" in identifier:
                 rel_tol = 4e-2
         elif all(part in identifier for part in ["do_grad", "32b"]):
+            if "scipy-jax" in identifier:
+                rel_tol = 1e-2
             # NB: ubuntu and macos give different results for 32b
-            rel_tol = 5e-03
             if "minuit-tensorflow" in identifier:
                 # large difference between local and CI
                 rel_tol = 1e-1
             if "minuit-jax" in identifier:
-                rel_tol = 4e-2
+                rel_tol = 1e-2
 
         # check fitted parameters
         assert pytest.approx(
