@@ -1,7 +1,7 @@
 name: CI/CD
 
 on:
-  push:
+  # push:
   pull_request:
   # Run daily at 0:01 UTC
   schedule:
