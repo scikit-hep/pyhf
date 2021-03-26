@@ -4,7 +4,7 @@ click==7.0.0
 tqdm==4.56.0
 jsonschema==3.2.0
 jsonpatch==1.23.0
-pyyaml==5.4
+pyyaml==5.1.0
 # xmlio
 uproot3==3.14.1
 uproot==4.0.0
