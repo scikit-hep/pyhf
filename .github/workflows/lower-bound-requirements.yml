@@ -2,6 +2,7 @@ name: Minimum supported dependencies
 
 on:
   # Run daily at 0:01 UTC
+  push:
   schedule:
   - cron:  '1 0 * * *'
   workflow_dispatch:
