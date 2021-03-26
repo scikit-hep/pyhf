@@ -209,8 +209,8 @@ class jax_backend:
             >>> tensor
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
-            >>> type(tensor) # doctest:+ELLIPSIS
-            <class 'jaxlib.xla_extension.DeviceArray'>
+            >>> type(tensor) # doctest:+ELLIPSIS # TODO: Remove when JAX API stabilized
+            <class '....DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
