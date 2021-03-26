@@ -24,6 +24,26 @@ def test_plot_cls_components():
     return fig
 
 
+@pytest.mark.mpl_image_compare
+def test_plot_cls_components_clb_only():
+    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+    fig, ax = plt.subplots(1, 1)
+    brazil.plot_cls_components(
+        ax, data["testmus"], data["results"], test_size=0.05, clb_only=True
+    )
+    return fig
+
+
+@pytest.mark.mpl_image_compare
+def test_plot_cls_components_clsb_only():
+    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+    fig, ax = plt.subplots(1, 1)
+    brazil.plot_cls_components(
+        ax, data["testmus"], data["results"], test_size=0.05, clsb_only=True
+    )
+    return fig
+
+
 def test_plot_cls_components_data_structure():
     """
     test results should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]
