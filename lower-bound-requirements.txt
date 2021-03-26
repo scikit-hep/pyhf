@@ -3,7 +3,7 @@ scipy==1.4.1  # c.f. PR #1001
 # click==5.0
 tqdm==4.56.0
 jsonschema==3.0.0
-jsonpatch==1.14
+jsonpatch==1.15
 pyyaml==3.01
 # xmlio
 uproot3==3.14.1
