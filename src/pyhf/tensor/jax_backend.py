@@ -209,8 +209,8 @@ class jax_backend:
             >>> tensor
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
-            >>> type(tensor) # doctest:+ELLIPSIS # TODO: Remove when JAX API stabilized
-            <class '...DeviceArray'>
+            >>> type(tensor) # doctest:+ELLIPSIS
+            <class '....DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
@@ -218,6 +218,7 @@ class jax_backend:
         Returns:
             `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
+        # TODO: Remove doctest:+ELLIPSIS when JAX API stabilized
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
