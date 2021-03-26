@@ -1,6 +1,6 @@
 # core
 scipy==1.4.1  # c.f. PR #1001
-# click==3.3
+click==4.0
 tqdm==4.56.0
 jsonschema==3.0.0
 jsonpatch==1.15
