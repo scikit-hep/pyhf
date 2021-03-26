@@ -3,7 +3,8 @@ import json
 import pyhf.contrib.viz.brazil as brazil
 import matplotlib.pyplot as plt
 
-# Compare against a reference image generated via:
+# Tests with the @pytest.mark.mpl_image_compare decorator compare against
+# reference images generated via:
 # pytest --mpl-generate-path=tests/contrib/baseline tests/contrib/test_viz.py
 
 
