@@ -210,7 +210,7 @@ class jax_backend:
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
             >>> type(tensor) # doctest:+ELLIPSIS
-            <class '....DeviceArray'>
+            <class '...DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
