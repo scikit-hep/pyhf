@@ -17,4 +17,4 @@ tensorflow-probability==0.10.1
 torch==1.8.0
 # jax
 jax==0.2.11  # c.f. PR #1375
-jaxlib==0.1.58
+jaxlib==0.1.62  # c.f. PR #1375
