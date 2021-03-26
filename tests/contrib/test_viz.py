@@ -21,3 +21,13 @@ def test_plot_cls_components():
     fig, ax = plt.subplots(1, 1)
     brazil.plot_cls_components(ax, data["testmus"], data["results"], test_size=0.05)
     return fig
+
+
+def test_plot_cls_components_data_structure():
+    """
+    test results should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]
+    """
+    data = json.load(open("tests/contrib/hypotestresults.json"))
+    fig, ax = plt.subplots(1, 1)
+    with pytest.raises(ValueError):
+        brazil.plot_cls_components(ax, data["testmus"], data["results"], test_size=0.05)
