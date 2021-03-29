@@ -116,7 +116,7 @@ def plot_cls_components(
     CLs_results = [(obs, exp_set) for obs, exp_set in zip(CLs_obs, CLs_exp_set)]
 
     # plot CLs_obs and CLs_expected set
-    y_label = kwargs.pop("ylabel", r"$p$-value")
+    y_label = kwargs.pop("ylabel", r"$p\,$-value")
     plot_results(ax, mutests, CLs_results, test_size, ylabel=y_label)
 
     CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
