@@ -55,7 +55,7 @@ def options_from_eqdelimstring(opts):
     document = '\n'.join(
         f"{opt.split('=', 1)[0]}: {opt.split('=', 1)[1]}" for opt in opts
     )
-    return yaml.full_load(document)
+    return yaml.safe_load(document)
 
 
 class EqDelimStringParamType(click.ParamType):
