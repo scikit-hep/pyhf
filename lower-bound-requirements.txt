@@ -9,7 +9,7 @@ pyyaml==5.1
 uproot3==3.14.1
 uproot==4.0.0
 # minuit
-iminuit==2.1.0
+iminuit==2.4.0
 # tensorflow
 tensorflow==2.2.1  # c.f. PR #1001
 tensorflow-probability==0.10.1
