@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def plot_results(ax, mutests, tests, test_size=0.05):
+def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     """
     Plot a series of hypothesis tests for various POI values.
 
@@ -46,8 +46,10 @@ def plot_results(ax, mutests, tests, test_size=0.05):
     ax.plot(mutests, [test_size] * len(mutests), c='red')
     ax.set_ylim(0, 1)
 
-    ax.set_xlabel(r"$\mu$ (POI)")
-    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+    x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
+    y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
 
 
 def plot_cls_components(
@@ -114,7 +116,8 @@ def plot_cls_components(
     CLs_results = [(obs, exp_set) for obs, exp_set in zip(CLs_obs, CLs_exp_set)]
 
     # plot CLs_obs and CLs_expected set
-    plot_results(ax, mutests, CLs_results, test_size)
+    y_label = kwargs.pop("ylabel", r"$p$-value")
+    plot_results(ax, mutests, CLs_results, test_size, ylabel=y_label)
 
     CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
     CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
