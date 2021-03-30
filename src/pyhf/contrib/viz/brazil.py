@@ -44,8 +44,20 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         ax.plot(
             mutests, cls_exp[idx], c=color, linestyle='dotted' if idx != 2 else 'dashed'
         )
-    ax.fill_between(mutests, cls_exp[0], cls_exp[-1], facecolor='yellow')
-    ax.fill_between(mutests, cls_exp[1], cls_exp[-2], facecolor='green')
+    ax.fill_between(
+        mutests,
+        cls_exp[0],
+        cls_exp[-1],
+        facecolor="yellow",
+        label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+    )
+    ax.fill_between(
+        mutests,
+        cls_exp[1],
+        cls_exp[-2],
+        facecolor="green",
+        label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+    )
 
     test_size_color = kwargs.pop("test_size_color", "red")
     ax.plot(mutests, [test_size] * len(mutests), color=test_size_color)
