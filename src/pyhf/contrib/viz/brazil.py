@@ -64,7 +64,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         mutests,
         [test_size] * len(mutests),
         color=test_size_color,
-        label=rf"$\alpha$={test_size}",
+        label=rf"$\alpha={test_size}$",
     )
     ax.set_ylim(0, 1)
 
