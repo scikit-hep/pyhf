@@ -39,13 +39,16 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     line_color = kwargs.pop("color", "black")
     ax.plot(mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$")
+
     for idx, color in zip(range(5), 5 * [line_color]):
         ax.plot(
             mutests, cls_exp[idx], c=color, linestyle='dotted' if idx != 2 else 'dashed'
         )
     ax.fill_between(mutests, cls_exp[0], cls_exp[-1], facecolor='yellow')
     ax.fill_between(mutests, cls_exp[1], cls_exp[-2], facecolor='green')
-    ax.plot(mutests, [test_size] * len(mutests), c='red')
+
+    test_size_color = kwargs.pop("test_size_color", "red")
+    ax.plot(mutests, [test_size] * len(mutests), color=test_size_color)
     ax.set_ylim(0, 1)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
