@@ -27,7 +27,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         >>> pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
     Args:
-        ax (`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
+        ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
         mutests (:obj:`list` or :obj:`array`): The values of the POI where the
           hypothesis tests were performed.
         tests (:obj:`list` or :obj:`array`): The :math:`\mathrm{CL}_{s}` values
@@ -89,7 +89,7 @@ def plot_cls_components(
         >>> pyhf.contrib.viz.brazil.plot_cls_components(ax, poi_vals, results)
 
     Args:
-        ax (`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
+        ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
         mutests (:obj:`list` or :obj:`array`): The values of the POI where the
           hypothesis tests were performed.
         tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-values
