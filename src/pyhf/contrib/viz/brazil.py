@@ -36,8 +36,10 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
-    ax.plot(mutests, cls_obs, c='black', label=r"$\mathrm{CL}_{s}$")
-    for idx, color in zip(range(5), 5 * ['black']):
+
+    line_color = kwargs.pop("color", "black")
+    ax.plot(mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$")
+    for idx, color in zip(range(5), 5 * [line_color]):
         ax.plot(
             mutests, cls_exp[idx], c=color, linestyle='dotted' if idx != 2 else 'dashed'
         )
@@ -117,7 +119,8 @@ def plot_cls_components(
 
     # plot CLs_obs and CLs_expected set
     y_label = kwargs.pop("ylabel", r"$p\,$-value")
-    plot_results(ax, mutests, CLs_results, test_size, ylabel=y_label)
+    CLs_color = kwargs.pop("cls_color", "black")
+    plot_results(ax, mutests, CLs_results, test_size, ylabel=y_label, color=CLs_color)
 
     CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
     CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
