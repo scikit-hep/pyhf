@@ -60,7 +60,12 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     )
 
     test_size_color = kwargs.pop("test_size_color", "red")
-    ax.plot(mutests, [test_size] * len(mutests), color=test_size_color)
+    ax.plot(
+        mutests,
+        [test_size] * len(mutests),
+        color=test_size_color,
+        label=rf"$\alpha$={test_size}",
+    )
     ax.set_ylim(0, 1)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
@@ -178,4 +183,12 @@ def plot_cls_components(
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{b}$",
         )
-    ax.legend(loc="best")
+
+    # Place test size last in legend
+    handles, labels = ax.get_legend_handles_labels()
+    if not no_cls:
+        test_size_idx = [idx for idx, label in enumerate(labels) if "alpha" in label][0]
+        handles.append(handles.pop(test_size_idx))
+        labels.append(labels.pop(test_size_idx))
+
+    ax.legend(handles, labels, loc="best")
