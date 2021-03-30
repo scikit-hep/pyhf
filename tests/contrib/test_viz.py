@@ -25,21 +25,31 @@ def test_plot_cls_components():
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_clb_only():
+def test_plot_cls_components_no_clb():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
     fig, ax = plt.subplots(1, 1)
     brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05, clb_only=True
+        ax, data["testmus"], data["results"], test_size=0.05, no_clb=True
     )
     return fig
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_clsb_only():
+def test_plot_cls_components_no_clsb():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
     fig, ax = plt.subplots(1, 1)
     brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05, clsb_only=True
+        ax, data["testmus"], data["results"], test_size=0.05, no_clsb=True
+    )
+    return fig
+
+
+@pytest.mark.mpl_image_compare
+def test_plot_cls_components_no_cls():
+    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+    fig, ax = plt.subplots(1, 1)
+    brazil.plot_cls_components(
+        ax, data["testmus"], data["results"], test_size=0.05, no_cls=True
     )
     return fig
 
