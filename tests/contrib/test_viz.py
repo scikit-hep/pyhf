@@ -1,7 +1,9 @@
-import pytest
 import json
+
+import pytest
+from matplotlib.figure import Figure
+
 import pyhf.contrib.viz.brazil as brazil
-import matplotlib.pyplot as plt
 
 # Tests with the @pytest.mark.mpl_image_compare decorator compare against
 # reference images generated via:
@@ -11,7 +13,9 @@ import matplotlib.pyplot as plt
 @pytest.mark.mpl_image_compare
 def test_plot_results():
     data = json.load(open("tests/contrib/hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     brazil.plot_results(ax, data['testmus'], data['results'], test_size=0.05)
     return fig
 
@@ -19,7 +23,9 @@ def test_plot_results():
 @pytest.mark.mpl_image_compare
 def test_plot_cls_components():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     brazil.plot_cls_components(ax, data["testmus"], data["results"], test_size=0.05)
     return fig
 
@@ -27,7 +33,9 @@ def test_plot_cls_components():
 @pytest.mark.mpl_image_compare
 def test_plot_cls_components_no_clb():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clb=True
     )
@@ -37,7 +45,9 @@ def test_plot_cls_components_no_clb():
 @pytest.mark.mpl_image_compare
 def test_plot_cls_components_no_clsb():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clsb=True
     )
@@ -47,7 +57,9 @@ def test_plot_cls_components_no_clsb():
 @pytest.mark.mpl_image_compare
 def test_plot_cls_components_no_cls():
     data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_cls=True
     )
@@ -59,6 +71,8 @@ def test_plot_cls_components_data_structure():
     test results should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]
     """
     data = json.load(open("tests/contrib/hypotest_results.json"))
-    fig, ax = plt.subplots(1, 1)
+
+    fig = Figure()
+    ax = fig.subplots()
     with pytest.raises(ValueError):
         brazil.plot_cls_components(ax, data["testmus"], data["results"], test_size=0.05)
