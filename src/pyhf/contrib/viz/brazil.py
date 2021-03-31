@@ -201,16 +201,11 @@ def plot_cls_components(
     handles, labels = ax.get_legend_handles_labels()
     if not no_cls:
 
-        def _last_label_in_legend(handles, labels, label_part):
+        for label_part in ["exp", "pm1", "pm2", "alpha"]:
             label_idx = [
                 idx for idx, label in enumerate(labels) if label_part in label
             ][0]
             handles.append(handles.pop(label_idx))
             labels.append(labels.pop(label_idx))
-
-            return handles, labels
-
-        for label_part in ["exp", "pm1", "pm2", "alpha"]:
-            handles, labels = _last_label_in_legend(handles, labels, label_part)
 
     ax.legend(handles, labels, loc="best")
