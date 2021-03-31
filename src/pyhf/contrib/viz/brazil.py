@@ -59,8 +59,8 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
     )
 
-    test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
     test_size_color = kwargs.pop("test_size_color", "red")
+    test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
     ax.plot(
         mutests,
         [test_size] * len(mutests),
