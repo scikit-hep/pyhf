@@ -192,7 +192,6 @@
             "operation": {
                 "type": "object",
                 "required": [ "op", "path" ],
-                "additionalProperties": false,
                 "allOf": [ { "$ref": "#/definitions/jsonpatch/path" } ],
                 "oneOf": [
                     {
