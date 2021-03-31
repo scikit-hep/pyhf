@@ -107,7 +107,8 @@
                             "lo_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                             "hi_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
                         },
-                        "required": ["lo_data", "hi_data"]
+                        "required": ["lo_data", "hi_data"],
+                        "additionalProperties": false
                     }
                 },
                 "required": ["name", "type", "data"],
@@ -144,7 +145,8 @@
                             "lo": { "type": "number" },
                             "hi": { "type": "number"}
                         },
-                        "required": ["lo", "hi"]
+                        "required": ["lo", "hi"],
+                        "additionalProperties": false
                     }
                 },
                 "required": ["name", "type", "data"],
@@ -190,6 +192,7 @@
             "operation": {
                 "type": "object",
                 "required": [ "op", "path" ],
+                "additionalProperties": false,
                 "allOf": [ { "$ref": "#/definitions/jsonpatch/path" } ],
                 "oneOf": [
                     {
@@ -281,10 +284,12 @@
                             "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
                             "values": { "type": "array", "items": { "type": "number" } }
                         },
-                        "required": ["name", "values"]
+                        "required": ["name", "values"],
+                        "additionalProperties": true
                     }
                 },
-                "required": ["metadata", "patch"]
+                "required": ["metadata", "patch"],
+                "additionalProperties": false
             },
             "metadata": {
                 "type": "object",
@@ -298,7 +303,8 @@
                     "description": { "type": "string" },
                     "references": { "$ref": "#/definitions/patchset/references" }
                 },
-                "required": ["references", "digests", "labels", "description"]
+                "required": ["references", "digests", "labels", "description"],
+                "additionalProperties": true
             }
         }
     }
