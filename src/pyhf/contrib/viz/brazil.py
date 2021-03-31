@@ -59,11 +59,13 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
     )
 
+    test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
     test_size_color = kwargs.pop("test_size_color", "red")
     ax.plot(
         mutests,
         [test_size] * len(mutests),
         color=test_size_color,
+        linestyle=test_size_linestyle,
         label=rf"$\alpha={test_size}$",
     )
     ax.set_ylim(0, 1)
@@ -150,8 +152,15 @@ def plot_cls_components(
     y_label = kwargs.pop("ylabel", r"$p\,$-value")
     if not no_cls:
         CLs_color = kwargs.pop("cls_color", "black")
+        test_size_linestyle = kwargs.pop("test_size_linestyle", "dashdot")
         plot_results(
-            ax, mutests, CLs_results, test_size, ylabel=y_label, color=CLs_color
+            ax,
+            mutests,
+            CLs_results,
+            test_size,
+            ylabel=y_label,
+            color=CLs_color,
+            test_size_linestyle=test_size_linestyle,
         )
     else:
         # Still need to setup the canvas
