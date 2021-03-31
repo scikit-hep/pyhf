@@ -42,7 +42,11 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     for idx, color in zip(range(5), 5 * [line_color]):
         ax.plot(
-            mutests, cls_exp[idx], c=color, linestyle='dotted' if idx != 2 else 'dashed'
+            mutests,
+            cls_exp[idx],
+            color=color,
+            linestyle="dotted" if idx != 2 else "dashed",
+            label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
         )
     ax.fill_between(
         mutests,
@@ -193,11 +197,20 @@ def plot_cls_components(
             label=r"$\mathrm{CL}_{b}$",
         )
 
-    # Place test size last in legend
+    # Order legend: ensure CLs expected band and test size are last in legend
     handles, labels = ax.get_legend_handles_labels()
     if not no_cls:
-        test_size_idx = [idx for idx, label in enumerate(labels) if "alpha" in label][0]
-        handles.append(handles.pop(test_size_idx))
-        labels.append(labels.pop(test_size_idx))
+
+        def _last_label_in_legend(handles, labels, label_part):
+            label_idx = [
+                idx for idx, label in enumerate(labels) if label_part in label
+            ][0]
+            handles.append(handles.pop(label_idx))
+            labels.append(labels.pop(label_idx))
+
+            return handles, labels
+
+        for label_part in ["exp", "pm1", "pm2", "alpha"]:
+            handles, labels = _last_label_in_legend(handles, labels, label_part)
 
     ax.legend(handles, labels, loc="best")
