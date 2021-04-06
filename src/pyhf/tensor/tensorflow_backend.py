@@ -160,15 +160,12 @@ class tensorflow_backend:
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
+        dtype = self.dtypemap["float"]
         tensor_in_1 = (
-            tensor_in_1
-            if tensor_in_1.dtype != tf.bool
-            else tf.cast(tensor_in_1, tf.float32)
+            tensor_in_1 if tensor_in_1.dtype != tf.bool else tf.cast(tensor_in_1, dtype)
         )
         tensor_in_1 = (
-            tensor_in_1
-            if tensor_in_2.dtype != tf.bool
-            else tf.cast(tensor_in_2, tf.float32)
+            tensor_in_1 if tensor_in_2.dtype != tf.bool else tf.cast(tensor_in_2, dtype)
         )
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
