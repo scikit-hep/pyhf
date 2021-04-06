@@ -64,7 +64,7 @@ class tensorflow_backend:
             >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
             >>> t = pyhf.tensorlib.erf(a)
             >>> print(t)
-            tf.Tensor([-0.9953223 -0.8427007  0.         0.8427007  0.9953223], shape=(5,), dtype=float64)
+            tf.Tensor([-0.99532227 -0.84270079  0.          0.84270079  0.99532227], shape=(5,), dtype=float64)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
@@ -85,7 +85,7 @@ class tensorflow_backend:
             >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
             >>> t = pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
             >>> print(t)
-            tf.Tensor([-2.000001   -0.99999964  0.          0.99999964  1.9999981 ], shape=(5,), dtype=float64)
+            tf.Tensor([-2. -1.  0.  1.  2.], shape=(5,), dtype=float64)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
@@ -190,7 +190,7 @@ class tensorflow_backend:
             >>> tensor
             <tf.Tensor: shape=(2, 3), dtype=float64, numpy=
             array([[1., 2., 3.],
-                   [4., 5., 6.]], dtype=float64)>
+                   [4., 5., 6.]])>
             >>> type(tensor)
             <class 'tensorflow.python.framework.ops.EagerTensor'>
 
@@ -409,7 +409,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
             >>> print(t)
-            tf.Tensor(-1.8286943, shape=(), dtype=float64)
+            tf.Tensor(-1.8286943966417715, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
@@ -440,7 +440,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson(5., 6.)
             >>> print(t)
-            tf.Tensor(0.16062315, shape=(), dtype=float64)
+            tf.Tensor(0.16062314104797995, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
@@ -503,7 +503,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal(0.5, 0., 1.)
             >>> print(t)
-            tf.Tensor(0.35206532, shape=(), dtype=float64)
+            tf.Tensor(0.3520653267642995, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -533,7 +533,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_cdf(0.8)
             >>> print(t)
-            tf.Tensor(0.7881446, shape=(), dtype=float64)
+            tf.Tensor(0.7881446014166034, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> t = pyhf.tensorlib.normal_cdf(values)
             >>> print(t)
@@ -564,7 +564,7 @@ class tensorflow_backend:
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
             >>> t = poissons.log_prob(values)
             >>> print(t)
-            tf.Tensor([-1.7403021 -2.086854 ], shape=(2,), dtype=float64)
+            tf.Tensor([-1.74030218 -2.0868536 ], shape=(2,), dtype=float64)
 
         Args:
             rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
@@ -590,7 +590,7 @@ class tensorflow_backend:
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
             >>> t = normals.log_prob(values)
             >>> print(t)
-            tf.Tensor([-1.4189385 -2.2257915], shape=(2,), dtype=float64)
+            tf.Tensor([-1.41893853 -2.22579135], shape=(2,), dtype=float64)
 
         Args:
             mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
@@ -620,7 +620,7 @@ class tensorflow_backend:
             >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
             >>> numpy_ndarray
             array([[1., 2., 3.],
-                   [4., 5., 6.]], dtype=float64)
+                   [4., 5., 6.]])
             >>> type(numpy_ndarray)
             <class 'numpy.ndarray'>
 
