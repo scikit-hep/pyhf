@@ -408,8 +408,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
-            >>> print(t)
-            tf.Tensor(-1.8286943966417715, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(-1.8286943966417..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
@@ -439,8 +439,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson(5., 6.)
-            >>> print(t)
-            tf.Tensor(0.16062314104797995, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(0.1606231410479..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
