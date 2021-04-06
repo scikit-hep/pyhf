@@ -414,7 +414,7 @@ class tensorflow_backend:
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
             >>> print(t)
-            tf.Tensor([-1.8286943 -2.086854 ], shape=(2,), dtype=float64)
+            tf.Tensor([-1.8286944 -2.0868536], shape=(2,), dtype=float64)
 
         Args:
             n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -445,7 +445,7 @@ class tensorflow_backend:
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
             >>> print(t)
-            tf.Tensor([0.16062315 0.12407687], shape=(2,), dtype=float64)
+            tf.Tensor([0.16062314 0.12407692], shape=(2,), dtype=float64)
 
         Args:
             n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -471,13 +471,13 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_logpdf(0.5, 0., 1.)
             >>> print(t)
-            tf.Tensor(-1.0439385, shape=(), dtype=float64)
+            tf.Tensor(-1.0439385332046727, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
             >>> t = pyhf.tensorlib.normal_logpdf(values, means, sigmas)
             >>> print(t)
-            tf.Tensor([-1.0439385 -0.7661075], shape=(2,), dtype=float64)
+            tf.Tensor([-1.04393853 -0.76610747], shape=(2,), dtype=float64)
 
         Args:
             x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -509,7 +509,7 @@ class tensorflow_backend:
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
             >>> t = pyhf.tensorlib.normal(values, means, sigmas)
             >>> print(t)
-            tf.Tensor([0.35206532 0.46481887], shape=(2,), dtype=float64)
+            tf.Tensor([0.35206533 0.46481887], shape=(2,), dtype=float64)
 
         Args:
             x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -537,7 +537,7 @@ class tensorflow_backend:
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> t = pyhf.tensorlib.normal_cdf(values)
             >>> print(t)
-            tf.Tensor([0.7881446  0.97724986], shape=(2,), dtype=float64)
+            tf.Tensor([0.7881446  0.97724987], shape=(2,), dtype=float64)
 
         Args:
             x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
