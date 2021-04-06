@@ -13,7 +13,7 @@ class tensorflow_backend:
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
-        self.precision = kwargs.get('precision', '32b')
+        self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
             'float': tf.float64 if self.precision == '64b' else tf.float32,
             'int': tf.int64 if self.precision == '64b' else tf.int32,
