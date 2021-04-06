@@ -490,8 +490,7 @@ class tensorflow_backend:
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
 
-        normal = tfp.distributions.Normal(mu, sigma)
-        return normal.log_prob(x)
+        return tfp.distributions.Normal(mu, sigma).log_prob(x)
 
     def normal(self, x, mu, sigma):
         r"""
@@ -523,8 +522,7 @@ class tensorflow_backend:
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
 
-        normal = tfp.distributions.Normal(mu, sigma)
-        return normal.prob(x)
+        return tfp.distributions.Normal(mu, sigma).prob(x)
 
     def normal_cdf(self, x, mu=0.0, sigma=1):
         """
@@ -552,8 +550,7 @@ class tensorflow_backend:
         mu = self.astensor(mu)
         sigma = self.astensor(sigma)
 
-        normal = tfp.distributions.Normal(mu, sigma)
-        return normal.cdf(x)
+        return tfp.distributions.Normal(mu, sigma).cdf(x)
 
     def poisson_dist(self, rate):
         r"""
