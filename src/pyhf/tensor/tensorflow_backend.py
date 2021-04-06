@@ -160,15 +160,12 @@ class tensorflow_backend:
             raise
 
     def outer(self, tensor_in_1, tensor_in_2):
+        dtype = self.dtypemap["float"]
         tensor_in_1 = (
-            tensor_in_1
-            if tensor_in_1.dtype != tf.bool
-            else tf.cast(tensor_in_1, tf.float32)
+            tensor_in_1 if tensor_in_1.dtype != tf.bool else tf.cast(tensor_in_1, dtype)
         )
         tensor_in_1 = (
-            tensor_in_1
-            if tensor_in_2.dtype != tf.bool
-            else tf.cast(tensor_in_2, tf.float32)
+            tensor_in_1 if tensor_in_2.dtype != tf.bool else tf.cast(tensor_in_2, dtype)
         )
         return tf.einsum('i,j->ij', tensor_in_1, tensor_in_2)
 
@@ -428,6 +425,8 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: Value of the continuous approximation to log(Poisson(n|lam))
         """
+        lam = self.astensor(lam)
+
         return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
@@ -457,6 +456,8 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: Value of the continuous approximation to Poisson(n|lam)
         """
+        lam = self.astensor(lam)
+
         return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
@@ -486,8 +487,10 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: Value of log(Normal(x|mu, sigma))
         """
-        normal = tfp.distributions.Normal(mu, sigma)
-        return normal.log_prob(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
+        return tfp.distributions.Normal(mu, sigma).log_prob(x)
 
     def normal(self, x, mu, sigma):
         r"""
@@ -516,8 +519,10 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: Value of Normal(x|mu, sigma)
         """
-        normal = tfp.distributions.Normal(mu, sigma)
-        return normal.prob(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
+        return tfp.distributions.Normal(mu, sigma).prob(x)
 
     def normal_cdf(self, x, mu=0.0, sigma=1):
         """
@@ -542,10 +547,10 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: The CDF
         """
-        normal = tfp.distributions.Normal(
-            self.astensor(mu, dtype='float'), self.astensor(sigma, dtype='float')
-        )
-        return normal.cdf(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
+        return tfp.distributions.Normal(mu, sigma).cdf(x)
 
     def poisson_dist(self, rate):
         r"""
@@ -568,6 +573,8 @@ class tensorflow_backend:
             TensorFlow Probability Poisson distribution: The Poisson distribution class
 
         """
+        rate = self.astensor(rate)
+
         return tfp.distributions.Poisson(rate)
 
     def normal_dist(self, mu, sigma):
@@ -593,6 +600,9 @@ class tensorflow_backend:
             TensorFlow Probability Normal distribution: The Normal distribution class
 
         """
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         return tfp.distributions.Normal(mu, sigma)
 
     def to_numpy(self, tensor_in):
