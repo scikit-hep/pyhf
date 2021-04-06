@@ -15,7 +15,7 @@ class pytorch_backend:
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self.precision = kwargs.get('precision', '32b')
+        self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
             'float': torch.float64 if self.precision == '64b' else torch.float32,
             'int': torch.int64 if self.precision == '64b' else torch.int32,
