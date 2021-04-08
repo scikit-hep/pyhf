@@ -8,7 +8,7 @@ import pathlib
 import jsonpatch
 
 
-@parse.with_pattern(r'\d+[p\.]?\d+')
+@parse.with_pattern(r'\d+(?:[p\.]\d+)?')
 def parse_number(text):
     return float(text.replace('p', '.'))
 
@@ -28,7 +28,7 @@ def parse_number(text):
     help="Pattern of signal filenames to extract information from",
     default="{x:number}_{y:number}",
 )
-@click.option('--hepdata', help="hepdata record id, e.g. ins1234567", required=True)
+@click.option('-i', '--analysis-id', default=None, help="Analysis ID if it exists")
 @click.option(
     '-a',
     '--algorithm',
@@ -36,6 +36,19 @@ def parse_number(text):
     default=['sha256'],
     help='Digest algorithms to use',
     multiple=True,
+)
+# @click.option(
+#    '-v',
+#    '--version',
+#    default="1.0.0",
+#    help="patchset version",
+# )
+@click.option(
+    '-r',
+    '--references',
+    help="string containing json-like dictionary containing references to the analysis, e.g. \"{'hepdata':'ins1234567'}\"",
+    required=True,
+    type=str,
 )
 @click.option(
     '-d',
@@ -48,11 +61,26 @@ def parse_number(text):
     help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
-def main(signals, bkg_only, pattern, algorithms, description, hepdata, output_file):
-    patchset = {'metadata': {'description': description,}, 'patches': []}
+def main(
+    signals,
+    bkg_only,
+    pattern,
+    algorithms,
+    description,
+    analysis_id,
+    output_file,
+    references,
+):
+    patchset = {
+        'metadata': {
+            'description': description,
+        },
+        'patches': [],
+    }
 
     # add in analysis id if specified
-    patchset['metadata']['references'] = {'hepdata': hepdata}
+    if analysis_id:
+        patchset['metadata']['analysis_id'] = analysis_id
     # add in the digest for background-only
     bkg_only_workspace = json.load(bkg_only)
     patchset['metadata']['digests'] = {
@@ -66,7 +94,6 @@ def main(signals, bkg_only, pattern, algorithms, description, hepdata, output_fi
             '\n', '\n\t'
         )
     )
-
     p = parse.compile(pattern, dict(number=parse_number))
     labels = p._named_fields
     if len(labels) == 0:
@@ -74,8 +101,8 @@ def main(signals, bkg_only, pattern, algorithms, description, hepdata, output_fi
         sys.exit(1)
     click.echo(f"You specified {len(labels)} labels: {labels}.")
     patchset['metadata']['labels'] = labels
-    patchset['metadata']['references'] = {'hepdata': 'ins1234567'}
-    patchset['version'] = '1.0.0'
+    patchset['metadata']['references'] = json.loads(references)
+    patchset['version'] = "1.0.0"
 
     click.echo(f"Making patches for {len(signals)} signals.")
     for signal in signals:
