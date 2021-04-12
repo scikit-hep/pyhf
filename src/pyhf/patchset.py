@@ -9,6 +9,12 @@ from .workspace import Workspace
 
 log = logging.getLogger(__name__)
 
+__all__ = ["Patch", "PatchSet"]
+
+
+def __dir__():
+    return __all__
+
 
 class Patch(jsonpatch.JsonPatch):
     """
