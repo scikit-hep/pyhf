@@ -4,6 +4,12 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+__all__ = ["plot_results"]
+
+
+def __dir__():
+    return __all__
+
 
 class BrazilBandCollection(
     namedtuple(
