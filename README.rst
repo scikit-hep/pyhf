@@ -156,7 +156,7 @@ A one bin example
    import pyhf
    import numpy as np
    import matplotlib.pyplot as plt
-   import pyhf.contrib.viz.brazil
+   from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
    model = pyhf.simplemodels.hepdata_like(
@@ -176,7 +176,7 @@ A one bin example
    fig.set_size_inches(7, 5)
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
-   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   brazil.plot_results(ax, poi_vals, results)
    fig.show()
 
 **pyhf**
@@ -201,7 +201,7 @@ A two bin example
    import pyhf
    import numpy as np
    import matplotlib.pyplot as plt
-   import pyhf.contrib.viz.brazil
+   from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
    model = pyhf.simplemodels.hepdata_like(
@@ -221,7 +221,7 @@ A two bin example
    fig.set_size_inches(7, 5)
    ax.set_xlabel(r"$\mu$ (POI)")
    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
-   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   brazil.plot_results(ax, poi_vals, results)
    fig.show()
 
 
