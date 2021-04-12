@@ -12,6 +12,20 @@ SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
 SCHEMA_VERSION = '1.0.0'
 
+__all__ = [
+    "EqDelimStringParamType",
+    "citation",
+    "digest",
+    "load_schema",
+    "options_from_eqdelimstring",
+    "remove_prefix",
+    "validate",
+]
+
+
+def __dir__():
+    return __all__
+
 
 def load_schema(schema_id, version=None):
     global SCHEMA_CACHE
