@@ -208,3 +208,7 @@ __all__ = [
     'staterror_combined',
     'combined',
 ]
+
+
+def __dir__():
+    return __all__
