@@ -11,8 +11,8 @@ import pyhf.contrib.viz.brazil as brazil
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_results():
-    data = json.load(open("tests/contrib/hypotest_results.json"))
+def test_plot_results(datadir):
+    data = json.load(open(datadir.join("hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
@@ -21,8 +21,8 @@ def test_plot_results():
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components():
-    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+def test_plot_cls_components(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
@@ -31,8 +31,8 @@ def test_plot_cls_components():
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_clb():
-    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+def test_plot_cls_components_no_clb(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
@@ -43,8 +43,8 @@ def test_plot_cls_components_no_clb():
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_clsb():
-    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+def test_plot_cls_components_no_clsb(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
@@ -55,8 +55,8 @@ def test_plot_cls_components_no_clsb():
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_cls():
-    data = json.load(open("tests/contrib/tail_probs_hypotest_results.json"))
+def test_plot_cls_components_no_cls(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
@@ -66,11 +66,11 @@ def test_plot_cls_components_no_cls():
     return fig
 
 
-def test_plot_cls_components_data_structure():
+def test_plot_cls_components_data_structure(datadir):
     """
     test results should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]
     """
-    data = json.load(open("tests/contrib/hypotest_results.json"))
+    data = json.load(open(datadir.join("hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
