@@ -24,7 +24,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         ...     for test_poi in poi_vals
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
     Args:
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
@@ -33,29 +33,35 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         tests (:obj:`list` or :obj:`array`): The :math:`\mathrm{CL}_{s}` values
           from the hypothesis tests.
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
+
+    Returns:
+        axis artists (:obj:`list`): The list of lists and tuples of ``matplotlib`` axis artists drawn.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
 
     line_color = kwargs.pop("color", "black")
-    ax.plot(mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$")
+    axis_artists = [
+        ax.plot(mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$")
+    ]
 
     for idx, color in zip(range(5), 5 * [line_color]):
-        ax.plot(
+        _cls_exp_line = ax.plot(
             mutests,
             cls_exp[idx],
             color=color,
             linestyle="dotted" if idx != 2 else "dashed",
             label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
         )
-    ax.fill_between(
+        axis_artists.append(_cls_exp_line)
+    one_sigma_band = ax.fill_between(
         mutests,
         cls_exp[0],
         cls_exp[-1],
         facecolor="yellow",
         label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
     )
-    ax.fill_between(
+    two_sigma_band = ax.fill_between(
         mutests,
         cls_exp[1],
         cls_exp[-2],
@@ -65,7 +71,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     test_size_color = kwargs.pop("test_size_color", "red")
     test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
-    ax.plot(
+    test_size_line = ax.plot(
         mutests,
         [test_size] * len(mutests),
         color=test_size_color,
@@ -78,6 +84,9 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+
+    axis_artists.extend((one_sigma_band, two_sigma_band, test_size_line))
+    return axis_artists
 
 
 def plot_cls_components(
@@ -116,7 +125,7 @@ def plot_cls_components(
         ...     for test_poi in poi_vals
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> pyhf.contrib.viz.brazil.plot_cls_components(ax, poi_vals, results)
+        >>> artists = pyhf.contrib.viz.brazil.plot_cls_components(ax, poi_vals, results)
 
     Args:
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
@@ -154,10 +163,11 @@ def plot_cls_components(
 
     # plot CLs_obs and CLs_expected set
     y_label = kwargs.pop("ylabel", r"$p\,$-value")
+    axis_artists = []
     if not no_cls:
         CLs_color = kwargs.pop("cls_color", "black")
         test_size_linestyle = kwargs.pop("test_size_linestyle", "dashdot")
-        plot_results(
+        brazil_band_artists = plot_results(
             ax,
             mutests,
             CLs_results,
@@ -166,6 +176,7 @@ def plot_cls_components(
             color=CLs_color,
             test_size_linestyle=test_size_linestyle,
         )
+        axis_artists.append(brazil_band_artists)
     else:
         # Still need to setup the canvas
         ax.set_ylim(0, 1)
@@ -180,22 +191,24 @@ def plot_cls_components(
     linewidth = kwargs.pop("linewidth", 2)
     if not no_clsb:
         CLsb_color = kwargs.pop("clsb_color", "red")
-        ax.plot(
+        CLsb_obs_line_artist = ax.plot(
             mutests,
             CLsb_obs,
             color=CLsb_color,
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{s+b}$",
         )
+        axis_artists.append(CLsb_obs_line_artist)
     if not no_clb:
         CLb_color = kwargs.pop("clb_color", "blue")
-        ax.plot(
+        CLb_obs_line_artist = ax.plot(
             mutests,
             CLb_obs,
             color=CLb_color,
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{b}$",
         )
+        axis_artists.append(CLb_obs_line_artist)
 
     # Order legend: ensure CLs expected band and test size are last in legend
     handles, labels = ax.get_legend_handles_labels()
@@ -209,3 +222,4 @@ def plot_cls_components(
             labels.append(labels.pop(label_idx))
 
     ax.legend(handles, labels, loc="best")
+    return axis_artists
