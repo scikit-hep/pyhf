@@ -43,3 +43,7 @@ def get(interpcode, do_tensorized_calc=True):
 
 
 __all__ = ['code0', 'code1', 'code2', 'code4', 'code4p']
+
+
+def __dir__():
+    return __all__
