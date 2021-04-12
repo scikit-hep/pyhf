@@ -158,12 +158,24 @@ from . import infer
 from .patchset import PatchSet
 
 __all__ = [
-    'Model',
-    'Workspace',
-    'PatchSet',
-    'infer',
-    'utils',
-    'modifiers',
-    'simplemodels',
-    '__version__',
+    "Model",
+    "Workspace",
+    "PatchSet",
+    "infer",
+    "utils",
+    "modifiers",
+    "simplemodels",
+    "__version__",
+    "tensorlib",
+    "optimzier",
+    "get_backend",
+    "set_backend",
+    "exceptions",
+    "interpolators",
+    "optimize",
+    "tensor",
 ]
+
+
+def __dir__():
+    return __all__
