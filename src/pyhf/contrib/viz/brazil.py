@@ -35,7 +35,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
-        axis artists (:obj:`list`): The list of lists and tuples of ``matplotlib`` axis artists drawn.
+        :obj:`list`: The list of lists and tuples of :obj:`matplotlib.artist` drawn.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
@@ -145,6 +145,9 @@ def plot_cls_components(
           component.
         no_cls (:obj:`bool`): Bool for not plotting the :math:`\mathrm{CL}_{s}`
           values.
+
+    Returns:
+        :obj:`list`: The list of lists and tuples of :obj:`matplotlib.artist` drawn.
     """
 
     if len(tests[0]) != 3:
