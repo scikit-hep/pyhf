@@ -194,4 +194,8 @@ def hypotest(
 
 from . import intervals  # noqa: F401
 
-__all__ = ["hypotest"]
+__all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
+
+
+def __dir__():
+    return __all__
