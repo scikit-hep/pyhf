@@ -1,5 +1,11 @@
 from .. import exceptions
 
+__all__ = ["reduce_paramsets_requirements"]
+
+
+def __dir__():
+    return __all__
+
 
 def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs):
     reduced_paramsets_requirements = {}
