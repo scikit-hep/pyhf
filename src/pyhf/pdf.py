@@ -16,6 +16,12 @@ from .mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
+__all__ = ["Model", "_ModelConfig"]
+
+
+def __dir__():
+    return __all__
+
 
 def _paramset_requirements_from_channelspec(spec, channel_nbins):
     # bookkeep all requirements for paramsets we need to build
