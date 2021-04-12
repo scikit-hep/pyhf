@@ -1,5 +1,11 @@
 from . import Model
 
+__all__ = ["hepdata_like"]
+
+
+def __dir__():
+    return __all__
+
 
 def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     """
