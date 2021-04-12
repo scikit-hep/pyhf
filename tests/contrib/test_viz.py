@@ -17,7 +17,7 @@ def test_plot_results(datadir):
     fig = Figure()
     ax = fig.subplots()
     artists = brazil.plot_results(ax, data['testmus'], data['results'], test_size=0.05)
-    assert len(artists) == 9
+    assert len(artists) == 4
     return fig
 
 
@@ -30,7 +30,7 @@ def test_plot_cls_components(datadir):
     brazil_band_artists, clsb_artists, clb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05
     )
-    assert len(brazil_band_artists) == 9
+    assert len(brazil_band_artists) == 4
     assert len(clsb_artists) == 1
     assert len(clb_artists) == 1
     return fig
@@ -45,7 +45,7 @@ def test_plot_cls_components_no_clb(datadir):
     brazil_band_artists, clsb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clb=True
     )
-    assert len(brazil_band_artists) == 9
+    assert len(brazil_band_artists) == 4
     assert len(clsb_artists) == 1
     return fig
 
@@ -59,7 +59,7 @@ def test_plot_cls_components_no_clsb(datadir):
     brazil_band_artists, clb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clsb=True
     )
-    assert len(brazil_band_artists) == 9
+    assert len(brazil_band_artists) == 4
     assert len(clb_artists) == 1
     return fig
 

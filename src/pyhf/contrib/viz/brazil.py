@@ -41,10 +41,11 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
 
     line_color = kwargs.pop("color", "black")
-    axis_artists = [
-        ax.plot(mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$")
-    ]
+    cls_obs_line_artist = ax.plot(
+        mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
+    )
 
+    cls_exp_line_artists = []
     for idx, color in zip(range(5), 5 * [line_color]):
         _cls_exp_line = ax.plot(
             mutests,
@@ -53,7 +54,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
             linestyle="dotted" if idx != 2 else "dashed",
             label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
         )
-        axis_artists.append(_cls_exp_line)
+        cls_exp_line_artists.append(_cls_exp_line)
     one_sigma_band = ax.fill_between(
         mutests,
         cls_exp[0],
@@ -85,8 +86,12 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    axis_artists.extend((one_sigma_band, two_sigma_band, test_size_line))
-    return axis_artists
+    return [
+        cls_obs_line_artist,
+        cls_exp_line_artists,
+        [one_sigma_band, two_sigma_band],
+        test_size_line,
+    ]
 
 
 def plot_cls_components(
