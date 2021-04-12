@@ -4,6 +4,12 @@ from ..tensor.common import (
     _tensorviewer_from_sizes,
 )
 
+__all__ = ["ParamViewer"]
+
+
+def __dir__():
+    return __all__
+
 
 def _tensorviewer_from_parmap(par_map, batch_size):
     names, slices, _ = list(
