@@ -2,7 +2,7 @@
 
 from . import utils
 from .. import get_backend
-
+from .. import exceptions
 
 def hypotest(
     poi_test,
@@ -130,6 +130,9 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    if not utils.all_pois_floating(pdf,fixed_params):
+        raise exceptions.InvalidModel(f'POI at index [{pdf.config.poi_index}] forced to be fixed, cannot run inference')
 
     calc = utils.create_calculator(
         calctype,

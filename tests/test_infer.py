@@ -395,3 +395,16 @@ def test_toy_calculator(tmpdir, hypotest_args):
     assert toy_calculator_qtilde_mu.teststatistic(mu_test) == pytest.approx(
         3.938244920380498, 1e-07
     )
+
+
+def test_fixed_poi(tmpdir, hypotest_args):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_expected keyword arg is as expected
+    """
+    tb = pyhf.tensorlib
+
+    mu_test, data, pdf = hypotest_args
+    pdf.config.param_set('mu').suggested_fixed = [True]
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        result = pyhf.infer.hypotest(*hypotest_args)
