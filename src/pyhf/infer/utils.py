@@ -18,7 +18,7 @@ def all_pois_floating(pdf, fixed_params):
         fixed_params: array of bools
 
     Returns:
-        bool
+        bool: The result whether all POIs are floating.
     """
 
     poi_fixed = fixed_params[pdf.config.poi_index]
