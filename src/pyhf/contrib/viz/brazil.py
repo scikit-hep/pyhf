@@ -151,7 +151,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
             one_sigma_band,
             two_sigma_band,
             test_size_line,
-        ),
+        )
     )
 
 
