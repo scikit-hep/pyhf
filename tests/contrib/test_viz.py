@@ -18,6 +18,10 @@ def test_plot_results(datadir):
     ax = fig.subplots()
     artists = brazil.plot_results(ax, data['testmus'], data['results'], test_size=0.05)
     assert len(artists) == 4
+    assert artists.cls_obs is not None
+    assert len(artists.cls_exp) == 5
+    assert len(artists.cls_exp_band) == 2
+    assert artists.test_size is not None
     return fig
 
 
