@@ -1,16 +1,21 @@
 """Brazil Band Plots."""
 import numpy as np
-from typing import NamedTuple
+from collections import namedtuple
 
+BrazilBandArtists = namedtuple(
+    "BrazilBandArtists",
+    ["cls_obs", "cls_exp", "cls_exp_band", "test_size"],
+    defaults=[None, [None] * 5, [None, None], None],
+)
+r"""
+:obj:`collections.namedtuple` of :obj:`matplotlib.artist` in the Brazil band plot.
 
-class BrazilBandArtists(NamedTuple):
-    r"""
-    :obj:`collections.namedtuple` of :obj:`matplotlib.artist` in the Brazil band plot.
-    """
-    cls_obs: "matplotlib.lines.Line2D" = None
-    cls_exp: "List[matplotlib.lines.Line2D]" = [None] * 5
-    cls_exp_band: "List[matplotlib.collections.PolyCollection]" = [None, None]
-    test_size: "matplotlib.lines.Line2D" = None
+Args:
+    cls_obs (:obj:`matplotlib.lines.Line2D`)
+    cls_exp (`list` of :obj:`matplotlib.lines.Line2D`)
+    cls_exp_band (`list` of :obj:`matplotlib.collections.PolyCollection`)
+    test_size (:obj:`matplotlib.lines.Line2D`)
+"""
 
 
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
