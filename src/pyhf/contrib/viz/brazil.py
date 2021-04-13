@@ -9,7 +9,7 @@ class BrazilBandContainer(Container):
     :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
 
     The container can be treated like a :obj:`collections.namedtuple`
-    ``(cls_obs, cls_exp, cls_exp_band, test_size)``.
+    ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
 
     Attributes:
         cls_obs (:class:`matplotlib.lines.Line2D`): The artist of the
@@ -18,9 +18,13 @@ class BrazilBandContainer(Container):
         cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The artists of
          the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
 
-        cls_exp_band (:obj:`list` of :class:`matplotlib.collections.PolyCollection`):
+        one_sigma_band (:class:`matplotlib.collections.PolyCollection`):
          The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma`
-         and :math:`\pm2\sigma` bands.
+         band.
+
+        two_sigma_band (:class:`matplotlib.collections.PolyCollection`):
+         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma`
+         band.
 
         test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
          line.
@@ -30,19 +34,28 @@ class BrazilBandContainer(Container):
         r"""
         Args:
             brazil_band_artists (:obj:`tuple`): Tuple of
-             ``(cls_obs, cls_exp, cls_exp_band, test_size)``.
-             ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
-             observed :math:`\mathrm{CL}_{s}` line,
-             ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
-             the expected :math:`\mathrm{CL}_{s}` lines,
-             ``cls_exp_band`` is a :obj:`list` of :class:`matplotlib.collections.PolyCollection`
-             of the :math:`\pm1,\pm2\sigma` bands,
-             and ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the test size.
+             ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
+              * ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
+                observed :math:`\mathrm{CL}_{s}` line.
+              * ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
+                the expected :math:`\mathrm{CL}_{s}` lines.
+              * ``one_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
+                of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
+              * ``two_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
+                of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
+              * ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the test size.
         """
-        cls_obs, cls_exp, cls_exp_band, test_size = brazil_band_artists
+        (
+            cls_obs,
+            cls_exp,
+            one_sigma_band,
+            two_sigma_band,
+            test_size,
+        ) = brazil_band_artists
         self.cls_obs = cls_obs
         self.cls_exp = cls_exp
-        self.cls_exp_band = cls_exp_band
+        self.one_sigma_band = one_sigma_band
+        self.two_sigma_band = two_sigma_band
         self.test_size = test_size
         super().__init__(brazil_band_artists, **kwargs)
 
@@ -86,11 +99,11 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
 
     line_color = kwargs.pop("color", "black")
-    (cls_obs_line_artist,) = ax.plot(
+    (cls_obs_line,) = ax.plot(
         mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
     )
 
-    cls_exp_line_artists = []
+    cls_exp_lines = []
     for idx, color in zip(range(5), 5 * [line_color]):
         (_cls_exp_line,) = ax.plot(
             mutests,
@@ -99,7 +112,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
             linestyle="dotted" if idx != 2 else "dashed",
             label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
         )
-        cls_exp_line_artists.append(_cls_exp_line)
+        cls_exp_lines.append(_cls_exp_line)
     one_sigma_band = ax.fill_between(
         mutests,
         cls_exp[0],
@@ -133,9 +146,10 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     return BrazilBandContainer(
         (
-            cls_obs_line_artist,
-            cls_exp_line_artists,
-            [one_sigma_band, two_sigma_band],
+            cls_obs_line,
+            cls_exp_lines,
+            one_sigma_band,
+            two_sigma_band,
             test_size_line,
         ),
     )
