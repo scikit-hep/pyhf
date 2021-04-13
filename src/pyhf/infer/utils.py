@@ -9,8 +9,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def all_pois_floating(model, fixed_params):
-    poi_fixed = fixed_params[model.config.poi_index]
+def all_pois_floating(pdf, fixed_params):
+    poi_fixed = fixed_params[pdf.config.poi_index]
     return not poi_fixed
 
 
