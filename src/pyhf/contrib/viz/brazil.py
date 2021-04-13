@@ -5,7 +5,7 @@ from matplotlib.container import Container
 
 class BrazilBandContainer(Container):
     r"""
-    Container for the :obj:`matplotlib.artist` s created in a
+    Container for the :obj:`matplotlib.artist` objects created in a
     :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
 
     The container can be treated like a :obj:`collections.namedtuple`
