@@ -1,10 +1,16 @@
 """Brazil Band Plots."""
 import numpy as np
-from collections import namedtuple
+from typing import NamedTuple
 
-BrazilBandArtists = namedtuple(
-    "BrazilBandArtists", ["cls_obs", "cls_exp", "cls_exp_band", "test_size"]
-)
+
+class BrazilBandArtists(NamedTuple):
+    r"""
+    :obj:`collections.namedtuple` of :obj:`matplotlib.artist` in the Brazil band plot.
+    """
+    cls_obs: "matplotlib.lines.Line2D" = None
+    cls_exp: "List[matplotlib.lines.Line2D]" = [None] * 5
+    cls_exp_band: "List[matplotlib.collections.PolyCollection]" = [None, None]
+    test_size: "matplotlib.lines.Line2D" = None
 
 
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
@@ -40,19 +46,20 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
-        :obj:`namedtuple`: ``BrazilBandArtists`` :obj:`namedtuple` of lists and tuples of :obj:`matplotlib.artist` drawn.
+        :obj:`~pyhf.contrib.viz.brazil.BrazilBandArtists`: A :obj:`collections.namedtuple`
+        of lists and tuples of :obj:`matplotlib.artist` drawn.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
 
     line_color = kwargs.pop("color", "black")
-    cls_obs_line_artist = ax.plot(
+    (cls_obs_line_artist,) = ax.plot(
         mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
     )
 
     cls_exp_line_artists = []
     for idx, color in zip(range(5), 5 * [line_color]):
-        _cls_exp_line = ax.plot(
+        (_cls_exp_line,) = ax.plot(
             mutests,
             cls_exp[idx],
             color=color,
@@ -77,7 +84,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     test_size_color = kwargs.pop("test_size_color", "red")
     test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
-    test_size_line = ax.plot(
+    (test_size_line,) = ax.plot(
         mutests,
         [test_size] * len(mutests),
         color=test_size_color,
