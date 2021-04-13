@@ -10,6 +10,17 @@ log = logging.getLogger(__name__)
 
 
 def all_pois_floating(pdf, fixed_params):
+    """
+    Checks whether all POI(s) are floatig (i.e. not within the fixed set).
+
+    Args:
+        pdf (:obj:`pyhf.Model`): The model
+        fixed_params: array of bools
+
+    Returns:
+        bool
+    """
+
     poi_fixed = fixed_params[pdf.config.poi_index]
     return not poi_fixed
 
