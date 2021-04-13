@@ -377,6 +377,60 @@ def test_parameters_normfactor_bad_attribute(bad_parameter):
         pyhf.Model(spec, poi_name='mypoi')
 
 
+def test_histosys_additional_properties():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'name': 'histosys',
+                                'type': 'histosys',
+                                'data': {
+                                    'hi_data': [1.0],
+                                    'lo_data': [0.5],
+                                    'foo': 2.0,
+                                },
+                            }
+                        ],
+                    }
+                ],
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+
+def test_normsys_additional_properties():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'name': 'normsys',
+                                'type': 'normsys',
+                                'data': {'hi': 1.0, 'lo': 0.5, 'foo': 2.0},
+                            }
+                        ],
+                    }
+                ],
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Model(spec)
+
+
 @pytest.mark.parametrize(
     'patch',
     [
