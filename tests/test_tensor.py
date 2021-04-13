@@ -107,14 +107,18 @@ def test_tensor_to_numpy(backend):
 
 def test_tensor_ravel(backend):
     tb = pyhf.tensorlib
-    assert (tb.tolist(tb.ravel(tb.astensor([[1, 2, 3], [4, 5, 6],])))) == [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-    ]
+    assert (
+        tb.tolist(
+            tb.ravel(
+                tb.astensor(
+                    [
+                        [1, 2, 3],
+                        [4, 5, 6],
+                    ]
+                )
+            )
+        )
+    ) == [1, 2, 3, 4, 5, 6]
 
 
 def test_complex_tensor_ops(backend):
