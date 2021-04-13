@@ -1,5 +1,10 @@
 """Brazil Band Plots."""
 import numpy as np
+from collections import namedtuple
+
+BrazilBandArtists = namedtuple(
+    "BrazilBandArtists", ["cls_obs", "cls_exp", "cls_exp_band", "test_size"]
+)
 
 
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
@@ -35,7 +40,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
-        :obj:`list`: The list of lists and tuples of :obj:`matplotlib.artist` drawn.
+        :obj:`namedtuple`: ``BrazilBandArtists`` :obj:`namedtuple` of lists and tuples of :obj:`matplotlib.artist` drawn.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
@@ -86,12 +91,12 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    return [
+    return BrazilBandArtists(
         cls_obs_line_artist,
         cls_exp_line_artists,
         [one_sigma_band, two_sigma_band],
         test_size_line,
-    ]
+    )
 
 
 def plot_cls_components(
