@@ -35,14 +35,19 @@ class BrazilBandContainer(Container):
         Args:
             brazil_band_artists (:obj:`tuple`): Tuple of
              ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
+
               * ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
                 observed :math:`\mathrm{CL}_{s}` line.
+
               * ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
                 the expected :math:`\mathrm{CL}_{s}` lines.
+
               * ``one_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
                 of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
+
               * ``two_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
                 of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
+
               * ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the test size.
         """
         (
