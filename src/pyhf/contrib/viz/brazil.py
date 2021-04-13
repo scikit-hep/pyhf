@@ -1,21 +1,50 @@
 """Brazil Band Plots."""
 import numpy as np
-from collections import namedtuple
+from matplotlib.container import Container
 
-BrazilBandArtists = namedtuple(
-    "BrazilBandArtists",
-    ["cls_obs", "cls_exp", "cls_exp_band", "test_size"],
-    defaults=[None, [None] * 5, [None, None], None],
-)
-r"""
-:obj:`collections.namedtuple` of :obj:`matplotlib.artist` in the Brazil band plot.
 
-Args:
-    cls_obs (:obj:`matplotlib.lines.Line2D`)
-    cls_exp (`list` of :obj:`matplotlib.lines.Line2D`)
-    cls_exp_band (`list` of :obj:`matplotlib.collections.PolyCollection`)
-    test_size (:obj:`matplotlib.lines.Line2D`)
-"""
+class BrazilBandContainer(Container):
+    r"""
+    Container for the :obj:`matplotlib.artist` s created in a
+    :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+
+    The container can be treated like a :obj:`collections.namedtuple`
+    ``(cls_obs, cls_exp, cls_exp_band, test_size)``.
+
+    Attributes:
+        cls_obs (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
+
+        cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The artists of
+         the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
+
+        cls_exp_band (:obj:`list` of :class:`matplotlib.collections.PolyCollection`):
+         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma`
+         and :math:`\pm2\sigma` bands.
+
+        test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
+         line.
+    """
+
+    def __init__(self, brazil_band_artists, **kwargs):
+        r"""
+        Args:
+            brazil_band_artists (:obj:`tuple`): Tuple of
+             ``(cls_obs, cls_exp, cls_exp_band, test_size)``.
+             ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
+             observed :math:`\mathrm{CL}_{s}` line,
+             ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
+             the expected :math:`\mathrm{CL}_{s}` lines,
+             ``cls_exp_band`` is a :obj:`list` of :class:`matplotlib.collections.PolyCollection`
+             of the :math:`\pm1,\pm2\sigma` bands,
+             and ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the test size.
+        """
+        cls_obs, cls_exp, cls_exp_band, test_size = brazil_band_artists
+        self.cls_obs = cls_obs
+        self.cls_exp = cls_exp
+        self.cls_exp_band = cls_exp_band
+        self.test_size = test_size
+        super().__init__(brazil_band_artists, **kwargs)
 
 
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
@@ -51,8 +80,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
-        :obj:`~pyhf.contrib.viz.brazil.BrazilBandArtists`: A :obj:`collections.namedtuple`
-        of lists and tuples of :obj:`matplotlib.artist` drawn.
+        :obj:`~pyhf.contrib.viz.brazil.BrazilBandContainer`: A container of :obj:`matplotlib.artist` drawn.
     """
     cls_obs = np.array([test[0] for test in tests]).flatten()
     cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
@@ -103,11 +131,13 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    return BrazilBandArtists(
-        cls_obs_line_artist,
-        cls_exp_line_artists,
-        [one_sigma_band, two_sigma_band],
-        test_size_line,
+    return BrazilBandContainer(
+        (
+            cls_obs_line_artist,
+            cls_exp_line_artists,
+            [one_sigma_band, two_sigma_band],
+            test_size_line,
+        ),
     )
 
 
