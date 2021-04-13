@@ -10,18 +10,39 @@ import pyhf.contrib.viz.brazil as brazil
 # pytest --mpl-generate-path=tests/contrib/baseline tests/contrib/test_viz.py
 
 
+def test_brazil_band_container(datadir):
+    data = json.load(open(datadir.join("hypotest_results.json")))
+
+    fig = Figure()
+    ax = fig.subplots()
+    barzil_band_container = brazil.plot_results(
+        ax, data["testmus"], data["results"], test_size=0.05
+    )
+
+    assert len(barzil_band_container) == 5
+    assert barzil_band_container == (
+        barzil_band_container.cls_obs,
+        barzil_band_container.cls_exp,
+        barzil_band_container.one_sigma_band,
+        barzil_band_container.two_sigma_band,
+        barzil_band_container.test_size,
+    )
+
+    assert barzil_band_container.cls_obs is not None
+    assert len(barzil_band_container.cls_exp) == 5
+    assert barzil_band_container.one_sigma_band is not None
+    assert barzil_band_container.two_sigma_band is not None
+    assert barzil_band_container.test_size is not None
+
+
 @pytest.mark.mpl_image_compare
 def test_plot_results(datadir):
     data = json.load(open(datadir.join("hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    artists = brazil.plot_results(ax, data['testmus'], data['results'], test_size=0.05)
-    assert len(artists) == 4
-    assert artists.cls_obs is not None
-    assert len(artists.cls_exp) == 5
-    assert len(artists.cls_exp_band) == 2
-    assert artists.test_size is not None
+    brazil.plot_results(ax, data["testmus"], data["results"], test_size=0.05)
+
     return fig
 
 
@@ -34,7 +55,7 @@ def test_plot_cls_components(datadir):
     brazil_band_artists, clsb_artists, clb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05
     )
-    assert len(brazil_band_artists) == 4
+    assert len(brazil_band_artists) == 5
     assert len(clsb_artists) == 1
     assert len(clb_artists) == 1
     return fig
@@ -49,7 +70,7 @@ def test_plot_cls_components_no_clb(datadir):
     brazil_band_artists, clsb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clb=True
     )
-    assert len(brazil_band_artists) == 4
+    assert len(brazil_band_artists) == 5
     assert len(clsb_artists) == 1
     return fig
 
@@ -63,7 +84,7 @@ def test_plot_cls_components_no_clsb(datadir):
     brazil_band_artists, clb_artists = brazil.plot_cls_components(
         ax, data["testmus"], data["results"], test_size=0.05, no_clsb=True
     )
-    assert len(brazil_band_artists) == 4
+    assert len(brazil_band_artists) == 5
     assert len(clb_artists) == 1
     return fig
 
