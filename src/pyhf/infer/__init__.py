@@ -133,7 +133,7 @@ def hypotest(
     fixed_params = fixed_params or pdf.config.suggested_fixed()
 
     if pdf.config.poi_index is None:
-        raise UnspecifiedPOI(
+        raise exceptions.UnspecifiedPOI(
             'No POI is defined. A POI is required to run a hypothesis test.'
         )
 
