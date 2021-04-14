@@ -45,12 +45,12 @@ def set_backend(backend, custom_optimizer=None, precision=None):
         >>> pyhf.tensorlib.name
         'tensorflow'
         >>> pyhf.tensorlib.precision
-        '32b'
-        >>> pyhf.set_backend(b"pytorch", precision="64b")
+        '64b'
+        >>> pyhf.set_backend(b"pytorch", precision="32b")
         >>> pyhf.tensorlib.name
         'pytorch'
         >>> pyhf.tensorlib.precision
-        '64b'
+        '32b'
         >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
         >>> pyhf.tensorlib.name
         'numpy'

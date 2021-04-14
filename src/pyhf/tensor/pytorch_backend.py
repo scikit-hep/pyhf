@@ -15,7 +15,7 @@ class pytorch_backend:
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self.precision = kwargs.get('precision', '32b')
+        self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
             'float': torch.float64 if self.precision == '64b' else torch.float32,
             'int': torch.int64 if self.precision == '64b' else torch.int32,
@@ -525,7 +525,7 @@ class pytorch_backend:
             >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
             >>> numpy_ndarray
             array([[1., 2., 3.],
-                   [4., 5., 6.]], dtype=float32)
+                   [4., 5., 6.]])
             >>> type(numpy_ndarray)
             <class 'numpy.ndarray'>
 
