@@ -4,6 +4,7 @@ from . import utils
 from .. import get_backend
 from .. import exceptions
 
+
 def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
     if pdf.config.poi_index is None:
         raise exceptions.UnspecifiedPOI(
