@@ -139,7 +139,7 @@ def hypotest(
 
     if not utils.all_pois_floating(pdf, fixed_params):
         raise exceptions.InvalidModel(
-            f'POI at index [{pdf.config.poi_index}] forced to be fixed, cannot run inference'
+            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes inference impossible. Please unfix the POI to continue.'
         )
 
     calc = utils.create_calculator(
