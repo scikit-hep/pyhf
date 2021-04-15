@@ -9,6 +9,24 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def all_pois_floating(pdf, fixed_params):
+    r"""
+    Check whether all POI(s) are floating (i.e. not within the fixed set).
+
+    Args:
+        pdf (~pyhf.pdf.Model): The statistical model adhering to the schema
+         ``model.json``.
+        fixed_params (:obj:`list` or `tensor` of :obj:`bool`): Array of
+         :obj:`bool` indicating if model parameters are fixed.
+
+    Returns:
+        :obj:`bool`: The result whether all POIs are floating.
+    """
+
+    poi_fixed = fixed_params[pdf.config.poi_index]
+    return not poi_fixed
+
+
 def create_calculator(calctype, *args, **kwargs):
     """
     Creates a calculator object of the specified `calctype`.

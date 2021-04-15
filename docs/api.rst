@@ -155,6 +155,7 @@ Fits and Tests
    mle.fixed_poi_fit
    hypotest
    intervals.upperlimit
+   utils.all_pois_floating
 
 Exceptions
 ----------

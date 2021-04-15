@@ -2,6 +2,19 @@
 
 from . import utils
 from .. import get_backend
+from .. import exceptions
+
+
+def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
+    if pdf.config.poi_index is None:
+        raise exceptions.UnspecifiedPOI(
+            'No POI is defined. A POI is required to run a hypothesis test.'
+        )
+
+    if not utils.all_pois_floating(pdf, fixed_params):
+        raise exceptions.InvalidModel(
+            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes inference impossible. Please unfix the POI to continue.'
+        )
 
 
 def hypotest(
@@ -130,6 +143,8 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params)
 
     calc = utils.create_calculator(
         calctype,
