@@ -38,9 +38,12 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
-        par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-        fixed_params (:obj:`tensor`): Parameters to be held constant in the fit.
+        init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
+        par_bounds (:obj:`tensor`): The extrema of values the model parameters
+            are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
 
     Returns:
         Tensor: The Asimov dataset.
@@ -192,10 +195,12 @@ class AsymptoticCalculator:
         Args:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
-            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
-              during minimization.
+            init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
+            par_bounds (:obj:`tensor`): The extrema of values the model parameters
+                are allowed to reach in the fit.
+                The shape should be ``(n, 2)`` for ``n`` model parameters.
+            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+                value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
 
@@ -618,10 +623,12 @@ class ToyCalculator:
         Args:
             data (:obj:`tensor`): The observed data.
             pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            init_pars (:obj:`tensor`): The initial parameter values to be used for fitting.
-            par_bounds (:obj:`tensor`): The parameter value bounds to be used for fitting.
-            fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value
-              during minimization.
+            init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
+            par_bounds (:obj:`tensor`): The extrema of values the model parameters
+                are allowed to reach in the fit.
+                The shape should be ``(n, 2)`` for ``n`` model parameters.
+            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+                value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
               ``'qtilde'`` (default) performs the calculation using the alternative test statistic,

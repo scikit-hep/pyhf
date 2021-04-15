@@ -35,18 +35,19 @@ Typically, ``prefix = 'FitConfig'`` and ``measurementName = 'NormalMeasurement'`
 .. code:: python
 
   from configManager import configMgr
+
   # ...
-  configMgr.analysisName = '3b_tag21.2.27-1_RW_ExpSyst_36100_multibin_bkg'
-  configMgr.histCacheFile = f'cache/{configMgr.analysisName:s}.root'
+  configMgr.analysisName = "3b_tag21.2.27-1_RW_ExpSyst_36100_multibin_bkg"
+  configMgr.histCacheFile = f"cache/{configMgr.analysisName:s}.root"
   # ...
   fitConfig = configMgr.addFitConfig("Excl")
   # ...
-  channel = fitConfig.addChannel("cuts", ['SR_0L'], 1, 0.5, 1.5)
+  channel = fitConfig.addChannel("cuts", ["SR_0L"], 1, 0.5, 1.5)
   # ...
-  meas1=fitConfig.addMeasurement(name="DefaultMeasurement",lumi=1.0,lumiErr=0.029)
+  meas1 = fitConfig.addMeasurement(name="DefaultMeasurement", lumi=1.0, lumiErr=0.029)
   meas1.addPOI("mu_SIG1")
   # ...
-  meas2=fitConfig.addMeasurement(name="DefaultMeasurement",lumi=1.0,lumiErr=0.029)
+  meas2 = fitConfig.addMeasurement(name="DefaultMeasurement", lumi=1.0, lumiErr=0.029)
   meas2.addPOI("mu_SIG2")
 
 Then, you expect the following files to be made:

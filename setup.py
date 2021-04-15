@@ -3,16 +3,16 @@ from setuptools import setup
 extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
-        'tensorflow~=2.2.0',  # TensorFlow minor releases are as volatile as major
-        'tensorflow-probability~=0.10.0',
+        'tensorflow~=2.2.1',  # TensorFlow minor releases are as volatile as major
+        'tensorflow-probability~=0.10.1',
     ],
-    'torch': ['torch~=1.2'],
-    'jax': ['jax~=0.2.4', 'jaxlib~=0.1.56'],
+    'torch': ['torch~=1.8'],
+    'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58'],
     'xmlio': [
-        'uproot3~=3.14',
+        'uproot3>=3.14.1',
         'uproot~=4.0',
     ],  # uproot3 required until writing to ROOT supported in uproot4
-    'minuit': ['iminuit~=2.1,<2.4'],  # iminuit v2.4.0 behavior needs to be understood
+    'minuit': ['iminuit>=2.4'],
 }
 extras_require['backends'] = sorted(
     set(

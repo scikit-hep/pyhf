@@ -222,11 +222,29 @@ class numpy_backend:
     def abs(self, tensor):
         return np.abs(tensor)
 
-    def ones(self, shape):
-        return np.ones(shape)
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
 
-    def zeros(self, shape):
-        return np.zeros(shape)
+        return np.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
+
+        return np.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return np.power(tensor_in_1, tensor_in_2)

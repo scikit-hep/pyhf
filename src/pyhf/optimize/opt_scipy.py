@@ -9,7 +9,7 @@ class scipy_optimizer(OptimizerMixin):
     Optimizer that uses :func:`scipy.optimize.minimize`.
     """
 
-    __slots__ = ['name', 'tolerance']
+    __slots__ = ['name', 'tolerance', 'solver_options']
 
     def __init__(self, *args, **kwargs):
         """
@@ -18,10 +18,16 @@ class scipy_optimizer(OptimizerMixin):
         See :class:`pyhf.optimize.mixins.OptimizerMixin` for other configuration options.
 
         Args:
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
+            tolerance (:obj:`float`): Tolerance for termination.
+              See specific optimizer for detailed meaning.
+              Default is ``None``.
+            solver_options (:obj:`dict`): additional solver options. See
+                :func:`scipy.optimize.show_options` for additional options of
+                optimization solvers.
         """
         self.name = 'scipy'
         self.tolerance = kwargs.pop('tolerance', None)
+        self.solver_options = kwargs.pop('solver_options', {})
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -43,10 +49,16 @@ class scipy_optimizer(OptimizerMixin):
         Same signature as :func:`scipy.optimize.minimize`.
 
         Minimizer Options:
-            maxiter (:obj:`int`): maximum number of iterations. Default is 100000.
-            verbose (:obj:`bool`): print verbose output during minimization. Default is off.
-            method (:obj:`str`): minimization routine. Default is 'SLSQP'.
-            tolerance (:obj:`float`): tolerance for termination. See specific optimizer for detailed meaning. Default is None.
+          * maxiter (:obj:`int`): Maximum number of iterations. Default is ``100000``.
+          * verbose (:obj:`bool`): Print verbose output during minimization.
+            Default is ``False``.
+          * method (:obj:`str`): Minimization routine. Default is ``'SLSQP'``.
+          * tolerance (:obj:`float`): Tolerance for termination. See specific optimizer
+            for detailed meaning.
+            Default is ``None``.
+          * solver_options (:obj:`dict`): additional solver options. See
+            :func:`scipy.optimize.show_options` for additional options of
+            optimization solvers.
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
@@ -55,6 +67,7 @@ class scipy_optimizer(OptimizerMixin):
         verbose = options.pop('verbose', self.verbose)
         method = options.pop('method', 'SLSQP')
         tolerance = options.pop('tolerance', self.tolerance)
+        solver_options = options.pop('solver_options', self.solver_options)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options.keys())}."
@@ -79,5 +92,5 @@ class scipy_optimizer(OptimizerMixin):
             bounds=bounds,
             constraints=constraints,
             tol=tolerance,
-            options=dict(maxiter=maxiter, disp=bool(verbose)),
+            options=dict(maxiter=maxiter, disp=bool(verbose), **solver_options),
         )

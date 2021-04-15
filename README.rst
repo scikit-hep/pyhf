@@ -36,27 +36,33 @@ Hello World
 
 This is how you use the ``pyhf`` Python API to build a statistical model and run basic inference:
 
-.. code:: python
+.. code:: pycon
 
    >>> import pyhf
-   >>> model = pyhf.simplemodels.hepdata_like(signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0])
+   >>> model = pyhf.simplemodels.hepdata_like(
+   ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+   ... )
    >>> data = [51, 48] + model.config.auxdata
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
+   ...     test_mu, data, model, test_stat="qtilde", return_expected=True
+   ... )
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.05251497423736956, Expected: 0.06445320535890459
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
-.. code:: python
+.. code:: pycon
 
    >>> import pyhf
    >>> import requests
-   >>> wspace = pyhf.Workspace(requests.get('https://git.io/JJYDE').json())
+   >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
    >>> test_mu = 1.0
-   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(test_mu, data, model, test_stat="qtilde", return_expected=True)
+   >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
+   ...     test_mu, data, model, test_stat="qtilde", return_expected=True
+   ... )
    >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
    Observed: 0.3599840922126626, Expected: 0.3599840922126626
 
@@ -284,8 +290,8 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.6.0}",
-     version = {0.6.0},
+     title = "{pyhf: v0.6.1}",
+     version = {0.6.1},
      doi = {10.5281/zenodo.1169739},
      url = {https://github.com/scikit-hep/pyhf},
    }
@@ -350,7 +356,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.0-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.1-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf

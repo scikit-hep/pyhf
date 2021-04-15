@@ -96,9 +96,12 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
     Args:
         data (:obj:`tensor`): The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
-        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
+        par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
+            are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
@@ -167,9 +170,12 @@ def fixed_poi_fit(
     Args:
         data: The data
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema model.json
-        init_pars (:obj:`list`): Values to initialize the model parameters at for the fit
-        par_bounds (:obj:`list` of :obj:`list`\s or :obj:`tuple`\s): The extrema of values the model parameters are allowed to reach in the fit
-        fixed_params (:obj:`list`): Parameters to be held constant in the fit.
+        init_pars (:obj:`list` of :obj:`float`): The starting values of the model parameters for minimization.
+        par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
+            are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
+        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:

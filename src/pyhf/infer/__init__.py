@@ -2,6 +2,19 @@
 
 from . import utils
 from .. import get_backend
+from .. import exceptions
+
+
+def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
+    if pdf.config.poi_index is None:
+        raise exceptions.UnspecifiedPOI(
+            'No POI is defined. A POI is required to run a hypothesis test.'
+        )
+
+    if not utils.all_pois_floating(pdf, fixed_params):
+        raise exceptions.InvalidModel(
+            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes inference impossible. Please unfix the POI to continue.'
+        )
 
 
 def hypotest(
@@ -43,9 +56,12 @@ def hypotest(
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
         data (Number or Tensor): The data considered
         pdf (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``
-        init_pars (:obj:`tensor`): The initial parameter values to be used for minimization
-        par_bounds (:obj:`tensor`): The parameter value bounds to be used for minimization
-        fixed_params (:obj:`tensor`): Whether to fix the parameter to the init_pars value during minimization
+        init_pars (:obj:`tensor` of :obj:`float`): The starting values of the model parameters for minimization.
+        par_bounds (:obj:`tensor`): The extrema of values the model parameters
+            are allowed to reach in the fit.
+            The shape should be ``(n, 2)`` for ``n`` model parameters.
+        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
+            value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
@@ -127,6 +143,8 @@ def hypotest(
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
+
+    _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params)
 
     calc = utils.create_calculator(
         calctype,

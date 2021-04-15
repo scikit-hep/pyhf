@@ -15,7 +15,7 @@ class pytorch_backend:
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self.precision = kwargs.get('precision', '32b')
+        self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
             'float': torch.float64 if self.precision == '64b' else torch.float32,
             'int': torch.int64 if self.precision == '64b' else torch.int32,
@@ -143,10 +143,31 @@ class pytorch_backend:
         Returns:
             PyTorch tensor: The tensor with repeated axes
         """
-        return tensor_in.repeat(repeats)
+        return tensor_in.tile(repeats)
 
     def outer(self, tensor_in_1, tensor_in_2):
-        return torch.ger(tensor_in_1, tensor_in_2)
+        """
+        Outer product of the input tensors.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([1.0, 2.0, 3.0])
+            >>> b = pyhf.tensorlib.astensor([1.0, 2.0, 3.0, 4.0])
+            >>> pyhf.tensorlib.outer(a, b)
+            tensor([[ 1.,  2.,  3.,  4.],
+                    [ 2.,  4.,  6.,  8.],
+                    [ 3.,  6.,  9., 12.]])
+
+        Args:
+            tensor_in_1 (:obj:`tensor`): 1-D input tensor.
+            tensor_in_2 (:obj:`tensor`): 1-D input tensor.
+
+        Returns:
+            PyTorch tensor: The outer product.
+        """
+        return torch.outer(tensor_in_1, tensor_in_2)
 
     def astensor(self, tensor_in, dtype='float'):
         """
@@ -209,7 +230,7 @@ class pytorch_backend:
         Returns:
             `torch.Tensor`: A flattened array.
         """
-        return tensor.view(-1)
+        return torch.ravel(tensor)
 
     def sum(self, tensor_in, axis=None):
         return (
@@ -224,11 +245,29 @@ class pytorch_backend:
     def abs(self, tensor):
         return torch.abs(tensor)
 
-    def ones(self, shape):
-        return torch.ones(shape, dtype=self.dtypemap['float'])
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
 
-    def zeros(self, shape):
-        return torch.zeros(shape, dtype=self.dtypemap['float'])
+        return torch.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
+
+        return torch.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
@@ -319,7 +358,8 @@ class pytorch_backend:
         return torch.einsum(subscripts, operands)
 
     def poisson_logpdf(self, n, lam):
-        return torch.distributions.Poisson(lam).log_prob(n)
+        # validate_args=True disallows continuous approximation
+        return torch.distributions.Poisson(lam, validate_args=False).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
@@ -347,9 +387,16 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: Value of the continuous approximation to Poisson(n|lam)
         """
-        return torch.exp(torch.distributions.Poisson(lam).log_prob(n))
+        # validate_args=True disallows continuous approximation
+        return torch.exp(
+            torch.distributions.Poisson(lam, validate_args=False).log_prob(n)
+        )
 
     def normal_logpdf(self, x, mu, sigma):
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return normal.log_prob(x)
 
@@ -379,6 +426,10 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: Value of Normal(x|mu, sigma)
         """
+        x = self.astensor(x)
+        mu = self.astensor(mu)
+        sigma = self.astensor(sigma)
+
         normal = torch.distributions.Normal(mu, sigma)
         return self.exp(normal.log_prob(x))
 
@@ -433,7 +484,8 @@ class pytorch_backend:
             PyTorch Poisson distribution: The Poisson distribution class
 
         """
-        return torch.distributions.Poisson(rate)
+        # validate_args=True disallows continuous approximation
+        return torch.distributions.Poisson(rate, validate_args=False)
 
     def normal_dist(self, mu, sigma):
         r"""
@@ -473,7 +525,7 @@ class pytorch_backend:
             >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
             >>> numpy_ndarray
             array([[1., 2., 3.],
-                   [4., 5., 6.]], dtype=float32)
+                   [4., 5., 6.]])
             >>> type(numpy_ndarray)
             <class 'numpy.ndarray'>
 
