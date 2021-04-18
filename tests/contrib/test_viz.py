@@ -33,6 +33,8 @@ def test_brazil_band_container(datadir):
     assert brazil_band_container.one_sigma_band is not None
     assert brazil_band_container.two_sigma_band is not None
     assert brazil_band_container.test_size is not None
+    assert brazil_band_container.axes is not None
+    assert brazil_band_container.axes == brazil_band_container.cls_obs.axes
 
 
 @pytest.mark.mpl_image_compare
