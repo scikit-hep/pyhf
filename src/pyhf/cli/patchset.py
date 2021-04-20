@@ -123,3 +123,16 @@ def verify(background_only, patchset):
     patchset.verify(ws)
 
     click.echo("All good.")
+
+
+@cli.command()
+@click.argument('patchset', default='-')
+def inspect(patchset):
+    with click.open_file(patchset, 'r') as fstream:
+        patchset_spec = json.load(fstream)
+
+    patchset = PatchSet(patchset_spec)
+    click.secho(f'\n    {len(patchset.patches)} patches found in Patchset')
+    click.secho('---------------------------------\n')
+    for p in patchset.patches:
+        print(p.name)
