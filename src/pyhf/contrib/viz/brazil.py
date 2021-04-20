@@ -5,8 +5,8 @@ from matplotlib.container import Container
 
 class BrazilBandContainer(Container):
     r"""
-    Container for the :obj:`matplotlib.artist` objects created in a
-    :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+    Container for the :obj:`matplotlib.artist` objects for the Brazil Band
+    created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
 
     The container can be treated like a :obj:`collections.namedtuple`
     ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
@@ -65,6 +65,159 @@ class BrazilBandContainer(Container):
         super().__init__(brazil_band_artists, **kwargs)
 
 
+class ClsComponentsContainer(Container):
+    r"""
+    Container for the :obj:`matplotlib.artist` objects for the
+    :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` lines
+    optionally created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+
+    The container can be treated like a :obj:`collections.namedtuple`
+    ``(clsb, clb)``.
+
+    Attributes:
+        clsb (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{s+b}` line.
+
+        clb (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{b}` line.
+    """
+
+    def __init__(self, cls_components_artists, **kwargs):
+        r"""
+        Args:
+            cls_components_artists (:obj:`tuple`): Tuple of ``(clsb, clb)``.
+
+              * ``clsb`` contains the :class:`matplotlib.lines.Line2D` of the
+                observed :math:`\mathrm{CL}_{s+b}` line.
+
+              * ``clb`` contains the :class:`matplotlib.lines.Line2D` of the
+                observed :math:`\mathrm{CL}_{b}` line.
+        """
+        clsb, clb = cls_components_artists
+        self.clsb = clsb
+        self.clb = clb
+        super().__init__(cls_components_artists, **kwargs)
+
+
+class ResultsPlotContainer(Container):
+    r"""
+    Container for the :obj:`matplotlib.artist` objects created in a
+    :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+
+    The container can be treated like a :obj:`collections.namedtuple`
+    ``(brazil_band, cls_components)``.
+
+    Attributes:
+        brazil_band (:class:`BrazilBandContainer`): The container for the Brazil
+         band artists.
+
+        cls_components (:class:`ClsComponentsContainer`): The container for the
+         artists for the components of the :math:`\mathrm{CL}_{s}` ratio.
+    """
+
+    def __init__(self, results_plot_artists, **kwargs):
+        r"""
+        Args:
+            results_plot_artists (:obj:`tuple`): Tuple of
+             ``(brazil_band, cls_components)``.
+
+              * ``brazil_band`` contains the :class:`BrazilBandContainer` of the
+                Brazil band artists.
+
+              * ``cls_components`` contains the :class:`ClsComponentsContainer` of the
+                :math:`\mathrm{CL}_{s}` ratio component artists.
+        """
+        brazil_band, cls_components = results_plot_artists
+        self.brazil_band = brazil_band
+        self.cls_components = cls_components
+        super().__init__(results_plot_artists, **kwargs)
+
+
+def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
+    line_color = kwargs.pop("color", "black")
+    (cls_obs_line,) = ax.plot(
+        mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
+    )
+
+    cls_exp_lines = []
+    for idx, color in zip(range(5), 5 * [line_color]):
+        (_cls_exp_line,) = ax.plot(
+            mutests,
+            cls_exp[idx],
+            color=color,
+            linestyle="dotted" if idx != 2 else "dashed",
+            label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
+        )
+        cls_exp_lines.append(_cls_exp_line)
+    one_sigma_band = ax.fill_between(
+        mutests,
+        cls_exp[0],
+        cls_exp[-1],
+        facecolor="yellow",
+        label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+    )
+    two_sigma_band = ax.fill_between(
+        mutests,
+        cls_exp[1],
+        cls_exp[-2],
+        facecolor="green",
+        label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+    )
+
+    test_size_color = kwargs.pop("test_size_color", "red")
+    test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
+    (test_size_line,) = ax.plot(
+        mutests,
+        [test_size] * len(mutests),
+        color=test_size_color,
+        linestyle=test_size_linestyle,
+        label=rf"$\alpha={test_size}$",
+    )
+
+    return BrazilBandContainer(
+        (
+            cls_obs_line,
+            cls_exp_lines,
+            one_sigma_band,
+            two_sigma_band,
+            test_size_line,
+        )
+    )
+
+
+def _plot_cls_components(mutests, tail_probs, ax, **kwargs):
+    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
+    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
+
+    linewidth = kwargs.pop("linewidth", 2)
+    no_clsb = kwargs.pop("no_clsb", False)
+    no_clb = kwargs.pop("no_clb", False)
+
+    CLsb_obs_line_artist = None
+    if not no_clsb:
+        CLsb_color = kwargs.pop("clsb_color", "red")
+        CLsb_obs_line_artist = ax.plot(
+            mutests,
+            CLsb_obs,
+            color=CLsb_color,
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{s+b}$",
+        )
+
+    CLb_obs_line_artist = None
+    if not no_clb:
+        CLb_color = kwargs.pop("clb_color", "blue")
+        CLb_obs_line_artist = ax.plot(
+            mutests,
+            CLb_obs,
+            color=CLb_color,
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{b}$",
+        )
+
+    return ClsComponentsContainer((CLsb_obs_line_artist, CLb_obs_line_artist))
+
+
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     r"""
     Plot a series of hypothesis tests for various POI values.
@@ -98,7 +251,8 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
-        :obj:`~pyhf.contrib.viz.brazil.BrazilBandContainer`: A container of :obj:`matplotlib.artist` drawn.
+        :obj:`~pyhf.contrib.viz.brazil.ResultsPlotContainer`: A container of the
+        :obj:`matplotlib.artist` objects drawn.
     """
 
     plot_components = kwargs.pop("components", False)
@@ -122,55 +276,25 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         for sigma_idx in range(5)
     ]
 
+    brazil_band_container = None
     if not no_cls:
-        line_color = kwargs.pop("color", "black")
-        (cls_obs_line,) = ax.plot(
-            mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
+        brazil_band_container = plot_brazil_band(
+            mutests, cls_obs, cls_exp, test_size, ax, **kwargs
         )
-
-        cls_exp_lines = []
-        for idx, color in zip(range(5), 5 * [line_color]):
-            (_cls_exp_line,) = ax.plot(
-                mutests,
-                cls_exp[idx],
-                color=color,
-                linestyle="dotted" if idx != 2 else "dashed",
-                label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
-            )
-            cls_exp_lines.append(_cls_exp_line)
-        one_sigma_band = ax.fill_between(
-            mutests,
-            cls_exp[0],
-            cls_exp[-1],
-            facecolor="yellow",
-            label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
-        )
-        two_sigma_band = ax.fill_between(
-            mutests,
-            cls_exp[1],
-            cls_exp[-2],
-            facecolor="green",
-            label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
-        )
-
-    test_size_color = kwargs.pop("test_size_color", "red")
-    test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
-    (test_size_line,) = ax.plot(
-        mutests,
-        [test_size] * len(mutests),
-        color=test_size_color,
-        linestyle=test_size_linestyle,
-        label=rf"$\alpha={test_size}$",
-    )
-    ax.set_ylim(0, 1)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
     y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
+    # TODO: Detect if ax is logy or not
+    ax.set_ylim(0, 1)
+
+    cls_components_container = None
     if plot_components:
-        _plot_cls_components(ax, mutests, tail_probs, **kwargs)
+        cls_components_container = _plot_cls_components(
+            mutests, tail_probs, ax, **kwargs
+        )
 
     # Order legend: ensure CLs expected band and test size are last in legend
     handles, labels = ax.get_legend_handles_labels()
@@ -184,46 +308,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     ax.legend(handles, labels, loc="best")
 
-    return BrazilBandContainer(
-        (
-            cls_obs_line,
-            cls_exp_lines,
-            one_sigma_band,
-            two_sigma_band,
-            test_size_line,
-        )
-    )
-
-
-def _plot_cls_components(ax, mutests, tail_probs, **kwargs):
-    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
-    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
-
-    axis_artists = []
-
-    linewidth = kwargs.pop("linewidth", 2)
-    no_clsb = kwargs.pop("no_clsb", False)
-    no_clb = kwargs.pop("no_clb", False)
-    if not no_clsb:
-        CLsb_color = kwargs.pop("clsb_color", "red")
-        CLsb_obs_line_artist = ax.plot(
-            mutests,
-            CLsb_obs,
-            color=CLsb_color,
-            linewidth=linewidth,
-            label=r"$\mathrm{CL}_{s+b}$",
-        )
-        axis_artists.append(CLsb_obs_line_artist)
-    if not no_clb:
-        CLb_color = kwargs.pop("clb_color", "blue")
-        CLb_obs_line_artist = ax.plot(
-            mutests,
-            CLb_obs,
-            color=CLb_color,
-            linewidth=linewidth,
-            label=r"$\mathrm{CL}_{b}$",
-        )
-        axis_artists.append(CLb_obs_line_artist)
+    return ResultsPlotContainer((brazil_band_container, cls_components_container))
 
 
 def plot_cls_components(
