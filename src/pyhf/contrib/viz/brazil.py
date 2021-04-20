@@ -28,9 +28,6 @@ class BrazilBandContainer(Container):
 
         test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
          line.
-
-        axes (:class:`matplotlib.axes.Axes`): The :class:`matplotlib.axes.Axes`
-         instance the container artists reside in.
     """
 
     def __init__(self, brazil_band_artists, **kwargs):
@@ -65,7 +62,6 @@ class BrazilBandContainer(Container):
         self.one_sigma_band = one_sigma_band
         self.two_sigma_band = two_sigma_band
         self.test_size = test_size
-        self.axes = cls_obs.axes
         super().__init__(brazil_band_artists, **kwargs)
 
 
