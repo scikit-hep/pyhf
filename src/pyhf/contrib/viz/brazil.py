@@ -104,38 +104,58 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     Returns:
         :obj:`~pyhf.contrib.viz.brazil.BrazilBandContainer`: A container of :obj:`matplotlib.artist` drawn.
     """
-    cls_obs = np.array([test[0] for test in tests]).flatten()
-    cls_exp = [np.array([test[1][i] for test in tests]).flatten() for i in range(5)]
 
-    line_color = kwargs.pop("color", "black")
-    (cls_obs_line,) = ax.plot(
-        mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
-    )
+    plot_components = kwargs.pop("components", False)
+    no_cls = kwargs.pop("no_cls", False)
 
-    cls_exp_lines = []
-    for idx, color in zip(range(5), 5 * [line_color]):
-        (_cls_exp_line,) = ax.plot(
-            mutests,
-            cls_exp[idx],
-            color=color,
-            linestyle="dotted" if idx != 2 else "dashed",
-            label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
+    if plot_components and len(tests[0]) != 3:
+        raise ValueError(
+            f"The components of 'tests' should have len of 3 to visualize the CLs components but have len {len(tests[0])}."
+            + "\n'tests' should have format of: [CLs_obs, [CLsb, CLb], [CLs_exp band]]"
         )
-        cls_exp_lines.append(_cls_exp_line)
-    one_sigma_band = ax.fill_between(
-        mutests,
-        cls_exp[0],
-        cls_exp[-1],
-        facecolor="yellow",
-        label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
-    )
-    two_sigma_band = ax.fill_between(
-        mutests,
-        cls_exp[1],
-        cls_exp[-2],
-        facecolor="green",
-        label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
-    )
+
+    cls_obs = np.array([test[0] for test in tests]).flatten()
+    if len(tests[0]) == 3:
+        # split into components
+        tail_probs = np.array([test[1] for test in tests])
+        CLs_exp_set = np.array([test[2] for test in tests])
+    else:
+        CLs_exp_set = np.array([test[1] for test in tests])
+    cls_exp = [
+        np.array([exp_set[sigma_idx] for exp_set in CLs_exp_set]).flatten()
+        for sigma_idx in range(5)
+    ]
+
+    if not no_cls:
+        line_color = kwargs.pop("color", "black")
+        (cls_obs_line,) = ax.plot(
+            mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
+        )
+
+        cls_exp_lines = []
+        for idx, color in zip(range(5), 5 * [line_color]):
+            (_cls_exp_line,) = ax.plot(
+                mutests,
+                cls_exp[idx],
+                color=color,
+                linestyle="dotted" if idx != 2 else "dashed",
+                label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
+            )
+            cls_exp_lines.append(_cls_exp_line)
+        one_sigma_band = ax.fill_between(
+            mutests,
+            cls_exp[0],
+            cls_exp[-1],
+            facecolor="yellow",
+            label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+        )
+        two_sigma_band = ax.fill_between(
+            mutests,
+            cls_exp[1],
+            cls_exp[-2],
+            facecolor="green",
+            label=r"$\pm1\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
+        )
 
     test_size_color = kwargs.pop("test_size_color", "red")
     test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
@@ -153,6 +173,21 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
+    if plot_components:
+        _plot_cls_components(ax, mutests, tail_probs, **kwargs)
+
+    # Order legend: ensure CLs expected band and test size are last in legend
+    handles, labels = ax.get_legend_handles_labels()
+    if not no_cls:
+        for label_part in ["exp", "pm1", "pm2", "alpha"]:
+            label_idx = [
+                idx for idx, label in enumerate(labels) if label_part in label
+            ][0]
+            handles.append(handles.pop(label_idx))
+            labels.append(labels.pop(label_idx))
+
+    ax.legend(handles, labels, loc="best")
+
     return BrazilBandContainer(
         (
             cls_obs_line,
@@ -162,6 +197,37 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
             test_size_line,
         )
     )
+
+
+def _plot_cls_components(ax, mutests, tail_probs, **kwargs):
+    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
+    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
+
+    axis_artists = []
+
+    linewidth = kwargs.pop("linewidth", 2)
+    no_clsb = kwargs.pop("no_clsb", False)
+    no_clb = kwargs.pop("no_clb", False)
+    if not no_clsb:
+        CLsb_color = kwargs.pop("clsb_color", "red")
+        CLsb_obs_line_artist = ax.plot(
+            mutests,
+            CLsb_obs,
+            color=CLsb_color,
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{s+b}$",
+        )
+        axis_artists.append(CLsb_obs_line_artist)
+    if not no_clb:
+        CLb_color = kwargs.pop("clb_color", "blue")
+        CLb_obs_line_artist = ax.plot(
+            mutests,
+            CLb_obs,
+            color=CLb_color,
+            linewidth=linewidth,
+            label=r"$\mathrm{CL}_{b}$",
+        )
+        axis_artists.append(CLb_obs_line_artist)
 
 
 def plot_cls_components(
