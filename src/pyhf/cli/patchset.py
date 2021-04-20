@@ -135,4 +135,4 @@ def inspect(patchset):
     click.secho(f'\n    {len(patchset.patches)} patches found in Patchset')
     click.secho('---------------------------------\n')
     for p in patchset.patches:
-        print(p.name)
+        click.echo(p.name)
