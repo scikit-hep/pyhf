@@ -15,9 +15,10 @@ def test_brazil_band_container(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_container = brazil.plot_results(
+    results_plot_container = brazil.plot_results(
         ax, data["testmus"], data["results"], test_size=0.05
     )
+    brazil_band_container = results_plot_container.brazil_band
 
     assert len(brazil_band_container) == 5
     assert brazil_band_container == (
@@ -35,6 +36,45 @@ def test_brazil_band_container(datadir):
     assert brazil_band_container.test_size is not None
 
 
+def test_cls_components_container(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+
+    fig = Figure()
+    ax = fig.subplots()
+    results_plot_container = brazil.plot_results(
+        ax, data["testmus"], data["results"], test_size=0.05, components=True
+    )
+    cls_components_container = results_plot_container.cls_components
+
+    assert len(cls_components_container) == 2
+    assert cls_components_container == (
+        cls_components_container.clsb,
+        cls_components_container.clb,
+    )
+
+    assert cls_components_container.clsb is not None
+    assert cls_components_container.clb is not None
+
+
+def test_results_plot_container(datadir):
+    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+
+    fig = Figure()
+    ax = fig.subplots()
+    results_plot_container = brazil.plot_results(
+        ax, data["testmus"], data["results"], test_size=0.05, components=True
+    )
+
+    assert len(results_plot_container) == 2
+    assert results_plot_container == (
+        results_plot_container.brazil_band,
+        results_plot_container.cls_components,
+    )
+
+    assert results_plot_container.brazil_band is not None
+    assert results_plot_container.cls_components is not None
+
+
 @pytest.mark.mpl_image_compare
 def test_plot_results(datadir):
     data = json.load(open(datadir.join("hypotest_results.json")))
@@ -47,69 +87,87 @@ def test_plot_results(datadir):
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components(datadir):
+def test_plot_results_components(datadir):
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_container, clsb_artists, clb_artists = brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05
+    brazil.plot_results(
+        ax, data["testmus"], data["results"], test_size=0.05, components=True
     )
-    assert len(brazil_band_container) == 5
-    assert len(clsb_artists) == 1
-    assert len(clb_artists) == 1
     return fig
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_clb(datadir):
+def test_plot_results_components_no_clb(datadir):
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_container, clsb_artists = brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05, no_clb=True
+    results_plot_container = brazil.plot_results(
+        ax,
+        data["testmus"],
+        data["results"],
+        test_size=0.05,
+        components=True,
+        no_clb=True,
     )
-    assert len(brazil_band_container) == 5
-    assert len(clsb_artists) == 1
+    cls_components_container = results_plot_container.cls_components
+
+    assert cls_components_container.clsb is not None
+    assert cls_components_container.clb is None
     return fig
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_clsb(datadir):
+def test_plot_results_components_no_clsb(datadir):
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_container, clb_artists = brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05, no_clsb=True
+    results_plot_container = brazil.plot_results(
+        ax,
+        data["testmus"],
+        data["results"],
+        test_size=0.05,
+        components=True,
+        no_clsb=True,
     )
-    assert len(brazil_band_container) == 5
-    assert len(clb_artists) == 1
+    cls_components_container = results_plot_container.cls_components
+
+    assert cls_components_container.clsb is None
+    assert cls_components_container.clb is not None
     return fig
 
 
 @pytest.mark.mpl_image_compare
-def test_plot_cls_components_no_cls(datadir):
+def test_plot_results_components_no_cls(datadir):
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    clsb_artists, clb_artists = brazil.plot_cls_components(
-        ax, data["testmus"], data["results"], test_size=0.05, no_cls=True
+    results_plot_container = brazil.plot_results(
+        ax,
+        data["testmus"],
+        data["results"],
+        test_size=0.05,
+        components=True,
+        no_cls=True,
     )
-    assert len(clsb_artists) == 1
-    assert len(clb_artists) == 1
+    assert results_plot_container.brazil_band is None
+    assert results_plot_container.cls_components is not None
     return fig
 
 
-def test_plot_cls_components_data_structure(datadir):
+def test_plot_results_components_data_structure(datadir):
     """
-    test results should have format of: CLs_obs, [CLsb, CLb], [CLs_exp band]
+    test results should have format of: [CLs_obs, [CLsb, CLb], [CLs_exp band]]
     """
     data = json.load(open(datadir.join("hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
     with pytest.raises(ValueError):
-        brazil.plot_cls_components(ax, data["testmus"], data["results"], test_size=0.05)
+        brazil.plot_results(
+            ax, data["testmus"], data["results"], test_size=0.05, components=True
+        )
