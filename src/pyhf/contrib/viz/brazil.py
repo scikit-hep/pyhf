@@ -71,7 +71,8 @@ class ClsComponentsContainer(Container):
     r"""
     Container for the :obj:`matplotlib.artist` objects for the
     :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` lines
-    optionally created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+    optionally created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot
+    and returned by :func:`~pyhf.contrib.viz.brazil.plot_cls_components`.
 
     The container can be treated like a :obj:`collections.namedtuple`
     ``(clsb, clb)``.
