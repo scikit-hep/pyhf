@@ -6,7 +6,8 @@ from matplotlib.container import Container
 class BrazilBandContainer(Container):
     r"""
     Container for the :obj:`matplotlib.artist` objects for the Brazil Band
-    created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
+    created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
+    returned by :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
 
     The container can be treated like a :obj:`collections.namedtuple`
     ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
@@ -185,7 +186,7 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
     )
 
 
-def _plot_cls_components(mutests, tail_probs, ax, **kwargs):
+def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
     CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
 
@@ -221,8 +222,13 @@ def _plot_cls_components(mutests, tail_probs, ax, **kwargs):
 def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     r"""
     Plot a series of hypothesis tests for various POI values.
+    For more detail on use of keywords see
+    :func:`~pyhf.contrib.viz.brazil.plot_brazil_band` and
+    :func:`~pyhf.contrib.viz.brazil.plot_cls_components`.
 
     Example:
+
+        A Brazil band plot.
 
         >>> import numpy as np
         >>> import matplotlib.pyplot as plt
@@ -242,12 +248,42 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         >>> fig, ax = plt.subplots()
         >>> artists = pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
 
+        A Brazil band plot with the components of the :math:`\mathrm{CL}_{s}`
+        ratio drawn on top.
+
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> import pyhf
+        >>> import pyhf.contrib.viz.brazil
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> results = [
+        ...     pyhf.infer.hypotest(
+        ...         test_poi, data, model, return_expected_set=True, return_tail_probs=True
+        ...     )
+        ...     for test_poi in poi_vals
+        ... ]
+        >>> fig, ax = plt.subplots()
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results, components=True)
+
     Args:
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
         mutests (:obj:`list` or :obj:`array`): The values of the POI where the
           hypothesis tests were performed.
-        tests (:obj:`list` or :obj:`array`): The :math:`\mathrm{CL}_{s}` values
-          from the hypothesis tests.
+        tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-value-like
+          values (:math:`\mathrm{CL}_{s}` values or tail probabilities) from
+          the hypothesis tests.
+          If the ``components`` keyword argument is ``True``,  ``tests`` is required
+          to have the same structure as :func:`pyhf.infer.hypotest`'s return
+          when using ``return_expected_set=True`` and ``return_tail_probs=True``:
+          a tuple of :math:`\mathrm{CL}_{s}`,
+          :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`,
+          :math:`\mathrm{CL}_{s,\mathrm{exp}}` band.
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
 
     Returns:
@@ -292,7 +328,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
 
     cls_components_container = None
     if plot_components:
-        cls_components_container = _plot_cls_components(
+        cls_components_container = plot_cls_components(
             mutests, tail_probs, ax, **kwargs
         )
 
@@ -311,7 +347,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
     return ResultsPlotContainer((brazil_band_container, cls_components_container))
 
 
-def plot_cls_components(
+def _plot_cls_components(
     ax,
     mutests,
     tests,
