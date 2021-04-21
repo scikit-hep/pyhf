@@ -219,7 +219,7 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     return ClsComponentsContainer((CLsb_obs_line_artist, CLb_obs_line_artist))
 
 
-def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
+def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
     r"""
     Plot a series of hypothesis tests for various POI values.
     For more detail on use of keywords see
@@ -246,7 +246,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         ...     for test_poi in poi_vals
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(poi_vals, results, ax=ax)
 
         A Brazil band plot with the components of the :math:`\mathrm{CL}_{s}`
         ratio drawn on top.
@@ -269,10 +269,9 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
         ...     for test_poi in poi_vals
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results, components=True)
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(poi_vals, results, ax=ax, components=True)
 
     Args:
-        ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
         mutests (:obj:`list` or :obj:`array`): The values of the POI where the
           hypothesis tests were performed.
         tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-value-like
@@ -285,6 +284,7 @@ def plot_results(ax, mutests, tests, test_size=0.05, **kwargs):
           :math:`\left[\mathrm{CL}_{s+b}, \mathrm{CL}_{b}\right]`,
           :math:`\mathrm{CL}_{s,\mathrm{exp}}` band.
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
+        ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
         :obj:`~pyhf.contrib.viz.brazil.ResultsPlotContainer`: A container of the

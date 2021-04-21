@@ -16,7 +16,7 @@ def test_brazil_band_container(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax, data["testmus"], data["results"], test_size=0.05
+        data["testmus"], data["results"], test_size=0.05, ax=ax
     )
     brazil_band_container = results_plot_container.brazil_band
 
@@ -42,7 +42,7 @@ def test_cls_components_container(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax, data["testmus"], data["results"], test_size=0.05, components=True
+        data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
     )
     cls_components_container = results_plot_container.cls_components
 
@@ -62,7 +62,7 @@ def test_results_plot_container(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax, data["testmus"], data["results"], test_size=0.05, components=True
+        data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
     )
 
     assert len(results_plot_container) == 2
@@ -81,7 +81,7 @@ def test_plot_results(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil.plot_results(ax, data["testmus"], data["results"], test_size=0.05)
+    brazil.plot_results(data["testmus"], data["results"], test_size=0.05, ax=ax)
 
     return fig
 
@@ -93,7 +93,7 @@ def test_plot_results_components(datadir):
     fig = Figure()
     ax = fig.subplots()
     brazil.plot_results(
-        ax, data["testmus"], data["results"], test_size=0.05, components=True
+        data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
     )
     return fig
 
@@ -105,10 +105,10 @@ def test_plot_results_components_no_clb(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax,
         data["testmus"],
         data["results"],
         test_size=0.05,
+        ax=ax,
         components=True,
         no_clb=True,
     )
@@ -126,10 +126,10 @@ def test_plot_results_components_no_clsb(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax,
         data["testmus"],
         data["results"],
         test_size=0.05,
+        ax=ax,
         components=True,
         no_clsb=True,
     )
@@ -147,10 +147,10 @@ def test_plot_results_components_no_cls(datadir):
     fig = Figure()
     ax = fig.subplots()
     results_plot_container = brazil.plot_results(
-        ax,
         data["testmus"],
         data["results"],
         test_size=0.05,
+        ax=ax,
         components=True,
         no_cls=True,
     )
@@ -169,5 +169,5 @@ def test_plot_results_components_data_structure(datadir):
     ax = fig.subplots()
     with pytest.raises(ValueError):
         brazil.plot_results(
-            ax, data["testmus"], data["results"], test_size=0.05, components=True
+            data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
         )
