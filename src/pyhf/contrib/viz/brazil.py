@@ -369,8 +369,10 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    # TODO: Detect if ax is logy or not
-    ax.set_ylim(0, 1)
+    if ax.get_yscale() == "log":
+        ax.set_ylim(test_size * 0.1, 1)
+    else:
+        ax.set_ylim(0, 1)
 
     cls_components_container = None
     if plot_components:
