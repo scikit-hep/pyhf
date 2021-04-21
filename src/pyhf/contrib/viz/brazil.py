@@ -189,13 +189,14 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
 
 def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     r"""
-    THIS IS WRONG
     Plot the values of :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
-    --- the components of the :math:`\mathrm{CL}_{s}` ratio --- on top of the
-    :math:`\mathrm{CL}_{s}` values for a series of hypothesis tests for various
-    POI values.
+    --- the components of the :math:`\mathrm{CL}_{s}` ratio --- for a series of
+    hypothesis tests for various POI values.
 
     Example:
+
+        :func:`plot_cls_components` is generally meant to be used inside
+        :func:`~pyhf.contrib.viz.brazil.plot_results` but can be used by itself.
 
         >>> import numpy as np
         >>> import matplotlib.pyplot as plt
@@ -214,22 +215,27 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
         ...     )
         ...     for test_poi in poi_vals
         ... ]
+        >>> tail_probs = np.array([test[1] for test in results])
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_cls_components(ax, poi_vals, results)
+        >>> artists = pyhf.contrib.viz.brazil.plot_cls_components(poi_vals, tail_probs, ax)
 
     Args:
         mutests (:obj:`list` or :obj:`array`): The values of the POI where the
-          hypothesis tests were performed.
+         hypothesis tests were performed.
+        tail_probs (:obj:`list` or :obj:`array`): The values of
+         :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` for the POIs
+         tested in ``mutests``.
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
-        no_clb (:obj:`bool`): Bool for not plotting the :math:`\mathrm{CL}_{b}`
-          component.
-        no_clsb (:obj:`bool`): Bool for not plotting the :math:`\mathrm{CL}_{s+b}`
-          component.
-        no_cls (:obj:`bool`): Bool for not plotting the :math:`\mathrm{CL}_{s}`
-          values.
+        Keywords:
+         * ``no_clb`` (:obj:`bool`): Bool for not plotting the
+           :math:`\mathrm{CL}_{b}` component.
+
+         * ``no_clsb`` (:obj:`bool`): Bool for not plotting the
+           :math:`\mathrm{CL}_{s+b}` component.
 
     Returns:
-        :obj:`list`: The list of lists and tuples of :obj:`matplotlib.artist` drawn.
+        :class:`ClsComponentsContainer`: A container of the
+        :obj:`matplotlib.artist` objects drawn.
     """
     clsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
     clb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
