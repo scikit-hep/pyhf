@@ -174,8 +174,6 @@ A one bin example
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
-   ax.set_xlabel(r"$\mu$ (POI)")
-   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
 
@@ -219,8 +217,6 @@ A two bin example
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
-   ax.set_xlabel(r"$\mu$ (POI)")
-   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
    brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
 
