@@ -1,4 +1,5 @@
 """Brazil Band Plots."""
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.container import Container
 
@@ -333,6 +334,8 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
         :obj:`~pyhf.contrib.viz.brazil.ResultsPlotContainer`: A container of the
         :obj:`matplotlib.artist` objects drawn.
     """
+    if ax is None:
+        ax = plt.gca()
 
     plot_components = kwargs.pop("components", False)
     no_cls = kwargs.pop("no_cls", False)

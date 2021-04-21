@@ -1,5 +1,7 @@
 import json
 
+import matplotlib
+import matplotlib.pyplot as plt
 import pytest
 from matplotlib.figure import Figure
 
@@ -82,6 +84,17 @@ def test_plot_results(datadir):
     fig = Figure()
     ax = fig.subplots()
     brazil.plot_results(data["testmus"], data["results"], test_size=0.05, ax=ax)
+
+    return fig
+
+
+@pytest.mark.mpl_image_compare
+def test_plot_results_no_axis(datadir):
+    data = json.load(open(datadir.join("hypotest_results.json")))
+
+    matplotlib.use("agg")  # Use non-gui backend
+    fig, ax = plt.subplots()
+    brazil.plot_results(data["testmus"], data["results"], test_size=0.05)
 
     return fig
 
