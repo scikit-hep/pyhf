@@ -136,6 +136,57 @@ class ResultsPlotContainer(Container):
 
 
 def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
+    r"""
+    Plot the values of :math:`\mathrm{CL}_{s,\mathrm{obs}}` and the
+    :math:`\mathrm{CL}_{s,\mathrm{exp}}` band (the "Brazil band") for a series
+    of hypothesis tests for various POI values.
+
+    Example:
+
+        :func:`plot_brazil_band` is generally meant to be used inside
+        :func:`~pyhf.contrib.viz.brazil.plot_results` but can be used by itself.
+
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> import pyhf
+        >>> import pyhf.contrib.viz.brazil
+        >>> pyhf.set_backend("numpy")
+        >>> model  = pyhf.simplemodels.hepdata_like(
+        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> results = [
+        ...     pyhf.infer.hypotest(test_poi, data, model, return_expected_set=True)
+        ...     for test_poi in poi_vals
+        ... ]
+        >>> cls_obs = np.array([test[0] for test in results]).flatten()
+        >>> cls_exp = [
+        ...     np.array([test[1][sigma_idx] for test in results]).flatten()
+        ...     for sigma_idx in range(5)
+        ... ]
+        >>> test_size = 0.05
+        >>> fig, ax = plt.subplots()
+        >>> artists = pyhf.contrib.viz.brazil.plot_brazil_band(
+        ...     poi_vals, cls_obs, cls_exp, test_size, ax
+        ... )
+
+    Args:
+        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+         hypothesis tests were performed.
+        cls_obs (:obj:`list` or :obj:`array`): The values of
+         :math:`\mathrm{CL}_{s,\mathrm{obs}}` for the POIs tested in ``mutests``.
+        cls_exp (:obj:`list` or :obj:`array`): The values of the
+         :math:`\mathrm{CL}_{s,\mathrm{exp}}` band for the POIs tested in
+         ``mutests``.
+        test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
+        ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
+
+    Returns:
+        :class:`BrazilBandContainer`: A container of the :obj:`matplotlib.artist`
+        objects drawn.
+    """
     line_color = kwargs.pop("color", "black")
     (cls_obs_line,) = ax.plot(
         mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
