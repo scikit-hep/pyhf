@@ -231,36 +231,36 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     Returns:
         :obj:`list`: The list of lists and tuples of :obj:`matplotlib.artist` drawn.
     """
-    CLsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
-    CLb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
+    clsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
+    clb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
 
     linewidth = kwargs.pop("linewidth", 2)
     no_clsb = kwargs.pop("no_clsb", False)
     no_clb = kwargs.pop("no_clb", False)
 
-    CLsb_obs_line_artist = None
+    clsb_obs_line_artist = None
     if not no_clsb:
-        CLsb_color = kwargs.pop("clsb_color", "red")
-        CLsb_obs_line_artist = ax.plot(
+        clsb_color = kwargs.pop("clsb_color", "red")
+        clsb_obs_line_artist = ax.plot(
             mutests,
-            CLsb_obs,
-            color=CLsb_color,
+            clsb_obs,
+            color=clsb_color,
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{s+b}$",
         )
 
-    CLb_obs_line_artist = None
+    clb_obs_line_artist = None
     if not no_clb:
-        CLb_color = kwargs.pop("clb_color", "blue")
-        CLb_obs_line_artist = ax.plot(
+        clb_color = kwargs.pop("clb_color", "blue")
+        clb_obs_line_artist = ax.plot(
             mutests,
-            CLb_obs,
-            color=CLb_color,
+            clb_obs,
+            color=clb_color,
             linewidth=linewidth,
             label=r"$\mathrm{CL}_{b}$",
         )
 
-    return ClsComponentsContainer((CLsb_obs_line_artist, CLb_obs_line_artist))
+    return ClsComponentsContainer((clsb_obs_line_artist, clb_obs_line_artist))
 
 
 def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
