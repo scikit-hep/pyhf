@@ -135,7 +135,7 @@ class ResultsPlotContainer(Container):
         super().__init__(results_plot_artists, **kwargs)
 
 
-def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
+def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
     r"""
     Plot the values of :math:`\mathrm{CL}_{s,\mathrm{obs}}` and the
     :math:`\mathrm{CL}_{s,\mathrm{exp}}` band (the "Brazil band") for a series
@@ -156,10 +156,10 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
-        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> test_pois = np.linspace(0, 5, 41)
         >>> results = [
         ...     pyhf.infer.hypotest(test_poi, data, model, return_expected_set=True)
-        ...     for test_poi in poi_vals
+        ...     for test_poi in test_pois
         ... ]
         >>> cls_obs = np.array([test[0] for test in results]).flatten()
         >>> cls_exp = [
@@ -169,17 +169,17 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
         >>> test_size = 0.05
         >>> fig, ax = plt.subplots()
         >>> artists = pyhf.contrib.viz.brazil.plot_brazil_band(
-        ...     poi_vals, cls_obs, cls_exp, test_size, ax
+        ...     test_pois, cls_obs, cls_exp, test_size, ax
         ... )
 
     Args:
-        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+        test_pois (:obj:`list` or :obj:`array`): The values of the POI where the
          hypothesis tests were performed.
         cls_obs (:obj:`list` or :obj:`array`): The values of
-         :math:`\mathrm{CL}_{s,\mathrm{obs}}` for the POIs tested in ``mutests``.
+         :math:`\mathrm{CL}_{s,\mathrm{obs}}` for the POIs tested in ``test_pois``.
         cls_exp (:obj:`list` or :obj:`array`): The values of the
          :math:`\mathrm{CL}_{s,\mathrm{exp}}` band for the POIs tested in
-         ``mutests``.
+         ``test_pois``.
         test_size (:obj:`float`): The size, :math:`\alpha`, of the test.
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
@@ -189,13 +189,13 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
     """
     line_color = kwargs.pop("color", "black")
     (cls_obs_line,) = ax.plot(
-        mutests, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
+        test_pois, cls_obs, color=line_color, label=r"$\mathrm{CL}_{s}$"
     )
 
     cls_exp_lines = []
     for idx, color in zip(range(5), 5 * [line_color]):
         (_cls_exp_line,) = ax.plot(
-            mutests,
+            test_pois,
             cls_exp[idx],
             color=color,
             linestyle="dotted" if idx != 2 else "dashed",
@@ -203,14 +203,14 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
         )
         cls_exp_lines.append(_cls_exp_line)
     one_sigma_band = ax.fill_between(
-        mutests,
+        test_pois,
         cls_exp[0],
         cls_exp[-1],
         facecolor="yellow",
         label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
     )
     two_sigma_band = ax.fill_between(
-        mutests,
+        test_pois,
         cls_exp[1],
         cls_exp[-2],
         facecolor="green",
@@ -220,8 +220,8 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
     test_size_color = kwargs.pop("test_size_color", "red")
     test_size_linestyle = kwargs.pop("test_size_linestyle", "solid")
     (test_size_line,) = ax.plot(
-        mutests,
-        [test_size] * len(mutests),
+        test_pois,
+        [test_size] * len(test_pois),
         color=test_size_color,
         linestyle=test_size_linestyle,
         label=rf"$\alpha={test_size}$",
@@ -238,7 +238,7 @@ def plot_brazil_band(mutests, cls_obs, cls_exp, test_size, ax, **kwargs):
     )
 
 
-def plot_cls_components(mutests, tail_probs, ax, **kwargs):
+def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
     r"""
     Plot the values of :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
     --- the components of the :math:`\mathrm{CL}_{s}` ratio --- for a series of
@@ -259,23 +259,23 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
-        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> test_pois = np.linspace(0, 5, 41)
         >>> results = [
         ...     pyhf.infer.hypotest(
         ...         test_poi, data, model, return_expected_set=True, return_tail_probs=True
         ...     )
-        ...     for test_poi in poi_vals
+        ...     for test_poi in test_pois
         ... ]
         >>> tail_probs = np.array([test[1] for test in results])
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_cls_components(poi_vals, tail_probs, ax)
+        >>> artists = pyhf.contrib.viz.brazil.plot_cls_components(test_pois, tail_probs, ax)
 
     Args:
-        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+        test_pois (:obj:`list` or :obj:`array`): The values of the POI where the
          hypothesis tests were performed.
         tail_probs (:obj:`list` or :obj:`array`): The values of
          :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` for the POIs
-         tested in ``mutests``.
+         tested in ``test_pois``.
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
         Keywords:
          * ``no_clb`` (:obj:`bool`): Bool for not plotting the
@@ -299,7 +299,7 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     if not no_clsb:
         clsb_color = kwargs.pop("clsb_color", "red")
         clsb_obs_line_artist = ax.plot(
-            mutests,
+            test_pois,
             clsb_obs,
             color=clsb_color,
             linewidth=linewidth,
@@ -310,7 +310,7 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     if not no_clb:
         clb_color = kwargs.pop("clb_color", "blue")
         clb_obs_line_artist = ax.plot(
-            mutests,
+            test_pois,
             clb_obs,
             color=clb_color,
             linewidth=linewidth,
@@ -320,7 +320,7 @@ def plot_cls_components(mutests, tail_probs, ax, **kwargs):
     return ClsComponentsContainer((clsb_obs_line_artist, clb_obs_line_artist))
 
 
-def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
+def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
     r"""
     Plot a series of hypothesis tests for various POI values.
     For more detail on use of keywords see
@@ -341,13 +341,13 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
-        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> test_pois = np.linspace(0, 5, 41)
         >>> results = [
         ...     pyhf.infer.hypotest(test_poi, data, model, return_expected_set=True)
-        ...     for test_poi in poi_vals
+        ...     for test_poi in test_pois
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_results(poi_vals, results, ax=ax)
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(test_pois, results, ax=ax)
 
         A Brazil band plot with the components of the :math:`\mathrm{CL}_{s}`
         ratio drawn on top.
@@ -362,18 +362,20 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
-        >>> poi_vals = np.linspace(0, 5, 41)
+        >>> test_pois = np.linspace(0, 5, 41)
         >>> results = [
         ...     pyhf.infer.hypotest(
         ...         test_poi, data, model, return_expected_set=True, return_tail_probs=True
         ...     )
-        ...     for test_poi in poi_vals
+        ...     for test_poi in test_pois
         ... ]
         >>> fig, ax = plt.subplots()
-        >>> artists = pyhf.contrib.viz.brazil.plot_results(poi_vals, results, ax=ax, components=True)
+        >>> artists = pyhf.contrib.viz.brazil.plot_results(
+        ...     test_pois, results, ax=ax, components=True
+        ... )
 
     Args:
-        mutests (:obj:`list` or :obj:`array`): The values of the POI where the
+        test_pois (:obj:`list` or :obj:`array`): The values of the POI where the
           hypothesis tests were performed.
         tests (:obj:`list` or :obj:`array`): The collection of :math:`p`-value-like
           values (:math:`\mathrm{CL}_{s}` values or tail probabilities) from
@@ -418,7 +420,7 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
     brazil_band_container = None
     if not no_cls:
         brazil_band_container = plot_brazil_band(
-            mutests, cls_obs, cls_exp, test_size, ax, **kwargs
+            test_pois, cls_obs, cls_exp, test_size, ax, **kwargs
         )
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
@@ -434,7 +436,7 @@ def plot_results(mutests, tests, test_size=0.05, ax=None, **kwargs):
     cls_components_container = None
     if plot_components:
         cls_components_container = plot_cls_components(
-            mutests, tail_probs, ax, **kwargs
+            test_pois, tail_probs, ax, **kwargs
         )
 
     # Order legend: ensure CLs expected band and test size are last in legend
