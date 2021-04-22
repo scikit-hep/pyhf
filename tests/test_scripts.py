@@ -631,6 +631,7 @@ def test_patchset_inspect(datadir, script_runner):
     ret = script_runner.run(*shlex.split(command))
     assert 'patch_channel1_signal_syst1' in ret.stdout
 
+
 @pytest.mark.parametrize('output_file', [False, True])
 @pytest.mark.parametrize('with_metadata', [False, True])
 def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
