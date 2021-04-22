@@ -81,6 +81,9 @@ class BrazilBandArtist(Artist):
         self.clb = clb
 
     def get_children(self):
+        """
+        Return a list of the child Artists of this Artist.
+        """
         # Unpack everything so that draw can work
         artists = [
             self.cls_obs,
