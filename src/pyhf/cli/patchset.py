@@ -128,6 +128,12 @@ def verify(background_only, patchset):
 @cli.command()
 @click.argument('patchset', default='-')
 def inspect(patchset):
+    """
+    Inspect the PatchSet (e.g. list individual patches).
+
+    Returns:
+        None
+    """
     with click.open_file(patchset, 'r') as fstream:
         patchset_spec = json.load(fstream)
 
