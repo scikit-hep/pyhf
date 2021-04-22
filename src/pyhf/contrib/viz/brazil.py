@@ -1,10 +1,101 @@
 """Brazil Band Plots."""
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.artist import Artist
 from matplotlib.container import Container
 
 
-class BrazilBandContainer(Container):
+class BrazilBandArtist(Artist):
+    r"""
+    TODO: Add doctring
+    Artist for the for the Brazil Band created in a
+    :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
+    returned by :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
+
+    Attributes:
+        cls_obs (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
+
+        cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The artists of
+         the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
+
+        one_sigma_band (:class:`matplotlib.collections.PolyCollection`):
+         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma`
+         band.
+
+        two_sigma_band (:class:`matplotlib.collections.PolyCollection`):
+         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma`
+         band.
+
+        test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
+         line.
+
+        clsb (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{s+b}` line.
+
+        clb (:class:`matplotlib.lines.Line2D`): The artist of the
+         :math:`\mathrm{CL}_{b}` line.
+    """
+
+    def __init__(
+        self,
+        cls_obs,
+        cls_exp,
+        one_sigma_band,
+        two_sigma_band,
+        test_size,
+        clsb=None,
+        clb=None,
+        **kwargs,
+    ):
+        r"""
+        Args:
+            ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
+            observed :math:`\mathrm{CL}_{s}` line.
+
+            ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
+            the expected :math:`\mathrm{CL}_{s}` lines.
+
+            ``one_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
+            of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
+
+            ``two_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
+            of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
+
+            ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the
+            test size.
+
+            ``clsb`` contains the :class:`matplotlib.lines.Line2D` of the
+            observed :math:`\mathrm{CL}_{s+b}` line.
+
+            ``clb`` contains the :class:`matplotlib.lines.Line2D` of the
+            observed :math:`\mathrm{CL}_{b}` line.
+        """
+        super().__init__(**kwargs)
+        self.cls_obs = cls_obs
+        self.cls_exp = cls_exp
+        self.one_sigma_band = one_sigma_band
+        self.two_sigma_band = two_sigma_band
+        self.test_size = test_size
+        self.clsb = clsb
+        self.clb = clb
+
+    def get_children(self):
+        # Unpack everything so that draw can work
+        artists = [
+            self.cls_obs,
+            *self.cls_exp,
+            self.one_sigma_band,
+            self.two_sigma_band,
+            self.test_size,
+            self.clsb,
+            self.clb,
+        ]
+        return tuple(artist for artist in artists if artist is not None)
+
+
+# TODO: Migrate out all useful docstring info and then delete
+class _BrazilBandContainer(Container):
     r"""
     Container for the :obj:`matplotlib.artist` objects for the Brazil Band
     created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
@@ -67,7 +158,8 @@ class BrazilBandContainer(Container):
         super().__init__(brazil_band_artists, **kwargs)
 
 
-class ClsComponentsContainer(Container):
+# TODO: Migrate out all useful docstring info and then delete
+class _ClsComponentsContainer(Container):
     r"""
     Container for the :obj:`matplotlib.artist` objects for the
     :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` lines
@@ -100,40 +192,6 @@ class ClsComponentsContainer(Container):
         self.clsb = clsb
         self.clb = clb
         super().__init__(cls_components_artists, **kwargs)
-
-
-class ResultsPlotContainer(Container):
-    r"""
-    Container for the :obj:`matplotlib.artist` objects created in a
-    :func:`~pyhf.contrib.viz.brazil.plot_results` plot.
-
-    The container can be treated like a :obj:`collections.namedtuple`
-    ``(brazil_band, cls_components)``.
-
-    Attributes:
-        brazil_band (:class:`BrazilBandContainer`): The container for the Brazil
-         band artists.
-
-        cls_components (:class:`ClsComponentsContainer`): The container for the
-         artists for the components of the :math:`\mathrm{CL}_{s}` ratio.
-    """
-
-    def __init__(self, results_plot_artists, **kwargs):
-        r"""
-        Args:
-            results_plot_artists (:obj:`tuple`): Tuple of
-             ``(brazil_band, cls_components)``.
-
-              * ``brazil_band`` contains the :class:`BrazilBandContainer` of the
-                Brazil band artists.
-
-              * ``cls_components`` contains the :class:`ClsComponentsContainer` of the
-                :math:`\mathrm{CL}_{s}` ratio component artists.
-        """
-        brazil_band, cls_components = results_plot_artists
-        self.brazil_band = brazil_band
-        self.cls_components = cls_components
-        super().__init__(results_plot_artists, **kwargs)
 
 
 def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
@@ -185,7 +243,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :class:`BrazilBandContainer`: A container of the :obj:`matplotlib.artist`
+        :class:`BrazilBandArtist`: A container of the :obj:`matplotlib.artist`
         objects drawn.
     """
     line_color = kwargs.pop("color", "black")
@@ -228,14 +286,12 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         label=rf"$\alpha={test_size}$",
     )
 
-    return BrazilBandContainer(
-        (
-            cls_obs_line,
-            cls_exp_lines,
-            one_sigma_band,
-            two_sigma_band,
-            test_size_line,
-        )
+    return BrazilBandArtist(
+        cls_obs_line,
+        cls_exp_lines,
+        one_sigma_band,
+        two_sigma_band,
+        test_size_line,
     )
 
 
@@ -286,8 +342,7 @@ def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
            :math:`\mathrm{CL}_{s+b}` component.
 
     Returns:
-        :class:`ClsComponentsContainer`: A container of the
-        :obj:`matplotlib.artist` objects drawn.
+        :obj:`tuple`: The :obj:`matplotlib.lines.Line2D` artists drawn.
     """
     clsb_obs = np.array([tail_prob[0] for tail_prob in tail_probs])
     clb_obs = np.array([tail_prob[1] for tail_prob in tail_probs])
@@ -299,7 +354,7 @@ def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
     clsb_obs_line_artist = None
     if not no_clsb:
         clsb_color = kwargs.pop("clsb_color", "red")
-        clsb_obs_line_artist = ax.plot(
+        (clsb_obs_line_artist,) = ax.plot(
             test_pois,
             clsb_obs,
             color=clsb_color,
@@ -310,7 +365,7 @@ def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
     clb_obs_line_artist = None
     if not no_clb:
         clb_color = kwargs.pop("clb_color", "blue")
-        clb_obs_line_artist = ax.plot(
+        (clb_obs_line_artist,) = ax.plot(
             test_pois,
             clb_obs,
             color=clb_color,
@@ -318,7 +373,7 @@ def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
             label=r"$\mathrm{CL}_{b}$",
         )
 
-    return ClsComponentsContainer((clsb_obs_line_artist, clb_obs_line_artist))
+    return clsb_obs_line_artist, clb_obs_line_artist
 
 
 def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
@@ -418,11 +473,12 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         for sigma_idx in range(5)
     ]
 
-    brazil_band_container = None
     if not no_cls:
-        brazil_band_container = plot_brazil_band(
+        brazil_band_artist = plot_brazil_band(
             test_pois, cls_obs, cls_exp, test_size, ax, **kwargs
         )
+    else:
+        brazil_band_artist = BrazilBandArtist(None, None, None, None, None)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
     y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
@@ -434,9 +490,8 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
     else:
         ax.set_ylim(0, 1)
 
-    cls_components_container = None
     if plot_components:
-        cls_components_container = plot_cls_components(
+        brazil_band_artist.clsb, brazil_band_artist.clb = plot_cls_components(
             test_pois, tail_probs, ax, **kwargs
         )
 
@@ -452,4 +507,4 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
 
     ax.legend(handles, labels, loc="best")
 
-    return ResultsPlotContainer((brazil_band_container, cls_components_container))
+    return brazil_band_artist
