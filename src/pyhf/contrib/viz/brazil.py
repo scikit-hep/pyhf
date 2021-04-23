@@ -2,13 +2,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.artist import Artist
-from matplotlib.container import Container
 
 
 class BrazilBandArtist(Artist):
     r"""
-    TODO: Add doctring
-    Artist for the for the Brazil Band created in a
+    Artist for the "Brazil Band" --- and optionally the components of the
+    :math:`\mathrm{CL}_{s}` ratio --- created in a
     :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
     returned by :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
 
@@ -30,11 +29,11 @@ class BrazilBandArtist(Artist):
         test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
          line.
 
-        clsb (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{s+b}` line.
+        clsb (:class:`matplotlib.lines.Line2D`): The artist of the optional
+         observed :math:`\mathrm{CL}_{s+b}` line.
 
-        clb (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{b}` line.
+        clb (:class:`matplotlib.lines.Line2D`): The artist of the optional
+         observed :math:`\mathrm{CL}_{b}` line.
     """
 
     def __init__(
@@ -50,26 +49,20 @@ class BrazilBandArtist(Artist):
     ):
         r"""
         Args:
-            ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
-            observed :math:`\mathrm{CL}_{s}` line.
-
-            ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
-            the expected :math:`\mathrm{CL}_{s}` lines.
-
-            ``one_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
-            of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
-
-            ``two_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
-            of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
-
-            ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the
-            test size.
-
-            ``clsb`` contains the :class:`matplotlib.lines.Line2D` of the
-            observed :math:`\mathrm{CL}_{s+b}` line.
-
-            ``clb`` contains the :class:`matplotlib.lines.Line2D` of the
-            observed :math:`\mathrm{CL}_{b}` line.
+            cls_obs (:class:`matplotlib.lines.Line2D`): The observed
+             :math:`\mathrm{CL}_{s}` line.
+            cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The
+             expected :math:`\mathrm{CL}_{s}` lines.
+            one_sigma_band (:class:`matplotlib.collections.PolyCollection`): The
+             :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
+            two_sigma_band (:class:`matplotlib.collections.PolyCollection`): The
+             :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
+            test_size (:class:`matplotlib.lines.Line2D`): The line indicating the
+             test size, :math:`\alpha`.
+            clsb (:class:`matplotlib.lines.Line2D`): The optional observed
+             :math:`\mathrm{CL}_{s+b}` line.
+            clb (:class:`matplotlib.lines.Line2D`): The optional observed
+             :math:`\mathrm{CL}_{b}` line.
         """
         super().__init__(**kwargs)
         self.cls_obs = cls_obs
@@ -84,7 +77,7 @@ class BrazilBandArtist(Artist):
         """
         Return a list of the child Artists of this Artist.
         """
-        # Unpack everything so that draw can work
+        # Unpack everything so that self.draw can work
         artists = [
             self.cls_obs,
             *self.cls_exp,
@@ -119,106 +112,6 @@ class BrazilBandArtist(Artist):
         for artist in self.get_children():
             artist.draw(renderer, *args, **kwargs)
         self.stale = False
-
-
-# TODO: Migrate out all useful docstring info and then delete
-class _BrazilBandContainer(Container):
-    r"""
-    Container for the :obj:`matplotlib.artist` objects for the Brazil Band
-    created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
-    returned by :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
-
-    The container can be treated like a :obj:`collections.namedtuple`
-    ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
-
-    Attributes:
-        cls_obs (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
-
-        cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The artists of
-         the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
-
-        one_sigma_band (:class:`matplotlib.collections.PolyCollection`):
-         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma`
-         band.
-
-        two_sigma_band (:class:`matplotlib.collections.PolyCollection`):
-         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma`
-         band.
-
-        test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
-         line.
-    """
-
-    def __init__(self, brazil_band_artists, **kwargs):
-        r"""
-        Args:
-            brazil_band_artists (:obj:`tuple`): Tuple of
-             ``(cls_obs, cls_exp, one_sigma_band, two_sigma_band, test_size)``.
-
-              * ``cls_obs`` contains the :class:`matplotlib.lines.Line2D` of the
-                observed :math:`\mathrm{CL}_{s}` line.
-
-              * ``cls_exp`` is a :obj:`list` of :class:`matplotlib.lines.Line2D` of
-                the expected :math:`\mathrm{CL}_{s}` lines.
-
-              * ``one_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
-                of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
-
-              * ``two_sigma_band`` contains the :class:`matplotlib.collections.PolyCollection`
-                of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
-
-              * ``test_size`` contains the :class:`matplotlib.lines.Line2D` of the test size.
-        """
-        (
-            cls_obs,
-            cls_exp,
-            one_sigma_band,
-            two_sigma_band,
-            test_size,
-        ) = brazil_band_artists
-        self.cls_obs = cls_obs
-        self.cls_exp = cls_exp
-        self.one_sigma_band = one_sigma_band
-        self.two_sigma_band = two_sigma_band
-        self.test_size = test_size
-        super().__init__(brazil_band_artists, **kwargs)
-
-
-# TODO: Migrate out all useful docstring info and then delete
-class _ClsComponentsContainer(Container):
-    r"""
-    Container for the :obj:`matplotlib.artist` objects for the
-    :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}` lines
-    optionally created in a :func:`~pyhf.contrib.viz.brazil.plot_results` plot
-    and returned by :func:`~pyhf.contrib.viz.brazil.plot_cls_components`.
-
-    The container can be treated like a :obj:`collections.namedtuple`
-    ``(clsb, clb)``.
-
-    Attributes:
-        clsb (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{s+b}` line.
-
-        clb (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{b}` line.
-    """
-
-    def __init__(self, cls_components_artists, **kwargs):
-        r"""
-        Args:
-            cls_components_artists (:obj:`tuple`): Tuple of ``(clsb, clb)``.
-
-              * ``clsb`` contains the :class:`matplotlib.lines.Line2D` of the
-                observed :math:`\mathrm{CL}_{s+b}` line.
-
-              * ``clb`` contains the :class:`matplotlib.lines.Line2D` of the
-                observed :math:`\mathrm{CL}_{b}` line.
-        """
-        clsb, clb = cls_components_artists
-        self.clsb = clsb
-        self.clb = clb
-        super().__init__(cls_components_artists, **kwargs)
 
 
 def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
@@ -270,7 +163,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :class:`BrazilBandArtist`: A container of the :obj:`matplotlib.artist`
+        :class:`BrazilBandArtist`: Artist containing the :obj:`matplotlib.artist`
         objects drawn.
     """
     line_color = kwargs.pop("color", "black")
@@ -473,8 +366,8 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :obj:`~pyhf.contrib.viz.brazil.ResultsPlotContainer`: A container of the
-        :obj:`matplotlib.artist` objects drawn.
+        :class:`BrazilBandArtist`: Artist containing the :obj:`matplotlib.artist`
+        objects drawn.
     """
     if ax is None:
         ax = plt.gca()
