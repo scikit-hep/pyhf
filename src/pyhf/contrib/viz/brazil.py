@@ -206,13 +206,15 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         label=rf"$\alpha={test_size}$",
     )
 
-    return BrazilBandArtist(
+    brazil_band_artist = BrazilBandArtist(
         cls_obs_line,
         cls_exp_lines,
         one_sigma_band,
         two_sigma_band,
         test_size_line,
     )
+    brazil_band_artist.axes = ax  # Inelegant way to attach to axes
+    return brazil_band_artist
 
 
 def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
@@ -398,6 +400,7 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
             test_pois, cls_obs, cls_exp, test_size, ax, **kwargs
         )
     else:
+        # TODO: Find more elegant solution
         brazil_band_artist = BrazilBandArtist(None, None, None, None, None)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")

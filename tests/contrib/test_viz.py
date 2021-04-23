@@ -66,7 +66,10 @@ def test_plot_results(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil.plot_results(data["testmus"], data["results"], test_size=0.05, ax=ax)
+    brazil_band_artist = brazil.plot_results(
+        data["testmus"], data["results"], test_size=0.05, ax=ax
+    )
+    assert brazil_band_artist.axes == ax
 
     return fig
 
