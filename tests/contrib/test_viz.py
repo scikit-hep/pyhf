@@ -77,6 +77,7 @@ def test_plot_results_no_axis(datadir):
 
     matplotlib.use("agg")  # Use non-gui backend
     fig, ax = plt.subplots()
+    ax.set_yscale("log")  # Also test log y detection
     brazil.plot_results(data["testmus"], data["results"], test_size=0.05)
 
     return fig
