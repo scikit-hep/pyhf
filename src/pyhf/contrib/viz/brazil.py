@@ -118,6 +118,7 @@ class BrazilBandArtist(Artist):
 
         for artist in self.get_children():
             artist.draw(renderer, *args, **kwargs)
+        self.stale = False
 
 
 # TODO: Migrate out all useful docstring info and then delete

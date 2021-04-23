@@ -50,9 +50,14 @@ def test_brazil_band_artist(datadir):
 
     assert len(brazil_band_artist.get_children()) == 11
 
-    assert brazil_band_artist.draw(fig.canvas.get_renderer()) is None
+    brazil_band_artist.stale = True
+    brazil_band_artist.draw(fig.canvas.get_renderer())
+    assert not brazil_band_artist.stale
+
     brazil_band_artist.set_visible(False)  # Other control flow path
+    brazil_band_artist.stale = True
     assert brazil_band_artist.draw(fig.canvas.get_renderer()) is None
+    assert brazil_band_artist.stale
 
 
 @pytest.mark.mpl_image_compare
