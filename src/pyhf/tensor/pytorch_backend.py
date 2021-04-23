@@ -29,7 +29,7 @@ class pytorch_backend:
             'bool': torch.bool,
         }
         self.default_do_grad = True
-        self.use_cuda = kwargs.get("use_gpu", torch.cuda.is_available())
+        self.use_cuda = kwargs.get("use_cuda", torch.cuda.is_available())
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
     def _setup(self):

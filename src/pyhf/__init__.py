@@ -35,7 +35,7 @@ default_optimizer = optimizer
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, precision=None, use_gpu=None):
+def set_backend(backend, custom_optimizer=None, precision=None, use_cuda=None):
     """
     Set the backend and the associated optimizer
 
@@ -61,7 +61,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, use_gpu=None):
         backend (:obj:`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
         custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
         precision (:obj:`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
-        use_gpu (:obj:`bool`): Boolean to enable hardware acceleration using CUDA enabled devices. Default is backend dependent.
+        use_cuda (:obj:`bool`): Boolean to enable hardware acceleration using CUDA enabled devices. Default is backend dependent.
 
     Returns:
         None
@@ -142,9 +142,9 @@ def set_backend(backend, custom_optimizer=None, precision=None, use_gpu=None):
     optimizer_changed = bool(optimizer != new_optimizer)
 
     # set device to CPU or GPU
-    if use_gpu is not None:
-        if backend.use_cuda != use_gpu:
-            backend_kwargs["use_gpu"] = use_gpu
+    if use_cuda is not None:
+        if backend.use_cuda != use_cuda:
+            backend_kwargs["use_cuda"] = use_cuda
             backend = getattr(tensor, f"{backend.name:s}_backend")(**backend_kwargs)
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
