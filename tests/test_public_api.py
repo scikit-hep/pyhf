@@ -97,6 +97,7 @@ def test_custom_backend_name_supported():
         def __init__(self, **kwargs):
             self.name = "pytorch"
             self.precision = '64b'
+            self.use_cuda = False
 
         def _setup(self):
             pass
@@ -119,6 +120,7 @@ def test_custom_backend_name_notsupported():
         def __init__(self, **kwargs):
             self.name = "notsupported"
             self.precision = '64b'
+            self.use_cuda = False
 
         def _setup(self):
             pass
