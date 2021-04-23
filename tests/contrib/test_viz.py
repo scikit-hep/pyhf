@@ -34,8 +34,7 @@ def test_brazil_band_artist(datadir):
 
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
-    fig = Figure()
-    ax = fig.subplots()
+    fig, ax = plt.subplots()  # Need renderer to test draw
     brazil_band_artist = brazil.plot_results(
         data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
     )
@@ -50,6 +49,10 @@ def test_brazil_band_artist(datadir):
     assert brazil_band_artist.clb is not None
 
     assert len(brazil_band_artist.get_children()) == 11
+
+    assert brazil_band_artist.draw(fig.canvas.get_renderer()) is None
+    brazil_band_artist.set_visible(False)  # Other control flow path
+    assert brazil_band_artist.draw(fig.canvas.get_renderer()) is None
 
 
 @pytest.mark.mpl_image_compare

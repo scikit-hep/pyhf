@@ -96,6 +96,29 @@ class BrazilBandArtist(Artist):
         ]
         return tuple(artist for artist in artists if artist is not None)
 
+    def draw(self, renderer, *args, **kwargs):
+        """
+        Draw the Artist (and its children) using the given renderer.
+
+        This has no effect if the artist is not visible (``.Artist.get_visible``
+        returns ``False``).
+
+        .. note::
+
+            Even though ``draw`` is in the public API of
+            :class:`matplotlib.artist.Artist` users should probably not call
+            it themselves unless they are familiar with ``matplotlib``'s
+            renderer backend mechanics.
+
+        Args:
+            renderer: :class:`matplotlib.backend_bases.RendererBase` subclass.
+        """
+        if not self.get_visible():
+            return
+
+        for artist in self.get_children():
+            artist.draw(renderer, *args, **kwargs)
+
 
 # TODO: Migrate out all useful docstring info and then delete
 class _BrazilBandContainer(Container):
