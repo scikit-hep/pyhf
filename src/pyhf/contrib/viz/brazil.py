@@ -1,43 +1,53 @@
 """Brazil Band Plots."""
-from typing import List, NamedTuple
+from collections import namedtuple
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-class BrazilBandCollection(NamedTuple):
+class BrazilBandCollection(
+    namedtuple(
+        "BrazilBandCollection",
+        (
+            "cls_obs",
+            "cls_exp",
+            "one_sigma_band",
+            "two_sigma_band",
+            "test_size",
+            "clsb",
+            "clb",
+        ),
+        defaults=(None,) * 7,
+    )
+):
     r"""
     Tuple containing the :class:`matplotlib.artist.Artist` objects of the
-    "Brazil Band" and optionally the components of the
+    "Brazil Band" and optionally the observed :math:`\mathrm{CL}_{s+b}`
+    and :math:`\mathrm{CL}_{b}` --- the components of the
     :math:`\mathrm{CL}_{s}` ratio.
     Returned by :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
     :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
 
-    :param cls_obs: The artist of the :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
+    :param cls_obs: The :class:`matplotlib.lines.Line2D` of the
+     :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
 
-    :param cls_exp: The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
+    :param cls_exp: The :obj:`list` of :class:`matplotlib.lines.Line2D` of the
+     :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
 
-    :param one_sigma_band: The artists of the
-     :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` band.
+    :param one_sigma_band: The :class:`matplotlib.collections.PolyCollection` of
+     the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` band.
 
-    :param two_sigma_band: The artists of the
-     :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` band.
+    :param two_sigma_band: The :class:`matplotlib.collections.PolyCollection` of
+     the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` band.
 
-    :param test_size: The artist of the test size line.
+    :param test_size: The :class:`matplotlib.lines.Line2D` of the test size line.
 
-    :param clsb: The artist of the optional observed :math:`\mathrm{CL}_{s+b}` line.
+    :param clsb: The :class:`matplotlib.lines.Line2D` of the optional observed
+     :math:`\mathrm{CL}_{s+b}` line.
 
-    :param clb: The artist of the optional observed :math:`\mathrm{CL}_{b}` line.
+    :param clb: The :class:`matplotlib.lines.Line2D` of the optional observed
+     :math:`\mathrm{CL}_{b}` line.
     """
-
-    cls_obs: matplotlib.lines.Line2D
-    cls_exp: List[matplotlib.lines.Line2D]
-    one_sigma_band: matplotlib.collections.PolyCollection
-    two_sigma_band: matplotlib.collections.PolyCollection
-    test_size: matplotlib.lines.Line2D
-    clsb: matplotlib.lines.Line2D = None
-    clb: matplotlib.lines.Line2D = None
 
     @property
     def axes(self):
@@ -342,7 +352,7 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         )
     else:
         # TODO: Find more elegant solution
-        brazil_band_collection = BrazilBandCollection(None, None, None, None, None)
+        brazil_band_collection = BrazilBandCollection()
 
     if plot_components:
         clsb, clb = plot_cls_components(test_pois, tail_probs, ax, **kwargs)
