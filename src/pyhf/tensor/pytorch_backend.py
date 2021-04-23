@@ -126,7 +126,7 @@ class pytorch_backend:
 
     def tolist(self, tensor_in):
         try:
-            return tensor_in.data.numpy().tolist()
+            return tensor_in.tolist()
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -545,4 +545,4 @@ class pytorch_backend:
             :class:`numpy.ndarray`: The tensor converted to a NumPy ``ndarray``.
 
         """
-        return tensor_in.numpy()
+        return tensor_in.cpu().numpy()
