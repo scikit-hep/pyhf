@@ -1,117 +1,60 @@
 """Brazil Band Plots."""
+from typing import List, NamedTuple
+
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.artist import Artist
 
 
-class BrazilBandArtist(Artist):
+class BrazilBandCollection(NamedTuple):
     r"""
-    Artist for the "Brazil Band" --- and optionally the components of the
-    :math:`\mathrm{CL}_{s}` ratio --- created in a
-    :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
-    returned by :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
+    Tuple containing the :class:`matplotlib.artist.Artist` objects of the
+    "Brazil Band" and optionally the components of the
+    :math:`\mathrm{CL}_{s}` ratio.
+    Returned by :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
+    :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
 
-    Attributes:
-        cls_obs (:class:`matplotlib.lines.Line2D`): The artist of the
-         :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
+    :param cls_obs: The artist of the :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
 
-        cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The artists of
-         the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
+    :param cls_exp: The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` lines.
 
-        one_sigma_band (:class:`matplotlib.collections.PolyCollection`):
-         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma`
-         band.
+    :param one_sigma_band: The artists of the
+     :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` band.
 
-        two_sigma_band (:class:`matplotlib.collections.PolyCollection`):
-         The artists of the :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma`
-         band.
+    :param two_sigma_band: The artists of the
+     :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` band.
 
-        test_size (:class:`matplotlib.lines.Line2D`): The artist of the test size
-         line.
+    :param test_size: The artist of the test size line.
 
-        clsb (:class:`matplotlib.lines.Line2D`): The artist of the optional
-         observed :math:`\mathrm{CL}_{s+b}` line.
+    :param clsb: The artist of the optional observed :math:`\mathrm{CL}_{s+b}` line.
 
-        clb (:class:`matplotlib.lines.Line2D`): The artist of the optional
-         observed :math:`\mathrm{CL}_{b}` line.
+    :param clb: The artist of the optional observed :math:`\mathrm{CL}_{b}` line.
     """
 
-    def __init__(
-        self,
-        cls_obs,
-        cls_exp,
-        one_sigma_band,
-        two_sigma_band,
-        test_size,
-        clsb=None,
-        clb=None,
-        **kwargs,
-    ):
+    cls_obs: matplotlib.lines.Line2D
+    cls_exp: List[matplotlib.lines.Line2D]
+    one_sigma_band: matplotlib.collections.PolyCollection
+    two_sigma_band: matplotlib.collections.PolyCollection
+    test_size: matplotlib.lines.Line2D
+    clsb: matplotlib.lines.Line2D = None
+    clb: matplotlib.lines.Line2D = None
+
+    @property
+    def axes(self):
         r"""
-        Args:
-            cls_obs (:class:`matplotlib.lines.Line2D`): The observed
-             :math:`\mathrm{CL}_{s}` line.
-            cls_exp (:obj:`list` of :class:`matplotlib.lines.Line2D`): The
-             expected :math:`\mathrm{CL}_{s}` lines.
-            one_sigma_band (:class:`matplotlib.collections.PolyCollection`): The
-             :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm1\sigma` bands.
-            two_sigma_band (:class:`matplotlib.collections.PolyCollection`): The
-             :math:`\mathrm{CL}_{s,\mathrm{exp}}` :math:`\pm2\sigma` bands.
-            test_size (:class:`matplotlib.lines.Line2D`): The line indicating the
-             test size, :math:`\alpha`.
-            clsb (:class:`matplotlib.lines.Line2D`): The optional observed
-             :math:`\mathrm{CL}_{s+b}` line.
-            clb (:class:`matplotlib.lines.Line2D`): The optional observed
-             :math:`\mathrm{CL}_{b}` line.
+        The :class:`matplotlib.axes.Axes` instance the artists resides in, or ``None``.
+
+        All artists in :class:`BrazilBandCollection` must be on the same axis.
         """
-        super().__init__(**kwargs)
-        self.cls_obs = cls_obs
-        self.cls_exp = cls_exp
-        self.one_sigma_band = one_sigma_band
-        self.two_sigma_band = two_sigma_band
-        self.test_size = test_size
-        self.clsb = clsb
-        self.clb = clb
+        axes = self.cls_obs.axes
+        for field, artist in self._asdict().items():
+            if artist is not None:
+                if isinstance(artist, list):
+                    artist = artist[0]
+                if artist.axes != axes:
+                    return None
 
-    def get_children(self):
-        """
-        Return a list of the child Artists of this Artist.
-        """
-        # Unpack everything so that self.draw can work
-        artists = [
-            self.cls_obs,
-            *self.cls_exp,
-            self.one_sigma_band,
-            self.two_sigma_band,
-            self.test_size,
-            self.clsb,
-            self.clb,
-        ]
-        return tuple(artist for artist in artists if artist is not None)
-
-    def draw(self, renderer, *args, **kwargs):
-        """
-        Draw the Artist (and its children) using the given renderer.
-
-        This has no effect if the artist is not visible (``.Artist.get_visible``
-        returns ``False``).
-
-        .. note::
-
-            Even though ``draw`` is in the public API of
-            :class:`matplotlib.artist.Artist` users should probably not call
-            it themselves unless they are familiar with ``matplotlib``'s
-            renderer backend mechanics.
-
-        Args:
-            renderer: :class:`matplotlib.backend_bases.RendererBase` subclass.
-        """
-        if not self.get_visible():
-            return
-
-        for artist in self.get_children():
-            artist.draw(renderer, *args, **kwargs)
-        self.stale = False
+        return axes
 
 
 def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
@@ -206,15 +149,13 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         label=rf"$\alpha={test_size}$",
     )
 
-    brazil_band_artist = BrazilBandArtist(
+    return BrazilBandCollection(
         cls_obs_line,
         cls_exp_lines,
         one_sigma_band,
         two_sigma_band,
         test_size_line,
     )
-    brazil_band_artist.axes = ax  # Inelegant way to attach to axes
-    return brazil_band_artist
 
 
 def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
@@ -396,12 +337,17 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
     ]
 
     if not no_cls:
-        brazil_band_artist = plot_brazil_band(
+        brazil_band_collection = plot_brazil_band(
             test_pois, cls_obs, cls_exp, test_size, ax, **kwargs
         )
     else:
         # TODO: Find more elegant solution
-        brazil_band_artist = BrazilBandArtist(None, None, None, None, None)
+        brazil_band_collection = BrazilBandCollection(None, None, None, None, None)
+
+    if plot_components:
+        clsb, clb = plot_cls_components(test_pois, tail_probs, ax, **kwargs)
+        brazil_band_artists = [*iter(brazil_band_collection)][0:5]
+        brazil_band_collection = BrazilBandCollection(*brazil_band_artists, clsb, clb)
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
     y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
@@ -412,11 +358,6 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         ax.set_ylim(test_size * 0.1, 1)
     else:
         ax.set_ylim(0, 1)
-
-    if plot_components:
-        brazil_band_artist.clsb, brazil_band_artist.clb = plot_cls_components(
-            test_pois, tail_probs, ax, **kwargs
-        )
 
     # Order legend: ensure CLs expected band and test size are last in legend
     handles, labels = ax.get_legend_handles_labels()
@@ -430,4 +371,4 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
 
     ax.legend(handles, labels, loc="best")
 
-    return brazil_band_artist
+    return brazil_band_collection

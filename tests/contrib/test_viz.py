@@ -12,52 +12,50 @@ import pyhf.contrib.viz.brazil as brazil
 # pytest --mpl-generate-path=tests/contrib/baseline tests/contrib/test_viz.py
 
 
-def test_brazil_band_artist(datadir):
+def test_brazil_band_collection(datadir):
     data = json.load(open(datadir.join("hypotest_results.json")))
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_artist = brazil.plot_results(
+    brazil_band_collection = brazil.plot_results(
         data["testmus"], data["results"], test_size=0.05, ax=ax
     )
 
-    assert brazil_band_artist.cls_obs is not None
-    assert brazil_band_artist.cls_exp is not None
-    assert len(brazil_band_artist.cls_exp) == 5
-    assert brazil_band_artist.one_sigma_band is not None
-    assert brazil_band_artist.two_sigma_band is not None
-    assert brazil_band_artist.test_size is not None
-    assert brazil_band_artist.clsb is None
-    assert brazil_band_artist.clb is None
-
-    assert len(brazil_band_artist.get_children()) == 9
+    assert brazil_band_collection.cls_obs is not None
+    assert brazil_band_collection.cls_exp is not None
+    assert len(brazil_band_collection.cls_exp) == 5
+    assert brazil_band_collection.one_sigma_band is not None
+    assert brazil_band_collection.two_sigma_band is not None
+    assert brazil_band_collection.test_size is not None
+    assert brazil_band_collection.clsb is None
+    assert brazil_band_collection.clb is None
 
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
-    fig, ax = plt.subplots()  # Need renderer to test draw
-    brazil_band_artist = brazil.plot_results(
+    fig = Figure()
+    ax = fig.subplots()
+    brazil_band_collection = brazil.plot_results(
         data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
     )
 
-    assert brazil_band_artist.cls_obs is not None
-    assert brazil_band_artist.cls_exp is not None
-    assert len(brazil_band_artist.cls_exp) == 5
-    assert brazil_band_artist.one_sigma_band is not None
-    assert brazil_band_artist.two_sigma_band is not None
-    assert brazil_band_artist.test_size is not None
-    assert brazil_band_artist.clsb is not None
-    assert brazil_band_artist.clb is not None
+    assert brazil_band_collection.cls_obs is not None
+    assert brazil_band_collection.cls_exp is not None
+    assert len(brazil_band_collection.cls_exp) == 5
+    assert brazil_band_collection.one_sigma_band is not None
+    assert brazil_band_collection.two_sigma_band is not None
+    assert brazil_band_collection.test_size is not None
+    assert brazil_band_collection.clsb is not None
+    assert brazil_band_collection.clb is not None
 
-    assert len(brazil_band_artist.get_children()) == 11
+    assert brazil_band_collection.axes == ax
 
-    brazil_band_artist.stale = True
-    brazil_band_artist.draw(fig.canvas.get_renderer())
-    assert not brazil_band_artist.stale
-
-    brazil_band_artist.set_visible(False)  # Other control flow path
-    brazil_band_artist.stale = True
-    assert brazil_band_artist.draw(fig.canvas.get_renderer()) is None
-    assert brazil_band_artist.stale
+    _fig = Figure()
+    _ax = _fig.subplots()
+    (line,) = _ax.plot([1, 2], [3, 4])
+    artists = [*iter(brazil_band_collection)]
+    artists[0] = line
+    bad_collection = brazil.BrazilBandCollection(*artists)
+    assert bad_collection.axes is None
 
 
 @pytest.mark.mpl_image_compare
@@ -66,10 +64,10 @@ def test_plot_results(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_artist = brazil.plot_results(
+    brazil_band_collection = brazil.plot_results(
         data["testmus"], data["results"], test_size=0.05, ax=ax
     )
-    assert brazil_band_artist.axes == ax
+    assert brazil_band_collection.axes == ax
 
     return fig
 
@@ -104,7 +102,7 @@ def test_plot_results_components_no_clb(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_artist = brazil.plot_results(
+    brazil_band_collection = brazil.plot_results(
         data["testmus"],
         data["results"],
         test_size=0.05,
@@ -113,8 +111,8 @@ def test_plot_results_components_no_clb(datadir):
         no_clb=True,
     )
 
-    assert brazil_band_artist.clsb is not None
-    assert brazil_band_artist.clb is None
+    assert brazil_band_collection.clsb is not None
+    assert brazil_band_collection.clb is None
     return fig
 
 
@@ -124,7 +122,7 @@ def test_plot_results_components_no_clsb(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_artist = brazil.plot_results(
+    brazil_band_collection = brazil.plot_results(
         data["testmus"],
         data["results"],
         test_size=0.05,
@@ -133,8 +131,8 @@ def test_plot_results_components_no_clsb(datadir):
         no_clsb=True,
     )
 
-    assert brazil_band_artist.clsb is None
-    assert brazil_band_artist.clb is not None
+    assert brazil_band_collection.clsb is None
+    assert brazil_band_collection.clb is not None
     return fig
 
 
@@ -144,7 +142,7 @@ def test_plot_results_components_no_cls(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    brazil_band_artist = brazil.plot_results(
+    brazil_band_collection = brazil.plot_results(
         data["testmus"],
         data["results"],
         test_size=0.05,
@@ -153,13 +151,13 @@ def test_plot_results_components_no_cls(datadir):
         no_cls=True,
     )
 
-    assert brazil_band_artist.cls_obs is None
-    assert brazil_band_artist.cls_exp is None
-    assert brazil_band_artist.one_sigma_band is None
-    assert brazil_band_artist.two_sigma_band is None
-    assert brazil_band_artist.test_size is None
-    assert brazil_band_artist.clsb is not None
-    assert brazil_band_artist.clb is not None
+    assert brazil_band_collection.cls_obs is None
+    assert brazil_band_collection.cls_exp is None
+    assert brazil_band_collection.one_sigma_band is None
+    assert brazil_band_collection.two_sigma_band is None
+    assert brazil_band_collection.test_size is None
+    assert brazil_band_collection.clsb is not None
+    assert brazil_band_collection.clb is not None
     return fig
 
 
