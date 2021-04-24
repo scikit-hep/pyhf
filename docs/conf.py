@@ -53,6 +53,7 @@ extensions = [
     'sphinx_issues',
     'sphinx_copybutton',
     'xref',
+    'sphinxcontrib.twitter',
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
