@@ -123,7 +123,7 @@ Matthew joined him on the project to begin development and by April 2018 Giordon
 learned about the project and began making contributions, quickly becoming
 `the third core developer <https://twitter.com/KyleCranmer/status/1052186117452259328>`_.
 ``pyhf`` was founded on the ideas of open contributions and community software and continues
-in that mission today as a `Scikit-HEP project <https://scikit-hep.org/>`_, wich an open
+in that mission today as a `Scikit-HEP project <https://scikit-hep.org/>`_, with an open
 invitation for community contributions and new developers.
 
 Troubleshooting
