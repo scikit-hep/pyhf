@@ -1,3 +1,5 @@
+.. _sec:faq:
+
 FAQ
 ===
 
@@ -85,13 +87,13 @@ As of the late 2010's Python is widely considered the lingua franca of machine l
 libraries, and is sufficiently high-level and expressive for physicists of various computational
 skill backgrounds to use.
 Using Python as the language for development allows for the distribution of the software
---- as both source files and binary distributions --- through the Python Package Index (PyPI) and
-Conda-forge, which significantly lowers the barrier for use as compared to ``C++``.
-Additionally, a 2017 `DIANA/HEP <http://diana-hep.org/>`_ study demonstrated the graph structure
-and automatic differentiation abilities of machine learning frameworks allowed them to be quite
-effective tools for statistical fits. :cite:`feickert_diana_fellowship_report`
-As the frameworks considered in this study (TensorFlow, PyTorch, MXNet)
-all provided low-level Python APIs to the libraries this made Python an obvious choice for a common
+--- as both source files and binary distributions --- through the Python Package Index (PyPI)
+and Conda-forge, which significantly lowers the barrier for use as compared to ``C++``.
+Additionally, a 2017 `DIANA/HEP <https://diana-hep.org/>`_ study :cite:`faq-feickert-diana-fellowship-report`
+demonstrated the graph structure and automatic differentiation abilities of machine learning
+frameworks allowed them to be quite effective tools for statistical fits.
+As the frameworks considered in this study (TensorFlow, PyTorch, MXNet) all provided
+low-level Python APIs to the libraries this made Python an obvious choice for a common
 high-level control language.
 Given all these considerations, Python was chosen as the development language.
 
@@ -103,11 +105,13 @@ be able to share and produce statistical results from LHC experiements if they w
 created with tools that didn't require the large ``C++`` dependencies and tooling expertise as
 :math:`\HiFa{}`.
 Around the same time that Lukas began thinking on these ideas, Matthew Feickert was working on
-`a DIANA/HEP fellowship <https://twitter.com/SMUPhysics/status/861584474638766080>`_ with Kyle Cranmer (co-author of :math:`\HiFa{}`) to study if the graph structure and automatic differentiation abilities of
-machine learning frameworks would allow them to be effective tools for statistical fits.
-Lukas would give helpful friendly advice on Matthew's project and one night (24 January, 2018)
-over dinner in CERN's R1 cafeteria the two were discussing the idea of implimenting :math:`\HiFa{}` in Python using
-machine learning libraries to drive the computation.
+`a DIANA/HEP fellowship <https://twitter.com/SMUPhysics/status/861584474638766080>`_ with
+Kyle Cranmer (co-author of :math:`\HiFa{}`) to study if the graph structure and automatic
+differentiation abilities of machine learning frameworks would allow them to be effective
+tools for statistical fits.
+Lukas would give helpful friendly advice on Matthew's project and one night [1]_ over dinner
+in CERN's R1 cafeteria the two were discussing the idea of implimenting :math:`\HiFa{}`
+in Python using machine learning libraries to drive the computation.
 Continuing the discussion in Lukas's office, Lukas showed Matthew that the core statistical
 machinery could be implimented rather succinctly, and that night
 `proceeded to do so <https://github.com/scikit-hep/pyhf/commit/fd32503fb760f070a4047cb867757458b1687599>`_
@@ -115,10 +119,12 @@ dubbing the project ``pyhf``.
 
 .. tweet:: https://twitter.com/lukasheinrich_/status/956809112674885632
 
-Matthew joined him on the project to begin development and by April 2018 Giordon Stark had learned about
-the project and began making contributions, quickly becoming `the third core developer <https://twitter.com/KyleCranmer/status/1052186117452259328>`_.
-``pyhf`` was founded on the ideas of open contributions and community software and continues in that mission
-today as a `Scikit-HEP project <https://scikit-hep.org/>`_, wich an open invitation for community contributions and new developers.
+Matthew joined him on the project to begin development and by April 2018 Giordon Stark had
+learned about the project and began making contributions, quickly becoming
+`the third core developer <https://twitter.com/KyleCranmer/status/1052186117452259328>`_.
+``pyhf`` was founded on the ideas of open contributions and community software and continues
+in that mission today as a `Scikit-HEP project <https://scikit-hep.org/>`_, wich an open
+invitation for community contributions and new developers.
 
 Troubleshooting
 ---------------
@@ -135,3 +141,18 @@ Troubleshooting
         sudo apt-get purge nvidia*
 
     and then installing the latest versions.
+
+Footnotes
+~~~~~~~~~
+
+.. [1]
+   24 January, 2018
+
+Bibliography
+~~~~~~~~~~~~
+
+.. bibliography:: bib/docs.bib
+   :filter: docname in docnames
+   :style: plain
+   :keyprefix: faq-
+   :labelprefix: faq-
