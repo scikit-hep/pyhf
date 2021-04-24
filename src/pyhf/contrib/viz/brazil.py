@@ -57,7 +57,15 @@ class BrazilBandCollection(
 
         All artists in :class:`BrazilBandCollection` must be on the same axis.
         """
-        axes = self.cls_obs.axes
+        try:
+            axes = next(
+                artist
+                for artist in [self.cls_obs, self.clsb, self.clb]
+                if artist is not None
+            ).axes
+        except StopIteration:
+            return None
+
         for field, artist in self._asdict().items():
             if artist is not None:
                 if isinstance(artist, list):
