@@ -78,6 +78,26 @@ If the journal you are publishing in requires you to use ``textsc`` for software
 
         \newcommand{\pyhf}{\textsc{pyhf}}
 
+Why use Python?
+~~~~~~~~~~~~~~~
+
+As of the late 2010's Python is widely considered the lingua franca of machine learning
+libraries, and is sufficiently high-level and expressive for physicists of various computational
+skill backgrounds to use.
+Using Python as the language for development allows for the distribution of the software
+--- as both source files and binary distributions --- through the Python Package Index (PyPI) and
+Conda-forge, which significantly lowers the barrier for use as compared to \texttt{C++}.
+Additionally, a 2017 DIANA/HEP~\cite{DIANA-proposal-2014} study demonstrated the graph structure
+and automatic differentiation abilities of machine learning frameworks allowed them to be quite
+effective tools for statistical fits.~\cite{matthew_feickert_2018_1458059}
+As the frameworks considered in this study (\texttt{TensorFlow}, \texttt{PyTorch}, \texttt{MXNet})
+all provided low-level Python APIs to the libraries this made Python an obvious choice for a common
+high-level control language.
+Given all these considerations, Python was chosen as the development language.
+
+How did ``pyhf`` get started?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Troubleshooting
 ---------------
 
