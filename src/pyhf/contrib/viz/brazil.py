@@ -21,7 +21,8 @@ class BrazilBandCollection(
     )
 ):
     r"""
-    Tuple containing the :class:`matplotlib.artist.Artist` objects of the
+    :obj:`collections.namedtuple` containing the
+    :class:`matplotlib.artist.Artist` objects of the
     "Brazil Band" and optionally the observed :math:`\mathrm{CL}_{s+b}`
     and :math:`\mathrm{CL}_{b}` --- the components of the
     :math:`\mathrm{CL}_{s}` ratio.
