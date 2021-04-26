@@ -38,27 +38,27 @@ class Patch(jsonpatch.JsonPatch):
 
     @property
     def metadata(self):
-        """ The metadata of the patch """
+        """The metadata of the patch"""
         return self._metadata
 
     @property
     def name(self):
-        """ The name of the patch """
+        """The name of the patch"""
         return self.metadata['name']
 
     @property
     def values(self):
-        """ The values of the associated labels for the patch """
+        """The values of the associated labels for the patch"""
         return tuple(self.metadata['values'])
 
     def __repr__(self):
-        """ Representation of the object """
+        """Representation of the object"""
         module = type(self).__module__
         qualname = type(self).__qualname__
         return f"<{module}.{qualname} object '{self.name}{self.values}' at {hex(id(self))}>"
 
     def __eq__(self, other):
-        """ Equality for subclass with new attributes """
+        """Equality for subclass with new attributes"""
         if not isinstance(other, Patch):
             return False
         return (
@@ -195,41 +195,41 @@ class PatchSet:
 
     @property
     def version(self):
-        """ The version of the PatchSet """
+        """The version of the PatchSet"""
         return self._version
 
     @property
     def metadata(self):
-        """ The metadata of the PatchSet """
+        """The metadata of the PatchSet"""
         return self._metadata
 
     @property
     def references(self):
-        """ The references in the PatchSet metadata """
+        """The references in the PatchSet metadata"""
         return self.metadata['references']
 
     @property
     def description(self):
-        """ The description in the PatchSet metadata """
+        """The description in the PatchSet metadata"""
         return self.metadata['description']
 
     @property
     def digests(self):
-        """ The digests in the PatchSet metadata """
+        """The digests in the PatchSet metadata"""
         return self.metadata['digests']
 
     @property
     def labels(self):
-        """ The labels in the PatchSet metadata """
+        """The labels in the PatchSet metadata"""
         return self.metadata['labels']
 
     @property
     def patches(self):
-        """ The patches in the PatchSet """
+        """The patches in the PatchSet"""
         return self._patches
 
     def __repr__(self):
-        """ Representation of the object """
+        """Representation of the object"""
         module = type(self).__module__
         qualname = type(self).__qualname__
         return f"<{module}.{qualname} object with {len(self.patches)} patch{'es' if len(self.patches) != 1 else ''} at {hex(id(self))}>"
