@@ -122,6 +122,8 @@ dubbing the project ``pyhf``.
 Matthew joined him on the project to begin development and by April 2018 Giordon Stark had
 learned about the project and began making contributions, quickly becoming
 `the third core developer <https://twitter.com/KyleCranmer/status/1052186117452259328>`_.
+The first physics paper to use ``pyhf`` followed closely in October 2018
+:cite:`faq-Heinrich:2018nip`, making Lukas and Holger's original conversations a reality.
 ``pyhf`` was founded on the ideas of open contributions and community software and continues
 in that mission today as a `Scikit-HEP project <https://scikit-hep.org/>`_, with an open
 invitation for community contributions and new developers.
@@ -151,7 +153,7 @@ Footnotes
 Bibliography
 ~~~~~~~~~~~~
 
-.. bibliography:: bib/docs.bib
+.. bibliography:: bib/docs.bib bib/use_citations.bib
    :filter: docname in docnames
    :style: plain
    :keyprefix: faq-
