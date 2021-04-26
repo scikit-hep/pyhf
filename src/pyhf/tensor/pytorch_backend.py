@@ -15,7 +15,7 @@ class pytorch_backend:
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
-        self.precision = kwargs.get('precision', '32b')
+        self.precision = kwargs.get('precision', '64b')
         self.dtypemap = {
             'float': torch.float64 if self.precision == '64b' else torch.float32,
             'int': torch.int64 if self.precision == '64b' else torch.int32,
@@ -245,11 +245,29 @@ class pytorch_backend:
     def abs(self, tensor):
         return torch.abs(tensor)
 
-    def ones(self, shape):
-        return torch.ones(shape, dtype=self.dtypemap['float'])
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
 
-    def zeros(self, shape):
-        return torch.zeros(shape, dtype=self.dtypemap['float'])
+        return torch.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
+
+        return torch.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return torch.pow(tensor_in_1, tensor_in_2)
@@ -507,7 +525,7 @@ class pytorch_backend:
             >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
             >>> numpy_ndarray
             array([[1., 2., 3.],
-                   [4., 5., 6.]], dtype=float32)
+                   [4., 5., 6.]])
             >>> type(numpy_ndarray)
             <class 'numpy.ndarray'>
 

@@ -14,6 +14,20 @@ def test_astensor_dtype(backend, caplog):
             assert 'Invalid dtype' in caplog.text
 
 
+def test_ones_dtype(backend, caplog):
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
+        with pytest.raises(KeyError):
+            assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
+            assert "Invalid dtype" in caplog.text
+
+
+def test_zeros_dtype(backend, caplog):
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
+        with pytest.raises(KeyError):
+            assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
+            assert "Invalid dtype" in caplog.text
+
+
 def test_simple_tensor_ops(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3]) + tb.astensor([4, 5, 6])) == [5, 7, 9]

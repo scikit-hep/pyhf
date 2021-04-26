@@ -197,7 +197,7 @@ class jax_backend:
     def isfinite(self, tensor):
         return jnp.isfinite(tensor)
 
-    def astensor(self, tensor_in, dtype='float'):
+    def astensor(self, tensor_in, dtype="float"):
         """
         Convert to a JAX ndarray.
 
@@ -209,15 +209,16 @@ class jax_backend:
             >>> tensor
             DeviceArray([[1., 2., 3.],
                          [4., 5., 6.]], dtype=float64)
-            >>> type(tensor)
-            <class 'jax.interpreters.xla._DeviceArray'>
+            >>> type(tensor) # doctest:+ELLIPSIS
+            <class '...DeviceArray'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla._DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
         """
+        # TODO: Remove doctest:+ELLIPSIS when JAX API stabilized
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
@@ -237,11 +238,29 @@ class jax_backend:
     def abs(self, tensor):
         return jnp.abs(tensor)
 
-    def ones(self, shape):
-        return jnp.ones(shape)
+    def ones(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
 
-    def zeros(self, shape):
-        return jnp.zeros(shape)
+        return jnp.ones(shape, dtype=dtype)
+
+    def zeros(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.error(
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                exc_info=True,
+            )
+            raise
+
+        return jnp.zeros(shape, dtype=dtype)
 
     def power(self, tensor_in_1, tensor_in_2):
         return jnp.power(tensor_in_1, tensor_in_2)
@@ -322,7 +341,7 @@ class jax_backend:
             tensor (Tensor): Tensor object
 
         Returns:
-            `jax.interpreters.xla._DeviceArray`: A flattened array.
+            `jaxlib.xla_extension.DeviceArray`: A flattened array.
         """
         return jnp.ravel(tensor)
 

@@ -75,18 +75,16 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             # do grad, scipy, 32b
             'do_grad-scipy-pytorch-32b': [0.49993881583213806, 1.0001085996627808],
             'do_grad-scipy-tensorflow-32b': [0.4999384582042694, 1.0001084804534912],
-            'do_grad-scipy-jax-32b': [0.4999389052391052, 1.0001085996627808],
+            'do_grad-scipy-jax-32b': [0.4978247582912445, 1.0006263256072998],
             # do grad, scipy, 64b
             'do_grad-scipy-pytorch-64b': [0.49998837853531425, 0.9999696648069287],
             'do_grad-scipy-tensorflow-64b': [0.4999883785353142, 0.9999696648069278],
             'do_grad-scipy-jax-64b': [0.49998837853531414, 0.9999696648069285],
             # no grad, minuit, 32b - not very consistent for pytorch
-            'no_grad-minuit-numpy-32b': [0.49622172117233276, 1.0007264614105225],
+            'no_grad-minuit-numpy-32b': [0.7465415000915527, 0.8796938061714172],
             #    nb: macos gives different numerics than CI
-            # 'no_grad-minuit-pytorch-32b': [0.7465415000915527, 0.8796938061714172],
             'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
             'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            # 'no_grad-minuit-jax-32b': [0.5144518613815308, 0.9927923679351807],
             'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
@@ -94,36 +92,47 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
             'no_grad-minuit-tensorflow-64b': [0.5000493563645547, 1.0000043833598657],
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 32b
-            'do_grad-minuit-pytorch-32b': [0.5017611384391785, 0.9997190237045288],
-            'do_grad-minuit-tensorflow-32b': [0.5012885928153992, 1.0000673532485962],
-            # 'do_grad-minuit-jax-32b': [0.5029529333114624, 0.9991086721420288],
+            # large divergence by tensorflow and pytorch
+            'do_grad-minuit-pytorch-32b': [0.9731879234313965, 0.9999999403953552],
+            'do_grad-minuit-tensorflow-32b': [0.9366918206214905, 0.9126002788543701],
             'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
-            'do_grad-minuit-pytorch-64b': [0.500273961181471, 0.9996310135736226],
-            'do_grad-minuit-tensorflow-64b': [0.500273961167223, 0.9996310135864218],
-            'do_grad-minuit-jax-64b': [0.5002739611532436, 0.9996310135970794],
+            'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
+            'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
+            'do_grad-minuit-jax-64b': [0.500049321731032, 1.0000044174002167],
         }[identifier]
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
-        rtol = 2e-06
+        rel_tol = 1e-6
+        # Fluctuations beyond precision shouldn't matter
+        abs_tol = 1e-5 if "32b" in identifier else 1e-8
+
         # handle cases where macos and ubuntu provide very different results numerical
-        if 'no_grad-minuit-tensorflow-32b' in identifier:
-            # not a very large difference, so we bump the relative difference down
-            rtol = 3e-02
-        if 'no_grad-minuit-pytorch-32b' in identifier:
-            # quite a large difference
-            rtol = 3e-01
-        if 'do_grad-minuit-pytorch-32b' in identifier:
-            # a small difference
-            rtol = 7e-05
-        if 'no_grad-minuit-jax-32b' in identifier:
-            rtol = 4e-02
-        if 'do_grad-minuit-jax-32b' in identifier:
-            rtol = 5e-03
+        if "no_grad" in identifier:
+            rel_tol = 1e-5
+            if "minuit-pytorch-32b" in identifier:
+                # large difference between local and CI
+                rel_tol = 3e-1
+            if "minuit-tensorflow-32b" in identifier:
+                # not a very large difference, so we bump the relative difference down
+                rel_tol = 3e-2
+            if "minuit-jax-32b" in identifier:
+                rel_tol = 4e-2
+        elif all(part in identifier for part in ["do_grad", "32b"]):
+            if "scipy-jax" in identifier:
+                rel_tol = 1e-2
+            # NB: ubuntu and macos give different results for 32b
+            if "minuit-tensorflow" in identifier:
+                # large difference between local and CI
+                rel_tol = 1e-1
+            if "minuit-jax" in identifier:
+                rel_tol = 1e-2
 
         # check fitted parameters
-        assert pytest.approx(expected, rel=rtol) == pyhf.tensorlib.tolist(
+        assert pytest.approx(
+            expected, rel=rel_tol, abs=abs_tol
+        ) == pyhf.tensorlib.tolist(
             result
         ), f"{identifier} = {pyhf.tensorlib.tolist(result)}"
 
@@ -187,7 +196,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     the minuit strategy=0. When there is no user-provided gradient, check that
     one automatically sets the minuit strategy=1.
     """
-    pyhf.set_backend(pyhf.tensorlib, 'minuit')
+    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(tolerance=0.2))
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
     m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
@@ -208,7 +217,9 @@ def test_minuit_strategy_do_grad(mocker, backend):
 
 @pytest.mark.parametrize('strategy', [0, 1])
 def test_minuit_strategy_global(mocker, backend, strategy):
-    pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy))
+    pyhf.set_backend(
+        pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
+    )
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
     m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)

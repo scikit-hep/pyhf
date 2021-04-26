@@ -1,15 +1,15 @@
 # core
 scipy==1.4.1  # c.f. PR #1001
-click==7.0.0
+click==7.0
 tqdm==4.56.0
-jsonschema==3.2.0
-jsonpatch==1.23.0
-pyyaml==5.1.0
+jsonschema==3.0.0
+jsonpatch==1.15
+pyyaml==5.1
 # xmlio
 uproot3==3.14.1
 uproot==4.0.0
 # minuit
-iminuit==2.1.0
+iminuit==2.4.0
 # tensorflow
 tensorflow==2.2.1  # c.f. PR #1001
 tensorflow-probability==0.10.1
