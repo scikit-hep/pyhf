@@ -192,21 +192,21 @@ combined = {
 }
 
 __all__ = [
-    'histosys',
-    'histosys_combined',
-    'lumi',
-    'lumi_combined',
-    'normfactor',
-    'normfactor_combined',
-    'normsys',
-    'normsys_combined',
-    'shapefactor',
-    'shapefactor_combined',
-    'shapesys',
-    'shapesys_combined',
-    'staterror',
-    'staterror_combined',
-    'combined',
+    "combined",
+    "histosys",
+    "histosys_combined",
+    "lumi",
+    "lumi_combined",
+    "normfactor",
+    "normfactor_combined",
+    "normsys",
+    "normsys_combined",
+    "shapefactor",
+    "shapefactor_combined",
+    "shapesys",
+    "shapesys_combined",
+    "staterror",
+    "staterror_combined",
 ]
 
 
