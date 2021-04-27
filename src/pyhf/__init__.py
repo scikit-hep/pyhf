@@ -167,7 +167,6 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
-    "optimize",
     "optimzier",
     "set_backend",
     "simplemodels",

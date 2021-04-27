@@ -16,7 +16,6 @@ def test_top_level_public_api():
         "infer",
         "interpolators",
         "modifiers",
-        "optimize",
         "optimzier",
         "set_backend",
         "simplemodels",
