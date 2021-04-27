@@ -205,7 +205,22 @@ def _nominal_and_modifiers_from_spec(config, spec):
 
 
 class _ModelConfig(_ChannelSummaryMixin):
+    """
+    Configuration for the :class:`~pyhf.pdf.Model`.
+
+    .. note::
+
+        :class:`_ModelConfig` should not be called directly.
+        It should instead by accessed through the :obj:`config` attribute
+        of :class:`~pyhf.pdf.Model`.
+
+    """
+
     def __init__(self, spec, **config_kwargs):
+        """
+        Args:
+            spec (:obj:`jsonable`): The HistFactory JSON specification.
+        """
         super().__init__(channels=spec['channels'])
         _required_paramsets = _paramset_requirements_from_modelspec(
             spec, self.channel_nbins
@@ -265,7 +280,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Returns:
             List: A list of booleans, ``True`` for fixed and ``False`` for not fixed.
 
-        Something like the following to build fixed_vals appropriately:
+        Something like the following to build ``fixed_vals`` appropriately:
 
         .. code:: python
 
