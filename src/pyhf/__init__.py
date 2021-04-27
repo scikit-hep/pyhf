@@ -159,21 +159,21 @@ from .patchset import PatchSet
 
 __all__ = [
     "Model",
-    "Workspace",
     "PatchSet",
-    "infer",
-    "utils",
-    "modifiers",
-    "simplemodels",
+    "Workspace",
     "__version__",
-    "tensorlib",
-    "optimzier",
-    "get_backend",
-    "set_backend",
     "exceptions",
+    "get_backend",
+    "infer",
     "interpolators",
+    "modifiers",
     "optimize",
+    "optimzier",
+    "set_backend",
+    "simplemodels",
     "tensor",
+    "tensorlib",
+    "utils",
 ]
 
 
