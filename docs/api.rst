@@ -197,6 +197,7 @@ Utilities
    validate
    options_from_eqdelimstring
    digest
+   pyhf.utils.citation
 
 Contrib
 -------
