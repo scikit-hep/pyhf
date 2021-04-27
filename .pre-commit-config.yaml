@@ -23,7 +23,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/psf/black
-    rev: 21.4b0
+    rev: 21.4b1
     hooks:
     - id: black
 
@@ -31,7 +31,7 @@ repos:
     rev: v1.10.0
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==21.4b0]
+      additional_dependencies: [black==21.4b1]
 
 -   repo: https://github.com/PyCQA/flake8
     rev: 3.9.1
@@ -48,6 +48,6 @@ repos:
     rev: 0.7.0
     hooks:
     - id: nbqa-black
-      additional_dependencies: [black==21.4b0]
+      additional_dependencies: [black==21.4b1]
     - id: nbqa-pyupgrade
       additional_dependencies: [pyupgrade==2.11.0]
