@@ -29,6 +29,7 @@ def test_brazil_band_collection(datadir):
     assert brazil_band_collection.test_size is not None
     assert brazil_band_collection.clsb is None
     assert brazil_band_collection.clb is None
+    assert brazil_band_collection.axes == ax
 
     data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
 
@@ -46,18 +47,7 @@ def test_brazil_band_collection(datadir):
     assert brazil_band_collection.test_size is not None
     assert brazil_band_collection.clsb is not None
     assert brazil_band_collection.clb is not None
-
     assert brazil_band_collection.axes == ax
-
-    _fig = Figure()
-    _ax = _fig.subplots()
-    (line,) = _ax.plot([1, 2], [3, 4])
-    artists = [*iter(brazil_band_collection)]
-    artists[0] = line
-    bad_collection = brazil.BrazilBandCollection(*artists)
-    assert bad_collection.axes is None
-
-    assert brazil.BrazilBandCollection(*(None,) * 7).axes is None
 
 
 @pytest.mark.mpl_image_compare

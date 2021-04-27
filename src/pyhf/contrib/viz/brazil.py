@@ -16,6 +16,7 @@ class BrazilBandCollection(
             "test_size",
             "clsb",
             "clb",
+            "axes",
         ),
     )
 ):
@@ -46,32 +47,9 @@ class BrazilBandCollection(
 
     :param clb: The :class:`matplotlib.lines.Line2D` of the observed
      :math:`\mathrm{CL}_{b}` line.
+
+    :param axes: The :class:`matplotlib.axes.Axes` the artists are plotted on.
     """
-
-    @property
-    def axes(self):
-        r"""
-        The :class:`matplotlib.axes.Axes` instance the artists resides in, or ``None``.
-
-        All artists in :class:`BrazilBandCollection` must be on the same axis.
-        """
-        try:
-            axes = next(
-                artist
-                for artist in [self.cls_obs, self.clsb, self.clb]
-                if artist is not None
-            ).axes
-        except StopIteration:
-            return None
-
-        for field, artist in self._asdict().items():
-            if artist is not None:
-                if isinstance(artist, list):
-                    artist = artist[0]
-                if artist.axes != axes:
-                    return None
-
-        return axes
 
 
 def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
@@ -380,4 +358,4 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
 
     ax.legend(handles, labels, loc="best")
 
-    return BrazilBandCollection(*brazil_band_artists, clsb, clb)
+    return BrazilBandCollection(*brazil_band_artists, clsb, clb, ax)
