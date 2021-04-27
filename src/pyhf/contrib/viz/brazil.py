@@ -4,7 +4,12 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-__all__ = ["plot_results"]
+__all__ = [
+    "BrazilBandCollection",
+    "plot_brazil_band",
+    "plot_cls_components",
+    "plot_results",
+]
 
 
 def __dir__():
