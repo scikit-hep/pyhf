@@ -1,6 +1,8 @@
 import pyhf
 import pyhf.cli
 import pyhf.contrib.viz.brazil
+import pyhf.readxml
+import pyhf.writexml
 
 
 def test_top_level_public_api():
@@ -150,4 +152,90 @@ def test_modifiers_public_api():
         "shapesys_combined",
         "staterror",
         "staterror_combined",
+    ]
+
+
+def test_parameters_public_api():
+    assert dir(pyhf.parameters) == [
+        "ParamViewer",
+        "constrained_by_normal",
+        "constrained_by_poisson",
+        "paramset",
+        "reduce_paramsets_requirements",
+        "unconstrained",
+    ]
+
+
+def test_parameters_paramsets_public_api():
+    assert dir(pyhf.parameters.paramsets) == [
+        "constrained_by_normal",
+        "constrained_by_poisson",
+        "constrained_paramset",
+        "paramset",
+        "unconstrained",
+    ]
+
+
+def test_parameters_paramview_public_api():
+    assert dir(pyhf.parameters.paramview) == ["ParamViewer"]
+
+
+def test_parameters_utils_public_api():
+    assert dir(pyhf.parameters.utils) == ["reduce_paramsets_requirements"]
+
+
+def test_patchset_public_api():
+    assert dir(pyhf.patchset) == ["Patch", "PatchSet"]
+
+
+def test_pdf_public_api():
+    assert dir(pyhf.pdf) == ["Model", "_ModelConfig"]
+
+
+def test_probability_public_api():
+    assert dir(pyhf.probability) == ["Independent", "Normal", "Poisson", "Simultaneous"]
+
+
+def test_readxml_public_api():
+    assert dir(pyhf.readxml) == [
+        "clear_filecache",
+        "dedupe_parameters",
+        "extract_error",
+        "import_root_histogram",
+        "parse",
+        "process_channel",
+        "process_data",
+        "process_measurements",
+        "process_sample",
+    ]
+
+
+def test_simplemodels_public_api():
+    assert dir(pyhf.simplemodels) == ["hepdata_like"]
+
+
+def test_utils_public_api():
+    assert dir(pyhf.utils) == [
+        "EqDelimStringParamType",
+        "citation",
+        "digest",
+        "load_schema",
+        "options_from_eqdelimstring",
+        "remove_prefix",
+        "validate",
+    ]
+
+
+def test_workspace_public_api():
+    assert dir(pyhf.workspace) == ["Workspace"]
+
+
+def test_writexml_public_api():
+    assert dir(pyhf.writexml) == [
+        "build_channel",
+        "build_data",
+        "build_measurement",
+        "build_modifier",
+        "build_sample",
+        "indent",
     ]
