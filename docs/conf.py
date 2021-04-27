@@ -71,8 +71,9 @@ xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.172
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('https://matplotlib.org/stable/', None),
     'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
 }

@@ -82,7 +82,7 @@ def run_toys_pyhf(ntoys=2_000, seed=0):
     ]
 
     fig, ax = plt.subplots()
-    brazil.plot_results(ax, test_mus, fit_results)
+    brazil.plot_results(test_mus, fit_results, ax=ax)
     ax.set_xlabel(r"$\mu$")
     ax.set_ylabel(r"$\mathrm{CL}_{s}$")
     _buffer = 0.02
