@@ -1,5 +1,6 @@
 import pyhf
 import pyhf.cli
+import pyhf.contrib.utils
 import pyhf.contrib.viz.brazil
 import pyhf.readxml
 import pyhf.writexml
@@ -38,6 +39,10 @@ def test_constraints_public_api():
 
 def test_cli_contrib_public_api():
     assert dir(pyhf.cli.contrib) == ["download"]
+
+
+def test_contrib_utils_public_api():
+    assert dir(pyhf.contrib.utils) == ["download"]
 
 
 def test_contrib_viz_public_api():
