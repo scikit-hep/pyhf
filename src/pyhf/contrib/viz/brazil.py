@@ -17,17 +17,15 @@ class BrazilBandCollection(
             "clsb",
             "clb",
         ),
-        defaults=(None,) * 7,
     )
 ):
     r"""
     :obj:`collections.namedtuple` containing the
     :class:`matplotlib.artist.Artist` objects of the
-    "Brazil Band" and optionally the observed :math:`\mathrm{CL}_{s+b}`
-    and :math:`\mathrm{CL}_{b}` --- the components of the
+    "Brazil Band" and the observed :math:`\mathrm{CL}_{s+b}` and
+    :math:`\mathrm{CL}_{b}` --- the components of the
     :math:`\mathrm{CL}_{s}` ratio.
-    Returned by :func:`~pyhf.contrib.viz.brazil.plot_results` plot and
-    :func:`~pyhf.contrib.viz.brazil.plot_brazil_band`.
+    Returned by :func:`~pyhf.contrib.viz.brazil.plot_results`.
 
     :param cls_obs: The :class:`matplotlib.lines.Line2D` of the
      :math:`\mathrm{CL}_{s,\mathrm{obs}}` line.
@@ -43,10 +41,10 @@ class BrazilBandCollection(
 
     :param test_size: The :class:`matplotlib.lines.Line2D` of the test size line.
 
-    :param clsb: The :class:`matplotlib.lines.Line2D` of the optional observed
+    :param clsb: The :class:`matplotlib.lines.Line2D` of the observed
      :math:`\mathrm{CL}_{s+b}` line.
 
-    :param clb: The :class:`matplotlib.lines.Line2D` of the optional observed
+    :param clb: The :class:`matplotlib.lines.Line2D` of the observed
      :math:`\mathrm{CL}_{b}` line.
     """
 
@@ -125,8 +123,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :class:`BrazilBandArtist`: Artist containing the :obj:`matplotlib.artist`
-        objects drawn.
+        :obj:`tuple`: The :obj:`matplotlib.aritst` objects drawn.
     """
     line_color = kwargs.pop("color", "black")
     (cls_obs_line,) = ax.plot(
@@ -168,13 +165,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         label=rf"$\alpha={test_size}$",
     )
 
-    return BrazilBandCollection(
-        cls_obs_line,
-        cls_exp_lines,
-        one_sigma_band,
-        two_sigma_band,
-        test_size_line,
-    )
+    return cls_obs_line, cls_exp_lines, one_sigma_band, two_sigma_band, test_size_line
 
 
 def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
@@ -328,7 +319,7 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :class:`BrazilBandArtist`: Artist containing the :obj:`matplotlib.artist`
+        :class:`BrazilBandCollection`: Artist containing the :obj:`matplotlib.artist`
         objects drawn.
     """
     if ax is None:
@@ -355,18 +346,17 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         for sigma_idx in range(5)
     ]
 
-    if not no_cls:
-        brazil_band_collection = plot_brazil_band(
-            test_pois, cls_obs, cls_exp, test_size, ax, **kwargs
-        )
-    else:
-        # TODO: Find more elegant solution
-        brazil_band_collection = BrazilBandCollection()
+    brazil_band_artists = (
+        plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs)
+        if not no_cls
+        else (None,) * 5
+    )
 
-    if plot_components:
-        clsb, clb = plot_cls_components(test_pois, tail_probs, ax, **kwargs)
-        brazil_band_artists = [*iter(brazil_band_collection)][0:5]
-        brazil_band_collection = BrazilBandCollection(*brazil_band_artists, clsb, clb)
+    clsb, clb = (
+        plot_cls_components(test_pois, tail_probs, ax, **kwargs)
+        if plot_components
+        else (None, None)
+    )
 
     x_label = kwargs.pop("xlabel", r"$\mu$ (POI)")
     y_label = kwargs.pop("ylabel", r"$\mathrm{CL}_{s}$")
@@ -390,4 +380,4 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
 
     ax.legend(handles, labels, loc="best")
 
-    return brazil_band_collection
+    return BrazilBandCollection(*brazil_band_artists, clsb, clb)

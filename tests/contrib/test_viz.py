@@ -57,8 +57,6 @@ def test_brazil_band_collection(datadir):
     bad_collection = brazil.BrazilBandCollection(*artists)
     assert bad_collection.axes is None
 
-    assert brazil.BrazilBandCollection().axes is None
-
 
 @pytest.mark.mpl_image_compare
 def test_plot_results(datadir):
