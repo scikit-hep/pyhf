@@ -374,7 +374,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> model = pyhf.simplemodels.hepdata_like(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
-            >>> model.config.param_set("mu")
+            >>> model.config.set_poi("mu")
             >>> model.config.poi_name
             'mu'
         """
