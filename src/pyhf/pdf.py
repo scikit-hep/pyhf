@@ -276,6 +276,20 @@ class _ModelConfig(_ChannelSummaryMixin):
         return init
 
     def suggested_bounds(self):
+        """
+        Return suggested parameter bounds for the model.
+
+        Returns:
+            :obj:`list`: Suggested bounds on model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> model.config.suggested_bounds()
+            [(0, 10), (1e-10, 10.0), (1e-10, 10.0)]
+        """
         bounds = []
         for name in self.par_order:
             bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
