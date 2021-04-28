@@ -256,6 +256,20 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.nmaindata = sum(self.channel_nbins.values())
 
     def suggested_init(self):
+        """
+        Return suggested initial parameter values for the model.
+
+        Returns:
+            :obj:`list`: Suggested initial model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.hepdata_like(
+            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            ... )
+            >>> model.config.suggested_init()
+            [1.0, 1.0, 1.0]
+        """
         init = []
         for name in self.par_order:
             init = init + self.par_map[name]['paramset'].suggested_init
@@ -278,7 +292,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         Identify the fixed parameters in the model.
 
         Returns:
-            List: A list of booleans, ``True`` for fixed and ``False`` for not fixed.
+            :obj:`list`: A list of booleans, ``True`` for fixed and ``False``
+            for not fixed.
 
         Something like the following to build ``fixed_vals`` appropriately:
 
