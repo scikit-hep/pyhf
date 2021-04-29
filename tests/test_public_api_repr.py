@@ -128,7 +128,7 @@ def test_infer_intervals_public_api():
 
 
 def test_infer_mle_public_api():
-    assert dir(pyhf.infer.mle) == ["fit", "fixed_poi_fit", "twice_nll"]
+    assert dir(pyhf.infer.mle) == ["fit", "fixed_poi_fit", "nll"]
 
 
 def test_infer_test_statistics_public_api():

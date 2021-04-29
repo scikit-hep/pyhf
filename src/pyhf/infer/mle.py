@@ -2,7 +2,7 @@
 from pyhf import get_backend
 from pyhf.exceptions import UnspecifiedPOI
 
-__all__ = ["fit", "fixed_poi_fit", "twice_nll"]
+__all__ = ["fit", "fixed_poi_fit", "nll"]
 
 
 def __dir__():
