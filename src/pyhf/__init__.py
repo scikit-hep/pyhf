@@ -167,12 +167,17 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
-    "optimzier",
+    "optimizer",
+    "parameters",
+    "patchset",
+    "pdf",
+    "probability",
     "set_backend",
     "simplemodels",
     "tensor",
     "tensorlib",
     "utils",
+    "workspace",
 ]
 
 

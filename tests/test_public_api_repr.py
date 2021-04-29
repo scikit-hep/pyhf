@@ -17,12 +17,17 @@ def test_top_level_public_api():
         "infer",
         "interpolators",
         "modifiers",
-        "optimzier",
+        "optimizer",
+        "parameters",
+        "patchset",
+        "pdf",
+        "probability",
         "set_backend",
         "simplemodels",
         "tensor",
         "tensorlib",
         "utils",
+        "workspace",
     ]
 
 
