@@ -15,3 +15,7 @@ __all__ = [
     'reduce_paramsets_requirements',
     'ParamViewer',
 ]
+
+
+def __dir__():
+    return __all__

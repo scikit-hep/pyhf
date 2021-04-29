@@ -8,6 +8,12 @@ import logging
 
 log = logging.getLogger(__name__)
 
+__all__ = ["create_calculator", "get_test_stat"]
+
+
+def __dir__():
+    return __all__
+
 
 def all_pois_floating(pdf, fixed_params):
     r"""

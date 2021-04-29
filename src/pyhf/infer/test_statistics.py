@@ -6,6 +6,12 @@ import logging
 
 log = logging.getLogger(__name__)
 
+__all__ = ["q0", "qmu", "qmu_tilde", "tmu", "tmu_tilde"]
+
+
+def __dir__():
+    return __all__
+
 
 def _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params):
     """

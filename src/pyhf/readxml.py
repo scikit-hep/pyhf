@@ -13,6 +13,22 @@ log = logging.getLogger(__name__)
 
 __FILECACHE__ = {}
 
+__all__ = [
+    "clear_filecache",
+    "dedupe_parameters",
+    "extract_error",
+    "import_root_histogram",
+    "parse",
+    "process_channel",
+    "process_data",
+    "process_measurements",
+    "process_sample",
+]
+
+
+def __dir__():
+    return __all__
+
 
 def extract_error(hist):
     """

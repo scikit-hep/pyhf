@@ -2,6 +2,12 @@
 from .. import get_backend
 from ..exceptions import UnspecifiedPOI
 
+__all__ = ["fit", "fixed_poi_fit", "twice_nll"]
+
+
+def __dir__():
+    return __all__
+
 
 def twice_nll(pars, data, pdf):
     r"""

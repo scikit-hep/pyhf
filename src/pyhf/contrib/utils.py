@@ -9,6 +9,13 @@ from .. import exceptions
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
+__all__ = ["download"]
+
+
+def __dir__():
+    return __all__
+
+
 try:
     import requests
 

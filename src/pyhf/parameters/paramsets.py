@@ -1,5 +1,17 @@
 from .. import default_backend
 
+__all__ = [
+    "constrained_by_normal",
+    "constrained_by_poisson",
+    "constrained_paramset",
+    "paramset",
+    "unconstrained",
+]
+
+
+def __dir__():
+    return __all__
+
 
 class paramset:
     def __init__(self, **kwargs):

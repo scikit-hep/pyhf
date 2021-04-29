@@ -3,6 +3,12 @@ from . import hypotest
 from .. import get_backend
 import numpy as np
 
+__all__ = ["upperlimit"]
+
+
+def __dir__():
+    return __all__
+
 
 def _interp(x, xp, fp):
     tb, _ = get_backend()

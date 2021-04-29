@@ -7,3 +7,7 @@ from .complete import cli as complete
 from ..contrib import cli as contrib
 
 __all__ = ['cli', 'rootio', 'spec', 'infer', 'complete', 'contrib']
+
+
+def __dir__():
+    return __all__

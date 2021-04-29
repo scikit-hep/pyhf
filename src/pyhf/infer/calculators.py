@@ -16,6 +16,18 @@ import logging
 
 log = logging.getLogger(__name__)
 
+__all__ = [
+    "AsymptoticCalculator",
+    "AsymptoticTestStatDistribution",
+    "EmpiricalDistribution",
+    "ToyCalculator",
+    "generate_asimov_data",
+]
+
+
+def __dir__():
+    return __all__
+
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
     """
