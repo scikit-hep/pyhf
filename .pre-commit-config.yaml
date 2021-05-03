@@ -23,7 +23,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/psf/black
-    rev: 21.4b1
+    rev: 21.4b2
     hooks:
     - id: black
 
@@ -39,13 +39,13 @@ repos:
     - id: flake8
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.13.0
+    rev: v2.14.0
     hooks:
     - id: pyupgrade
       args: ["--py37-plus"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.7.0
+    rev: 0.8.0
     hooks:
     - id: nbqa-black
       additional_dependencies: [black==21.4b1]
