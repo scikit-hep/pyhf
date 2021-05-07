@@ -68,3 +68,34 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
         ]
     }
     return Model(spec, batch_size=batch_size)
+
+
+def correlated_background(signal, bkg_up, bkg_nominal, bkg_down, batch_size=None):
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": signal,
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": bkg_nominal,
+                        "modifiers": [
+                            {
+                                "name": "correlated_bkg_uncertainty",
+                                "type": "histosys",
+                                "data": {"hi_data": bkg_up, "lo_data": bkg_down},
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    return Model(spec, batch_size=batch_size)
