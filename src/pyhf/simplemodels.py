@@ -103,10 +103,6 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
         ['background', 'signal']
         >>> model.config.parameters
         ['correlated_bkg_uncertainty', 'mu']
-        >>> model.config.poi_index
-        0
-        >>> model.config.par_order
-        ['mu', 'correlated_bkg_uncertainty']
         >>> model.expected_data(model.config.suggested_init())
         array([62., 63.,  0.])
 
