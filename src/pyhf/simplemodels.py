@@ -73,8 +73,8 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
 def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
     r"""
     Construct a simple single channel :class:`~pyhf.pdf.Model` with a
-    :class:`~pyhf.modifiers.histosys` modifier representing a two component
-    correlated background uncertainty.
+    :class:`~pyhf.modifiers.histosys` modifier representing a background
+    with a fully correlated bin-by-bin uncertainty.
 
     Args:
         signal (:obj:`list`): The data in the signal sample.
