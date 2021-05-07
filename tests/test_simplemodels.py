@@ -5,8 +5,8 @@ def test_correlated_background():
     model = pyhf.simplemodels.correlated_background(
         signal=[12.0, 11.0],
         bkg=[50.0, 52.0],
-        bkg_up=[53.0, 59.0],
-        bkg_down=[45.0, 49.0],
+        bkg_up=[45.0, 57.0],
+        bkg_down=[55.0, 47.0],
     )
     assert model.config.channels == ["single_channel"]
     assert model.config.samples == ["background", "signal"]

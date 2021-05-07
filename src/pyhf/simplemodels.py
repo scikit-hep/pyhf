@@ -92,8 +92,8 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
         >>> model = pyhf.simplemodels.correlated_background(
         ...     signal=[12.0, 11.0],
         ...     bkg=[50.0, 52.0],
-        ...     bkg_up=[53.0, 59.0],
-        ...     bkg_down=[45.0, 49.0],
+        ...     bkg_up=[45.0, 57.0],
+        ...     bkg_down=[55.0, 47.0],
         ... )
         >>> model.schema
         'model.json'
