@@ -1,6 +1,6 @@
 from . import Model
 
-__all__ = ["hepdata_like"]
+__all__ = ["correlated_background", "hepdata_like"]
 
 
 def __dir__():
