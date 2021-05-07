@@ -70,11 +70,51 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     return Model(spec, batch_size=batch_size)
 
 
-def correlated_background(signal, bkg_up, bkg_nominal, bkg_down, batch_size=None):
+def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
+    r"""
+    Construct a simple single channel :class:`~pyhf.pdf.Model` with a
+    :class:`~pyhf.modifiers.histosys` modifier representing a correlated
+    background uncertainty.
+
+    Args:
+        signal (:obj:`list`): The data in the signal sample.
+        bkg (:obj:`list`): The data in the background sample.
+        bkg_up (:obj:`list`): The background sample under a :math:`+1\sigma` variation.
+        bkg_down (:obj:`list`): The background sample under a :math:`-1\sigma` variation.
+        batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
+
+    Returns:
+        ~pyhf.pdf.Model: The statistical model adhering to the :obj:`model.json` schema.
+
+    Example:
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.correlated_background(
+        ...     signal=[12.0, 11.0],
+        ...     bkg=[50.0, 52.0],
+        ...     bkg_up=[53.0, 59.0],
+        ...     bkg_down=[45.0, 49.0],
+        ... )
+        >>> model.schema
+        'model.json'
+        >>> model.config.channels
+        ['single_channel']
+        >>> model.config.samples
+        ['background', 'signal']
+        >>> model.config.parameters
+        ['correlated_bkg_uncertainty', 'mu']
+        >>> model.config.poi_index
+        0
+        >>> model.config.par_order
+        ['mu', 'correlated_bkg_uncertainty']
+        >>> model.expected_data(model.config.suggested_init())
+        array([62., 63.,  0.])
+
+    """
     spec = {
         "channels": [
             {
-                "name": "singlechannel",
+                "name": "single_channel",
                 "samples": [
                     {
                         "name": "signal",
@@ -85,7 +125,7 @@ def correlated_background(signal, bkg_up, bkg_nominal, bkg_down, batch_size=None
                     },
                     {
                         "name": "background",
-                        "data": bkg_nominal,
+                        "data": bkg,
                         "modifiers": [
                             {
                                 "name": "correlated_bkg_uncertainty",
