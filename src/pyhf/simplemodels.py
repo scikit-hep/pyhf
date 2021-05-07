@@ -16,8 +16,10 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
     Args:
         signal (:obj:`list`): The data in the signal sample.
         bkg (:obj:`list`): The data in the background sample.
-        bkg_up (:obj:`list`): The background sample under a :math:`+1\sigma` variation.
-        bkg_down (:obj:`list`): The background sample under a :math:`-1\sigma` variation.
+        bkg_up (:obj:`list`): The background sample under an upward variation
+         corresponding to :math:`\alpha=+1`.
+        bkg_down (:obj:`list`): The background sample under a downward variation
+         corresponding to :math:`\alpha=-1`.
         batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
 
     Returns:
