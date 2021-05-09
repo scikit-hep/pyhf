@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
-import re
 
 log = logging.getLogger(__name__)
 
