@@ -159,19 +159,20 @@ def test_spaces_in_measurement_config(const):
         ExportOnly=str(True),
     )
     poiel = ET.Element('POI')
-    poiel.text = 'mu_SIG ' #space
+    poiel.text = 'mu_SIG '  # space
     meas.append(poiel)
 
     setting = ET.Element('ParamSetting', Const=const)
-    setting.text = ' '.join(['Lumi', 'alpha_mu_both']) + ' ' #spacces
+    setting.text = ' '.join(['Lumi', 'alpha_mu_both']) + ' '  # spacces
     meas.append(setting)
 
     toplvl.append(meas)
 
     meas_json = pyhf.readxml.process_measurements(toplvl)[0]
     assert meas_json['config']['poi'] == 'mu_SIG'
-    assert [x['name'] for x in meas_json['config']['parameters']] == ['lumi','mu_both']
-    
+    assert [x['name'] for x in meas_json['config']['parameters']] == ['lumi', 'mu_both']
+
+
 @pytest.mark.parametrize("const", ['False', 'True'])
 def test_import_measurement_gamma_bins(const):
     toplvl = ET.Element("Combination")
