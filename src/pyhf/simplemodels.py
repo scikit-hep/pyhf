@@ -101,7 +101,7 @@ def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
 
     Args:
         signal (:obj:`list`): The data in the signal sample
-        bkg_data (:obj:`list`): The data in the background sample
+        bkg (:obj:`list`): The data in the background sample
         bkg_uncertainty (:obj:`list`): The statistical uncertainty on the background sample counts
         batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute
 

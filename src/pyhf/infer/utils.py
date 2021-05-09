@@ -47,7 +47,7 @@ def create_calculator(calctype, *args, **kwargs):
         >>> import numpy.random as random
         >>> random.seed(0)
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0],
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0],
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata

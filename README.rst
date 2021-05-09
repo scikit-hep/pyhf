@@ -40,7 +40,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 
    >>> import pyhf
    >>> model = pyhf.simplemodels.uncorrelated_background(
-   ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+   ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
    ... )
    >>> data = [51, 48] + model.config.auxdata
    >>> test_mu = 1.0
@@ -160,7 +160,7 @@ A one bin example
 
    pyhf.set_backend("numpy")
    model = pyhf.simplemodels.uncorrelated_background(
-       signal=[10.0], bkg_data=[50.0], bkg_uncertainty=[7.0]
+       signal=[10.0], bkg=[50.0], bkg_uncertainty=[7.0]
    )
    data = [55.0] + model.config.auxdata
 
@@ -203,7 +203,7 @@ A two bin example
 
    pyhf.set_backend("numpy")
    model = pyhf.simplemodels.uncorrelated_background(
-       signal=[30.0, 45.0], bkg_data=[100.0, 150.0], bkg_uncertainty=[15.0, 20.0]
+       signal=[30.0, 45.0], bkg=[100.0, 150.0], bkg_uncertainty=[15.0, 20.0]
    )
    data = [100.0, 145.0] + model.config.auxdata
 
