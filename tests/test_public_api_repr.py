@@ -233,7 +233,6 @@ def test_utils_public_api():
         "digest",
         "load_schema",
         "options_from_eqdelimstring",
-        "remove_prefix",
         "validate",
     ]
 
