@@ -76,7 +76,7 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
     return Model(spec, batch_size=batch_size)
 
 
-def uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size=None):
+def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
     """
     Construct a simple single channel :class:`~pyhf.pdf.Model` with a
     :class:`~pyhf.modifiers.shapesys` modifier representing an uncorrelated
@@ -86,7 +86,7 @@ def uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size=None)
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> model.schema
         'model.json'
@@ -102,7 +102,7 @@ def uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size=None)
     Args:
         signal_data (:obj:`list`): The data in the signal sample
         bkg_data (:obj:`list`): The data in the background sample
-        bkg_uncerts (:obj:`list`): The statistical uncertainty on the background sample counts
+        bkg_uncertainty (:obj:`list`): The statistical uncertainty on the background sample counts
         batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute
 
     Returns:
@@ -116,19 +116,19 @@ def uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size=None)
                 'samples': [
                     {
                         'name': 'signal',
-                        'data': signal_data,
+                        'data': signal,
                         'modifiers': [
                             {'name': 'mu', 'type': 'normfactor', 'data': None}
                         ],
                     },
                     {
                         'name': 'background',
-                        'data': bkg_data,
+                        'data': bkg,
                         'modifiers': [
                             {
                                 'name': 'uncorr_bkguncrt',
                                 'type': 'shapesys',
-                                'data': bkg_uncerts,
+                                'data': bkg_uncertainty,
                             }
                         ],
                     },
