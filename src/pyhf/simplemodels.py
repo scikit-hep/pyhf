@@ -1,3 +1,5 @@
+from warnings import warn
+
 from . import Model
 
 __all__ = ["correlated_background", "uncorrelated_background"]
@@ -139,6 +141,18 @@ def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
     return Model(spec, batch_size=batch_size)
 
 
+# Deprecated APIs
+def _deprecated_api_warning(
+    deprecated_api, new_api, deprecated_release, remove_release
+):
+    warn(
+        f"{deprecated_api} is deprecated in favor of {new_api} as of pyhf v{deprecated_release} and will be removed in release {remove_release}."
+        + f" Please use {new_api}.",
+        DeprecationWarning,
+        stacklevel=3,  # Raise to user level
+    )
+
+
 def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     """
     .. note:: Deprecated API: Use :func:`~pyhf.simplemodels.uncorrelated_background`
@@ -147,4 +161,10 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     .. warning:: :func:`~pyhf.simplemodels.hepdata_like` will be removed in
      ``pyhf`` ``v0.7.0``.
     """
+    _deprecated_api_warning(
+        "pyhf.simplemodels.hepdata_like",
+        "pyhf.simplemodels.uncorrelated_background",
+        "0.6.2",
+        "0.7.0",
+    )
     return uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
