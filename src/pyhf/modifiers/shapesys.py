@@ -24,6 +24,7 @@ class shapesys:
             'n_parameters': n_parameters,
             'is_constrained': cls.is_constrained,
             'is_shared': False,
+            'is_scalar': False,
             'inits': (1.0,) * n_parameters,
             'bounds': ((1e-10, 10.0),) * n_parameters,
             'fixed': False,

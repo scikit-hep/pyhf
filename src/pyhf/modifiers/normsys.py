@@ -17,6 +17,7 @@ class normsys:
             'n_parameters': 1,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
+            'is_scalar': True,
             'inits': (0.0,),
             'bounds': ((-5.0, 5.0),),
             'fixed': False,

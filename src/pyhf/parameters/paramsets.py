@@ -15,10 +15,12 @@ def __dir__():
 
 class paramset:
     def __init__(self, **kwargs):
+        self.name = kwargs.pop('name')
         self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
         self.suggested_fixed = kwargs.pop('fixed')
+        self.is_scalar = kwargs.pop('is_scalar')
 
 
 class unconstrained(paramset):

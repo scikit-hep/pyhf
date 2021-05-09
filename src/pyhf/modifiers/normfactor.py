@@ -16,6 +16,7 @@ class normfactor:
             'n_parameters': 1,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
+            'is_scalar': True,
             'inits': (1.0,),
             'bounds': ((0, 10),),
             'fixed': False,
