@@ -10,8 +10,7 @@ def parset_to_rootnames(paramset):
     if paramset.is_scalar:
         if paramset.constrained:
             return f'alpha_{paramset.name}'
-        else:
-            return f'{paramset.name}'
+        return f'{paramset.name}'
     else:
         return [
             f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)
