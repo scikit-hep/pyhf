@@ -141,7 +141,10 @@ def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
 
 def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     """
-    Deprecated API: Use :func:`~pyhf.simplemodels.uncorrelated_background`
-    instead.
+    .. note:: Deprecated API: Use :func:`~pyhf.simplemodels.uncorrelated_background`
+     instead.
+
+    .. warning:: :func:`~pyhf.simplemodels.hepdata_like` will be removed in
+     ``pyhf`` ``v0.7.0``.
     """
     uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
