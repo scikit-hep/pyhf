@@ -7,7 +7,9 @@ import numpy as np
 def model_setup(backend):
     np.random.seed(0)
     n_bins = 100
-    model = pyhf.simplemodels.hepdata_like([10] * n_bins, [50] * n_bins, [1] * n_bins)
+    model = pyhf.simplemodels.uncorrelated_background(
+        [10] * n_bins, [50] * n_bins, [1] * n_bins
+    )
     init_pars = model.config.suggested_init()
     observations = np.random.randint(50, 60, size=n_bins).tolist()
     data = observations + model.config.auxdata
@@ -186,7 +188,7 @@ def test_pdf_batched(backend):
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    model = pyhf.simplemodels.hepdata_like(
+    model = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'],
         source['bindata']['bkg'],
         source['bindata']['bkgerr'],

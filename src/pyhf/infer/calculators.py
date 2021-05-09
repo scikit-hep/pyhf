@@ -37,7 +37,7 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -262,7 +262,7 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -304,7 +304,7 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -383,7 +383,7 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -428,7 +428,7 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -519,7 +519,7 @@ class EmpiricalDistribution:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> init_pars = model.config.suggested_init()
@@ -575,7 +575,7 @@ class EmpiricalDistribution:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> init_pars = model.config.suggested_init()
@@ -675,7 +675,7 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -761,7 +761,7 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -808,7 +808,7 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
@@ -865,7 +865,7 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]

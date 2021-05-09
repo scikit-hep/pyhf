@@ -79,7 +79,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         >>> import pyhf
         >>> import pyhf.contrib.viz.brazil
         >>> pyhf.set_backend("numpy")
-        >>> model  = pyhf.simplemodels.hepdata_like(
+        >>> model  = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -173,7 +173,7 @@ def plot_cls_components(test_pois, tail_probs, ax, **kwargs):
         >>> import pyhf
         >>> import pyhf.contrib.viz.brazil
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -254,7 +254,7 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         >>> import pyhf
         >>> import pyhf.contrib.viz.brazil
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -275,7 +275,7 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
         >>> import pyhf
         >>> import pyhf.contrib.viz.brazil
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]

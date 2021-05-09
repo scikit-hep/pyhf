@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import tensorflow as tf
 import pyhf
-from pyhf.simplemodels import hepdata_like
+from pyhf.simplemodels import uncorrelated_background
 
 
 def test_astensor_dtype(backend, caplog):
@@ -524,7 +524,7 @@ def test_pdf_eval_2(backend):
         },
     }
 
-    pdf = hepdata_like(
+    pdf = uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
     data = source['bindata']['data'] + pdf.config.auxdata

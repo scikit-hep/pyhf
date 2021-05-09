@@ -30,7 +30,7 @@ def twice_nll(pars, data, pdf):
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -86,7 +86,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
@@ -157,7 +157,7 @@ def fixed_poi_fit(
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]

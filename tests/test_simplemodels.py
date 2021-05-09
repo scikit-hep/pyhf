@@ -15,7 +15,7 @@ def test_correlated_background():
 
 
 def test_uncorrelated_background():
-    model = pyhf.simplemodels.hepdata_like(
+    model = pyhf.simplemodels.uncorrelated_background(
         signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
     )
     assert model.config.channels == ["singlechannel"]

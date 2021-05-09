@@ -270,7 +270,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> model.config.suggested_init()
@@ -290,7 +290,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> model.config.suggested_bounds()
@@ -311,7 +311,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> model.config.par_slice("uncorr_bkguncrt")
@@ -328,7 +328,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> param_set = model.config.param_set("uncorr_bkguncrt")
@@ -347,7 +347,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> model.config.suggested_fixed()
@@ -377,7 +377,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         Example:
             >>> import pyhf
-            >>> model = pyhf.simplemodels.hepdata_like(
+            >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
             ... )
             >>> model.config.set_poi("mu")

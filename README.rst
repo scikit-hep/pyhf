@@ -39,7 +39,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 .. code:: pycon
 
    >>> import pyhf
-   >>> model = pyhf.simplemodels.hepdata_like(
+   >>> model = pyhf.simplemodels.uncorrelated_background(
    ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
    ... )
    >>> data = [51, 48] + model.config.auxdata
@@ -159,7 +159,7 @@ A one bin example
    from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
-   model = pyhf.simplemodels.hepdata_like(
+   model = pyhf.simplemodels.uncorrelated_background(
        signal_data=[10.0], bkg_data=[50.0], bkg_uncerts=[7.0]
    )
    data = [55.0] + model.config.auxdata
@@ -202,7 +202,7 @@ A two bin example
    from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
-   model = pyhf.simplemodels.hepdata_like(
+   model = pyhf.simplemodels.uncorrelated_background(
        signal_data=[30.0, 45.0], bkg_data=[100.0, 150.0], bkg_uncerts=[15.0, 20.0]
    )
    data = [100.0, 145.0] + model.config.auxdata
