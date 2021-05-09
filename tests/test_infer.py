@@ -7,7 +7,7 @@ import scipy.stats
 @pytest.fixture(scope='module')
 def hypotest_args():
     pdf = pyhf.simplemodels.uncorrelated_background(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     mu_test = 1.0
     data = [51, 48] + pdf.config.auxdata
@@ -82,7 +82,7 @@ def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
     Check that the fit errors for POI outside of parameter bounds
     """
     pdf = pyhf.simplemodels.uncorrelated_background(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48] + pdf.config.auxdata
 
@@ -167,7 +167,7 @@ def test_hypotest_backends(backend, kwargs):
     Check that hypotest runs fully across all backends for all calculator types.
     """
     pdf = pyhf.simplemodels.uncorrelated_background(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48] + pdf.config.auxdata
     assert pyhf.infer.hypotest(1.0, data, pdf, **kwargs) is not None

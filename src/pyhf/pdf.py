@@ -271,7 +271,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> model.config.suggested_init()
             [1.0, 1.0, 1.0]
@@ -291,7 +291,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> model.config.suggested_bounds()
             [(0, 10), (1e-10, 10.0), (1e-10, 10.0)]
@@ -312,7 +312,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> model.config.par_slice("uncorr_bkguncrt")
             slice(1, 3, None)
@@ -329,7 +329,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> param_set = model.config.param_set("uncorr_bkguncrt")
             >>> param_set.pdf_type
@@ -348,7 +348,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> model.config.suggested_fixed()
             [False, False, False]
@@ -378,7 +378,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> model.config.set_poi("mu")
             >>> model.config.poi_name

@@ -82,7 +82,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
@@ -152,7 +152,7 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
@@ -209,7 +209,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
@@ -273,7 +273,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
@@ -329,7 +329,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ...     signal=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [60, 65]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
