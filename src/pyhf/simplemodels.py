@@ -1,6 +1,6 @@
 from . import Model
 
-__all__ = ["correlated_background", "hepdata_like"]
+__all__ = ["correlated_background", "uncorrelated_background"]
 
 
 def __dir__():
@@ -76,7 +76,7 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
     return Model(spec, batch_size=batch_size)
 
 
-def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
+def uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     """
     Construct a simple single channel :class:`~pyhf.pdf.Model` with a
     :class:`~pyhf.modifiers.shapesys` modifier representing an uncorrelated
@@ -85,7 +85,7 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
+        >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
         ... )
         >>> model.schema
@@ -137,3 +137,11 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
         ]
     }
     return Model(spec, batch_size=batch_size)
+
+
+def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
+    """
+    Deprecated API: Use :func:`~pyhf.simplemodels.uncorrelated_background`
+    instead.
+    """
+    uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
