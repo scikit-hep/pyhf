@@ -147,4 +147,4 @@ def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
     .. warning:: :func:`~pyhf.simplemodels.hepdata_like` will be removed in
      ``pyhf`` ``v0.7.0``.
     """
-    uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
+    return uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
