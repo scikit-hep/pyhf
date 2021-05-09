@@ -1,9 +1,10 @@
 import re
 
+
 def parset_to_rootnames(paramset):
-    '''
+    """
     TODO: doc
-    '''
+    """
     if paramset.name == 'lumi':
         return 'Lumi'
     if paramset.is_scalar:
@@ -12,17 +13,20 @@ def parset_to_rootnames(paramset):
         else:
             return f'{paramset.name}'
     else:
-        return [f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)]
+        return [
+            f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)
+        ]
+
 
 def interpret_rootname(rootname):
-    '''
+    """
     TODO: doc
-    '''
+    """
     interpretation = {
         'constrained': 'n/a',
         'is_scalar': 'n/a',
         'name': 'n/a',
-        'element': 'n/a'
+        'element': 'n/a',
     }
     if rootname.startswith('gamma_'):
         interpretation['is_scalar'] = False
@@ -40,11 +44,12 @@ def interpret_rootname(rootname):
         if not match:
             raise ValueError('confusing rootname, please report bug')
         interpretation['name'] = match.group(1)
-    
+
     if not (rootname.startswith('alpha_') or rootname.startswith('gamma_')):
         interpretation['constrained'] = False
         interpretation['name'] = rootname
-        
-    return interpretation
-        
 
+    if rootname == 'Lumi':
+        interpretation['name'] = 'lumi'
+
+    return interpretation

@@ -1,5 +1,6 @@
 import pyhf
 import pyhf.compat
+import pyhf.readxml
 
 
 def test_interpretation():
@@ -20,6 +21,9 @@ def test_interpretation():
     assert interp['is_scalar']
     assert interp['name'] == 'mu'
     assert interp['element'] == 'n/a'
+
+    interp = pyhf.compat.interpret_rootname('Lumi')
+    assert interp['name'] == 'lumi'
 
 
 def test_torootname():
@@ -44,3 +48,19 @@ def test_torootname():
         'gamma_uncorr_bkguncrt_0',
         'gamma_uncorr_bkguncrt_1',
     ]
+
+
+def test_fromxml():
+    parsed_xml = pyhf.readxml.parse(
+        'validation/xmlimport_input3/config/examples/example_ShapeSys.xml',
+        'validation/xmlimport_input3',
+    )
+
+    # build the spec, strictly checks properties included
+    spec = {
+        'channels': parsed_xml['channels'],
+        'parameters': parsed_xml['measurements'][0]['config']['parameters'],
+    }
+    m = pyhf.Model(spec, poi_name='SigXsecOverSM')
+
+    assert pyhf.compat.parset_to_rootnames(m.config.param_set('lumi')) == 'Lumi'
