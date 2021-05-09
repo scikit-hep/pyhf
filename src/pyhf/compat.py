@@ -11,9 +11,7 @@ def parset_to_rootnames(paramset):
         if paramset.constrained:
             return f'alpha_{paramset.name}'
         return f'{paramset.name}'
-    return [
-        f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)
-    ]
+    return [f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)]
 
 
 def interpret_rootname(rootname):

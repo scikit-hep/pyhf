@@ -300,7 +300,8 @@ def process_measurements(toplvl, other_parameter_configs=None):
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
                         param_obj = parameter_configs_map.pop(
-                            param_interpretation['name'], {'name': param_interpretation['name']}
+                            param_interpretation['name'],
+                            {'name': param_interpretation['name']},
                         )
                         # ParamSetting will always take precedence
                         param_obj.update(overall_param_obj)

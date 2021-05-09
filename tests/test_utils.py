@@ -59,6 +59,7 @@ def test_digest_bad_alg():
         pyhf.utils.digest({}, algorithm='nonexistent_algorithm')
     assert 'nonexistent_algorithm' in str(excinfo.value)
 
+
 @pytest.mark.parametrize('oneline', [False, True])
 def test_citation(oneline):
     citation = pyhf.utils.citation(oneline)
