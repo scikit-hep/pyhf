@@ -21,6 +21,8 @@ class paramset:
         self.suggested_bounds = kwargs.pop('bounds')
         self.suggested_fixed = kwargs.pop('fixed')
         self.is_scalar = kwargs.pop('is_scalar')
+        if self.is_scalar:
+            assert self.n_parameters == 1
 
 
 class unconstrained(paramset):

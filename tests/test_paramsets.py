@@ -4,6 +4,8 @@ import pytest
 
 def test_paramset_unconstrained():
     pset = paramsets.unconstrained(
+        name='foo',
+        is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
@@ -17,6 +19,8 @@ def test_paramset_unconstrained():
 
 def test_paramset_constrained_custom_sigmas():
     pset = paramsets.constrained_by_normal(
+        name='foo',
+        is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
@@ -33,6 +37,8 @@ def test_paramset_constrained_custom_sigmas():
 
 def test_paramset_constrained_default_sigmas():
     pset = paramsets.constrained_by_normal(
+        name='foo',
+        is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
@@ -48,6 +54,8 @@ def test_paramset_constrained_default_sigmas():
 
 def test_paramset_constrained_custom_factors():
     pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
@@ -64,6 +72,8 @@ def test_paramset_constrained_custom_factors():
 
 def test_paramset_constrained_missiing_factors():
     pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
