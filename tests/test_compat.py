@@ -1,3 +1,4 @@
+import pytest
 import pyhf
 import pyhf.compat
 import pyhf.readxml
@@ -24,6 +25,15 @@ def test_interpretation():
 
     interp = pyhf.compat.interpret_rootname('Lumi')
     assert interp['name'] == 'lumi'
+
+    interp = pyhf.compat.interpret_rootname('Lumi')
+    assert interp['name'] == 'lumi'
+
+    with pytest.raises(ValueError):
+        pyhf.compat.interpret_rootname('gamma_foo')
+
+    with pytest.raises(ValueError):
+        pyhf.compat.interpret_rootname('alpha_')
 
 
 def test_torootname():
