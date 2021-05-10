@@ -989,7 +989,7 @@ def test_shapesys_nuisparfilter_validation():
 def test_optimizer_stitching(backend, optimizer):
     pyhf.set_backend(backend(precision='64b'), optimizer)
 
-    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    pdf = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10])
     data = [125.0] + pdf.config.auxdata
 
     result_nostitch = pyhf.infer.mle.fixed_poi_fit(2.0, data, pdf, do_stitch=False)
@@ -1014,7 +1014,7 @@ def test_optimizer_stitching(backend, optimizer):
 def test_optimizer_grad(backend, optimizer, rtol):
     pyhf.set_backend(backend(precision='64b'), optimizer)
 
-    pdf = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10])
+    pdf = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10])
     data = [125.0] + pdf.config.auxdata
 
     result_nograd = pyhf.infer.mle.fit(data, pdf, do_grad=False)

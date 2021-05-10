@@ -825,8 +825,8 @@ def test_sorted(workspace_factory):
 
 
 def test_closure_over_workspace_build():
-    model = pyhf.simplemodels.hepdata_like(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48]
     one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
@@ -847,8 +847,8 @@ def test_closure_over_workspace_build():
 
 
 def test_wspace_immutable():
-    model = pyhf.simplemodels.hepdata_like(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48]
     workspace = pyhf.Workspace.build(model, data)
