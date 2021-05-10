@@ -41,20 +41,20 @@ def test_torootname():
     m2 = pyhf.simplemodels.hepdata_like([5], [50], [7])
     m3 = pyhf.simplemodels.hepdata_like([5, 6], [50, 50], [7, 8])
 
-    assert pyhf.compat.parset_to_rootnames(m1.config.param_set('mu')) == 'mu'
+    assert pyhf.compat.paramset_to_rootnames(m1.config.param_set('mu')) == 'mu'
 
     assert (
-        pyhf.compat.parset_to_rootnames(
+        pyhf.compat.paramset_to_rootnames(
             m1.config.param_set('correlated_bkg_uncertainty')
         )
         == 'alpha_correlated_bkg_uncertainty'
     )
 
-    assert pyhf.compat.parset_to_rootnames(m2.config.param_set('uncorr_bkguncrt')) == [
+    assert pyhf.compat.paramset_to_rootnames(m2.config.param_set('uncorr_bkguncrt')) == [
         'gamma_uncorr_bkguncrt_0'
     ]
 
-    assert pyhf.compat.parset_to_rootnames(m3.config.param_set('uncorr_bkguncrt')) == [
+    assert pyhf.compat.paramset_to_rootnames(m3.config.param_set('uncorr_bkguncrt')) == [
         'gamma_uncorr_bkguncrt_0',
         'gamma_uncorr_bkguncrt_1',
     ]
@@ -73,4 +73,4 @@ def test_fromxml():
     }
     m = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
-    assert pyhf.compat.parset_to_rootnames(m.config.param_set('lumi')) == 'Lumi'
+    assert pyhf.compat.paramset_to_rootnames(m.config.param_set('lumi')) == 'Lumi'

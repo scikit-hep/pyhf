@@ -5,7 +5,7 @@ Compatibility functions for translating between ROOT and pyhf
 import re
 
 __all__ = [
-    "parset_to_rootnames",
+    "paramset_to_rootnames",
     "interpret_rootname",
 ]
 
@@ -14,7 +14,7 @@ def __dir__():
     return __all__
 
 
-def parset_to_rootnames(paramset):
+def paramset_to_rootnames(paramset):
     """
     Generates parameter names for parameters in the set as ROOT would do.
 
@@ -44,6 +44,17 @@ def parset_to_rootnames(paramset):
 def interpret_rootname(rootname):
     """
     Interprets a ROOT-generated name as best as possible
+    Possible properties of a ROOT parameter are 
+
+    * "constrained": whether it's a member of a constrained paramset
+    * "is_scalar": whether it's a member of a scalar paramset
+    * "name": name of the param set
+    * "element": index in a non-scalar param set
+
+    it is possible that some of them might not be determinable
+    and will then hold the strnigvalue "n/a"
+
+
 
         Args:
             rootname (:obj:`tensor`):
