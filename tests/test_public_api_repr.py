@@ -250,3 +250,9 @@ def test_writexml_public_api():
         "build_sample",
         "indent",
     ]
+
+def test_compat():
+    assert dir(pyhf.compat) == [
+        "parset_to_rootnames",
+        "interpret_rootname",
+    ]

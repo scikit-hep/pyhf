@@ -4,6 +4,15 @@ Compatibility functions for translating between ROOT and pyhf
 
 import re
 
+__all__ = [
+    "parset_to_rootnames",
+    "interpret_rootname",
+]
+
+
+def __dir__():
+    return __all__
+
 
 def parset_to_rootnames(paramset):
     """
