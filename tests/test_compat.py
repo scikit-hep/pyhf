@@ -50,11 +50,13 @@ def test_torootname():
         == 'alpha_correlated_bkg_uncertainty'
     )
 
-    assert pyhf.compat.paramset_to_rootnames(m2.config.param_set('uncorr_bkguncrt')) == [
-        'gamma_uncorr_bkguncrt_0'
-    ]
+    assert pyhf.compat.paramset_to_rootnames(
+        m2.config.param_set('uncorr_bkguncrt')
+    ) == ['gamma_uncorr_bkguncrt_0']
 
-    assert pyhf.compat.paramset_to_rootnames(m3.config.param_set('uncorr_bkguncrt')) == [
+    assert pyhf.compat.paramset_to_rootnames(
+        m3.config.param_set('uncorr_bkguncrt')
+    ) == [
         'gamma_uncorr_bkguncrt_0',
         'gamma_uncorr_bkguncrt_1',
     ]

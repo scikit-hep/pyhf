@@ -44,7 +44,7 @@ def paramset_to_rootnames(paramset):
 def interpret_rootname(rootname):
     """
     Interprets a ROOT-generated name as best as possible
-    Possible properties of a ROOT parameter are 
+    Possible properties of a ROOT parameter are
 
     * "constrained": whether it's a member of a constrained paramset
     * "is_scalar": whether it's a member of a scalar paramset
