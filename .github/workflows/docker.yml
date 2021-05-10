@@ -101,7 +101,11 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          tags: pyhf/pyhf:latest
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
           load: true
           push: true
 
@@ -113,5 +117,9 @@ jobs:
       #     context: .
       #     file: docker/Dockerfile
       #     tags: pyhf/pyhf:latest,pyhf/pyhf:latest-stable
+      #     labels: |
+      #       org.opencontainers.image.source=${{ github.event.repository.html_url }}
+      #       org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+      #       org.opencontainers.image.revision=${{ github.sha }}
       #     load: true
       #     push: true
