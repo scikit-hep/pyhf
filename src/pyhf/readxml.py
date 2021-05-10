@@ -266,7 +266,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
         result = {
             'name': x.attrib['Name'],
             'config': {
-                'poi': x.findall('POI')[0].text,
+                'poi': x.findall('POI')[0].text.strip(),
                 'parameters': [
                     {
                         'name': 'lumi',
@@ -289,7 +289,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
 
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
-                for param_name in param.text.split(' '):
+                for param_name in param.text.strip().split(' '):
                     param_name = utils.remove_prefix(param_name, 'alpha_')
                     if param_name.startswith('gamma_') and re.search(
                         r'^gamma_.+_\d+$', param_name
