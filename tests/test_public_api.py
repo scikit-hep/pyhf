@@ -209,6 +209,7 @@ def test_pdf_batched_deprecated_api(backend):
     model.expected_data(pars)
 
 
+# TODO: Remove skipif after pyhf v0.6.2 released
 @pytest.mark.skipif(
     tuple(int(part) for part in pyhf.__version__.split(".")) < (0, 6, 2),
     reason="requires pyhf v0.6.2+",
