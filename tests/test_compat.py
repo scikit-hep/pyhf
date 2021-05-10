@@ -38,8 +38,8 @@ def test_interpretation():
 
 def test_torootname():
     m1 = pyhf.simplemodels.correlated_background([5], [50], [52], [48])
-    m2 = pyhf.simplemodels.hepdata_like([5], [50], [7])
-    m3 = pyhf.simplemodels.hepdata_like([5, 6], [50, 50], [7, 8])
+    m2 = pyhf.simplemodels.uncorrelated_background([5], [50], [7])
+    m3 = pyhf.simplemodels.uncorrelated_background([5, 6], [50, 50], [7, 8])
 
     assert pyhf.compat.paramset_to_rootnames(m1.config.param_set('mu')) == 'mu'
 
