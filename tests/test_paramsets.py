@@ -83,3 +83,16 @@ def test_paramset_constrained_missiing_factors():
     )
     with pytest.raises(RuntimeError):
         pset.width()
+
+
+def test_scalar_multiparam_failure():
+    with pytest.raises(ValueError):
+        pset = paramsets.paramset(
+            name='foo',
+            is_scalar=True,
+            n_parameters=5,
+            inits=[0, 1, 2, 3, 4],
+            bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+            fixed=False,
+            auxdata=[0, 0, 0, 0, 0],
+        )
