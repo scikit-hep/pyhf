@@ -36,8 +36,9 @@ jobs:
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION}"
           TAGS="$TAGS,${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
+          # Releases also have GITHUB_REFs that are tags, so reuse VERSION
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${GITHUB_REF#refs/tags/}"
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
           fi
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
