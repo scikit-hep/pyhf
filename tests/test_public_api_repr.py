@@ -254,6 +254,6 @@ def test_writexml_public_api():
 
 def test_compat():
     assert dir(pyhf.compat) == [
-        "parset_to_rootnames",
         "interpret_rootname",
+        "parset_to_rootnames",
     ]
