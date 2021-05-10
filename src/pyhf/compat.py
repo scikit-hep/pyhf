@@ -1,10 +1,28 @@
+"""
+Compatibility functions for translating between ROOT and pyhf
+"""
+
 import re
 
 
 def parset_to_rootnames(paramset):
     """
-    TODO: doc
+    Generates parameter names for parameters in the set as ROOT would do.
+
+        lumi -> Lumi
+        unconstrained scalar parameter foo -> foo
+        constrained scalar parameter foo -> alpha_foo
+        non-scalar parameters -> gamma_foo_i
+
+        Args:
+            paramset (:obj:`pyhf.paramsets.paramset`): the parameter set
+
+        Returns:
+            rootnames (:obj:`List[str]` or `str`): the generated parameter names
+                                          (for the non-scalar/scalar case)
+                                          respectively
     """
+
     if paramset.name == 'lumi':
         return 'Lumi'
     if paramset.is_scalar:
@@ -16,8 +34,15 @@ def parset_to_rootnames(paramset):
 
 def interpret_rootname(rootname):
     """
-    TODO: doc
+    Interprets a ROOT-generated name as best as possible
+
+        Args:
+            rootname (:obj:`tensor`): 
+
+        Returns:
+            interpretation (:obj:`dict`): interpreteted key-value pairs
     """
+
     interpretation = {
         'constrained': 'n/a',
         'is_scalar': 'n/a',
