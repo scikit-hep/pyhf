@@ -25,7 +25,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/psf/black
-    rev: 21.5b0
+    rev: 21.5b1
     hooks:
     - id: black
 
@@ -36,12 +36,12 @@ repos:
       additional_dependencies: [black==21.5b0]
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 3.9.1
+    rev: 3.9.2
     hooks:
     - id: flake8
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.14.0
+    rev: v2.15.0
     hooks:
     - id: pyupgrade
       args: ["--py37-plus"]
