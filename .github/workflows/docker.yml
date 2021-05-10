@@ -34,9 +34,8 @@ jobs:
         id: docker_build_test
         uses: docker/build-push-action@v2
         with:
-          repository: pyhf/pyhf
-          dockerfile: docker/Dockerfile
-          tags: test
+          file: docker/Dockerfile
+          tags: pyhf/pyhf:test
           tag_with_sha: true
           tag_with_ref: true
           push: false
@@ -69,9 +68,8 @@ jobs:
         id: docker_build_latest
         uses: docker/build-push-action@v2
         with:
-          repository: pyhf/pyhf
-          dockerfile: docker/Dockerfile
-          tags: latest
+          file: docker/Dockerfile
+          tags: pyhf/pyhf:latest
           push: true
 
       # - name: Build and publish to registry with release tag
@@ -79,7 +77,6 @@ jobs:
       #   id: docker_build_release
       #   uses: docker/build-push-action@v2
       #   with:
-      #     repository: pyhf/pyhf
-      #     dockerfile: docker/Dockerfile
-      #     tags: latest,latest-stable
+      #     file: docker/Dockerfile
+      #     tags: pyhf/pyhf:latest,pyhf/pyhf:latest-stable
       #     push: true
