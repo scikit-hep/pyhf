@@ -36,8 +36,6 @@ jobs:
         with:
           file: docker/Dockerfile
           tags: pyhf/pyhf:test
-          tag_with_sha: true
-          tag_with_ref: true
           push: false
 
       - name: Image digest
