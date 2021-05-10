@@ -36,8 +36,9 @@ jobs:
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION}"
           TAGS="$TAGS,${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
+          # Releases also have GITHUB_REFs that are tags, so reuse VERSION
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable"
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
           fi
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
@@ -54,6 +55,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test build
         id: docker_build_test
@@ -99,7 +107,7 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          tags: pyhf/pyhf:latest
+          tags: pyhf/pyhf:latest,ghcr.io/${{github.repository}}:latest
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
