@@ -70,7 +70,7 @@ jobs:
           push: false
 
       - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        run: echo ${{ steps.docker_build_test.outputs.digest }}
 
       - name: List built images
         run: docker images
