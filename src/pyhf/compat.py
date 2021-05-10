@@ -37,7 +37,7 @@ def interpret_rootname(rootname):
     Interprets a ROOT-generated name as best as possible
 
         Args:
-            rootname (:obj:`tensor`): 
+            rootname (:obj:`tensor`):
 
         Returns:
             interpretation (:obj:`dict`): interpreteted key-value pairs
