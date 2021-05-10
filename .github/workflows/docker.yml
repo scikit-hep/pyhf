@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -37,6 +40,7 @@ jobs:
         id: docker_build_test
         uses: docker/build-push-action@v2
         with:
+          context: .
           file: docker/Dockerfile
           tags: pyhf/pyhf:test
           push: false
@@ -69,6 +73,7 @@ jobs:
         id: docker_build_latest
         uses: docker/build-push-action@v2
         with:
+          context: .
           file: docker/Dockerfile
           tags: pyhf/pyhf:latest
           push: true
@@ -78,6 +83,7 @@ jobs:
       #   id: docker_build_release
       #   uses: docker/build-push-action@v2
       #   with:
+      #     context: .
       #     file: docker/Dockerfile
       #     tags: pyhf/pyhf:latest,pyhf/pyhf:latest-stable
       #     push: true
