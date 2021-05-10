@@ -30,7 +30,7 @@ def test_pdf_inputs(backend):
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
 
@@ -53,7 +53,7 @@ def test_invalid_pdf_pars():
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
 
@@ -69,7 +69,7 @@ def test_invalid_pdf_data():
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
 
@@ -87,7 +87,7 @@ def test_pdf_expected_data_by_sample(backend, batch_size):
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'],
         source['bindata']['bkg'],
         source['bindata']['bkgerr'],
@@ -118,7 +118,7 @@ def test_pdf_basicapi_tests(backend):
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
 
@@ -143,7 +143,7 @@ def test_pdf_basicapi_tests(backend):
         [60.0], 1e-08
     )
 
-    pdf = pyhf.simplemodels.hepdata_like(
+    pdf = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'],
         source['bindata']['bkg'],
         source['bindata']['bkgerr'],

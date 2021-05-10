@@ -48,7 +48,7 @@ def test_scipy_minimize(backend, capsys):
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
     pyhf.set_backend(tensorlib(precision=precision), optimizer())
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
     # numpy does not support grad
     if pyhf.tensorlib.name == 'numpy' and do_grad:
@@ -167,7 +167,7 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
 
     # start with first backend
     pyhf.set_backend(backend, 'scipy')
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
     assert pyhf.tensorlib.default_do_grad == do_grad
@@ -178,7 +178,7 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
 
     # now switch to new backend and see what happens
     pyhf.set_backend(backend_new)
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
     assert pyhf.tensorlib.default_do_grad == do_grad_new
@@ -198,7 +198,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     """
     pyhf.set_backend(pyhf.tensorlib, pyhf.optimize.minuit_optimizer(tolerance=0.2))
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
     do_grad = pyhf.tensorlib.default_do_grad
@@ -221,7 +221,7 @@ def test_minuit_strategy_global(mocker, backend, strategy):
         pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
     )
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
     do_grad = pyhf.tensorlib.default_do_grad
@@ -239,7 +239,7 @@ def test_minuit_strategy_global(mocker, backend, strategy):
 
 
 def test_set_tolerance(backend):
-    m = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
     assert pyhf.infer.mle.fit(data, m, tolerance=0.01) is not None
@@ -258,7 +258,7 @@ def test_set_tolerance(backend):
 )
 def test_optimizer_unsupported_minimizer_options(optimizer):
     pyhf.set_backend(pyhf.default_backend, optimizer())
-    m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    m = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
     with pytest.raises(pyhf.exceptions.Unsupported) as excinfo:
         pyhf.infer.mle.fit(data, m, unsupported_minimizer_options=False)
@@ -274,7 +274,7 @@ def test_optimizer_unsupported_minimizer_options(optimizer):
 )
 def test_optimizer_return_values(optimizer, return_fitted_val, return_result_obj):
     pyhf.set_backend(pyhf.default_backend, optimizer())
-    m = pyhf.simplemodels.hepdata_like([5.0], [10.0], [3.5])
+    m = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
     result = pyhf.infer.mle.fit(
         data,
@@ -475,7 +475,7 @@ def test_minuit_failed_optimization(
 
     monkeypatch.setattr(iminuit, 'Minuit', BadMinuit)
     pyhf.set_backend('numpy', 'minuit')
-    pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
+    pdf = pyhf.simplemodels.uncorrelated_background([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
     with pytest.raises(pyhf.exceptions.FailedMinimization) as excinfo:
@@ -495,7 +495,7 @@ def test_minuit_failed_optimization(
 
 def test_minuit_set_options(mocker):
     pyhf.set_backend('numpy', 'minuit')
-    pdf = pyhf.simplemodels.hepdata_like([5], [10], [3.5])
+    pdf = pyhf.simplemodels.uncorrelated_background([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
     # no need to postprocess in this test
     mocker.patch.object(OptimizerMixin, '_internal_postprocess')
@@ -600,7 +600,7 @@ def test_solver_options_scipy(mocker):
     pyhf.set_backend('numpy', optimizer)
     assert pyhf.optimizer.solver_options == {'ftol': 1e-5}
 
-    model = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
     assert pyhf.infer.mle.fit(data, model).tolist()
 
@@ -614,6 +614,6 @@ def test_bad_solver_options_scipy(mocker):
     pyhf.set_backend('numpy', optimizer)
     assert pyhf.optimizer.solver_options == {'arbitrary_option': 'foobar'}
 
-    model = pyhf.simplemodels.hepdata_like([50.0], [100.0], [10.0])
+    model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
     assert pyhf.infer.mle.fit(data, model).tolist()

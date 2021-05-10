@@ -220,7 +220,10 @@ def test_readxml_public_api():
 
 
 def test_simplemodels_public_api():
-    assert dir(pyhf.simplemodels) == ["correlated_background", "hepdata_like"]
+    assert dir(pyhf.simplemodels) == [
+        "correlated_background",
+        "uncorrelated_background",
+    ]
 
 
 def test_utils_public_api():
