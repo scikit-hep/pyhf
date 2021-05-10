@@ -87,7 +87,7 @@ def test_paramset_constrained_missiing_factors():
 
 def test_scalar_multiparam_failure():
     with pytest.raises(ValueError):
-        pset = paramsets.paramset(
+        paramsets.paramset(
             name='foo',
             is_scalar=True,
             n_parameters=5,
