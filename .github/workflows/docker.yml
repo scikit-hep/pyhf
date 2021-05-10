@@ -37,7 +37,7 @@ jobs:
           TAGS="${DOCKER_IMAGE}:${VERSION}"
           TAGS="$TAGS,${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable"
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable,ghcr.io/${DOCKER_IMAGE}:latest-stable"
           fi
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
@@ -106,7 +106,7 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          tags: pyhf/pyhf:latest
+          tags: pyhf/pyhf:latest,ghcr.io/pyhf/pyhf:latest
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
