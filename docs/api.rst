@@ -47,8 +47,9 @@ Making Models from PDFs
    ~workspace.Workspace
    ~patchset.PatchSet
    ~patchset.Patch
-   simplemodels.hepdata_like
+   simplemodels.uncorrelated_background
    simplemodels.correlated_background
+   simplemodels.hepdata_like
 
 Backends
 --------

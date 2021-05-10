@@ -6,7 +6,7 @@ import logging
 
 def test_q0(caplog):
     mu = 1.0
-    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
@@ -25,7 +25,7 @@ def test_q0(caplog):
 
 def test_qmu(caplog):
     mu = 1.0
-    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
@@ -41,7 +41,7 @@ def test_qmu(caplog):
 
 def test_qmu_tilde(caplog):
     mu = 1.0
-    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
@@ -58,7 +58,7 @@ def test_qmu_tilde(caplog):
 
 def test_tmu(caplog):
     mu = 1.0
-    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
@@ -74,7 +74,7 @@ def test_tmu(caplog):
 
 def test_tmu_tilde(caplog):
     mu = 1.0
-    model = pyhf.simplemodels.hepdata_like([6], [9], [3])
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
