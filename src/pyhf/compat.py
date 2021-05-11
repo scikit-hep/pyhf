@@ -15,18 +15,21 @@ def paramset_to_rootnames(paramset):
     """
     Generates parameter names for parameters in the set as ROOT would do.
 
-        lumi -> Lumi
-        unconstrained scalar parameter foo -> foo
-        constrained scalar parameter foo -> alpha_foo
-        non-scalar parameters -> gamma_foo_i
+    Args:
+        paramset (:obj:`pyhf.paramsets.paramset`): The parameter set.
 
-        Args:
-            paramset (:obj:`pyhf.paramsets.paramset`): the parameter set
+    Returns:
+        :obj:`List[str]` or :obj:`str`: The generated parameter names
+        (for the non-scalar/scalar case) respectively.
 
-        Returns:
-            rootnames (:obj:`List[str]` or `str`): the generated parameter names
-                                          (for the non-scalar/scalar case)
-                                          respectively
+    Example:
+
+        pyhf parameter names and then the converted names for ROOT:
+
+        * ``"lumi"`` -> ``"Lumi"``
+        * unconstrained scalar parameter ``"foo"`` -> ``"foo"``
+        * constrained scalar parameter ``"foo"`` -> ``"alpha_foo"``
+        * non-scalar parameters ``"foo"`` -> ``"gamma_foo_i"``
     """
 
     if paramset.name == 'lumi':
