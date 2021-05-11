@@ -70,7 +70,7 @@ def interpret_rootname(rootname):
         interpretation['is_scalar'] = False
         match = re.search(r'^gamma_(.+)_(\d+)$', rootname)
         if not match:
-            raise ValueError('confusing rootname, please report bug')
+            raise ValueError(f'confusing rootname {rootname}. Please report as a bug.')
         interpretation['name'] = match.group(1)
         interpretation['element'] = int(match.group(2))
     else:
@@ -80,7 +80,7 @@ def interpret_rootname(rootname):
         interpretation['constrained'] = True
         match = re.search(r'^alpha_(.+)$', rootname)
         if not match:
-            raise ValueError('confusing rootname, please report bug')
+            raise ValueError(f'confusing rootname {rootname}. Please report as a bug.')
         interpretation['name'] = match.group(1)
 
     if not (rootname.startswith('alpha_') or rootname.startswith('gamma_')):
