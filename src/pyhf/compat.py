@@ -30,6 +30,18 @@ def paramset_to_rootnames(paramset):
         * unconstrained scalar parameter ``"foo"`` -> ``"foo"``
         * constrained scalar parameter ``"foo"`` -> ``"alpha_foo"``
         * non-scalar parameters ``"foo"`` -> ``"gamma_foo_i"``
+
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> model.config.parameters
+        ['mu', 'uncorr_bkguncrt']
+        >>> pyhf.compat.paramset_to_rootnames(model.config.param_set("mu"))
+        'mu'
+        >>> pyhf.compat.paramset_to_rootnames(model.config.param_set("uncorr_bkguncrt"))
+        ['gamma_uncorr_bkguncrt_0', 'gamma_uncorr_bkguncrt_1']
     """
 
     if paramset.name == 'lumi':
