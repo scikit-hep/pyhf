@@ -12,6 +12,7 @@ def test_top_level_public_api():
         "PatchSet",
         "Workspace",
         "__version__",
+        "compat",
         "exceptions",
         "get_backend",
         "infer",
@@ -33,6 +34,10 @@ def test_top_level_public_api():
 
 def test_cli_public_api():
     assert dir(pyhf.cli) == ["cli", "complete", "contrib", "infer", "rootio", "spec"]
+
+
+def test_compat_public_api():
+    assert dir(pyhf.compat) == ["interpret_rootname", "paramset_to_rootnames"]
 
 
 def test_constraints_public_api():
@@ -233,7 +238,6 @@ def test_utils_public_api():
         "digest",
         "load_schema",
         "options_from_eqdelimstring",
-        "remove_prefix",
         "validate",
     ]
 

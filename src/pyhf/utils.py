@@ -18,7 +18,6 @@ __all__ = [
     "digest",
     "load_schema",
     "options_from_eqdelimstring",
-    "remove_prefix",
     "validate",
 ]
 
@@ -123,29 +122,6 @@ def digest(obj, algorithm='sha256'):
             f"{algorithm} is not an algorithm provided by Python's hashlib library."
         )
     return hash_alg(stringified).hexdigest()
-
-
-def remove_prefix(text, prefix):
-    """
-    Remove a prefix from the beginning of the provided text.
-
-    Example:
-
-        >>> import pyhf
-        >>> pyhf.utils.remove_prefix("alpha_syst1", "alpha_")
-        'syst1'
-
-    Args:
-        text (:obj:`str`): A provided input to manipulate.
-        prefix (:obj:`str`): A prefix to remove from provided input, if it exists.
-
-    Returns:
-        stripped_text (:obj:`str`): Text with the prefix removed.
-    """
-    # NB: python3.9 can be `return text.removeprefix(prefix)`
-    if text.startswith(prefix):
-        return text[len(prefix) :]
-    return text
 
 
 def citation(oneline=False):

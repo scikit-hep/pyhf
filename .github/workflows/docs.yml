@@ -37,6 +37,7 @@ jobs:
                                src/pyhf/workspace.py \
                                src/pyhf/probability.py \
                                src/pyhf/patchset.py \
+                               src/pyhf/compat.py \
                                src/pyhf/interpolators \
                                src/pyhf/infer \
                                src/pyhf/optimize \

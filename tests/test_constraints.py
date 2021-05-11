@@ -136,6 +136,8 @@ def test_batched_constraints(backend):
         par_map={
             'pois1': {
                 'paramset': constrained_by_poisson(
+                    name='pois1',
+                    is_scalar=False,
                     n_parameters=1,
                     inits=[1.0],
                     bounds=[[0, 10]],
@@ -148,6 +150,8 @@ def test_batched_constraints(backend):
             },
             'pois2': {
                 'paramset': constrained_by_poisson(
+                    name='pois2',
+                    is_scalar=False,
                     n_parameters=2,
                     inits=[1.0] * 2,
                     bounds=[[0, 10]] * 2,
@@ -159,6 +163,8 @@ def test_batched_constraints(backend):
             },
             'norm1': {
                 'paramset': constrained_by_normal(
+                    name='norm1',
+                    is_scalar=False,
                     n_parameters=2,
                     inits=[0] * 2,
                     bounds=[[0, 10]] * 2,
@@ -170,6 +176,8 @@ def test_batched_constraints(backend):
             },
             'norm2': {
                 'paramset': constrained_by_normal(
+                    name='norm2',
+                    is_scalar=False,
                     n_parameters=3,
                     inits=[0] * 3,
                     bounds=[[0, 10]] * 3,

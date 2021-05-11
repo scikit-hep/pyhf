@@ -155,6 +155,7 @@ from .pdf import Model
 from .workspace import Workspace
 from . import simplemodels
 from . import infer
+from . import compat
 from .patchset import PatchSet
 
 __all__ = [
@@ -162,6 +163,7 @@ __all__ = [
     "PatchSet",
     "Workspace",
     "__version__",
+    "compat",
     "exceptions",
     "get_backend",
     "infer",

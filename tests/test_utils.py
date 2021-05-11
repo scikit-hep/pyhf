@@ -60,12 +60,6 @@ def test_digest_bad_alg():
     assert 'nonexistent_algorithm' in str(excinfo.value)
 
 
-def test_remove_prefix():
-    assert pyhf.utils.remove_prefix('abcDEF123', 'abc') == 'DEF123'
-    assert pyhf.utils.remove_prefix('abcDEF123', 'Abc') == 'abcDEF123'
-    assert pyhf.utils.remove_prefix('abcDEF123', '123') == 'abcDEF123'
-
-
 @pytest.mark.parametrize('oneline', [False, True])
 def test_citation(oneline):
     citation = pyhf.utils.citation(oneline)
