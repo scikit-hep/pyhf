@@ -1,4 +1,5 @@
 import pytest
+
 import pyhf
 import pyhf.compat
 import pyhf.readxml
@@ -37,29 +38,26 @@ def test_interpretation():
 
 
 def test_torootname():
-    m1 = pyhf.simplemodels.correlated_background([5], [50], [52], [48])
-    m2 = pyhf.simplemodels.uncorrelated_background([5], [50], [7])
-    m3 = pyhf.simplemodels.uncorrelated_background([5, 6], [50, 50], [7, 8])
+    model_1 = pyhf.simplemodels.correlated_background([5], [50], [52], [48])
+    model_2 = pyhf.simplemodels.uncorrelated_background([5], [50], [7])
+    model_3 = pyhf.simplemodels.uncorrelated_background([5, 6], [50, 50], [7, 8])
 
-    assert pyhf.compat.paramset_to_rootnames(m1.config.param_set('mu')) == 'mu'
+    assert pyhf.compat.paramset_to_rootnames(model_1.config.param_set('mu')) == 'mu'
 
     assert (
         pyhf.compat.paramset_to_rootnames(
-            m1.config.param_set('correlated_bkg_uncertainty')
+            model_1.config.param_set('correlated_bkg_uncertainty')
         )
         == 'alpha_correlated_bkg_uncertainty'
     )
 
     assert pyhf.compat.paramset_to_rootnames(
-        m2.config.param_set('uncorr_bkguncrt')
+        model_2.config.param_set('uncorr_bkguncrt')
     ) == ['gamma_uncorr_bkguncrt_0']
 
     assert pyhf.compat.paramset_to_rootnames(
-        m3.config.param_set('uncorr_bkguncrt')
-    ) == [
-        'gamma_uncorr_bkguncrt_0',
-        'gamma_uncorr_bkguncrt_1',
-    ]
+        model_3.config.param_set('uncorr_bkguncrt')
+    ) == ['gamma_uncorr_bkguncrt_0', 'gamma_uncorr_bkguncrt_1']
 
 
 def test_fromxml():
@@ -73,6 +71,6 @@ def test_fromxml():
         'channels': parsed_xml['channels'],
         'parameters': parsed_xml['measurements'][0]['config']['parameters'],
     }
-    m = pyhf.Model(spec, poi_name='SigXsecOverSM')
+    model = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
-    assert pyhf.compat.paramset_to_rootnames(m.config.param_set('lumi')) == 'Lumi'
+    assert pyhf.compat.paramset_to_rootnames(model.config.param_set('lumi')) == 'Lumi'
