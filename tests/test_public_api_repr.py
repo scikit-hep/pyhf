@@ -35,6 +35,10 @@ def test_cli_public_api():
     assert dir(pyhf.cli) == ["cli", "complete", "contrib", "infer", "rootio", "spec"]
 
 
+def test_compat_public_api():
+    assert dir(pyhf.compat) == ["interpret_rootname", "paramset_to_rootnames"]
+
+
 def test_constraints_public_api():
     assert dir(pyhf.constraints) == [
         "gaussian_constraint_combined",
@@ -249,11 +253,4 @@ def test_writexml_public_api():
         "build_modifier",
         "build_sample",
         "indent",
-    ]
-
-
-def test_compat():
-    assert dir(pyhf.compat) == [
-        "interpret_rootname",
-        "paramset_to_rootnames",
     ]
