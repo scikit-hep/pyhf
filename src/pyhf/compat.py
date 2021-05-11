@@ -43,24 +43,36 @@ def paramset_to_rootnames(paramset):
 
 def interpret_rootname(rootname):
     """
-    Interprets a ROOT-generated name as best as possible
-    Possible properties of a ROOT parameter are
+    Interprets a ROOT-generated name as best as possible.
 
-    * "constrained": whether it's a member of a constrained paramset
-    * "is_scalar": whether it's a member of a scalar paramset
-    * "name": name of the param set
-    * "element": index in a non-scalar param set
+    Possible properties of a ROOT parameter are:
 
-    it is possible that some of them might not be determinable
-    and will then hold the strnigvalue "n/a"
+    * ``"constrained"``: :obj:`bool` representing if parameter is a member of a
+      constrained paramset.
+    * ``"is_scalar"``: :obj:`bool` representing if parameter is a member of a
+      scalar paramset.
+    * ``"name"``: The name of the param set.
+    * ``"element"``: The index in a non-scalar param set.
 
+    It is possible that some of the parameter names might not be determinable
+    and will then hold the string value ``"n/a"``.
 
+    Args:
+        rootname (:obj:`str`): The ROOT-generated name of the parameter.
 
-        Args:
-            rootname (:obj:`tensor`):
+    Returns:
+        :obj:`dict`: The interpreted key-value pairs.
 
-        Returns:
-            interpretation (:obj:`dict`): interpreteted key-value pairs
+    Example:
+
+        >>> import pyhf
+        >>> interpreted_name = pyhf.compat.interpret_rootname("gamma_foo_0")
+        >>> pyhf.compat.interpret_rootname("gamma_foo_0")
+        {'constrained': 'n/a', 'is_scalar': False, 'name': 'foo', 'element': 0}
+        >>> pyhf.compat.interpret_rootname("alpha_foo")
+        {'constrained': True, 'is_scalar': True, 'name': 'foo', 'element': 'n/a'}
+        >>> pyhf.compat.interpret_rootname("Lumi")
+        {'constrained': False, 'is_scalar': True, 'name': 'lumi', 'element': 'n/a'}
     """
 
     interpretation = {
