@@ -18,6 +18,7 @@ Top-Level
    set_backend
    readxml
    writexml
+   compat
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
