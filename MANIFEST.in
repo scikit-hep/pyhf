@@ -1,6 +1,7 @@
 prune *
 graft src
 include LICENSE
+include AUTHORS
 exclude lower-bound-requirements.txt
 
 global-exclude __pycache__ *.py[cod]
