@@ -8,7 +8,7 @@ def model_setup(backend):
     np.random.seed(0)
     n_bins = 100
     # TODO: Simplify after pyhf v0.6.2 released
-    if tuple(int(part) for part in pyhf.__version__.split(".")) < (0, 6, 2):
+    if tuple(int(part) for part in pyhf.__version__.split(".")[:3]) < (0, 6, 2):
         model = pyhf.simplemodels.hepdata_like(
             [10] * n_bins, [50] * n_bins, [1] * n_bins
         )
@@ -211,7 +211,7 @@ def test_pdf_batched_deprecated_api(backend):
 
 # TODO: Remove skipif after pyhf v0.6.2 released
 @pytest.mark.skipif(
-    tuple(int(part) for part in pyhf.__version__.split(".")) < (0, 6, 2),
+    tuple(int(part) for part in pyhf.__version__.split(".")[:3]) < (0, 6, 2),
     reason="requires pyhf v0.6.2+",
 )
 def test_pdf_batched(backend):
