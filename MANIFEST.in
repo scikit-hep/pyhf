@@ -1,5 +1,7 @@
 prune **
 graft src
+include setup.py
+include setup.cfg
 include LICENSE
 include README.rst
 include pyproject.toml
