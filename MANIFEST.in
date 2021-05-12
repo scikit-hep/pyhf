@@ -1,6 +1,6 @@
-prune *
+prune **
 graft src
 include LICENSE
 exclude lower-bound-requirements.txt
 
-global-exclude __pycache__ *.py[cod] .*
+global-exclude __pycache__ *.py[cod]
