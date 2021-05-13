@@ -1,6 +1,12 @@
-prune *
+prune **
 graft src
-include LICENSE
-exclude lower-bound-requirements.txt
 
-global-exclude __pycache__ *.py[cod] .*
+include setup.py
+include setup.cfg
+include LICENSE
+include README.rst
+include pyproject.toml
+include MANIFEST.in
+include AUTHORS
+
+global-exclude __pycache__ *.py[cod]
