@@ -19,8 +19,7 @@ from pathlib import Path
 import sys
 from pkg_resources import get_distribution
 
-sys.path.insert(0, str(Path('../src').resolve()))
-sys.path.insert(1, str(Path('./exts').resolve()))
+sys.path.insert(0, str(Path('./exts').resolve()))
 
 
 def setup(app):
