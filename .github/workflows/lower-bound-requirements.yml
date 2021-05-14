@@ -24,10 +24,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies and force lowest bound
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --quiet --no-cache-dir --requirement lower-bound-requirements.txt
-        python -m pip install --quiet --no-cache-dir --editable .[test]
-        python -m pip install --no-cache-dir --upgrade --requirement lower-bound-requirements.txt
+        python -m pip --no-cache-dir install --upgrade pip setuptools wheel
+        python -m pip --no-cache-dir --quiet install --requirement lower-bound-requirements.txt
+        python -m pip --no-cache-dir --quiet install .[test]
+        python -m pip --no-cache-dir --quiet install --requirement lower-bound-requirements.txt
         python -m pip list
     - name: Test with pytest
       run: |
