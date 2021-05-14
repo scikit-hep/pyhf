@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --use-feature=in-tree-build install --ignore-installed --upgrade .[test]
+        python -m pip --use-feature=in-tree-build install --ignore-installed --upgrade --editable .[test]
     - name: List installed Python packages
       run: |
         python -m pip list
