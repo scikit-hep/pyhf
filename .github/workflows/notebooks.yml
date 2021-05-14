@@ -22,8 +22,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[complete]
+        python -m pip --no-cache-dir install --upgrade pip setuptools wheel
+        python -m pip --no-cache-dir --quiet install --upgrade .[complete]
         python -m pip list
     - name: Test example notebooks
       run: |
