@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --use-feature=in-tree-build install --ignore-installed --upgrade --quiet --no-cache-dir --editable .[test]
+        python -m pip --no-cache-dir --quiet --use-feature=in-tree-build install --ignore-installed --upgrade --editable .[test]
         python -m pip list
     - name: Test with pytest
       run: |
