@@ -25,8 +25,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip --no-cache-dir install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --ignore-installed --upgrade .[docs,test]
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip --quiet install --ignore-installed --upgrade .[docs,test]
         python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc

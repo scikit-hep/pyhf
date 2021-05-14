@@ -28,8 +28,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip --no-cache-dir install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --use-feature=in-tree-build install --ignore-installed --upgrade .[test]
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip --use-feature=in-tree-build install --ignore-installed --upgrade .[test]
     - name: List installed Python packages
       run: |
         python -m pip list
