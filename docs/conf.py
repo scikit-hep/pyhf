@@ -433,6 +433,7 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
+# mathjax3_config = {
 mathjax_config = {
     'tex2jax': {'inlineMath': [['$', '$'], ['\\(', '\\)']]},
     'TeX': {
