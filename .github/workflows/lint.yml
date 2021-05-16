@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --quiet install --ignore-installed --upgrade .[lint]
+        python -m pip --quiet install --upgrade .[lint]
         python -m pip list
     - name: Lint with flake8
       run: |
