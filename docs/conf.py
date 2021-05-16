@@ -433,10 +433,10 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
-mathjax_config = {
+mathjax3_config = {
     'tex2jax': {'inlineMath': [['$', '$'], ['\\(', '\\)']]},
-    'TeX': {
-        'Macros': {
+    'tex': {
+        'macros': {
             'bm': ["\\boldsymbol{#1}", 1],  # \usepackage{bm}, see mathjax/MathJax#1219
             'HiFa': r'\texttt{HistFactory}',
             'Root': r'\texttt{ROOT}',
