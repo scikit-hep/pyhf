@@ -55,7 +55,7 @@ We recommend first reading the "[Developing](https://scikit-hep.org/pyhf/develop
 You can install the development environment (which includes a number of extra) libraries and all others needed to run the tests via `pip`:
 
 ```bash
-python -m pip install --ignore-installed -U -e .[complete]
+python -m pip install --upgrade --editable .[complete]
 ```
 
 To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Black](https://github.com/psf/black) by running
