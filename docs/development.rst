@@ -11,7 +11,7 @@ and install all necessary packages for development
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U -e .[complete]
+    python -m pip install --upgrade --editable .[complete]
 
 Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__  by running
 
