@@ -1087,11 +1087,15 @@ def test_pdf_invalid_parameter_shapes(backend):
     #  - b/c uncorrelated, we have 1 par per bin for shapesys (so nbins)
     #  - actual data + aux data = 2 * nbins
     assert pdf.expected_actualdata(pars).shape[-1] == nbins
+    assert pdf.main_model.expected_data(pars).shape[-1] == nbins
     assert pdf.expected_auxdata(pars).shape[-1] == nbins
     assert pdf.expected_data(pars).shape[-1] == 2 * nbins
 
     with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.expected_actualdata(pars[: nbins - 1])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.main_model.expected_data(pars[: nbins - 1])
 
     with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.expected_auxdata(pars[: nbins - 1])
@@ -1101,6 +1105,9 @@ def test_pdf_invalid_parameter_shapes(backend):
 
     with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.expected_actualdata(pars + [pars[-1]])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.main_model.expected_data(pars + [pars[-1]])
 
     with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.expected_auxdata(pars + [pars[-1]])
