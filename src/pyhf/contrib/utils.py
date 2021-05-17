@@ -6,7 +6,6 @@ from io import BytesIO
 import logging
 from .. import exceptions
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 __all__ = ["download"]
