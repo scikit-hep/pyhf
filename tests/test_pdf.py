@@ -1070,3 +1070,40 @@ def test_make_model_with_tensors():
         pyhf.tensorlib.astensor(1.05),
         pyhf.tensorlib.astensor([5.0, 5.0]),
     )
+
+
+def test_pdf_invalid_parameter_shapes(backend):
+    nbins = np.random.randint(2, 10)
+
+    signal = np.random.random(nbins).tolist()
+    bkg = np.random.random(nbins).tolist()
+    bkg_uncrt = np.sqrt(bkg).tolist()
+    pdf = pyhf.simplemodels.uncorrelated_background(signal, bkg, bkg_uncrt)
+
+    pars = pdf.config.suggested_init()
+
+    # NB:
+    #  - nbins is shape of actual data
+    #  - b/c uncorrelated, we have 1 par per bin for shapesys (so nbins)
+    #  - actual data + aux data = 2 * nbins
+    assert pdf.expected_actualdata(pars).shape[-1] == nbins
+    assert pdf.expected_auxdata(pars).shape[-1] == nbins
+    assert pdf.expected_data(pars).shape[-1] == 2 * nbins
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_actualdata(pars[: nbins - 1])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_auxdata(pars[: nbins - 1])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_data(pars[: nbins - 1])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_actualdata(pars + [pars[-1]])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_auxdata(pars + [pars[-1]])
+
+    with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
+        pdf.expected_data(pars + [pars[-1]])
