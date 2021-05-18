@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --quiet install --upgrade --editable .[complete]
+        python -m pip --quiet install --upgrade .[complete]
         python -m pip list
     - name: Test example notebooks
       run: |
