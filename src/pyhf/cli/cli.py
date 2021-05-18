@@ -3,7 +3,7 @@ import logging
 
 import click
 
-from ..version import __version__
+from .. import __version__
 from . import rootio, spec, infer, patchset, complete
 from ..contrib import cli as contrib
 from .. import utils

@@ -1,7 +1,11 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["wheel", "setuptools>=30.3.0", "attrs>=17.1", "setuptools_scm"]
+requires = ["wheel", "setuptools>=30.3.0", "attrs>=17.1", "setuptools_scm[toml]>=3.4"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/pyhf/version.py"
+local_scheme = "no-local-version"
 
 [tool.black]
 line-length = 88

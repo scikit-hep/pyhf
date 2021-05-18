@@ -1,6 +1,6 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
-from .version import __version__
+from .version import version as __version__
 from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
 from . import events
 
