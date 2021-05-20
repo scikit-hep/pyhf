@@ -26,6 +26,10 @@ class paramset:
                 f'misconfigured parameter set {self.name}. Scalar but N>1 parameters.'
             )
 
+    @property
+    def maximal_pars(self):
+        return self.suggested_init
+
 
 class unconstrained(paramset):
     def __init__(self, **kwargs):
@@ -54,6 +58,10 @@ class constrained_by_normal(constrained_paramset):
         except AttributeError:
             return [1.0] * self.n_parameters
 
+    @property
+    def maximal_pars(self):
+        return [0.0] * self.n_parameters
+
 
 class constrained_by_poisson(constrained_paramset):
     def __init__(self, **kwargs):
@@ -71,3 +79,7 @@ class constrained_by_poisson(constrained_paramset):
             ).tolist()
         except AttributeError:
             raise RuntimeError('need to know rate factor to compu')
+
+    @property
+    def maximal_pars(self):
+        return [1.0] * self.n_parameters
