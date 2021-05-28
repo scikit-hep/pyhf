@@ -4,7 +4,7 @@ FROM ${BASE_IMAGE} as base
 
 FROM base as builder
 COPY . /code
-# hadolint ignore=DL3003
+# hadolint ignore=DL3003,SC2102
 RUN apt-get -qq -y update && \
     apt-get -qq -y install --no-install-recommends \
         git && \
@@ -12,8 +12,8 @@ RUN apt-get -qq -y update && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* && \
     cd /code && \
-    python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
-    python -m pip install --no-cache-dir .[xmlio] && \
+    python -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
+    python -m pip --no-cache-dir install .[xmlio,contrib] && \
     python -m pip list
 
 FROM base
