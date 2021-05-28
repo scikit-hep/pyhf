@@ -13,7 +13,7 @@ RUN apt-get -qq -y update && \
     rm -rf /var/lib/apt/lists/* && \
     cd /code && \
     python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
-    python -m pip install --no-cache-dir .[xmlio] && \
+    python -m pip install --no-cache-dir .[xmlio,contrib] && \
     python -m pip list
 
 FROM base
