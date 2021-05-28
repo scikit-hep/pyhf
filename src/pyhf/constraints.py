@@ -3,6 +3,12 @@ from . import events
 from . import probability as prob
 from .parameters import ParamViewer
 
+__all__ = ["gaussian_constraint_combined", "poisson_constraint_combined"]
+
+
+def __dir__():
+    return __all__
+
 
 class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):

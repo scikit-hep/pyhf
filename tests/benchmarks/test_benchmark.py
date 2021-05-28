@@ -1,5 +1,5 @@
 import pyhf
-from pyhf.simplemodels import hepdata_like
+from pyhf.simplemodels import uncorrelated_background
 import numpy as np
 import pytest
 
@@ -84,7 +84,7 @@ def test_hypotest(benchmark, backend, n_bins):
         None
     """
     source = generate_source_static(n_bins)
-    pdf = hepdata_like(
+    pdf = uncorrelated_background(
         source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
     )
     data = source['bindata']['data'] + pdf.config.auxdata

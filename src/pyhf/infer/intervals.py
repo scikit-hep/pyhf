@@ -5,6 +5,12 @@ import numpy as np
 from scipy.optimize import toms748 as _toms748
 from warnings import warn as _warn
 
+__all__ = ["upperlimit"]
+
+
+def __dir__():
+    return __all__
+
 
 def _interp(x, xp, fp):
     tb, _ = get_backend()
@@ -130,8 +136,8 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         >>> import numpy as np
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)

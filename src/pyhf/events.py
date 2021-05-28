@@ -4,6 +4,21 @@ from functools import wraps
 __events = {}
 __disabled_events = set()
 
+__all__ = [
+    "Callables",
+    "WeakList",
+    "disable",
+    "enable",
+    "noop",
+    "register",
+    "subscribe",
+    "trigger",
+]
+
+
+def __dir__():
+    return __all__
+
 
 def noop(*args, **kwargs):
     pass

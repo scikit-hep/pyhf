@@ -16,6 +16,7 @@ class shapefactor:
             'n_parameters': len(sample_data),
             'is_constrained': cls.is_constrained,
             'is_shared': True,
+            'is_scalar': False,
             'inits': (1.0,) * len(sample_data),
             'bounds': ((0.0, 10.0),) * len(sample_data),
             'fixed': False,

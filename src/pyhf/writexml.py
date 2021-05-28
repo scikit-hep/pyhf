@@ -16,6 +16,20 @@ _ROOT_DATA_FILE = None
 
 log = logging.getLogger(__name__)
 
+__all__ = [
+    "build_channel",
+    "build_data",
+    "build_measurement",
+    "build_modifier",
+    "build_sample",
+    "indent",
+]
+
+
+def __dir__():
+    return __all__
+
+
 # 'spec' gets passed through all functions as NormFactor is a unique case of having
 # parameter configurations stored at the modifier-definition-spec level. This means
 # that build_modifier() needs access to the measurements. The call stack is:

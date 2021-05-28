@@ -22,6 +22,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -29,7 +31,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
+        python -m pip install --upgrade --editable .[test]
+    - name: List installed Python packages
+      run: |
         python -m pip list
     - name: Test with pytest
       run: |
@@ -55,35 +59,3 @@ jobs:
       if: github.event_name == 'schedule' && matrix.python-version == 3.8
       run: |
         python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
-
-  docker:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build Docker image
-      uses: docker/build-push-action@v1
-      with:
-        repository: pyhf/pyhf
-        dockerfile: docker/Dockerfile
-        tags: test
-        tag_with_sha: true
-        tag_with_ref: true
-        push: false
-    - name: List built images
-      run: docker images
-    - name: Run CLI API check
-      run: |
-        printf "\npyhf\n"
-        docker run --rm pyhf/pyhf:test
-        printf "\npyhf --version\n"
-        docker run --rm pyhf/pyhf:test --version
-        printf "\npyhf --help\n"
-        docker run --rm pyhf/pyhf:test --help
-    - name: Check for curl and tar
-      run: >-
-        docker run --rm
-        --entrypoint /bin/bash
-        pyhf/pyhf:test
-        -c "which curl; which tar"

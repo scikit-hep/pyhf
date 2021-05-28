@@ -1,6 +1,6 @@
 from .tensor import BackendRetriever as tensor
 from .optimize import OptimizerRetriever as optimize
-from .version import __version__
+from .version import version as __version__
 from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
 from . import events
 
@@ -155,15 +155,33 @@ from .pdf import Model
 from .workspace import Workspace
 from . import simplemodels
 from . import infer
+from . import compat
 from .patchset import PatchSet
 
 __all__ = [
-    'Model',
-    'Workspace',
-    'PatchSet',
-    'infer',
-    'utils',
-    'modifiers',
-    'simplemodels',
-    '__version__',
+    "Model",
+    "PatchSet",
+    "Workspace",
+    "__version__",
+    "compat",
+    "exceptions",
+    "get_backend",
+    "infer",
+    "interpolators",
+    "modifiers",
+    "optimizer",
+    "parameters",
+    "patchset",
+    "pdf",
+    "probability",
+    "set_backend",
+    "simplemodels",
+    "tensor",
+    "tensorlib",
+    "utils",
+    "workspace",
 ]
+
+
+def __dir__():
+    return __all__

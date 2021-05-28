@@ -6,6 +6,12 @@ from pathlib import Path
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
+__all__ = ["download"]
+
+
+def __dir__():
+    return __all__
+
 
 @click.group(name="contrib")
 def cli():

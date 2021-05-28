@@ -16,6 +16,7 @@ class lumi:
             'n_parameters': 1,
             'is_constrained': cls.is_constrained,
             'is_shared': True,
+            'is_scalar': True,
             'op_code': cls.op_code,
             'inits': None,  # lumi
             'bounds': None,  # (0, 10*lumi)

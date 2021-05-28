@@ -8,6 +8,12 @@ import logging
 
 log = logging.getLogger(__name__)
 
+__all__ = ["create_calculator", "get_test_stat"]
+
+
+def __dir__():
+    return __all__
+
 
 def all_pois_floating(pdf, fixed_params):
     r"""
@@ -40,8 +46,8 @@ def create_calculator(calctype, *args, **kwargs):
         >>> import pyhf
         >>> import numpy.random as random
         >>> random.seed(0)
-        >>> model = pyhf.simplemodels.hepdata_like(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0],
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0],
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata

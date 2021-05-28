@@ -38,8 +38,8 @@ def hypotest(
     Example:
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
@@ -194,4 +194,8 @@ def hypotest(
 
 from . import intervals  # noqa: F401
 
-__all__ = ["hypotest"]
+__all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
+
+
+def __dir__():
+    return __all__

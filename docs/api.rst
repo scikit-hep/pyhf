@@ -18,6 +18,7 @@ Top-Level
    set_backend
    readxml
    writexml
+   compat
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
@@ -47,6 +48,8 @@ Making Models from PDFs
    ~workspace.Workspace
    ~patchset.PatchSet
    ~patchset.Patch
+   simplemodels.uncorrelated_background
+   simplemodels.correlated_background
    simplemodels.hepdata_like
 
 Backends
@@ -198,6 +201,7 @@ Utilities
    validate
    options_from_eqdelimstring
    digest
+   citation
 
 Contrib
 -------

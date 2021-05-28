@@ -7,7 +7,15 @@ import numpy as np
 def model_setup(backend):
     np.random.seed(0)
     n_bins = 100
-    model = pyhf.simplemodels.hepdata_like([10] * n_bins, [50] * n_bins, [1] * n_bins)
+    # TODO: Simplify after pyhf v0.6.2 released
+    if tuple(int(part) for part in pyhf.__version__.split(".")[:3]) < (0, 6, 2):
+        model = pyhf.simplemodels.hepdata_like(
+            [10] * n_bins, [50] * n_bins, [1] * n_bins
+        )
+    else:
+        model = pyhf.simplemodels.uncorrelated_background(
+            [10] * n_bins, [50] * n_bins, [1] * n_bins
+        )
     init_pars = model.config.suggested_init()
     observations = np.random.randint(50, 60, size=n_bins).tolist()
     data = observations + model.config.auxdata
@@ -180,13 +188,39 @@ def test_prob_models(backend):
     )
 
 
-def test_pdf_batched(backend):
+# TODO: Remove after pyhf v0.6.2 released
+def test_pdf_batched_deprecated_api(backend):
     tb, _ = backend
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     model = pyhf.simplemodels.hepdata_like(
+        source['bindata']['sig'],
+        source['bindata']['bkg'],
+        source['bindata']['bkgerr'],
+        batch_size=2,
+    )
+
+    pars = [model.config.suggested_init()] * 2
+    data = source['bindata']['data'] + model.config.auxdata
+
+    model.pdf(pars, data)
+    model.expected_data(pars)
+
+
+# TODO: Remove skipif after pyhf v0.6.2 released
+@pytest.mark.skipif(
+    tuple(int(part) for part in pyhf.__version__.split(".")[:3]) < (0, 6, 2),
+    reason="requires pyhf v0.6.2+",
+)
+def test_pdf_batched(backend):
+    tb, _ = backend
+    source = {
+        "binning": [2, -0.5, 1.5],
+        "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
+    }
+    model = pyhf.simplemodels.uncorrelated_background(
         source['bindata']['sig'],
         source['bindata']['bkg'],
         source['bindata']['bkgerr'],

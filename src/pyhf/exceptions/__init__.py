@@ -1,5 +1,32 @@
 import sys
 
+__all__ = [
+    "FailedMinimization",
+    "ImportBackendError",
+    "InvalidArchiveHost",
+    "InvalidBackend",
+    "InvalidInterpCode",
+    "InvalidMeasurement",
+    "InvalidModel",
+    "InvalidModifier",
+    "InvalidNameReuse",
+    "InvalidOptimizer",
+    "InvalidPatchLookup",
+    "InvalidPatchSet",
+    "InvalidPdfData",
+    "InvalidPdfParameters",
+    "InvalidSpecification",
+    "InvalidTestStatistic",
+    "InvalidWorkspaceOperation",
+    "PatchSetVerificationError",
+    "UnspecifiedPOI",
+    "Unsupported",
+]
+
+
+def __dir__():
+    return __all__
+
 
 class Unsupported(Exception):
     """

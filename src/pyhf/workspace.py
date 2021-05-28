@@ -16,6 +16,12 @@ from .mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
+__all__ = ["Workspace"]
+
+
+def __dir__():
+    return __all__
+
 
 def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
     """
