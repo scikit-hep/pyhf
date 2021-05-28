@@ -27,6 +27,7 @@ def upperlimit_auto(
     rtol=None,
     calctype='asymptotics',
     test_stat='qtilde',
+    from_upperlimit_fn=False
 ):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
@@ -124,6 +125,8 @@ def upperlimit_auto(
         tb.astensor(_toms748(f, *best_bracket(i), args=(i), k=2, xtol=atol, rtol=rtol))
         for i in range(1, 6)
     ]
+    if from_upperlimit_fn:
+        return obs, exp, (list(cache.keys()), list(cache.values()))
     return obs, exp
 
 
@@ -153,7 +156,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
     Args:
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        scan (:obj:`iterable`): Iterable of POI values.
+        scan (:obj:`iterable` or "auto"): Iterable of POI values or "auto" to use ``upperlimit_auto``.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
@@ -166,6 +169,22 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
     """
+
+    if isinstance(scan, str):
+        if scan.lower() == 'auto':
+            bounds = model.config.suggested_bounds()[
+                model.config.par_slice(model.config.poi_name).start
+            ]
+            obs_limit, exp_limit, results = upperlimit_auto(data,
+                                                            model,
+                                                            bounds[0],
+                                                            bounds[1],
+                                                            rtol=1e-3,
+                                                            from_upperlimit_fn=True)
+            if return_results:
+                return obs_limit, exp_limit, results
+            return obs_limit, exp_limit
+
     tb, _ = get_backend()
     results = [
         hypotest(mu, data, model, test_stat="qtilde", return_expected_set=True)
