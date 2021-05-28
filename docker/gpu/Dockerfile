@@ -14,7 +14,7 @@ COPY . /code
 COPY ./docker/gpu/install_backend.sh /code/install_backend.sh
 WORKDIR /code
 ARG BACKEND=tensorflow
-RUN python3 -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
+RUN python3 -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
     /bin/bash install_backend.sh ${BACKEND} && \
     python3 -m pip list
 
