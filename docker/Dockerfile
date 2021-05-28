@@ -4,8 +4,7 @@ FROM ${BASE_IMAGE} as base
 
 FROM base as builder
 COPY . /code
-# hadolint ignore=DL3003
-# hadolint ignore=SC2102
+# hadolint ignore=DL3003,SC2102
 RUN apt-get -qq -y update && \
     apt-get -qq -y install --no-install-recommends \
         git && \
