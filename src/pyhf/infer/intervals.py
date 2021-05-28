@@ -27,7 +27,7 @@ def upperlimit_auto(
     rtol=None,
     calctype='asymptotics',
     test_stat='qtilde',
-    from_upperlimit_fn=False
+    from_upperlimit_fn=False,
 ):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
@@ -175,12 +175,9 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
             bounds = model.config.suggested_bounds()[
                 model.config.par_slice(model.config.poi_name).start
             ]
-            obs_limit, exp_limit, results = upperlimit_auto(data,
-                                                            model,
-                                                            bounds[0],
-                                                            bounds[1],
-                                                            rtol=1e-3,
-                                                            from_upperlimit_fn=True)
+            obs_limit, exp_limit, results = upperlimit_auto(
+                data, model, bounds[0], bounds[1], rtol=1e-3, from_upperlimit_fn=True
+            )
             if return_results:
                 return obs_limit, exp_limit, results
             return obs_limit, exp_limit
