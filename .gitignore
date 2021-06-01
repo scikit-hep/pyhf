@@ -1,4 +1,4 @@
-src/pyhf/version.py
+src/pyhf/_version.py
 MANIFEST
 build
 dist
