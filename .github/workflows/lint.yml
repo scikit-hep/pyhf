@@ -27,7 +27,8 @@ jobs:
     - name: Lint with Black
       run: |
         black --check --diff --verbose .
+
     - name: Lint Dockerfile
-      uses: brpaz/hadolint-action@v1.1.0
+      uses: hadolint/hadolint-action@v1.5.0
       with:
-        dockerfile: "docker/Dockerfile"
+        dockerfile: docker/Dockerfile
