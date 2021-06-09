@@ -127,3 +127,11 @@ def test_patch_repr(patch):
 def test_patch_equality(patch):
     assert patch == patch
     assert patch != object()
+
+
+def test_patchset_get_string_values(datadir):
+    patchset = pyhf.PatchSet(json.load(open(datadir.join('patchset_good_stringvalues.json'))))
+    assert patchset["Gtt_2100_5000_800"]
+    assert patchset["Gbb_2200_5000_800"]
+    assert patchset[[2100, 800, "Gtt"]]
+    assert patchset[[2100, 800, "Gbb"]]
