@@ -543,8 +543,8 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
         "https://doi.org/10.17182/hepdata.89408.v1/r2",
     ],
 )
-def test_patchset_download(datadir, script_runner, archive):
-    command = f'pyhf contrib download {archive} {datadir.join("likelihoods").strpath}'
+def test_patchset_download(tmpdir, script_runner, archive):
+    command = f'pyhf contrib download {archive} {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
