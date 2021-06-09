@@ -25,7 +25,11 @@ def patch():
 
 @pytest.mark.parametrize(
     'patchset_file',
-    ['patchset_bad_empty_patches.json', 'patchset_bad_no_version.json'],
+    [
+        'patchset_bad_empty_patches.json',
+        'patchset_bad_no_version.json',
+        'patchset_bad_wrong_valuetype.json',
+    ],
 )
 def test_patchset_invalid_spec(datadir, patchset_file):
     patchsetspec = json.load(open(datadir.join(patchset_file)))
@@ -130,7 +134,9 @@ def test_patch_equality(patch):
 
 
 def test_patchset_get_string_values(datadir):
-    patchset = pyhf.PatchSet(json.load(open(datadir.join('patchset_good_stringvalues.json'))))
+    patchset = pyhf.PatchSet(
+        json.load(open(datadir.join('patchset_good_stringvalues.json')))
+    )
     assert patchset["Gtt_2100_5000_800"]
     assert patchset["Gbb_2200_5000_800"]
     assert patchset[[2100, 800, "Gtt"]]
