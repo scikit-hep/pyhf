@@ -266,10 +266,10 @@ def _join_measurements(join, left_measurements, right_measurements):
                         'poi': measurements[0]['config']['poi'],
                         'parameters': _join_parameter_configs(
                             measurement_name,
-                            *[
+                            *(
                                 measurement['config']['parameters']
                                 for measurement in measurements
-                            ],
+                            ),
                         ),
                     },
                 }

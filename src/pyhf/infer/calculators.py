@@ -460,7 +460,7 @@ class AsymptoticCalculator:
             map(
                 list,
                 zip(
-                    *[
+                    *(
                         self.pvalues(
                             test_stat, sig_plus_bkg_distribution, bkg_only_distribution
                         )
@@ -468,7 +468,7 @@ class AsymptoticCalculator:
                             bkg_only_distribution.expected_value(n_sigma)
                             for n_sigma in [2, 1, 0, -1, -2]
                         ]
-                    ]
+                    )
                 ),
             )
         )

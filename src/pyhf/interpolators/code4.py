@@ -343,7 +343,7 @@ class _slow_code4:
             ]
 
             coefficients = [
-                sum([A_i * b_j for A_i, b_j in zip(A_row, b)]) for A_row in A_inverse
+                sum(A_i * b_j for A_i, b_j in zip(A_row, b)) for A_row in A_inverse
             ]
             delta = 1
             for i in range(1, 7):
