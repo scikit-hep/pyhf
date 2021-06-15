@@ -40,7 +40,7 @@ repos:
     rev: v1.10.0
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==21.5b1]
+      additional_dependencies: [black==21.6b0]
 
 -   repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
@@ -51,6 +51,6 @@ repos:
     rev: 0.12.0
     hooks:
     - id: nbqa-black
-      additional_dependencies: [black==21.5b1]
+      additional_dependencies: [black==21.6b0]
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.15.0]
+      additional_dependencies: [pyupgrade==2.19.4]
