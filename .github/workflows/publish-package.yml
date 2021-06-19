@@ -26,6 +26,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install build check-manifest twine
+        python -m pip list
     - name: Check MANIFEST
       run: |
         check-manifest
