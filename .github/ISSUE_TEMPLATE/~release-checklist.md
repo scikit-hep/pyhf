@@ -1,5 +1,5 @@
 ---
-name: Release Checklist
+name: (Maintainers Only) Release Checklist
 about: Checklist for core developers to complete as part of making a release
 
 ---
