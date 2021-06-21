@@ -12,6 +12,8 @@ Important Notes
   (PR :pr:`1438`)
 * There is a small breaking API change for :func:`pyhf.contrib.viz.brazil.plot_results`.
   See the Pyhton API changes section for more information.
+* The :class:`pyhf.patchset.PatchSet` schema now allows string types for patch values in patchsets.
+  (PR :pr:`1488`)
 * Only lower bounds on core dependencies are now set.
   This allows for greater developer freedom and reduces the risk of breaking
   user's applications by unnecessarily constraining libraries.
@@ -51,6 +53,8 @@ Fixes
   (PR :pr:`1409`)
 * Parameter name strings are now normalized to remove trailing spaces.
   (PR :pr:`1436`)
+* The logging level is now not automatically set in :class:`pyhf.contrib.utils`.
+  (PR :pr:`1460`)
 
 Features
 --------
