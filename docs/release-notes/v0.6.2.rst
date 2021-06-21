@@ -1,0 +1,102 @@
+|release v0.6.2|_
+=================
+
+This is a patch release from ``v0.6.1`` → ``v0.6.2``.
+
+Important Notes
+---------------
+
+* The :func:`pyhf.simplemodels.hepdata_like` API has been deprecated in favor of
+  :func:`pyhf.simplemodels.uncorrelated_background`.
+  The :func:`pyhf.simplemodels.hepdata_like` API will be removed in ``pyhf`` ``v0.7.0``.
+  (PR :pr:`1438`)
+* There is a small breaking API change for :func:`pyhf.contrib.viz.brazil.plot_results`.
+  See the Python API changes section for more information.
+* The :class:`pyhf.patchset.PatchSet` schema now allows string types for patch values in patchsets.
+  (PR :pr:`1488`)
+* Only lower bounds on core dependencies are now set.
+  This allows for greater developer freedom and reduces the risk of breaking
+  user's applications by unnecessarily constraining libraries.
+  This also means that users will be responsible for ensuring that their
+  installed dependencies do not conflict with or break ``pyhf``.
+  c.f. Hynek Schlawack's blog post `Semantic Versioning Will Not Save You
+  <https://hynek.me/articles/semver-will-not-save-you/>`_ for more in-depth coverage
+  on this topic.
+  For most users nothing should change.
+  This mainly affects developers of other libraries in which ``pyhf`` is a dependency.
+  (PR :pr:`1382`)
+* Calling ``dir()`` on any ``pyhf`` module or trying to tab complete an API will
+  now provide a more helpfully restricted view of the available APIs.
+  This should help provide better exploration of the ``pyhf`` API.
+  (PR :pr:`1403`)
+* Docker images of releases are now published to both `Docker Hub
+  <https://hub.docker.com/r/pyhf/pyhf/tags>`_ and to the `GitHub Container
+  Registry <https://github.com/scikit-hep/pyhf/pkgs/container/pyhf>`_.
+  (PR :pr:`1444`)
+* CUDA enabled Docker images are now available for release ``v0.6.1`` and later
+  on `Docker Hub <https://hub.docker.com/r/pyhf/cuda>`__ and the `GitHub
+  Container Registry <https://github.com/pyhf/cuda-images/pkgs/container/cuda-images>`__.
+  Visit `github.com/pyhf/cuda-images <https://github.com/pyhf/cuda-images>`_ for more
+  information.
+
+Fixes
+-----
+
+* Allow for precision to be properly set for the tensorlib ``ones`` and ``zeros``
+  methods through a ``dtype`` argument.
+  This allows for precision to be properly set through the :func:`pyhf.set_backend`
+  ``precision`` argument.
+  (PR :pr:`1369`)
+* The default precision for all backends is now ``64b``.
+  (PR :pr:`1400`)
+* Add check to ensure that POIs are not fixed during a fit.
+  (PR :pr:`1409`)
+* Parameter name strings are now normalized to remove trailing spaces.
+  (PR :pr:`1436`)
+* The logging level is now not automatically set in :class:`pyhf.contrib.utils`.
+  (PR :pr:`1460`)
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* The :func:`pyhf.simplemodels.hepdata_like` API has been deprecated in favor of
+  :func:`pyhf.simplemodels.uncorrelated_background`.
+  The :func:`pyhf.simplemodels.hepdata_like` API will be removed in ``pyhf`` ``v0.7.0``.
+  (PR :pr:`1438`)
+* The :func:`pyhf.simplemodels.correlated_background` API has been added to
+  provide an example model with a single channel with a correlated background
+  uncertainty.
+  (PR :pr:`1435`)
+* Add CLs component plotting kwargs to :func:`pyhf.contrib.viz.brazil.plot_results`.
+  This allows CLs+b and CLb components of the CLs ratio to be plotted as well.
+  To be more consistent with the ``matplotlib`` API,
+  :func:`pyhf.contrib.viz.brazil.plot_results` now returns a lists of the artists
+  drawn on the axis and moves the ``ax`` arguments to the to the last argument.
+  (PR :pr:`1377`)
+* The ``pyhf.compat`` module has been added to aid in translating to and from ROOT
+  names.
+  (PR :pr:`1439`)
+
+CLI API
+~~~~~~~
+
+* The CLI API now supports a ``patchset inspect`` API to list the individual
+  patches in a ``PatchSet``.
+  (PR :pr:`1412`)
+
+.. code-block:: shell
+
+  pyhf patchset inspect [OPTIONS] [PATCHSET]
+
+Contributors
+------------
+
+``v0.6.2`` benefited from contributions from:
+
+* Alexander Held
+
+.. |release v0.6.2| replace:: ``v0.6.2``
+.. _`release v0.6.2`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2
