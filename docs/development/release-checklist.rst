@@ -22,7 +22,8 @@ Before Release
 * [ ] Update the checklist file in the ``docs`` directory if there are revisions.
 * [ ] Verify that the project README is displaying correctly on
   `TestPyPI <https://test.pypi.org/project/pyhf/>`_.
-* [ ] Add any new use citations to the Use and Citations page.
+* [ ] Add any new use citations or published probability models to the Use and
+  Citations page.
 * [ ] Update the `pypa/gh-action-pypi-publish <https://github.com/pypa/gh-action-pypi-publish>`_
   GitHub Action used for deployment to TestPyPI and PyPI to the latest stable
   release.
