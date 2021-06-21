@@ -34,8 +34,8 @@ Important Notes
   Registry <https://github.com/scikit-hep/pyhf/pkgs/container/pyhf>`_.
   (PR :pr:`1444`)
 * CUDA enabled Docker images are now available for release ``v0.6.1`` and later
-  on `Docker Hub <https://hub.docker.com/r/pyhf/cuda>`_ and the `GitHub
-  Container Registry <https://github.com/pyhf/cuda-images/pkgs/container/cuda-images>`_.
+  on `Docker Hub <https://hub.docker.com/r/pyhf/cuda>`__ and the `GitHub
+  Container Registry <https://github.com/pyhf/cuda-images/pkgs/container/cuda-images>`__.
   Visit `github.com/pyhf/cuda-images <https://github.com/pyhf/cuda-images>`_ for more
   information.
 
