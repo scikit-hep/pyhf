@@ -15,9 +15,10 @@ Important Notes
 Fixes
 -----
 
-* In the PyTorch backend the ``validate_args`` kwarg is used with
-  ``torch.distributions`` to ensure a continuous approximation of the Poisson
-  distribution in ``torch`` ``v1.8.0+``.
+* Allow for precision to be properly set for the tensorlib ``ones`` and ``zeros``
+  methods through a ``dtype`` argument.
+  This allows for precision to be properly set through the :func:`pyhf.set_backend`
+  ``precision`` argument.
 
 Features
 --------
