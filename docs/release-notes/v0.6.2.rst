@@ -19,6 +19,10 @@ Important Notes
   (PR :pr:`1382`)
 * There is a small breaking API change for :func:`pyhf.contrib.viz.brazil.plot_results`.
   See the Pyhton API changes section for more information.
+* Calling ``dir()`` on any ``pyhf`` module will now provide a more helpfully restricted
+  view.
+  This should help provide better exploration of the ``pyhf`` API.
+  (PR :pr:`1403`)
 
 Fixes
 -----
