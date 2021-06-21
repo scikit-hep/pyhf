@@ -28,6 +28,8 @@ Fixes
   (PR :pr:`1369`)
 * The default precision for all backends is now ``64b``.
   (PR :pr:`1400`)
+* Add check to ensure that POIs are not fixed during a fit.
+  (PR :pr:`1409`)
 
 Features
 --------
