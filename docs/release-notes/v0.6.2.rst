@@ -40,6 +40,8 @@ Fixes
   (PR :pr:`1400`)
 * Add check to ensure that POIs are not fixed during a fit.
   (PR :pr:`1409`)
+* Parameter name strings are now normalized to remove trailing spaces.
+  (PR :pr:`1436`)
 
 Features
 --------
