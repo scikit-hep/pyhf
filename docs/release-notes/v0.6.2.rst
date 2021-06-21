@@ -6,11 +6,7 @@ This is a patch release from ``v0.6.1`` → ``v0.6.2``.
 Important Notes
 ---------------
 
-* As a result of changes to the default behavior of ``torch.distributions`` in
-  PyTorch ``v1.8.0``, accommodating changes have been made in the underlying
-  implementations for :func:`pyhf.tensor.pytorch_backend.pytorch_backend`.
-  These changes require a new lower bound of ``torch`` ``v1.8.0`` for use of the
-  PyTorch backend.
+* As a result of changes to the default behavior of ``torch.distributions``
 
 Fixes
 -----
@@ -19,6 +15,7 @@ Fixes
   methods through a ``dtype`` argument.
   This allows for precision to be properly set through the :func:`pyhf.set_backend`
   ``precision`` argument.
+* The default precision for all backends is now ``64b``.
 
 Features
 --------
@@ -26,13 +23,7 @@ Features
 Python API
 ~~~~~~~~~~
 
-* The ``solver_options`` kwarg can be passed to the
-  :func:`pyhf.optimize.opt_scipy.scipy_optimizer` optimizer for additional
-  configuration of the minimization.
-  See :func:`scipy.optimize.show_options` for additional options of optimization
-  solvers.
-* The ``torch`` API is now used to provide the implementations of the ``ravel``,
-  ``tile``, and ``outer`` tensorlib methods for the PyTorch backend.
+* The ``solver_options`` kwarg can be
 
 Contributors
 ------------
