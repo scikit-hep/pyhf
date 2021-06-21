@@ -17,6 +17,8 @@ Important Notes
   For most users nothing should change.
   This mainly affects developers of other libraries in which ``pyhf`` is a dependnecy.
   (PR :pr:`1382`)
+* There is a small breaking API change for :func:`pyhf.contrib.viz.brazil.plot_results`.
+  See the Pyhton API changes section for more information.
 
 Fixes
 -----
@@ -33,6 +35,16 @@ Fixes
 
 Features
 --------
+
+Python API
+~~~~~~~~~~
+
+* Add CLs component plotting kwargs to :func:`pyhf.contrib.viz.brazil.plot_results`.
+  This allows CLs+b and CLb components of the CLs ratio to be polotted as well.
+  To be more consistent with the ``matplotlib`` API,
+  :func:`pyhf.contrib.viz.brazil.plot_results` now returns a lists of the artists
+  drawn on the axis and moves the ``ax`` arguments to the to the last argument.
+  (PR :pr:`1377`)
 
 CLI API
 ~~~~~~~
