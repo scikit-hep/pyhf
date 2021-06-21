@@ -129,5 +129,5 @@
     "keywords": "physics fitting numpy scipy tensorflow pytorch jax",
     "developmentStatus": "4 - Beta",
     "applicationCategory": "Scientific/Engineering, Scientific/Engineering :: Physics",
-    "programmingLanguage": "Python 3, Python 3.7, Python 3.8"
+    "programmingLanguage": "Python 3, Python 3.7, Python 3.8, Python Implementation CPython"
 }
