@@ -8,13 +8,14 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
-
 |Docs from latest| |Docs from master| |Binder|
 
-|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
-Pulls|
+|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
+
+|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
+
+|GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
+|Docker Automated|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
@@ -369,3 +370,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://hub.docker.com/r/pyhf/pyhf/
 .. |Docker Pulls| image:: https://img.shields.io/docker/pulls/pyhf/pyhf.svg
    :target: https://hub.docker.com/r/pyhf/pyhf/
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.1-blue?logo=Docker
+   :target: https://hub.docker.com/r/pyhf/pyhf/tags
+.. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
+   :target: https://hub.docker.com/r/pyhf/cuda/tags
