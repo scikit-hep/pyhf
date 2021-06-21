@@ -13,7 +13,7 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
 * [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/master/.github/ISSUE_TEMPLATE) directory if there are revisions.
 * [ ] Verify that the project README is displaying correctly on [TestPyPI](https://test.pypi.org/project/pyhf/).
-* [ ] Add any new use citations or published probability models to the [Use and Citations page](https://scikit-hep.org/pyhf/citations.html).
+* [ ] Add any new use citations or published statistical models to the [Use and Citations page](https://scikit-hep.org/pyhf/citations.html).
 * [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
 
