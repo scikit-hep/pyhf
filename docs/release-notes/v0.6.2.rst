@@ -34,10 +34,16 @@ Fixes
 Features
 --------
 
-Python API
-~~~~~~~~~~
+CLI API
+~~~~~~~
 
-* The ``solver_options`` kwarg can be
+* The CLI API now supports a ``patchset inspect`` API to list the individual
+  pathces in a ``PatchSet``.
+  (PR :pr:`1412`)
+
+.. code-block:: shell
+
+  pyhf patchset inspect [OPTIONS] [PATCHSET]
 
 Contributors
 ------------
