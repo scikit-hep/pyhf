@@ -2,8 +2,10 @@ Release Checklist
 -----------------
 
 When making a release PR for ``pyhf`` first **copy the contents of this checklist
-and paste it into a comment on the PR** (with some small RST to Markdown
-conversions).
+and paste it into a new Issue** titled "Release vX.Y.Z Checklist" (with some
+small RST to Markdown conversions) and add the Issue to the release GitHub
+Project board.
+Link the Issue to the release PR for easy reference.
 
 Before Release
 ~~~~~~~~~~~~~~
@@ -60,3 +62,4 @@ After Release
 * [ ] Update the tutorial to use the new release number and API.
 * [ ] Make a PR to use the new release in the `CUDA enabled Docker
   images <https://github.com/pyhf/cuda-images>`_.
+* [ ] Close the release GitHub Project board.
