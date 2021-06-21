@@ -15,7 +15,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated|
+|GitHub Actions Status: Docker|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
@@ -371,5 +371,5 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amaster
 .. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=master
    :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster
-.. |Docker Automated| image:: https://img.shields.io/docker/automated/pyhf/pyhf.svg
-   :target: https://hub.docker.com/r/pyhf/pyhf/
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=master
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amaster
