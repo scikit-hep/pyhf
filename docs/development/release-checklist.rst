@@ -12,7 +12,7 @@ Before Release
   `release GitHub project board <https://github.com/scikit-hep/pyhf/projects>`_
   to a new project board.
 * [ ] Verify that there is a release notes file for the release under ``docs/release-notes``.
-* [ ] Verify that the release notes files correctly summarizes all development
+* [ ] Verify that the release notes files correctly summarize all development
   changes since the last release.
 * [ ] Draft email to ``pyhf-announcements`` mailing list that summarizes the
   main points of the release notes and circulate it for development team
@@ -36,6 +36,9 @@ Once Release PR is Merged
 * [ ] Watch for a GitHub notification that there is an automatic PR to the
   `Conda-forge feedstock <https://github.com/conda-forge/pyhf-feedstock>`_.
   This may take multiple hours to happen.
+  If there are any changes needed to the Conda-forge release make them **from a
+  personal account** and not from an organization account to have workflows
+  properly trigger.
 
 After Release
 ~~~~~~~~~~~~~
@@ -43,6 +46,8 @@ After Release
 Update things post release
 
 * [ ] Verify that the release is installable from both PyPI and Conda-forge.
+* [ ] Send the drafted ``pyhf-announcements`` email out from the
+  ``pyhf-announcements`` account email.
 * [ ] Tweet the release out on both personal and team Twitter accounts.
 * [ ] Update the tutorial.
 * [ ] Make a PR for new CUDA enabled Docker images.

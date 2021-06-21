@@ -75,9 +75,6 @@ from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI
   Note that dev releases are considered pre-releases, so ``0.1.2`` is a "newer"
   release than ``0.1.2.dev3``.
 
-  # Insert the release checklist into the developer docs
-.. include:: development/release-checklist.rst
-
 Publishing
 ----------
 
