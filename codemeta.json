@@ -44,7 +44,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=1.4"
+            "version": ">=1.4.1"
         },
         {
             "@type": "SoftwareApplication",
@@ -57,7 +57,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=7.0"
+            "version": ">=7.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -70,7 +70,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=4.56"
+            "version": ">=4.56.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -83,7 +83,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=3.2"
+            "version": ">=3.0.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -96,7 +96,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=1.23"
+            "version": ">=1.15"
         },
         {
             "@type": "SoftwareApplication",
@@ -109,7 +109,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": "~=5.1"
+            "version": ">=5.1"
         }
     ],
     "audience": [
