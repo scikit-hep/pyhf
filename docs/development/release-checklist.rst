@@ -47,8 +47,6 @@ Once Release PR is Merged
 After Release
 ~~~~~~~~~~~~~
 
-Update things post release
-
 * [ ] Verify that the release is installable from both PyPI and Conda-forge.
 * [ ] Send the drafted ``pyhf-announcements`` email out from the
   ``pyhf-announcements`` account email.
