@@ -62,6 +62,9 @@ Python API
   :func:`pyhf.contrib.viz.brazil.plot_results` now returns a lists of the artists
   drawn on the axis and moves the ``ax`` arguments to the to the last argument.
   (PR :pr:`1377`)
+* The ``pyhf.compat`` module has been added to aid in translating to and from ROOT
+  names.
+  (PR :pr:`1439`)
 
 CLI API
 ~~~~~~~
