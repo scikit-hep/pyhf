@@ -6,7 +6,17 @@ This is a patch release from ``v0.6.1`` → ``v0.6.2``.
 Important Notes
 ---------------
 
-* As a result of changes to the default behavior of ``torch.distributions``
+* Only lower bounds on core dependencies are now set.
+  This allows for greater developer freedom and reduces the risk of breaking
+  user's applications by unnecessarily constraining libraries.
+  This also means that users will be responsible for ensuring that their
+  installed dependencies do not conflict with or break ``pyhf``.
+  c.f. Hynek Schlawack's blog post `Semantic Versioning Will Not Save You
+  <https://hynek.me/articles/semver-will-not-save-you/>`_ for more in coverage
+  on this topic.
+  For most users nothing should change.
+  This mainly affects developers of other libraries in which ``pyhf`` is a dependnecy.
+  (PR :pr:`1382`)
 
 Fixes
 -----
