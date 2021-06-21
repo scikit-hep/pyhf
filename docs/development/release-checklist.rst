@@ -26,6 +26,8 @@ Before Release
 * [ ] Update the `pypa/gh-action-pypi-publish <https://github.com/pypa/gh-action-pypi-publish>`_
   GitHub Action used for deployment to TestPyPI and PyPI to the latest stable
   release.
+* [ ] Update the ``codemeta.json`` file in the release PR if its requirements
+  have updated.
 
 
 Once Release PR is Merged
