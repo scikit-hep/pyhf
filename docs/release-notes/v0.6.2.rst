@@ -34,5 +34,12 @@ Python API
 * The ``torch`` API is now used to provide the implementations of the ``ravel``,
   ``tile``, and ``outer`` tensorlib methods for the PyTorch backend.
 
+Contributors
+------------
+
+``v0.6.2`` benefited from contributions from:
+
+* Alexander Held
+
 .. |release v0.6.2| replace:: ``v0.6.2``
 .. _`release v0.6.2`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2
