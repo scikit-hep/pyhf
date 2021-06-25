@@ -115,7 +115,7 @@ in Python using machine learning libraries to drive the computation.
 Continuing the discussion in Lukas's office, Lukas showed Matthew that the core statistical
 machinery could be implimented rather succinctly, and that night
 `proceeded to do so <https://github.com/scikit-hep/pyhf/commit/fd32503fb760f070a4047cb867757458b1687599>`_
-dubbing the `project ``pyhf`` <https://twitter.com/lukasheinrich_/status/956809112674885632>`_.
+and |dubbed the project pyhf|_.
 
 Matthew joined him on the project to begin development and by April 2018 Giordon Stark had
 learned about the project and began making contributions, quickly becoming
@@ -156,3 +156,6 @@ Bibliography
    :style: plain
    :keyprefix: faq-
    :labelprefix: faq-
+
+.. |dubbed the project pyhf| replace:: dubbed the project ``pyhf``
+.. _`dubbed the project pyhf`: https://twitter.com/lukasheinrich_/status/956809112674885632
