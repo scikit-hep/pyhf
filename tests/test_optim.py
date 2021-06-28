@@ -45,7 +45,7 @@ def test_scipy_minimize(backend, capsys):
     ids=['scipy', 'minuit'],
 )
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
-def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
+def test_minimize(tensorlib, optimizer, do_grad, do_stitch):
     pyhf.set_backend(tensorlib(precision="64b"), optimizer())
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
