@@ -81,7 +81,6 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
-        # handle cases where macos and ubuntu provide very different results numerical
         rel_tol = 1e-5 if "no_grad" in identifier else 1e-6
         # Fluctuations beyond precision shouldn't matter
         abs_tol = 1e-8
