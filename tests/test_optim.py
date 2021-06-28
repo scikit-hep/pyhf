@@ -29,7 +29,6 @@ def test_scipy_minimize(backend, capsys):
 
 
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
-@pytest.mark.parametrize('precision', ['64b'], ids=['64b'])
 @pytest.mark.parametrize(
     'tensorlib',
     [
@@ -47,7 +46,7 @@ def test_scipy_minimize(backend, capsys):
 )
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
 def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
-    pyhf.set_backend(tensorlib(precision=precision), optimizer())
+    pyhf.set_backend(tensorlib(precision="64b"), optimizer())
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
     # numpy does not support grad
@@ -58,26 +57,26 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
         expected = {
             # numpy does not do grad
-            'do_grad-scipy-numpy-64b': None,
-            'do_grad-minuit-numpy-64b': None,
+            'do_grad-scipy-numpy': None,
+            'do_grad-minuit-numpy': None,
             # no grad, scipy, 64b
-            'no_grad-scipy-numpy-64b': [0.49998815367220306, 0.9999696999038924],
-            'no_grad-scipy-pytorch-64b': [0.49998815367220306, 0.9999696999038924],
-            'no_grad-scipy-tensorflow-64b': [0.49998865164653106, 0.9999696533705097],
-            'no_grad-scipy-jax-64b': [0.4999880886490433, 0.9999696971774877],
+            'no_grad-scipy-numpy': [0.49998815367220306, 0.9999696999038924],
+            'no_grad-scipy-pytorch': [0.49998815367220306, 0.9999696999038924],
+            'no_grad-scipy-tensorflow': [0.49998865164653106, 0.9999696533705097],
+            'no_grad-scipy-jax': [0.4999880886490433, 0.9999696971774877],
             # do grad, scipy, 64b
-            'do_grad-scipy-pytorch-64b': [0.49998837853531425, 0.9999696648069287],
-            'do_grad-scipy-tensorflow-64b': [0.4999883785353142, 0.9999696648069278],
-            'do_grad-scipy-jax-64b': [0.49998837853531414, 0.9999696648069285],
+            'do_grad-scipy-pytorch': [0.49998837853531425, 0.9999696648069287],
+            'do_grad-scipy-tensorflow': [0.4999883785353142, 0.9999696648069278],
+            'do_grad-scipy-jax': [0.49998837853531414, 0.9999696648069285],
             # no grad, minuit, 64b - quite consistent
-            'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
-            'no_grad-minuit-pytorch-64b': [0.5000493563758468, 1.0000043833508256],
-            'no_grad-minuit-tensorflow-64b': [0.5000493563645547, 1.0000043833598657],
-            'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
+            'no_grad-minuit-numpy': [0.5000493563629738, 1.0000043833598724],
+            'no_grad-minuit-pytorch': [0.5000493563758468, 1.0000043833508256],
+            'no_grad-minuit-tensorflow': [0.5000493563645547, 1.0000043833598657],
+            'no_grad-minuit-jax': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 64b
-            'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
-            'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
-            'do_grad-minuit-jax-64b': [0.500049321731032, 1.0000044174002167],
+            'do_grad-minuit-pytorch': [0.500049321728735, 1.00000441739846],
+            'do_grad-minuit-tensorflow': [0.5000492930412292, 1.0000044107437134],
+            'do_grad-minuit-jax': [0.500049321731032, 1.0000044174002167],
         }[identifier]
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
