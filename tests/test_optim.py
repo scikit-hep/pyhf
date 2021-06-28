@@ -58,44 +58,22 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
         expected = {
             # numpy does not do grad
-            'do_grad-scipy-numpy-32b': None,
             'do_grad-scipy-numpy-64b': None,
-            'do_grad-minuit-numpy-32b': None,
             'do_grad-minuit-numpy-64b': None,
-            # no grad, scipy, 32b - never works
-            'no_grad-scipy-numpy-32b': [1.0, 1.0],
-            'no_grad-scipy-pytorch-32b': [1.0, 1.0],
-            'no_grad-scipy-tensorflow-32b': [1.0, 1.0],
-            'no_grad-scipy-jax-32b': [1.0, 1.0],
             # no grad, scipy, 64b
             'no_grad-scipy-numpy-64b': [0.49998815367220306, 0.9999696999038924],
             'no_grad-scipy-pytorch-64b': [0.49998815367220306, 0.9999696999038924],
             'no_grad-scipy-tensorflow-64b': [0.49998865164653106, 0.9999696533705097],
             'no_grad-scipy-jax-64b': [0.4999880886490433, 0.9999696971774877],
-            # do grad, scipy, 32b
-            'do_grad-scipy-pytorch-32b': [0.49993881583213806, 1.0001085996627808],
-            'do_grad-scipy-tensorflow-32b': [0.4999384582042694, 1.0001084804534912],
-            'do_grad-scipy-jax-32b': [0.4978247582912445, 1.0006263256072998],
             # do grad, scipy, 64b
             'do_grad-scipy-pytorch-64b': [0.49998837853531425, 0.9999696648069287],
             'do_grad-scipy-tensorflow-64b': [0.4999883785353142, 0.9999696648069278],
             'do_grad-scipy-jax-64b': [0.49998837853531414, 0.9999696648069285],
-            # no grad, minuit, 32b - not very consistent for pytorch
-            'no_grad-minuit-numpy-32b': [0.7465415000915527, 0.8796938061714172],
-            #    nb: macos gives different numerics than CI
-            'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
-            'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
             'no_grad-minuit-pytorch-64b': [0.5000493563758468, 1.0000043833508256],
             'no_grad-minuit-tensorflow-64b': [0.5000493563645547, 1.0000043833598657],
             'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
-            # do grad, minuit, 32b
-            # large divergence by tensorflow and pytorch
-            'do_grad-minuit-pytorch-32b': [0.9731879234313965, 0.9999999403953552],
-            'do_grad-minuit-tensorflow-32b': [0.9366918206214905, 0.9126002788543701],
-            'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
             # do grad, minuit, 64b
             'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
             'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
