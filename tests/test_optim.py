@@ -29,7 +29,7 @@ def test_scipy_minimize(backend, capsys):
 
 
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
-@pytest.mark.parametrize('precision', ['32b', '64b'], ids=['32b', '64b'])
+@pytest.mark.parametrize('precision', ['64b'], ids=['64b'])
 @pytest.mark.parametrize(
     'tensorlib',
     [
