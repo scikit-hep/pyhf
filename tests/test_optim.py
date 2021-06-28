@@ -54,7 +54,7 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         with pytest.raises(pyhf.exceptions.Unsupported):
             pyhf.infer.mle.fit(data, m, do_grad=do_grad)
     else:
-        identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
+        identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}'
         expected = {
             # numpy does not do grad
             'do_grad-scipy-numpy': None,
