@@ -82,30 +82,10 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
-        rel_tol = 1e-6
-        # Fluctuations beyond precision shouldn't matter
-        abs_tol = 1e-5 if "32b" in identifier else 1e-8
-
         # handle cases where macos and ubuntu provide very different results numerical
-        if "no_grad" in identifier:
-            rel_tol = 1e-5
-            if "minuit-pytorch-32b" in identifier:
-                # large difference between local and CI
-                rel_tol = 3e-1
-            if "minuit-tensorflow-32b" in identifier:
-                # not a very large difference, so we bump the relative difference down
-                rel_tol = 3e-2
-            if "minuit-jax-32b" in identifier:
-                rel_tol = 4e-2
-        elif all(part in identifier for part in ["do_grad", "32b"]):
-            if "scipy-jax" in identifier:
-                rel_tol = 1e-2
-            # NB: ubuntu and macos give different results for 32b
-            if "minuit-tensorflow" in identifier:
-                # large difference between local and CI
-                rel_tol = 1e-1
-            if "minuit-jax" in identifier:
-                rel_tol = 1e-2
+        rel_tol = 1e-5 if "no_grad" in identifier else 1e-6
+        # Fluctuations beyond precision shouldn't matter
+        abs_tol = 1e-8
 
         # check fitted parameters
         assert pytest.approx(
