@@ -7,9 +7,8 @@ def test_subscribe_event():
 
     m = mock.Mock()
     events.subscribe(ename)(m.__call__)
-
     assert ename in events.__events
-    assert m.__call__ == events.__events.get(ename)[0]()
+    assert m.__call__ == events.__events.get(ename)[0][0]()
     del events.__events[ename]
 
 

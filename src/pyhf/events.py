@@ -6,7 +6,6 @@ __disabled_events = set()
 
 __all__ = [
     "Callables",
-    "WeakList",
     "disable",
     "enable",
     "noop",
@@ -24,19 +23,49 @@ def noop(*args, **kwargs):
     pass
 
 
-class WeakList(list):
-    def append(self, item):
-        list.append(self, weakref.WeakMethod(item, self.remove))
+class Callables():
+    def __init__(self):
+        self._callbacks = []
 
+    def _flush(self):
+        _callbacks = []
+        for func, arg in self._callbacks:
+            if arg is not None:
+                arg = arg()
+                if arg is None:
+                    print(func, arg, 'None')
+                    continue
+            _callbacks.append((func, arg))
+        self._callbacks = _callbacks
 
-class Callables(WeakList):
+    def append(self, callback):
+        try:
+            # methods
+            callback_ref = weakref.WeakMethod(callback), weakref.ref(callback.__self__)
+        except AttributeError:
+            callback_ref = weakref.ref(callback), None
+        self._callbacks.append(callback_ref)
+
     def __call__(self, *args, **kwargs):
-        for func in self:
+        self._flush()
+        for func, _ in self._callbacks:
             # weakref: needs to be de-ref'd first before calling
             func()(*args, **kwargs)
 
+    def __iter__(self):
+        self._flush()
+        return iter(self._callbacks)
+
+    def __getitem__(self, index):
+        self._flush()
+        return self._callbacks[index]
+
+    def __len__(self):
+        self._flush()
+        return len(self._callbacks)
+
     def __repr__(self):
-        return "Callables(%s)" % list.__repr__(self)
+        return f"Callables({self._callbacks})"
 
 
 def subscribe(event):
