@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 import shutil
 import pkg_resources
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import numpy as np
 
 # TODO: Move to uproot4 when ROOT file writing is supported

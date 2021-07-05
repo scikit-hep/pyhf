@@ -2,7 +2,7 @@ import pyhf
 import pyhf.writexml
 import pytest
 import json
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import logging
 
 
