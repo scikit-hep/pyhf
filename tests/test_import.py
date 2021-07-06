@@ -4,7 +4,7 @@ import numpy as np
 import uproot
 from pathlib import Path
 import pytest
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import logging
 
 
