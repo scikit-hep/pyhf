@@ -50,7 +50,7 @@ repos:
 -   repo: https://github.com/nbQA-dev/nbQA
     rev: 0.13.1
     hooks:
+    - id: nbqa-pyupgrade
+      additional_dependencies: [pyupgrade==2.20.0]
     - id: nbqa-black
       additional_dependencies: [black==21.6b0]
-    - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.19.4]
