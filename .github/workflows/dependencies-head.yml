@@ -25,6 +25,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install distribution build requiements
+      run: |
+        sudo apt update
+        sudo apt install -y gcc gfortran python3-dev libopenblas-dev liblapack-dev
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
