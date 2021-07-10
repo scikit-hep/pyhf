@@ -7,7 +7,7 @@ extras_require = {
         'tensorflow-probability~=0.10.1',
     ],
     'torch': ['torch~=1.8'],
-    'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58,!=0.1.68'],
+    'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58,!=0.1.68'],  # c.f. Issue 1501
     'xmlio': [
         'uproot3>=3.14.1',
         'uproot~=4.0',
