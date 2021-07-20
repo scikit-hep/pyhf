@@ -57,7 +57,7 @@ The Issue was fixed in the next release of ``pyhf``, but the intermediate
 solution for users was to simply install an older version of ``click`` that was
 still compatible with ``pyhf``
 
-    .. code-block:: txt
+    .. code-block::
 
         # requirements.txt
         click<8.0.0
