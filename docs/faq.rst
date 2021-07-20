@@ -51,8 +51,8 @@ If ``pyhf`` were to define upper bounds we could create situations in which
 result in ``pip`` failing to be able to install ``pyhf``.
 
 To give an explicit example, changes in ``click``'s behavior between its
-``v7.X`` releases and ``v8.X`` resulted in a runtime ``TypeError``
-(c.f. Issue :issue:`1506`).
+``v7.X`` releases and ``v8.X`` resulted in a runtime ``TypeError`` if ``click``
+``v8.X`` was used with ``pyhf`` ``v0.6.2`` (c.f. Issue :issue:`1506`).
 The Issue was fixed in the next release of ``pyhf``, but the intermediate
 solution for users was to simply install an older version of ``click`` that was
 still compatible with ``pyhf``
