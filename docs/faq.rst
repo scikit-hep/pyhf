@@ -30,6 +30,39 @@ Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backen
 The default backend is NumPy.
 For more information see :code:`pyhf cls --help`.
 
+I installed ``pyhf`` from PyPI, why am I getting an error from a dependency?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You might need to manually constrain the **upper bound** on ``pyhf``'s core
+dependencies.
+
+We work hard to make sure that ``pyhf`` is well maintained so that it installs
+correctly "out of the box" and have tested all of ``pyhf``'s core dependencies
+to determine hard lower bounds for compatible dependency releases.
+However, as ``pyhf`` `is a Python library
+https://caremad.io/posts/2013/07/setup-vs-requirement/`_ we can only define
+lower bounds for its core dependencies, as defining upper bounds would make
+decisions for users on what versions of libraries they can use in Python
+applications they build around ``pyhf`` --- `this is bad
+https://hynek.me/articles/semver-will-not-save-you/`_.
+If ``pyhf`` were to define upper bounds we could create situations in which
+``pyhf`` and other libraries defined in an environment file (i.e.,
+``requirements.txt``) could have directly conflicting dependencies that would
+result in ``pip`` failing to be able to install ``pyhf``.
+
+To give an explicit example, ``click`` ``v0.8.0`` was released _after_ ``pyhf``
+``v0.6.2`` and changes in ``click``'s behavior between ``v7.X`` and ``v8.X``
+resulted in a runtime ``TypeError`` (c.f. Issue :issue:`1506`).
+The Issue was fixed in the next release of ``pyhf``, but the intermediate
+solution was to simply install an older version of ``click`` that was still
+compatible with ``pyhf``
+
+    .. code-block:: txt
+
+        # requirements.txt
+        click<8.0.0
+        pyhf==0.6.2
+
 Does ``pyhf`` support Python 2?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 No.
