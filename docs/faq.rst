@@ -40,11 +40,11 @@ We work hard to make sure that ``pyhf`` is well maintained so that it installs
 correctly "out of the box" and have tested all of ``pyhf``'s core dependencies
 to determine hard lower bounds for compatible dependency releases.
 However, as ``pyhf`` `is a Python library
-https://caremad.io/posts/2013/07/setup-vs-requirement/`_ we can only define
+<https://caremad.io/posts/2013/07/setup-vs-requirement/>`__ we can only define
 lower bounds for its core dependencies, as defining upper bounds would make
 decisions for users on what versions of libraries they can use in Python
-applications they build around ``pyhf`` --- `this is bad
-https://hynek.me/articles/semver-will-not-save-you/`_.
+applications they build around ``pyhf`` --- `that would be bad
+<https://hynek.me/articles/semver-will-not-save-you/>`__.
 If ``pyhf`` were to define upper bounds we could create situations in which
 ``pyhf`` and other libraries defined in an environment file (i.e.,
 ``requirements.txt``) could have directly conflicting dependencies that would
