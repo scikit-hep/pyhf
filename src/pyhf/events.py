@@ -23,7 +23,7 @@ def noop(*args, **kwargs):
     pass
 
 
-class Callables():
+class Callables:
     def __init__(self):
         self._callbacks = []
 
