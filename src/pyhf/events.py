@@ -28,15 +28,7 @@ class Callables:
         self._callbacks = []
 
     def _flush(self):
-        _callbacks = []
-        for func, arg in self._callbacks:
-            if arg is not None:
-                arg = arg()
-                if arg is None:
-                    print(func, arg, 'None')
-                    continue
-            _callbacks.append((func, arg))
-        self._callbacks = _callbacks
+        self._callbacks = [(func, arg) for func, arg in self._callbacks]
 
     def append(self, callback):
         try:
