@@ -30,7 +30,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y gcc python3-dev libopenblas-dev libatlas-base-dev liblapack-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
-        export NPY_NUM_BUILD_JOBS=2
 
     - name: Install dependencies
       run: |
@@ -47,7 +46,7 @@ jobs:
         git clone --recurse-submodules -j8 https://github.com/scipy/scipy.git
         cd scipy
         export NPY_NUM_BUILD_JOBS=2
-        python -u runtests.py -g -j2 --build-only
+        python -u runtests.py --parallel 2 --build-only
         cd ..
 
     - name: List installed Python libraries
