@@ -30,6 +30,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y gcc gfortran python3-dev libopenblas-dev liblapack-dev
+        sudo apt-get install -y libatlas-base-dev liblapack-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
+        export NPY_NUM_BUILD_JOBS=2
 
     - name: Install dependencies
       run: |
@@ -37,9 +39,17 @@ jobs:
         python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes scipy
         python -m pip install --upgrade cython pybind11
-        python -m pip install --upgrade mpmath pythran
-        python -m pip install --upgrade git+git://github.com/scipy/scipy.git
+        python -m pip install --upgrade mpmath gmpy2 pythran
+        python -m pip install --upgrade meson
         python -m pip list
+
+    - name: Build SciPy
+      run: |
+        git clone https://github.com/scipy/scipy.git
+        cd scipy
+        export NPY_NUM_BUILD_JOBS=2
+        python -u runtests.py -g -j2 --build-only
+        cd ..
 
     - name: Test with pytest
       run: |
