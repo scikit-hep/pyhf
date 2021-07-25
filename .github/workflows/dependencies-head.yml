@@ -45,7 +45,7 @@ jobs:
 
     - name: Build SciPy
       run: |
-        git clone https://github.com/scipy/scipy.git
+        git clone --recurse-submodules -j8 https://github.com/scipy/scipy.git
         cd scipy
         export NPY_NUM_BUILD_JOBS=2
         python -u runtests.py -g -j2 --build-only
