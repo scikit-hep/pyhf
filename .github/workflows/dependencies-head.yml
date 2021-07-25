@@ -29,8 +29,7 @@ jobs:
     - name: Install distribution build requiements
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc gfortran python3-dev libopenblas-dev liblapack-dev
-        sudo apt-get install -y libatlas-base-dev liblapack-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
+        sudo apt-get install -y gcc python3-dev libopenblas-dev libatlas-base-dev liblapack-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
         export NPY_NUM_BUILD_JOBS=2
 
     - name: Install dependencies
@@ -50,6 +49,10 @@ jobs:
         export NPY_NUM_BUILD_JOBS=2
         python -u runtests.py -g -j2 --build-only
         cd ..
+
+    - name: List installed Python libraries
+      run: |
+        python -m pip list
 
     - name: Test with pytest
       run: |
