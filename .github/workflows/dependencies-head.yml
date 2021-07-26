@@ -17,19 +17,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    # For the time being only test SciPy pre-releases
+    # c.f. Issue #1531
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip install --upgrade --pre scipy
-        python -m pip uninstall --yes scipy
-        python -m pip install --upgrade cython
-        python -m pip install --upgrade git+git://github.com/scipy/scipy.git
         python -m pip list
+
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
