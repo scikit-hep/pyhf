@@ -41,13 +41,13 @@ jobs:
         python -m pip install --upgrade meson
         python -m pip list
 
+    # Following https://scipy.github.io/devdocs/dev/contributor/quickstart_pip.html#building-scipy
     - name: Build SciPy
       run: |
         git clone --recurse-submodules -j8 https://github.com/scipy/scipy.git
         cd scipy
         export NPY_NUM_BUILD_JOBS=2
-        python -u runtests.py --parallel 2 --build-only
-        python -m pip install --upgrade .
+        python setup.py build --parallel 2 install
         cd ..
 
     - name: List installed Python libraries
