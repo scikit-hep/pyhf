@@ -247,5 +247,4 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         if return_results:
             return obs_limit, exp_limit, results
         return obs_limit, exp_limit
-    else:
-        return upperlimit_fixedscan(data, model, scan, level, return_results)
+    return upperlimit_fixedscan(data, model, scan, level, return_results)
