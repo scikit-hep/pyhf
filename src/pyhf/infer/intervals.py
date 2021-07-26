@@ -119,6 +119,16 @@ def upperlimit_auto(
         upper = ks[neg][np.argmax(vals[neg])]
         return (lower, upper)
 
+    # extend low and high if they don't bracket CLs level
+    low_res = f_all(low)
+    while np.any(np.array(low_res[0] + low_res[1]) < 0.05):
+        low /= 2
+        low_res = f_all(low)
+    high_res = f_all(high)
+    while np.any(np.array(high_res[0] + high_res[1]) > 0.05):
+        high *= 2
+        high_res = f_all(high)
+
     tb, _ = get_backend()
     obs = tb.astensor(_toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
     exp = [
@@ -130,10 +140,68 @@ def upperlimit_auto(
     return obs, exp
 
 
-def upperlimit(data, model, scan, level=0.05, return_results=False):
+def upperlimit_fixedscan(data, model, scan, level=0.05, return_results=False):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using a fixed scan through POI-space.
+
+    Example:
+        >>> import numpy as np
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> scan = np.linspace(0, 5, 21)
+        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+        ...     data, model, scan, return_results=True
+        ... )
+        >>> obs_limit
+        array(1.01764089)
+        >>> exp_limits
+        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
+
+    Args:
+        data (:obj:`tensor`): The observed data.
+        model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+        scan (:obj:`iterable`): Iterable of POI values.
+        level (:obj:`float`): The threshold value to evaluate the interpolated results at.
+        return_results (:obj:`bool`): Whether to return the per-point results.
+
+    Returns:
+        Tuple of Tensors:
+
+            - Tensor: The observed upper limit on the POI.
+            - Tensor: The expected upper limits on the POI.
+            - Tuple of Tensors: The given ``scan`` along with the
+              :class:`~pyhf.infer.hypotest` results at each test POI.
+              Only returned when ``return_results`` is ``True``.
+    """
+    tb, _ = get_backend()
+    results = [
+        hypotest(mu, data, model, test_stat="qtilde", return_expected_set=True)
+        for mu in scan
+    ]
+    obs = tb.astensor([[r[0]] for r in results])
+    exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
+
+    result_arrary = tb.concatenate([obs, exp], axis=1).T
+
+    # observed limit and the (0, +-1, +-2)sigma expected limits
+    limits = [_interp(level, result_arrary[idx][::-1], scan[::-1]) for idx in range(6)]
+    obs_limit, exp_limits = limits[0], limits[1:]
+
+    if return_results:
+        return obs_limit, exp_limits, (scan, results)
+    return obs_limit, exp_limits
+
+
+def upperlimit(data, model, scan, level=0.05, return_results=False):
+    """
+    Calculate an upper limit interval ``(0, poi_up)`` for a single
+    Parameter of Interest (POI) using root-finding or a fixed scan through POI-space.
 
     Example:
         >>> import numpy as np
@@ -169,33 +237,15 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
     """
-
-    if isinstance(scan, str):
-        if scan.lower() == 'auto':
-            bounds = model.config.suggested_bounds()[
-                model.config.par_slice(model.config.poi_name).start
-            ]
-            obs_limit, exp_limit, results = upperlimit_auto(
-                data, model, bounds[0], bounds[1], rtol=1e-3, from_upperlimit_fn=True
-            )
-            if return_results:
-                return obs_limit, exp_limit, results
-            return obs_limit, exp_limit
-
-    tb, _ = get_backend()
-    results = [
-        hypotest(mu, data, model, test_stat="qtilde", return_expected_set=True)
-        for mu in scan
-    ]
-    obs = tb.astensor([[r[0]] for r in results])
-    exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
-
-    result_arrary = tb.concatenate([obs, exp], axis=1).T
-
-    # observed limit and the (0, +-1, +-2)sigma expected limits
-    limits = [_interp(level, result_arrary[idx][::-1], scan[::-1]) for idx in range(6)]
-    obs_limit, exp_limits = limits[0], limits[1:]
-
-    if return_results:
-        return obs_limit, exp_limits, (scan, results)
-    return obs_limit, exp_limits
+    if isinstance(scan, str) and scan.lower() == 'auto':
+        bounds = model.config.suggested_bounds()[
+            model.config.par_slice(model.config.poi_name).start
+        ]
+        obs_limit, exp_limit, results = upperlimit_auto(
+            data, model, bounds[0], bounds[1], rtol=1e-3, from_upperlimit_fn=True
+        )
+        if return_results:
+            return obs_limit, exp_limit, results
+        return obs_limit, exp_limit
+    else:
+        return upperlimit_fixedscan(data, model, scan, level, return_results)
