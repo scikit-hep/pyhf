@@ -4,7 +4,7 @@ requires = ["wheel", "setuptools>=30.3.0", "attrs>=17.1", "setuptools_scm[toml]>
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "src/pyhf/version.py"
+write_to = "src/pyhf/_version.py"
 local_scheme = "no-local-version"
 
 [tool.black]

@@ -24,10 +24,10 @@ Updating list of citations and use cases of :code:`pyhf`:
    :all:
    :style: plain
 
-Published Likelihoods
----------------------
+Published Statistical Models
+----------------------------
 
-Updating list of HEPData entries for publications using ``HistFactory`` JSON likelihoods:
+Updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models:
 
 .. bibliography:: bib/HEPData_likelihoods.bib
    :list: bullet

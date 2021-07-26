@@ -29,7 +29,6 @@ def test_scipy_minimize(backend, capsys):
 
 
 @pytest.mark.parametrize('do_stitch', [False, True], ids=['no_stitch', 'do_stitch'])
-@pytest.mark.parametrize('precision', ['32b', '64b'], ids=['32b', '64b'])
 @pytest.mark.parametrize(
     'tensorlib',
     [
@@ -46,8 +45,8 @@ def test_scipy_minimize(backend, capsys):
     ids=['scipy', 'minuit'],
 )
 @pytest.mark.parametrize('do_grad', [False, True], ids=['no_grad', 'do_grad'])
-def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
-    pyhf.set_backend(tensorlib(precision=precision), optimizer())
+def test_minimize(tensorlib, optimizer, do_grad, do_stitch):
+    pyhf.set_backend(tensorlib(precision="64b"), optimizer())
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
     # numpy does not support grad
@@ -55,79 +54,36 @@ def test_minimize(tensorlib, precision, optimizer, do_grad, do_stitch):
         with pytest.raises(pyhf.exceptions.Unsupported):
             pyhf.infer.mle.fit(data, m, do_grad=do_grad)
     else:
-        identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}-{pyhf.tensorlib.precision}'
+        identifier = f'{"do_grad" if do_grad else "no_grad"}-{pyhf.optimizer.name}-{pyhf.tensorlib.name}'
         expected = {
             # numpy does not do grad
-            'do_grad-scipy-numpy-32b': None,
-            'do_grad-scipy-numpy-64b': None,
-            'do_grad-minuit-numpy-32b': None,
-            'do_grad-minuit-numpy-64b': None,
-            # no grad, scipy, 32b - never works
-            'no_grad-scipy-numpy-32b': [1.0, 1.0],
-            'no_grad-scipy-pytorch-32b': [1.0, 1.0],
-            'no_grad-scipy-tensorflow-32b': [1.0, 1.0],
-            'no_grad-scipy-jax-32b': [1.0, 1.0],
+            'do_grad-scipy-numpy': None,
+            'do_grad-minuit-numpy': None,
             # no grad, scipy, 64b
-            'no_grad-scipy-numpy-64b': [0.49998815367220306, 0.9999696999038924],
-            'no_grad-scipy-pytorch-64b': [0.49998815367220306, 0.9999696999038924],
-            'no_grad-scipy-tensorflow-64b': [0.49998865164653106, 0.9999696533705097],
-            'no_grad-scipy-jax-64b': [0.4999880886490433, 0.9999696971774877],
-            # do grad, scipy, 32b
-            'do_grad-scipy-pytorch-32b': [0.49993881583213806, 1.0001085996627808],
-            'do_grad-scipy-tensorflow-32b': [0.4999384582042694, 1.0001084804534912],
-            'do_grad-scipy-jax-32b': [0.4978247582912445, 1.0006263256072998],
+            'no_grad-scipy-numpy': [0.49998815367220306, 0.9999696999038924],
+            'no_grad-scipy-pytorch': [0.49998815367220306, 0.9999696999038924],
+            'no_grad-scipy-tensorflow': [0.49998865164653106, 0.9999696533705097],
+            'no_grad-scipy-jax': [0.4999880886490433, 0.9999696971774877],
             # do grad, scipy, 64b
-            'do_grad-scipy-pytorch-64b': [0.49998837853531425, 0.9999696648069287],
-            'do_grad-scipy-tensorflow-64b': [0.4999883785353142, 0.9999696648069278],
-            'do_grad-scipy-jax-64b': [0.49998837853531414, 0.9999696648069285],
-            # no grad, minuit, 32b - not very consistent for pytorch
-            'no_grad-minuit-numpy-32b': [0.7465415000915527, 0.8796938061714172],
-            #    nb: macos gives different numerics than CI
-            'no_grad-minuit-pytorch-32b': [0.9684963226318359, 0.9171305894851685],
-            'no_grad-minuit-tensorflow-32b': [0.5284154415130615, 0.9911751747131348],
-            'no_grad-minuit-jax-32b': [0.49620240926742554, 1.0018986463546753],
+            'do_grad-scipy-pytorch': [0.49998837853531425, 0.9999696648069287],
+            'do_grad-scipy-tensorflow': [0.4999883785353142, 0.9999696648069278],
+            'do_grad-scipy-jax': [0.49998837853531414, 0.9999696648069285],
             # no grad, minuit, 64b - quite consistent
-            'no_grad-minuit-numpy-64b': [0.5000493563629738, 1.0000043833598724],
-            'no_grad-minuit-pytorch-64b': [0.5000493563758468, 1.0000043833508256],
-            'no_grad-minuit-tensorflow-64b': [0.5000493563645547, 1.0000043833598657],
-            'no_grad-minuit-jax-64b': [0.5000493563528641, 1.0000043833614634],
-            # do grad, minuit, 32b
-            # large divergence by tensorflow and pytorch
-            'do_grad-minuit-pytorch-32b': [0.9731879234313965, 0.9999999403953552],
-            'do_grad-minuit-tensorflow-32b': [0.9366918206214905, 0.9126002788543701],
-            'do_grad-minuit-jax-32b': [0.5007095336914062, 0.9999282360076904],
+            'no_grad-minuit-numpy': [0.5000493563629738, 1.0000043833598724],
+            'no_grad-minuit-pytorch': [0.5000493563758468, 1.0000043833508256],
+            'no_grad-minuit-tensorflow': [0.5000493563645547, 1.0000043833598657],
+            'no_grad-minuit-jax': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 64b
-            'do_grad-minuit-pytorch-64b': [0.500049321728735, 1.00000441739846],
-            'do_grad-minuit-tensorflow-64b': [0.5000492930412292, 1.0000044107437134],
-            'do_grad-minuit-jax-64b': [0.500049321731032, 1.0000044174002167],
+            'do_grad-minuit-pytorch': [0.500049321728735, 1.00000441739846],
+            'do_grad-minuit-tensorflow': [0.5000492930412292, 1.0000044107437134],
+            'do_grad-minuit-jax': [0.500049321731032, 1.0000044174002167],
         }[identifier]
 
         result = pyhf.infer.mle.fit(data, m, do_grad=do_grad, do_stitch=do_stitch)
 
-        rel_tol = 1e-6
+        rel_tol = 1e-5 if "no_grad" in identifier else 1e-6
         # Fluctuations beyond precision shouldn't matter
-        abs_tol = 1e-5 if "32b" in identifier else 1e-8
-
-        # handle cases where macos and ubuntu provide very different results numerical
-        if "no_grad" in identifier:
-            rel_tol = 1e-5
-            if "minuit-pytorch-32b" in identifier:
-                # large difference between local and CI
-                rel_tol = 3e-1
-            if "minuit-tensorflow-32b" in identifier:
-                # not a very large difference, so we bump the relative difference down
-                rel_tol = 3e-2
-            if "minuit-jax-32b" in identifier:
-                rel_tol = 4e-2
-        elif all(part in identifier for part in ["do_grad", "32b"]):
-            if "scipy-jax" in identifier:
-                rel_tol = 1e-2
-            # NB: ubuntu and macos give different results for 32b
-            if "minuit-tensorflow" in identifier:
-                # large difference between local and CI
-                rel_tol = 1e-1
-            if "minuit-jax" in identifier:
-                rel_tol = 1e-2
+        abs_tol = 1e-8
 
         # check fitted parameters
         assert pytest.approx(
