@@ -36,7 +36,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes scipy
-        python -m pip install --upgrade cython pybind11
+        python -m pip install --upgrade numpy cython pybind11
         python -m pip install --upgrade mpmath gmpy2 pythran
         python -m pip install --upgrade meson
         python -m pip list
