@@ -26,6 +26,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    # c.f. https://github.com/scipy/scipy/blob/053f3f54130f8b17c09540352a784f4c54a919df/.github/workflows/linux.yml#L24-L44
     - name: Install distribution build requiements
       run: |
         sudo apt-get update
