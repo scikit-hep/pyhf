@@ -29,7 +29,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
-        python -m pip install --upgrade --pre scipy
+        python -m pip uninstall --yes scipy
+        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple scipy
         python -m pip list
 
     - name: Test with pytest
