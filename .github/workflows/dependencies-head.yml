@@ -23,8 +23,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # For the time being only test SciPy pre-releases
-    # c.f. Issue #1531
+    # Use nightly SciPy wheels from Anaconda's PyPI
+    # c.f. https://twitter.com/ralfgommers/status/1419917265781334025
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
