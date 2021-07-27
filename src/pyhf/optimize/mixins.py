@@ -29,11 +29,23 @@ class OptimizerMixin:
             )
 
     def _internal_minimize(
-        self, func, x0, do_grad=False, bounds=None, fixed_vals=None, options={}
+        self,
+        func,
+        x0,
+        do_grad=False,
+        bounds=None,
+        fixed_vals=None,
+        options={},
+        par_names=None,
     ):
 
         minimizer = self._get_minimizer(
-            func, x0, bounds, fixed_vals=fixed_vals, do_grad=do_grad
+            func,
+            x0,
+            bounds,
+            fixed_vals=fixed_vals,
+            do_grad=do_grad,
+            par_names=par_names,
         )
         result = self._minimize(
             minimizer,
@@ -157,7 +169,9 @@ class OptimizerMixin:
             do_stitch=do_stitch,
         )
 
-        result = self._internal_minimize(**minimizer_kwargs, options=kwargs)
+        result = self._internal_minimize(
+            **minimizer_kwargs, options=kwargs, par_names=pdf.config.par_names()
+        )
         result = self._internal_postprocess(
             result, stitch_pars, return_uncertainties=return_uncertainties
         )
