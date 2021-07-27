@@ -30,7 +30,7 @@ jobs:
     - name: Install distribution build requiements
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc python3-dev libopenblas-dev libatlas-base-dev liblapack-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
+        sudo apt-get install -y gcc python3-dev libopenblas-dev libatlas-base-dev gfortran libgmp-dev libmpfr-dev libsuitesparse-dev ccache swig libmpc-dev
 
     - name: Install dependencies
       run: |
