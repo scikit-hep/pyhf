@@ -324,7 +324,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         The names of the parameters in the model including binned-parameter indexing.
 
         Args:
-            fstring (:obj:`str`): Format string for the parameter names using `name` and `index` variables. Default: '{name}[{index}]'.
+            fstring (:obj:`str`): Format string for the parameter names using ``name`` and ``index`` variables. Default: ``'{name}[{index}]'``.
 
         Returns:
             :obj:`list`: Names of the model parameters.
@@ -346,7 +346,9 @@ class _ModelConfig(_ChannelSummaryMixin):
                 _names.append(name)
                 continue
 
-            _names.extend([fstring.format(name=name, index=i) for i in range(_npars)])
+            _names.extend(
+                [fstring.format(name=name, index=idx) for idx in range(_npars)]
+            )
         return _names
 
     def param_set(self, name):
