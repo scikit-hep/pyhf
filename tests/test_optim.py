@@ -575,10 +575,15 @@ def test_bad_solver_options_scipy(mocker):
     assert pyhf.infer.mle.fit(data, model).tolist()
 
 
-def test_minuit_param_names():
+def test_minuit_param_names(mocker):
     pyhf.set_backend('numpy', 'minuit')
     pdf = pyhf.simplemodels.uncorrelated_background([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
     _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
     assert 'minuit' in result
     assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt')
+
+    pdf.config.par_names = mocker.Mock(return_value=None)
+    _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
+    assert 'minuit' in result
+    assert result.minuit.parameters == ('x0', 'x1')
