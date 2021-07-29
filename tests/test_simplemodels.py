@@ -13,6 +13,7 @@ def test_correlated_background():
     assert model.config.channels == ["single_channel"]
     assert model.config.samples == ["background", "signal"]
     assert model.config.par_order == ["mu", "correlated_bkg_uncertainty"]
+    assert model.config.par_names() == ['mu', 'correlated_bkg_uncertainty']
     assert model.config.suggested_init() == [1.0, 0.0]
 
 
@@ -23,6 +24,11 @@ def test_uncorrelated_background():
     assert model.config.channels == ["singlechannel"]
     assert model.config.samples == ["background", "signal"]
     assert model.config.par_order == ["mu", "uncorr_bkguncrt"]
+    assert model.config.par_names() == [
+        'mu',
+        'uncorr_bkguncrt[0]',
+        'uncorr_bkguncrt[1]',
+    ]
     assert model.config.suggested_init() == [1.0, 1.0, 1.0]
 
 
