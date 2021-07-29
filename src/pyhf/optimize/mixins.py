@@ -169,11 +169,17 @@ class OptimizerMixin:
             do_stitch=do_stitch,
         )
 
+        # handle non-pyhf ModelConfigs
         try:
             par_names = pdf.config.par_names()
         except AttributeError:
-            # handle non-pyhf ModelConfigs
             par_names = None
+
+        # need to remove parameters that are fixed in the fit
+        if par_names and do_stitch and fixed_vals:
+            for index, _ in fixed_vals:
+                par_names[index] = None
+            par_names = [name for name in par_names if name]
 
         result = self._internal_minimize(
             **minimizer_kwargs, options=kwargs, par_names=par_names
