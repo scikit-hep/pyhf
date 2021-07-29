@@ -319,6 +319,38 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         return self.par_map[name]['slice']
 
+    def par_names(self, fstring='{name}[{index}]'):
+        """
+        The names of the parameters in the model including binned-parameter indexing.
+
+        Args:
+            fstring (:obj:`str`): Format string for the parameter names using ``name`` and ``index`` variables. Default: ``'{name}[{index}]'``.
+
+        Returns:
+            :obj:`list`: Names of the model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.par_names()
+            ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+            >>> model.config.par_names(fstring='{name}_{index}')
+            ['mu', 'uncorr_bkguncrt_0', 'uncorr_bkguncrt_1']
+        """
+        _names = []
+        for name in self.par_order:
+            _npars = self.param_set(name).n_parameters
+            if _npars == 1:
+                _names.append(name)
+                continue
+
+            _names.extend(
+                [fstring.format(name=name, index=idx) for idx in range(_npars)]
+            )
+        return _names
+
     def param_set(self, name):
         """
         The :class:`~pyhf.parameters.paramset` for the model parameter ``name``.
