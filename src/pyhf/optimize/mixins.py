@@ -169,8 +169,14 @@ class OptimizerMixin:
             do_stitch=do_stitch,
         )
 
+        try:
+            par_names = pdf.config.par_names()
+        except AttributeError:
+            # handle non-pyhf ModelConfigs
+            par_names = None
+
         result = self._internal_minimize(
-            **minimizer_kwargs, options=kwargs, par_names=pdf.config.par_names()
+            **minimizer_kwargs, options=kwargs, par_names=par_names
         )
         result = self._internal_postprocess(
             result, stitch_pars, return_uncertainties=return_uncertainties
