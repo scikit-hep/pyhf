@@ -319,9 +319,12 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         return self.par_map[name]['slice']
 
-    def par_names(self):
+    def par_names(self, fstring='{name}[{index}]'):
         """
         The names of the parameters in the model including binned-parameter indexing.
+
+        Args:
+            fstring (:obj:`str`): Format string for the parameter names using `name` and `index` variables. Default: '{name}[{index}]'.
 
         Returns:
             :obj:`list`: Names of the model parameters.
@@ -333,6 +336,8 @@ class _ModelConfig(_ChannelSummaryMixin):
             ... )
             >>> model.config.par_names()
             ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+            >>> model.config.par_names(fstring='{name}_{index}')
+            ['mu', 'uncorr_bkguncrt_0', 'uncorr_bkguncrt_1']
         """
         _names = []
         for name in self.par_order:
@@ -341,7 +346,7 @@ class _ModelConfig(_ChannelSummaryMixin):
                 _names.append(name)
                 continue
 
-            _names.extend([f'{name}[{i}]' for i in range(_npars)])
+            _names.extend([fstring.format(name=name, index=i) for i in range(_npars)])
         return _names
 
     def param_set(self, name):
