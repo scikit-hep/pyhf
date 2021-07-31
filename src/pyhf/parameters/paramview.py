@@ -1,5 +1,5 @@
-from .. import get_backend, default_backend, events
-from ..tensor.common import (
+from pyhf import get_backend, default_backend, events
+from pyhf.tensor.common import (
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
 )
