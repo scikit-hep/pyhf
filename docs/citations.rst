@@ -30,7 +30,7 @@ Use Citations
 General Citations
 ~~~~~~~~~~~~~~~~~
 
-.. bibliography:: bib/use_citations.bib
+.. bibliography:: bib/general_citations.bib
    :list: bullet
    :all:
    :style: plain
