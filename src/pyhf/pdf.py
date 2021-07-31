@@ -3,16 +3,16 @@
 import copy
 import logging
 
-from . import get_backend, default_backend
-from . import exceptions
-from . import modifiers
-from . import utils
-from . import events
-from . import probability as prob
-from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import _TensorViewer, _tensorviewer_from_sizes
-from .mixins import _ChannelSummaryMixin
+from pyhf import get_backend, default_backend
+from pyhf import exceptions
+from pyhf import modifiers
+from pyhf import utils
+from pyhf import events
+from pyhf import probability as prob
+from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
+from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
+from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
+from pyhf.mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
