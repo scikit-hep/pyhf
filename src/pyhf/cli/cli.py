@@ -3,10 +3,10 @@ import logging
 
 import click
 
-from .. import __version__
-from . import rootio, spec, infer, patchset, complete
-from ..contrib import cli as contrib
-from .. import utils
+from pyhf import __version__
+from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf.contrib import cli as contrib
+from pyhf import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
