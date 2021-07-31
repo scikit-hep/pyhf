@@ -1,6 +1,6 @@
 from warnings import warn
 
-from . import Model
+from pyhf import Model
 
 __all__ = ["correlated_background", "uncorrelated_background"]
 
