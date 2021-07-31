@@ -1,8 +1,8 @@
 import logging
 
-from . import modifier
-from .. import get_backend, default_backend, events
-from ..parameters import constrained_by_poisson, ParamViewer
+from pyhf.modifiers import modifier
+from pyhf import get_backend, default_backend, events
+from pyhf.parameters import constrained_by_poisson, ParamViewer
 
 log = logging.getLogger(__name__)
 
