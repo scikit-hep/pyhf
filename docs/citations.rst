@@ -19,7 +19,18 @@ Use in Publications
 
 Updating list of citations and use cases of :code:`pyhf`:
 
+Use Citations
+~~~~~~~~~~~~~
+
 .. bibliography:: bib/use_citations.bib
+   :list: bullet
+   :all:
+   :style: plain
+
+General Citations
+~~~~~~~~~~~~~~~~~
+
+.. bibliography:: bib/general_citations.bib
    :list: bullet
    :all:
    :style: plain
