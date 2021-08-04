@@ -43,7 +43,7 @@ class _ChannelSummaryMixin:
         self.parameters = sorted(list(set(self.parameters)))
         self.modifiers = sorted(list(set(self.modifiers)))
         self.channel_nbins = {
-            self.channel_name: self.channel_nbins[channel] for channel in self.channels
+            channel: self.channel_nbins[channel] for channel in self.channels
         }
 
         self.channel_slices = {}
