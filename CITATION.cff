@@ -5,12 +5,15 @@ authors:
 - family-names: "Heinrich"
   given-names: "Lukas"
   orcid: "https://orcid.org/0000-0002-4048-7584"
+  affiliation: "CERN"
 - family-names: "Feickert"
   given-names: "Matthew"
   orcid: "https://orcid.org/0000-0003-4124-7862"
+  affiliation: "University of Illinois at Urbana-Champaign"
 - family-names: "Stark"
   given-names: "Giordon"
   orcid: "https://orcid.org/0000-0001-6616-3433"
+  affiliation: "SCIPP, University of California, Santa Cruz"
 title: "scikit-hep/pyhf: v0.6.2"
 version: 0.6.2
 doi: 10.5281/zenodo.1169739
