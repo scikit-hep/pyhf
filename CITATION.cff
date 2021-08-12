@@ -17,7 +17,7 @@ authors:
 title: "scikit-hep/pyhf: v0.6.2"
 version: 0.6.2
 doi: 10.5281/zenodo.1169739
-repository-code: "https://github.com/scikit-hep/pyhf"
+repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2"
 url: "https://pyhf.readthedocs.io/en/v0.6.2/"
 keywords:
   - python
