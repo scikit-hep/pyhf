@@ -174,7 +174,7 @@ def test_get_teststat_error():
         pyhf.infer.utils.get_test_stat("look at me i'm not real")
 
 
-@pytest.mark.parametrize("switch,expected_len", [(False, 1), (True, 2)])
+@pytest.mark.parametrize("return_fitted_pars", [False, True])
 @pytest.mark.parametrize(
     "test_stat",
     [
@@ -185,7 +185,7 @@ def test_get_teststat_error():
         pyhf.infer.test_statistics.tmu_tilde,
     ],
 )
-def test_return_fitted_pars(test_stat, switch, expected_len):
+def test_return_fitted_pars(test_stat, return_fitted_pars):
     mu = 0.0 if test_stat is pyhf.infer.test_statistics.q0 else 1.0
     model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
     data = [9] + model.config.auxdata
@@ -200,7 +200,9 @@ def test_return_fitted_pars(test_stat, switch, expected_len):
         init_pars,
         par_bounds,
         fixed_params,
-        return_fitted_pars=switch,
+        return_fitted_pars=return_fitted_pars,
     )
-
-    assert len(result) == expected_len
+    if return_fitted_pars:
+        assert len(result) == 2
+        assert len(result[1]) == len(init_pars)
+    assert result > -1e4  # >= 0 but with generous tolerance
