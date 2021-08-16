@@ -204,5 +204,8 @@ def test_return_fitted_pars(test_stat, return_fitted_pars):
     )
     if return_fitted_pars:
         assert len(result) == 2
-        assert len(result[1]) == len(init_pars)
+        assert len(result[1]) == 2
+        result, (pars_bestfit, pars_constrained_fit) = result
+        assert len(pars_bestfit) == len(init_pars)
+        assert len(pars_constrained_fit) == len(init_pars)
     assert result > -1e4  # >= 0 but with generous tolerance
