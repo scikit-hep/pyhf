@@ -172,3 +172,35 @@ def test_get_teststat_by_name(test_stat):
 def test_get_teststat_error():
     with pytest.raises(pyhf.exceptions.InvalidTestStatistic):
         pyhf.infer.utils.get_test_stat("look at me i'm not real")
+
+
+@pytest.mark.parametrize("switch,expected_len", [(False, 1), (True, 2)])
+@pytest.mark.parametrize(
+    "test_stat",
+    [
+        pyhf.infer.test_statistics.q0,
+        pyhf.infer.test_statistics.qmu,
+        pyhf.infer.test_statistics.qmu_tilde,
+        pyhf.infer.test_statistics.tmu,
+        pyhf.infer.test_statistics.tmu_tilde,
+    ],
+)
+def test_return_fitted_pars(test_stat, switch, expected_len):
+    mu = 0.0 if test_stat is pyhf.infer.test_statistics.q0 else 1.0
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
+    data = [9] + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+
+    result = test_stat(
+        mu,
+        data,
+        model,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=switch,
+    )
+
+    assert len(result) == expected_len
