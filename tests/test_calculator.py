@@ -30,10 +30,5 @@ def test_generate_asimov_can_return_fitted_pars(return_fitted_pars):
     if return_fitted_pars:
         assert len(result) == 2
         result, asimov_pars = result
-        # asimov_pars and result could be tensors, so convert to List[float] first
-        assert list(map(float, asimov_pars)) == [
-            1.0,
-            1.0,
-            1.0,
-        ]  # mu, 2x uncorr_bkguncrt
-    assert list(map(float, result)) == [2.0, 2.0, 1.0, 1.0]
+        assert pytest.approx([1.0, 1.0, 1.0]) == pyhf.tensorlib.tolist(asimov_pars)
+    assert pytest.approx([2.0, 2.0, 1.0, 1.0]) == pyhf.tensorlib.tolist(result)
