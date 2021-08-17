@@ -29,7 +29,9 @@ def __dir__():
     return __all__
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
+def generate_asimov_data(
+    asimov_mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -46,6 +48,13 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
+        to also access the Asimov parameters:
+        >>> pyhf.infer.calculators.generate_asimov_data(
+        ...     mu_test, data, model, None, None, None,
+        ...     return_fitted_pars = True
+        ... )
+        (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
+
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
@@ -56,15 +65,20 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter values for the given ``asimov_mu``.
+
 
     Returns:
         Tensor: The Asimov dataset.
-
+        Tensor: (If ``return_fitted_pars`` is ``True``) the Asimov parameters.
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
         asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
     )
-    return pdf.expected_data(bestfit_nuisance_asimov)
+    asimov_data = pdf.expected_data(bestfit_nuisance_asimov)
+    if return_fitted_pars:
+        return asimov_data, bestfit_nuisance_asimov
+    return asimov_data
 
 
 class AsymptoticTestStatDistribution:
