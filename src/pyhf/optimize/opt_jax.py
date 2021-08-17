@@ -1,7 +1,7 @@
 """JAX Backend Function Shim."""
 
-from .. import get_backend
-from ..tensor.common import _TensorViewer
+from pyhf import get_backend
+from pyhf.tensor.common import _TensorViewer
 import jax
 import logging
 

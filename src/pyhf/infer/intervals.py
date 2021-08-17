@@ -1,6 +1,6 @@
 """Interval estimation"""
-from . import hypotest
-from .. import get_backend
+from pyhf.infer import hypotest
+from pyhf import get_backend
 import numpy as np
 from scipy.optimize import toms748 as _toms748
 from warnings import warn as _warn

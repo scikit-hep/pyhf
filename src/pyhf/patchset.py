@@ -3,9 +3,9 @@ pyhf patchset provides a user-friendly interface for interacting with patchsets.
 """
 import logging
 import jsonpatch
-from . import exceptions
-from . import utils
-from .workspace import Workspace
+from pyhf import exceptions
+from pyhf import utils
+from pyhf.workspace import Workspace
 
 log = logging.getLogger(__name__)
 

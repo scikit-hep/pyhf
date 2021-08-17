@@ -41,7 +41,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
             "xmlio extra: python -m pip install pyhf[xmlio]",
             exc_info=True,
         )
-    from .. import readxml
+    from pyhf import readxml
 
     spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
     if output_file is None:
@@ -71,7 +71,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
             "xmlio extra: python -m pip install pyhf[xmlio]",
             exc_info=True,
         )
-    from .. import writexml
+    from pyhf import writexml
 
     os.makedirs(output_dir, exist_ok=True)
     with click.open_file(workspace, 'r') as specstream:

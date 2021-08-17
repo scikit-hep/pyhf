@@ -1,7 +1,7 @@
 import logging
 
-from .. import exceptions
-from .. import get_backend
+from pyhf import exceptions
+from pyhf import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -163,13 +163,13 @@ def modifier(*args, **kwargs):
     )
 
 
-from .histosys import histosys, histosys_combined
-from .lumi import lumi, lumi_combined
-from .normfactor import normfactor, normfactor_combined
-from .normsys import normsys, normsys_combined
-from .shapefactor import shapefactor, shapefactor_combined
-from .shapesys import shapesys, shapesys_combined
-from .staterror import staterror, staterror_combined
+from pyhf.modifiers.histosys import histosys, histosys_combined
+from pyhf.modifiers.lumi import lumi, lumi_combined
+from pyhf.modifiers.normfactor import normfactor, normfactor_combined
+from pyhf.modifiers.normsys import normsys, normsys_combined
+from pyhf.modifiers.shapefactor import shapefactor, shapefactor_combined
+from pyhf.modifiers.shapesys import shapesys, shapesys_combined
+from pyhf.modifiers.staterror import staterror, staterror_combined
 
 uncombined = {
     'histosys': histosys,

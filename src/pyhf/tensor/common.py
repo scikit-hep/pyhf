@@ -1,5 +1,5 @@
-from .. import default_backend, get_backend
-from .. import events
+from pyhf import default_backend, get_backend
+from pyhf import events
 
 
 class _TensorViewer:

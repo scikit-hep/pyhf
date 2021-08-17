@@ -63,6 +63,7 @@ bibtex_bibfiles = [
     "bib/talks.bib",
     "bib/tutorials.bib",
     "bib/use_citations.bib",
+    "bib/general_citations.bib",
 ]
 
 # external links

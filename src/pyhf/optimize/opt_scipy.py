@@ -1,6 +1,6 @@
 """SciPy Optimizer Class."""
-from .. import exceptions
-from .mixins import OptimizerMixin
+from pyhf import exceptions
+from pyhf.optimize.mixins import OptimizerMixin
 import scipy
 
 
@@ -31,7 +31,13 @@ class scipy_optimizer(OptimizerMixin):
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
-        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
+        self,
+        objective_and_grad,
+        init_pars,
+        init_bounds,
+        fixed_vals=None,
+        do_grad=False,
+        par_names=None,
     ):
         return scipy.optimize.minimize
 
