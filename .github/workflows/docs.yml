@@ -27,6 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --quiet --use-feature=in-tree-build install --upgrade .[docs,test]
+        python -m pip install yq
         python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
@@ -43,6 +44,9 @@ jobs:
                                src/pyhf/optimize \
                                src/pyhf/contrib \
                                src/pyhf/cli
+    - name: Verify CITATION.cff schema
+      run: |
+        jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
     - name: Test and build docs
       run: |
         python -m doctest README.rst
