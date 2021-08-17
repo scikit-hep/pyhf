@@ -1,8 +1,8 @@
 """Inference for Statistical Models."""
 
-from . import utils
-from .. import get_backend
-from .. import exceptions
+from pyhf.infer import utils
+from pyhf import get_backend
+from pyhf import exceptions
 
 
 def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
@@ -192,7 +192,7 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-from . import intervals  # noqa: F401
+from pyhf.infer import intervals  # noqa: F401
 
 __all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
 

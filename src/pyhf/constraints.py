@@ -1,7 +1,7 @@
-from . import get_backend, default_backend
-from . import events
-from . import probability as prob
-from .parameters import ParamViewer
+from pyhf import get_backend, default_backend
+from pyhf import events
+from pyhf import probability as prob
+from pyhf.parameters import ParamViewer
 
 __all__ = ["gaussian_constraint_combined", "poisson_constraint_combined"]
 

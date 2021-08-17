@@ -1,5 +1,5 @@
 """Tensorflow Backend Function Shim."""
-from .. import get_backend
+from pyhf import get_backend
 import tensorflow as tf
 
 

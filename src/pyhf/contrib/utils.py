@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 import tarfile
 from io import BytesIO
 import logging
-from .. import exceptions
+from pyhf import exceptions
 
 log = logging.getLogger(__name__)
 

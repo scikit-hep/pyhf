@@ -9,10 +9,10 @@ import logging
 import jsonpatch
 import copy
 import collections
-from . import exceptions
-from . import utils
-from .pdf import Model
-from .mixins import _ChannelSummaryMixin
+from pyhf import exceptions
+from pyhf import utils
+from pyhf.pdf import Model
+from pyhf.mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
