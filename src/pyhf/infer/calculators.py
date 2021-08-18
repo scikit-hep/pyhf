@@ -12,6 +12,7 @@ from .. import get_backend
 from . import utils
 import tqdm
 
+from dataclasses import dataclass
 import logging
 
 log = logging.getLogger(__name__)
@@ -202,6 +203,18 @@ class AsymptoticTestStatDistribution:
         )
 
 
+@dataclass(frozen=True)
+class BestFitParameters:
+    """Fitted model parameters of the fits happening in ``AsymptoticCalculator.teststatistic``"""
+
+    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
+    asimov_pars: 'Tensor'  # noqa: F821
+    free_fit_to_data: 'Tensor'  # noqa: F821
+    free_fit_to_asimov: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_data: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_asimov: 'Tensor'  # noqa: F821
+
+
 class AsymptoticCalculator:
     """The Asymptotic Calculator."""
 
@@ -266,6 +279,21 @@ class AsymptoticCalculator:
         self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
 
+    @property
+    def fitted_pars(self):
+        """
+        Best-fit parameters of the fits that have been run in self.teststatistic.
+
+        The parameters are collected in a ~pyhf.infer.BestFitParameters instance.
+        """
+        try:
+            return self._fitted_pars
+        except AttributeError:
+            if self.sqrtqmuA_v is None:
+                raise RuntimeError("need to call .teststatistic(poi_test) first")
+            else:
+                raise
+
     def distributions(self, poi_test):
         r"""
         Probability distributions of the test statistic, as defined in
@@ -311,8 +339,12 @@ class AsymptoticCalculator:
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
-        """
+        r"""
         Compute the test statistic for the observed data under the studied model.
+
+        The fitted parameters of the five fits that are implicitly ran at every call
+        of this method are afterwards accessible through ``self.fitted_pars``,
+        which is a ~pyhf.infer.BestFitParameters instance.
 
         Example:
 
@@ -328,6 +360,11 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator.teststatistic(mu_test)
             array(0.14043184)
 
+            access the best-fit parameters
+            (here: :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset):
+            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
+            array([0.        , 1.00304893, 0.96263365])
+
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
@@ -339,35 +376,45 @@ class AsymptoticCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
-        qmu_v = teststat_func(
+        qmu_v, (mubhathat, muhatbhat) = teststat_func(
             poi_test,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
 
-        asimov_data = generate_asimov_data(
+        asimov_data, asimov_mubhathat = generate_asimov_data(
             asimov_mu,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
-        qmuA_v = teststat_func(
+        qmuA_v, (mubhathat_A, muhatbhat_A) = teststat_func(
             poi_test,
             asimov_data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
+        self._fitted_pars = BestFitParameters(
+            asimov_pars=asimov_mubhathat,
+            free_fit_to_data=muhatbhat,
+            free_fit_to_asimov=muhatbhat_A,
+            fixed_poi_fit_to_data=mubhathat,
+            fixed_poi_fit_to_asimov=mubhathat_A,
+        )
 
         if self.test_stat in ["q", "q0"]:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v
