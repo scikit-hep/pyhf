@@ -157,6 +157,146 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
     assert check_uniform_type(result[3])
 
 
+def assert_fitresults_shapes(fitted_pars, model):
+    tb = pyhf.tensorlib
+    expected_fit_pars = (
+        'asimov_pars',
+        'fixed_poi_fit_to_data',
+        'fixed_poi_fit_to_asimov',
+        'free_fit_to_data',
+        'free_fit_to_asimov',
+    )
+    for fitpars_name in expected_fit_pars:
+        assert hasattr(fitted_pars, fitpars_name)
+        this_fit = getattr(fitted_pars, fitpars_name)
+        assert isinstance(this_fit, type(tb.astensor(this_fit)))
+        assert tb.shape(this_fit) == (model.config.npars,)
+
+
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_fitted_pars(tmpdir, hypotest_args, test_stat):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_fitted_pars keyword arg is as expected
+    """
+    tb = pyhf.tensorlib
+    *_, model = hypotest_args
+
+    result = pyhf.infer.hypotest(
+        *hypotest_args, test_stat=test_stat, return_fitted_pars=True
+    )
+
+    assert len(list(result)) == 2
+    CLs_obs, fitted_pars = result
+    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
+    assert_fitresults_shapes(fitted_pars, model)
+
+
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_fitted_pars_with_tail_probs(tmpdir, hypotest_args, test_stat):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_fitted_pars and return_tail_probs keyword args is as expected
+    """
+    tb = pyhf.tensorlib
+    *_, model = hypotest_args
+    kwargs = dict(
+        test_stat=test_stat,
+        return_tail_probs=True,
+        return_fitted_pars=True,
+    )
+
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
+
+    assert len(list(result)) == 3
+    CLs_obs, tails, fitted_pars = result
+    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
+    assert len(tails) == 1 if test_stat == 'q0' else 2
+    assert check_uniform_type(tails)
+    assert_fitresults_shapes(fitted_pars, model)
+
+
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_fitted_pars_with_expected(tmpdir, hypotest_args, test_stat):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_fitted_pars and return_expected keyword args is as expected
+    """
+    tb = pyhf.tensorlib
+    *_, model = hypotest_args
+    kwargs = dict(
+        test_stat=test_stat,
+        return_expected=True,
+        return_fitted_pars=True,
+    )
+
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
+
+    assert len(list(result)) == 3
+    CLs_obs, CLs_exp, fitted_pars = result
+    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
+    assert isinstance(CLs_exp, type(tb.astensor(CLs_exp)))
+    assert_fitresults_shapes(fitted_pars, model)
+
+
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_fitted_pars_with_expected_set(
+    tmpdir, hypotest_args, test_stat
+):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_fitted_pars and return_expected_set keyword args is as expected
+    """
+    tb = pyhf.tensorlib
+    *_, model = hypotest_args
+    kwargs = dict(
+        test_stat=test_stat,
+        return_expected_set=True,
+        return_fitted_pars=True,
+    )
+
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
+
+    assert len(list(result)) == 3
+    CLs_obs, CLs_exp_set, fitted_pars = result
+    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
+    assert len(CLs_exp_set) == 5
+    assert check_uniform_type(CLs_exp_set)
+    assert_fitresults_shapes(fitted_pars, model)
+
+
+@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+def test_hypotest_return_fitted_pars_with_max_returned_pvals(
+    tmpdir, hypotest_args, test_stat
+):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_expected_set keyword arg,
+    on top of all other optional additions to the return value, is as expected
+    """
+    tb = pyhf.tensorlib
+    *_, model = hypotest_args
+    kwargs = dict(
+        test_stat=test_stat,
+        return_tail_probs=True,
+        return_expected=True,
+        return_expected_set=True,
+        return_fitted_pars=True,
+    )
+
+    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
+
+    assert len(list(result)) == 5
+    CLs_obs, tails, CLs_exp, CLs_exp_set, fitted_pars = result
+    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
+    assert len(tails) == 1 if test_stat == 'q0' else 2
+    assert check_uniform_type(tails)
+    assert isinstance(CLs_exp, type(tb.astensor(CLs_exp)))
+    assert len(CLs_exp_set) == 5
+    assert check_uniform_type(CLs_exp_set)
+    assert_fitresults_shapes(fitted_pars, model)
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
