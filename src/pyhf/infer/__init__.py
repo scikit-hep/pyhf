@@ -28,6 +28,7 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
+    return_fitted_pars=False,
     **kwargs,
 ):
     r"""
@@ -66,6 +67,7 @@ def hypotest(
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
+        return_fitted_pars (:obj:`bool`): Bool for returning the best-fit-parameters.
 
     Returns:
         Tuple of Floats and lists of Floats:
@@ -140,6 +142,13 @@ def hypotest(
             Only returned when ``return_expected_set`` is ``True``.
 
     """
+    if return_fitted_pars and calctype == 'toybased':
+        raise ValueError(
+            f"{return_fitted_pars=} is not compatible with {calctype=!r}. "
+            f"Use return_fitted_pars=False (default) with {calctype!r}, "
+            "or use calctype='asymptotics' instead."
+        )
+
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
@@ -189,6 +198,8 @@ def hypotest(
     elif return_expected:
         _returns.append(tb.astensor(pvalues_exp_band[2]))
     # Enforce a consistent return type of the observed CLs
+    if return_fitted_pars:
+        _returns.append(calc.fitted_pars)
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
