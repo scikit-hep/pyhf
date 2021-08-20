@@ -27,15 +27,18 @@ class Callables:
     def __init__(self):
         self._callbacks = []
 
-    def _flush(self):
-        # self._callbacks = [
-        #     (func, arg)
-        #     for func, arg in self._callbacks
-        #     if func is not None and arg is not None
-        # ]
-        self._callbacks = [(func, arg) for func, arg in self._callbacks]
+    @property
+    def callbacks(self):
+        """
+        Get the current list of living callbacks.
+        """
+        self._flush()
+        return self._callbacks
 
     def append(self, callback):
+        """
+        Append a new bound method as a callback to the list of callables.
+        """
         try:
             # methods
             callback_ref = weakref.WeakMethod(callback), weakref.ref(callback.__self__)
@@ -43,26 +46,38 @@ class Callables:
             callback_ref = weakref.ref(callback), None
         self._callbacks.append(callback_ref)
 
+    def _flush(self):
+        """
+        Flush the list of callbacks with those who are weakly-referencing deleted objects.
+
+        Note: must interact with the self._callbacks directly, and not
+        self.callbacks, to avoid infinite recursion.
+        """
+        _callbacks = []
+        for func, arg in self._callbacks:
+            if arg is not None:
+                arg = arg()
+                if arg is None:
+                    continue
+            _callbacks.append((func, arg))
+        self._callbacks = _callbacks
+
     def __call__(self, *args, **kwargs):
-        self._flush()
-        for func, _ in self._callbacks:
+        for func, _ in self.callbacks:
             # weakref: needs to be de-ref'd first before calling
             func()(*args, **kwargs)
 
     def __iter__(self):
-        self._flush()
-        return iter(self._callbacks)
+        return iter(self.callbacks)
 
     def __getitem__(self, index):
-        self._flush()
-        return self._callbacks[index]
+        return self.callbacks[index]
 
     def __len__(self):
-        self._flush()
-        return len(self._callbacks)
+        return len(self.callbacks)
 
     def __repr__(self):
-        return f"Callables({self._callbacks})"
+        return f"Callables({self.callbacks})"
 
 
 def subscribe(event):
