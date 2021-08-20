@@ -297,6 +297,19 @@ def test_hypotest_return_fitted_pars_with_max_returned_pvals(
     assert_fitresults_shapes(fitted_pars, model)
 
 
+def test_hypotest_toybased_return_fitted_pars_raises(hypotest_args):
+    with pytest.raises(ValueError) as exc_info:
+        pyhf.infer.hypotest(
+            *hypotest_args,
+            return_fitted_pars=True,
+            calctype='toybased',
+            ntoys=1,  # limit test time if exception is not raised
+        )
+    assert 'return_fitted_pars' in str(exc_info.value)
+    assert "'toybased'" in str(exc_info.value)
+    assert "'asymptotics'" in str(exc_info.value)
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
