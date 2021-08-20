@@ -98,7 +98,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(3.9549891)
 
-        or, also return the best-fit parameter arrays:
+        Access the best-fit parameter Tensors:
+
         >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
@@ -186,7 +187,8 @@ def qmu_tilde(
         >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(3.93824492)
 
-        or, also return the best-fit parameter arrays:
+        Access the best-fit parameter Tensors
+
         >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
@@ -261,7 +263,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(3.9549891)
 
-        or, also return the best-fit parameter arrays:
+        Access the best-fit parameter Tensors
+
         >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
@@ -329,6 +332,7 @@ def tmu_tilde(
         \end{equation}
 
     Example:
+
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
@@ -343,7 +347,8 @@ def tmu_tilde(
         >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(3.93824492)
 
-        or, also return the best-fit parameter arrays:
+        Access the best-fit parameter Tensors
+
         >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
@@ -416,7 +421,8 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
 
-        or, also return the best-fit parameter arrays:
+        Access the best-fit parameter Tensors
+
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
         (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
 

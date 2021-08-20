@@ -49,7 +49,8 @@ def generate_asimov_data(
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
-        to also access the Asimov parameters:
+        It is possible to access the Asimov parameters as well:
+
         >>> pyhf.infer.calculators.generate_asimov_data(
         ...     mu_test, data, model, None, None, None,
         ...     return_fitted_pars = True
@@ -205,7 +206,7 @@ class AsymptoticTestStatDistribution:
 
 @dataclass(frozen=True)
 class BestFitParameters:
-    """Fitted model parameters of the fits happening in ``AsymptoticCalculator.teststatistic``"""
+    """Fitted model parameters of the fits happening in ~pyhf.infer.calculators.AsymptoticCalculator.teststatistic"""
 
     # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
     asimov_pars: 'Tensor'  # noqa: F821
@@ -344,7 +345,7 @@ class AsymptoticCalculator:
 
         The fitted parameters of the five fits that are implicitly ran at every call
         of this method are afterwards accessible through ``self.fitted_pars``,
-        which is a ~pyhf.infer.BestFitParameters instance.
+        which is a ~pyhf.infer.calculators.BestFitParameters instance.
 
         Example:
 
@@ -362,6 +363,7 @@ class AsymptoticCalculator:
 
             access the best-fit parameters
             (here: :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset):
+
             >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
             array([0.        , 1.00304893, 0.96263365])
 
