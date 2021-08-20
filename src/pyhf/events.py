@@ -41,7 +41,9 @@ class Callables:
         """
         try:
             # methods
-            callback_ref = weakref.WeakMethod(callback), weakref.ref(callback.__self__)
+            callback_ref = weakref.ref(callback.__func__), weakref.ref(
+                callback.__self__
+            )
         except AttributeError:
             callback_ref = weakref.ref(callback), None
         self._callbacks.append(callback_ref)
@@ -56,16 +58,19 @@ class Callables:
         _callbacks = []
         for func, arg in self._callbacks:
             if arg is not None:
-                arg = arg()
-                if arg is None:
+                arg_ref = arg()
+                if arg_ref is None:
                     continue
             _callbacks.append((func, arg))
         self._callbacks = _callbacks
 
     def __call__(self, *args, **kwargs):
-        for func, _ in self.callbacks:
+        for func, arg in self.callbacks:
             # weakref: needs to be de-ref'd first before calling
-            func()(*args, **kwargs)
+            if arg is not None:
+                func()(arg(), *args, **kwargs)
+            else:
+                func()(*args, **kwargs)
 
     def __iter__(self):
         return iter(self.callbacks)
