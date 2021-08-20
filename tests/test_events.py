@@ -8,7 +8,7 @@ def test_subscribe_event():
     m = mock.Mock()
     events.subscribe(ename)(m.__call__)
     assert ename in events.__events
-    assert m.__call__ == events.__events.get(ename)[0][0]()
+    assert m.__call__.__func__ == events.__events.get(ename)[0][0]()
     del events.__events[ename]
 
 
@@ -26,15 +26,7 @@ def test_event():
 def test_event_weakref():
     ename = 'test'
 
-    # Note: one might be tempted to make this a magic mock, don't.
-    # For whatever reason, MagicMock keeps around tons of references to itself
-    # and generates new ones on each successive call, which makes it very hard
-    # to use to test anything that's checking if a ref is deleted properly...
-    class MyMagicMock:
-        def __call__(self):
-            ...
-
-    m = MyMagicMock()
+    m = mock.Mock()
     events.subscribe(ename)(m.__call__)
     assert len(events.trigger(ename)) == 1
     # should be weakly referenced
