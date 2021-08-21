@@ -47,9 +47,9 @@ def subscribe(event):
     #
     # >>> @pyhf.events.subscribe('myevent')
     # ... def test(a,b):
-    # ...   print a+b
+    # ...   print(a+b)
     # ...
-    # >>> pyhf.events.trigger_myevent(1,2)
+    # >>> pyhf.events.trigger.("myevent")(1,2)
     # 3
     global __events
 
@@ -70,15 +70,15 @@ def register(event):
     #
     # >>> @pyhf.events.register('test_func')
     # ... def test(a,b):
-    # ...   print a+b
+    # ...   print(a+b)
     # ...
     # >>> @pyhf.events.subscribe('test_func::before')
     # ... def precall():
-    # ...   print 'before call'
+    # ...   print('before call')
     # ...
     # >>> @pyhf.events.subscribe('test_func::after')
     # ... def postcall():
-    # ...   print 'after call'
+    # ...   print('after call')
     # ...
     # >>> test(1,2)
     # "before call"
