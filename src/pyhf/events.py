@@ -42,15 +42,18 @@ class Callables(WeakList):
 def subscribe(event):
     """
     This is meant to be used as a decorator.
+
+    Example:
+        >>> import pyhf
+        >>> @pyhf.events.subscribe("myevent")
+        ... def test(a, b):
+        ...     print(a + b)
+        ...
+        >>> pyhf.events.trigger("myevent")(1, 2)
+        3
+
     """
-    # Example:
-    #
-    # >>> @pyhf.events.subscribe('myevent')
-    # ... def test(a,b):
-    # ...   print(a+b)
-    # ...
-    # >>> pyhf.events.trigger.("myevent")(1,2)
-    # 3
+
     global __events
 
     def __decorator(func):
@@ -64,27 +67,28 @@ def register(event):
     """
     This is meant to be used as a decorator to register a function for triggering events.
 
-    This creates two events: "<event_name>::before" and "<event_name>::after"
+    This creates two events: ``<event_name>::before`` and ``<event_name>::after``
+
+    Example:
+        >>> import pyhf
+        >>> @pyhf.events.register("test_func")
+        ... def test(a, b):
+        ...     print(a + b)
+        ...
+        >>> @pyhf.events.subscribe("test_func::before")
+        ... def precall():
+        ...     print("before call")
+        ...
+        >>> @pyhf.events.subscribe("test_func::after")
+        ... def postcall():
+        ...     print("after call")
+        ...
+        >>> test(1, 2)
+        before call
+        3
+        after call
+
     """
-    # Examples:
-    #
-    # >>> @pyhf.events.register('test_func')
-    # ... def test(a,b):
-    # ...   print(a+b)
-    # ...
-    # >>> @pyhf.events.subscribe('test_func::before')
-    # ... def precall():
-    # ...   print('before call')
-    # ...
-    # >>> @pyhf.events.subscribe('test_func::after')
-    # ... def postcall():
-    # ...   print('after call')
-    # ...
-    # >>> test(1,2)
-    # "before call"
-    # 3
-    # "after call"
-    # >>>
 
     def _register(func):
         @wraps(func)
