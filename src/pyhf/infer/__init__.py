@@ -150,8 +150,9 @@ def hypotest(
     """
     if return_fitted_pars and calctype == 'toybased':
         raise ValueError(
-            f"{return_fitted_pars=} is not compatible with {calctype=!r}. "
-            f"Use return_fitted_pars=False (default) with {calctype!r}, "
+            f"return_fitted_pars={return_fitted_pars!r} is not compatible "
+            f"with calctype={calctype!r}. "
+            f"Use return_fitted_pars=False (default) with calctype={calctype!r}, "
             "or use calctype='asymptotics' instead."
         )
 
