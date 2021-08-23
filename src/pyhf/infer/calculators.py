@@ -71,8 +71,11 @@ def generate_asimov_data(
 
 
     Returns:
-        Tensor: The Asimov dataset.
-        Tensor: (If ``return_fitted_pars`` is ``True``) the Asimov parameters.
+        A Tensor or a Tuple of two Tensors:
+
+             - The Asimov dataset.
+
+             - The Asimov parameters. Only returned if ``return_fitted_pars`` is ``True``.
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
         asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
@@ -206,7 +209,10 @@ class AsymptoticTestStatDistribution:
 
 @dataclass(frozen=True)
 class BestFitParameters:
-    """Fitted model parameters of the fits happening in ~pyhf.infer.calculators.AsymptoticCalculator.teststatistic"""
+    """
+    Fitted model parameters of the fits in
+    :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
+    """
 
     # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
     asimov_pars: 'Tensor'  # noqa: F821
@@ -283,9 +289,11 @@ class AsymptoticCalculator:
     @property
     def fitted_pars(self):
         """
-        Best-fit parameters of the fits that have been run in self.teststatistic.
+        Best-fit parameters of the fits that have been run in
+        :py:meth:`self.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`.
 
-        The parameters are collected in a ~pyhf.infer.BestFitParameters instance.
+        Returns:
+            ~pyhf.infer.BestFitParameters:  The collection of fitted parameter tensors.
         """
         try:
             return self._fitted_pars
@@ -345,7 +353,7 @@ class AsymptoticCalculator:
 
         The fitted parameters of the five fits that are implicitly ran at every call
         of this method are afterwards accessible through ``self.fitted_pars``,
-        which is a ~pyhf.infer.calculators.BestFitParameters instance.
+        which is a :py:class:`~pyhf.infer.calculators.BestFitParameters` instance.
 
         Example:
 

@@ -70,7 +70,7 @@ def hypotest(
         return_fitted_pars (:obj:`bool`): Bool for returning the best-fit-parameters.
 
     Returns:
-        Tuple of Floats and lists of Floats and a ~pyhf.infer.calculators.BestFitParameters:
+        Tuple of Floats and lists of Floats and a :py:class:`~pyhf.infer.calculators.BestFitParameters` instance:
 
             - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to
               the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,
@@ -141,10 +141,10 @@ def hypotest(
             referred to as the "Brazil band".
             Only returned when ``return_expected_set`` is ``True``.
 
-            - the best-fit parameters: the five tensors of :math:`\hat{\theta}, \hat{mu}`
-              or ::math:`\hat{\hat{\theta}}, \mu` fitted to the data or the Asimov dataset
-              when using the 'asymptotics' calculator. The tensors are wrapped in an
-              instance of ~pyhf.infer.calculators.BestFitParameters.
+            - the best-fit parameters: the five tensors of :math:`\hat{\mu}, \hat{\theta}`
+              or :math:`\mu, \hat{\hat{\theta}}` fitted to the data or the Asimov dataset
+              when using the ``'asymptotics'`` calculator. The tensors are wrapped in an
+              instance of :py:class:`~pyhf.infer.calculators.BestFitParameters`.
               Only returned when ``return_fitted_pars`` is ``True``.
 
     """
