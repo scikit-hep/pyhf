@@ -94,5 +94,5 @@ def test_asympotic_calculator_fitted_pars_before_teststatistic_raises():
     data = [0, 0]  # [main, aux]
     calc = pyhf.infer.calculators.AsymptoticCalculator(data, model)
     with pytest.raises(RuntimeError) as exc_info:
-        calc.fitted_pars
+        _ = calc.fitted_pars  # assign to avoid codefactor warning
     assert 'teststatistic' in str(exc_info.value)

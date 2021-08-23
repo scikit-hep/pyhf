@@ -300,8 +300,7 @@ class AsymptoticCalculator:
         except AttributeError:
             if self.sqrtqmuA_v is None:
                 raise RuntimeError("need to call .teststatistic(poi_test) first")
-            else:
-                raise
+            raise
 
     def distributions(self, poi_test):
         r"""
