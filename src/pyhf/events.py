@@ -89,22 +89,27 @@ def subscribe(event):
     """
     Subscribe a function or object method as a callback to an event.
 
-    Note: this is meant to be used as a decorator.
+    .. note::
+
+     This is meant to be used as a decorator.
 
     Args:
         event (:obj:`str`): The name of the event to subscribe to.
 
     Returns:
         :obj:`function`: Decorated function.
+
+    Example:
+        >>> import pyhf
+        >>> @pyhf.events.subscribe("myevent")
+        ... def test(a, b):
+        ...     print(a + b)
+        ...
+        >>> pyhf.events.trigger("myevent")(1, 2)
+        3
+
     """
-    # Example:
-    #
-    # >>> @pyhf.events.subscribe('myevent')
-    # ... def test(a,b):
-    # ...   print a+b
-    # ...
-    # >>> pyhf.events.trigger_myevent(1,2)
-    # 3
+
     global __events
 
     def __decorator(func):
@@ -119,7 +124,9 @@ def register(event):
     Register a function or object method to trigger an event.  This creates two
     events: ``{event_name}::before`` and ``{event_name}::after``.
 
-    Note: this is meant to be used as a decorator.
+    .. note::
+
+     This is meant to be used as a decorator.
 
     Args:
         event (:obj:`str`): The name of the event to subscribe to.
@@ -127,26 +134,26 @@ def register(event):
     Returns:
         :obj:`function`: Decorated function.
 
+    Example:
+        >>> import pyhf
+        >>> @pyhf.events.register("test_func")
+        ... def test(a, b):
+        ...     print(a + b)
+        ...
+        >>> @pyhf.events.subscribe("test_func::before")
+        ... def precall():
+        ...     print("before call")
+        ...
+        >>> @pyhf.events.subscribe("test_func::after")
+        ... def postcall():
+        ...     print("after call")
+        ...
+        >>> test(1, 2)
+        before call
+        3
+        after call
+
     """
-    # Examples:
-    #
-    # >>> @pyhf.events.register('test_func')
-    # ... def test(a,b):
-    # ...   print a+b
-    # ...
-    # >>> @pyhf.events.subscribe('test_func::before')
-    # ... def precall():
-    # ...   print 'before call'
-    # ...
-    # >>> @pyhf.events.subscribe('test_func::after')
-    # ... def postcall():
-    # ...   print 'after call'
-    # ...
-    # >>> test(1,2)
-    # "before call"
-    # 3
-    # "after call"
-    # >>>
 
     def _register(func):
         @wraps(func)
