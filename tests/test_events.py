@@ -65,3 +65,19 @@ def test_trigger_noevent():
     assert noop_m.is_called_once()
 
     events.noop = noop
+
+
+def test_subscribe_function():
+    @events.subscribe('test')
+    def foo():
+        ...
+
+    events.trigger('test')()
+
+
+def test_trigger_function():
+    @events.register('test')
+    def foo():
+        ...
+
+    foo()
