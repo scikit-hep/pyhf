@@ -67,17 +67,42 @@ def test_trigger_noevent():
     events.noop = noop
 
 
-def test_subscribe_function():
-    @events.subscribe('test')
-    def foo():
-        ...
+def test_subscribe_function(capsys):
+    ename = 'test'
 
-    events.trigger('test')()
+    def add(a, b):
+        print(a + b)
+
+    events.subscribe(ename)(add)
+    events.trigger(ename)(1, 2)
+
+    captured = capsys.readouterr()
+    assert captured.out == "3\n"
+
+    del events.__events[ename]
 
 
-def test_trigger_function():
-    @events.register('test')
-    def foo():
-        ...
+def test_trigger_function(capsys):
+    ename = 'test'
 
-    foo()
+    def add(a, b):
+        print(a + b)
+
+    precall = mock.Mock()
+    postcall = mock.Mock()
+
+    wrapped_add = events.register(ename)(add)
+    events.subscribe(f'{ename}::before')(precall.__call__)
+    events.subscribe(f'{ename}::after')(postcall.__call__)
+
+    precall.assert_not_called()
+    postcall.assert_not_called()
+
+    wrapped_add(1, 2)
+    captured = capsys.readouterr()
+    assert captured.out == "3\n"
+    precall.assert_called_once()
+    postcall.assert_called_once()
+
+    del events.__events[f'{ename}::before']
+    del events.__events[f'{ename}::after']
