@@ -104,6 +104,7 @@ def subscribe(event):
         ...   print(a+b)
         ...
         >>> pyhf.events.trigger('myevent')(1,2)
+        3
     """
     global __events
 
@@ -142,9 +143,9 @@ def register(event):
         ...   print('after call')
         ...
         >>> test(1,2)
-        "before call"
+        before call
         3
-        "after call"
+        after call
     """
 
     def _register(func):
