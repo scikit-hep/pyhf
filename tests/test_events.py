@@ -9,6 +9,9 @@ def test_subscribe_event():
     events.subscribe(ename)(m.__call__)
     assert ename in events.__events
     assert m.__call__.__func__ == events.__events.get(ename)[0][0]()
+    assert "weakref" in repr(events.trigger(ename))
+    assert list(events.trigger(ename))
+    assert len(list(events.trigger(ename))) == 1
     del events.__events[ename]
 
 
