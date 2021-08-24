@@ -89,7 +89,9 @@ def subscribe(event):
     """
     Subscribe a function or object method as a callback to an event.
 
-    Note: this is meant to be used as a decorator.
+    .. note::
+
+     This is meant to be used as a decorator.
 
     Args:
         event (:obj:`str`): The name of the event to subscribe to.
@@ -122,7 +124,9 @@ def register(event):
     Register a function or object method to trigger an event.  This creates two
     events: ``{event_name}::before`` and ``{event_name}::after``.
 
-    Note: this is meant to be used as a decorator.
+    .. note::
+
+     This is meant to be used as a decorator.
 
     Args:
         event (:obj:`str`): The name of the event to subscribe to.
