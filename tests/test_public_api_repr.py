@@ -67,7 +67,6 @@ def test_contrib_viz_public_api():
 def test_contrib_events_public_api():
     assert dir(pyhf.events) == [
         "Callables",
-        "WeakList",
         "disable",
         "enable",
         "noop",
