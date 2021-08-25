@@ -211,13 +211,6 @@ def qmu_tilde(
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-
-        - Float: The calculated test statistic,
-
-        - Tuple of two Tensors: The best-fit parameter tensors,
-          :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
-          Only returned if ``return_fitted_pars`` is ``True``.
-    Returns:
         Tuple of a Float and a Tuple of Tensors:
 
             - The calculated test statistic, :math:`\tilde{q}_{\mu}`
