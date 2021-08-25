@@ -1,6 +1,6 @@
 """Module for Maximum Likelihood Estimation."""
-from .. import get_backend
-from ..exceptions import UnspecifiedPOI
+from pyhf import get_backend
+from pyhf.exceptions import UnspecifiedPOI
 
 __all__ = ["fit", "fixed_poi_fit", "twice_nll"]
 

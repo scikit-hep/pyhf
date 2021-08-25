@@ -1,7 +1,7 @@
 """Numpy Backend Function Shim."""
 
-from .. import get_backend
-from .. import exceptions
+from pyhf import get_backend
+from pyhf import exceptions
 
 
 def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=None):

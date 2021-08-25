@@ -10,7 +10,7 @@ import numpy as np
 import uproot3 as uproot
 from uproot3_methods.classes import TH1
 
-from .mixins import _ChannelSummaryMixin
+from pyhf.mixins import _ChannelSummaryMixin
 
 _ROOT_DATA_FILE = None
 

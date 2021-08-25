@@ -4,11 +4,11 @@ import logging
 import click
 import json
 
-from ..utils import EqDelimStringParamType
-from ..infer import hypotest
-from ..infer import mle
-from ..workspace import Workspace
-from .. import get_backend, set_backend, optimize
+from pyhf.utils import EqDelimStringParamType
+from pyhf.infer import hypotest
+from pyhf.infer import mle
+from pyhf.workspace import Workspace
+from pyhf import get_backend, set_backend, optimize
 
 log = logging.getLogger(__name__)
 

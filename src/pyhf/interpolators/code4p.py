@@ -1,8 +1,8 @@
 """Piecewise-Linear + Polynomial Interpolation (Code 4p)."""
 import logging
-from .. import get_backend, default_backend
-from .. import events
-from . import _slow_interpolator_looper
+from pyhf import get_backend, default_backend
+from pyhf import events
+from pyhf.interpolators import _slow_interpolator_looper
 
 log = logging.getLogger(__name__)
 

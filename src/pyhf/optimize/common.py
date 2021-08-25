@@ -1,11 +1,11 @@
 """Common Backend Shim to prepare minimization for optimizer."""
-from .. import get_backend
-from ..tensor.common import _TensorViewer
+from pyhf import get_backend
+from pyhf.tensor.common import _TensorViewer
 
 
 def _make_stitch_pars(tv=None, fixed_values=None):
     """
-    Construct a callable to stitch fixed paramter values into the unfixed parameters. See :func:`shim`.
+    Construct a callable to stitch fixed parameter values into the unfixed parameters. See :func:`shim`.
 
     This is extracted out to be unit-tested for proper behavior.
 
@@ -37,22 +37,22 @@ def _get_tensor_shim():
     """
     tensorlib, _ = get_backend()
     if tensorlib.name == 'numpy':
-        from .opt_numpy import wrap_objective as numpy_shim
+        from pyhf.optimize.opt_numpy import wrap_objective as numpy_shim
 
         return numpy_shim
 
     if tensorlib.name == 'tensorflow':
-        from .opt_tflow import wrap_objective as tflow_shim
+        from pyhf.optimize.opt_tflow import wrap_objective as tflow_shim
 
         return tflow_shim
 
     if tensorlib.name == 'pytorch':
-        from .opt_pytorch import wrap_objective as pytorch_shim
+        from pyhf.optimize.opt_pytorch import wrap_objective as pytorch_shim
 
         return pytorch_shim
 
     if tensorlib.name == 'jax':
-        from .opt_jax import wrap_objective as jax_shim
+        from pyhf.optimize.opt_jax import wrap_objective as jax_shim
 
         return jax_shim
     raise ValueError(f'No optimizer shim for {tensorlib.name}.')

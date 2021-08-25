@@ -1,6 +1,6 @@
 """Minuit Optimizer Class."""
-from .. import exceptions
-from .mixins import OptimizerMixin
+from pyhf import exceptions
+from pyhf.optimize.mixins import OptimizerMixin
 import scipy
 import iminuit
 

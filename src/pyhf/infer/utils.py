@@ -1,8 +1,8 @@
 """Inference for Statistical Models."""
 
-from .calculators import AsymptoticCalculator, ToyCalculator
-from ..exceptions import InvalidTestStatistic
-from .test_statistics import q0, qmu, qmu_tilde
+from pyhf.infer.calculators import AsymptoticCalculator, ToyCalculator
+from pyhf.exceptions import InvalidTestStatistic
+from pyhf.infer.test_statistics import q0, qmu, qmu_tilde
 
 import logging
 

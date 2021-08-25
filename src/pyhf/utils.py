@@ -6,7 +6,7 @@ import yaml
 import click
 import hashlib
 
-from .exceptions import InvalidSpecification
+from pyhf.exceptions import InvalidSpecification
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"

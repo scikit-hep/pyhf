@@ -1,4 +1,4 @@
-from .. import exceptions
+from pyhf import exceptions
 
 __all__ = ["reduce_paramsets_requirements"]
 

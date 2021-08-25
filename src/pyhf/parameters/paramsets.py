@@ -1,4 +1,4 @@
-from .. import default_backend
+from pyhf import default_backend
 
 __all__ = [
     "constrained_by_normal",

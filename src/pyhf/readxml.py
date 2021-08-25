@@ -1,5 +1,5 @@
-from . import utils
-from . import compat
+from pyhf import utils
+from pyhf import compat
 
 import logging
 

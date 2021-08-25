@@ -3,16 +3,16 @@
 import copy
 import logging
 
-from . import get_backend, default_backend
-from . import exceptions
-from . import modifiers
-from . import utils
-from . import events
-from . import probability as prob
-from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import _TensorViewer, _tensorviewer_from_sizes
-from .mixins import _ChannelSummaryMixin
+from pyhf import get_backend, default_backend
+from pyhf import exceptions
+from pyhf import modifiers
+from pyhf import utils
+from pyhf import events
+from pyhf import probability as prob
+from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
+from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
+from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
+from pyhf.mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
 
@@ -319,12 +319,9 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         return self.par_map[name]['slice']
 
-    def par_names(self, fstring='{name}[{index}]'):
+    def par_names(self):
         """
         The names of the parameters in the model including binned-parameter indexing.
-
-        Args:
-            fstring (:obj:`str`): Format string for the parameter names using ``name`` and ``index`` variables. Default: ``'{name}[{index}]'``.
 
         Returns:
             :obj:`list`: Names of the model parameters.
@@ -336,18 +333,16 @@ class _ModelConfig(_ChannelSummaryMixin):
             ... )
             >>> model.config.par_names()
             ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
-            >>> model.config.par_names(fstring='{name}_{index}')
-            ['mu', 'uncorr_bkguncrt_0', 'uncorr_bkguncrt_1']
         """
         _names = []
         for name in self.par_order:
-            _npars = self.param_set(name).n_parameters
-            if _npars == 1:
+            param_set = self.param_set(name)
+            if param_set.is_scalar:
                 _names.append(name)
                 continue
 
             _names.extend(
-                [fstring.format(name=name, index=idx) for idx in range(_npars)]
+                [f'{name}[{index}]' for index in range(param_set.n_parameters)]
             )
         return _names
 

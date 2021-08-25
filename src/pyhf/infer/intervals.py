@@ -1,6 +1,6 @@
 """Interval estimation"""
-from . import hypotest
-from .. import get_backend
+from pyhf.infer import hypotest
+from pyhf import get_backend
 import numpy as np
 
 __all__ = ["upperlimit"]

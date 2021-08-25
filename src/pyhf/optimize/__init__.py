@@ -1,12 +1,12 @@
 """Optimizers for Tensor Functions."""
 
-from .. import exceptions
+from pyhf import exceptions
 
 
 class _OptimizerRetriever:
     def __getattr__(self, name):
         if name == 'scipy_optimizer':
-            from .opt_scipy import scipy_optimizer
+            from pyhf.optimize.opt_scipy import scipy_optimizer
 
             assert scipy_optimizer
             # hide away one level of the module name
@@ -17,7 +17,7 @@ class _OptimizerRetriever:
             return scipy_optimizer
         elif name == 'minuit_optimizer':
             try:
-                from .opt_minuit import minuit_optimizer
+                from pyhf.optimize.opt_minuit import minuit_optimizer
 
                 assert minuit_optimizer
                 # hide away one level of the module name
