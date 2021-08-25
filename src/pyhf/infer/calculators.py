@@ -293,7 +293,7 @@ class AsymptoticCalculator:
         :py:meth:`self.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`.
 
         Returns:
-            ~pyhf.infer.BestFitParameters:  The collection of fitted parameter tensors.
+            ~pyhf.infer.calculators.BestFitParameters:  The collection of fitted parameter tensors.
         """
         try:
             return self._fitted_pars
