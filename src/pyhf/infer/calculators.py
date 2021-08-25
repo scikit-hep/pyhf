@@ -368,7 +368,7 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator.teststatistic(mu_test)
             array(0.14043184)
 
-            access the best-fit parameters
+            Access the best-fit parameters afterwards:
             (here: :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset):
 
             >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
