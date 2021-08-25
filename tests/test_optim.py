@@ -581,7 +581,7 @@ def test_minuit_param_names(mocker):
     data = [10] + pdf.config.auxdata
     _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
     assert 'minuit' in result
-    assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt')
+    assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt[0]')
 
     pdf.config.par_names = mocker.Mock(return_value=None)
     _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)

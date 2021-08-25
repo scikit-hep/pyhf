@@ -890,3 +890,34 @@ def test_reproducible_model_spec():
         {'bounds': [[0, 5]], 'inits': [1], 'name': 'mu'}
     ]
     assert pyhf.Model(model_from_ws.spec)
+
+
+def test_par_names_scalar_nonscalar():
+    """
+    Testing to ensure that nonscalar parameters are still indexed, even if
+    n_parameters==1.
+    """
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [1.0],
+                        'modifiers': [
+                            {'type': 'normfactor', 'name': 'scalar', 'data': None},
+                            {'type': 'shapesys', 'name': 'nonscalar', 'data': [1.0]},
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+
+    model = pyhf.Model(spec, poi_name="scalar")
+    assert model.config.par_order == ["scalar", "nonscalar"]
+    assert model.config.par_names() == [
+        'scalar',
+        'nonscalar[0]',
+    ]
