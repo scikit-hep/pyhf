@@ -23,3 +23,4 @@ Contributors include:
 - Eric Schanet
 - Henry Schreiner
 - Saransh Chopra
+- Lars Henkelmann
