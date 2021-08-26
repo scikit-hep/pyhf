@@ -62,7 +62,7 @@ def test_get_measurement(workspace_factory):
     for measurement in w.measurement_names:
         m = w.get_measurement(measurement_name=measurement)
         assert m['name'] == measurement
-    for measurement_idx, _ in enumerate(w.measurement_names):
+    for measurement_idx in range(len(w.measurement_names)):
         m = w.get_measurement(measurement_index=measurement_idx)
         assert m['name'] == w.measurement_names[measurement_idx]
 
