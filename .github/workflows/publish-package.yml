@@ -75,6 +75,9 @@ jobs:
     - name: List contents of sdist
       run: python -m tarfile --list dist/pyhf-*.tar.gz
 
+    - name: List contents of wheel
+      run: python -m zipfile --list dist/pyhf-*.whl
+
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
