@@ -417,7 +417,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
 
-    def data(self, model, with_aux=True):
+    def data(self, model, include_auxdata=True):
         """
         Return the data for the supplied model with or without auxiliary data from the model.
 
@@ -428,7 +428,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
-            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not
+            include_auxdata (:obj:`bool`): Whether to include auxiliary data from the model or not
 
         Returns:
             :obj:`list`: data
@@ -444,7 +444,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                 exc_info=True,
             )
             raise
-        if with_aux:
+        if include_auxdata:
             observed_data += model.config.auxdata
         return observed_data
 
