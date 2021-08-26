@@ -73,7 +73,8 @@ jobs:
       run: twine check dist/*
 
     - name: List contents of sdist
-      run: tar --list --file dist/pyhf-*.tar.gz
+      run: python -m tarfile --list dist/pyhf-*.tar.gz
+
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
