@@ -18,21 +18,26 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+
     - name: Install python-build, check-manifest, and twine
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install build check-manifest twine
         python -m pip list
+
     - name: Check MANIFEST
       run: |
         check-manifest
+
     - name: Build a wheel and a sdist
       run: |
         python -m build --outdir dist/ .
+
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
       run: |
@@ -51,6 +56,7 @@ jobs:
           echo "Push event to origin/master was triggered by push of tag ${latest_tag}"
         fi
         echo "python-build named built distribution: ${wheel_name}"
+
     - name: Verify tagged commits don't have dev versions
       if: startsWith(github.ref, 'refs/tags')
       run: |
@@ -62,10 +68,16 @@ jobs:
           return 1
         fi
         echo "python-build named built distribution: ${wheel_name}"
+
     - name: Verify the distribution
       run: twine check dist/*
+
     - name: List contents of sdist
-      run: tar --list --file dist/pyhf-*.tar.gz
+      run: python -m tarfile --list dist/pyhf-*.tar.gz
+
+    - name: List contents of wheel
+      run: python -m zipfile --list dist/pyhf-*.whl
+
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on master, so check the push event is actually coming from master
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
@@ -73,6 +85,7 @@ jobs:
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
+
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.4.2
