@@ -28,7 +28,7 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
-    return_fitted_pars=False,
+    return_calculator=False,
     **kwargs,
 ):
     r"""
@@ -67,10 +67,12 @@ def hypotest(
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
-        return_fitted_pars (:obj:`bool`): Bool for returning the best-fit-parameters.
+        return_calculator (:obj:`bool`): Bool for returning calculator.
 
     Returns:
-        Tuple of Floats and lists of Floats and a :py:class:`~pyhf.infer.calculators.BestFitParameters` instance:
+        Tuple of Floats and lists of Floats and
+        a :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
+        or :py:class:`~pyhf.infer.calculators.ToyCalculator`instance:
 
             - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to
               the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,
@@ -141,21 +143,13 @@ def hypotest(
             referred to as the "Brazil band".
             Only returned when ``return_expected_set`` is ``True``.
 
-            - the best-fit parameters: the five tensors of :math:`\hat{\mu}, \hat{\theta}`
-              or :math:`\mu, \hat{\hat{\theta}}` fitted to the data or the Asimov dataset
-              when using the ``'asymptotics'`` calculator. The tensors are wrapped in an
-              instance of :py:class:`~pyhf.infer.calculators.BestFitParameters`.
-              Only returned when ``return_fitted_pars`` is ``True``.
+            - a calculator: The calculator instance used in the computation of the p-values.
+              Either an instance of :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
+              or :py:class:`~pyhf.infer.calculators.ToyCalculator`,
+              depending on the value of ``calctype``.
+              Only returned when ``return_calculator`` is ``True``.
 
     """
-    if return_fitted_pars and calctype == 'toybased':
-        raise ValueError(
-            f"return_fitted_pars={return_fitted_pars!r} is not compatible "
-            f"with calctype={calctype!r}. "
-            f"Use return_fitted_pars=False (default) with calctype={calctype!r}, "
-            "or use calctype='asymptotics' instead."
-        )
-
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
     fixed_params = fixed_params or pdf.config.suggested_fixed()
@@ -204,9 +198,9 @@ def hypotest(
         _returns.append(pvalues_exp_band)
     elif return_expected:
         _returns.append(tb.astensor(pvalues_exp_band[2]))
+    if return_calculator:
+        _returns.append(calc)
     # Enforce a consistent return type of the observed CLs
-    if return_fitted_pars:
-        _returns.append(calc.fitted_pars)
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
