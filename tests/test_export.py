@@ -395,7 +395,7 @@ def test_export_data(mocker):
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
 
 
-def test_export_root_histogram(mocker, tmpdir):
+def test_export_root_histogram(mocker, tmp_path):
     """
     Test that pyhf.writexml._export_root_histogram writes out a histogram
     in the manner that uproot is expecting
@@ -403,7 +403,7 @@ def test_export_root_histogram(mocker, tmpdir):
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE", {})
     pyhf.writexml._export_root_histogram("example", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-    with uproot.recreate(tmpdir.join("test_export_root_histogram.root")) as file:
+    with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
         file["hist"] = pyhf.writexml._ROOT_DATA_FILE["example"]
         counts, edges = file["hist"].to_numpy()
         values = counts * edges[:-1]
