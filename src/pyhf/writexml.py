@@ -6,9 +6,7 @@ import pkg_resources
 import xml.etree.ElementTree as ET
 import numpy as np
 
-# TODO: Move to uproot4 when ROOT file writing is supported
-import uproot3 as uproot
-from uproot3_methods.classes import TH1
+import uproot
 
 from pyhf.mixins import _ChannelSummaryMixin
 
@@ -48,11 +46,11 @@ def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
 
 
 def _export_root_histogram(histname, data):
-    hist = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
-    hist._fName = histname
     if histname in _ROOT_DATA_FILE:
         raise KeyError(f"Duplicate key {histname} being written.")
-    _ROOT_DATA_FILE[histname] = hist
+    _ROOT_DATA_FILE[histname] = np.histogram(
+        np.asarray(data), bins=np.arange(len(data) + 1)
+    )
 
 
 # https://stackoverflow.com/a/4590052
