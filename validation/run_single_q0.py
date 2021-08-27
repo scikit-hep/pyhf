@@ -20,16 +20,16 @@ if __name__ == "__main__":
     poi.setVal(0)
     bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    asymptotic_calc = ROOT.RooStats.AsymptoticCalculator(data, sb_model, bkg_model)
-    asymptotic_calc.SetPrintLevel(10)
-    asymptotic_calc.SetOneSidedDiscovery(True)
+    calc = ROOT.RooStats.AsymptoticCalculator(data, sb_model, bkg_model)
+    calc.SetPrintLevel(10)
+    calc.SetOneSidedDiscovery(True)
 
-    result = asymptotic_calc.GetHypoTest()
+    result = calc.GetHypoTest()
     pnull_obs = result.NullPValue()
     palt_obs = result.AlternatePValue()
     usecls = 0
     pnull_exp = [
-        asymptotic_calc.GetExpectedPValues(pnull_obs, palt_obs, sigma, usecls)
+        calc.GetExpectedPValues(pnull_obs, palt_obs, sigma, usecls)
         for sigma in [-2, -1, 0, 1, 2]
     ]
 

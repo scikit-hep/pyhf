@@ -19,12 +19,12 @@ if __name__ == "__main__":
     poi.setVal(0)
     bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    asymptotic_calc = ROOT.RooStats.AsymptoticCalculator(data, bkg_model, sb_model)
-    asymptotic_calc.SetPrintLevel(10)
-    asymptotic_calc.SetOneSided(True)
-    asymptotic_calc.SetQTilde(True)
+    calc = ROOT.RooStats.AsymptoticCalculator(data, bkg_model, sb_model)
+    calc.SetPrintLevel(10)
+    calc.SetOneSided(True)
+    calc.SetQTilde(True)
 
-    test_inverter = ROOT.RooStats.HypoTestInverter(asymptotic_calc)
+    test_inverter = ROOT.RooStats.HypoTestInverter(calc)
     test_inverter.RunFixedScan(51, 0, 5)
     test_inverter.SetConfidenceLevel(0.95)
     test_inverter.UseCLs(True)
