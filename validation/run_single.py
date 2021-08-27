@@ -10,35 +10,32 @@ if __name__ == "__main__":
     workspace = infile.Get("combined")
     data = workspace.data("obsData")
 
-    sbModel = workspace.obj("ModelConfig")
-    poi = sbModel.GetParametersOfInterest().first()
+    sb_model = workspace.obj("ModelConfig")
+    poi = sb_model.GetParametersOfInterest().first()
 
-    sbModel.SetSnapshot(ROOT.RooArgSet(poi))
+    sb_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    bModel = sbModel.Clone()
-    bModel.SetName("bonly")
+    bkg_model = sb_model.Clone()
+    bkg_model.SetName("bonly")
     poi.setVal(0)
-    bModel.SetSnapshot(ROOT.RooArgSet(poi))
+    bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
-    ac.SetPrintLevel(10)
-    ac.SetOneSided(True)
-    ac.SetQTilde(True)
+    asymptotic_calc = ROOT.RooStats.AsymptoticCalculator(data, bkg_model, sb_model)
+    asymptotic_calc.SetPrintLevel(10)
+    asymptotic_calc.SetOneSided(True)
+    asymptotic_calc.SetQTilde(True)
 
-    calc = ROOT.RooStats.HypoTestInverter(ac)
-    calc.SetConfidenceLevel(0.95)
-    calc.UseCLs(True)
-    calc.RunFixedScan(1, 1, 1)
+    test_inverter = ROOT.RooStats.HypoTestInverter(asymptotic_calc)
+    test_inverter.SetConfidenceLevel(0.95)
+    test_inverter.UseCLs(True)
+    test_inverter.RunFixedScan(1, 1, 1)
 
-    result = calc.GetInterval()
+    result = test_inverter.GetInterval()
 
     index = 0
-
-    w = result.GetExpectedPValueDist(index)
-    v = w.GetSamplingDistribution()
-
+    dist = result.GetExpectedPValueDist(index)
     CLs_obs = result.CLs(index)
-    CLs_exp = list(v)[3:-3]
+    CLs_exp = list(dist.GetSamplingDistribution())[3:-3]
 
     print(
         json.dumps({'CLs_obs': CLs_obs, 'CLs_exp': CLs_exp}, sort_keys=True, indent=4)
