@@ -72,7 +72,7 @@ def hypotest(
     Returns:
         Tuple of Floats and lists of Floats and
         a :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
-        or :py:class:`~pyhf.infer.calculators.ToyCalculator`instance:
+        or :py:class:`~pyhf.infer.calculators.ToyCalculator` instance:
 
             - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to
               the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,
@@ -143,7 +143,7 @@ def hypotest(
             referred to as the "Brazil band".
             Only returned when ``return_expected_set`` is ``True``.
 
-            - a calculator: The calculator instance used in the computation of the p-values.
+            - a calculator: The calculator instance used in the computation of the :math:`p`-values.
               Either an instance of :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
               or :py:class:`~pyhf.infer.calculators.ToyCalculator`,
               depending on the value of ``calctype``.
