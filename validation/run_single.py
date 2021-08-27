@@ -1,11 +1,7 @@
-import ROOT
+import json
 import sys
 
-infile = sys.argv[1]
-
-infile = ROOT.TFile.Open(infile)
-workspace = infile.Get("combined")
-data = workspace.data("obsData")
+import ROOT
 
 sbModel = workspace.obj("ModelConfig")
 poi = sbModel.GetParametersOfInterest().first()
