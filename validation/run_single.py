@@ -3,37 +3,43 @@ import sys
 
 import ROOT
 
-sbModel = workspace.obj("ModelConfig")
-poi = sbModel.GetParametersOfInterest().first()
+if __name__ == "__main__":
+    infile = sys.argv[1]
 
-sbModel.SetSnapshot(ROOT.RooArgSet(poi))
+    infile = ROOT.TFile.Open(infile)
+    workspace = infile.Get("combined")
+    data = workspace.data("obsData")
 
-bModel = sbModel.Clone()
-bModel.SetName("bonly")
-poi.setVal(0)
-bModel.SetSnapshot(ROOT.RooArgSet(poi))
+    sbModel = workspace.obj("ModelConfig")
+    poi = sbModel.GetParametersOfInterest().first()
 
-ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
-ac.SetPrintLevel(10)
-ac.SetOneSided(True)
-ac.SetQTilde(True)
+    sbModel.SetSnapshot(ROOT.RooArgSet(poi))
 
+    bModel = sbModel.Clone()
+    bModel.SetName("bonly")
+    poi.setVal(0)
+    bModel.SetSnapshot(ROOT.RooArgSet(poi))
 
-calc = ROOT.RooStats.HypoTestInverter(ac)
-calc.SetConfidenceLevel(0.95)
-calc.UseCLs(True)
-calc.RunFixedScan(1, 1, 1)
+    ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
+    ac.SetPrintLevel(10)
+    ac.SetOneSided(True)
+    ac.SetQTilde(True)
 
-result = calc.GetInterval()
+    calc = ROOT.RooStats.HypoTestInverter(ac)
+    calc.SetConfidenceLevel(0.95)
+    calc.UseCLs(True)
+    calc.RunFixedScan(1, 1, 1)
 
-index = 0
+    result = calc.GetInterval()
 
-w = result.GetExpectedPValueDist(index)
-v = w.GetSamplingDistribution()
+    index = 0
 
-CLs_obs = result.CLs(index)
-CLs_exp = list(v)[3:-3]
+    w = result.GetExpectedPValueDist(index)
+    v = w.GetSamplingDistribution()
 
-import json
+    CLs_obs = result.CLs(index)
+    CLs_exp = list(v)[3:-3]
 
-print(json.dumps({'CLs_obs': CLs_obs, 'CLs_exp': CLs_exp}, sort_keys=True, indent=4))
+    print(
+        json.dumps({'CLs_obs': CLs_obs, 'CLs_exp': CLs_exp}, sort_keys=True, indent=4)
+    )
