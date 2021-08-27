@@ -394,7 +394,6 @@ def test_export_data(mocker):
 
 def test_export_duplicate_hist_name(mocker):
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE', new={'duplicate_name': True})
-    mocker.patch.object(pyhf.writexml, 'TH1')
 
     with pytest.raises(KeyError):
         pyhf.writexml._export_root_histogram('duplicate_name', [0, 1, 2])
