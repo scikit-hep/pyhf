@@ -1,9 +1,12 @@
+import json
+import logging
+import xml.etree.ElementTree as ET
+
+import pytest
+import uproot
+
 import pyhf
 import pyhf.writexml
-import pytest
-import json
-import xml.etree.ElementTree as ET
-import logging
 
 
 def spec_staterror():
@@ -390,6 +393,25 @@ def test_export_data(mocker):
     assert data.attrib['HistoName']
     assert data.attrib['InputFile']
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
+
+
+def test_export_root_histogram(mocker, tmpdir):
+    """
+    Test that pyhf.writexml._export_root_histogram writes out a histogram
+    in the manner that uproot is expecting
+    """
+    mocker.patch("pyhf.writexml._ROOT_DATA_FILE", {})
+    pyhf.writexml._export_root_histogram("example", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+    with uproot.recreate(tmpdir.join("test_export_root_histogram.root")) as file:
+        file["hist"] = pyhf.writexml._ROOT_DATA_FILE["example"]
+        counts, edges = file["hist"].to_numpy()
+        values = counts * edges[:-1]
+
+        assert file["hist"].values().tolist() == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        assert counts.tolist() == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        assert edges.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        assert values.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
 def test_export_duplicate_hist_name(mocker):
