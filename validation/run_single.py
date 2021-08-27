@@ -38,5 +38,5 @@ if __name__ == "__main__":
     CLs_exp = list(dist.GetSamplingDistribution())[3:-3]
 
     print(
-        json.dumps({'CLs_obs': CLs_obs, 'CLs_exp': CLs_exp}, sort_keys=True, indent=4)
+        json.dumps({"CLs_obs": CLs_obs, "CLs_exp": CLs_exp}, sort_keys=True, indent=4)
     )
