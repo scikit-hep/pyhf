@@ -1,10 +1,12 @@
 import json
-import numpy as np
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
+import ROOT
+
 import pyhf
 import pyhf.contrib.viz.brazil as brazil
-import ROOT
-import sys
 
 
 def run_toys_ROOT(infile, ntoys):
@@ -83,8 +85,6 @@ def run_toys_pyhf(ntoys=2_000, seed=0):
 
     fig, ax = plt.subplots()
     brazil.plot_results(test_mus, fit_results, ax=ax)
-    ax.set_xlabel(r"$\mu$")
-    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
     _buffer = 0.02
     ax.set_xlim(1.0 - _buffer, 1.2 + _buffer)
     ax.set_ylim(0.0, 0.2)

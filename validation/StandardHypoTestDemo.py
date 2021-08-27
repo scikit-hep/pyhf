@@ -1,8 +1,10 @@
-import sys
-import numpy as np
 import json
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
 import ROOT
+
 import pyhf
 
 

@@ -1,7 +1,7 @@
-import ROOT
-
 import json
 import sys
+
+import ROOT
 
 source_data = json.load(open(sys.argv[1]))
 root_file = sys.argv[2]
