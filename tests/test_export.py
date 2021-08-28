@@ -401,13 +401,14 @@ def test_export_root_histogram(mocker, tmp_path):
     in the manner that uproot is expecting
     """
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE", {})
-    pyhf.writexml._export_root_histogram("example", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    pyhf.writexml._export_root_histogram("hist", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
-        file["hist"] = pyhf.writexml._ROOT_DATA_FILE["example"]
+        file["hist"] = pyhf.writexml._ROOT_DATA_FILE["hist"]
         values, edges = file["hist"].to_numpy()
 
         assert file["hist"].values().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        assert file["hist"].name == "hist"
         assert values.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert edges.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
