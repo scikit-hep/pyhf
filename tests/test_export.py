@@ -405,13 +405,11 @@ def test_export_root_histogram(mocker, tmp_path):
 
     with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
         file["hist"] = pyhf.writexml._ROOT_DATA_FILE["example"]
-        counts, edges = file["hist"].to_numpy()
-        values = counts * edges[:-1]
+        values, edges = file["hist"].to_numpy()
 
-        assert file["hist"].values().tolist() == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        assert counts.tolist() == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        assert edges.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        assert file["hist"].values().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert values.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        assert edges.tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
 def test_export_duplicate_hist_name(mocker):
