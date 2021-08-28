@@ -1,9 +1,11 @@
-import pyhf
-import pyhf.writexml
-import pyhf.readxml
 import json
-import pytest
+
 import numpy as np
+import pytest
+
+import pyhf
+import pyhf.readxml
+import pyhf.writexml
 
 
 @pytest.fixture(scope='module')
