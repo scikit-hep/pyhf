@@ -45,11 +45,12 @@ def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
     return f"{prefix}{middle}{suffix}"
 
 
-def _export_root_histogram(histname, data):
-    if histname in _ROOT_DATA_FILE:
-        raise KeyError(f"Duplicate key {histname} being written.")
-    hist_uproot_model = uproot.to_writable((np.asarray(data), np.arange(len(data) + 1)))
-    _ROOT_DATA_FILE[histname] = hist_uproot_model
+def _export_root_histogram(hist_name, data):
+    if hist_name in _ROOT_DATA_FILE:
+        raise KeyError(f"Duplicate key {hist_name} being written.")
+    _ROOT_DATA_FILE[hist_name] = uproot.to_writable(
+        (np.asarray(data), np.arange(len(data) + 1))
+    )
 
 
 # https://stackoverflow.com/a/4590052
