@@ -234,7 +234,7 @@ def build_sample(spec, samplespec, channelname):
     attrs = {
         'Name': samplespec['name'],
         'HistoName': histname,
-        'InputFile': _ROOT_DATA_FILE._path,
+        'InputFile': _ROOT_DATA_FILE.file_path,
         'NormalizeByTheory': 'False',
     }
     sample = ET.Element('Sample', **attrs)
@@ -253,7 +253,7 @@ def build_sample(spec, samplespec, channelname):
 
 def build_data(obsspec, channelname):
     histname = _make_hist_name(channelname, 'data')
-    data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE._path)
+    data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE.file_path)
 
     observation = next((obs for obs in obsspec if obs['name'] == channelname), None)
     _export_root_histogram(histname, observation['data'])
@@ -262,7 +262,7 @@ def build_data(obsspec, channelname):
 
 def build_channel(spec, channelspec, obsspec):
     channel = ET.Element(
-        'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
+        'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE.file_path
     )
     if obsspec:
         data = build_data(obsspec, channelspec['name'])
