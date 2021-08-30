@@ -398,7 +398,8 @@ def test_export_data(mocker):
 def test_export_root_histogram(mocker, tmp_path):
     """
     Test that pyhf.writexml._export_root_histogram writes out a histogram
-    in the manner that uproot is expecting
+    in the manner that uproot is expecting and verifies this by reading
+    the serialized file
     """
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE", {})
     pyhf.writexml._export_root_histogram("hist", [0, 1, 2, 3, 4, 5, 6, 7, 8])
@@ -406,6 +407,7 @@ def test_export_root_histogram(mocker, tmp_path):
     with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
         file["hist"] = pyhf.writexml._ROOT_DATA_FILE["hist"]
 
+    with uproot.open(tmp_path.joinpath("test_export_root_histogram.root")) as file:
         assert file["hist"].values().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
         assert file["hist"].axis().edges().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert file["hist"].name == "hist"
