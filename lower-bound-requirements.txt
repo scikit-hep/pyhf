@@ -6,7 +6,7 @@ jsonschema==3.0.0
 jsonpatch==1.15
 pyyaml==5.1
 # xmlio
-uproot==4.1.0
+uproot==4.1.1
 # minuit
 iminuit==2.4.0
 # tensorflow

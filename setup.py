@@ -8,7 +8,7 @@ extras_require = {
     ],
     'torch': ['torch~=1.8'],
     'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58,!=0.1.68'],  # c.f. Issue 1501
-    'xmlio': ['uproot>=4.1.0'],
+    'xmlio': ['uproot>=4.1.1'],
     'minuit': ['iminuit>=2.4'],
 }
 extras_require['backends'] = sorted(
