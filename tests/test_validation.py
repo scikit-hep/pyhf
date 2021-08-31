@@ -1,10 +1,11 @@
-import pyhf
-import pyhf.writexml
-import pyhf.readxml
 import json
-import pytest
-from pathlib import Path
+
 import numpy as np
+import pytest
+
+import pyhf
+import pyhf.readxml
+import pyhf.writexml
 
 
 @pytest.fixture(scope='module')
@@ -807,7 +808,7 @@ def test_validation(setup):
 
 
 @pytest.mark.parametrize(
-    'toplvl, basedir',
+    'top_level, base_dir',
     [
         (
             'validation/xmlimport_input/config/example.xml',
@@ -824,26 +825,28 @@ def test_validation(setup):
     ],
     ids=['example-one', 'example-two', 'example-three'],
 )
-def test_import_roundtrip(tmpdir, toplvl, basedir):
-    parsed_xml_before = pyhf.readxml.parse(toplvl, basedir)
+def test_import_roundtrip(tmp_path, top_level, base_dir):
+    parsed_xml_before = pyhf.readxml.parse(top_level, base_dir)
     spec = {
         'channels': parsed_xml_before['channels'],
         'parameters': parsed_xml_before['measurements'][0]['config']['parameters'],
     }
     pdf_before = pyhf.Model(spec, poi_name='SigXsecOverSM')
 
-    tmpconfig = tmpdir.mkdir('config')
-    tmpdata = tmpdir.mkdir('data')
-    tmpxml = tmpdir.join('FitConfig.xml')
-    tmpxml.write(
+    tmp_config = tmp_path.joinpath('config')
+    tmp_config.mkdir()
+    tmp_data = tmp_path.joinpath('data')
+    tmp_data.mkdir()
+    tmp_xml = tmp_path.joinpath('FitConfig.xml')
+    tmp_xml.write_text(
         pyhf.writexml.writexml(
             parsed_xml_before,
-            tmpconfig.strpath,
-            tmpdata.strpath,
-            Path(tmpdir.strpath).joinpath('FitConfig'),
+            tmp_config,
+            tmp_data,
+            tmp_path.joinpath('FitConfig'),
         ).decode('utf-8')
     )
-    parsed_xml_after = pyhf.readxml.parse(tmpxml.strpath, tmpdir.strpath)
+    parsed_xml_after = pyhf.readxml.parse(tmp_xml, tmp_path)
     spec = {
         'channels': parsed_xml_after['channels'],
         'parameters': parsed_xml_after['measurements'][0]['config']['parameters'],

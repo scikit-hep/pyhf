@@ -283,9 +283,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix))
     )
 
-    with uproot.recreate(
-        str(Path(data_rootdir).joinpath('data.root'))
-    ) as _ROOT_DATA_FILE:
+    with uproot.recreate(Path(data_rootdir).joinpath('data.root')) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
             channelfilename = str(
                 Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
