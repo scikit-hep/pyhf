@@ -1,6 +1,7 @@
 ---
 name: 🐛 Bug Report
 description: Create a report to help us improve
+labels: ["bug", "needs-triage"]
 
 body:
 - type: markdown
@@ -13,30 +14,28 @@ body:
       Verify first that your issue is not [already reported on
       GitHub][issue search].
 
-      [issue search]: ../search?q=is%3Aissue&type=issues
 
+      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Abug
 
 - type: textarea
   attributes:
     label: Summary
     description: Explain the problem briefly below.
     placeholder: >-
-      When I try to do X with `pyhf` and the following workspace, Y breaks or
+      When I try to do X with pyhf and the following workspace, Y breaks or
       Z happens in an unexpected manner.
-      Here are all the details I know about this problem...
+      Here are all the details I know about this problem.
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: pyhf version
+    label: pyhf Version
     description: >-
       Paste verbatim output from `pyhf --version` below, under
-      the prompt line. Please don't wrap it with tripple backticks — your
+      the prompt line. Please don't wrap it with tripple backticks &mdash; your
       whole input will be turned into a code snippet automatically.
     render: console
-    value: |
-      $ pyhf --version
     placeholder: |
       $ pyhf --version
       pyhf, version 0.6.2
@@ -47,23 +46,23 @@ body:
   attributes:
     label: OS / Environment
     description: >-
-      Provide the name of your operating system and the output of `uname --all`
-    placeholder: >-
+      Provide the name of your operating system and the output of `uname --all`.
+    placeholder: |
       Ubuntu 18.04
       $ uname --all
   validations:
     required: true
 
-
 - type: textarea
   attributes:
     label: Steps to Reproduce
-    description: |
+    description: >-
       Describe exactly how to reproduce the problem, using a minimal test-case.
       It would *really* help us understand your problem if you paste in the Python code
-      that you're running commands you used.
+      that you're running.
 
-      **HINT:** You can paste https://gist.github.com links for larger files.
+
+      **HINT:** You can paste [GitHub Gist](https://gist.github.com) links for larger files.
     value: |
       <!--- Paste your minimal failing Python example code between the quotes below -->
       ```python (paste below)
@@ -85,10 +84,11 @@ body:
 - type: textarea
   attributes:
     label: Actual Results
-    description: |
+    description: >-
       Describe what actually happened.
 
-      Paste verbatim command output and don't wrap it with tripple backticks — your
+
+      Paste verbatim command output and don't wrap it with tripple backticks &mdash; your
       whole input will be turned into a code snippet automatically.
     render: console
   validations:
