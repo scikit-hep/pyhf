@@ -1,0 +1,107 @@
+---
+name: 🐛 Bug Report
+description: Create a report to help us improve
+
+body:
+- type: markdown
+  attributes:
+    value: >
+      **Thank you for wanting to report a bug in pyhf!**
+
+
+      ⚠
+      Verify first that your issue is not [already reported on
+      GitHub][issue search].
+
+      [issue search]: ../search?q=is%3Aissue&type=issues
+
+
+- type: textarea
+  attributes:
+    label: Summary
+    description: Explain the problem briefly below.
+    placeholder: >-
+      When I try to do X with `pyhf` and the following workspace, Y breaks or
+      Z happens in an unexpected manner.
+      Here are all the details I know about this problem...
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: pyhf version
+    description: >-
+      Paste verbatim output from `pyhf --version` below, under
+      the prompt line. Please don't wrap it with tripple backticks — your
+      whole input will be turned into a code snippet automatically.
+    render: console
+    value: |
+      $ pyhf --version
+    placeholder: |
+      $ pyhf --version
+      pyhf, version 0.6.2
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: OS / Environment
+    description: >-
+      Provide the name of your operating system and the output of `uname --all`
+    placeholder: >-
+      Ubuntu 18.04
+      $ uname --all
+  validations:
+    required: true
+
+
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: |
+      Describe exactly how to reproduce the problem, using a minimal test-case.
+      It would *really* help us understand your problem if you paste in the Python code
+      that you're running commands you used.
+
+      **HINT:** You can paste https://gist.github.com links for larger files.
+    value: |
+      <!--- Paste your minimal failing Python example code between the quotes below -->
+      ```python (paste below)
+
+      ```
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Expected Results
+    description: >-
+      Describe what you expected to happen when running the steps above.
+    placeholder: >-
+      I expected X to happen because I assumed Y.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Actual Results
+    description: |
+      Describe what actually happened.
+
+      Paste verbatim command output and don't wrap it with tripple backticks — your
+      whole input will be turned into a code snippet automatically.
+    render: console
+  validations:
+    required: true
+
+- type: checkboxes
+  attributes:
+    label: Code of Conduct
+    description: |
+      Read the [`pyhf` Code of Conduct][CoC] first.
+
+      [CoC]: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
+    options:
+    - label: I agree to follow the Code of Conduct
+      required: true
+...
