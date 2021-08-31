@@ -17,7 +17,9 @@ archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 Use in Publications
 -------------------
 
-Updating list of citations and use cases of :code:`pyhf`:
+The following is an updating list of citations and use cases of :code:`pyhf`.
+There is an incomplete but automatically updated `list of citations on INSPIRE
+<https://inspirehep.net/literature/1845084>`__ as well.
 
 Use Citations
 ~~~~~~~~~~~~~
