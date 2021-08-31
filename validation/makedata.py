@@ -1,37 +1,37 @@
-import ROOT
-
 import json
 import sys
 
-source_data = json.load(open(sys.argv[1]))
-root_file = sys.argv[2]
+import ROOT
 
-binning = source_data['binning']
-bindata = source_data['bindata']
+if __name__ == "__main__":
+    source_data = json.load(open(sys.argv[1]))
+    root_file = sys.argv[2]
 
+    binning = source_data["binning"]
+    bin_data = source_data["bin_data"]
 
-f = ROOT.TFile(root_file, 'RECREATE')
-data = ROOT.TH1F('data', 'data', *binning)
-for i, v in enumerate(bindata['data']):
-    data.SetBinContent(i + 1, v)
-data.Sumw2()
+    out_file = ROOT.TFile(root_file, "RECREATE")
+    data = ROOT.TH1F("data", "data", *binning)
+    for idx, value in enumerate(bin_data["data"]):
+        data.SetBinContent(idx + 1, value)
+    data.Sumw2()
 
-bkg = ROOT.TH1F('bkg', 'bkg', *binning)
-for i, v in enumerate(bindata['bkg']):
-    bkg.SetBinContent(i + 1, v)
-bkg.Sumw2()
+    bkg = ROOT.TH1F("bkg", "bkg", *binning)
+    for idx, value in enumerate(bin_data["bkg"]):
+        bkg.SetBinContent(idx + 1, value)
+    bkg.Sumw2()
 
+    if "bkgerr" in bin_data:
+        bkgerr = ROOT.TH1F("bkgerr", "bkgerr", *binning)
 
-if 'bkgerr' in bindata:
-    bkgerr = ROOT.TH1F('bkgerr', 'bkgerr', *binning)
+        # shapesys must be as multiplicative factor
+        for idx, value in enumerate(bin_data["bkgerr"]):
+            bkgerr.SetBinContent(idx + 1, value / bkg.GetBinContent(idx + 1))
+        bkgerr.Sumw2()
 
-    # shapesys must be as multiplicative factor
-    for i, v in enumerate(bindata['bkgerr']):
-        bkgerr.SetBinContent(i + 1, v / bkg.GetBinContent(i + 1))
-    bkgerr.Sumw2()
+    sig = ROOT.TH1F("sig", "sig", *binning)
+    for idx, value in enumerate(bin_data["sig"]):
+        sig.SetBinContent(idx + 1, value)
+    sig.Sumw2()
 
-sig = ROOT.TH1F('sig', 'sig', *binning)
-for i, v in enumerate(bindata['sig']):
-    sig.SetBinContent(i + 1, v)
-sig.Sumw2()
-f.Write()
+    out_file.Write()

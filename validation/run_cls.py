@@ -1,45 +1,44 @@
-import ROOT
 import sys
 
-infile = sys.argv[1]
+import ROOT
 
-infile = ROOT.TFile.Open(infile)
-workspace = infile.Get("combined")
-data = workspace.data("obsData")
+if __name__ == "__main__":
+    infile = sys.argv[1]
 
+    infile = ROOT.TFile.Open(infile)
+    workspace = infile.Get("combined")
+    data = workspace.data("obsData")
 
-sbModel = workspace.obj("ModelConfig")
-poi = sbModel.GetParametersOfInterest().first()
+    sb_model = workspace.obj("ModelConfig")
+    poi = sb_model.GetParametersOfInterest().first()
 
-sbModel.SetSnapshot(ROOT.RooArgSet(poi))
+    sb_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-bModel = sbModel.Clone()
-bModel.SetName("bonly")
-poi.setVal(0)
-bModel.SetSnapshot(ROOT.RooArgSet(poi))
+    bkg_model = sb_model.Clone()
+    bkg_model.SetName("bonly")
+    poi.setVal(0)
+    bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-ac = ROOT.RooStats.AsymptoticCalculator(data, bModel, sbModel)
-ac.SetPrintLevel(10)
-ac.SetOneSided(True)
-ac.SetQTilde(True)
+    calc = ROOT.RooStats.AsymptoticCalculator(data, bkg_model, sb_model)
+    calc.SetPrintLevel(10)
+    calc.SetOneSided(True)
+    calc.SetQTilde(True)
 
-calc = ROOT.RooStats.HypoTestInverter(ac)
-calc.RunFixedScan(51, 0, 5)
-calc.SetConfidenceLevel(0.95)
-calc.UseCLs(True)
+    test_inverter = ROOT.RooStats.HypoTestInverter(calc)
+    test_inverter.RunFixedScan(51, 0, 5)
+    test_inverter.SetConfidenceLevel(0.95)
+    test_inverter.UseCLs(True)
 
+    result = test_inverter.GetInterval()
 
-result = calc.GetInterval()
+    plot = ROOT.RooStats.HypoTestInverterPlot("plot", "plot", result)
+    canvas = ROOT.TCanvas()
+    canvas.SetLogy(False)
+    plot.Draw("OBS EXP CLb 2CL")
+    canvas.Draw()
+    canvas.SaveAs("scan.pdf")
 
-plot = ROOT.RooStats.HypoTestInverterPlot("plot", "plot", result)
-c = ROOT.TCanvas()
-c.SetLogy(False)
-plot.Draw("OBS EXP CLb 2CL")
-c.Draw()
-c.SaveAs('scan.pdf')
+    print(f"observed: {result.UpperLimit()}")
 
-
-print(f'observed: {result.UpperLimit()}')
-
-for i in [-2, -1, 0, 1, 2]:
-    print(f'expected {i}: {result.GetExpectedUpperLimit(i)}')
+    for n_sigma in [-2, -1, 0, 1, 2]:
+        print(f"expected {n_sigma}: {result.GetExpectedUpperLimit(n_sigma)}")

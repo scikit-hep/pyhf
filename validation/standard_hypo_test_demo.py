@@ -1,63 +1,64 @@
-import sys
-import numpy as np
 import json
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
 import ROOT
+
 import pyhf
 
 
-def StandardHypoTestDemo(
+def standard_hypo_test_demo(
     infile,
     ntoys,
-    workspaceName="combined",
-    modelSBName="ModelConfig",
-    dataName="obsData",
+    workspace_name="combined",
+    sb_model_name="ModelConfig",
+    data_name="obsData",
 ):
 
     file = ROOT.TFile.Open(infile)
-    w = file.Get(workspaceName)
-    sbModel = w.obj(modelSBName)
-    data = w.data(dataName)
+    workspace = file.Get(workspace_name)
+    sb_model = workspace.obj(sb_model_name)
+    data = workspace.data(data_name)
 
-    bModel = sbModel.Clone()
-    bModel.SetName(modelSBName + "B_only")
-    var = bModel.GetParametersOfInterest().first()
-    oldval = var.getVal()
-    var.setVal(0)
-    bModel.SetSnapshot(ROOT.RooArgSet(var))
-    var.setVal(oldval)
+    bkg_model = sb_model.Clone()
+    bkg_model.SetName(sb_model_name + "B_only")
+    _var = bkg_model.GetParametersOfInterest().first()
+    _oldval = _var.getVal()
+    _var.setVal(0)
+    bkg_model.SetSnapshot(ROOT.RooArgSet(_var))
+    _var.setVal(_oldval)
 
-    var = sbModel.GetParametersOfInterest().first()
-    sbModel.SetSnapshot(ROOT.RooArgSet(var))
+    _var = sb_model.GetParametersOfInterest().first()
+    sb_model.SetSnapshot(ROOT.RooArgSet(_var))
 
-    profll = ROOT.RooStats.ProfileLikelihoodTestStat(bModel.GetPdf())
-    profll.SetOneSidedDiscovery(False)
-    profll.SetOneSided(True)
-    hypoCalc = ROOT.RooStats.FrequentistCalculator(data, bModel, sbModel)
-    # profll.SetPrintLevel(2)
+    profile_ll = ROOT.RooStats.ProfileLikelihoodTestStat(bkg_model.GetPdf())
+    profile_ll.SetOneSidedDiscovery(False)
+    profile_ll.SetOneSided(True)
+    calc = ROOT.RooStats.FrequentistCalculator(data, bkg_model, sb_model)
 
-    print('by hand', profll.Evaluate(data, ROOT.RooArgSet(var)))
+    print(f'by hand: {profile_ll.Evaluate(data, ROOT.RooArgSet(_var))}')
 
-    hypoCalc.SetToys(ntoys, ntoys)
+    calc.SetToys(ntoys, ntoys)
 
-    sampler = hypoCalc.GetTestStatSampler()
-    sampler.SetTestStatistic(profll)
+    sampler = calc.GetTestStatSampler()
+    sampler.SetTestStatistic(profile_ll)
 
-    htr = hypoCalc.GetHypoTest()
-    htr.SetPValueIsRightTail(True)
-    htr.SetBackgroundAsAlt(True)
+    hypo_test_result = calc.GetHypoTest()
+    hypo_test_result.SetPValueIsRightTail(True)
+    hypo_test_result.SetBackgroundAsAlt(True)
 
-    ds = htr.GetNullDistribution()
-    db = htr.GetAltDistribution()
+    dist_signal = hypo_test_result.GetNullDistribution()
+    dist_bkg = hypo_test_result.GetAltDistribution()
 
-    r = ROOT.RooStats.HypoTestResult()
-    r.SetPValueIsRightTail(True)
-    r.SetNullDistribution(ds)
-    r.SetAltDistribution(db)
+    result = ROOT.RooStats.HypoTestResult()
+    result.SetPValueIsRightTail(True)
+    result.SetNullDistribution(dist_signal)
+    result.SetAltDistribution(dist_bkg)
 
     values = [
-        1 / (r.SetTestStatisticData(v), r.CLs())[-1]
-        for v in ds.GetSamplingDistribution()
+        1 / (result.SetTestStatisticData(v), result.CLs())[-1]
+        for v in dist_signal.GetSamplingDistribution()
     ]
     print(values)
     values = np.percentile(
@@ -65,8 +66,8 @@ def StandardHypoTestDemo(
     )
     print(values)
 
-    htr.Print()
-    plot = ROOT.RooStats.HypoTestPlot(htr, 100)
+    hypo_test_result.Print()
+    plot = ROOT.RooStats.HypoTestPlot(hypo_test_result, 100)
     plot.SetLogYaxis(True)
     plot.Draw()
     ROOT.gPad.SaveAs("plot.png")
@@ -118,7 +119,7 @@ def pyhf_version(ntoys=5000, seed=0):
 
 
 if __name__ == "__main__":
-    StandardHypoTestDemo(
+    standard_hypo_test_demo(
         infile=sys.argv[1], ntoys=int(sys.argv[2]) if len(sys.argv) > 2 else 2000
     )
     pyhf_version()
