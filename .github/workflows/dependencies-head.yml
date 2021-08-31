@@ -63,31 +63,6 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
-  uproot3:
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
-        python -m pip uninstall --yes uproot3
-        python -m pip install --upgrade git+git://github.com/scikit-hep/uproot3.git
-        python -m pip list
-    - name: Test with pytest
-      run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
-
   uproot4:
 
     runs-on: ${{ matrix.os }}

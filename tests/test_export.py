@@ -1,9 +1,12 @@
+import json
+import logging
+import xml.etree.ElementTree as ET
+
+import pytest
+import uproot
+
 import pyhf
 import pyhf.writexml
-import pytest
-import json
-import xml.etree.ElementTree as ET
-import logging
 
 
 def spec_staterror():
@@ -392,9 +395,26 @@ def test_export_data(mocker):
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called
 
 
+def test_export_root_histogram(mocker, tmp_path):
+    """
+    Test that pyhf.writexml._export_root_histogram writes out a histogram
+    in the manner that uproot is expecting and verifies this by reading
+    the serialized file
+    """
+    mocker.patch("pyhf.writexml._ROOT_DATA_FILE", {})
+    pyhf.writexml._export_root_histogram("hist", [0, 1, 2, 3, 4, 5, 6, 7, 8])
+
+    with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
+        file["hist"] = pyhf.writexml._ROOT_DATA_FILE["hist"]
+
+    with uproot.open(tmp_path.joinpath("test_export_root_histogram.root")) as file:
+        assert file["hist"].values().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        assert file["hist"].axis().edges().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        assert file["hist"].name == "hist"
+
+
 def test_export_duplicate_hist_name(mocker):
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE', new={'duplicate_name': True})
-    mocker.patch.object(pyhf.writexml, 'TH1')
 
     with pytest.raises(KeyError):
         pyhf.writexml._export_root_histogram('duplicate_name', [0, 1, 2])
