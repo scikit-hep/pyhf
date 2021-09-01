@@ -14,7 +14,7 @@ body:
       Verify first that your issue is not [already reported on
       GitHub][issue search].
       Make sure to check the closed issues as well as it may
-      already be implimented in a development release.
+      already be implemented in a development release.
 
 
       [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Abug
