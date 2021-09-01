@@ -392,7 +392,7 @@ def test_tensor_tile(backend):
     ]
 
     if tb.name == 'tensorflow':
-        with pytest.raises(tf.python.framework.errors_impl.InvalidArgumentError):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             tb.tile(tb.astensor([[[10, 20, 30]]]), (2, 1))
 
 

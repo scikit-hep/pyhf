@@ -120,7 +120,7 @@ class tensorflow_backend:
         """
         try:
             return tf.tile(tensor_in, repeats)
-        except tf.python.framework.errors_impl.InvalidArgumentError:
+        except tf.errors.InvalidArgumentError:
             shape = tf.shape(tensor_in).numpy().tolist()
             diff = len(repeats) - len(shape)
             if diff < 0:
