@@ -30,26 +30,36 @@ body:
 
 - type: textarea
   attributes:
-    label: pyhf Version
-    description: >-
-      Paste verbatim output from `pyhf --version` below, under
-      the prompt line. Please don't wrap it with tripple backticks &mdash; your
-      whole input will be turned into a code snippet automatically.
-    render: console
-    placeholder: |
-      $ pyhf --version
-      pyhf, version 0.6.2
-  validations:
-    required: true
-
-- type: textarea
-  attributes:
     label: OS / Environment
     description: >-
-      Provide the name of your operating system and the output of `uname --all`.
+      Provide information on your operating system.
+      Something like the output of `cat /etc/os-release` on Linux or
+      `system_profiler -detailLevel mini SPSoftwareDataType` on macOS.
+    render: console
     placeholder: |
-      Ubuntu 18.04
-      $ uname --all
+      # Linux
+      $ cat /etc/os-release
+      NAME="Ubuntu"
+      VERSION="20.04.2 LTS (Focal Fossa)"
+      ID=ubuntu
+      ID_LIKE=debian
+      PRETTY_NAME="Ubuntu 20.04.2 LTS"
+      VERSION_ID="20.04"
+      HOME_URL="https://www.ubuntu.com/"
+      SUPPORT_URL="https://help.ubuntu.com/"
+      BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+      PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+      VERSION_CODENAME=focal
+      UBUNTU_CODENAME=focal
+
+      # macOS
+      $ system_profiler -detailLevel mini SPSoftwareDataType | head -n 6
+      Software:
+
+          System Software Overview:
+
+            System Version: macOS 10.15.7 (19H1323)
+            Kernel Version: Darwin 19.6.0
   validations:
     required: true
 
@@ -68,8 +78,28 @@ body:
       ```python (paste below)
 
       ```
+
+      <!--- ...or if you have a failing CLI command paste it between the quotes below -->
+      ```console (paste below)
+
+      ```
   validations:
     required: true
+
+- type: textarea
+  attributes:
+    label: File Upload (optional)
+    description: >-
+      If your steps to reproduce your minimal failing example require either a spec or a
+      workspace file, please upload it by attaching it to the text area here.
+
+
+      **HINT:** You can paste [GitHub Gist](https://gist.github.com) links for larger files.
+    placeholder: >-
+      Attach any files or compressed archives by dragging & dropping, selecting,
+      or pasting them here.
+  validations:
+    required: false
 
 - type: textarea
   attributes:
@@ -85,12 +115,23 @@ body:
   attributes:
     label: Actual Results
     description: >-
-      Describe what actually happened.
-
-
-      Paste verbatim command output and don't wrap it with tripple backticks &mdash; your
-      whole input will be turned into a code snippet automatically.
+      Paste verbatim program or command output.
+      Don't wrap it with tripple backticks &mdash; your whole input will be
+      turned into a code snippet automatically.
     render: console
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: pyhf Version
+    description: >-
+      Paste verbatim output from `pyhf --version` below, under the prompt line.
+      Don't wrap it with tripple backticks &mdash; your whole input will be
+      turned into a code snippet automatically.
+    render: console
+    placeholder: |
+      $ pyhf --version
   validations:
     required: true
 
