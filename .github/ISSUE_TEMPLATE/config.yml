@@ -1,15 +1,15 @@
 # Ref: https://help.github.com/en/github/building-a-strong-community/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
 blank_issues_enabled: true
 contact_links:
-- name: 🙋 Useage Questions
+- name: 🙋  Useage Questions
   url: https://github.com/scikit-hep/pyhf/discussions
   about: |
     Use pyhf's GitHub Discussions to ask "How do I do X with pyhf?".
-- name: 📖 Tutorial
+- name: 📖  Tutorial
   url: https://pyhf.github.io/pyhf-tutorial/
   about: |
     The pyhf tutorial is continually updated and provides an in depth walkthrough
     of how to use the latest release of pyhf.
-- name: 📝 pyhf Code of Conduct
+- name: 📝  pyhf Code of Conduct
   url: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
   about: Expectations for how people will interact with each other on pyhf's GitHub.
