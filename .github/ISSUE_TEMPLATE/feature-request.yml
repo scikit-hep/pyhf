@@ -17,7 +17,7 @@ body:
       already be implemented in a development release.
 
 
-      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Abug
+      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Afeat%2Fenhancement
 
 
 - type: textarea
