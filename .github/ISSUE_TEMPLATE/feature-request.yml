@@ -41,6 +41,7 @@ body:
 
       * Could there be a different approach to solving this issue?
 
+
       If there are external references or other GitHub Issues that are related
       please link them here as well.
     placeholder: >-
@@ -57,7 +58,9 @@ body:
 
       **HINT:** You can paste [GitHub Gist](https://gist.github.com) links for larger files.
     value: |
-      <!--- Paste your mock Python example code between the quotes below -->
+      <!--- Describe what you are showing in your example -->
+
+      <!--- and then paste your mock Python example code between the quotes below -->
       ```python (paste below)
 
       ```
