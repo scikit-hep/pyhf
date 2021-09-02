@@ -15,7 +15,7 @@ body:
       GitHub][issue search].
 
 
-      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Abug
+      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs
 
 - type: textarea
   attributes:
