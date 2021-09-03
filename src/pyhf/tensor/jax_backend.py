@@ -78,7 +78,7 @@ class jax_backend:
             >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> pyhf.tensorlib.clip(a, -1, 1)
-            DeviceArray([-1., -1.,  0.,  1.,  1.], dtype=float64)
+            DeviceArray([-1., -1.,  0.,  1.,  1.], dtype=float64, weak_type=True)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
