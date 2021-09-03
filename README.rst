@@ -122,7 +122,7 @@ Implemented variations:
   - ☑ ShapeSys
   - ☑ NormFactor
   - ☑ Multiple Channels
-  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot4>`__
   - ☑ ShapeFactor
   - ☑ StatError
   - ☑ Lumi Uncertainty
