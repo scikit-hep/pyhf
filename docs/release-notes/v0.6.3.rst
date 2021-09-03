@@ -48,13 +48,5 @@ Python API
   renamed to ``include_auxdata`` to improve API consistency.
   (PR :pr:`1562`)
 
-
-Contributors
-------------
-
-``v0.6.3`` benefited from contributions from:
-
-* Alexander Held
-
 .. |release v0.6.3| replace:: ``v0.6.3``
 .. _`release v0.6.3`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3
