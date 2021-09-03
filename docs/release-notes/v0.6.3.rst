@@ -6,11 +6,15 @@ This is a patch release from ``v0.6.2`` → ``v0.6.3``.
 Important Notes
 ---------------
 
-* XXX The :func:`pyhf.simplemodels.hepdata_like` API has been deprecated in favor of
-  :func:`pyhf.simplemodels.uncorrelated_background`.
-  The :func:`pyhf.simplemodels.hepdata_like` API will be removed in ``pyhf`` ``v0.7.0``.
-  (PR :pr:`1438`)
-* XXX
+* With the addition of writing ROOT files in |uproot v4.1.0 release|_ the
+  ``xmlio`` extra no longer requires ``uproot3`` and all dependncies on
+  ``uproot3`` and ``uproot3-methods`` have been dropped.
+  (PR :pr:`1567`)
+* :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+  renamed to ``include_auxdata`` to improve API consistency.
+
+.. |uproot v4.1.0 release| replace:: ``uproot`` ``v4.1.0``
+.. _`uproot v4.1.0 release`: https://github.com/scikit-hep/uproot4/releases/tag/4.1.0
 
 Fixes
 -----
@@ -31,6 +35,12 @@ Python API
 * The :class:`pyhf.pdf._ModelConfig` ``channel_nbins`` dict is now sorted by
   keys to match the order of the ``channels`` dict.
   (PR :pr:`1546`)
+* :func:`pyhf.pdf._ModelConfig.par_names` can now handle non-scalar modifiers
+  with 1 parameter.
+  (PR :pr:`1560`)
+* :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+  renamed to ``include_auxdata`` to improve API consistency.
+  (PR :pr:`1562`)
 
 
 Contributors
