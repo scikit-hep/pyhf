@@ -101,7 +101,7 @@ class jax_backend:
             >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
             >>> pyhf.tensorlib.erf(a)
             DeviceArray([-0.99532227, -0.84270079,  0.        ,  0.84270079,
-                          0.99532227], dtype=float64)
+                          0.99532227], dtype=float64, weak_type=True)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
@@ -121,7 +121,7 @@ class jax_backend:
             >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([-2., -1., 0., 1., 2.])
             >>> pyhf.tensorlib.erfinv(pyhf.tensorlib.erf(a))
-            DeviceArray([-2., -1.,  0.,  1.,  2.], dtype=float64)
+            DeviceArray([-2., -1.,  0.,  1.,  2.], dtype=float64, weak_type=True)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
@@ -142,7 +142,7 @@ class jax_backend:
             >>> a = pyhf.tensorlib.astensor([[1.0], [2.0]])
             >>> pyhf.tensorlib.tile(a, (1, 2))
             DeviceArray([[1., 1.],
-                         [2., 2.]], dtype=float64)
+                         [2., 2.]], dtype=float64, weak_type=True)
 
         Args:
             tensor_in (:obj:`tensor`): The tensor to be repeated
@@ -165,7 +165,7 @@ class jax_backend:
             >>> a = tensorlib.astensor([4])
             >>> b = tensorlib.astensor([5])
             >>> tensorlib.conditional((a < b)[0], lambda: a + b, lambda: a - b)
-            DeviceArray([9.], dtype=float64)
+            DeviceArray([9.], dtype=float64, weak_type=True)
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
@@ -208,7 +208,7 @@ class jax_backend:
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
             >>> tensor
             DeviceArray([[1., 2., 3.],
-                         [4., 5., 6.]], dtype=float64)
+                         [4., 5., 6.]], dtype=float64, weak_type=True)
             >>> type(tensor) # doctest:+ELLIPSIS
             <class '...DeviceArray'>
 
@@ -309,7 +309,7 @@ class jax_backend:
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            [DeviceArray([1., 1., 1.], dtype=float64), DeviceArray([2., 3., 4.], dtype=float64), DeviceArray([5., 6., 7.], dtype=float64)]
+            [DeviceArray([1., 1., 1.], dtype=float64, weak_type=True), DeviceArray([2., 3., 4.], dtype=float64, weak_type=True), DeviceArray([5., 6., 7.], dtype=float64, weak_type=True)]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -335,7 +335,7 @@ class jax_backend:
             >>> pyhf.set_backend("jax")
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
             >>> pyhf.tensorlib.ravel(tensor)
-            DeviceArray([1., 2., 3., 4., 5., 6.], dtype=float64)
+            DeviceArray([1., 2., 3., 4., 5., 6.], dtype=float64, weak_type=True)
 
         Args:
             tensor (Tensor): Tensor object
@@ -381,11 +381,11 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            DeviceArray(0.16062314, dtype=float64)
+            DeviceArray(0.16062314, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)
-            DeviceArray([0.16062314, 0.12407692], dtype=float64)
+            DeviceArray([0.16062314, 0.12407692], dtype=float64, weak_type=True)
 
         Args:
             n (:obj:`tensor` or :obj:`float`): The value at which to evaluate the approximation to the Poisson distribution p.m.f.
@@ -424,12 +424,12 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            DeviceArray(0.35206533, dtype=float64)
+            DeviceArray(0.35206533, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
             >>> pyhf.tensorlib.normal(values, means, sigmas)
-            DeviceArray([0.35206533, 0.46481887], dtype=float64)
+            DeviceArray([0.35206533, 0.46481887], dtype=float64, weak_type=True)
 
         Args:
             x (:obj:`tensor` or :obj:`float`): The value at which to evaluate the Normal distribution p.d.f.
@@ -450,10 +450,10 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal_cdf(0.8)
-            DeviceArray(0.7881446, dtype=float64)
+            DeviceArray(0.7881446, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> pyhf.tensorlib.normal_cdf(values)
-            DeviceArray([0.7881446 , 0.97724987], dtype=float64)
+            DeviceArray([0.7881446 , 0.97724987], dtype=float64, weak_type=True)
 
         Args:
             x (:obj:`tensor` or :obj:`float`): The observed value of the random variable to evaluate the CDF for
@@ -476,7 +476,7 @@ class jax_backend:
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> poissons = pyhf.tensorlib.poisson_dist(rates)
             >>> poissons.log_prob(values)
-            DeviceArray([-1.74030218, -2.0868536 ], dtype=float64)
+            DeviceArray([-1.74030218, -2.0868536 ], dtype=float64, weak_type=True)
 
         Args:
             rate (:obj:`tensor` or :obj:`float`): The mean of the Poisson distribution (the expected number of events)
@@ -498,7 +498,7 @@ class jax_backend:
             >>> values = pyhf.tensorlib.astensor([4, 9])
             >>> normals = pyhf.tensorlib.normal_dist(means, stds)
             >>> normals.log_prob(values)
-            DeviceArray([-1.41893853, -2.22579135], dtype=float64)
+            DeviceArray([-1.41893853, -2.22579135], dtype=float64, weak_type=True)
 
         Args:
             mu (:obj:`tensor` or :obj:`float`): The mean of the Normal distribution
@@ -520,7 +520,7 @@ class jax_backend:
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
             >>> tensor
             DeviceArray([[1., 2., 3.],
-                         [4., 5., 6.]], dtype=float64)
+                         [4., 5., 6.]], dtype=float64, weak_type=True)
             >>> numpy_ndarray = pyhf.tensorlib.to_numpy(tensor)
             >>> numpy_ndarray
             array([[1., 2., 3.],
