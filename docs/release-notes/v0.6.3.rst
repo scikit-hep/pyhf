@@ -7,13 +7,13 @@ Important Notes
 ---------------
 
 * With the addition of writing ROOT files in |uproot v4.1.0 release|_ the
-  ``xmlio`` extra no longer requires ``uproot3`` and all dependncies on
+  ``xmlio`` extra no longer requires ``uproot3`` and all dependencies on
   ``uproot3`` and ``uproot3-methods`` have been dropped.
   (PR :pr:`1567`)
 * All backends are now fully compatible and tested with
   `Python 3.9 <https://www.python.org/dev/peps/pep-0596/>`_.
   (PR :pr:`1574`)
-* The TensorFlow backend now supports compatability with TensorFlow ``v2.2.1``
+* The TensorFlow backend now supports compatibility with TensorFlow ``v2.2.1``
   and later and TensorFlow Probability ``v0.10.1`` and later.
   (PR :pr:`1001`)
 * The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
@@ -36,7 +36,7 @@ Features
 Python API
 ~~~~~~~~~~
 
-* Model parameter names are now propagated to optimizers through additon of the
+* Model parameter names are now propagated to optimizers through addition of the
   :func:`pyhf.pdf._ModelConfig.par_names` API.
   :func:`pyhf.pdf._ModelConfig.par_names` also handles non-scalar modifiers with
   1 parameter.
