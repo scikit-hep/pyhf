@@ -15,12 +15,9 @@ Important Notes
 Fixes
 -----
 
-* XXX Allow for precision to be properly set for the tensorlib ``ones`` and ``zeros``
-  methods through a ``dtype`` argument.
-  This allows for precision to be properly set through the :func:`pyhf.set_backend`
-  ``precision`` argument.
-  (PR :pr:`1369`)
-* X
+* The weakref bug with Click ``v8.0+`` was resolved.
+  ``pyhf`` is now fully compatible with Click ``v7`` and ``v8`` releases.
+  (PR :pr:`1530`)
 
 Features
 --------
@@ -28,22 +25,13 @@ Features
 Python API
 ~~~~~~~~~~
 
-* XXX The :func:`pyhf.simplemodels.hepdata_like` API has been deprecated in favor of
-  :func:`pyhf.simplemodels.uncorrelated_background`.
-  The :func:`pyhf.simplemodels.hepdata_like` API will be removed in ``pyhf`` ``v0.7.0``.
-  (PR :pr:`1438`)
-* X
+* Model parameter names are now propagated to optimizers through additon of the
+  :func:`pyhf.pdf._ModelConfig.par_names` API.
+  (PR :pr:`1536`)
+* The :class:`pyhf.pdf._ModelConfig` ``channel_nbins`` dict is now sorted by
+  keys to match the order of the ``channels`` dict.
+  (PR :pr:`1546`)
 
-CLI API
-~~~~~~~
-
-* XXX The CLI API now supports a ``patchset inspect`` API to list the individual
-  patches in a ``PatchSet``.
-  (PR :pr:`1412`)
-
-.. code-block:: shell
-
-  pyhf patchset inspect [OPTIONS] [PATCHSET]
 
 Contributors
 ------------
