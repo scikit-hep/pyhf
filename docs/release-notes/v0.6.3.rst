@@ -10,6 +10,12 @@ Important Notes
   ``xmlio`` extra no longer requires ``uproot3`` and all dependncies on
   ``uproot3`` and ``uproot3-methods`` have been dropped.
   (PR :pr:`1567`)
+* All backends are now fully compatible and tested with
+  `Python 3.9 <https://www.python.org/dev/peps/pep-0596/>`_.
+  (PR :pr:`1574`)
+* The TensorFlow backend now supports compatability with TensorFlow ``v2.2.1``
+  and later and TensorFlow Probability ``v0.10.1`` and later.
+  (PR :pr:`1001`)
 * :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
   renamed to ``include_auxdata`` to improve API consistency.
 
