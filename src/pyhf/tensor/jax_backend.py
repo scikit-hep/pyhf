@@ -208,7 +208,7 @@ class jax_backend:
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
             >>> tensor
             DeviceArray([[1., 2., 3.],
-                         [4., 5., 6.]], dtype=float64, weak_type=True)
+                         [4., 5., 6.]], dtype=float64)
             >>> type(tensor) # doctest:+ELLIPSIS
             <class '...DeviceArray'>
 
