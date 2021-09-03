@@ -16,8 +16,9 @@ Important Notes
 * The TensorFlow backend now supports compatability with TensorFlow ``v2.2.1``
   and later and TensorFlow Probability ``v0.10.1`` and later.
   (PR :pr:`1001`)
-* :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+* The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
   renamed to ``include_auxdata`` to improve API consistency.
+  (PR :pr:`1562`)
 
 .. |uproot v4.1.0 release| replace:: ``uproot`` ``v4.1.0``
 .. _`uproot v4.1.0 release`: https://github.com/scikit-hep/uproot4/releases/tag/4.1.0
@@ -37,14 +38,28 @@ Python API
 
 * Model parameter names are now propagated to optimizers through additon of the
   :func:`pyhf.pdf._ModelConfig.par_names` API.
-  (PR :pr:`1536`)
+  :func:`pyhf.pdf._ModelConfig.par_names` also handles non-scalar modifiers with
+  1 parameter.
+  (PRs :pr:`1536`, :pr:`1560`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+      ... )
+      >>> model.config.parameters
+      ['mu', 'uncorr_bkguncrt']
+      >>> model.config.npars
+      3
+      >>> model.config.par_names()
+      ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+
 * The :class:`pyhf.pdf._ModelConfig` ``channel_nbins`` dict is now sorted by
   keys to match the order of the ``channels`` dict.
   (PR :pr:`1546`)
-* :func:`pyhf.pdf._ModelConfig.par_names` can now handle non-scalar modifiers
-  with 1 parameter.
-  (PR :pr:`1560`)
-* :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+
+* The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
   renamed to ``include_auxdata`` to improve API consistency.
   (PR :pr:`1562`)
 
