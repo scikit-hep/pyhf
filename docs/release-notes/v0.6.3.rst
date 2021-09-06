@@ -56,7 +56,7 @@ Python API
       ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
 
 * The :class:`pyhf.pdf._ModelConfig` ``channel_nbins`` dict is now sorted by
-  keys to match the order of the ``channels`` dict.
+  keys to match the order of the ``channels`` list.
   (PR :pr:`1546`)
 
 * The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
