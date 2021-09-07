@@ -34,7 +34,7 @@ repos:
 -   repo: https://github.com/psf/black
     rev: 21.8b0
     hooks:
-    - id: black
+    - id: black-jupyter
 
 -   repo: https://github.com/asottile/blacken-docs
     rev: v1.11.0
@@ -52,5 +52,3 @@ repos:
     hooks:
     - id: nbqa-pyupgrade
       additional_dependencies: [pyupgrade==2.25.0]
-    - id: nbqa-black
-      additional_dependencies: [black==21.8b0]
