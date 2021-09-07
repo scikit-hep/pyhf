@@ -35,6 +35,7 @@ repos:
     rev: 21.8b0
     hooks:
     - id: black
+    - id: black-jupyter
 
 -   repo: https://github.com/asottile/blacken-docs
     rev: v1.11.0
