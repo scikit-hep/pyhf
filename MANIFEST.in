@@ -1,6 +1,10 @@
-prune **
 graft src
 graft tests
+
+prune binder
+prune docker
+prune docs
+prune validation
 
 include setup.py
 include setup.cfg
@@ -9,5 +13,8 @@ include README.rst
 include pyproject.toml
 include MANIFEST.in
 include AUTHORS
+include CITATION.cff
+
+exclude lower-bound-requirements.txt
 
 global-exclude __pycache__ *.py[cod]
