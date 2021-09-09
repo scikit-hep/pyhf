@@ -32,7 +32,7 @@ jobs:
 
     - name: Check MANIFEST
       run: |
-        check-manifest
+        check-manifest --verbose
 
     - name: Build a wheel and a sdist
       run: |
