@@ -30,10 +30,6 @@ jobs:
         python -m pip install build check-manifest twine
         python -m pip list
 
-    - name: Check MANIFEST
-      run: |
-        check-manifest --verbose
-
     - name: Build a wheel and a sdist
       run: |
         python -m build --outdir dist/ .

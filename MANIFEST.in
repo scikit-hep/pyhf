@@ -1,3 +1,5 @@
+prune **
+
 graft src
 graft tests
 
@@ -11,10 +13,3 @@ include AUTHORS
 include CITATION.cff
 
 global-exclude __pycache__ *.py[cod]
-
-prune binder
-prune docker
-prune docs
-prune validation
-
-exclude lower-bound-requirements.txt
