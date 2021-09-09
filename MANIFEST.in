@@ -1,11 +1,6 @@
 graft src
 graft tests
 
-prune binder
-prune docker
-prune docs
-prune validation
-
 include setup.py
 include setup.cfg
 include LICENSE
@@ -15,6 +10,11 @@ include MANIFEST.in
 include AUTHORS
 include CITATION.cff
 
-exclude lower-bound-requirements.txt
-
 global-exclude __pycache__ *.py[cod]
+
+prune binder
+prune docker
+prune docs
+prune validation
+
+exclude lower-bound-requirements.txt
