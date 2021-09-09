@@ -24,10 +24,10 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Install python-build, check-manifest, and twine
+    - name: Install build and twine
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install build check-manifest twine
+        python -m pip install build twine
         python -m pip list
 
     - name: Build a wheel and a sdist
