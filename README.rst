@@ -122,7 +122,7 @@ Implemented variations:
   - ☑ ShapeSys
   - ☑ NormFactor
   - ☑ Multiple Channels
-  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot4>`__
   - ☑ ShapeFactor
   - ☑ StatError
   - ☑ Lumi Uncertainty
@@ -287,11 +287,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.6.2}",
-     version = {0.6.2},
+     title = "{pyhf: v0.6.3}",
+     version = {0.6.3},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3}
    }
 
    @article{pyhf_joss,
@@ -337,7 +337,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.2-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.3-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
@@ -350,7 +350,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/conda-forge/pyhf-feedstock
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.2-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.3-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags

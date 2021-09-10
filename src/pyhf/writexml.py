@@ -6,9 +6,7 @@ import pkg_resources
 import xml.etree.ElementTree as ET
 import numpy as np
 
-# TODO: Move to uproot4 when ROOT file writing is supported
-import uproot3 as uproot
-from uproot3_methods.classes import TH1
+import uproot
 
 from pyhf.mixins import _ChannelSummaryMixin
 
@@ -47,12 +45,12 @@ def _make_hist_name(channel, sample, modifier='', prefix='hist', suffix=''):
     return f"{prefix}{middle}{suffix}"
 
 
-def _export_root_histogram(histname, data):
-    hist = TH1.from_numpy((np.asarray(data), np.arange(len(data) + 1)))
-    hist._fName = histname
-    if histname in _ROOT_DATA_FILE:
-        raise KeyError(f"Duplicate key {histname} being written.")
-    _ROOT_DATA_FILE[histname] = hist
+def _export_root_histogram(hist_name, data):
+    if hist_name in _ROOT_DATA_FILE:
+        raise KeyError(f"Duplicate key {hist_name} being written.")
+    _ROOT_DATA_FILE[hist_name] = uproot.to_writable(
+        (np.asarray(data), np.arange(len(data) + 1))
+    )
 
 
 # https://stackoverflow.com/a/4590052
@@ -236,7 +234,7 @@ def build_sample(spec, samplespec, channelname):
     attrs = {
         'Name': samplespec['name'],
         'HistoName': histname,
-        'InputFile': _ROOT_DATA_FILE._path,
+        'InputFile': _ROOT_DATA_FILE.file_path,
         'NormalizeByTheory': 'False',
     }
     sample = ET.Element('Sample', **attrs)
@@ -255,7 +253,7 @@ def build_sample(spec, samplespec, channelname):
 
 def build_data(obsspec, channelname):
     histname = _make_hist_name(channelname, 'data')
-    data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE._path)
+    data = ET.Element('Data', HistoName=histname, InputFile=_ROOT_DATA_FILE.file_path)
 
     observation = next((obs for obs in obsspec if obs['name'] == channelname), None)
     _export_root_histogram(histname, observation['data'])
@@ -264,7 +262,7 @@ def build_data(obsspec, channelname):
 
 def build_channel(spec, channelspec, obsspec):
     channel = ET.Element(
-        'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE._path
+        'Channel', Name=channelspec['name'], InputFile=_ROOT_DATA_FILE.file_path
     )
     if obsspec:
         data = build_data(obsspec, channelspec['name'])
@@ -285,9 +283,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
         "Combination", OutputFilePrefix=str(Path(specdir).joinpath(resultprefix))
     )
 
-    with uproot.recreate(
-        str(Path(data_rootdir).joinpath('data.root'))
-    ) as _ROOT_DATA_FILE:
+    with uproot.recreate(Path(data_rootdir).joinpath('data.root')) as _ROOT_DATA_FILE:
         for channelspec in spec['channels']:
             channelfilename = str(
                 Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')

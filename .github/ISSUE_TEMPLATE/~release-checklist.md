@@ -1,5 +1,5 @@
 ---
-name: (Maintainers Only) Release Checklist
+name: ✅  Release Checklist (Maintainers Only)
 about: Checklist for core developers to complete as part of making a release
 
 ---
@@ -21,10 +21,13 @@ about: Checklist for core developers to complete as part of making a release
 
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
 * [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the generated PR tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
+   - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
+   - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/master/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
 * [ ] Watch for a GitHub notification that there is an automatic PR to the
   [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the Conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
+   - [ ] Verify the requirements in the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `setup.cfg` and `pyproject.toml`.
 
 ## After Release
 

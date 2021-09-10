@@ -381,7 +381,7 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            DeviceArray(0.16062314, dtype=float64)
+            DeviceArray(0.16062314, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)

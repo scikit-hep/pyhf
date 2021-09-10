@@ -344,7 +344,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
+            ET.parse(Path(rootdir).joinpath(inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)
