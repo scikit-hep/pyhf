@@ -10,6 +10,7 @@ Important Notes
   ``xmlio`` extra no longer requires ``uproot3`` and all dependencies on
   ``uproot3`` and ``uproot3-methods`` have been dropped.
   (PR :pr:`1567`)
+  uproot4 additionally brings large speedups to writing, that results in an order of magnitude faster conversion times for most workspace conversions from JSON back to XML + ROOT with pyhf json2xml.
 * All backends are now fully compatible and tested with
   `Python 3.9 <https://www.python.org/dev/peps/pep-0596/>`_.
   (PR :pr:`1574`)
