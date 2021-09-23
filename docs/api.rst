@@ -140,7 +140,7 @@ Calculators
    :nosignatures:
 
    calculators.generate_asimov_data
-   calculators.BestFitParameters
+   calculators.HypoTestFitResults
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator

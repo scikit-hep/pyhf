@@ -208,7 +208,7 @@ class AsymptoticTestStatDistribution:
 
 
 @dataclass(frozen=True)
-class BestFitParameters:
+class HypoTestFitResults:
     """
     Fitted model parameters of the fits in
     :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
@@ -293,7 +293,7 @@ class AsymptoticCalculator:
         :py:meth:`self.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`.
 
         Returns:
-            ~pyhf.infer.calculators.BestFitParameters:  The collection of fitted parameter tensors.
+            ~pyhf.infer.calculators.HypoTestFitResults:  The collection of fitted parameter tensors.
         """
         try:
             return self._fitted_pars
@@ -352,7 +352,7 @@ class AsymptoticCalculator:
 
         The fitted parameters of the five fits that are implicitly ran at every call
         of this method are afterwards accessible through ``self.fitted_pars``,
-        which is a :py:class:`~pyhf.infer.calculators.BestFitParameters` instance.
+        which is a :py:class:`~pyhf.infer.calculators.HypoTestFitResults` instance.
 
         Example:
 
@@ -417,7 +417,7 @@ class AsymptoticCalculator:
             return_fitted_pars=True,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-        self._fitted_pars = BestFitParameters(
+        self._fitted_pars = HypoTestFitResults(
             asimov_pars=asimov_mubhathat,
             free_fit_to_data=muhatbhat,
             free_fit_to_asimov=muhatbhat_A,
