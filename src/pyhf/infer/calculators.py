@@ -699,21 +699,25 @@ class ToyCalculator:
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
-        signal_pars = fixed_poi_fit(poi_test,
-                                    self.data,
-                                    self.pdf,
-                                    self.init_pars,
-                                    self.par_bounds,
-                                    self.fixed_params)
+        signal_pars = fixed_poi_fit(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
         signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
         signal_sample = signal_pdf.sample(sample_shape)
 
-        bkg_pars = fixed_poi_fit(1.0 if self.test_stat == 'q0' else 0.0,
-                                 self.data,
-                                 self.pdf,
-                                 self.init_pars,
-                                 self.par_bounds,
-                                 self.fixed_params)
+        bkg_pars = fixed_poi_fit(
+            1.0 if self.test_stat == 'q0' else 0.0,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
         bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
         bkg_sample = bkg_pdf.sample(sample_shape)
 
