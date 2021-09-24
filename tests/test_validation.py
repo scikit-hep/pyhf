@@ -125,8 +125,8 @@ def expected_result_1bin_shapesys_q0():
 @pytest.fixture(scope='module')
 def expected_result_1bin_shapesys_q0_toys():
     expected_result = {
-        "exp": [0.0, 0.0005, 0.0145, 0.1205, 0.402761],
-        "obs": 0.005,
+        "exp": [0.0, 0.0, 0.0135, 0.1365, 0.39854497],
+        "obs": 0.004,
     }
     return expected_result
 

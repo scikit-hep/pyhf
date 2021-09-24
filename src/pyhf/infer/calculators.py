@@ -686,7 +686,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (array(0.14), array(0.76))
+            (array(0.14), array(0.79))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -786,7 +786,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (array(0.01), array(0.41), array(0.02439024))
+            (array(0.03), array(0.37), array(0.08108108))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -832,7 +832,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
+            [array(0.), array(0.), array(0.08403955), array(0.21892596), array(0.86072977)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
