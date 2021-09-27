@@ -669,9 +669,14 @@ class ToyCalculator:
         """
         Probability distributions of the test statistic value under the signal + background and background-only hypotheses.
 
-        These distributions are produced by generating MC toys with the nuisance parameters set to their conditional
-        maximum likelihood estimators at the corresponding value of the parameter of interest for each hypothesis, following
-        the recommendations in https://indico.cern.ch/event/126652/contributions/1343592/attachments/80222/115004/Frequentist_Limit_Recommendation.pdf.
+        These distributions are produced by generating pseudo-data ("toys")
+        with the nuisance parameters set to their conditional maximum likelihood
+        estimators at the corresponding value of the parameter of interest for
+        each hypothesis, following the joint recommendations of the ATLAS and CMS
+        experiments in |LHC Higgs search combination procedure|_.
+
+        .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
+        .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
         Example:
 
