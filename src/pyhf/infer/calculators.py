@@ -707,7 +707,7 @@ class ToyCalculator:
             self.par_bounds,
             self.fixed_params,
         )
-        signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
+        signal_pdf = self.pdf.make_pdf(signal_pars)
         signal_sample = signal_pdf.sample(sample_shape)
 
         bkg_pars = fixed_poi_fit(
@@ -718,7 +718,7 @@ class ToyCalculator:
             self.par_bounds,
             self.fixed_params,
         )
-        bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
+        bkg_pdf = self.pdf.make_pdf(bkg_pars)
         bkg_sample = bkg_pdf.sample(sample_shape)
 
         teststat_func = utils.get_test_stat(self.test_stat)
