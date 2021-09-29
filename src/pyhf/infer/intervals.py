@@ -15,7 +15,7 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit(data, model, scan, level=0.05, return_results=False):
+def upperlimit(data, model, scan, level=0.05, return_results=False, **kwargs):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using a fixed scan through POI-space.
@@ -54,9 +54,10 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
     """
+    test_stat = kwargs.pop('test_stat', "qtilde")
     tb, _ = get_backend()
     results = [
-        hypotest(mu, data, model, test_stat="qtilde", return_expected_set=True)
+        hypotest(mu, data, model, test_stat=test_stat, return_expected_set=True)
         for mu in scan
     ]
     obs = tb.astensor([[r[0]] for r in results])
