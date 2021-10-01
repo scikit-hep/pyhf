@@ -41,9 +41,9 @@ Presentations
 This list will be updated with talks given on :code:`pyhf`:
 
 .. bibliography:: bib/talks.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 Tutorials
 ---------
@@ -51,9 +51,9 @@ Tutorials
 This list will be updated with tutorials and schools given on :code:`pyhf`:
 
 .. bibliography:: bib/tutorials.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 
 Posters
@@ -62,9 +62,9 @@ Posters
 This list will be updated with posters presented on :code:`pyhf`:
 
 .. bibliography:: bib/posters.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 In the Media
 ------------
@@ -72,6 +72,6 @@ In the Media
 This list will be updated with media publications featuring :code:`pyhf`:
 
 .. bibliography:: bib/media.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
