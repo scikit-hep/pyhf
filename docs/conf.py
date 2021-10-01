@@ -65,6 +65,7 @@ bibtex_bibfiles = [
     "bib/use_citations.bib",
     "bib/general_citations.bib",
 ]
+bibtex_default_style = "unsrt"
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
