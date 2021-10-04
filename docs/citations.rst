@@ -25,17 +25,17 @@ Use Citations
 ~~~~~~~~~~~~~
 
 .. bibliography:: bib/use_citations.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 General Citations
 ~~~~~~~~~~~~~~~~~
 
 .. bibliography:: bib/general_citations.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 Published Statistical Models
 ----------------------------
@@ -43,6 +43,6 @@ Published Statistical Models
 Updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models:
 
 .. bibliography:: bib/HEPData_likelihoods.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt

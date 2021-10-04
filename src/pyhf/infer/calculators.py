@@ -737,7 +737,16 @@ class ToyCalculator:
 
     def distributions(self, poi_test, track_progress=None):
         """
-        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
+        Probability distributions of the test statistic value under the signal + background and background-only hypotheses.
+
+        These distributions are produced by generating pseudo-data ("toys")
+        with the nuisance parameters set to their conditional maximum likelihood
+        estimators at the corresponding value of the parameter of interest for
+        each hypothesis, following the joint recommendations of the ATLAS and CMS
+        experiments in |LHC Higgs search combination procedure|_.
+
+        .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
+        .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
         Example:
 
@@ -756,7 +765,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (array(0.14), array(0.76))
+            (array(0.14), array(0.79))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -769,14 +778,26 @@ class ToyCalculator:
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
-        signal_pars = self.pdf.config.suggested_init()
-        signal_pars[self.pdf.config.poi_index] = poi_test
-        signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
+        signal_pars = fixed_poi_fit(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        signal_pdf = self.pdf.make_pdf(signal_pars)
         signal_sample = signal_pdf.sample(sample_shape)
 
-        bkg_pars = self.pdf.config.suggested_init()
-        bkg_pars[self.pdf.config.poi_index] = 1.0 if self.test_stat == 'q0' else 0.0
-        bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
+        bkg_pars = fixed_poi_fit(
+            1.0 if self.test_stat == 'q0' else 0.0,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        bkg_pdf = self.pdf.make_pdf(bkg_pars)
         bkg_sample = bkg_pdf.sample(sample_shape)
 
         teststat_func = utils.get_test_stat(self.test_stat)
@@ -844,7 +865,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (array(0.01), array(0.41), array(0.02439024))
+            (array(0.03), array(0.37), array(0.08108108))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -890,7 +911,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
+            [array(0.), array(0.), array(0.08403955), array(0.21892596), array(0.86072977)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
