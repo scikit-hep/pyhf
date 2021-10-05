@@ -87,12 +87,3 @@ def test_asymptotic_calculator_has_fitted_pars(test_stat):
         assert pytest.approx(
             [7.6470499e-05, 1.4997178], rel=rtol
         ) == pyhf.tensorlib.tolist(fitted_pars.free_fit_to_asimov)
-
-
-def test_asympotic_calculator_fitted_pars_before_teststatistic_raises():
-    model = pyhf.simplemodels.uncorrelated_background([0], [0], [0])
-    data = [0, 0]  # [main, aux]
-    calc = pyhf.infer.calculators.AsymptoticCalculator(data, model)
-    with pytest.raises(RuntimeError) as exc_info:
-        _ = calc.fitted_pars  # assign to avoid codefactor warning
-    assert 'teststatistic' in str(exc_info.value)

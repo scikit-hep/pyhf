@@ -285,22 +285,7 @@ class AsymptoticCalculator:
         self.test_stat = test_stat
         self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
-
-    @property
-    def fitted_pars(self):
-        """
-        Best-fit parameters of the fits that have been run in
-        :py:meth:`self.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`.
-
-        Returns:
-            ~pyhf.infer.calculators.HypoTestFitResults:  The collection of fitted parameter tensors.
-        """
-        try:
-            return self._fitted_pars
-        except AttributeError:
-            if self.sqrtqmuA_v is None:
-                raise RuntimeError("need to call .teststatistic(poi_test) first")
-            raise
+        self.fitted_pars = None
 
     def distributions(self, poi_test):
         r"""
@@ -421,7 +406,7 @@ class AsymptoticCalculator:
             return_fitted_pars=True,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
-        self._fitted_pars = HypoTestFitResults(
+        self.fitted_pars = HypoTestFitResults(
             asimov_pars=asimov_mubhathat,
             free_fit_to_data=muhatbhat,
             free_fit_to_asimov=muhatbhat_A,
