@@ -369,7 +369,11 @@ class AsymptoticCalculator:
             array(0.14043184)
 
             Access the best-fit parameters afterwards:
-            (here: :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset):
+
+            >>> asymptotic_calculator.fitted_pars
+            HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
+
+            E.g. the :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset:
 
             >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
             array([0.        , 1.00304893, 0.96263365])
