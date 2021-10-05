@@ -164,173 +164,49 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
         ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
     ],
 )
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+@pytest.mark.parametrize('return_tail_probs', [True, False])
+@pytest.mark.parametrize('return_expected', [True, False])
+@pytest.mark.parametrize('return_expected_set', [True, False])
 def test_hypotest_return_calculator(
-    tmpdir, hypotest_args, calctype, kwargs, expected_type, test_stat
+    tmpdir,
+    hypotest_args,
+    calctype,
+    kwargs,
+    expected_type,
+    return_tail_probs,
+    return_expected,
+    return_expected_set,
 ):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     additon of the return_calculator keyword arg is as expected
     """
-    tb = pyhf.tensorlib
     *_, model = hypotest_args
+
+    # only those return flags where the toggled return value
+    # is placed in front of the calculator in the returned tuple
+    extra_returns = sum(
+        int(return_flag)
+        for return_flag in (
+            return_tail_probs,
+            return_expected,
+            return_expected_set,
+        )
+    )
 
     result = pyhf.infer.hypotest(
         *hypotest_args,
-        test_stat=test_stat,
         return_calculator=True,
+        return_tail_probs=return_tail_probs,
+        return_expected=return_expected,
+        return_expected_set=return_expected_set,
         calctype=calctype,
         **kwargs,
     )
 
-    assert len(list(result)) == 2
-    CLs_obs, calc = result
-    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
-    assert isinstance(calc, expected_type)
-
-
-@pytest.mark.parametrize(
-    'calctype,kwargs,expected_type',
-    [
-        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
-    ],
-)
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_calculator_with_tail_probs(
-    tmpdir, hypotest_args, calctype, kwargs, expected_type, test_stat
-):
-    """
-    Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_calculator and return_tail_probs keyword args is as expected
-    """
-    tb = pyhf.tensorlib
-    *_, model = hypotest_args
-    kwargs = dict(
-        test_stat=test_stat,
-        return_tail_probs=True,
-        return_calculator=True,
-        calctype=calctype,
-        **kwargs,
-    )
-
-    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-
-    assert len(list(result)) == 3
-    CLs_obs, tails, calc = result
-    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
-    assert len(tails) == 1 if test_stat == 'q0' else 2
-    assert check_uniform_type(tails)
-    assert isinstance(calc, expected_type)
-
-
-@pytest.mark.parametrize(
-    'calctype,kwargs,expected_type',
-    [
-        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
-    ],
-)
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_calculator_with_expected(
-    tmpdir, hypotest_args, calctype, kwargs, expected_type, test_stat
-):
-    """
-    Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_calculator and return_expected keyword args is as expected
-    """
-    tb = pyhf.tensorlib
-    *_, model = hypotest_args
-    kwargs = dict(
-        test_stat=test_stat,
-        return_expected=True,
-        return_calculator=True,
-        calctype=calctype,
-        **kwargs,
-    )
-
-    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-
-    assert len(list(result)) == 3
-    CLs_obs, CLs_exp, calc = result
-    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
-    assert isinstance(CLs_exp, type(tb.astensor(CLs_exp)))
-    assert isinstance(calc, expected_type)
-
-
-@pytest.mark.parametrize(
-    'calctype,kwargs,expected_type',
-    [
-        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
-    ],
-)
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_calculator_with_expected_set(
-    tmpdir, hypotest_args, calctype, kwargs, expected_type, test_stat
-):
-    """
-    Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_calculator and return_expected_set keyword args is as expected
-    """
-    tb = pyhf.tensorlib
-    *_, model = hypotest_args
-    kwargs = dict(
-        test_stat=test_stat,
-        return_expected_set=True,
-        return_calculator=True,
-        calctype=calctype,
-        **kwargs,
-    )
-
-    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-
-    assert len(list(result)) == 3
-    CLs_obs, CLs_exp_set, calc = result
-    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
-    assert len(CLs_exp_set) == 5
-    assert check_uniform_type(CLs_exp_set)
-    assert isinstance(calc, expected_type)
-
-
-@pytest.mark.parametrize(
-    'calctype,kwargs,expected_type',
-    [
-        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
-    ],
-)
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_calculator_with_max_returned_pvals(
-    tmpdir, hypotest_args, calctype, kwargs, expected_type, test_stat
-):
-    """
-    Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected_set keyword arg,
-    on top of all other optional additions to the return value, is as expected
-    """
-    tb = pyhf.tensorlib
-    *_, model = hypotest_args
-    kwargs = dict(
-        test_stat=test_stat,
-        return_tail_probs=True,
-        return_expected=True,
-        return_expected_set=True,
-        calctype=calctype,
-        return_calculator=True,
-        **kwargs,
-    )
-
-    result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
-
-    assert len(list(result)) == 5
-    CLs_obs, tails, CLs_exp, CLs_exp_set, calc = result
-    assert isinstance(CLs_obs, type(tb.astensor(CLs_obs)))
-    assert len(tails) == 1 if test_stat == 'q0' else 2
-    assert check_uniform_type(tails)
-    assert isinstance(CLs_exp, type(tb.astensor(CLs_exp)))
-    assert len(CLs_exp_set) == 5
-    assert check_uniform_type(CLs_exp_set)
+    assert len(list(result)) == 2 + extra_returns
+    # not *_, calc = result b.c. in future, there could be additional optional returns
+    calc = result[1 + extra_returns]
     assert isinstance(calc, expected_type)
 
 
