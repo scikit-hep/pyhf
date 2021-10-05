@@ -325,7 +325,8 @@ html_extra_path = ['_extras']
 htmlhelp_basename = 'pyhfdoc'
 
 # sphinx-copybutton configuration
-copybutton_prompt_text = ">>> "
+copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |\\.\\.\\. "
+copybutton_prompt_is_regexp = True
 
 # -- Options for LaTeX output ---------------------------------------------
 
