@@ -51,7 +51,7 @@ extras_require['docs'] = sorted(
             'sphinx>=4.0.0',
             'sphinxcontrib-bibtex~=2.1',
             'sphinx-click',
-            'sphinx_rtd_theme',
+            'furo>2021.09.22',
             'nbsphinx',
             'ipywidgets',
             'sphinx-issues',
