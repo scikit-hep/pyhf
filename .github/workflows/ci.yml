@@ -46,7 +46,7 @@ jobs:
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
-    - name: Report core project coverage with Codecov
+    - name: Report core project coverage with Codecov (maintainers)
       # Run on all events except schedule if PR comes from maintainers
       if: github.repository == 'scikit-hep/pyhf' && github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
@@ -55,7 +55,7 @@ jobs:
         file: ./coverage.xml
         flags: unittests
 
-    - name: Report core project coverage with Codecov
+    - name: Report core project coverage with Codecov (contributors)
       # Run on pull_request events if PR comes from contributor fork
       if: github.repository != 'scikit-hep/pyhf' && github.event_name == 'pull_request' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
@@ -67,7 +67,7 @@ jobs:
       run: |
         python -m pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
-    - name: Report contrib coverage with Codecov
+    - name: Report contrib coverage with Codecov (maintainers)
       # Run on all events except schedule if PR comes from maintainers
       if: github.repository == 'scikit-hep/pyhf' && github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
@@ -76,7 +76,7 @@ jobs:
         file: ./coverage.xml
         flags: contrib
 
-    - name: Report contrib coverage with Codecov
+    - name: Report contrib coverage with Codecov (contributors)
       # Run on pull_request events if PR comes from contributor fork
       if: github.repository != 'scikit-hep/pyhf' && github.event_name == 'pull_request' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
