@@ -44,7 +44,8 @@ def upperlimit(data, model, scan, level=0.05, return_results=False, **hypotest_k
         scan (:obj:`iterable`): Iterable of POI values.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
-        hypotest_kwargs (:obj:`string`): Hypotest kwarg configuration options(~pyhf.infer.hypotest).
+        hypotest_kwargs (:obj:`string`): Kwargs for the calls to
+         :class:`~pyhf.infer.hypotest` to configure the fits.
 
     Returns:
         Tuple of Tensors:
