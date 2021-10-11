@@ -25,3 +25,4 @@ Contributors include:
 - Saransh Chopra
 - Sviatoslav Sydorenko
 - Mason Proffitt
+- Aryan Roy
