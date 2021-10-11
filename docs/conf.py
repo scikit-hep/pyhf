@@ -65,6 +65,7 @@ bibtex_bibfiles = [
     "bib/use_citations.bib",
     "bib/general_citations.bib",
 ]
+bibtex_default_style = "unsrt"
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
@@ -324,7 +325,9 @@ html_extra_path = ['_extras']
 htmlhelp_basename = 'pyhfdoc'
 
 # sphinx-copybutton configuration
-copybutton_prompt_text = ">>> "
+copybutton_prompt_text = r">>> |\.\.\. |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_here_doc_delimiter = "EOF"
 
 # -- Options for LaTeX output ---------------------------------------------
 
