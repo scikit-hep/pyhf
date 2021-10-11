@@ -55,7 +55,7 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
+        files: ./coverage.xml
         flags: unittests
 
     - name: Report core project coverage with Codecov (contributors)
@@ -63,7 +63,7 @@ jobs:
       if: github.repository != 'scikit-hep/pyhf' && github.event_name == 'pull_request' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
-        file: ./coverage.xml
+        files: ./coverage.xml
         flags: unittests
 
     - name: Test Contrib module with pytest
@@ -76,7 +76,7 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
+        files: ./coverage.xml
         flags: contrib
 
     - name: Report contrib coverage with Codecov (contributors)
@@ -84,7 +84,7 @@ jobs:
       if: github.repository != 'scikit-hep/pyhf' && github.event_name == 'pull_request' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
-        file: ./coverage.xml
+        files: ./coverage.xml
         flags: contrib
 
     - name: Run benchmarks
