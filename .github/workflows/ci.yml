@@ -2,7 +2,11 @@ name: CI/CD
 
 on:
   push:
+    branches:
+    - master
   pull_request:
+    branches:
+    - master
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
@@ -24,20 +28,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --upgrade --editable .[test]
+
     - name: List installed Python packages
-      run: |
-        python -m pip list
+      run: python -m pip list
+
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
     - name: Report core project coverage with Codecov
       if: github.event_name == 'push' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
@@ -45,9 +53,11 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: unittests
+
     - name: Test Contrib module with pytest
       run: |
         python -m pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+
     - name: Report contrib coverage with Codecov
       if: github.event_name == 'push' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
@@ -55,6 +65,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: contrib
+
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.9
       run: |
