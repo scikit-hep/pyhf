@@ -6,8 +6,7 @@ jsonschema==3.0.0
 jsonpatch==1.15
 pyyaml==5.1
 # xmlio
-uproot3==3.14.1
-uproot==4.0.0
+uproot==4.1.1
 # minuit
 iminuit==2.4.0
 # tensorflow
@@ -16,5 +15,8 @@ tensorflow-probability==0.10.1
 # torch
 torch==1.8.0
 # jax
+# Use Google Cloud Storage buckets for long term wheel support
+# c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
+--find-links https://storage.googleapis.com/jax-releases/jax_releases.html
 jax==0.2.8
 jaxlib==0.1.58

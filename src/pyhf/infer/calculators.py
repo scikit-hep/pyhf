@@ -7,14 +7,26 @@ hypotheses.
 
 Using the calculators hypothesis tests can then be performed.
 """
-from .mle import fixed_poi_fit
-from .. import get_backend
-from . import utils
+from pyhf.infer.mle import fixed_poi_fit
+from pyhf import get_backend
+from pyhf.infer import utils
 import tqdm
 
 import logging
 
 log = logging.getLogger(__name__)
+
+__all__ = [
+    "AsymptoticCalculator",
+    "AsymptoticTestStatDistribution",
+    "EmpiricalDistribution",
+    "ToyCalculator",
+    "generate_asimov_data",
+]
+
+
+def __dir__():
+    return __all__
 
 
 def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
@@ -25,8 +37,8 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
 
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
-        >>> model = pyhf.simplemodels.hepdata_like(
-        ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
@@ -250,8 +262,8 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -292,8 +304,8 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -371,8 +383,8 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -416,8 +428,8 @@ class AsymptoticCalculator:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -448,7 +460,7 @@ class AsymptoticCalculator:
             map(
                 list,
                 zip(
-                    *[
+                    *(
                         self.pvalues(
                             test_stat, sig_plus_bkg_distribution, bkg_only_distribution
                         )
@@ -456,7 +468,7 @@ class AsymptoticCalculator:
                             bkg_only_distribution.expected_value(n_sigma)
                             for n_sigma in [2, 1, 0, -1, -2]
                         ]
-                    ]
+                    )
                 ),
             )
         )
@@ -507,8 +519,8 @@ class EmpiricalDistribution:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> init_pars = model.config.suggested_init()
             >>> par_bounds = model.config.suggested_bounds()
@@ -565,8 +577,8 @@ class EmpiricalDistribution:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> init_pars = model.config.suggested_init()
             >>> par_bounds = model.config.suggested_bounds()
@@ -657,7 +669,16 @@ class ToyCalculator:
 
     def distributions(self, poi_test, track_progress=None):
         """
-        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
+        Probability distributions of the test statistic value under the signal + background and background-only hypotheses.
+
+        These distributions are produced by generating pseudo-data ("toys")
+        with the nuisance parameters set to their conditional maximum likelihood
+        estimators at the corresponding value of the parameter of interest for
+        each hypothesis, following the joint recommendations of the ATLAS and CMS
+        experiments in |LHC Higgs search combination procedure|_.
+
+        .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
+        .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
         Example:
 
@@ -665,8 +686,8 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -676,7 +697,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (array(0.14), array(0.76))
+            (array(0.14), array(0.79))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -689,14 +710,26 @@ class ToyCalculator:
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
-        signal_pars = self.pdf.config.suggested_init()
-        signal_pars[self.pdf.config.poi_index] = poi_test
-        signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
+        signal_pars = fixed_poi_fit(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        signal_pdf = self.pdf.make_pdf(signal_pars)
         signal_sample = signal_pdf.sample(sample_shape)
 
-        bkg_pars = self.pdf.config.suggested_init()
-        bkg_pars[self.pdf.config.poi_index] = 1.0 if self.test_stat == 'q0' else 0.0
-        bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
+        bkg_pars = fixed_poi_fit(
+            1.0 if self.test_stat == 'q0' else 0.0,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        bkg_pdf = self.pdf.make_pdf(bkg_pars)
         bkg_sample = bkg_pdf.sample(sample_shape)
 
         teststat_func = utils.get_test_stat(self.test_stat)
@@ -751,8 +784,8 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -764,7 +797,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (array(0.01), array(0.41), array(0.02439024))
+            (array(0.03), array(0.37), array(0.08108108))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -798,8 +831,8 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata
@@ -810,7 +843,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
+            [array(0.), array(0.), array(0.08403955), array(0.21892596), array(0.86072977)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
@@ -855,8 +888,8 @@ class ToyCalculator:
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.hepdata_like(
-            ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
             >>> observations = [51, 48]
             >>> data = observations + model.config.auxdata

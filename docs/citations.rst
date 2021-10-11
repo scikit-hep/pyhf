@@ -17,19 +17,32 @@ archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 Use in Publications
 -------------------
 
-Updating list of citations and use cases of :code:`pyhf`:
+The following is an updating list of citations and use cases of :code:`pyhf`.
+There is an incomplete but automatically updated `list of citations on INSPIRE
+<https://inspirehep.net/literature/1845084>`__ as well.
+
+Use Citations
+~~~~~~~~~~~~~
 
 .. bibliography:: bib/use_citations.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
-Published Likelihoods
----------------------
+General Citations
+~~~~~~~~~~~~~~~~~
 
-Updating list of HEPData entries for publications using ``HistFactory`` JSON likelihoods:
+.. bibliography:: bib/general_citations.bib
+   :list: enumerated
+   :all:
+   :style: unsrt
+
+Published Statistical Models
+----------------------------
+
+Updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models:
 
 .. bibliography:: bib/HEPData_likelihoods.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt

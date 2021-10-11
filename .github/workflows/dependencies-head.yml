@@ -13,22 +13,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    # Use nightly SciPy wheels from Anaconda's PyPI
+    # c.f. https://twitter.com/ralfgommers/status/1419917265781334025
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes scipy
-        python -m pip install --upgrade --no-cache-dir cython
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scipy/scipy.git
+        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple scipy
         python -m pip list
+
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
@@ -39,7 +43,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -50,35 +54,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes iminuit
-        python -m pip install --upgrade --no-cache-dir cython
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/iminuit.git
-        python -m pip list
-    - name: Test with pytest
-      run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
-
-  uproot3:
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
-        python -m pip uninstall --yes uproot3
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/uproot3.git
+        python -m pip install --upgrade cython
+        python -m pip install --upgrade git+git://github.com/scikit-hep/iminuit.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -90,7 +69,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -101,9 +80,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes uproot
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/scikit-hep/uproot4.git
+        python -m pip install --upgrade git+git://github.com/scikit-hep/uproot4.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -115,7 +94,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.8]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -126,9 +105,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed --upgrade -q --no-cache-dir -e .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
         python -m pip uninstall --yes pytest
-        python -m pip install --upgrade --no-cache-dir git+git://github.com/pytest-dev/pytest.git
+        python -m pip install --upgrade git+git://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
       run: |

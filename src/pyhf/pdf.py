@@ -3,18 +3,25 @@
 import copy
 import logging
 
-from . import get_backend, default_backend
-from . import exceptions
-from . import utils
-from . import events
-from . import probability as prob
-from .constraints import gaussian_constraint_combined, poisson_constraint_combined
-from .parameters import reduce_paramsets_requirements, ParamViewer
-from .tensor.common import _TensorViewer, _tensorviewer_from_sizes
-from .mixins import _ChannelSummaryMixin
-from .modifiers import pyhfset
+from pyhf import get_backend, default_backend
+from pyhf import exceptions
+from pyhf import modifiers
+from pyhf import utils
+from pyhf import events
+from pyhf import probability as prob
+from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
+from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
+from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
+from pyhf.mixins import _ChannelSummaryMixin
+from pyhf.modifiers import pyhfset
 
 log = logging.getLogger(__name__)
+
+__all__ = ["Model", "_ModelConfig"]
+
+
+def __dir__():
+    return __all__
 
 
 def _finalize_parameters(user_parameters, _paramsets_requirements, channel_nbins):
@@ -154,7 +161,22 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
 
 class _ModelConfig(_ChannelSummaryMixin):
+    """
+    Configuration for the :class:`~pyhf.pdf.Model`.
+
+    .. note::
+
+        :class:`_ModelConfig` should not be called directly.
+        It should instead by accessed through the :obj:`config` attribute
+        of :class:`~pyhf.pdf.Model`.
+
+    """
+
     def __init__(self, spec, **config_kwargs):
+        """
+        Args:
+            spec (:obj:`jsonable`): The HistFactory JSON specification.
+        """
         super().__init__(channels=spec['channels'])
 
         default_modifier_settings = {
@@ -185,21 +207,106 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.parameters = sorted([k for k in self.par_map.keys()])
 
     def suggested_init(self):
+        """
+        Return suggested initial parameter values for the model.
+
+        Returns:
+            :obj:`list`: Suggested initial model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.suggested_init()
+            [1.0, 1.0, 1.0]
+        """
         init = []
         for name in self.par_order:
             init = init + self.par_map[name]['paramset'].suggested_init
         return init
 
     def suggested_bounds(self):
+        """
+        Return suggested parameter bounds for the model.
+
+        Returns:
+            :obj:`list`: Suggested bounds on model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.suggested_bounds()
+            [(0, 10), (1e-10, 10.0), (1e-10, 10.0)]
+        """
         bounds = []
         for name in self.par_order:
             bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
         return bounds
 
     def par_slice(self, name):
+        """
+        The slice of the model parameter tensor corresponding to the model
+        parameter ``name``.
+
+        Returns:
+            :obj:`slice`: Slice of the model parameter tensor.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.par_slice("uncorr_bkguncrt")
+            slice(1, 3, None)
+        """
         return self.par_map[name]['slice']
 
+    def par_names(self):
+        """
+        The names of the parameters in the model including binned-parameter indexing.
+
+        Returns:
+            :obj:`list`: Names of the model parameters.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.par_names()
+            ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+        """
+        _names = []
+        for name in self.par_order:
+            param_set = self.param_set(name)
+            if param_set.is_scalar:
+                _names.append(name)
+                continue
+
+            _names.extend(
+                [f'{name}[{index}]' for index in range(param_set.n_parameters)]
+            )
+        return _names
+
     def param_set(self, name):
+        """
+        The :class:`~pyhf.parameters.paramset` for the model parameter ``name``.
+
+        Returns:
+            :obj:`~pyhf.parameters.paramsets`: Corresponding :obj:`paramset`.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> param_set = model.config.param_set("uncorr_bkguncrt")
+            >>> param_set.pdf_type
+            'poisson'
+        """
         return self.par_map[name]['paramset']
 
     def suggested_fixed(self):
@@ -207,14 +314,23 @@ class _ModelConfig(_ChannelSummaryMixin):
         Identify the fixed parameters in the model.
 
         Returns:
-            List: A list of booleans, ``True`` for fixed and ``False`` for not fixed.
+            :obj:`list`: A list of booleans, ``True`` for fixed and ``False``
+            for not fixed.
 
-        Something like the following to build fixed_vals appropriately:
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.suggested_fixed()
+            [False, False, False]
+
+        Something like the following to build ``fixed_vals`` appropriately:
 
         .. code:: python
 
-            fixed_pars = pdf.config.suggested_fixed()
-            inits = pdf.config.suggested_init()
+            fixed_pars = model.config.suggested_fixed()
+            inits = model.config.suggested_init()
             fixed_vals = [
                 (index, init)
                 for index, (init, is_fixed) in enumerate(zip(inits, fixed_pars))
@@ -228,6 +344,18 @@ class _ModelConfig(_ChannelSummaryMixin):
         return fixed
 
     def set_poi(self, name):
+        """
+        Set the model parameter of interest to be model parameter ``name``.
+
+        Example:
+            >>> import pyhf
+            >>> model = pyhf.simplemodels.uncorrelated_background(
+            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+            ... )
+            >>> model.config.set_poi("mu")
+            >>> model.config.poi_name
+            'mu'
+        """
         if name not in [x for x, _ in self.modifiers]:
             raise exceptions.InvalidModel(
                 f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."

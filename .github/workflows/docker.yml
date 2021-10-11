@@ -1,0 +1,132 @@
+name: Docker Images
+
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - v*
+  pull_request:
+    branches:
+    - master
+  schedule:
+    - cron:  '1 0 * * *'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  docker:
+    name: Build, test, and publish Docker images to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Prepare
+        id: prep
+        run: |
+          DOCKER_IMAGE=pyhf/pyhf
+          VERSION=latest
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ $GITHUB_REF == refs/pull/* ]]; then
+            VERSION=pr-${{ github.event.number }}
+          fi
+          TAGS="${DOCKER_IMAGE}:${VERSION}"
+          TAGS="$TAGS,${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
+          # Releases also have GITHUB_REFs that are tags, so reuse VERSION
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
+          fi
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test build
+        id: docker_build_test
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/Dockerfile
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          load: true
+          push: false
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build_test.outputs.digest }}
+
+      - name: List built images
+        run: docker images
+
+      - name: Run CLI API check
+        run: |
+          printf "\npyhf\n"
+          docker run --rm pyhf/pyhf:sha-${GITHUB_SHA::8}
+          printf "\npyhf --version\n"
+          docker run --rm pyhf/pyhf:sha-${GITHUB_SHA::8} --version
+          printf "\npyhf --help\n"
+          docker run --rm pyhf/pyhf:sha-${GITHUB_SHA::8} --help
+
+      - name: Check for curl and tar
+        run: >-
+          docker run --rm
+          --entrypoint /bin/bash
+          pyhf/pyhf:sha-${GITHUB_SHA::8}
+          -c "which curl; which tar"
+
+      - name: Build and publish to registry
+        # every PR will trigger a push event on master, so check the push event is actually coming from master
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
+        id: docker_build_latest
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/Dockerfile
+          tags: pyhf/pyhf:latest,ghcr.io/${{github.repository}}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          push: true
+
+      - name: Build and publish to registry with release tag
+        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
+        id: docker_build_release
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/Dockerfile
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          push: true

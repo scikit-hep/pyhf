@@ -72,35 +72,35 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf"
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]"
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
 
 ... with JAX backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]"
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]"
 
 
 ... with xml import/export functionality
@@ -108,10 +108,10 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
 .. code-block:: console
 
-    python -m pip install --ignore-installed -U "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]"
+    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]"
 
 
 Updating :code:`pyhf`
 ---------------------
 
-Rerun the installation command. As the upgrade flag, :code:`-U`, is used then the libraries will be updated.
+Rerun the installation command. As the upgrade flag (:code:`-U`, :code:`--upgrade`) is used then the libraries will be updated.

@@ -1,9 +1,9 @@
 """Polynomial Interpolation (Code 4)."""
 import logging
 import math
-from .. import get_backend, default_backend
-from .. import events
-from . import _slow_interpolator_looper
+from pyhf import get_backend, default_backend
+from pyhf import events
+from pyhf.interpolators import _slow_interpolator_looper
 
 log = logging.getLogger(__name__)
 
@@ -343,7 +343,7 @@ class _slow_code4:
             ]
 
             coefficients = [
-                sum([A_i * b_j for A_i, b_j in zip(A_row, b)]) for A_row in A_inverse
+                sum(A_i * b_j for A_i, b_j in zip(A_row, b)) for A_row in A_inverse
             ]
             delta = 1
             for i in range(1, 7):

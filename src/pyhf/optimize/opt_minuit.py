@@ -1,6 +1,6 @@
 """Minuit Optimizer Class."""
-from .. import exceptions
-from .mixins import OptimizerMixin
+from pyhf import exceptions
+from pyhf.optimize.mixins import OptimizerMixin
 import scipy
 import iminuit
 
@@ -40,7 +40,13 @@ class minuit_optimizer(OptimizerMixin):
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
-        self, objective_and_grad, init_pars, init_bounds, fixed_vals=None, do_grad=False
+        self,
+        objective_and_grad,
+        init_pars,
+        init_bounds,
+        fixed_vals=None,
+        do_grad=False,
+        par_names=None,
     ):
 
         step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
@@ -60,7 +66,7 @@ class minuit_optimizer(OptimizerMixin):
             wrapped_objective = objective_and_grad
             jac = None
 
-        minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac)
+        minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac, name=par_names)
         minuit.errors = step_sizes
         minuit.limits = init_bounds
         minuit.fixed = fixed_bools

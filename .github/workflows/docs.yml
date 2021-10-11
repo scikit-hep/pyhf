@@ -13,20 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --quiet --no-cache-dir --ignore-installed --upgrade .[docs,test]
+        python -m pip --quiet --use-feature=in-tree-build install --upgrade .[docs,test]
+        python -m pip install yq
         python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
@@ -37,11 +38,15 @@ jobs:
                                src/pyhf/workspace.py \
                                src/pyhf/probability.py \
                                src/pyhf/patchset.py \
+                               src/pyhf/compat.py \
                                src/pyhf/interpolators \
                                src/pyhf/infer \
                                src/pyhf/optimize \
                                src/pyhf/contrib \
                                src/pyhf/cli
+    - name: Verify CITATION.cff schema
+      run: |
+        jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
     - name: Test and build docs
       run: |
         python -m doctest README.rst

@@ -1,12 +1,30 @@
-from .. import default_backend
+from pyhf import default_backend
+
+__all__ = [
+    "constrained_by_normal",
+    "constrained_by_poisson",
+    "constrained_paramset",
+    "paramset",
+    "unconstrained",
+]
+
+
+def __dir__():
+    return __all__
 
 
 class paramset:
     def __init__(self, **kwargs):
+        self.name = kwargs.pop('name')
         self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
         self.suggested_fixed = kwargs.pop('fixed')
+        self.is_scalar = kwargs.pop('is_scalar')
+        if self.is_scalar and not (self.n_parameters == 1):
+            raise ValueError(
+                f'misconfigured parameter set {self.name}. Scalar but N>1 parameters.'
+            )
 
 
 class unconstrained(paramset):

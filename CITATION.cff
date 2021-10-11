@@ -1,0 +1,71 @@
+cff-version: 1.2.0
+message: "Please cite the following works when using this software."
+type: software
+authors:
+- family-names: "Heinrich"
+  given-names: "Lukas"
+  orcid: "https://orcid.org/0000-0002-4048-7584"
+  affiliation: "CERN"
+- family-names: "Feickert"
+  given-names: "Matthew"
+  orcid: "https://orcid.org/0000-0003-4124-7862"
+  affiliation: "University of Illinois at Urbana-Champaign"
+- family-names: "Stark"
+  given-names: "Giordon"
+  orcid: "https://orcid.org/0000-0001-6616-3433"
+  affiliation: "SCIPP, University of California, Santa Cruz"
+title: "pyhf: v0.6.3"
+version: 0.6.3
+doi: 10.5281/zenodo.1169739
+repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3"
+url: "https://pyhf.readthedocs.io/en/v0.6.3/"
+keywords:
+  - python
+  - physics
+  - statistics
+  - fitting
+  - scipy
+  - numpy
+  - tensorflow
+  - pytorch
+  - jax
+  - auto-differentiation
+license: "Apache-2.0"
+abstract: |
+  The HistFactory p.d.f. template is per-se independent of its implementation
+  in ROOT and it is useful to be able to run statistical analysis outside of
+  the ROOT, RooFit, RooStats framework. pyhf is a pure-python implementation
+  of that statistical model for multi-bin histogram-based analysis and its
+  interval estimation is based on the asymptotic formulas of "Asymptotic
+  formulae for likelihood-based tests of new physics". pyhf supports modern
+  computational graph libraries such as TensorFlow, PyTorch, and JAX in order
+  to make use of features such as autodifferentiation and GPU acceleration.
+references:
+  - type: article
+    authors:
+    - family-names: "Heinrich"
+      given-names: "Lukas"
+      orcid: "https://orcid.org/0000-0002-4048-7584"
+      affiliation: "CERN"
+    - family-names: "Feickert"
+      given-names: "Matthew"
+      orcid: "https://orcid.org/0000-0003-4124-7862"
+      affiliation: "University of Illinois at Urbana-Champaign"
+    - family-names: "Stark"
+      given-names: "Giordon"
+      orcid: "https://orcid.org/0000-0001-6616-3433"
+      affiliation: "University of Illinois at Urbana-Champaign"
+    - family-names: "Cranmer"
+      given-names: "Kyle"
+      orcid: "https://orcid.org/0000-0002-5769-7094"
+      affiliation: "New York University"
+    title: "pyhf: pure-Python implementation of HistFactory statistical models"
+    doi: 10.21105/joss.02823
+    url: "https://doi.org/10.21105/joss.02823"
+    year: 2021
+    publisher:
+      name: "The Open Journal"
+    volume: 6
+    number: 58
+    pages: 2823
+    journal: Journal of Open Source Software

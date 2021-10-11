@@ -6,11 +6,24 @@ import yaml
 import click
 import hashlib
 
-from .exceptions import InvalidSpecification
+from pyhf.exceptions import InvalidSpecification
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
 SCHEMA_VERSION = '1.0.0'
+
+__all__ = [
+    "EqDelimStringParamType",
+    "citation",
+    "digest",
+    "load_schema",
+    "options_from_eqdelimstring",
+    "validate",
+]
+
+
+def __dir__():
+    return __all__
 
 
 def load_schema(schema_id, version=None):
@@ -111,29 +124,6 @@ def digest(obj, algorithm='sha256'):
     return hash_alg(stringified).hexdigest()
 
 
-def remove_prefix(text, prefix):
-    """
-    Remove a prefix from the beginning of the provided text.
-
-    Example:
-
-        >>> import pyhf
-        >>> pyhf.utils.remove_prefix("alpha_syst1", "alpha_")
-        'syst1'
-
-    Args:
-        text (:obj:`str`): A provided input to manipulate.
-        prefix (:obj:`str`): A prefix to remove from provided input, if it exists.
-
-    Returns:
-        stripped_text (:obj:`str`): Text with the prefix removed.
-    """
-    # NB: python3.9 can be `return text.removeprefix(prefix)`
-    if text.startswith(prefix):
-        return text[len(prefix) :]
-    return text
-
-
 def citation(oneline=False):
     """
     Get the bibtex citation for pyhf
@@ -141,8 +131,8 @@ def citation(oneline=False):
     Example:
 
         >>> import pyhf
-        >>> pyhf.utils.citation(True)
-        '@software{pyhf,  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},  title = "{pyhf: v0.6.1}",  version = {0.6.1},  doi = {10.5281/zenodo.1169739},  url = {https://github.com/scikit-hep/pyhf},}@article{pyhf_joss,  doi = {10.21105/joss.02823},  url = {https://doi.org/10.21105/joss.02823},  year = {2021},  publisher = {The Open Journal},  volume = {6},  number = {58},  pages = {2823},  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},  title = {pyhf: pure-Python implementation of HistFactory statistical models},  journal = {Journal of Open Source Software}}'
+        >>> pyhf.utils.citation(oneline=True)
+        '@software{pyhf,  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},  title = "{pyhf: v0.6.3}",  version = {0.6.3},  doi = {10.5281/zenodo.1169739},  url = {https://doi.org/10.5281/zenodo.1169739},  note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3}}@article{pyhf_joss,  doi = {10.21105/joss.02823},  url = {https://doi.org/10.21105/joss.02823},  year = {2021},  publisher = {The Open Journal},  volume = {6},  number = {58},  pages = {2823},  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},  title = {pyhf: pure-Python implementation of HistFactory statistical models},  journal = {Journal of Open Source Software}}'
 
     Keyword Args:
         oneline (:obj:`bool`): Whether to provide citation with new lines (default) or as a one-liner.

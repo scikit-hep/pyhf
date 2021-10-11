@@ -4,10 +4,16 @@ from urllib.parse import urlparse
 import tarfile
 from io import BytesIO
 import logging
-from .. import exceptions
+from pyhf import exceptions
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
+
+__all__ = ["download"]
+
+
+def __dir__():
+    return __all__
+
 
 try:
     import requests

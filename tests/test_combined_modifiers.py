@@ -48,6 +48,8 @@ def test_histosys(backend):
         par_map={
             'hello': {
                 'paramset': constrained_by_normal(
+                    name='hello',
+                    is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[-5, 5]],
@@ -58,6 +60,8 @@ def test_histosys(backend):
             },
             'world': {
                 'paramset': constrained_by_normal(
+                    name='world',
+                    is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[-5, 5]],
@@ -149,6 +153,8 @@ def test_normsys(backend):
         par_map={
             'hello': {
                 'paramset': constrained_by_normal(
+                    name='hello',
+                    is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[-5, 5]],
@@ -159,6 +165,8 @@ def test_normsys(backend):
             },
             'world': {
                 'paramset': constrained_by_normal(
+                    name='world',
+                    is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[-5, 5]],
@@ -252,6 +260,8 @@ def test_lumi(backend):
         par_map={
             'lumi': {
                 'paramset': constrained_by_normal(
+                    name='lumi',
+                    is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[-5, 5]],
@@ -309,6 +319,8 @@ def test_stat(backend):
         par_map={
             'staterror_chan1': {
                 'paramset': constrained_by_normal(
+                    name='staterror_chan1',
+                    is_scalar=False,
                     n_parameters=1,
                     inits=[1],
                     bounds=[[0, 10]],
@@ -319,6 +331,8 @@ def test_stat(backend):
             },
             'staterror_chan2': {
                 'paramset': constrained_by_normal(
+                    name='staterror_chan2',
+                    is_scalar=False,
                     n_parameters=2,
                     inits=[1, 1],
                     bounds=[[0, 10], [0, 10]],
@@ -396,12 +410,19 @@ def test_shapesys(backend):
         par_map={
             'dummy1': {
                 'paramset': paramset(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='dummy1',
+                    is_scalar=True,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
             },
             'shapesys1': {
                 'paramset': constrained_by_poisson(
+                    name='shapesys1',
+                    is_scalar=False,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
@@ -413,7 +434,9 @@ def test_shapesys(backend):
             },
             'shapesys2': {
                 'paramset': constrained_by_poisson(
+                    name='shapesys2',
                     n_parameters=2,
+                    is_scalar=False,
                     inits=[0, 0],
                     bounds=[[0, 10], [0, 10]],
                     fixed=False,
@@ -424,7 +447,12 @@ def test_shapesys(backend):
             },
             'dummy2': {
                 'paramset': paramset(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='dummy2',
+                    is_scalar=True,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(4, 5),
             },
@@ -495,13 +523,23 @@ def test_normfactor(backend):
         par_map={
             'mu1': {
                 'paramset': unconstrained(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='mu1',
+                    is_scalar=True,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
             },
             'mu2': {
                 'paramset': unconstrained(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='mu2',
+                    is_scalar=True,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(1, 2),
             },
@@ -575,12 +613,19 @@ def test_shapesys_zero(backend):
         par_map={
             'SigXsecOverSM': {
                 'paramset': paramset(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='SigXsecOverSM',
+                    is_scalar=True,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
             },
             'syst': {
                 'paramset': constrained_by_poisson(
+                    name='syst',
+                    is_scalar=False,
                     n_parameters=5,
                     inits=[0] * 5,
                     bounds=[[0, 10]] * 5,
@@ -592,6 +637,8 @@ def test_shapesys_zero(backend):
             },
             'syst_lowstats': {
                 'paramset': constrained_by_poisson(
+                    name='syst_lowstats',
+                    is_scalar=False,
                     n_parameters=0,
                     inits=[0] * 0,
                     bounds=[[0, 10]] * 0,
@@ -669,13 +716,23 @@ def test_shapefactor(backend):
         par_map={
             'shapefac1': {
                 'paramset': unconstrained(
-                    n_parameters=1, inits=[0], bounds=[[0, 10]], fixed=False
+                    name='shapefac1',
+                    is_scalar=False,
+                    n_parameters=1,
+                    inits=[0],
+                    bounds=[[0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(0, 1),
             },
             'shapefac2': {
                 'paramset': unconstrained(
-                    n_parameters=2, inits=[0, 0], bounds=[[0, 10], [0, 10]], fixed=False
+                    name='shapefac2',
+                    is_scalar=False,
+                    n_parameters=2,
+                    inits=[0, 0],
+                    bounds=[[0, 10], [0, 10]],
+                    fixed=False,
                 ),
                 'slice': slice(1, 3),
             },

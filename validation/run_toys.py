@@ -1,10 +1,12 @@
 import json
-import numpy as np
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
+import ROOT
+
 import pyhf
 import pyhf.contrib.viz.brazil as brazil
-import ROOT
-import sys
 
 
 def run_toys_ROOT(infile, ntoys):
@@ -12,44 +14,44 @@ def run_toys_ROOT(infile, ntoys):
     workspace = infile.Get("combined")
     data = workspace.data("obsData")
 
-    sbModel = workspace.obj("ModelConfig")
-    poi = sbModel.GetParametersOfInterest().first()
+    sb_model = workspace.obj("ModelConfig")
+    poi = sb_model.GetParametersOfInterest().first()
 
-    sbModel.SetSnapshot(ROOT.RooArgSet(poi))
+    sb_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    bModel = sbModel.Clone()
-    bModel.SetName("bonly")
+    bkg_model = sb_model.Clone()
+    bkg_model.SetName("bonly")
     poi.setVal(0)
-    bModel.SetSnapshot(ROOT.RooArgSet(poi))
+    bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    ac = ROOT.RooStats.FrequentistCalculator(data, bModel, sbModel)
-    ac.SetToys(ntoys, ntoys)
+    calc = ROOT.RooStats.FrequentistCalculator(data, bkg_model, sb_model)
+    calc.SetToys(ntoys, ntoys)
 
-    profll = ROOT.RooStats.ProfileLikelihoodTestStat(bModel.GetPdf())
-    profll.SetOneSidedDiscovery(False)
-    profll.SetOneSided(True)
-    ac.GetTestStatSampler().SetTestStatistic(profll)
+    profile_ll = ROOT.RooStats.ProfileLikelihoodTestStat(bkg_model.GetPdf())
+    profile_ll.SetOneSidedDiscovery(False)
+    profile_ll.SetOneSided(True)
+    calc.GetTestStatSampler().SetTestStatistic(profile_ll)
 
-    calc = ROOT.RooStats.HypoTestInverter(ac)
-    calc.SetConfidenceLevel(0.95)
-    calc.UseCLs(True)
+    test_inverter = ROOT.RooStats.HypoTestInverter(calc)
+    test_inverter.SetConfidenceLevel(0.95)
+    test_inverter.UseCLs(True)
 
-    npoints = 2
+    n_points = 2
 
-    calc.RunFixedScan(npoints, 1.0, 1.2)
+    test_inverter.RunFixedScan(n_points, 1.0, 1.2)
 
-    result = calc.GetInterval()
+    result = test_inverter.GetInterval()
 
     plot = ROOT.RooStats.HypoTestInverterPlot("plot", "plot", result)
 
-    data = []
-    for i in range(npoints):
-        d = {
-            "test_b": list(result.GetAltTestStatDist(i).GetSamplingDistribution()),
-            "test_s": list(result.GetNullTestStatDist(i).GetSamplingDistribution()),
-            "pvals": list(result.GetExpectedPValueDist(i).GetSamplingDistribution()),
+    data = [
+        {
+            "test_b": list(result.GetAltTestStatDist(idx).GetSamplingDistribution()),
+            "test_s": list(result.GetNullTestStatDist(idx).GetSamplingDistribution()),
+            "pvals": list(result.GetExpectedPValueDist(idx).GetSamplingDistribution()),
         }
-        data.append(d)
+        for idx in range(n_points)
+    ]
 
     json.dump(data, open("scan.json", "w"))
 
@@ -58,6 +60,7 @@ def run_toys_ROOT(infile, ntoys):
     plot.Draw("OBS EXP CLb 2CL")
     canvas.GetListOfPrimitives().At(0).GetYaxis().SetRangeUser(0, 0.2)
     canvas.Draw()
+
     extensions = ["pdf", "png"]
     for ext in extensions:
         canvas.SaveAs(f"poi_scan_ROOT.{ext}")
@@ -82,9 +85,7 @@ def run_toys_pyhf(ntoys=2_000, seed=0):
     ]
 
     fig, ax = plt.subplots()
-    brazil.plot_results(ax, test_mus, fit_results)
-    ax.set_xlabel(r"$\mu$")
-    ax.set_ylabel(r"$\mathrm{CL}_{s}$")
+    brazil.plot_results(test_mus, fit_results, ax=ax)
     _buffer = 0.02
     ax.set_xlim(1.0 - _buffer, 1.2 + _buffer)
     ax.set_ylim(0.0, 0.2)

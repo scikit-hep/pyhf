@@ -4,10 +4,9 @@ import logging
 import click
 import json
 
-from ..workspace import Workspace
-from .. import modifiers
-from .. import utils
-from .. import parameters
+from pyhf.workspace import Workspace
+from pyhf import modifiers
+from pyhf import utils
 
 log = logging.getLogger(__name__)
 

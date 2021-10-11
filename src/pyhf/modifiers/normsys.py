@@ -1,8 +1,8 @@
 import logging
 
-from .. import get_backend, events
-from .. import interpolators
-from ..parameters import constrained_by_normal, ParamViewer
+from pyhf import get_backend, events
+from pyhf import interpolators
+from pyhf.parameters import constrained_by_normal, ParamViewer
 
 log = logging.getLogger(__name__)
 

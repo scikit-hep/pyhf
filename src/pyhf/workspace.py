@@ -9,12 +9,18 @@ import logging
 import jsonpatch
 import copy
 import collections
-from . import exceptions
-from . import utils
-from .pdf import Model
-from .mixins import _ChannelSummaryMixin
+from pyhf import exceptions
+from pyhf import utils
+from pyhf.pdf import Model
+from pyhf.mixins import _ChannelSummaryMixin
 
 log = logging.getLogger(__name__)
+
+__all__ = ["Workspace"]
+
+
+def __dir__():
+    return __all__
 
 
 def _join_items(join, left_items, right_items, key='name', deep_merge_key=None):
@@ -260,10 +266,10 @@ def _join_measurements(join, left_measurements, right_measurements):
                         'poi': measurements[0]['config']['poi'],
                         'parameters': _join_parameter_configs(
                             measurement_name,
-                            *[
+                            *(
                                 measurement['config']['parameters']
                                 for measurement in measurements
-                            ],
+                            ),
                         ),
                     },
                 }
@@ -411,7 +417,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
 
-    def data(self, model, with_aux=True):
+    def data(self, model, include_auxdata=True):
         """
         Return the data for the supplied model with or without auxiliary data from the model.
 
@@ -422,7 +428,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
-            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not
+            include_auxdata (:obj:`bool`): Whether to include auxiliary data from the model or not
 
         Returns:
             :obj:`list`: data
@@ -438,7 +444,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                 exc_info=True,
             )
             raise
-        if with_aux:
+        if include_auxdata:
             observed_data += model.config.auxdata
         return observed_data
 

@@ -1,4 +1,5 @@
-from . import utils
+from pyhf import utils
+from pyhf import compat
 
 import logging
 
@@ -7,11 +8,26 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
-import re
 
 log = logging.getLogger(__name__)
 
 __FILECACHE__ = {}
+
+__all__ = [
+    "clear_filecache",
+    "dedupe_parameters",
+    "extract_error",
+    "import_root_histogram",
+    "parse",
+    "process_channel",
+    "process_data",
+    "process_measurements",
+    "process_sample",
+]
+
+
+def __dir__():
+    return __all__
 
 
 def extract_error(hist):
@@ -250,7 +266,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
         result = {
             'name': x.attrib['Name'],
             'config': {
-                'poi': x.findall('POI')[0].text,
+                'poi': x.findall('POI')[0].text.strip(),
                 'parameters': [
                     {
                         'name': 'lumi',
@@ -273,27 +289,24 @@ def process_measurements(toplvl, other_parameter_configs=None):
 
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
-                for param_name in param.text.split(' '):
-                    param_name = utils.remove_prefix(param_name, 'alpha_')
-                    if param_name.startswith('gamma_') and re.search(
-                        r'^gamma_.+_\d+$', param_name
-                    ):
+                for param_name in param.text.strip().split(' '):
+                    param_interpretation = compat.interpret_rootname(param_name)
+                    if not param_interpretation['is_scalar']:
                         raise ValueError(
-                            f'pyhf does not support setting individual gamma parameters constant, such as for {param_name}.'
+                            f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
                         )
-                    param_name = utils.remove_prefix(param_name, 'gamma_')
-                    # lumi will always be the first parameter
-                    if param_name == 'Lumi':
+                    if param_interpretation['name'] == 'lumi':
                         result['config']['parameters'][0].update(overall_param_obj)
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
                         param_obj = parameter_configs_map.pop(
-                            param_name, {'name': param_name}
+                            param_interpretation['name'],
+                            {'name': param_interpretation['name']},
                         )
                         # ParamSetting will always take precedence
                         param_obj.update(overall_param_obj)
                         # add it back in to the parameter_configs_map
-                        parameter_configs_map[param_name] = param_obj
+                        parameter_configs_map[param_interpretation['name']] = param_obj
         result['config']['parameters'].extend(parameter_configs_map.values())
         results.append(result)
 
@@ -331,7 +344,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
+            ET.parse(Path(rootdir).joinpath(inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)

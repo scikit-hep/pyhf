@@ -1,8 +1,8 @@
-from .tensor import BackendRetriever as tensor
-from .optimize import OptimizerRetriever as optimize
-from .version import __version__
-from .exceptions import InvalidBackend, InvalidOptimizer, Unsupported
-from . import events
+from pyhf.tensor import BackendRetriever as tensor
+from pyhf.optimize import OptimizerRetriever as optimize
+from pyhf._version import version as __version__
+from pyhf.exceptions import InvalidBackend, InvalidOptimizer, Unsupported
+from pyhf import events
 
 tensorlib = None
 optimizer = None
@@ -151,19 +151,37 @@ def set_backend(backend, custom_optimizer=None, precision=None):
     tensorlib._setup()
 
 
-from .pdf import Model
-from .workspace import Workspace
-from . import simplemodels
-from . import infer
-from .patchset import PatchSet
+from pyhf.pdf import Model
+from pyhf.workspace import Workspace
+from pyhf import simplemodels
+from pyhf import infer
+from pyhf import compat
+from pyhf.patchset import PatchSet
 
 __all__ = [
-    'Model',
-    'Workspace',
-    'PatchSet',
-    'infer',
-    'utils',
-    'modifiers',
-    'simplemodels',
-    '__version__',
+    "Model",
+    "PatchSet",
+    "Workspace",
+    "__version__",
+    "compat",
+    "exceptions",
+    "get_backend",
+    "infer",
+    "interpolators",
+    "modifiers",
+    "optimizer",
+    "parameters",
+    "patchset",
+    "pdf",
+    "probability",
+    "set_backend",
+    "simplemodels",
+    "tensor",
+    "tensorlib",
+    "utils",
+    "workspace",
 ]
+
+
+def __dir__():
+    return __all__

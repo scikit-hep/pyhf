@@ -8,13 +8,14 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|Docker Automated| |Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
-
 |Docs from latest| |Docs from master| |Binder|
 
-|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Stars| |Docker
-Pulls|
+|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
+
+|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
+
+|GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
+|GitHub Actions Status: Docker|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
@@ -39,8 +40,8 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 .. code:: pycon
 
    >>> import pyhf
-   >>> model = pyhf.simplemodels.hepdata_like(
-   ...     signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+   >>> model = pyhf.simplemodels.uncorrelated_background(
+   ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
    ... )
    >>> data = [51, 48] + model.config.auxdata
    >>> test_mu = 1.0
@@ -121,7 +122,7 @@ Implemented variations:
   - ☑ ShapeSys
   - ☑ NormFactor
   - ☑ Multiple Channels
-  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot4>`__
   - ☑ ShapeFactor
   - ☑ StatError
   - ☑ Lumi Uncertainty
@@ -156,11 +157,11 @@ A one bin example
    import pyhf
    import numpy as np
    import matplotlib.pyplot as plt
-   import pyhf.contrib.viz.brazil
+   from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
-   model = pyhf.simplemodels.hepdata_like(
-       signal_data=[10.0], bkg_data=[50.0], bkg_uncerts=[7.0]
+   model = pyhf.simplemodels.uncorrelated_background(
+       signal=[10.0], bkg=[50.0], bkg_uncertainty=[7.0]
    )
    data = [55.0] + model.config.auxdata
 
@@ -174,9 +175,7 @@ A one bin example
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
-   ax.set_xlabel(r"$\mu$ (POI)")
-   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
-   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
 
 **pyhf**
@@ -201,11 +200,11 @@ A two bin example
    import pyhf
    import numpy as np
    import matplotlib.pyplot as plt
-   import pyhf.contrib.viz.brazil
+   from pyhf.contrib.viz import brazil
 
    pyhf.set_backend("numpy")
-   model = pyhf.simplemodels.hepdata_like(
-       signal_data=[30.0, 45.0], bkg_data=[100.0, 150.0], bkg_uncerts=[15.0, 20.0]
+   model = pyhf.simplemodels.uncorrelated_background(
+       signal=[30.0, 45.0], bkg=[100.0, 150.0], bkg_uncertainty=[15.0, 20.0]
    )
    data = [100.0, 145.0] + model.config.auxdata
 
@@ -219,9 +218,7 @@ A two bin example
 
    fig, ax = plt.subplots()
    fig.set_size_inches(7, 5)
-   ax.set_xlabel(r"$\mu$ (POI)")
-   ax.set_ylabel(r"$\mathrm{CL}_{s}$")
-   pyhf.contrib.viz.brazil.plot_results(ax, poi_vals, results)
+   brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
 
 
@@ -290,10 +287,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.6.1}",
-     version = {0.6.1},
+     title = "{pyhf: v0.6.3}",
+     version = {0.6.3},
      doi = {10.5281/zenodo.1169739},
-     url = {https://github.com/scikit-hep/pyhf},
+     url = {https://doi.org/10.5281/zenodo.1169739},
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3}
    }
 
    @article{pyhf_joss,
@@ -339,14 +337,24 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster
-.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amaster
-.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster
-.. |Docker Automated| image:: https://img.shields.io/docker/automated/pyhf/pyhf.svg
-   :target: https://hub.docker.com/r/pyhf/pyhf/
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.3-blue.svg
+   :target: https://pyhf.readthedocs.io/
+.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
+   :target: https://scikit-hep.github.io/pyhf
+.. |Binder| image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+
+.. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
+   :target: https://badge.fury.io/py/pyhf
+.. |Conda-forge version| image:: https://img.shields.io/conda/vn/conda-forge/pyhf.svg
+   :target: https://github.com/conda-forge/pyhf-feedstock
+.. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
+   :target: https://pypi.org/project/pyhf/
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.3-blue?logo=Docker
+   :target: https://hub.docker.com/r/pyhf/pyhf/tags
+.. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
+   :target: https://hub.docker.com/r/pyhf/cuda/tags
+
 .. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master
    :target: https://codecov.io/gh/scikit-hep/pyhf?branch=master
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
@@ -356,19 +364,12 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.1-blue.svg
-   :target: https://pyhf.readthedocs.io/
-.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
-   :target: https://scikit-hep.github.io/pyhf
-.. |Binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
-.. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
-   :target: https://badge.fury.io/py/pyhf
-.. |Conda-forge version| image:: https://img.shields.io/conda/vn/conda-forge/pyhf.svg
-   :target: https://github.com/conda-forge/pyhf-feedstock
-.. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
-   :target: https://pypi.org/project/pyhf/
-.. |Docker Stars| image:: https://img.shields.io/docker/stars/pyhf/pyhf.svg
-   :target: https://hub.docker.com/r/pyhf/pyhf/
-.. |Docker Pulls| image:: https://img.shields.io/docker/pulls/pyhf/pyhf.svg
-   :target: https://hub.docker.com/r/pyhf/pyhf/
+
+.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=master
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster
+.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=master
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amaster
+.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=master
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=master
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amaster

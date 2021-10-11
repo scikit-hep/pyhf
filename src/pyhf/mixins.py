@@ -39,6 +39,9 @@ class _ChannelSummaryMixin:
         self.channels = sorted(list(set(self.channels)))
         self.samples = sorted(list(set(self.samples)))
         self.modifiers = sorted(list(set(self.modifiers)))
+        self.channel_nbins = {
+            channel: self.channel_nbins[channel] for channel in self.channels
+        }
 
         self.channel_slices = {}
         begin = 0

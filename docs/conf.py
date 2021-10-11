@@ -19,8 +19,7 @@ from pathlib import Path
 import sys
 from pkg_resources import get_distribution
 
-sys.path.insert(0, str(Path('../src').resolve()))
-sys.path.insert(1, str(Path('./exts').resolve()))
+sys.path.insert(0, str(Path('./exts').resolve()))
 
 
 def setup(app):
@@ -64,15 +63,18 @@ bibtex_bibfiles = [
     "bib/talks.bib",
     "bib/tutorials.bib",
     "bib/use_citations.bib",
+    "bib/general_citations.bib",
 ]
+bibtex_default_style = "unsrt"
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('https://matplotlib.org/stable/', None),
     'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
 }
@@ -323,7 +325,9 @@ html_extra_path = ['_extras']
 htmlhelp_basename = 'pyhfdoc'
 
 # sphinx-copybutton configuration
-copybutton_prompt_text = ">>> "
+copybutton_prompt_text = r">>> |\.\.\. |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_here_doc_delimiter = "EOF"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -432,10 +436,10 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
-mathjax_config = {
+mathjax3_config = {
     'tex2jax': {'inlineMath': [['$', '$'], ['\\(', '\\)']]},
-    'TeX': {
-        'Macros': {
+    'tex': {
+        'macros': {
             'bm': ["\\boldsymbol{#1}", 1],  # \usepackage{bm}, see mathjax/MathJax#1219
             'HiFa': r'\texttt{HistFactory}',
             'Root': r'\texttt{ROOT}',

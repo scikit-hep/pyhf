@@ -4,8 +4,8 @@ import logging
 import click
 import json
 
-from ..patchset import PatchSet
-from ..workspace import Workspace
+from pyhf.patchset import PatchSet
+from pyhf.workspace import Workspace
 
 logging.basicConfig()
 log = logging.getLogger(__name__)

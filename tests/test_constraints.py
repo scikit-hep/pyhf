@@ -136,6 +136,8 @@ def test_batched_constraints(backend):
         par_map={
             'pois1': {
                 'paramset': constrained_by_poisson(
+                    name='pois1',
+                    is_scalar=False,
                     n_parameters=1,
                     inits=[1.0],
                     bounds=[[0, 10]],
@@ -148,6 +150,8 @@ def test_batched_constraints(backend):
             },
             'pois2': {
                 'paramset': constrained_by_poisson(
+                    name='pois2',
+                    is_scalar=False,
                     n_parameters=2,
                     inits=[1.0] * 2,
                     bounds=[[0, 10]] * 2,
@@ -159,6 +163,8 @@ def test_batched_constraints(backend):
             },
             'norm1': {
                 'paramset': constrained_by_normal(
+                    name='norm1',
+                    is_scalar=False,
                     n_parameters=2,
                     inits=[0] * 2,
                     bounds=[[0, 10]] * 2,
@@ -170,6 +176,8 @@ def test_batched_constraints(backend):
             },
             'norm2': {
                 'paramset': constrained_by_normal(
+                    name='norm2',
+                    is_scalar=False,
                     n_parameters=3,
                     inits=[0] * 3,
                     bounds=[[0, 10]] * 3,
@@ -193,10 +201,8 @@ def test_batched_constraints(backend):
     assert np.isclose(
         result,
         sum(
-            [
-                default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12, 13, 14])
-            ]
+            default_backend.poisson_logpdf(data, rate)
+            for data, rate in zip([12, 13, 14], [12, 13, 14])
         ),
     )
     assert result.shape == ()
@@ -214,10 +220,8 @@ def test_batched_constraints(backend):
     assert np.isclose(
         result,
         sum(
-            [
-                default_backend.poisson_logpdf(data, rate)
-                for data, rate in zip([12, 13, 14], [12 * 1.1, 13 * 1.1, 14 * 1.1])
-            ]
+            default_backend.poisson_logpdf(data, rate)
+            for data, rate in zip([12, 13, 14], [12 * 1.1, 13 * 1.1, 14 * 1.1])
         ),
     )
     assert result.shape == ()
@@ -286,12 +290,10 @@ def test_batched_constraints(backend):
     assert np.isclose(
         result[0],
         sum(
-            [
-                default_backend.normal_logpdf(data, mu, sigma)
-                for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [1.5, 2.0, 1.0, 1.0, 1.0]
-                )
-            ]
+            default_backend.normal_logpdf(data, mu, sigma)
+            for data, mu, sigma in zip(
+                [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [1.5, 2.0, 1.0, 1.0, 1.0]
+            )
         ),
     )
     assert result.shape == (1,)
@@ -309,12 +311,10 @@ def test_batched_constraints(backend):
     assert np.isclose(
         result[0],
         sum(
-            [
-                default_backend.normal_logpdf(data, mu, sigma)
-                for data, mu, sigma in zip(
-                    [0, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1.5, 2.0, 1.0, 1.0, 1.0]
-                )
-            ]
+            default_backend.normal_logpdf(data, mu, sigma)
+            for data, mu, sigma in zip(
+                [0, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1.5, 2.0, 1.0, 1.0, 1.0]
+            )
         ),
     )
     assert result.shape == (1,)

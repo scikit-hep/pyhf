@@ -4,7 +4,7 @@ import numpy as np
 import uproot
 from pathlib import Path
 import pytest
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 import logging
 
 
@@ -146,6 +146,31 @@ def test_import_measurements():
     assert lumi_param_config['inits'] == [1.0]
     assert 'sigmas' in lumi_param_config
     assert lumi_param_config['sigmas'] == [0.1]
+
+
+@pytest.mark.parametrize("const", ['False', 'True'])
+def test_spaces_in_measurement_config(const):
+    toplvl = ET.Element("Combination")
+    meas = ET.Element(
+        "Measurement",
+        Name='NormalMeasurement',
+        Lumi=str(1.0),
+        LumiRelErr=str(0.017),
+        ExportOnly=str(True),
+    )
+    poiel = ET.Element('POI')
+    poiel.text = 'mu_SIG '  # space
+    meas.append(poiel)
+
+    setting = ET.Element('ParamSetting', Const=const)
+    setting.text = ' '.join(['Lumi', 'alpha_mu_both']) + ' '  # spacces
+    meas.append(setting)
+
+    toplvl.append(meas)
+
+    meas_json = pyhf.readxml.process_measurements(toplvl)[0]
+    assert meas_json['config']['poi'] == 'mu_SIG'
+    assert [x['name'] for x in meas_json['config']['parameters']] == ['lumi', 'mu_both']
 
 
 @pytest.mark.parametrize("const", ['False', 'True'])

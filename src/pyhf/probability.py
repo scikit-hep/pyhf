@@ -1,5 +1,11 @@
 """The probability density function module."""
-from . import get_backend
+from pyhf import get_backend
+
+__all__ = ["Independent", "Normal", "Poisson", "Simultaneous"]
+
+
+def __dir__():
+    return __all__
 
 
 class _SimpleDistributionMixin:

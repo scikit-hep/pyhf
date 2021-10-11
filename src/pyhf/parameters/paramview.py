@@ -1,15 +1,21 @@
-from .. import get_backend, default_backend, events
-from ..tensor.common import (
+from pyhf import get_backend, default_backend, events
+from pyhf.tensor.common import (
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
 )
+
+__all__ = ["ParamViewer"]
+
+
+def __dir__():
+    return __all__
 
 
 def _tensorviewer_from_parmap(par_map, batch_size):
     names, slices, _ = list(
         zip(
             *sorted(
-                [(k, v['slice'], v['slice'].start) for k, v in par_map.items()],
+                ((k, v['slice'], v['slice'].start) for k, v in par_map.items()),
                 key=lambda x: x[2],
             )
         )

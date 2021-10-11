@@ -1,0 +1,52 @@
+---
+name: 📝  Documentation Report
+description: Create a report for problems with the docs
+labels: ["docs", "needs-triage"]
+
+body:
+- type: markdown
+  attributes:
+    value: >
+      **Thank you for wanting to report a problem with pyhf's documentation!**
+
+
+      ⚠
+      Verify first that your issue is not [already reported on
+      GitHub][issue search].
+
+
+      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Adocs
+
+- type: textarea
+  attributes:
+    label: Summary
+    description: >-
+      Explain the problem briefly below, add suggestions to wording or structure.
+      If there are external references that are related please link them here
+      as well.
+    placeholder: >-
+      I was reading the pyhf documentation for pyhf version X and I'm having
+      problems understanding Y.
+      It would be very helpful if that got rephrased as Z.
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: Documentation Page Link
+    description: |
+      Paste the link to the documentation webpage that you have a question on.
+  validations:
+    required: true
+
+- type: checkboxes
+  attributes:
+    label: Code of Conduct
+    description: |
+      Read the [`pyhf` Code of Conduct][CoC] first.
+
+      [CoC]: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
+    options:
+    - label: I agree to follow the Code of Conduct
+      required: true
+...

@@ -1,4 +1,10 @@
-from .. import exceptions
+from pyhf import exceptions
+
+__all__ = ["reduce_paramsets_requirements"]
+
+
+def __dir__():
+    return __all__
 
 
 def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs):
@@ -7,6 +13,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
     paramset_keys = [
         'paramset_type',
         'n_parameters',
+        'is_scalar',
         'inits',
         'bounds',
         'auxdata',
@@ -57,6 +64,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
 
             combined_paramset[k] = v
 
+        combined_paramset['name'] = paramset_name
         reduced_paramsets_requirements[paramset_name] = combined_paramset
 
     return reduced_paramsets_requirements

@@ -6,8 +6,8 @@ import scipy.stats
 
 @pytest.fixture(scope='module')
 def hypotest_args():
-    pdf = pyhf.simplemodels.hepdata_like(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    pdf = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     mu_test = 1.0
     data = [51, 48] + pdf.config.auxdata
@@ -81,8 +81,8 @@ def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
     """
     Check that the fit errors for POI outside of parameter bounds
     """
-    pdf = pyhf.simplemodels.hepdata_like(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    pdf = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48] + pdf.config.auxdata
 
@@ -166,8 +166,8 @@ def test_hypotest_backends(backend, kwargs):
     """
     Check that hypotest runs fully across all backends for all calculator types.
     """
-    pdf = pyhf.simplemodels.hepdata_like(
-        signal_data=[12.0, 11.0], bkg_data=[50.0, 52.0], bkg_uncerts=[3.0, 7.0]
+    pdf = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
     data = [51, 48] + pdf.config.auxdata
     assert pyhf.infer.hypotest(1.0, data, pdf, **kwargs) is not None
@@ -365,30 +365,30 @@ def test_toy_calculator(tmpdir, hypotest_args):
     assert qtilde_mu_sig.samples.tolist() == pytest.approx(
         [
             0.0,
-            0.13298492825293806,
+            0.017350013494649374,
             0.0,
-            0.7718560148925349,
-            1.814884694401428,
+            0.2338008822475217,
+            0.020328779776718875,
+            0.8911134903562186,
+            0.04408274703718007,
             0.0,
+            0.03977591672014569,
             0.0,
-            0.0,
-            0.0,
-            0.06586643485326249,
         ],
         1e-07,
     )
     assert qtilde_mu_bkg.samples.tolist() == pytest.approx(
         [
-            2.2664625749100082,
-            1.081660887453154,
-            2.7570218408936853,
-            1.3835691388297846,
-            0.4707467005909507,
-            0.0,
-            3.7166483705294127,
-            3.8021896732709592,
-            5.114135391143066,
-            1.3511153731000718,
+            5.642956861215396,
+            0.37581364290284114,
+            4.875367689039649,
+            3.4299006094989295,
+            1.0161021805475343,
+            0.03345317321810626,
+            0.21984803001140563,
+            1.274869119189077,
+            9.368264062021098,
+            3.0716486684082156,
         ],
         1e-07,
     )

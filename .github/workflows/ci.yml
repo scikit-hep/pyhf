@@ -15,10 +15,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9]
         exclude:
           - os: macos-latest
             python-version: 3.7
+          - os: macos-latest
+            python-version: 3.8
 
     steps:
     - uses: actions/checkout@v2
@@ -29,13 +31,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --ignore-installed -U -q --no-cache-dir -e .[test]
+        python -m pip install --upgrade --editable .[test]
+    - name: List installed Python packages
+      run: |
         python -m pip list
     - name: Test with pytest
       run: |
         python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
     - name: Report core project coverage with Codecov
-      if: github.event_name == 'push' && matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -45,45 +49,13 @@ jobs:
       run: |
         python -m pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
     - name: Report contrib coverage with Codecov
-      if: github.event_name == 'push' && matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
+      if: github.event_name == 'push' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: contrib
     - name: Run benchmarks
-      if: github.event_name == 'schedule' && matrix.python-version == 3.8
+      if: github.event_name == 'schedule' && matrix.python-version == 3.9
       run: |
         python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
-
-  docker:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build Docker image
-      uses: docker/build-push-action@v1
-      with:
-        repository: pyhf/pyhf
-        dockerfile: docker/Dockerfile
-        tags: test
-        tag_with_sha: true
-        tag_with_ref: true
-        push: false
-    - name: List built images
-      run: docker images
-    - name: Run CLI API check
-      run: |
-        printf "\npyhf\n"
-        docker run --rm pyhf/pyhf:test
-        printf "\npyhf --version\n"
-        docker run --rm pyhf/pyhf:test --version
-        printf "\npyhf --help\n"
-        docker run --rm pyhf/pyhf:test --help
-    - name: Check for curl and tar
-      run: >-
-        docker run --rm
-        --entrypoint /bin/bash
-        pyhf/pyhf:test
-        -c "which curl; which tar"

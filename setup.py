@@ -3,15 +3,12 @@ from setuptools import setup
 extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
-        'tensorflow~=2.2.1',  # TensorFlow minor releases are as volatile as major
-        'tensorflow-probability~=0.10.1',
+        'tensorflow~=2.2,>=2.2.1,!=2.3.0',  # c.f. https://github.com/tensorflow/tensorflow/pull/40789
+        'tensorflow-probability~=0.10,>=0.10.1',
     ],
     'torch': ['torch~=1.8'],
-    'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58'],
-    'xmlio': [
-        'uproot3>=3.14.1',
-        'uproot~=4.0',
-    ],  # uproot3 required until writing to ROOT supported in uproot4
+    'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58,!=0.1.68'],  # c.f. Issue 1501
+    'xmlio': ['uproot>=4.1.1'],
     'minuit': ['iminuit>=2.4'],
 }
 extras_require['backends'] = sorted(
@@ -49,15 +46,16 @@ extras_require['test'] = sorted(
 extras_require['docs'] = sorted(
     set(
         extras_require['xmlio']
+        + extras_require['contrib']
         + [
-            'sphinx>=3.1.2',
+            'sphinx>=4.0.0',
             'sphinxcontrib-bibtex~=2.1',
             'sphinx-click',
             'sphinx_rtd_theme',
             'nbsphinx',
             'ipywidgets',
             'sphinx-issues',
-            'sphinx-copybutton>0.2.9',
+            'sphinx-copybutton>=0.3.2',
         ]
     )
 )

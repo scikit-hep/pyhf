@@ -281,7 +281,12 @@
                         "type": "object",
                         "properties": {
                             "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
-                            "values": { "type": "array", "items": { "type": "number" } }
+                            "values": {
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [{"type": "number"}, {"type": "string"}]
+                                }
+                            }
                         },
                         "required": ["name", "values"],
                         "additionalProperties": true

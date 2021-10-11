@@ -1,7 +1,10 @@
-repos:
+ci:
+  autoupdate_commit_msg: "chore: [pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: monthly
 
+repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.0.1
     hooks:
     - id: check-added-large-files
     - id: check-case-conflict
@@ -22,32 +25,30 @@ repos:
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
 
--   repo: https://github.com/psf/black
-    rev: 21.4b0
-    hooks:
-    - id: black
-
--   repo: https://github.com/asottile/blacken-docs
-    rev: v1.10.0
-    hooks:
-    - id: blacken-docs
-      additional_dependencies: [black==21.4b0]
-
--   repo: https://github.com/PyCQA/flake8
-    rev: 3.9.1
-    hooks:
-    - id: flake8
-
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.13.0
+    rev: v2.29.0
     hooks:
     - id: pyupgrade
       args: ["--py37-plus"]
 
--   repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.7.0
+-   repo: https://github.com/psf/black
+    rev: 21.9b0
     hooks:
-    - id: nbqa-black
-      additional_dependencies: [black==21.4b0]
+    - id: black-jupyter
+
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.11.0
+    hooks:
+    - id: blacken-docs
+      additional_dependencies: [black==21.9b0]
+
+-   repo: https://github.com/PyCQA/flake8
+    rev: 3.9.2
+    hooks:
+    - id: flake8
+
+-   repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.1.1
+    hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.11.0]
+      additional_dependencies: [pyupgrade==2.29.0]
