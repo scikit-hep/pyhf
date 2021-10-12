@@ -53,7 +53,6 @@ jobs:
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.xml
         flags: unittests
 
@@ -65,7 +64,6 @@ jobs:
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.xml
         flags: contrib
 
