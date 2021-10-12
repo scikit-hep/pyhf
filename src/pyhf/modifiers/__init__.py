@@ -1,10 +1,10 @@
-from .histosys import histosys_builder, histosys_combined
-from .lumi import lumi_builder, lumi_combined
-from .normfactor import normfactor_builder, normfactor_combined
-from .shapefactor import shapefactor_builder, shapefactor_combined
-from .normsys import normsys_builder, normsys_combined
-from .shapesys import shapesys_builder, shapesys_combined
-from .staterror import staterror_builder, staterror_combined
+from pyhf.modifiers.histosys import histosys_builder, histosys_combined
+from pyhf.modifiers.lumi import lumi_builder, lumi_combined
+from pyhf.modifiers.normfactor import normfactor_builder, normfactor_combined
+from pyhf.modifiers.shapefactor import shapefactor_builder, shapefactor_combined
+from pyhf.modifiers.normsys import normsys_builder, normsys_combined
+from pyhf.modifiers.shapesys import shapesys_builder, shapesys_combined
+from pyhf.modifiers.staterror import staterror_builder, staterror_combined
 
 __all__ = [
     'histosys',

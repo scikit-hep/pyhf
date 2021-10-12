@@ -34,11 +34,9 @@ def _finalize_parameters(user_parameters, _paramsets_requirements, channel_nbins
                 f"Multiple parameter configurations for {parameter['name']} were found."
             )
         _paramsets_user_configs[parameter.get('name')] = parameter
-
     _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
     )
-
     _sets = {}
     for param_name, paramset_requirements in _reqs.items():
         paramset_type = getattr(pyhf.parameters, paramset_requirements['paramset_type'])
@@ -143,7 +141,6 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
         raise exceptions.InvalidModel('No parameters specified for the Model.')
 
     config.set_parameters(_required_paramsets)
-
     the_modifiers = {}
     for k, (builder, applier) in modifier_set.items():
         the_modifiers[k] = applier(
@@ -209,7 +206,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
         self.parameters = sorted(k for k in self.par_map.keys())
-    
+        
     def suggested_init(self):
         """
         Return suggested initial parameter values for the model.
