@@ -18,7 +18,7 @@ jobs:
     if: >-
       github.event_name != 'push'
       || (github.event_name == 'push' && github.ref == 'refs/heads/master')
-      || (github.event_name == 'push' && github.ref != 'refs/heads/master' && contains(github.event.head_commit.message, 'ci all'))
+      || (github.event_name == 'push' && github.ref != 'refs/heads/master' && contains(github.event.head_commit.message, '[ci all]'))
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
