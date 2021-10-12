@@ -26,3 +26,4 @@ Contributors include:
 - Sviatoslav Sydorenko
 - Mason Proffitt
 - Lars Henkelmann
+- Aryan Roy
