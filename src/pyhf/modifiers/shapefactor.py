@@ -1,16 +1,17 @@
 import logging
 
 from pyhf import get_backend, default_backend, events
-from pyhf.parameters import unconstrained, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': unconstrained,
+        'paramset_type': 'unconstrained',
         'n_parameters': len(sample_data),
         'is_shared': True,
+        'is_scalar': False,
         'inits': (1.0,) * len(sample_data),
         'bounds': ((0.0, 10.0),) * len(sample_data),
         'fixed': False,
@@ -40,8 +41,9 @@ class shapefactor_builder:
         moddata = self.collect(thismod, nom)
         self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -49,6 +51,9 @@ class shapefactor_builder:
 
 
 class shapefactor_combined:
+    name = 'shapefactor'
+    op_code = 'multiplication'
+
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         """
         Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
@@ -87,8 +92,6 @@ class shapefactor_combined:
 
         and at that point can be used to compute the effect of shapefactor.
         """
-        self.name = 'shapefactor'
-        self.op_code = 'multiplication'
 
         self.batch_size = batch_size
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]

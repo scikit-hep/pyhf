@@ -1,16 +1,17 @@
 import logging
 
 from pyhf import get_backend, events
-from pyhf.parameters import constrained_by_normal, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': constrained_by_normal,
+        'paramset_type': 'constrained_by_normal',
         'n_parameters': 1,
         'is_shared': True,
+        'is_scalar': True,
         'inits': None,  # lumi
         'bounds': None,  # (0, 10*lumi)
         'fixed': False,
@@ -42,8 +43,9 @@ class lumi_builder:
         moddata = self.collect(thismod, nom)
         self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -51,10 +53,11 @@ class lumi_builder:
 
 
 class lumi_combined:
+    name = 'lumi'
+    op_code = 'multiplication'
+
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         self.batch_size = batch_size
-        self.name = 'lumi'
-        self.op_code = 'multiplication'
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
         lumi_mods = [m for m, _ in modifiers]

@@ -2,16 +2,17 @@ import logging
 
 from pyhf import get_backend, events
 from pyhf import interpolators
-from pyhf.parameters import constrained_by_normal, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': constrained_by_normal,
+        'paramset_type': 'constrained_by_normal',
         'n_parameters': 1,
         'is_shared': True,
+        'is_scalar': True,
         'inits': (0.0,),
         'bounds': ((-5.0, 5.0),),
         'fixed': False,
@@ -52,8 +53,9 @@ class normsys_builder:
         self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
 
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -61,11 +63,12 @@ class normsys_builder:
 
 
 class normsys_combined:
+    name = 'normsys'
+    op_code = 'multiplication'
+
     def __init__(
         self, modifiers, pdfconfig, builder_data, interpcode='code1', batch_size=None
     ):
-        self.name = 'normsys'
-        self.op_code = 'multiplication'
 
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']

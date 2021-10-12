@@ -1,7 +1,7 @@
 import logging
 
 from pyhf import get_backend, default_backend, events
-from pyhf.parameters import constrained_by_poisson, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
@@ -14,9 +14,10 @@ def required_parset(sample_data, modifier_data):
     ]
     n_parameters = sum(valid_bins)
     return {
-        'paramset_type': constrained_by_poisson,
+        'paramset_type': 'constrained_by_poisson',
         'n_parameters': n_parameters,
         'is_shared': False,
+        'is_scalar': False,
         'inits': (1.0,) * n_parameters,
         'bounds': ((1e-10, 10.0),) * n_parameters,
         'fixed': False,
@@ -53,8 +54,9 @@ class shapesys_builder:
         self._mega_mods[key][sample]['data']['nom_data'] += moddata['nom_data']
 
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -62,9 +64,10 @@ class shapesys_builder:
 
 
 class shapesys_combined:
+    name = 'shapesys'
+    op_code = 'multiplication'
+
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
-        self.name = 'shapesys'
-        self.op_code = 'multiplication'
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]

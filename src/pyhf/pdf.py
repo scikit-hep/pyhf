@@ -5,7 +5,6 @@ import logging
 
 from pyhf import get_backend, default_backend
 from pyhf import exceptions
-from pyhf import modifiers
 from pyhf import utils
 from pyhf import events
 from pyhf import probability as prob
@@ -14,6 +13,8 @@ from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
 from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.modifiers import pyhfset
+
+import pyhf.parameters
 
 log = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ def _finalize_parameters(user_parameters, _paramsets_requirements, channel_nbins
 
     _sets = {}
     for param_name, paramset_requirements in _reqs.items():
-        paramset_type = paramset_requirements.get('paramset_type')
+        paramset_type = getattr(pyhf.parameters, paramset_requirements['paramset_type'])
         paramset = paramset_type(**paramset_requirements)
         _sets[param_name] = paramset
 
@@ -204,7 +205,7 @@ class _ModelConfig(_ChannelSummaryMixin):
     def set_parameters(self, _required_paramsets):
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
-        self.parameters = sorted([k for k in self.par_map.keys()])
+        self.parameters = sorted(k for k in self.par_map.keys())
 
     def suggested_init(self):
         """

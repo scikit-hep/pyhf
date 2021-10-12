@@ -1,16 +1,17 @@
 import logging
 
 from pyhf import get_backend, default_backend, events
-from pyhf.parameters import constrained_by_normal, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': constrained_by_normal,
+        'paramset_type': 'constrained_by_normal',
         'n_parameters': len(sample_data),
         'is_shared': True,
+        'is_scalar': False,
         'inits': (1.0,) * len(sample_data),
         'bounds': ((1e-10, 10.0),) * len(sample_data),
         'fixed': False,
@@ -18,7 +19,7 @@ def required_parset(sample_data, modifier_data):
     }
 
 
-class staterr_builder:
+class staterror_builder:
     def __init__(self, config):
         self._mega_mods = {}
         self.config = config
@@ -44,8 +45,9 @@ class staterr_builder:
         self._mega_mods[key][sample]['data']['nom_data'] += moddata['nom_data']
 
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -53,9 +55,10 @@ class staterr_builder:
 
 
 class staterror_combined:
+    name = 'staterror'
+    op_code = 'multiplication'
+
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
-        self.name = 'staterror'
-        self.op_code = 'multiplication'
 
         self.batch_size = batch_size
 

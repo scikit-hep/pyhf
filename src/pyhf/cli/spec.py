@@ -7,6 +7,7 @@ import json
 from pyhf.workspace import Workspace
 from pyhf import modifiers
 from pyhf import utils
+from pyhf import parameters
 
 log = logging.getLogger(__name__)
 
@@ -81,10 +82,7 @@ def inspect(workspace, output_file, measurement):
     model = ws.model()
 
     result['parameters'] = sorted(
-        [
-            (k, parset_descr[type(v['paramset'])])
-            for k, v in model.config.par_map.items()
-        ]
+        (k, parset_descr[type(v['paramset'])]) for k, v in model.config.par_map.items()
     )
     result['systematics'] = [
         (

@@ -1,16 +1,17 @@
 import logging
 
 from pyhf import get_backend, events
-from pyhf.parameters import unconstrained, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': unconstrained,
+        'paramset_type': 'unconstrained',
         'n_parameters': 1,
         'is_shared': True,
+        'is_scalar': True,
         'inits': (1.0,),
         'bounds': ((0, 10),),
         'fixed': False,
@@ -40,8 +41,9 @@ class normfactor_builder:
         moddata = self.collect(thismod, nom)
         self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
         if thismod:
-            self.required_parsets.setdefault(thismod['name'], []).append(
-                required_parset(defined_samp['data'], thismod['data'])
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
             )
 
     def finalize(self):
@@ -49,10 +51,11 @@ class normfactor_builder:
 
 
 class normfactor_combined:
+    name = 'normfactor'
+    op_code = 'multiplication'
+
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         self.batch_size = batch_size
-        self.name = 'normfactor'
-        self.op_code = 'multiplication'
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
         normfactor_mods = [m for m, _ in modifiers]
