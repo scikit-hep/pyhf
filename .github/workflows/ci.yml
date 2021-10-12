@@ -14,7 +14,7 @@ jobs:
   test:
 
     runs-on: ${{ matrix.os }}
-    # On push events run the CI only on master by default, but run on any branch if the commit message contains 'ci all'
+    # On push events run the CI only on master by default, but run on any branch if the commit message contains '[ci all]'
     if: >-
       github.event_name != 'push'
       || (github.event_name == 'push' && github.ref == 'refs/heads/master')
