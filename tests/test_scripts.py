@@ -376,11 +376,11 @@ def test_prune_outfile(tmpdir, script_runner):
     spec = json.loads(temp.read())
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
-    assert 'staterror_channel1' in ws.parameters
+    assert 'staterror_channel1' in ws.model().config.parameters
     pruned_spec = json.loads(tempout.read())
     pruned_ws = pyhf.Workspace(pruned_spec)
     assert 'GammaExample' not in pruned_ws.measurement_names
-    assert 'staterror_channel1' not in pruned_ws.parameters
+    assert 'staterror_channel1' not in pruned_ws.model().config.parameters
 
 
 def test_rename(tmpdir, script_runner):
@@ -407,14 +407,14 @@ def test_rename_outfile(tmpdir, script_runner):
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
     assert 'GamEx' not in ws.measurement_names
-    assert 'staterror_channel1' in ws.parameters
-    assert 'staterror_channelone' not in ws.parameters
+    assert 'staterror_channel1' in ws.model().config.parameters
+    assert 'staterror_channelone' not in ws.model().config.parameters
     renamed_spec = json.loads(tempout.read())
     renamed_ws = pyhf.Workspace(renamed_spec)
     assert 'GammaExample' not in renamed_ws.measurement_names
     assert 'GamEx' in renamed_ws.measurement_names
-    assert 'staterror_channel1' not in renamed_ws.parameters
-    assert 'staterror_channelone' in renamed_ws.parameters
+    assert 'staterror_channel1' not in renamed_ws.model().config.parameters
+    assert 'staterror_channelone' in renamed_ws.model().config.parameters
 
 
 def test_combine(tmpdir, script_runner):

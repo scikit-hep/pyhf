@@ -557,7 +557,7 @@ def test_invalid_modifier():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
-        pyhf.pdf._ModelConfig(spec)
+        pyhf.pdf.Model(spec, validate=False)  # don't validate to delay exception
 
 
 def test_invalid_modifier_name_resuse():
@@ -817,8 +817,7 @@ def test_model_integration_fixed_parameters():
         'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
     }
     model = pyhf.Model(spec, poi_name='mypoi')
-    assert model.config.suggested_fixed() == [False, True]
-    assert model.config.poi_index == 1
+    assert model.config.suggested_fixed()[model.config.par_slice('mypoi')] == [True]
 
 
 def test_model_integration_fixed_parameters_shapesys():
@@ -848,9 +847,11 @@ def test_model_integration_fixed_parameters_shapesys():
         'parameters': [{'name': 'uncorr', 'inits': [1.0, 2.0, 3.0], 'fixed': True}],
     }
     model = pyhf.Model(spec, poi_name='mypoi')
-    assert len(model.config.suggested_fixed()) == 5
-    assert model.config.suggested_fixed() == [False, True, True, True, False]
-    assert model.config.poi_index == 4
+    assert model.config.suggested_fixed()[model.config.par_slice('uncorr')] == [
+        True,
+        True,
+        True,
+    ]
 
 
 def test_reproducible_model_spec():
