@@ -41,7 +41,7 @@ ignore = [
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--ignore=setup.py --ignore=validation/ --ignore=binder/ --ignore=docs/ --cov=pyhf --cov-report=term-missing --cov-config=.coveragerc --cov-report xml --doctest-modules src/pyhf --doctest-glob='*.rst'"
+addopts = "--ignore=setup.py --ignore=validation/ --ignore=binder/ --ignore=docs/ --cov=pyhf --cov-report=term-missing --cov-config=.coveragerc --cov-report xml --doctest-modules --doctest-glob='*.rst'"
 testpaths = [
     "tests"
 ]
