@@ -99,7 +99,9 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
             moddict = {}
             for x in s['modifiers']:
                 if x['type'] not in modifier_set:
-                    raise exceptions.InvalidModifier(f'{x["type"]} not among {list(modifier_set.keys())}')
+                    raise exceptions.InvalidModifier(
+                        f'{x["type"]} not among {list(modifier_set.keys())}'
+                    )
                 moddict[f"{x['type']}/{x['name']}"] = x
             helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
 
