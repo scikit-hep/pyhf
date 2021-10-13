@@ -67,12 +67,6 @@ def test_get_measurement(workspace_factory):
         assert m['name'] == w.measurement_names[measurement_idx]
 
 
-def test_get_measurement_fake(workspace_factory):
-    w = workspace_factory()
-    m = w.get_measurement(poi_name='fake_poi')
-    assert m
-
-
 def test_get_measurement_nonexist(workspace_factory):
     w = workspace_factory()
     with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
@@ -97,12 +91,6 @@ def test_get_measurement_no_measurements_defined(workspace_factory):
 
 def test_get_workspace_measurement_priority(workspace_factory):
     w = workspace_factory()
-
-    # does poi_name override all others?
-    m = w.get_measurement(
-        poi_name='fake_poi', measurement_name='FakeMeasurement', measurement_index=999
-    )
-    assert m['config']['poi'] == 'fake_poi'
 
     # does measurement_name override measurement_index?
     m = w.get_measurement(
