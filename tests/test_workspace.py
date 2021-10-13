@@ -124,6 +124,27 @@ def test_get_workspace_model_default(workspace_factory):
     assert m
 
 
+def test_get_workspace_model_nopoi(workspace_factory):
+    w = workspace_factory()
+    m = w.model(poi_name=None)
+
+    assert m.config.poi_name is None
+    assert m.config.poi_index is None
+
+
+def test_get_workspace_model_overridepoi(workspace_factory):
+    w = workspace_factory()
+    m = w.model(poi_name='lumi')
+
+    assert m.config.poi_name == 'lumi'
+
+
+def test_get_workspace_model_fakepoi(workspace_factory):
+    w = workspace_factory()
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        m = w.model(poi_name='afakepoi')
+
+
 def test_workspace_observations(workspace_factory):
     w = workspace_factory()
     assert w.observations
