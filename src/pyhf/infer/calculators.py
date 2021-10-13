@@ -12,6 +12,7 @@ from pyhf import get_backend
 from pyhf.infer import utils
 import tqdm
 
+from dataclasses import dataclass
 import logging
 
 log = logging.getLogger(__name__)
@@ -29,7 +30,9 @@ def __dir__():
     return __all__
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
+def generate_asimov_data(
+    asimov_mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -46,6 +49,14 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
 
+        It is possible to access the Asimov parameters as well:
+
+        >>> pyhf.infer.calculators.generate_asimov_data(
+        ...     mu_test, data, model, None, None, None,
+        ...     return_fitted_pars = True
+        ... )
+        (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
+
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
         data (:obj:`tensor`): The observed data.
@@ -56,15 +67,23 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter values for the given ``asimov_mu``.
+
 
     Returns:
-        Tensor: The Asimov dataset.
+        A Tensor or a Tuple of two Tensors:
 
+             - The Asimov dataset.
+
+             - The Asimov parameters. Only returned if ``return_fitted_pars`` is ``True``.
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
         asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
     )
-    return pdf.expected_data(bestfit_nuisance_asimov)
+    asimov_data = pdf.expected_data(bestfit_nuisance_asimov)
+    if return_fitted_pars:
+        return asimov_data, bestfit_nuisance_asimov
+    return asimov_data
 
 
 class AsymptoticTestStatDistribution:
@@ -188,6 +207,21 @@ class AsymptoticTestStatDistribution:
         )
 
 
+@dataclass(frozen=True)
+class HypoTestFitResults:
+    """
+    Fitted model parameters of the fits in
+    :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
+    """
+
+    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
+    asimov_pars: 'Tensor'  # noqa: F821
+    free_fit_to_data: 'Tensor'  # noqa: F821
+    free_fit_to_asimov: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_data: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_asimov: 'Tensor'  # noqa: F821
+
+
 class AsymptoticCalculator:
     """The Asymptotic Calculator."""
 
@@ -251,6 +285,7 @@ class AsymptoticCalculator:
         self.test_stat = test_stat
         self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
+        self.fitted_pars = None
 
     def distributions(self, poi_test):
         r"""
@@ -297,8 +332,12 @@ class AsymptoticCalculator:
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
-        """
+        r"""
         Compute the test statistic for the observed data under the studied model.
+
+        The fitted parameters of the five fits that are implicitly ran at every call
+        of this method are afterwards accessible through ``self.fitted_pars``,
+        which is a :py:class:`~pyhf.infer.calculators.HypoTestFitResults` instance.
 
         Example:
 
@@ -314,6 +353,16 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator.teststatistic(mu_test)
             array(0.14043184)
 
+            Access the best-fit parameters afterwards:
+
+            >>> asymptotic_calculator.fitted_pars
+            HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
+
+            E.g. the :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset:
+
+            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
+            array([0.        , 1.00304893, 0.96263365])
+
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
 
@@ -325,35 +374,45 @@ class AsymptoticCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
-        qmu_v = teststat_func(
+        qmu_v, (mubhathat, muhatbhat) = teststat_func(
             poi_test,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
 
-        asimov_data = generate_asimov_data(
+        asimov_data, asimov_mubhathat = generate_asimov_data(
             asimov_mu,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
-        qmuA_v = teststat_func(
+        qmuA_v, (mubhathat_A, muhatbhat_A) = teststat_func(
             poi_test,
             asimov_data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
+        self.fitted_pars = HypoTestFitResults(
+            asimov_pars=asimov_mubhathat,
+            free_fit_to_data=muhatbhat,
+            free_fit_to_asimov=muhatbhat_A,
+            fixed_poi_fit_to_data=mubhathat,
+            fixed_poi_fit_to_asimov=mubhathat_A,
+        )
 
         if self.test_stat in ["q", "q0"]:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v

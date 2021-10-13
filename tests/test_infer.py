@@ -174,6 +174,59 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize(
+    'calctype,kwargs,expected_type',
+    [
+        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
+        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
+    ],
+)
+@pytest.mark.parametrize('return_tail_probs', [True, False])
+@pytest.mark.parametrize('return_expected', [True, False])
+@pytest.mark.parametrize('return_expected_set', [True, False])
+def test_hypotest_return_calculator(
+    tmpdir,
+    hypotest_args,
+    calctype,
+    kwargs,
+    expected_type,
+    return_tail_probs,
+    return_expected,
+    return_expected_set,
+):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    additon of the return_calculator keyword arg is as expected
+    """
+    *_, model = hypotest_args
+
+    # only those return flags where the toggled return value
+    # is placed in front of the calculator in the returned tuple
+    extra_returns = sum(
+        int(return_flag)
+        for return_flag in (
+            return_tail_probs,
+            return_expected,
+            return_expected_set,
+        )
+    )
+
+    result = pyhf.infer.hypotest(
+        *hypotest_args,
+        return_calculator=True,
+        return_tail_probs=return_tail_probs,
+        return_expected=return_expected,
+        return_expected_set=return_expected_set,
+        calctype=calctype,
+        **kwargs,
+    )
+
+    assert len(list(result)) == 2 + extra_returns
+    # not *_, calc = result b.c. in future, there could be additional optional returns
+    calc = result[1 + extra_returns]
+    assert isinstance(calc, expected_type)
+
+
+@pytest.mark.parametrize(
     "kwargs",
     [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
     ids=lambda x: x['calctype'],

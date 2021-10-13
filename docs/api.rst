@@ -140,6 +140,7 @@ Calculators
    :nosignatures:
 
    calculators.generate_asimov_data
+   calculators.HypoTestFitResults
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator

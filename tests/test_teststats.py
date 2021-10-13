@@ -172,3 +172,40 @@ def test_get_teststat_by_name(test_stat):
 def test_get_teststat_error():
     with pytest.raises(pyhf.exceptions.InvalidTestStatistic):
         pyhf.infer.utils.get_test_stat("look at me i'm not real")
+
+
+@pytest.mark.parametrize("return_fitted_pars", [False, True])
+@pytest.mark.parametrize(
+    "test_stat",
+    [
+        pyhf.infer.test_statistics.q0,
+        pyhf.infer.test_statistics.qmu,
+        pyhf.infer.test_statistics.qmu_tilde,
+        pyhf.infer.test_statistics.tmu,
+        pyhf.infer.test_statistics.tmu_tilde,
+    ],
+)
+def test_return_fitted_pars(test_stat, return_fitted_pars):
+    mu = 0.0 if test_stat is pyhf.infer.test_statistics.q0 else 1.0
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
+    data = [9] + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+
+    result = test_stat(
+        mu,
+        data,
+        model,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=return_fitted_pars,
+    )
+    if return_fitted_pars:
+        assert len(result) == 2
+        assert len(result[1]) == 2
+        result, (pars_bestfit, pars_constrained_fit) = result
+        assert len(pars_bestfit) == len(init_pars)
+        assert len(pars_constrained_fit) == len(init_pars)
+    assert result > -1e4  # >= 0 but with generous tolerance
