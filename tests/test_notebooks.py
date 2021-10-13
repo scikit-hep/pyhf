@@ -78,7 +78,7 @@ def test_learn_tensorizinginterpolations(common_kwargs):
     )
 
 
-# def test_learn_using_calculators(common_kwargs):
-#     pm.execute_notebook(
-#         "docs/examples/notebooks/learn/UsingCalculators.ipynb", **common_kwargs
-#     )
+def test_learn_using_calculators(common_kwargs):
+    pm.execute_notebook(
+        "docs/examples/notebooks/learn/UsingCalculators.ipynb", **common_kwargs
+    )
