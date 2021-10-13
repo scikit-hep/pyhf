@@ -321,7 +321,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     def get_measurement(self, measurement_name=None, measurement_index=None):
         """
-        Get (or create) a measurement object.
+        Get a measurement object.
 
         The following logic is used:
 
