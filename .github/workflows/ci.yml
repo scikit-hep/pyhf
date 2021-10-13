@@ -50,7 +50,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
     - name: Report core project coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
@@ -61,7 +61,7 @@ jobs:
 
     - name: Test Contrib module with pytest
       run: |
-        python -m pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+        pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
@@ -73,4 +73,4 @@ jobs:
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.9
       run: |
-        python -m pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
+        pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
