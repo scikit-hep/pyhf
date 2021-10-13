@@ -22,7 +22,7 @@ def required_parset(sample_data, modifier_data):
 
 class normsys_builder:
     def __init__(self, config):
-        self._mega_mods = {}
+        self.builder_data = {}
         self.config = config
         self.required_parsets = {}
 
@@ -37,7 +37,7 @@ class normsys_builder:
         return {'lo': lo, 'hi': hi, 'mask': mask, 'nom_data': nom_data}
 
     def append(self, key, channel, sample, thismod, defined_samp):
-        self._mega_mods.setdefault(key, {}).setdefault(sample, {}).setdefault(
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
             'data', {'hi': [], 'lo': [], 'nom_data': [], 'mask': []}
         )
 
@@ -47,10 +47,10 @@ class normsys_builder:
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self._mega_mods[key][sample]['data']['nom_data'] += moddata['nom_data']
-        self._mega_mods[key][sample]['data']['lo'] += moddata['lo']
-        self._mega_mods[key][sample]['data']['hi'] += moddata['hi']
-        self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
+        self.builder_data[key][sample]['data']['lo'] += moddata['lo']
+        self.builder_data[key][sample]['data']['hi'] += moddata['hi']
+        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
 
         if thismod:
             self.required_parsets.setdefault(
@@ -59,7 +59,7 @@ class normsys_builder:
             )
 
     def finalize(self):
-        return self._mega_mods
+        return self.builder_data
 
 
 class normsys_combined:

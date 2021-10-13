@@ -20,7 +20,7 @@ def required_parset(sample_data, modifier_data):
 
 class shapefactor_builder:
     def __init__(self, config):
-        self._mega_mods = {}
+        self.builder_data = {}
         self.config = config
         self.required_parsets = {}
 
@@ -30,7 +30,7 @@ class shapefactor_builder:
         return {'mask': mask}
 
     def append(self, key, channel, sample, thismod, defined_samp):
-        self._mega_mods.setdefault(key, {}).setdefault(sample, {}).setdefault(
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
             'data', {'mask': []}
         )
         nom = (
@@ -39,7 +39,7 @@ class shapefactor_builder:
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self._mega_mods[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
         if thismod:
             self.required_parsets.setdefault(
                 thismod['name'],
@@ -47,7 +47,7 @@ class shapefactor_builder:
             )
 
     def finalize(self):
-        return self._mega_mods
+        return self.builder_data
 
 
 class shapefactor_combined:
