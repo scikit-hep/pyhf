@@ -27,4 +27,4 @@ jobs:
         python -m pip list
     - name: Test example notebooks
       run: |
-        python -m pytest -r sx tests/test_notebooks.py
+        pytest -r sx tests/test_notebooks.py

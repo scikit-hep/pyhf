@@ -71,14 +71,14 @@ This will run `black` over your code each time you attempt to make a commit and 
 You can run the unit tests (which should be fast!) via the following command.
 
 ```bash
-python -m pytest --ignore=tests/test_notebooks.py
+pytest --ignore=tests/test_notebooks.py
 ```
 
 Note: This ignores the notebook tests (which are run via [papermill](https://github.com/nteract/papermill) which run somewhat slow.
 Make sure to run the complete suite before submitting a PR
 
 ```bash
-python -m pytest
+pytest
 ```
 
 ## Making a pull request
@@ -90,5 +90,5 @@ We try to follow [Conventional Commit](https://www.conventionalcommits.org/) for
 New baseline visuals can be generated using this command:
 
 ```bash
-python -m pytest tests/contrib/test_viz.py --mpl-generate-path=tests/contrib/baseline
+pytest tests/contrib/test_viz.py --mpl-generate-path=tests/contrib/baseline
 ```
