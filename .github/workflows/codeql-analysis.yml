@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: codeql-${{ github.head_ref }}
+  group: codeql-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

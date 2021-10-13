@@ -18,7 +18,7 @@ on:
         - true
 
 concurrency:
-  group: package-${{ github.head_ref }}
+  group: package-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

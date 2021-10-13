@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: docker-${{ github.head_ref }}
+  group: docker-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

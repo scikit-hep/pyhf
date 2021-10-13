@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: release-tests-${{ github.head_ref }}
+  group: release-tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
