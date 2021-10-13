@@ -405,7 +405,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         config_kwargs.setdefault('poi_name', measurement['config']['poi'])
 
         log.debug(
-            f"model being created for measurement {measurement['name']:s} with POI {poi_name:s}"
+            f"model being created for measurement {measurement['name']:s}"
         )
 
         modelspec = {
