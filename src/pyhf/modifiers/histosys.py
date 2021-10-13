@@ -21,6 +21,8 @@ def required_parset(sample_data, modifier_data):
 
 
 class histosys_builder:
+    """Builder class for collecting histoys modifier data"""
+
     def __init__(self, config):
         self.builder_data = {}
         self.config = config

@@ -20,6 +20,8 @@ def required_parset(sample_data, modifier_data):
 
 
 class staterror_builder:
+    """Builder class for collecting staterror modifier data"""
+
     def __init__(self, config):
         self.builder_data = {}
         self.config = config
