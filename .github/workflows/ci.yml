@@ -46,7 +46,7 @@ jobs:
       run: python -m pip list
 
     - name: Test docstring examples with doctest
-      runt: pytest src/
+      run: pytest src/
 
     - name: Test with pytest
       run: |
