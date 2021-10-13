@@ -177,7 +177,7 @@ def inspect(workspace, output_file, measurement):
     '--modifier-type',
     default=[],
     multiple=True,
-    type=click.Choice(modifiers.pyhfset.keys()),
+    type=click.Choice(modifiers.histfactory_set.keys()),
 )
 @click.option('--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...')
 def prune(

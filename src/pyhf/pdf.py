@@ -12,7 +12,7 @@ from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_co
 from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
 from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from pyhf.mixins import _ChannelSummaryMixin
-from pyhf.modifiers import pyhfset
+from pyhf.modifiers import histfactory_set
 
 import pyhf.parameters
 
@@ -610,7 +610,7 @@ class Model:
             model (:class:`~pyhf.pdf.Model`): The Model instance.
 
         """
-        modifier_set = modifier_set or pyhfset
+        modifier_set = modifier_set or histfactory_set
 
         self.batch_size = batch_size
         # deep-copy "spec" as it may be modified by config

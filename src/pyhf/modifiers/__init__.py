@@ -7,6 +7,7 @@ from pyhf.modifiers.shapesys import shapesys_builder, shapesys_combined
 from pyhf.modifiers.staterror import staterror_builder, staterror_combined
 
 __all__ = [
+    'histfactory_set',
     'histosys',
     'histosys_builder',
     'histosys_combined',
@@ -19,7 +20,6 @@ __all__ = [
     'normsys',
     'normsys_builder',
     'normsys_combined',
-    'pyhfset',
     'shapefactor',
     'shapefactor_builder',
     'shapefactor_combined',
@@ -36,7 +36,7 @@ def __dir__():
     return __all__
 
 
-pyhfset = {
+histfactory_set = {
     'histosys': (histosys_builder, histosys_combined),
     'lumi': (lumi_builder, lumi_combined),
     'normfactor': (normfactor_builder, normfactor_combined),

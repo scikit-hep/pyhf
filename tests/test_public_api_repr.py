@@ -150,6 +150,7 @@ def test_interpolators_public_api():
 
 def test_modifiers_public_api():
     assert dir(pyhf.modifiers) == [
+        'histfactory_set',
         'histosys',
         'histosys_builder',
         'histosys_combined',
@@ -162,7 +163,6 @@ def test_modifiers_public_api():
         'normsys',
         'normsys_builder',
         'normsys_combined',
-        'pyhfset',
         'shapefactor',
         'shapefactor_builder',
         'shapefactor_combined',
