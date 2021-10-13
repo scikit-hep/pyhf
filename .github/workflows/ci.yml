@@ -48,6 +48,9 @@ jobs:
     - name: Test docstring examples with doctest
       run: pytest src/
 
+    - name: Test README examples with doctest
+      run: pytest README.rst
+
     - name: Test with pytest
       run: |
         pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
