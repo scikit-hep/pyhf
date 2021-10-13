@@ -81,13 +81,16 @@ class shapefactor_combined:
         with the 0th par-index corresponding to the normfactor. Because
         channel1 has 2 bins, and channel2 has 3 bins (with channel1 before
         channel2), global_concatenated_bin_indices looks like
+            
             [0, 1, 0, 1, 2]
             ^^^^^            = channel1
+
                   ^^^^^^^^^  = channel2
 
         So now we need to gather the corresponding shapefactor indices
         according to global_concatenated_bin_indices. Therefore
         self._shapefactor_indices now looks like
+
             [[1, 2, 1, 2, 3], [4, 5, 4, 5, 6]]
 
         and at that point can be used to compute the effect of shapefactor.
