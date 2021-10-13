@@ -46,10 +46,10 @@ jobs:
       run: python -m pip list
 
     - name: Test docstring examples with doctest
-      run: pytest src/
+      run: pytest -r sx src/
 
     - name: Test README examples with doctest
-      run: pytest README.rst
+      run: pytest -r sx README.rst
 
     - name: Test with pytest
       run: |
