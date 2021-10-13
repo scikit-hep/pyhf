@@ -320,23 +320,21 @@ class Workspace(_ChannelSummaryMixin, dict):
         return object.__repr__(self)
 
     def get_measurement(
-        self, poi_name=None, measurement_name=None, measurement_index=None
+        self, measurement_name=None, measurement_index=None, poi_name=None
     ):
         """
         Get (or create) a measurement object.
 
         The following logic is used:
 
-          1. if the poi name is given, create a measurement object for that poi
-          2. if the measurement name is given, find the measurement for the given name
-          3. if the measurement index is given, return the measurement at that index
-          4. if there are measurements but none of the above have been specified, return the 0th measurement
+          1. if the measurement name is given, find the measurement for the given name
+          2. if the measurement index is given, return the measurement at that index
+          3. if there are measurements but none of the above have been specified, return the 0th measurement
 
         Raises:
           ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
-            poi_name (:obj:`str`): The name of the parameter of interest to create a new measurement from
             measurement_name (:obj:`str`): The name of the measurement to use
             measurement_index (:obj:`int`): The index of the measurement to use
 
@@ -345,12 +343,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         measurement = None
-        if poi_name is not None:
-            measurement = {
-                'name': 'NormalMeasurement',
-                'config': {'poi': poi_name, 'parameters': []},
-            }
-        elif self.measurement_names:
+        if self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
                     log.debug(f"measurements defined: {self.measurement_names}")
@@ -381,7 +374,13 @@ class Workspace(_ChannelSummaryMixin, dict):
         utils.validate(measurement, 'measurement.json', self.version)
         return measurement
 
-    def model(self, **config_kwargs):
+    def model(
+        self,
+        measurement_name=None,
+        measurement_index=None,
+        patches=None,
+        **config_kwargs,
+    ):
         """
         Create a model object with/without patches applied.
 
@@ -389,33 +388,38 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             patches: A list of JSON patches to apply to the model specification
-            config_kwargs: Possible keyword arguments for the measurement and model configuration
+            measurement_name (:obj:`str`): The name of the measurement to use in :func:`~pyhf.Workspace.get_measurement`.
+            measurement_index (:obj:`int`): The index of the measurement to use in :func:`~pyhf.Workspace.get_measurement`.
+            patches (:list:`jsonpatch.JsonPatch` or :list:`pyhf.patchset.Patch`): A list of patches to apply to the model.
+            config_kwargs: Possible keyword arguments for the model configuration. See :class:`~pyhf.Model` for more details.
+            poi_name (:obj:`str` or :obj:`None`): Specify this keyword argument to override the default parameter of interest specified in the measurement. Set to `None` for a POI-less model.
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
 
         """
-
-        poi_name = config_kwargs.pop('poi_name', None)
-        measurement_name = config_kwargs.pop('measurement_name', None)
-        measurement_index = config_kwargs.pop('measurement_index', None)
         measurement = self.get_measurement(
-            poi_name=poi_name,
             measurement_name=measurement_name,
             measurement_index=measurement_index,
         )
-        log.debug(f"model being created for measurement {measurement['name']:s}")
 
-        patches = config_kwargs.pop('patches', [])
+        # set poi_name if the user does not provide it
+        config_kwargs.setdefault('poi_name', measurement['config']['poi'])
+
+        log.debug(
+            f"model being created for measurement {measurement['name']:s} with POI {poi_name:s}"
+        )
 
         modelspec = {
             'channels': self['channels'],
             'parameters': measurement['config']['parameters'],
         }
+
+        patches = patches or []
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
+        return Model(modelspec, **config_kwargs)
 
     def data(self, model, include_auxdata=True):
         """
