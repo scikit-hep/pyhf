@@ -206,7 +206,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
         self.parameters = sorted(k for k in self.par_map.keys())
-        
+
     def suggested_init(self):
         """
         Return suggested initial parameter values for the model.
