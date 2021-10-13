@@ -77,6 +77,7 @@ intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/stable/', None),
     'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
+    'jsonpatch': ('https://python-json-patch.readthedocs.io/en/latest/', None),
 }
 
 # GitHub repo
