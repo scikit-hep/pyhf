@@ -319,9 +319,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         """Representation of the Workspace."""
         return object.__repr__(self)
 
-    def get_measurement(
-        self, measurement_name=None, measurement_index=None, poi_name=None
-    ):
+    def get_measurement(self, measurement_name=None, measurement_index=None):
         """
         Get (or create) a measurement object.
 
