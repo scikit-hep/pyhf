@@ -142,7 +142,7 @@ def test_get_workspace_model_overridepoi(workspace_factory):
 def test_get_workspace_model_fakepoi(workspace_factory):
     w = workspace_factory()
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        m = w.model(poi_name='afakepoi')
+        w.model(poi_name='afakepoi')
 
 
 def test_workspace_observations(workspace_factory):
