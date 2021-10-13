@@ -374,7 +374,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         fixed_vals=[(pdf.config.poi_index, mu)],
         return_uncertainties=True,
     )
-    assert result.shape[1] == 2
+    assert result.shape == (2,2)
     assert pytest.approx([0.26418431, 0.0]) == pyhf.tensorlib.tolist(result[:, 1])
 
 
