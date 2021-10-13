@@ -31,6 +31,11 @@ repos:
     - id: pyupgrade
       args: ["--py37-plus"]
 
+-   repo: https://github.com/MarcoGorelli/absolufy-imports
+    rev: v0.3.0
+    hooks:
+    - id: absolufy-imports
+
 -   repo: https://github.com/psf/black
     rev: 21.9b0
     hooks:
