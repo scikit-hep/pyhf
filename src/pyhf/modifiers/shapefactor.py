@@ -81,7 +81,7 @@ class shapefactor_combined:
         with the 0th par-index corresponding to the normfactor. Because
         channel1 has 2 bins, and channel2 has 3 bins (with channel1 before
         channel2), global_concatenated_bin_indices looks like
-            
+
             [0, 1, 0, 1, 2]
             ^^^^^            = channel1
 
