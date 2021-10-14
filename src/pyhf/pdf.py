@@ -202,7 +202,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
     def set_parameters(self, _required_paramsets):
         """
-        Evaluate the rquired parrameters for the modeel configuration.
+        Evaluate the required parameters for the model configuration.
         """
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
