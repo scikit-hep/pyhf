@@ -331,12 +331,7 @@ def test_pdf_integration_shapesys_zeros(backend):
                                 "data": [10, 9, 1, 0.0, 0.1, 5],
                                 "name": "syst",
                                 "type": "shapesys",
-                            },
-                            {
-                                "data": [0, 0, 0, 0, 0, 0],
-                                "name": "syst_lowstats",
-                                "type": "shapesys",
-                            },
+                            }
                         ],
                         "name": "background1",
                     },
@@ -346,10 +341,8 @@ def test_pdf_integration_shapesys_zeros(backend):
     }
     pdf = pyhf.Model(spec)
     par_set_syst = pdf.config.param_set('syst')
-    par_set_syst_lowstats = pdf.config.param_set('syst_lowstats')
 
     assert par_set_syst.n_parameters == 4
-    assert par_set_syst_lowstats.n_parameters == 0
     tensorlib, _ = backend
     nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 0.0, 70, 0.1, 50]), 2)
     uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1, 0.0, 0.1, 5]), 2)
@@ -358,7 +351,6 @@ def test_pdf_integration_shapesys_zeros(backend):
     assert pytest.approx(tensorlib.tolist(par_set_syst.factors)) == tensorlib.tolist(
         tensorlib.gather(factors, indices)
     )
-    assert getattr(par_set_syst_lowstats, 'factors', None) is None
 
 
 @pytest.mark.only_numpy

@@ -6,16 +6,18 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(sigmas,fixed):
+    n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',
-        'n_parameters': len(sample_data),
+        'n_parameters': n_parameters,
         'is_shared': True,
         'is_scalar': False,
-        'inits': (1.0,) * len(sample_data),
-        'bounds': ((1e-10, 10.0),) * len(sample_data),
-        'fixed': False,
-        'auxdata': (1.0,) * len(sample_data),
+        'inits': (1.0,) * n_parameters,
+        'bounds': ((1e-10, 10.0),) * n_parameters,
+        'fixed': tuple(fixed),
+        'auxdata': (1.0,) * n_parameters,
+        'sigmas': tuple(sigmas),
     }
 
 
@@ -64,6 +66,49 @@ class staterror_builder:
                 sample["data"]["nom_data"] = default_backend.concatenate(
                     sample["data"]["nom_data"]
                 )
+
+        for modname in self.builder_data.keys():
+            parname = modname.split('/')[1]
+
+            nomsall = default_backend.sum(
+                [
+                    v['data']['nom_data']
+                    for k, v in self.builder_data[modname].items()
+                    if default_backend.astensor(v['data']['mask']).any()
+                ],
+                axis=0,
+            )
+            relerrs = default_backend.sum(
+                [
+                    [
+                        (v['data']['uncrt'][binnr] / nomsall[binnr]) ** 2
+                        if nomsall[binnr] > 0
+                        else 0.0
+                        for binnr in range(len(v['data']['nom_data']))
+                    ]
+                    for k, v in self.builder_data[modname].items()
+                ],
+                axis=0,
+            )
+            relerrs = default_backend.sqrt(relerrs)
+
+            masks = {}
+            for k, v in self.builder_data[modname].items():
+                mask_this_sample = default_backend.astensor(
+                    v['data']['mask'], dtype='bool'
+                )
+                if mask_this_sample.any():
+                    if modname not in masks:
+                        masks[modname] = mask_this_sample
+                    else:
+                        assert (mask_this_sample == masks[modname]).all()
+
+            # masks[modname] = (nomsall > 0) & masks[modname]
+            for k, v in self.builder_data[modname].items():
+                v['data']['mask'] = masks[modname]
+            sigmas = relerrs[masks[modname]]
+            fixed = [s == 0 for s in sigmas]
+            self.required_parsets.setdefault(parname, [required_parset(sigmas,fixed)])
         return self.builder_data
 
 
@@ -99,8 +144,6 @@ class staterror_combined:
                 for m in keys
             ]
         )
-        self.finalize(pdfconfig)
-
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
@@ -109,17 +152,33 @@ class staterror_combined:
             global_concatenated_bin_indices,
             (len(self._staterr_mods), self.batch_size or 1, 1),
         )
-        # access field is shape (sys, batch, globalbin)
-        for s, syst_access in enumerate(self._access_field):
-            for t, batch_access in enumerate(syst_access):
-                selection = self.param_viewer.index_selection[s][t]
-                for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
-                    )
+
+        self._reindex_access_field(pdfconfig)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
+
+    def _reindex_access_field(self, pdfconfig):
+        for syst_index, syst_access in enumerate(self._access_field):
+            singular_sample_index = [
+                idx
+                for idx, syst in enumerate(
+                    default_backend.astensor(self._staterror_mask)[syst_index, :, 0]
+                )
+                if any(syst)
+            ][-1]
+
+            for batch_index, batch_access in enumerate(syst_access):
+                selection = self.param_viewer.index_selection[syst_index][batch_index]
+                access_field_for_syst_and_batch = default_backend.zeros(
+                    len(batch_access)
+                )
+
+                sample_mask = self._staterror_mask[syst_index][singular_sample_index][0]
+                access_field_for_syst_and_batch[sample_mask] = selection
+                self._access_field[
+                    syst_index, batch_index
+                ] = access_field_for_syst_and_batch
 
     def _precompute(self):
         if not self.param_viewer.index_selection:
@@ -132,37 +191,6 @@ class staterror_combined:
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
-
-    def finalize(self, pdfconfig):
-        staterror_mask = default_backend.astensor(self._staterror_mask)
-        for this_mask, uncert_this_mod, mod in zip(
-            staterror_mask, self.__staterror_uncrt, self._staterr_mods
-        ):
-            active_nominals = default_backend.where(
-                this_mask[:, 0, :],
-                uncert_this_mod[:, 1, :],
-                default_backend.zeros(uncert_this_mod[:, 1, :].shape),
-            )
-            summed_nominals = default_backend.sum(active_nominals, axis=0)
-
-            # the below tries to filter cases in which this modifier is not
-            # used by checking non zeroness.. should probably use mask
-            numerator = default_backend.where(
-                uncert_this_mod[:, 1, :] > 0,
-                uncert_this_mod[:, 0, :],
-                default_backend.zeros(uncert_this_mod[:, 1, :].shape),
-            )
-            denominator = default_backend.where(
-                summed_nominals > 0,
-                summed_nominals,
-                default_backend.ones(uncert_this_mod[:, 1, :].shape),
-            )
-            relerrs = numerator / denominator
-            sigmas = default_backend.sqrt(
-                default_backend.sum(default_backend.power(relerrs, 2), axis=0)
-            )
-            assert len(sigmas[sigmas > 0]) == pdfconfig.param_set(mod).n_parameters
-            pdfconfig.param_set(mod).sigmas = default_backend.tolist(sigmas[sigmas > 0])
 
     def apply(self, pars):
         if not self.param_viewer.index_selection:
