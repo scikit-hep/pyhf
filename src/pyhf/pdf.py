@@ -25,7 +25,7 @@ def __dir__():
     return __all__
 
 
-def _finalize_parameters(user_parameters, _paramsets_requirements, channel_nbins):
+def _finalize_parameters(user_parameters, _paramsets_requirements):
     # build up a dictionary of the parameter configurations provided by the user
     _paramsets_user_configs = {}
     for parameter in user_parameters:
@@ -137,7 +137,6 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     _required_paramsets = _finalize_parameters(
         user_parameters,
         _required_paramsets,
-        config.channel_nbins,
     )
     if not _required_paramsets:
         raise exceptions.InvalidModel('No parameters specified for the Model.')
