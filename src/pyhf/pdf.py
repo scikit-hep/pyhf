@@ -255,7 +255,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self.auxdata_order = []
 
         self._create_and_register_paramsets(_required_paramsets)
-        if poi_name is not None:
+        if poi_name is not None and poi_name != "":
             self.set_poi(poi_name)
 
         self.npars = len(self.suggested_init())
