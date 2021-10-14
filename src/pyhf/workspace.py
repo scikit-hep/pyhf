@@ -385,7 +385,6 @@ class Workspace(_ChannelSummaryMixin, dict):
         See :func:`pyhf.workspace.Workspace.get_measurement` and :class:`pyhf.pdf.Model` for possible keyword arguments.
 
         Args:
-            patches: A list of JSON patches to apply to the model specification
             measurement_name (:obj:`str`): The name of the measurement to use
              in :func:`~pyhf.workspace.Workspace.get_measurement`.
             measurement_index (:obj:`int`): The index of the measurement to use
