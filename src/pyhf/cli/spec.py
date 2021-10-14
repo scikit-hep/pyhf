@@ -6,8 +6,8 @@ import json
 
 from pyhf.workspace import Workspace
 from pyhf import modifiers
-from pyhf import utils
 from pyhf import parameters
+from pyhf import utils
 
 log = logging.getLogger(__name__)
 

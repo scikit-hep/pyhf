@@ -3,6 +3,7 @@
 import copy
 import logging
 
+import pyhf.parameters
 from pyhf import get_backend, default_backend
 from pyhf import exceptions
 from pyhf import utils
@@ -13,8 +14,6 @@ from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
 from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.modifiers import histfactory_set
-
-import pyhf.parameters
 
 log = logging.getLogger(__name__)
 
