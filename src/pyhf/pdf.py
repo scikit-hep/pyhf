@@ -629,6 +629,7 @@ class Model:
             modifier_set, self.config, self.spec, self.batch_size
         )
 
+        poi_name = None if poi_name == "" else poi_name
         if poi_name is not None:
             self.config.set_poi(poi_name)
 
