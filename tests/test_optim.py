@@ -375,7 +375,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape == (2, 2)
-    assert pytest.approx([0.0, 0.26418431]) == pyhf.tensorlib.tolist(result[:, 1])
+    assert pytest.approx([0.26418431, 0.0]) == pyhf.tensorlib.tolist(result[:, 1])
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -405,7 +405,8 @@ def test_optim_correlations(backend, source, spec, mu):
     assert correlations.shape == (2, 2)
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.tolist(correlations)
-    assert np.allclose([[0.0, 0.0], [0.0, 1.0]], pyhf.tensorlib.tolist(correlations))
+
+    assert np.allclose([[1.0, 0.0], [0.0, 0.0]], pyhf.tensorlib.tolist(correlations))
 
 
 @pytest.mark.parametrize(

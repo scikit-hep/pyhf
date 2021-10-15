@@ -73,7 +73,7 @@ def test_sbottom_regionA_1400_950_60(
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1400_950_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1.5e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),

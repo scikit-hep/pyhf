@@ -1,46 +1,79 @@
 import logging
 
-from pyhf.modifiers import modifier
 from pyhf import get_backend, default_backend, events
-from pyhf.parameters import constrained_by_poisson, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
-@modifier(
-    name='shapesys', constrained=True, pdf_type='poisson', op_code='multiplication'
-)
-class shapesys:
-    @classmethod
-    def required_parset(cls, sample_data, modifier_data):
-        # count the number of bins with nonzero, positive yields
-        valid_bins = [
-            (sample_bin > 0 and modifier_bin > 0)
-            for sample_bin, modifier_bin in zip(modifier_data, sample_data)
-        ]
-        n_parameters = sum(valid_bins)
-        return {
-            'paramset_type': constrained_by_poisson,
-            'n_parameters': n_parameters,
-            'is_constrained': cls.is_constrained,
-            'is_shared': False,
-            'is_scalar': False,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((1e-10, 10.0),) * n_parameters,
-            'fixed': False,
-            # nb: auxdata/factors set by finalize. Set to non-numeric to crash
-            # if we fail to set auxdata/factors correctly
-            'auxdata': (None,) * n_parameters,
-            'factors': (None,) * n_parameters,
-        }
+def required_parset(sample_data, modifier_data):
+    # count the number of bins with nonzero, positive yields
+    valid_bins = [
+        (sample_bin > 0 and modifier_bin > 0)
+        for sample_bin, modifier_bin in zip(modifier_data, sample_data)
+    ]
+    n_parameters = sum(valid_bins)
+    return {
+        'paramset_type': 'constrained_by_poisson',
+        'n_parameters': n_parameters,
+        'is_shared': False,
+        'is_scalar': False,
+        'inits': (1.0,) * n_parameters,
+        'bounds': ((1e-10, 10.0),) * n_parameters,
+        'fixed': False,
+        # nb: auxdata/factors set by finalize. Set to non-numeric to crash
+        # if we fail to set auxdata/factors correctly
+        'auxdata': (None,) * n_parameters,
+        'factors': (None,) * n_parameters,
+    }
+
+
+class shapesys_builder:
+    """Builder class for collecting shapesys modifier data"""
+
+    def __init__(self, config):
+        self.builder_data = {}
+        self.config = config
+        self.required_parsets = {}
+
+    def collect(self, thismod, nom):
+        uncrt = thismod['data'] if thismod else [0.0] * len(nom)
+        mask = [(x > 0 and y > 0) for x, y in zip(uncrt, nom)]
+        return {'mask': mask, 'nom_data': nom, 'uncrt': uncrt}
+
+    def append(self, key, channel, sample, thismod, defined_samp):
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
+            'data', {'uncrt': [], 'nom_data': [], 'mask': []}
+        )
+        nom = (
+            defined_samp['data']
+            if defined_samp
+            else [0.0] * self.config.channel_nbins[channel]
+        )
+        moddata = self.collect(thismod, nom)
+        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]['data']['uncrt'] += moddata['uncrt']
+        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
+
+        if thismod:
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
+            )
+
+    def finalize(self):
+        return self.builder_data
 
 
 class shapesys_combined:
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
+    name = 'shapesys'
+    op_code = 'multiplication'
+
+    def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         self.batch_size = batch_size
 
-        keys = [f'{mtype}/{m}' for m, mtype in shapesys_mods]
-        self._shapesys_mods = [m for m, _ in shapesys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        self._shapesys_mods = [m for m, _ in modifiers]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
@@ -48,15 +81,16 @@ class shapesys_combined:
         )
 
         self._shapesys_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            for m in keys
         ]
         self.__shapesys_info = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[m][s]['data']['mask'],
-                        mega_mods[m][s]['data']['nom_data'],
-                        mega_mods[m][s]['data']['uncrt'],
+                        builder_data[m][s]['data']['mask'],
+                        builder_data[m][s]['data']['nom_data'],
+                        builder_data[m][s]['data']['uncrt'],
                     ]
                     for s in pdfconfig.samples
                 ]
@@ -71,7 +105,7 @@ class shapesys_combined:
 
         self._access_field = default_backend.tile(
             global_concatenated_bin_indices,
-            (len(shapesys_mods), self.batch_size or 1, 1),
+            (len(self._shapesys_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
 

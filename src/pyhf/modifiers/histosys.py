@@ -1,40 +1,78 @@
 import logging
 
-from pyhf.modifiers import modifier
 from pyhf import get_backend, events
 from pyhf import interpolators
-from pyhf.parameters import constrained_by_normal, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
-@modifier(name='histosys', constrained=True, op_code='addition')
-class histosys:
-    @classmethod
-    def required_parset(cls, sample_data, modifier_data):
-        return {
-            'paramset_type': constrained_by_normal,
-            'n_parameters': 1,
-            'is_constrained': cls.is_constrained,
-            'is_shared': True,
-            'is_scalar': True,
-            'inits': (0.0,),
-            'bounds': ((-5.0, 5.0),),
-            'fixed': False,
-            'auxdata': (0.0,),
-        }
+def required_parset(sample_data, modifier_data):
+    return {
+        'paramset_type': 'constrained_by_normal',
+        'n_parameters': 1,
+        'is_shared': True,
+        'is_scalar': True,
+        'inits': (0.0,),
+        'bounds': ((-5.0, 5.0),),
+        'fixed': False,
+        'auxdata': (0.0,),
+    }
+
+
+class histosys_builder:
+    """Builder class for collecting histoys modifier data"""
+
+    def __init__(self, config):
+        self.builder_data = {}
+        self.config = config
+        self.required_parsets = {}
+
+    def collect(self, thismod, nom):
+        lo_data = thismod['data']['lo_data'] if thismod else nom
+        hi_data = thismod['data']['hi_data'] if thismod else nom
+        maskval = True if thismod else False
+        mask = [maskval] * len(nom)
+        return {'lo_data': lo_data, 'hi_data': hi_data, 'mask': mask, 'nom_data': nom}
+
+    def append(self, key, channel, sample, thismod, defined_samp):
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
+            'data', {'hi_data': [], 'lo_data': [], 'nom_data': [], 'mask': []}
+        )
+        nom = (
+            defined_samp['data']
+            if defined_samp
+            else [0.0] * self.config.channel_nbins[channel]
+        )
+        moddata = self.collect(thismod, nom)
+        self.builder_data[key][sample]['data']['lo_data'] += moddata['lo_data']
+        self.builder_data[key][sample]['data']['hi_data'] += moddata['hi_data']
+        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
+        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+
+        if thismod:
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
+            )
+
+    def finalize(self):
+        return self.builder_data
 
 
 class histosys_combined:
+    name = 'histosys'
+    op_code = 'addition'
+
     def __init__(
-        self, histosys_mods, pdfconfig, mega_mods, interpcode='code0', batch_size=None
+        self, modifiers, pdfconfig, builder_data, interpcode='code0', batch_size=None
     ):
         self.batch_size = batch_size
         self.interpcode = interpcode
         assert self.interpcode in ['code0', 'code2', 'code4p']
 
-        keys = [f'{mtype}/{m}' for m, mtype in histosys_mods]
-        histosys_mods = [m for m, _ in histosys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        histosys_mods = [m for m, _ in modifiers]
 
         parfield_shape = (
             (self.batch_size, pdfconfig.npars)
@@ -48,16 +86,17 @@ class histosys_combined:
         self._histosys_histoset = [
             [
                 [
-                    mega_mods[m][s]['data']['lo_data'],
-                    mega_mods[m][s]['data']['nom_data'],
-                    mega_mods[m][s]['data']['hi_data'],
+                    builder_data[m][s]['data']['lo_data'],
+                    builder_data[m][s]['data']['nom_data'],
+                    builder_data[m][s]['data']['hi_data'],
                 ]
                 for s in pdfconfig.samples
             ]
             for m in keys
         ]
         self._histosys_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            for m in keys
         ]
 
         if histosys_mods:
