@@ -1,6 +1,9 @@
+import sys
+
 from pyhf.tensor import BackendRetriever
 
-STATE = {
+this = sys.modules[__name__]
+this.state = {
     'default': (None, None),
     'current': (None, None),
 }
@@ -24,18 +27,17 @@ def get_backend(default=False):
     Returns:
         backend, optimizer
     """
-    global STATE
-    return STATE['default' if default else 'current']
+    return this.state['default' if default else 'current']
 
 
 from pyhf.optimize import OptimizerRetriever
 from pyhf import events
 
-STATE['default'] = (
+this.state['default'] = (
     BackendRetriever.numpy_backend(),
     OptimizerRetriever.scipy_optimizer(),
 )
-STATE['current'] = STATE['default']
+this.state['current'] = this.state['default']
 
 
 @events.register('change_backend')
@@ -70,8 +72,6 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
     Returns:
         None
     """
-    global STATE
-
     _supported_precisions = ["32b", "64b"]
     backend_kwargs = {}
 
@@ -144,25 +144,25 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
-        (backend.name != STATE['current'][0].name)
-        | (backend.precision != STATE['current'][0].precision)
+        (backend.name != this.state['current'][0].name)
+        | (backend.precision != this.state['current'][0].precision)
     )
-    optimizer_changed = bool(STATE['current'][1] != new_optimizer)
+    optimizer_changed = bool(this.state['current'][1] != new_optimizer)
     # set new backend
-    STATE['current'] = (backend, new_optimizer)
+    this.state['current'] = (backend, new_optimizer)
     if default:
         default_tensorlib_changed = bool(
-            (backend.name != STATE['default'][0].name)
-            | (backend.precision != STATE['default'][0].precision)
+            (backend.name != this.state['default'][0].name)
+            | (backend.precision != this.state['default'][0].precision)
         )
-        default_optimizer_changed = bool(STATE['default'][1] != new_optimizer)
+        default_optimizer_changed = bool(this.state['default'][1] != new_optimizer)
         # trigger events
         if default_tensorlib_changed:
             events.trigger("default_tensorlib_changed")()
         if default_optimizer_changed:
             events.trigger("default_optimizer_changed")()
 
-        STATE['default'] = STATE['current']
+        this.state['default'] = this.state['current']
 
     # trigger events
     if tensorlib_changed:
