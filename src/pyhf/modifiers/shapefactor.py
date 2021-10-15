@@ -58,9 +58,22 @@ class shapefactor_combined:
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         """
-        Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
-        bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
-        uncoupled_shapefactor). Let's say this is the set-up:
+
+        Args:
+            modifiers (:obj:`list` of :obj:`tuple`): List of tuples of
+             form ``(modifier, modifier_type)``.
+            pdfconfig (:class:`~pyhf.pdf._ModelConfig`): Configuration for the model.
+            builder_data (:obj:`dict`): Map of keys ``'modifier_type/modifier'``
+             to the channels and bins they are applied to.
+            batch_size (:obj:`int`): The number of rows in the resulting tensor.
+             If :obj:`None` defaults to ``1``.
+
+        Imagine a situation where we have 2 channels (``SR``, ``CR``), 3 samples
+        (``sig1``, ``bkg1``, ``bkg2``), and 2 :class:`~pyhf.modifiers.shapefactor`
+        modifiers (``coupled_shapefactor``, ``uncoupled_shapefactor``).
+        Let's say this is the set-up:
+
+        .. code-block::
 
             SR(nbins=2)
               sig1 -> subscribes to normfactor
@@ -68,34 +81,48 @@ class shapefactor_combined:
             CR(nbins=3)
               bkg2 -> subscribes to coupled_shapefactor, uncoupled_shapefactor
 
-        The coupled_shapefactor needs to have 3 nuisance parameters to account
-        for the CR, with 2 of them shared in the SR. The uncoupled_shapefactor
-        just has 3 nuisance parameters.
+        The ``coupled_shapefactor`` needs to have 3 nuisance parameters to account
+        for the ``CR``, with 2 of them shared in the ``SR``.
+        The ``uncoupled_shapefactor`` just has 3 nuisance parameters.
 
-        self._parindices will look like
+        ``self._parindices`` will look like
+
+        .. code-block::
+
             [0, 1, 2, 3, 4, 5, 6]
 
-        self._shapefactor_indices will look like
+        ``self._shapefactor_indices`` will look like
+
+        .. code-block::
+
+            [0, 1, 2, 3, 4, 5, 6]
             [[1,2,3],[4,5,6]]
              ^^^^^^^         = coupled_shapefactor
                      ^^^^^^^ = uncoupled_shapefactor
 
-        with the 0th par-index corresponding to the normfactor. Because
-        channel1 has 2 bins, and channel2 has 3 bins (with channel1 before
-        channel2), global_concatenated_bin_indices looks like
+        with the ``0``th par-index corresponding to the
+        :class:`~pyhf.modifiers.normfactor`. Because the ``SR`` channel has 2
+        bins, and the ``CR`` channel has 3 bins (with ``SR`` before ``CR``),
+        ``global_concatenated_bin_indices`` looks like
+
+        .. code-block::
 
             [0, 1, 0, 1, 2]
-            ^^^^^            = channel1
+            ^^^^^            = SR channel
 
-                  ^^^^^^^^^  = channel2
+                  ^^^^^^^^^  = CR channel
 
-        So now we need to gather the corresponding shapefactor indices
-        according to global_concatenated_bin_indices. Therefore
-        self._shapefactor_indices now looks like
+        So now we need to gather the corresponding
+        :class:`~pyhf.modifiers.shapefactor` indices according to
+        ``global_concatenated_bin_indices``. Therefore ``self._shapefactor_indices``
+        now looks like
+
+        .. code-block::
 
             [[1, 2, 1, 2, 3], [4, 5, 4, 5, 6]]
 
-        and at that point can be used to compute the effect of shapefactor.
+        and at that point can be used to compute the effect of
+        :class:`~pyhf.modifiers.shapefactor`.
         """
 
         self.batch_size = batch_size
@@ -120,7 +147,7 @@ class shapefactor_combined:
             global_concatenated_bin_indices,
             (len(shapefactor_mods), self.batch_size or 1, 1),
         )
-        # acess field is now
+        # access field is now
         # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model
         # [
         #   [0 1 2 0 1 0 1 2 3 4] (number of rows according to batch_size but at least 1)
