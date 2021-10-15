@@ -57,3 +57,9 @@ repos:
     hooks:
     - id: nbqa-pyupgrade
       additional_dependencies: [pyupgrade==2.29.0]
+
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+    - id: codespell
+      args: ["-L", "hist,gaus", "-S", "*.ipynb,*.dtd,*.eps,*.bib", "-x", "validation/xmlimport_input/log"]
