@@ -2,6 +2,7 @@ import pyhf
 import pyhf.exceptions as exceptions
 import pytest
 
+
 class custom_builder:
     def __init__(self, pdfconfig):
         self.config = pdfconfig
@@ -25,6 +26,7 @@ class custom_builder:
 
     def finalize(self):
         return self.builder_data
+
 
 class custom_applicator:
     op_code = 'multiplication'
