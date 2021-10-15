@@ -1,7 +1,8 @@
 """Piecewise-Exponential Interpolation (Code 1)."""
 import logging
 import math
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf.interpolators import _slow_interpolator_looper
 

@@ -1,5 +1,6 @@
 """Helper Classes for use of automatic differentiation."""
-from pyhf import get_backend, exceptions
+from pyhf.tensor.manager import get_backend
+from pyhf import exceptions
 from pyhf.optimize.common import shim
 
 import logging

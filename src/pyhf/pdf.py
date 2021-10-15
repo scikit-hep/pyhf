@@ -4,7 +4,8 @@ import copy
 import logging
 
 import pyhf.parameters
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
 from pyhf import utils
 from pyhf import events
@@ -64,10 +65,10 @@ class _nominal_builder:
         self.mega_samples[sample]['nom'] += nom
 
     def finalize(self):
-        nominal_rates = default_backend.astensor(
+        nominal_rates = pyhf.default_backend.astensor(
             [self.mega_samples[sample]['nom'] for sample in self.config.samples]
         )
-        _nominal_rates = default_backend.reshape(
+        _nominal_rates = pyhf.default_backend.reshape(
             nominal_rates,
             (
                 1,  # modifier dimension.. nominal_rates is the base
@@ -476,7 +477,7 @@ class _MainModel:
         self._delta_mods = []
         self.batch_size = batch_size
 
-        self._nominal_rates = default_backend.tile(
+        self._nominal_rates = pyhf.default_backend.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 

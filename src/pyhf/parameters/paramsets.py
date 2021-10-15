@@ -1,4 +1,4 @@
-from pyhf import default_backend
+import pyhf
 
 __all__ = [
     "constrained_by_normal",
@@ -66,8 +66,8 @@ class constrained_by_poisson(constrained_paramset):
 
     def width(self):
         try:
-            return default_backend.sqrt(
-                1.0 / default_backend.astensor(self.factors)
+            return pyhf.default_backend.sqrt(
+                1.0 / pyhf.default_backend.astensor(self.factors)
             ).tolist()
         except AttributeError:
             raise RuntimeError('need to know rate factor to compu')

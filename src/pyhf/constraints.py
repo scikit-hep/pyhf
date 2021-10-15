@@ -1,4 +1,5 @@
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf import probability as prob
 from pyhf.parameters import ParamViewer
