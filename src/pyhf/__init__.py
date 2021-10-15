@@ -23,6 +23,7 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
+    "optimize",
     "optimizer",
     "parameters",
     "patchset",
