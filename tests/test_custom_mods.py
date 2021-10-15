@@ -104,3 +104,4 @@ def test_missing_poi():
             poi_name='non_existent_poi',
             validate=False,
         )
+        assert m
