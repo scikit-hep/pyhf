@@ -110,10 +110,10 @@ Kyle Cranmer (co-author of :math:`\HiFa{}`) to study if the graph structure and 
 differentiation abilities of machine learning frameworks would allow them to be effective
 tools for statistical fits.
 Lukas would give helpful friendly advice on Matthew's project and one night [1]_ over dinner
-in CERN's R1 cafeteria the two were discussing the idea of implimenting :math:`\HiFa{}`
+in CERN's R1 cafeteria the two were discussing the idea of implementing :math:`\HiFa{}`
 in Python using machine learning libraries to drive the computation.
 Continuing the discussion in Lukas's office, Lukas showed Matthew that the core statistical
-machinery could be implimented rather succinctly, and that night
+machinery could be implemented rather succinctly, and that night
 `proceeded to do so <https://github.com/scikit-hep/pyhf/commit/fd32503fb760f070a4047cb867757458b1687599>`_
 and |dubbed the project pyhf|_.
 

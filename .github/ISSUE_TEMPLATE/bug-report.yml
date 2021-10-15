@@ -116,7 +116,7 @@ body:
     label: Actual Results
     description: >-
       Paste verbatim program or command output.
-      Don't wrap it with tripple backticks &mdash; your whole input will be
+      Don't wrap it with triple backticks &mdash; your whole input will be
       turned into a code snippet automatically.
     render: console
   validations:
@@ -127,7 +127,7 @@ body:
     label: pyhf Version
     description: >-
       Paste verbatim output from `pyhf --version` below, under the prompt line.
-      Don't wrap it with tripple backticks &mdash; your whole input will be
+      Don't wrap it with triple backticks &mdash; your whole input will be
       turned into a code snippet automatically.
     render: console
     placeholder: |

@@ -130,7 +130,7 @@ def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
 def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected keyword arg is as expected
+    addition of the return_expected keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
@@ -152,7 +152,7 @@ def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
 def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected_set keyword arg is as expected
+    addition of the return_expected_set keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
@@ -195,7 +195,7 @@ def test_hypotest_return_calculator(
 ):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_calculator keyword arg is as expected
+    addition of the return_calculator keyword arg is as expected
     """
     *_, model = hypotest_args
 
@@ -423,7 +423,7 @@ def test_emperical_distribution(tmpdir, hypotest_args):
 
 def test_toy_calculator(tmpdir, hypotest_args):
     """
-    Check that the toy calculator is peforming as expected
+    Check that the toy calculator is performing as expected
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
@@ -469,7 +469,7 @@ def test_toy_calculator(tmpdir, hypotest_args):
 def test_fixed_poi(tmpdir, hypotest_args):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected keyword arg is as expected
+    addition of the return_expected keyword arg is as expected
     """
 
     _, _, pdf = hypotest_args
