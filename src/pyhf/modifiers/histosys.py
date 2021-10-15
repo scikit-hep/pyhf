@@ -57,12 +57,18 @@ class histosys_builder:
             )
 
     def finalize(self):
-        for k,v in self.builder_data.items():
-            for kk,vv in v.items():
+        for k, v in self.builder_data.items():
+            for kk, vv in v.items():
                 vv['data']['mask'] = default_backend.concatenate(vv['data']['mask'])
-                vv['data']['lo_data'] = default_backend.concatenate(vv['data']['lo_data'])
-                vv['data']['hi_data'] = default_backend.concatenate(vv['data']['hi_data'])
-                vv['data']['nom_data'] = default_backend.concatenate(vv['data']['nom_data'])
+                vv['data']['lo_data'] = default_backend.concatenate(
+                    vv['data']['lo_data']
+                )
+                vv['data']['hi_data'] = default_backend.concatenate(
+                    vv['data']['hi_data']
+                )
+                vv['data']['nom_data'] = default_backend.concatenate(
+                    vv['data']['nom_data']
+                )
         return self.builder_data
 
 

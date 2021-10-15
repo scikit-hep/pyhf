@@ -65,7 +65,10 @@ class _nominal_builder:
 
     def finalize(self):
         nominal_rates = default_backend.astensor(
-            [default_backend.concatenate(self.mega_samples[sample]['nom']) for sample in self.config.samples]
+            [
+                default_backend.concatenate(self.mega_samples[sample]['nom'])
+                for sample in self.config.samples
+            ]
         )
         _nominal_rates = default_backend.reshape(
             nominal_rates,

@@ -53,11 +53,13 @@ class staterror_builder:
             )
 
     def finalize(self):
-        for k,v in self.builder_data.items():
-            for kk,vv in v.items():
+        for k, v in self.builder_data.items():
+            for kk, vv in v.items():
                 vv['data']['mask'] = default_backend.concatenate(vv['data']['mask'])
                 vv['data']['uncrt'] = default_backend.concatenate(vv['data']['uncrt'])
-                vv['data']['nom_data'] = default_backend.concatenate(vv['data']['nom_data'])
+                vv['data']['nom_data'] = default_backend.concatenate(
+                    vv['data']['nom_data']
+                )
         return self.builder_data
 
 
