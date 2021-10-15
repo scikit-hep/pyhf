@@ -148,7 +148,7 @@ class shapefactor_combined:
             (len(shapefactor_mods), self.batch_size or 1, 1),
         )
         # access field is now
-        # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model
+        # e.g. for a 3 channel (3 bins, 2 bins, 5 bins) model
         # [
         #   [0 1 2 0 1 0 1 2 3 4] (number of rows according to batch_size but at least 1)
         #   [0 1 2 0 1 0 1 2 3 4]
