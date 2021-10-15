@@ -44,7 +44,7 @@ def __dir__():
 def __getattr__(name):
     if name == 'tensorlib':
         return get_backend(default=False)[0]
-    elif name == 'optimizer':
+    if name == 'optimizer':
         return get_backend(default=False)[1]
-    elif name == 'default_backend':
+    if name == 'default_backend':
         return get_backend(default=True)[0]
