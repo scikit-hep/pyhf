@@ -38,25 +38,25 @@ class code4:
         assert alpha0 > 0
         self.__alpha0 = alpha0
         # nb: this should never be a tensor, store in default backend (e.g. numpy)
-        self._histogramssets = default_backend.astensor(histogramssets)
+        self._histogramssets = pyhf.default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
         # precompute terms that only depend on the histogramssets
-        self._deltas_up = default_backend.divide(
+        self._deltas_up = pyhf.default_backend.divide(
             self._histogramssets[:, :, 2], self._histogramssets[:, :, 1]
         )
-        self._deltas_dn = default_backend.divide(
+        self._deltas_dn = pyhf.default_backend.divide(
             self._histogramssets[:, :, 0], self._histogramssets[:, :, 1]
         )
-        self._broadcast_helper = default_backend.ones(
-            default_backend.shape(self._deltas_up)
+        self._broadcast_helper = pyhf.default_backend.ones(
+            pyhf.default_backend.shape(self._deltas_up)
         )
         self._alpha0 = self._broadcast_helper * self.__alpha0
 
-        deltas_up_alpha0 = default_backend.power(self._deltas_up, self._alpha0)
-        deltas_dn_alpha0 = default_backend.power(self._deltas_dn, self._alpha0)
+        deltas_up_alpha0 = pyhf.default_backend.power(self._deltas_up, self._alpha0)
+        deltas_dn_alpha0 = pyhf.default_backend.power(self._deltas_dn, self._alpha0)
         # x = A^{-1} b
-        A_inverse = default_backend.astensor(
+        A_inverse = pyhf.default_backend.astensor(
             [
                 [
                     15.0 / (16 * alpha0),
@@ -108,19 +108,19 @@ class code4:
                 ],
             ]
         )
-        b = default_backend.stack(
+        b = pyhf.default_backend.stack(
             [
                 deltas_up_alpha0 - self._broadcast_helper,
                 deltas_dn_alpha0 - self._broadcast_helper,
-                default_backend.log(self._deltas_up) * deltas_up_alpha0,
-                -default_backend.log(self._deltas_dn) * deltas_dn_alpha0,
-                default_backend.power(default_backend.log(self._deltas_up), 2)
+                pyhf.default_backend.log(self._deltas_up) * deltas_up_alpha0,
+                -pyhf.default_backend.log(self._deltas_dn) * deltas_dn_alpha0,
+                pyhf.default_backend.power(pyhf.default_backend.log(self._deltas_up), 2)
                 * deltas_up_alpha0,
-                default_backend.power(default_backend.log(self._deltas_dn), 2)
+                pyhf.default_backend.power(pyhf.default_backend.log(self._deltas_dn), 2)
                 * deltas_dn_alpha0,
             ]
         )
-        self._coefficients = default_backend.einsum(
+        self._coefficients = pyhf.default_backend.einsum(
             'rc,shb,cshb->rshb', A_inverse, self._broadcast_helper, b
         )
 

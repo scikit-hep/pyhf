@@ -78,7 +78,7 @@ class staterror_combined:
             [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
             for m in keys
         ]
-        self.__staterror_uncrt = default_backend.astensor(
+        self.__staterror_uncrt = pyhf.default_backend.astensor(
             [
                 [
                     [
@@ -96,7 +96,7 @@ class staterror_combined:
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
 
-        self._access_field = default_backend.tile(
+        self._access_field = pyhf.default_backend.tile(
             global_concatenated_bin_indices,
             (len(self._staterr_mods), self.batch_size or 1, 1),
         )
@@ -125,35 +125,37 @@ class staterror_combined:
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
 
     def finalize(self, pdfconfig):
-        staterror_mask = default_backend.astensor(self._staterror_mask)
+        staterror_mask = pyhf.default_backend.astensor(self._staterror_mask)
         for this_mask, uncert_this_mod, mod in zip(
             staterror_mask, self.__staterror_uncrt, self._staterr_mods
         ):
-            active_nominals = default_backend.where(
+            active_nominals = pyhf.default_backend.where(
                 this_mask[:, 0, :],
                 uncert_this_mod[:, 1, :],
-                default_backend.zeros(uncert_this_mod[:, 1, :].shape),
+                pyhf.default_backend.zeros(uncert_this_mod[:, 1, :].shape),
             )
-            summed_nominals = default_backend.sum(active_nominals, axis=0)
+            summed_nominals = pyhf.default_backend.sum(active_nominals, axis=0)
 
             # the below tries to filter cases in which this modifier is not
             # used by checking non zeroness.. should probably use mask
-            numerator = default_backend.where(
+            numerator = pyhf.default_backend.where(
                 uncert_this_mod[:, 1, :] > 0,
                 uncert_this_mod[:, 0, :],
-                default_backend.zeros(uncert_this_mod[:, 1, :].shape),
+                pyhf.default_backend.zeros(uncert_this_mod[:, 1, :].shape),
             )
-            denominator = default_backend.where(
+            denominator = pyhf.default_backend.where(
                 summed_nominals > 0,
                 summed_nominals,
-                default_backend.ones(uncert_this_mod[:, 1, :].shape),
+                pyhf.default_backend.ones(uncert_this_mod[:, 1, :].shape),
             )
             relerrs = numerator / denominator
-            sigmas = default_backend.sqrt(
-                default_backend.sum(default_backend.power(relerrs, 2), axis=0)
+            sigmas = pyhf.default_backend.sqrt(
+                pyhf.default_backend.sum(pyhf.default_backend.power(relerrs, 2), axis=0)
             )
             assert len(sigmas[sigmas > 0]) == pdfconfig.param_set(mod).n_parameters
-            pdfconfig.param_set(mod).sigmas = default_backend.tolist(sigmas[sigmas > 0])
+            pdfconfig.param_set(mod).sigmas = pyhf.default_backend.tolist(
+                sigmas[sigmas > 0]
+            )
 
     def apply(self, pars):
         if not self.param_viewer.index_selection:

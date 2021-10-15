@@ -2,7 +2,6 @@ from pyhf.tensor import BackendRetriever as tensor
 from pyhf.tensor.manager import get_backend
 from pyhf.tensor.manager import set_backend
 from pyhf._version import version as __version__
-from pyhf.exceptions import InvalidBackend, InvalidOptimizer, Unsupported
 
 from pyhf.pdf import Model
 from pyhf.workspace import Workspace

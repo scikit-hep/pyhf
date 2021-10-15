@@ -145,7 +145,7 @@ class shapefactor_combined:
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
 
-        self._access_field = default_backend.tile(
+        self._access_field = pyhf.default_backend.tile(
             global_concatenated_bin_indices,
             (len(shapefactor_mods), self.batch_size or 1, 1),
         )

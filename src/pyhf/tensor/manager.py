@@ -1,6 +1,7 @@
 import sys
 
 from pyhf.tensor import BackendRetriever
+from pyhf import exceptions
 
 this = sys.modules[__name__]
 this.state = {
@@ -93,7 +94,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
                 **backend_kwargs
             )
         except TypeError:
-            raise InvalidBackend(
+            raise exceptions.InvalidBackend(
                 f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
             )
 
@@ -104,7 +105,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
                 f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
             )
         if backend.precision not in _supported_precisions:
-            raise Unsupported(
+            raise exceptions.Unsupported(
                 f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
             )
     # If "precision" arg passed, it should always win
@@ -125,7 +126,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
                     OptimizerRetriever, f"{custom_optimizer.lower()}_optimizer"
                 )()
             except TypeError:
-                raise InvalidOptimizer(
+                raise exceptions.InvalidOptimizer(
                     f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
                 )
         else:
