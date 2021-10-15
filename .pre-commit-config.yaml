@@ -62,4 +62,4 @@ repos:
     rev: v2.1.0
     hooks:
     - id: codespell
-      args: ["-L", "hist,gaus", "-S", "*.ipynb,*.dtd,*.eps,*.bib", "-x", "validation/xmlimport_input/log"]
+      args: ["-w", "-L", "hist,gaus", "-S", "*.ipynb,*.dtd,*.eps,*.bib", "-x", "validation/xmlimport_input/log"]
