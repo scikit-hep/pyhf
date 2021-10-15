@@ -100,7 +100,7 @@ class shapefactor_combined:
              ^^^^^^^         = coupled_shapefactor
                      ^^^^^^^ = uncoupled_shapefactor
 
-        with the ``0``th par-index corresponding to the
+        with the 0th par-index corresponding to the
         :class:`~pyhf.modifiers.normfactor`. Because the ``SR`` channel has 2
         bins, and the ``CR`` channel has 3 bins (with ``SR`` before ``CR``),
         ``global_concatenated_bin_indices`` looks like
