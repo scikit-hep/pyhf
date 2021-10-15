@@ -36,7 +36,7 @@ def test_custom_mods():
         ):
             pass
         def apply(self, pars):
-            raise NotImplemented
+            raise NotImplementedError
 
     modifier_set = {
         custom_applicator.name: (custom_builder, custom_applicator)
