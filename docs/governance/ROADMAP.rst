@@ -10,7 +10,7 @@ Overview and Goals
 We will follow loosely Seibert’s `Heirarchy of
 Needs <https://twitter.com/FRoscheck/status/1159158552298229763>`__
 
-|Seibert Heirarchy of Needs SciPy 2019| (`Stan
+|Seibert Hierarchy of Needs SciPy 2019| (`Stan
 Seibert <https://github.com/seibert>`__, SciPy 2019)
 
 As a general overview that will include:
@@ -158,7 +158,7 @@ Presentations During Roadmap Timeline
    2019 <https://indico.cern.ch/event/773049/contributions/3476180/>`__
    (November 4-8th, 2019)
 
-.. |Seibert Heirarchy of Needs SciPy 2019| image:: https://pbs.twimg.com/media/EBYojw8XUAERJhZ?format=png
+.. |Seibert Hierarchy of Needs SciPy 2019| image:: https://pbs.twimg.com/media/EBYojw8XUAERJhZ?format=png
 
 .. |check| raw:: html
 

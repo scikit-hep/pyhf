@@ -50,7 +50,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     if do_grad:
 
         def func(pars):
-            # need to conver to tuple to make args hashable
+            # need to convert to tuple to make args hashable
             return _jitted_objective_and_grad(
                 pars,
                 data,
@@ -65,7 +65,7 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     else:
 
         def func(pars):
-            # need to conver to tuple to make args hashable
+            # need to convert to tuple to make args hashable
             return _jitted_objective(
                 pars,
                 data,

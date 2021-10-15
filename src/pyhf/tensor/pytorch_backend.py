@@ -93,7 +93,7 @@ class pytorch_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -107,8 +107,8 @@ class pytorch_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             PyTorch Tensor: The output of the callable that was evaluated

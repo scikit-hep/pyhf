@@ -514,7 +514,7 @@ class _MainModel:
         Compute the logarithm of the value of the probability density.
 
         Args:
-            maindata (:obj:`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
+            maindata (:obj:`tensor`): The main channel data (a subset of the full data in a HistFactory model)
             pars (:obj:`tensor`): The model parameters
 
         Returns:

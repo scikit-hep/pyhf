@@ -12,7 +12,7 @@ def __dir__():
 def twice_nll(pars, data, pdf):
     r"""
     Two times the negative log-likelihood of the model parameters, :math:`\left(\mu, \boldsymbol{\theta}\right)`, given the observed data.
-    It is used in the calculation of the test statistic, :math:`t_{\mu}`, as defiend in Equation (8) in :xref:`arXiv:1007.1727`
+    It is used in the calculation of the test statistic, :math:`t_{\mu}`, as defined in Equation (8) in :xref:`arXiv:1007.1727`
 
     .. math::
 
