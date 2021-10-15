@@ -204,7 +204,6 @@ class _ModelConfig(_ChannelSummaryMixin):
         Evaluate the required parameters for the model configuration.
         """
         self._create_and_register_paramsets(_required_paramsets)
-
         self.npars = len(self.suggested_init())
         self.parameters = sorted(k for k in self.par_map.keys())
 
