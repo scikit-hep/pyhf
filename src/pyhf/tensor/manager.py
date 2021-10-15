@@ -16,6 +16,7 @@ def get_backend(default=False):
 
     Example:
         >>> import pyhf
+        >>> pyhf.set_backend("numpy")
         >>> backend, optimizer = pyhf.get_backend()
         >>> backend
         <pyhf.tensor.numpy_backend.numpy_backend object at 0x...>
