@@ -150,20 +150,27 @@ def test_interpolators_public_api():
 
 def test_modifiers_public_api():
     assert dir(pyhf.modifiers) == [
-        "combined",
+        "histfactory_set",
         "histosys",
+        "histosys_builder",
         "histosys_combined",
         "lumi",
+        "lumi_builder",
         "lumi_combined",
         "normfactor",
+        "normfactor_builder",
         "normfactor_combined",
         "normsys",
+        "normsys_builder",
         "normsys_combined",
         "shapefactor",
+        "shapefactor_builder",
         "shapefactor_combined",
         "shapesys",
+        "shapesys_builder",
         "shapesys_combined",
         "staterror",
+        "staterror_builder",
         "staterror_combined",
     ]
 

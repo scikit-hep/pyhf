@@ -222,7 +222,7 @@ def test_prune_modifier(workspace_factory):
         ws.prune(modifiers=modifier)
 
     new_ws = ws.prune(modifiers=[modifier])
-    assert modifier not in new_ws.parameters
+    assert modifier not in new_ws.model().config.parameters
     assert modifier not in [
         p['name']
         for measurement in new_ws['measurements']
@@ -283,22 +283,22 @@ def test_rename_sample(workspace_factory):
 
 def test_rename_modifier(workspace_factory):
     ws = workspace_factory()
-    modifier = ws.parameters[0]
+    modifier = ws.model().config.parameters[0]
     renamed = 'renamedModifier'
-    assert renamed not in ws.parameters
+    assert renamed not in ws.model().config.parameters
     new_ws = ws.rename(modifiers={modifier: renamed})
-    assert modifier not in new_ws.parameters
-    assert renamed in new_ws.parameters
+    assert modifier not in new_ws.model().config.parameters
+    assert renamed in new_ws.model().config.parameters
 
 
 def test_rename_poi(workspace_factory):
     ws = workspace_factory()
     poi = ws.get_measurement()['config']['poi']
     renamed = 'renamedPoi'
-    assert renamed not in ws.parameters
+    assert renamed not in ws.model().config.parameters
     new_ws = ws.rename(modifiers={poi: renamed})
-    assert poi not in new_ws.parameters
-    assert renamed in new_ws.parameters
+    assert poi not in new_ws.model().config.parameters
+    assert renamed in new_ws.model().config.parameters
     assert new_ws.get_measurement()['config']['poi'] == renamed
 
 
@@ -770,7 +770,9 @@ def test_combine_workspace(workspace_factory, join):
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
     assert set(combined.channels) == set(ws.channels + new_ws.channels)
     assert set(combined.samples) == set(ws.samples + new_ws.samples)
-    assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
+    assert set(combined.model().config.parameters) == set(
+        ws.model().config.parameters + new_ws.model().config.parameters
+    )
 
 
 def test_workspace_equality(workspace_factory):
