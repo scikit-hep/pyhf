@@ -1,7 +1,7 @@
 import pyhf
 
+
 def test_custom_mods():
-    
     class custom_builder:
         def __init__(self, pdfconfig):
             self.config = pdfconfig
@@ -26,7 +26,6 @@ def test_custom_mods():
         def finalize(self):
             return self.builder_data
 
-
     class custom_applicator:
         op_code = 'multiplication'
         name = 'customfunc'
@@ -35,12 +34,11 @@ def test_custom_mods():
             self, modifiers=None, pdfconfig=None, builder_data=None, batch_size=None
         ):
             pass
+
         def apply(self, pars):
             raise NotImplementedError
 
-    modifier_set = {
-        custom_applicator.name: (custom_builder, custom_applicator)
-    }
+    modifier_set = {custom_applicator.name: (custom_builder, custom_applicator)}
     modifier_set.update(**pyhf.modifiers.histfactory_set)
 
     m = pyhf.Model(
@@ -53,7 +51,11 @@ def test_custom_mods():
                             'name': 'signal',
                             'data': [10] * 20,
                             'modifiers': [
-                                {'name': 'singlemod', 'type': 'customfunc', 'data': None},
+                                {
+                                    'name': 'singlemod',
+                                    'type': 'customfunc',
+                                    'data': None,
+                                },
                             ],
                         },
                         {'name': 'background', 'data': [300] * 20, 'modifiers': []},
