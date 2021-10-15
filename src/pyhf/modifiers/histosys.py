@@ -1,6 +1,6 @@
 import logging
 
-from pyhf import get_backend, events
+from pyhf import get_backend, default_backend, events
 from pyhf import interpolators
 from pyhf.parameters import ParamViewer
 
@@ -45,10 +45,10 @@ class histosys_builder:
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self.builder_data[key][sample]['data']['lo_data'] += moddata['lo_data']
-        self.builder_data[key][sample]['data']['hi_data'] += moddata['hi_data']
-        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
-        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]['data']['lo_data'].append(moddata['lo_data'])
+        self.builder_data[key][sample]['data']['hi_data'].append(moddata['hi_data'])
+        self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
+        self.builder_data[key][sample]['data']['mask'].append(moddata['mask'])
 
         if thismod:
             self.required_parsets.setdefault(
@@ -57,6 +57,12 @@ class histosys_builder:
             )
 
     def finalize(self):
+        for k,v in self.builder_data.items():
+            for kk,vv in v.items():
+                vv['data']['mask'] = default_backend.concatenate(vv['data']['mask'])
+                vv['data']['lo_data'] = default_backend.concatenate(vv['data']['lo_data'])
+                vv['data']['hi_data'] = default_backend.concatenate(vv['data']['hi_data'])
+                vv['data']['nom_data'] = default_backend.concatenate(vv['data']['nom_data'])
         return self.builder_data
 
 

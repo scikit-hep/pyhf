@@ -42,9 +42,9 @@ class staterror_builder:
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
-        self.builder_data[key][sample]['data']['uncrt'] += moddata['uncrt']
-        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
+        self.builder_data[key][sample]['data']['mask'].append(moddata['mask'])
+        self.builder_data[key][sample]['data']['uncrt'].append(moddata['uncrt'])
+        self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
 
         if thismod:
             self.required_parsets.setdefault(
@@ -53,6 +53,11 @@ class staterror_builder:
             )
 
     def finalize(self):
+        for k,v in self.builder_data.items():
+            for kk,vv in v.items():
+                vv['data']['mask'] = default_backend.concatenate(vv['data']['mask'])
+                vv['data']['uncrt'] = default_backend.concatenate(vv['data']['uncrt'])
+                vv['data']['nom_data'] = default_backend.concatenate(vv['data']['nom_data'])
         return self.builder_data
 
 

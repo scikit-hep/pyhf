@@ -61,11 +61,11 @@ class _nominal_builder:
             raise exceptions.InvalidModel(
                 f'expected {self.config.channel_nbins[channel]} size sample data but got {len(nom)}'
             )
-        self.mega_samples[sample]['nom'] += nom
+        self.mega_samples[sample]['nom'].append(nom)
 
     def finalize(self):
         nominal_rates = default_backend.astensor(
-            [self.mega_samples[sample]['nom'] for sample in self.config.samples]
+            [default_backend.concatenate(self.mega_samples[sample]['nom']) for sample in self.config.samples]
         )
         _nominal_rates = default_backend.reshape(
             nominal_rates,
