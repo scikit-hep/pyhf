@@ -6,6 +6,7 @@ import json
 
 from pyhf.workspace import Workspace
 from pyhf import modifiers
+from pyhf import parameters
 from pyhf import utils
 
 log = logging.getLogger(__name__)
@@ -72,14 +73,16 @@ def inspect(workspace, output_file, measurement):
     ]
     result['modifiers'] = dict(ws.modifiers)
 
+    parset_descr = {
+        parameters.paramsets.unconstrained: 'unconstrained',
+        parameters.paramsets.constrained_by_normal: 'constrained_by_normal',
+        parameters.paramsets.constrained_by_poisson: 'constrained_by_poisson',
+    }
+
+    model = ws.model()
+
     result['parameters'] = sorted(
-        (
-            parname,
-            modifiers.registry[result['modifiers'][parname]]
-            .required_parset([], [])['paramset_type']
-            .__name__,
-        )
-        for parname in ws.parameters
+        (k, parset_descr[type(v['paramset'])]) for k, v in model.config.par_map.items()
     )
     result['systematics'] = [
         (
@@ -97,7 +100,7 @@ def inspect(workspace, output_file, measurement):
 
     maxlen_channels = max(map(len, ws.channels))
     maxlen_samples = max(map(len, ws.samples))
-    maxlen_parameters = max(map(len, ws.parameters))
+    maxlen_parameters = max(map(len, [p for p, _ in result['parameters']]))
     maxlen_measurements = max(map(lambda x: len(x[0]), result['measurements']))
     maxlen = max(
         [maxlen_channels, maxlen_samples, maxlen_parameters, maxlen_measurements]
@@ -174,7 +177,7 @@ def inspect(workspace, output_file, measurement):
     '--modifier-type',
     default=[],
     multiple=True,
-    type=click.Choice(modifiers.uncombined.keys()),
+    type=click.Choice(modifiers.histfactory_set.keys()),
 )
 @click.option('--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...')
 def prune(

@@ -1,34 +1,79 @@
 import logging
 
-from pyhf.modifiers import modifier
 from pyhf import get_backend, default_backend, events
-from pyhf.parameters import unconstrained, ParamViewer
+from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
 
 
-@modifier(name='shapefactor', op_code='multiplication')
-class shapefactor:
-    @classmethod
-    def required_parset(cls, sample_data, modifier_data):
-        return {
-            'paramset_type': unconstrained,
-            'n_parameters': len(sample_data),
-            'is_constrained': cls.is_constrained,
-            'is_shared': True,
-            'is_scalar': False,
-            'inits': (1.0,) * len(sample_data),
-            'bounds': ((0.0, 10.0),) * len(sample_data),
-            'fixed': False,
-        }
+def required_parset(sample_data, modifier_data):
+    return {
+        'paramset_type': 'unconstrained',
+        'n_parameters': len(sample_data),
+        'is_shared': True,
+        'is_scalar': False,
+        'inits': (1.0,) * len(sample_data),
+        'bounds': ((0.0, 10.0),) * len(sample_data),
+        'fixed': False,
+    }
+
+
+class shapefactor_builder:
+    """Builder class for collecting shapefactor modifier data"""
+
+    def __init__(self, config):
+        self.builder_data = {}
+        self.config = config
+        self.required_parsets = {}
+
+    def collect(self, thismod, nom):
+        maskval = True if thismod else False
+        mask = [maskval] * len(nom)
+        return {'mask': mask}
+
+    def append(self, key, channel, sample, thismod, defined_samp):
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
+            'data', {'mask': []}
+        )
+        nom = (
+            defined_samp['data']
+            if defined_samp
+            else [0.0] * self.config.channel_nbins[channel]
+        )
+        moddata = self.collect(thismod, nom)
+        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+        if thismod:
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
+            )
+
+    def finalize(self):
+        return self.builder_data
 
 
 class shapefactor_combined:
-    def __init__(self, shapefactor_mods, pdfconfig, mega_mods, batch_size=None):
+    name = 'shapefactor'
+    op_code = 'multiplication'
+
+    def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         """
-        Imagine a situation where we have 2 channels (SR, CR), 3 samples (sig1,
-        bkg1, bkg2), and 2 shapefactor modifiers (coupled_shapefactor,
-        uncoupled_shapefactor). Let's say this is the set-up:
+
+        Args:
+            modifiers (:obj:`list` of :obj:`tuple`): List of tuples of
+             form ``(modifier, modifier_type)``.
+            pdfconfig (:class:`~pyhf.pdf._ModelConfig`): Configuration for the model.
+            builder_data (:obj:`dict`): Map of keys ``'modifier_type/modifier'``
+             to the channels and bins they are applied to.
+            batch_size (:obj:`int`): The number of rows in the resulting tensor.
+             If :obj:`None` defaults to ``1``.
+
+        Imagine a situation where we have 2 channels (``SR``, ``CR``), 3 samples
+        (``sig1``, ``bkg1``, ``bkg2``), and 2 :class:`~pyhf.modifiers.shapefactor`
+        modifiers (``coupled_shapefactor``, ``uncoupled_shapefactor``).
+        Let's say this is the set-up:
+
+        .. code-block::
 
             SR(nbins=2)
               sig1 -> subscribes to normfactor
@@ -36,36 +81,53 @@ class shapefactor_combined:
             CR(nbins=3)
               bkg2 -> subscribes to coupled_shapefactor, uncoupled_shapefactor
 
-        The coupled_shapefactor needs to have 3 nuisance parameters to account
-        for the CR, with 2 of them shared in the SR. The uncoupled_shapefactor
-        just has 3 nuisance parameters.
+        The ``coupled_shapefactor`` needs to have 3 nuisance parameters to account
+        for the ``CR``, with 2 of them shared in the ``SR``.
+        The ``uncoupled_shapefactor`` just has 3 nuisance parameters.
 
-        self._parindices will look like
+        ``self._parindices`` will look like
+
+        .. code-block::
+
             [0, 1, 2, 3, 4, 5, 6]
 
-        self._shapefactor_indices will look like
+        ``self._shapefactor_indices`` will look like
+
+        .. code-block::
+
+            [0, 1, 2, 3, 4, 5, 6]
             [[1,2,3],[4,5,6]]
              ^^^^^^^         = coupled_shapefactor
                      ^^^^^^^ = uncoupled_shapefactor
 
-        with the 0th par-index corresponding to the normfactor. Because
-        channel1 has 2 bins, and channel2 has 3 bins (with channel1 before
-        channel2), global_concatenated_bin_indices looks like
-            [0, 1, 0, 1, 2]
-            ^^^^^            = channel1
-                  ^^^^^^^^^  = channel2
+        with the 0th par-index corresponding to the
+        :class:`~pyhf.modifiers.normfactor`. Because the ``SR`` channel has 2
+        bins, and the ``CR`` channel has 3 bins (with ``SR`` before ``CR``),
+        ``global_concatenated_bin_indices`` looks like
 
-        So now we need to gather the corresponding shapefactor indices
-        according to global_concatenated_bin_indices. Therefore
-        self._shapefactor_indices now looks like
+        .. code-block::
+
+            [0, 1, 0, 1, 2]
+            ^^^^^            = SR channel
+
+                  ^^^^^^^^^  = CR channel
+
+        So now we need to gather the corresponding
+        :class:`~pyhf.modifiers.shapefactor` indices according to
+        ``global_concatenated_bin_indices``. Therefore ``self._shapefactor_indices``
+        now looks like
+
+        .. code-block::
+
             [[1, 2, 1, 2, 3], [4, 5, 4, 5, 6]]
 
-        and at that point can be used to compute the effect of shapefactor.
+        and at that point can be used to compute the effect of
+        :class:`~pyhf.modifiers.shapefactor`.
         """
 
         self.batch_size = batch_size
-        keys = [f'{mtype}/{m}' for m, mtype in shapefactor_mods]
-        shapefactor_mods = [m for m, _ in shapefactor_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        shapefactor_mods = [m for m, _ in modifiers]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
@@ -73,7 +135,8 @@ class shapefactor_combined:
         )
 
         self._shapefactor_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            for m in keys
         ]
 
         global_concatenated_bin_indices = [
@@ -84,7 +147,7 @@ class shapefactor_combined:
             global_concatenated_bin_indices,
             (len(shapefactor_mods), self.batch_size or 1, 1),
         )
-        # acess field is now
+        # access field is now
         # e.g. for a 3 channnel (3 bins, 2 bins, 5 bins) model
         # [
         #   [0 1 2 0 1 0 1 2 3 4] (number of rows according to batch_size but at least 1)
