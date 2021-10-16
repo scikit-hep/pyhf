@@ -45,7 +45,7 @@ def test_custom_mods():
     modifier_set = {custom_applicator.name: (custom_builder, custom_applicator)}
     modifier_set.update(**pyhf.modifiers.histfactory_set)
 
-    m = pyhf.Model(
+    model = pyhf.Model(
         {
             'channels': [
                 {
@@ -71,8 +71,8 @@ def test_custom_mods():
         poi_name='k1',
         validate=False,
     )
-    assert m
-    assert 'k1' in m.config.parameters
+    assert model
+    assert 'k1' in model.config.parameters
 
 
 def test_missing_poi():
@@ -80,7 +80,7 @@ def test_missing_poi():
     modifier_set.update(**pyhf.modifiers.histfactory_set)
 
     with pytest.raises(exceptions.InvalidModel):
-        m = pyhf.Model(
+        model = pyhf.Model(
             {
                 'channels': [
                     {
@@ -106,4 +106,4 @@ def test_missing_poi():
             poi_name='non_existent_poi',
             validate=False,
         )
-        assert m
+        assert model
