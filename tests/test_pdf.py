@@ -1018,4 +1018,3 @@ def test_make_model_with_tensors():
         pyhf.tensorlib.astensor(1.05),
         pyhf.tensorlib.astensor([5.0, 5.0]),
     )
-
