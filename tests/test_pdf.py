@@ -1067,6 +1067,7 @@ def test_make_model_with_tensors():
 
         pars = model.config.suggested_init()
         exp_data = model.expected_data(pars)
+        assert exp_data
 
     make_model(
         pyhf.tensorlib.astensor([60.0, 62.0]),
