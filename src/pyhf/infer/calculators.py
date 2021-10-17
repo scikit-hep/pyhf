@@ -706,7 +706,7 @@ class ToyCalculator:
               :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
               of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`), ``'q'``
               performs the calculation using the test statistic :math:`q_{\mu}`
-              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
+              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` performs the calculation using
               the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).

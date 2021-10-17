@@ -155,7 +155,7 @@ class jax_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -169,8 +169,8 @@ class jax_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             JAX ndarray: The output of the callable that was evaluated
@@ -216,7 +216,7 @@ class jax_backend:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogeneous array.
         """
         # TODO: Remove doctest:+ELLIPSIS when JAX API stabilized
         try:

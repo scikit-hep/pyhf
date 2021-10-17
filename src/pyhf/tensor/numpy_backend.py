@@ -140,7 +140,7 @@ class numpy_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -154,8 +154,8 @@ class numpy_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             NumPy ndarray: The output of the callable that was evaluated
@@ -201,7 +201,7 @@ class numpy_backend:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+            `numpy.ndarray`: A multi-dimensional, fixed-size homogeneous array.
         """
         try:
             dtype = self.dtypemap[dtype]

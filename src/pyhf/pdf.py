@@ -360,7 +360,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> model.config.poi_name
             'mu'
         """
-        if name not in [x for x, _ in self.modifiers]:
+        if name not in self.parameters:
             raise exceptions.InvalidModel(
                 f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
@@ -517,7 +517,7 @@ class _MainModel:
         Compute the logarithm of the value of the probability density.
 
         Args:
-            maindata (:obj:`tensor`): The main channnel data (a subset of the full data in a HistFactory model)
+            maindata (:obj:`tensor`): The main channel data (a subset of the full data in a HistFactory model)
             pars (:obj:`tensor`): The model parameters
 
         Returns:

@@ -20,7 +20,7 @@ def _qmu_like(
     Clipped version of _tmu_like where the returned test statistic
     is 0 if muhat > 0 else tmu_like_stat.
 
-    If the lower bound of the POI is 0 this automatically implments
+    If the lower bound of the POI is 0 this automatically implements
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
@@ -41,7 +41,7 @@ def _tmu_like(
     """
     Basic Profile Likelihood test statistic.
 
-    If the lower bound of the POI is 0 this automatically implments
+    If the lower bound of the POI is 0 this automatically implements
     tmu_tilde. Otherwise this is tmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
@@ -63,7 +63,7 @@ def _tmu_like(
 def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
-    limit on the strength parameter, :math:`\mu`, as defiend in
+    limit on the strength parameter, :math:`\mu`, as defined in
     Equation (14) in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -152,7 +152,7 @@ def qmu_tilde(
     r"""
     The "alternative" test statistic, :math:`\tilde{q}_{\mu}`, for establishing
     an upper limit on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`
+    bounded POI, as defined in Equation (16) in :xref:`arXiv:1007.1727`
 
     .. math::
        :nowrap:
@@ -242,7 +242,7 @@ def qmu_tilde(
 def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
-    interval on the strength parameter, :math:`\mu`, as defiend in Equation (8)
+    interval on the strength parameter, :math:`\mu`, as defined in Equation (8)
     in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -325,7 +325,7 @@ def tmu_tilde(
     r"""
     The test statistic, :math:`\tilde{t}_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`
+    bounded POI, as defined in Equation (11) in :xref:`arXiv:1007.1727`
 
     .. math::
 
