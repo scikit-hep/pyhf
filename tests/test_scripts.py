@@ -560,13 +560,11 @@ def test_patchset_download(tmpdir, script_runner, archive):
         "pyhf.exceptions.InvalidArchiveHost: www.pyhfthisdoesnotexist.org is not an approved archive host"
         in ret.stderr
     )
-    command = f'pyhf contrib download --verbose --force https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
+    # Valid URL but doesn't contain file
+    command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
-    assert (
-        "SSLCertificateError"
-        and "hostname 'www.pyhfthisdoesnotexist.org' doesn't match" in ret.stderr
-    )
+    assert "tarfile.ReadError: not a gzip file" in ret.stderr
 
 
 def test_missing_contrib_extra(caplog):
