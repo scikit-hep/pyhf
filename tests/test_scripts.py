@@ -560,7 +560,7 @@ def test_patchset_download(tmpdir, script_runner, archive):
         "pyhf.exceptions.InvalidArchiveHost: www.pyhfthisdoesnotexist.org is not an approved archive host"
         in ret.stderr
     )
-    # Valid URL but doesn't contain file
+    # Force a download from a real URL, but one that doesn't have an existing file
     command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
