@@ -955,3 +955,127 @@ def test_par_names_scalar_nonscalar():
         'scalar',
         'nonscalar[0]',
     ]
+
+
+def test_make_model_with_tensors():
+    def make_model(
+        nominal,
+        lumi_sigma,
+        corrup_data,
+        corrdn_data,
+        stater_data,
+        normsys_up,
+        normsys_dn,
+        uncorr_data,
+    ):
+        spec = {
+            "channels": [
+                {
+                    "name": "achannel",
+                    "samples": [
+                        {
+                            "name": "background",
+                            "data": nominal,
+                            "modifiers": [
+                                {"name": "mu", "type": "normfactor", "data": None},
+                                {"name": "lumi", "type": "lumi", "data": None},
+                                {
+                                    "name": "mod_name",
+                                    "type": "shapefactor",
+                                    "data": None,
+                                },
+                                {
+                                    "name": "corr_bkguncrt2",
+                                    "type": "histosys",
+                                    "data": {
+                                        'hi_data': corrup_data,
+                                        'lo_data': corrdn_data,
+                                    },
+                                },
+                                {
+                                    "name": "staterror2",
+                                    "type": "staterror",
+                                    "data": stater_data,
+                                },
+                                {
+                                    "name": "norm",
+                                    "type": "normsys",
+                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                },
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "name": "secondchannel",
+                    "samples": [
+                        {
+                            "name": "background",
+                            "data": nominal,
+                            "modifiers": [
+                                {"name": "mu", "type": "normfactor", "data": None},
+                                {"name": "lumi", "type": "lumi", "data": None},
+                                {
+                                    "name": "mod_name",
+                                    "type": "shapefactor",
+                                    "data": None,
+                                },
+                                {
+                                    "name": "uncorr_bkguncrt2",
+                                    "type": "shapesys",
+                                    "data": uncorr_data,
+                                },
+                                {
+                                    "name": "corr_bkguncrt2",
+                                    "type": "histosys",
+                                    "data": {
+                                        'hi_data': corrup_data,
+                                        'lo_data': corrdn_data,
+                                    },
+                                },
+                                {
+                                    "name": "staterror",
+                                    "type": "staterror",
+                                    "data": stater_data,
+                                },
+                                {
+                                    "name": "norm",
+                                    "type": "normsys",
+                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                },
+                            ],
+                        }
+                    ],
+                },
+            ],
+        }
+        model = pyhf.Model(
+            {
+                'channels': spec['channels'],
+                'parameters': [
+                    {
+                        'name': 'lumi',
+                        'auxdata': [1.0],
+                        'bounds': [[0.5, 1.5]],
+                        'inits': [1.0],
+                        "sigmas": [lumi_sigma],
+                    }
+                ],
+            },
+            validate=False,
+        )
+
+        pars = model.config.suggested_init()
+        exp_data = model.expected_data(pars)
+        assert exp_data is not None
+
+    make_model(
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor(0.2),
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor([5.0, 5.0]),
+        pyhf.tensorlib.astensor(0.95),
+        pyhf.tensorlib.astensor(1.05),
+        pyhf.tensorlib.astensor([5.0, 5.0]),
+    )

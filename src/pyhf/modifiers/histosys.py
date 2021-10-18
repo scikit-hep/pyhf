@@ -1,6 +1,6 @@
 import logging
 
-from pyhf import get_backend, events
+from pyhf import get_backend, default_backend, events
 from pyhf import interpolators
 from pyhf.parameters import ParamViewer
 
@@ -31,7 +31,7 @@ class histosys_builder:
     def collect(self, thismod, nom):
         lo_data = thismod['data']['lo_data'] if thismod else nom
         hi_data = thismod['data']['hi_data'] if thismod else nom
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {'lo_data': lo_data, 'hi_data': hi_data, 'mask': mask, 'nom_data': nom}
 
@@ -45,10 +45,10 @@ class histosys_builder:
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self.builder_data[key][sample]['data']['lo_data'] += moddata['lo_data']
-        self.builder_data[key][sample]['data']['hi_data'] += moddata['hi_data']
-        self.builder_data[key][sample]['data']['nom_data'] += moddata['nom_data']
-        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]['data']['lo_data'].append(moddata['lo_data'])
+        self.builder_data[key][sample]['data']['hi_data'].append(moddata['hi_data'])
+        self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
+        self.builder_data[key][sample]['data']['mask'].append(moddata['mask'])
 
         if thismod:
             self.required_parsets.setdefault(
@@ -57,6 +57,20 @@ class histosys_builder:
             )
 
     def finalize(self):
+        for modifier in self.builder_data.values():
+            for sample in modifier.values():
+                sample["data"]["mask"] = default_backend.concatenate(
+                    sample["data"]["mask"]
+                )
+                sample["data"]["lo_data"] = default_backend.concatenate(
+                    sample["data"]["lo_data"]
+                )
+                sample["data"]["hi_data"] = default_backend.concatenate(
+                    sample["data"]["hi_data"]
+                )
+                sample["data"]["nom_data"] = default_backend.concatenate(
+                    sample["data"]["nom_data"]
+                )
         return self.builder_data
 
 
