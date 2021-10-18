@@ -62,12 +62,16 @@ class shapesys_builder:
             )
 
     def finalize(self):
-        for k, v in self.builder_data.items():
-            for kk, vv in v.items():
-                vv['data']['mask'] = default_backend.concatenate(vv['data']['mask'])
-                vv['data']['uncrt'] = default_backend.concatenate(vv['data']['uncrt'])
-                vv['data']['nom_data'] = default_backend.concatenate(
-                    vv['data']['nom_data']
+        for sample in self.builder_data.values():
+            for sample_property in sample.values():
+                sample_property["data"]["mask"] = default_backend.concatenate(
+                    sample_property["data"]["mask"]
+                )
+                sample_property["data"]["uncrt"] = default_backend.concatenate(
+                    sample_property["data"]["uncrt"]
+                )
+                sample_property["data"]["nom_data"] = default_backend.concatenate(
+                    sample_property["data"]["nom_data"]
                 )
         return self.builder_data
 
