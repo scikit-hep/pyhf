@@ -57,19 +57,19 @@ class histosys_builder:
             )
 
     def finalize(self):
-        for sample in self.builder_data.values():
-            for sample_property in sample.values():
-                sample_property["data"]["mask"] = default_backend.concatenate(
-                    sample_property["data"]["mask"]
+        for modifier in self.builder_data.values():
+            for sample in modifier.values():
+                sample["data"]["mask"] = default_backend.concatenate(
+                    sample["data"]["mask"]
                 )
-                sample_property["data"]["lo_data"] = default_backend.concatenate(
-                    sample_property["data"]["lo_data"]
+                sample["data"]["lo_data"] = default_backend.concatenate(
+                    sample["data"]["lo_data"]
                 )
-                sample_property["data"]["hi_data"] = default_backend.concatenate(
-                    sample_property["data"]["hi_data"]
+                sample["data"]["hi_data"] = default_backend.concatenate(
+                    sample["data"]["hi_data"]
                 )
-                sample_property["data"]["nom_data"] = default_backend.concatenate(
-                    sample_property["data"]["nom_data"]
+                sample["data"]["nom_data"] = default_backend.concatenate(
+                    sample["data"]["nom_data"]
                 )
         return self.builder_data
 
