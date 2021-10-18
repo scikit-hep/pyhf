@@ -31,7 +31,7 @@ class histosys_builder:
     def collect(self, thismod, nom):
         lo_data = thismod['data']['lo_data'] if thismod else nom
         hi_data = thismod['data']['hi_data'] if thismod else nom
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {'lo_data': lo_data, 'hi_data': hi_data, 'mask': mask, 'nom_data': nom}
 
