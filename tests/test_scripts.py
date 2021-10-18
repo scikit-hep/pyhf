@@ -557,14 +557,15 @@ def test_patchset_download(tmpdir, script_runner, archive):
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
-        "pyhf.exceptions.InvalidArchiveHost: www.fail.org is not an approved archive host"
+        "pyhf.exceptions.InvalidArchiveHost: www.pyhfthisdoesnotexist.org is not an approved archive host"
         in ret.stderr
     )
-    command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose --force https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
-        "SSLCertificateError" and "hostname 'www.fail.org' doesn't match" in ret.stderr
+        "SSLCertificateError"
+        and "hostname 'www.pyhfthisdoesnotexist.org' doesn't match" in ret.stderr
     )
 
 
