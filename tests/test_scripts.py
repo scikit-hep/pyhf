@@ -553,7 +553,7 @@ def test_patchset_download(tmpdir, script_runner, archive):
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = f'pyhf contrib download --verbose https://www.fail.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
