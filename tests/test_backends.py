@@ -59,7 +59,9 @@ def test_diffable_backend_failure():
         y = pyhf.default_backend.astensor(x)
         return 2 * y
 
-    with pytest.raises(jax._src.errors.TracerArrayConversionError):
+    with pytest.raises(
+        (jax._src.errors.TracerArrayConversionError, jax.errors.ConcretizationTypeError)
+    ):
         jax.jacrev(example_op)([1.0])
 
     def example_op2(x):
