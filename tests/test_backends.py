@@ -60,7 +60,11 @@ def test_diffable_backend_failure():
         return 2 * y
 
     with pytest.raises(
-        (jax._src.errors.TracerArrayConversionError, jax.errors.ConcretizationTypeError)
+        (
+            ValueError,
+            jax._src.errors.TracerArrayConversionError,
+            jax.errors.ConcretizationTypeError,
+        )
     ):
         jax.jacrev(example_op)([1.0])
 
