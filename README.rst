@@ -40,6 +40,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 .. code:: pycon
 
    >>> import pyhf
+   >>> pyhf.set_backend("numpy")
    >>> model = pyhf.simplemodels.uncorrelated_background(
    ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
    ... )
@@ -48,8 +49,8 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
-   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.05251497423736956, Expected: 0.06445320535890459
+   >>> print(f"Observed: {CLs_obs:.9f}, Expected: {CLs_exp:.9f}")
+   Observed: 0.052514974, Expected: 0.064453205
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
@@ -57,6 +58,7 @@ Alternatively the statistical model and observational data can be read from its 
 
    >>> import pyhf
    >>> import requests
+   >>> pyhf.set_backend("numpy")
    >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
@@ -64,8 +66,8 @@ Alternatively the statistical model and observational data can be read from its 
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
-   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.3599840922126626, Expected: 0.3599840922126626
+   >>> print(f"Observed: {CLs_obs:.9f}, Expected: {CLs_exp:.9f}")
+   Observed: 0.359984092, Expected: 0.359984092
 
 
 Finally, you can also use the command line interface that ``pyhf`` provides
