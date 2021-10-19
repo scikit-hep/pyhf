@@ -70,15 +70,15 @@ jobs:
     - name: Test docstring examples with doctest
       run: pytest -r sx src/
 
-    - name: Test README examples with doctest
-      run: pytest -r sx README.rst
-
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
         flags: doctest
+
+    - name: Test README examples with doctest
+      run: pytest -r sx README.rst
 
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.9
