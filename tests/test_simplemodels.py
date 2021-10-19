@@ -3,7 +3,7 @@ import warnings
 import pyhf
 
 
-def test_correlated_background():
+def test_correlated_background(backend):
     model = pyhf.simplemodels.correlated_background(
         signal=[12.0, 11.0],
         bkg=[50.0, 52.0],
@@ -17,7 +17,7 @@ def test_correlated_background():
     assert model.config.suggested_init() == [0.0, 1.0]
 
 
-def test_uncorrelated_background():
+def test_uncorrelated_background(backend):
     model = pyhf.simplemodels.uncorrelated_background(
         signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
     )
