@@ -33,6 +33,14 @@ class paramset:
         else:
             return self._suggested_fixed
 
+    @suggested_fixed.setter
+    def suggested_fixed(self,value):
+        if type(value) == bool:
+            self._suggested_fixed = value
+        else:
+            print('??HUIH')
+            assert len(value) == self.n_parameters
+            self._suggested_fixed = value
 
 class unconstrained(paramset):
     def __init__(self, **kwargs):
