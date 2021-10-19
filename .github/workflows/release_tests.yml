@@ -39,7 +39,7 @@ jobs:
 
     - name: Canary test public API
       run: |
-        python -m pytest -r sx tests/test_public_api.py
+        pytest -r sx tests/test_public_api.py
 
     - name: Verify requirements in codemeta.json
       run: |
