@@ -57,13 +57,13 @@ class staterror_builder:
     def finalize(self):
         for modifier in self.builder_data.values():
             for sample in modifier.values():
-                sample["data"]["mask"] = default_backend.concatenate(
+                sample["data"]["mask"] = pyhf.default_backend.concatenate(
                     sample["data"]["mask"]
                 )
-                sample["data"]["uncrt"] = default_backend.concatenate(
+                sample["data"]["uncrt"] = pyhf.default_backend.concatenate(
                     sample["data"]["uncrt"]
                 )
-                sample["data"]["nom_data"] = default_backend.concatenate(
+                sample["data"]["nom_data"] = pyhf.default_backend.concatenate(
                     sample["data"]["nom_data"]
                 )
         return self.builder_data
