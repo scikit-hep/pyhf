@@ -39,6 +39,11 @@ def test_uncorrelated_background(backend):
     assert model.config.suggested_init() == [1.0, 1.0, 1.0]
 
 
+# See #1654
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
+@pytest.mark.fail_tensorflow
+@pytest.mark.fail_jax
 def test_correlated_background_default_backend(default_backend):
     model = pyhf.simplemodels.correlated_background(
         signal=[12.0, 11.0],
@@ -53,6 +58,11 @@ def test_correlated_background_default_backend(default_backend):
     assert model.config.suggested_init() == [0.0, 1.0]
 
 
+# See #1654
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
+@pytest.mark.fail_tensorflow
+@pytest.mark.fail_jax
 def test_uncorrelated_background_default_backend(default_backend):
     model = pyhf.simplemodels.uncorrelated_background(
         signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
