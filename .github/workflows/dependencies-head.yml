@@ -28,14 +28,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes scipy
         python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple scipy
         python -m pip list
 
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   iminuit:
 
@@ -54,14 +54,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes iminuit
         python -m pip install --upgrade cython
         python -m pip install --upgrade git+git://github.com/scikit-hep/iminuit.git
         python -m pip list
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   uproot4:
 
@@ -80,13 +80,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes uproot
         python -m pip install --upgrade git+git://github.com/scikit-hep/uproot4.git
         python -m pip list
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   pytest:
 
@@ -105,10 +105,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --editable .[test]
+        python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes pytest
         python -m pip install --upgrade git+git://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
       run: |
-        python -m pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
