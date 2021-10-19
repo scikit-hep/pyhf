@@ -16,7 +16,7 @@ def __dir__():
 class paramset:
     def __init__(self, **kwargs):
         self.name = kwargs.pop('name')
-        self.n_parameters = kwargs.pFop('n_parameters')
+        self.n_parameters = kwargs.pop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
         self._suggested_fixed = kwargs.pop('fixed')
