@@ -38,7 +38,6 @@ class paramset:
         if type(value) == bool:
             self._suggested_fixed = value
         else:
-            print('??HUIH')
             assert len(value) == self.n_parameters
             self._suggested_fixed = value
 

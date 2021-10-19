@@ -156,8 +156,6 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
         user_parameters,
         _required_paramsets,
     )
-    for k,v in _required_paramsets.items():
-        print(k,v['fixed'])
     _prameter_objects, _auxdata, _auxdata_order = _create_parameters_from_spec(
         _required_paramsets
     )
