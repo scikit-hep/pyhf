@@ -53,9 +53,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob='*.rst'"
 ]
-testpaths = [
-    "tests"
-]
+testpaths = "tests"
 markers = [
     "fail_jax",
     "fail_numpy",
