@@ -342,14 +342,13 @@ def test_pdf_integration_shapesys_zeros(backend):
     pdf = pyhf.Model(spec)
     par_set_syst = pdf.config.param_set('syst')
 
-    assert par_set_syst.n_parameters == 4
+    assert par_set_syst.n_parameters == 6
     tensorlib, _ = backend
-    nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 0.0, 70, 0.1, 50]), 2)
-    uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1, 0.0, 0.1, 5]), 2)
+    nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 1.0, 1.0, 0.1, 50]), 2)
+    uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1.0, 1.0, 0.1, 5]), 2)
     factors = tensorlib.divide(nominal_sq, uncerts_sq)
-    indices = tensorlib.astensor([0, 1, 4, 5], dtype='int')
     assert pytest.approx(tensorlib.tolist(par_set_syst.factors)) == tensorlib.tolist(
-        tensorlib.gather(factors, indices)
+        factors
     )
 
 
