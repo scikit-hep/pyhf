@@ -33,6 +33,15 @@ class paramset:
         else:
             return self._suggested_fixed
 
+    @property
+    def suggested_fixed_as_bool(self):
+        '''compresses list of same-value bools into single bool'''
+        suggested_fixed = self.suggested_fixed
+        first = suggested_fixed[0]
+        if all([x==first for x in suggested_fixed]):
+            return first
+        raise RuntimeError()
+
     @suggested_fixed.setter
     def suggested_fixed(self,value):
         if type(value) == bool:
