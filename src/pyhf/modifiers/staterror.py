@@ -6,7 +6,7 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas,fixed):
+def required_parset(sigmas, fixed):
     n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',
@@ -108,7 +108,7 @@ class staterror_builder:
                 v['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
             fixed = [s == 0 for s in sigmas]
-            self.required_parsets.setdefault(parname, [required_parset(sigmas,fixed)])
+            self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
 
 

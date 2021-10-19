@@ -16,9 +16,8 @@ def required_parset(sample_data, modifier_data):
     factors = [
         (nom_yield ** 2 / unc ** 2) if (is_valid) else 1.0
         for is_valid, nom_yield, unc in zip(valid_bins, sample_data, modifier_data)
-        
     ]
-    fixed = tuple([True if not is_valid else False for is_valid in valid_bins])
+    fixed = tuple(True if not is_valid else False for is_valid in valid_bins)
     n_parameters = len(factors)
     return {
         "paramset_type": "constrained_by_poisson",

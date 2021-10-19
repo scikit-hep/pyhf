@@ -29,7 +29,7 @@ class paramset:
     @property
     def suggested_fixed(self):
         if type(self._suggested_fixed) == bool:
-            return [self._suggested_fixed]*self.n_parameters
+            return [self._suggested_fixed] * self.n_parameters
         else:
             return self._suggested_fixed
 
