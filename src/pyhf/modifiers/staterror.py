@@ -48,12 +48,6 @@ class staterror_builder:
         self.builder_data[key][sample]['data']['uncrt'].append(moddata['uncrt'])
         self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
 
-        if thismod:
-            self.required_parsets.setdefault(
-                thismod['name'],
-                [required_parset(defined_samp['data'], thismod['data'])],
-            )
-
     def finalize(self):
         for modifier in self.builder_data.values():
             for sample in modifier.values():
