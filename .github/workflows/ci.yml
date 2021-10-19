@@ -68,7 +68,7 @@ jobs:
         flags: contrib
 
     - name: Test docstring examples with doctest
-      run: pytest -r sx src/
+      run: pytest -r sx src/ README.rst
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
@@ -76,9 +76,6 @@ jobs:
       with:
         files: ./coverage.xml
         flags: doctest
-
-    - name: Test README examples with doctest
-      run: pytest -r sx README.rst
 
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == 3.9
