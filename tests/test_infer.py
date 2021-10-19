@@ -474,6 +474,6 @@ def test_fixed_poi(tmpdir, hypotest_args):
 
     _, _, pdf = hypotest_args
     pdf.config.param_set('mu').suggested_fixed = [True]
-    print('???',pdf.config.param_set('mu').suggested_fixed)
+    print('???', pdf.config.param_set('mu').suggested_fixed)
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.infer.hypotest(*hypotest_args)

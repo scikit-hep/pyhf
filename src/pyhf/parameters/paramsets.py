@@ -37,16 +37,17 @@ class paramset:
         '''compresses list of same-value bools into single bool'''
         suggested_fixed = self.suggested_fixed
         first = suggested_fixed[0]
-        if all([x==first for x in suggested_fixed]):
+        if all([x == first for x in suggested_fixed]):
             return first
         raise RuntimeError()
 
     @suggested_fixed.setter
-    def suggested_fixed(self,value):
+    def suggested_fixed(self, value):
         if type(value) == bool:
             self._suggested_fixed = value
         assert len(value) == self.n_parameters
         self._suggested_fixed = value
+
 
 class unconstrained(paramset):
     def __init__(self, **kwargs):

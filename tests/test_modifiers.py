@@ -81,9 +81,21 @@ def test_staterror_holes():
 
     model = pyhf.Model(spec, poi_name='')
     assert model.config.npars == 9
-    a, b = model._modifications(pyhf.tensorlib.astensor([2, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 5.0, 6.0]))
-    assert model.config.param_set('staterror_1').suggested_fixed == [False, True, True, False]
-    assert model.config.param_set('staterror_2').suggested_fixed== [False, True, False, False]
+    a, b = model._modifications(
+        pyhf.tensorlib.astensor([2, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 5.0, 6.0])
+    )
+    assert model.config.param_set('staterror_1').suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
+    assert model.config.param_set('staterror_2').suggested_fixed == [
+        False,
+        True,
+        False,
+        False,
+    ]
     assert (b[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
     assert (b[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 5.0, 6.0]).all()
 
@@ -128,9 +140,21 @@ def test_shapesys_holes():
     }
 
     model = pyhf.Model(spec, poi_name='mu')
-    a, b = model._modifications(pyhf.tensorlib.astensor([1.0, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 1.0, 5.0]))
+    a, b = model._modifications(
+        pyhf.tensorlib.astensor([1.0, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 1.0, 5.0])
+    )
     assert (b[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
     assert (b[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 1.0, 5.0]).all()
 
-    assert model.config.param_set('freeshape1').suggested_fixed == [False, True, True, False]
-    assert model.config.param_set('freeshape2').suggested_fixed== [False, True, True, False]
+    assert model.config.param_set('freeshape1').suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
+    assert model.config.param_set('freeshape2').suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
