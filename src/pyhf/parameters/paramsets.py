@@ -16,7 +16,7 @@ def __dir__():
 class paramset:
     def __init__(self, **kwargs):
         self.name = kwargs.pop('name')
-        self.n_parameters = kwargs.pop('n_parameters')
+        self.n_parameters = kwargs.pFop('n_parameters')
         self.suggested_init = kwargs.pop('inits')
         self.suggested_bounds = kwargs.pop('bounds')
         self._suggested_fixed = kwargs.pop('fixed')
@@ -30,8 +30,7 @@ class paramset:
     def suggested_fixed(self):
         if type(self._suggested_fixed) == bool:
             return [self._suggested_fixed] * self.n_parameters
-        else:
-            return self._suggested_fixed
+        return self._suggested_fixed
 
     @property
     def suggested_fixed_as_bool(self):
@@ -46,9 +45,8 @@ class paramset:
     def suggested_fixed(self,value):
         if type(value) == bool:
             self._suggested_fixed = value
-        else:
-            assert len(value) == self.n_parameters
-            self._suggested_fixed = value
+        assert len(value) == self.n_parameters
+        self._suggested_fixed = value
 
 class unconstrained(paramset):
     def __init__(self, **kwargs):
