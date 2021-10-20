@@ -119,6 +119,7 @@ def test_bool_compression():
     assert not pset.suggested_fixed_as_bool
     assert pset.factors == [1] * 5
 
+def test_bool_compression2():
     pset = paramsets.constrained_by_poisson(
         name='foo',
         is_scalar=False,
