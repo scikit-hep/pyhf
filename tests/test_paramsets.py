@@ -85,6 +85,24 @@ def test_paramset_constrained_missiing_factors():
         pset.width()
 
 
+def test_vector_fixed_set():
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        fixed=False,
+        auxdata=[0, 0, 0, 0, 0],
+        factors=None,
+    )
+    pset.suggested_fixed = True
+    assert pset.suggested_fixed == [True]*5
+
+    pset.suggested_fixed = [False,True,False,True,False]
+    assert pset.suggested_fixed == [False,True,False,True,False]
+    
+
 def test_bool_compression():
     pset = paramsets.constrained_by_poisson(
         name='foo',

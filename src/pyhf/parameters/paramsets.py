@@ -45,8 +45,9 @@ class paramset:
     def suggested_fixed(self, value):
         if type(value) == bool:
             self._suggested_fixed = value
-        assert len(value) == self.n_parameters
-        self._suggested_fixed = value
+        else:
+            assert len(value) == self.n_parameters
+            self._suggested_fixed = value
 
 
 class unconstrained(paramset):
