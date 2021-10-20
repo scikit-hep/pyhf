@@ -94,7 +94,7 @@ def test_vector_fixed_set():
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
         fixed=False,
         auxdata=[0, 0, 0, 0, 0],
-        factors=[1,1,1,1,1],
+        factors=[1, 1, 1, 1, 1],
     )
     pset.suggested_fixed = True
     assert pset.suggested_fixed == [True] * 5
@@ -112,7 +112,7 @@ def test_bool_compression():
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
         fixed=False,
         auxdata=[0, 0, 0, 0, 0],
-        factors=[1,1,1,1,1],
+        factors=[1, 1, 1, 1, 1],
     )
 
     assert pset.suggested_fixed == [False] * 5
