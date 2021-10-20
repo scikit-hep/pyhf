@@ -126,9 +126,9 @@ def test_bool_compression2():
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        factors=[1, 1, 1, 1, 1],
         fixed=[False, True, False, True, False],
         auxdata=[0, 0, 0, 0, 0],
-        factors=[1, 1, 1, 1, 1],
     )
     assert pset.factors == [1] * 5
     with pytest.raises(RuntimeError):
