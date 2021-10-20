@@ -84,8 +84,7 @@ class constrained_by_poisson(constrained_paramset):
         self.pdf_type = 'poisson'
         self.auxdata = kwargs.pop('auxdata')
         factors = kwargs.pop('factors')
-        if factors:
-            self.factors = factors
+        self.factors = factors
 
     def width(self):
         try:
