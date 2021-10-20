@@ -102,18 +102,6 @@ def test_vector_fixed_set():
     pset.suggested_fixed = [False, True, False, True, False]
     assert pset.suggested_fixed == [False, True, False, True, False]
 
-
-
-
-
-
-
-
-
-
-
-
-
 def test_bool_compression2():
     pset = paramsets.constrained_by_poisson(
         name='foo',
