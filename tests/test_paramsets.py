@@ -116,7 +116,7 @@ def test_bool_compression():
     )
 
     assert pset.suggested_fixed == [False] * 5
-    assert pset.suggested_fixed_as_bool == False
+    assert not pset.suggested_fixed_as_bool
 
     pset = paramsets.constrained_by_poisson(
         name='foo',
