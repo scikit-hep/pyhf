@@ -97,11 +97,11 @@ def test_vector_fixed_set():
         factors=None,
     )
     pset.suggested_fixed = True
-    assert pset.suggested_fixed == [True]*5
+    assert pset.suggested_fixed == [True] * 5
 
-    pset.suggested_fixed = [False,True,False,True,False]
-    assert pset.suggested_fixed == [False,True,False,True,False]
-    
+    pset.suggested_fixed = [False, True, False, True, False]
+    assert pset.suggested_fixed == [False, True, False, True, False]
+
 
 def test_bool_compression():
     pset = paramsets.constrained_by_poisson(
@@ -115,9 +115,8 @@ def test_bool_compression():
         factors=None,
     )
 
-    assert pset.suggested_fixed == [False]*5
+    assert pset.suggested_fixed == [False] * 5
     assert pset.suggested_fixed_as_bool == False
-
 
     pset = paramsets.constrained_by_poisson(
         name='foo',
@@ -125,7 +124,7 @@ def test_bool_compression():
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
-        fixed = [False, True, False, True, False],
+        fixed=[False, True, False, True, False],
         auxdata=[0, 0, 0, 0, 0],
         factors=None,
     )
