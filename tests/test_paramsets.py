@@ -127,7 +127,7 @@ def test_bool_compression2():
     )
     assert pset.factors == [1] * 5
     with pytest.raises(RuntimeError):
-        pset.suggested_fixed_as_bool
+        print(pset.suggested_fixed_as_bool)
 
 def test_bool_compression():
     pset = paramsets.constrained_by_poisson(
