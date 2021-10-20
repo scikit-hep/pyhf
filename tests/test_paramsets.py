@@ -85,6 +85,36 @@ def test_paramset_constrained_missiing_factors():
         pset.width()
 
 
+def test_bool_compression():
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        fixed=False,
+        auxdata=[0, 0, 0, 0, 0],
+        factors=None,
+    )
+
+    assert pset.suggested_fixed == [False]*5
+    assert pset.suggested_fixed_as_bool == False
+
+
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        fixed = [False, True, False, True, False],
+        auxdata=[0, 0, 0, 0, 0],
+        factors=None,
+    )
+    with pytest.raises(RuntimeError):
+        pset.suggested_fixed_as_bool
+
+
 def test_scalar_multiparam_failure():
     with pytest.raises(ValueError):
         paramsets.paramset(
