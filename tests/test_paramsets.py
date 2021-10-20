@@ -117,6 +117,7 @@ def test_bool_compression():
 
     assert pset.suggested_fixed == [False] * 5
     assert not pset.suggested_fixed_as_bool
+    assert pset.factors == [1] * 5
 
     pset = paramsets.constrained_by_poisson(
         name='foo',
@@ -126,8 +127,9 @@ def test_bool_compression():
         bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
         fixed=[False, True, False, True, False],
         auxdata=[0, 0, 0, 0, 0],
-        factors=None,
+        factors=[1, 1, 1, 1, 1],
     )
+    assert pset.factors == [1] * 5
     with pytest.raises(RuntimeError):
         pset.suggested_fixed_as_bool
 
