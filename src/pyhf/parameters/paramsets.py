@@ -65,9 +65,11 @@ class constrained_by_poisson(constrained_paramset):
             self.factors = factors
 
     def width(self):
+        default_backend = pyhf.default_backend
+
         try:
-            return pyhf.default_backend.sqrt(
-                1.0 / pyhf.default_backend.astensor(self.factors)
+            return default_backend.sqrt(
+                1.0 / default_backend.astensor(self.factors)
             ).tolist()
         except AttributeError:
             raise RuntimeError('need to know rate factor to compu')

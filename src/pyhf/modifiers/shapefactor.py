@@ -126,6 +126,7 @@ class shapefactor_combined:
         and at that point can be used to compute the effect of
         :class:`~pyhf.modifiers.shapefactor`.
         """
+        default_backend = pyhf.default_backend
 
         self.batch_size = batch_size
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
@@ -145,7 +146,7 @@ class shapefactor_combined:
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
 
-        self._access_field = pyhf.default_backend.tile(
+        self._access_field = default_backend.tile(
             global_concatenated_bin_indices,
             (len(shapefactor_mods), self.batch_size or 1, 1),
         )

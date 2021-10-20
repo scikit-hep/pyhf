@@ -65,13 +65,15 @@ class _nominal_builder:
         self.mega_samples[sample]['nom'].append(nom)
 
     def finalize(self):
-        nominal_rates = pyhf.default_backend.astensor(
+        default_backend = pyhf.default_backend
+
+        nominal_rates = default_backend.astensor(
             [
-                pyhf.default_backend.concatenate(self.mega_samples[sample]['nom'])
+                default_backend.concatenate(self.mega_samples[sample]['nom'])
                 for sample in self.config.samples
             ]
         )
-        _nominal_rates = pyhf.default_backend.reshape(
+        _nominal_rates = default_backend.reshape(
             nominal_rates,
             (
                 1,  # modifier dimension.. nominal_rates is the base
@@ -474,13 +476,15 @@ class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, modifiers, nominal_rates, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.config = config
 
         self._factor_mods = []
         self._delta_mods = []
         self.batch_size = batch_size
 
-        self._nominal_rates = pyhf.default_backend.tile(
+        self._nominal_rates = default_backend.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
 

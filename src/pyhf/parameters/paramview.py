@@ -52,11 +52,13 @@ class ParamViewer:
 
     def __init__(self, shape, par_map, par_selection):
 
+        default_backend = pyhf.default_backend
+
         batch_size = shape[0] if len(shape) > 1 else None
 
-        fullsize = pyhf.default_backend.product(pyhf.default_backend.astensor(shape))
-        flat_indices = pyhf.default_backend.astensor(range(int(fullsize)), dtype='int')
-        self._all_indices = pyhf.default_backend.reshape(flat_indices, shape)
+        fullsize = default_backend.product(default_backend.astensor(shape))
+        flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
+        self._all_indices = default_backend.reshape(flat_indices, shape)
 
         # a tensor viewer that can split and stitch parameters
         self.allpar_viewer = _tensorviewer_from_parmap(par_map, batch_size)

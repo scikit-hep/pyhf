@@ -27,19 +27,20 @@ class code1:
 
     def __init__(self, histogramssets, subscribe=True):
         """Piecewise-Exponential Interpolation."""
-        # nb: this should never be a tensor, store in default backend (e.g. numpy)
-        self._histogramssets = pyhf.default_backend.astensor(histogramssets)
+        default_backend = pyhf.default_backend
+
+        self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
         # precompute terms that only depend on the histogramssets
-        self._deltas_up = pyhf.default_backend.divide(
+        self._deltas_up = default_backend.divide(
             self._histogramssets[:, :, 2], self._histogramssets[:, :, 1]
         )
-        self._deltas_dn = pyhf.default_backend.divide(
+        self._deltas_dn = default_backend.divide(
             self._histogramssets[:, :, 0], self._histogramssets[:, :, 1]
         )
-        self._broadcast_helper = pyhf.default_backend.ones(
-            pyhf.default_backend.shape(self._deltas_up)
+        self._broadcast_helper = default_backend.ones(
+            default_backend.shape(self._deltas_up)
         )
 
         self._precompute()

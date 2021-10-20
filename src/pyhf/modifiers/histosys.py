@@ -59,18 +59,20 @@ class histosys_builder:
             )
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         for modifier in self.builder_data.values():
             for sample in modifier.values():
-                sample["data"]["mask"] = pyhf.default_backend.concatenate(
+                sample["data"]["mask"] = default_backend.concatenate(
                     sample["data"]["mask"]
                 )
-                sample["data"]["lo_data"] = pyhf.default_backend.concatenate(
+                sample["data"]["lo_data"] = default_backend.concatenate(
                     sample["data"]["lo_data"]
                 )
-                sample["data"]["hi_data"] = pyhf.default_backend.concatenate(
+                sample["data"]["hi_data"] = default_backend.concatenate(
                     sample["data"]["hi_data"]
                 )
-                sample["data"]["nom_data"] = pyhf.default_backend.concatenate(
+                sample["data"]["nom_data"] = default_backend.concatenate(
                     sample["data"]["nom_data"]
                 )
         return self.builder_data

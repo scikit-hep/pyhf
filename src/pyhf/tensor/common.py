@@ -15,13 +15,15 @@ class _TensorViewer:
         # >>> source[target.argsort()]
         # array([6, 8, 9, 7])
 
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         self.names = names
         self._partition_indices = indices
-        _concat_indices = pyhf.default_backend.astensor(
-            pyhf.default_backend.concatenate(self._partition_indices), dtype='int'
+        _concat_indices = default_backend.astensor(
+            default_backend.concatenate(self._partition_indices), dtype='int'
         )
-        self._sorted_indices = pyhf.default_backend.tolist(_concat_indices.argsort())
+        self._sorted_indices = default_backend.tolist(_concat_indices.argsort())
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -65,10 +67,10 @@ class _TensorViewer:
 
 
 def _tensorviewer_from_slices(target_slices, names, batch_size):
-    db = pyhf.default_backend
+    default_backend = pyhf.default_backend
     ranges = []
     for sl in target_slices:
-        ranges.append(db.astensor(range(sl.start, sl.stop)))
+        ranges.append(default_backend.astensor(range(sl.start, sl.stop)))
     if not target_slices:
         return None
     return _TensorViewer(ranges, names=names, batch_size=batch_size)

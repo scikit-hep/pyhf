@@ -13,6 +13,8 @@ def __dir__():
 
 class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -61,18 +63,18 @@ class gaussian_constraint_combined:
         # if this constraint terms is at all used (non-zrto idx selection
         # start preparing constant tensors
         if self.param_viewer.index_selection:
-            self._normal_data = pyhf.default_backend.astensor(
-                pyhf.default_backend.concatenate(normal_constraint_data), dtype='int'
+            self._normal_data = default_backend.astensor(
+                default_backend.concatenate(normal_constraint_data), dtype='int'
             )
 
-            _normal_sigmas = pyhf.default_backend.concatenate(normal_constraint_sigmas)
+            _normal_sigmas = default_backend.concatenate(normal_constraint_sigmas)
             if self.batch_size:
-                sigmas = pyhf.default_backend.reshape(_normal_sigmas, (1, -1))
-                self._sigmas = pyhf.default_backend.tile(sigmas, (self.batch_size, 1))
+                sigmas = default_backend.reshape(_normal_sigmas, (1, -1))
+                self._sigmas = default_backend.tile(sigmas, (self.batch_size, 1))
             else:
                 self._sigmas = _normal_sigmas
 
-            access_field = pyhf.default_backend.concatenate(
+            access_field = default_backend.concatenate(
                 self.param_viewer.index_selection, axis=1
             )
             self._access_field = access_field
@@ -145,6 +147,8 @@ class gaussian_constraint_combined:
 
 class poisson_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -190,20 +194,20 @@ class poisson_constraint_combined:
         self._access_field = None
         self._batched_factors = None
         if self.param_viewer.index_selection:
-            self._poisson_data = pyhf.default_backend.astensor(
-                pyhf.default_backend.concatenate(poisson_constraint_data), dtype='int'
+            self._poisson_data = default_backend.astensor(
+                default_backend.concatenate(poisson_constraint_data), dtype='int'
             )
 
-            _poisson_rate_fac = pyhf.default_backend.astensor(
-                pyhf.default_backend.concatenate(poisson_constraint_rate_factors),
+            _poisson_rate_fac = default_backend.astensor(
+                default_backend.concatenate(poisson_constraint_rate_factors),
                 dtype='float',
             )
-            factors = pyhf.default_backend.reshape(_poisson_rate_fac, (1, -1))
-            self._batched_factors = pyhf.default_backend.tile(
+            factors = default_backend.reshape(_poisson_rate_fac, (1, -1))
+            self._batched_factors = default_backend.tile(
                 factors, (self.batch_size or 1, 1)
             )
 
-            access_field = pyhf.default_backend.concatenate(
+            access_field = default_backend.concatenate(
                 self.param_viewer.index_selection, axis=1
             )
             self._access_field = access_field

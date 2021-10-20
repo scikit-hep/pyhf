@@ -30,8 +30,9 @@ class code2:
 
     def __init__(self, histogramssets, subscribe=True):
         """Quadratic Interpolation."""
-        # nb: this should never be a tensor, store in default backend (e.g. numpy)
-        self._histogramssets = pyhf.default_backend.astensor(histogramssets)
+        default_backend = pyhf.default_backend
+
+        self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)
         # precompute terms that only depend on the histogramssets
@@ -42,9 +43,7 @@ class code2:
         self._b = 0.5 * (self._histogramssets[:, :, 2] - self._histogramssets[:, :, 0])
         self._b_plus_2a = self._b + 2 * self._a
         self._b_minus_2a = self._b - 2 * self._a
-        self._broadcast_helper = pyhf.default_backend.ones(
-            pyhf.default_backend.shape(self._a)
-        )
+        self._broadcast_helper = default_backend.ones(default_backend.shape(self._a))
         self._precompute()
         if subscribe:
             events.subscribe('tensorlib_changed')(self._precompute)
