@@ -114,9 +114,11 @@ def test_bool_compression():
         fixed=False,
         auxdata=[0, 0, 0, 0, 0],
     )
+    
+    compressed = pset.suggested_fixed_as_bool
 
     assert pset.suggested_fixed == [False] * 5
-    assert not pset.suggested_fixed_as_bool
+    assert not compressed
     assert pset.factors == [1] * 5
 
 def test_bool_compression2():
