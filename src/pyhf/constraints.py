@@ -173,17 +173,7 @@ class poisson_constraint_combined:
                 continue
 
             poisson_constraint_data.append(thisauxdata)
-
-            # poisson constraints can specify a scaling factor for the
-            # backgrounds rates (see: on-off problem with a aux measurement
-            # with tau*b). If such a scale factor is not defined we just
-            # take a factor of one
-            try:
-                poisson_constraint_rate_factors.append(parset.factors)
-            except AttributeError:
-                # this seems to be dead code
-                # TODO: add coverage (issue #540)
-                poisson_constraint_rate_factors.append([1.0] * len(thisauxdata))
+            poisson_constraint_rate_factors.append(parset.factors)
 
         self._poisson_data = None
         self._access_field = None
