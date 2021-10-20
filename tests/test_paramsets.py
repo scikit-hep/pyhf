@@ -102,6 +102,20 @@ def test_vector_fixed_set():
     pset.suggested_fixed = [False, True, False, True, False]
     assert pset.suggested_fixed == [False, True, False, True, False]
 
+def test_bool_compression2():
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        factors=[1, 1, 1, 1, 1],
+        fixed=[False, True, False, True, False],
+        auxdata=[0, 0, 0, 0, 0],
+    )
+    assert pset.factors == [1] * 5
+    with pytest.raises(RuntimeError):
+        pset.suggested_fixed_as_bool
 
 def test_bool_compression():
     pset = paramsets.constrained_by_poisson(
@@ -120,22 +134,6 @@ def test_bool_compression():
     assert pset.suggested_fixed == [False] * 5
     assert not compressed
     assert pset.factors == [1] * 5
-
-def test_bool_compression2():
-    pset = paramsets.constrained_by_poisson(
-        name='foo',
-        is_scalar=False,
-        n_parameters=5,
-        inits=[0, 1, 2, 3, 4],
-        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
-        factors=[1, 1, 1, 1, 1],
-        fixed=[False, True, False, True, False],
-        auxdata=[0, 0, 0, 0, 0],
-    )
-    assert pset.factors == [1] * 5
-    with pytest.raises(RuntimeError):
-        pset.suggested_fixed_as_bool
-
 
 def test_scalar_multiparam_failure():
     with pytest.raises(ValueError):
