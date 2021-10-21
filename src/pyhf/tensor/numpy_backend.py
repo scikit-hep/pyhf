@@ -357,6 +357,12 @@ class numpy_backend:
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit :math:`\lambda \to 0` is still
+            defined and returns ``1.0`` in the case where ``n=0`` and ``lam=0``.
+
         Example:
 
             >>> import pyhf
