@@ -3,7 +3,7 @@ from jax.config import config
 config.update('jax_enable_x64', True)
 
 import jax.numpy as jnp
-from jax.scipy.special import gammaln
+from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
 from jax.scipy.stats import norm
 import numpy as np
@@ -368,7 +368,7 @@ class jax_backend:
     def poisson_logpdf(self, n, lam):
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return n * jnp.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -398,7 +398,7 @@ class jax_backend:
         """
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
+        return jnp.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
