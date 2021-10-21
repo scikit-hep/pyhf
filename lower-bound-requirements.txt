@@ -13,7 +13,7 @@ iminuit==2.4.0
 tensorflow==2.2.1  # c.f. PR #1001
 tensorflow-probability==0.10.1
 # torch
-torch==1.8.0
+torch==1.10.0
 # jax
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
