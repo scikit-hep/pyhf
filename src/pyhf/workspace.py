@@ -801,12 +801,15 @@ class Workspace(_ChannelSummaryMixin, dict):
                     'poi': model.config.poi_name,
                     'parameters': [
                         {
-                            "bounds": [list(x) for x in v['paramset'].suggested_bounds],
-                            "inits": v['paramset'].suggested_init,
-                            "fixed": v['paramset'].suggested_fixed_as_bool,
-                            "name": k,
+                            "bounds": [
+                                list(x)
+                                for x in parset_spec['paramset'].suggested_bounds
+                            ],
+                            "inits": parset_spec['paramset'].suggested_init,
+                            "fixed": parset_spec['paramset'].suggested_fixed_as_bool,
+                            "name": parset_name,
                         }
-                        for k, v in model.config.par_map.items()
+                        for parset_name, parset_spec in model.config.par_map.items()
                     ],
                 },
             }

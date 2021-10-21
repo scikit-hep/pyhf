@@ -39,7 +39,9 @@ class paramset:
         first = suggested_fixed[0]
         if all([x == first for x in suggested_fixed]):
             return first
-        raise RuntimeError(f'{suggested_fixed} is neither all-True nor all-False, so not compressible')
+        raise RuntimeError(
+            f'{suggested_fixed} is neither all-True nor all-False, so not compressible'
+        )
 
     @suggested_fixed.setter
     def suggested_fixed(self, value):

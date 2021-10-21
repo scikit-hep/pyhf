@@ -514,11 +514,11 @@ class _MainModel:
 
         self.modifiers_appliers = modifiers
 
-        for k, v in self.modifiers_appliers.items():
-            if v.op_code == 'addition':
-                self._delta_mods.append(v.name)
-            elif v.op_code == 'multiplication':
-                self._factor_mods.append(v.name)
+        for modifier_type, modifier_applier in self.modifiers_appliers.items():
+            if modifier_applier.op_code == 'addition':
+                self._delta_mods.append(modifier_applier.name)
+            elif modifier_applier.op_code == 'multiplication':
+                self._factor_mods.append(modifier_applier.name)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)

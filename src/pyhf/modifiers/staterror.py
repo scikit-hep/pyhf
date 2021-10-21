@@ -66,30 +66,30 @@ class staterror_builder:
 
             nomsall = default_backend.sum(
                 [
-                    v['data']['nom_data']
-                    for k, v in self.builder_data[modname].items()
-                    if default_backend.astensor(v['data']['mask']).any()
+                    modifier_data['data']['nom_data']
+                    for modifier_data in self.builder_data[modname].values()
+                    if default_backend.astensor(modifier_data['data']['mask']).any()
                 ],
                 axis=0,
             )
             relerrs = default_backend.sum(
                 [
                     [
-                        (v['data']['uncrt'][binnr] / nomsall[binnr]) ** 2
+                        (modifier_data['data']['uncrt'][binnr] / nomsall[binnr]) ** 2
                         if nomsall[binnr] > 0
                         else 0.0
-                        for binnr in range(len(v['data']['nom_data']))
+                        for binnr in range(len(modifier_data['data']['nom_data']))
                     ]
-                    for k, v in self.builder_data[modname].items()
+                    for modifier_data in self.builder_data[modname].values()
                 ],
                 axis=0,
             )
             relerrs = default_backend.sqrt(relerrs)
 
             masks = {}
-            for k, v in self.builder_data[modname].items():
+            for modifier_data in self.builder_data[modname].values():
                 mask_this_sample = default_backend.astensor(
-                    v['data']['mask'], dtype='bool'
+                    modifier_data['data']['mask'], dtype='bool'
                 )
                 if mask_this_sample.any():
                     if modname not in masks:
@@ -98,8 +98,8 @@ class staterror_builder:
                         assert (mask_this_sample == masks[modname]).all()
 
             # masks[modname] = (nomsall > 0) & masks[modname]
-            for k, v in self.builder_data[modname].items():
-                v['data']['mask'] = masks[modname]
+            for modifier_data in self.builder_data[modname].values():
+                modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
             fixed = [s == 0 for s in sigmas]
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
