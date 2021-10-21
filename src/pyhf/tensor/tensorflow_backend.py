@@ -2,7 +2,6 @@
 import logging
 import tensorflow as tf
 import tensorflow_probability as tfp
-from numpy import nan
 
 log = logging.getLogger(__name__)
 
@@ -427,15 +426,7 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to log(Poisson(n|lam))
         """
         lam = self.astensor(lam)
-        # Guard against Poisson(n=0 | lam=0)
-        # c.f. https://github.com/scikit-hep/pyhf/issues/293
-        valid_obs_given_rate = tf.logical_or(
-            tf.math.not_equal(lam, n), tf.math.not_equal(n, 0)
-        )
-
-        return tf.where(
-            valid_obs_given_rate, tfp.distributions.Poisson(lam).log_prob(n), nan
-        )
+        return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
@@ -465,17 +456,7 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to Poisson(n|lam)
         """
         lam = self.astensor(lam)
-        # Guard against Poisson(n=0 | lam=0)
-        # c.f. https://github.com/scikit-hep/pyhf/issues/293
-        valid_obs_given_rate = tf.logical_or(
-            tf.math.not_equal(lam, n), tf.math.not_equal(n, 0)
-        )
-
-        return tf.where(
-            valid_obs_given_rate,
-            tf.exp(tfp.distributions.Poisson(lam).log_prob(n)),
-            nan,
-        )
+        return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
         r"""
