@@ -290,12 +290,11 @@ def test_pdf_calculations(backend):
     # Allow poisson(lambda=0) under limit Poisson(lambda -> 0) = 1
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=False)
+    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
     assert tb.tolist(
         tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx(
-        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(),
-        nan_ok=False,
+        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
     )
 
     # Ensure continuous approximation is valid
@@ -334,12 +333,11 @@ def test_pdf_calculations_pytorch(backend):
     # Allow poisson(lambda=0) under limit Poisson(lambda -> 0) = 1
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=False)
+    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
     assert tb.tolist(
         tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx(
-        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(),
-        nan_ok=False,
+        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
     )
 
     # Ensure continuous approximation is valid
