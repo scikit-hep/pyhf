@@ -1,7 +1,7 @@
 """NumPy Tensor Library Module."""
 import numpy as np
 import logging
-from scipy.special import gammaln
+from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
@@ -349,7 +349,7 @@ class numpy_backend:
         return np.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        return n * np.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -379,7 +379,8 @@ class numpy_backend:
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
+
+        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
