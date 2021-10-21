@@ -385,7 +385,6 @@ class numpy_backend:
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
-
         return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
