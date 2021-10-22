@@ -2,7 +2,6 @@
 import logging
 import tensorflow as tf
 import tensorflow_probability as tfp
-from numpy import nan
 
 log = logging.getLogger(__name__)
 
@@ -427,21 +426,27 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to log(Poisson(n|lam))
         """
         lam = self.astensor(lam)
-        # Guard against Poisson(n=0 | lam=0)
-        # c.f. https://github.com/scikit-hep/pyhf/issues/293
-        valid_obs_given_rate = tf.logical_or(
-            tf.math.not_equal(lam, n), tf.math.not_equal(n, 0)
-        )
-
-        return tf.where(
-            valid_obs_given_rate, tfp.distributions.Poisson(lam).log_prob(n), nan
-        )
+        return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
         r"""
         The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
+
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
 
         Example:
             >>> import pyhf
@@ -465,17 +470,7 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to Poisson(n|lam)
         """
         lam = self.astensor(lam)
-        # Guard against Poisson(n=0 | lam=0)
-        # c.f. https://github.com/scikit-hep/pyhf/issues/293
-        valid_obs_given_rate = tf.logical_or(
-            tf.math.not_equal(lam, n), tf.math.not_equal(n, 0)
-        )
-
-        return tf.where(
-            valid_obs_given_rate,
-            tf.exp(tfp.distributions.Poisson(lam).log_prob(n)),
-            nan,
-        )
+        return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
         r"""
