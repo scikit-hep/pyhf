@@ -287,7 +287,7 @@ def test_pdf_calculations(backend):
         ],
         nan_ok=True,
     )
-    # Allow poisson(lambda=0) under limit Poisson(lambda -> 0) = 1
+    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
@@ -330,7 +330,7 @@ def test_pdf_calculations_pytorch(backend):
         ],
     )
 
-    # Allow poisson(lambda=0) under limit Poisson(lambda -> 0) = 1
+    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
