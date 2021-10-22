@@ -567,3 +567,73 @@ def test_patchset_fail(datadir, patchset_file):
     patchset = json.load(open(datadir.joinpath(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')
+
+
+def test_schema_tensor_type_allowed(backend):
+    tensorlib, _ = backend
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': tensorlib.astensor([10]),
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': tensorlib.astensor([15]),
+                        'modifiers': [
+                            {
+                                'name': 'uncorr_bkguncrt',
+                                'type': 'shapesys',
+                                'data': tensorlib.astensor([5]),
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    assert pyhf.schema.validate(spec, 'model.json') is None
+
+
+def test_schema_tensor_type_disallowed(mocker, backend):
+    tensorlib, _ = backend
+    mocker.patch.object(
+        pyhf.schema.validate,
+        '__kwdefaults__',
+        {'version': None, 'allow_tensors': False},
+    )
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': tensorlib.astensor([10]),
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': tensorlib.astensor([15]),
+                        'modifiers': [
+                            {
+                                'name': 'uncorr_bkguncrt',
+                                'type': 'shapesys',
+                                'data': tensorlib.astensor([5]),
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.schema.validate(spec, 'model.json')
