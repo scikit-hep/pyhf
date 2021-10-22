@@ -58,7 +58,7 @@ def test_correlated_background_default_backend(default_backend):
     assert model.config.suggested_init() == [0.0, 1.0]
 
 
-# See #1654
+# See https://github.com/scikit-hep/pyhf/issues/1654
 @pytest.mark.fail_pytorch
 @pytest.mark.fail_pytorch64
 @pytest.mark.fail_tensorflow
