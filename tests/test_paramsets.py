@@ -87,7 +87,7 @@ def test_paramset_constrained_missiing_factors():
 
 def test_vector_fixed_set():
     pset = paramsets.constrained_by_poisson(
-        name='foo',
+        name="foo",
         is_scalar=False,
         n_parameters=5,
         inits=[0, 1, 2, 3, 4],
