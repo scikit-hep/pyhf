@@ -1,11 +1,28 @@
 import jsonschema
+from typing import Union
 import pyhf.exceptions
 from pyhf.schema.loader import load_schema
 from pyhf.schema import variables
-from typing import Union
+from pyhf import tensor
 
 
-def validate(spec: dict, schema_name: str, version: Union[str, None] = None, allow_tensors: bool = True):
+def _is_array_or_tensor(checker, instance):
+    """
+    A helper function for allowing the validation of tensors as list types in schema validation.
+
+    .. warning:
+
+        This will check for valid array types using any backends that have been loaded so far.
+    """
+    return isinstance(instance, (list, *tensor.array_types))
+
+
+def validate(
+    spec: dict,
+    schema_name: str,
+    version: Union[str, None] = None,
+    allow_tensors: bool = True,
+):
     """
     Validate the provided instance, ``spec``, against the schema associated with ``schema_id``.
 
@@ -40,9 +57,14 @@ def validate(spec: dict, schema_name: str, version: Union[str, None] = None, all
         referrer=f"{version}/{schema_name}",
         store=variables.SCHEMA_CACHE,
     )
-    validator = jsonschema.Draft6Validator(
-        schema, resolver=resolver, format_checker=None
-    )
+
+    Validator = jsonschema.Draft6Validator
+
+    if allow_tensors:
+        type_checker = Validator.TYPE_CHECKER.redefine('array', _is_array_or_tensor)
+        Validator = jsonschema.validators.extend(Validator, type_checker=type_checker)
+
+    validator = Validator(schema, resolver=resolver, format_checker=None)
 
     try:
         return validator.validate(spec)
