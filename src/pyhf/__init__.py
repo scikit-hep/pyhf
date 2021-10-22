@@ -1,4 +1,5 @@
 from pyhf.tensor import BackendRetriever as tensor
+from pyhf.optimize import OptimizerRetriever as optimize  # noqa
 from pyhf.tensor.manager import get_backend
 from pyhf.tensor.manager import set_backend
 from pyhf._version import version as __version__
