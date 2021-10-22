@@ -3,6 +3,7 @@ import sys
 from pyhf.tensor import BackendRetriever
 from pyhf import exceptions
 from pyhf import events
+from pyhf.optimize import OptimizerRetriever
 
 this = sys.modules[__name__]
 this.state = {
@@ -32,8 +33,6 @@ def get_backend(default=False):
     """
     return this.state['default' if default else 'current']
 
-
-from pyhf.optimize import OptimizerRetriever
 
 this.state['default'] = (
     BackendRetriever.numpy_backend(),
