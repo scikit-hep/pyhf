@@ -1,4 +1,6 @@
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import (
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
@@ -49,6 +51,8 @@ class ParamViewer:
     """
 
     def __init__(self, shape, par_map, par_selection):
+
+        default_backend = pyhf.default_backend
 
         batch_size = shape[0] if len(shape) > 1 else None
 

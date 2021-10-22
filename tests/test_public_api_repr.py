@@ -13,6 +13,7 @@ def test_top_level_public_api():
         "Workspace",
         "__version__",
         "compat",
+        "default_backend",
         "exceptions",
         "get_backend",
         "infer",

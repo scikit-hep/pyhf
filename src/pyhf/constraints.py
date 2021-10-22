@@ -1,4 +1,5 @@
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf import probability as prob
 from pyhf.parameters import ParamViewer
@@ -12,6 +13,8 @@ def __dir__():
 
 class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
@@ -144,6 +147,8 @@ class gaussian_constraint_combined:
 
 class poisson_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 

@@ -1,6 +1,8 @@
 import logging
 
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf import interpolators
 from pyhf.parameters import ParamViewer
 
@@ -57,6 +59,8 @@ class histosys_builder:
             )
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         for modifier in self.builder_data.values():
             for sample in modifier.values():
                 sample["data"]["mask"] = default_backend.concatenate(
