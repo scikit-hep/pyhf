@@ -11,6 +11,7 @@ class tensorflow_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
     array_type = tf.Tensor
+    array_subtype = tf.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
