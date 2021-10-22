@@ -90,3 +90,26 @@ def test_deprecated_apis():
             "pyhf.simplemodels.hepdata_like is deprecated in favor of pyhf.simplemodels.uncorrelated_background"
             in str(_warning[-1].message)
         )
+
+
+def test_simplemodels_tensor_type_allowed(backend):
+    tensorlib, _ = backend
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=tensorlib.astensor([12.0, 11.0]),
+        bkg=tensorlib.astensor([50.0, 52.0]),
+        bkg_uncertainty=tensorlib.astensor([3.0, 7.0]),
+    )
+    assert pyhf.utils.validate(model.spec, 'model.json') is None
+
+
+def test_simplemodels_tensor_type_disallowed(mocker, backend):
+    tensorlib, _ = backend
+    mocker.patch.object(
+        pyhf.utils.validate, '__kwdefaults__', {'version': None, 'allow_tensors': False}
+    )
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.simplemodels.uncorrelated_background(
+            signal=tensorlib.astensor([12.0, 11.0]),
+            bkg=tensorlib.astensor([50.0, 52.0]),
+            bkg_uncertainty=tensorlib.astensor([3.0, 7.0]),
+        )
