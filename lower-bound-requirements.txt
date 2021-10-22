@@ -10,8 +10,8 @@ uproot==4.1.1
 # minuit
 iminuit==2.4.0
 # tensorflow
-tensorflow==2.2.3  # c.f. PR #1657
-tensorflow-probability==0.10.1  # c.f. PR #1657
+tensorflow==2.3.1  # tfp v0.11.0+ requires tensorflow>=2.3
+tensorflow-probability==0.11.0  # c.f. PR #1657
 # torch
 torch==1.10.0
 # jax
