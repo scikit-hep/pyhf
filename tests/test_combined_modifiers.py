@@ -664,13 +664,7 @@ def test_shapesys_zero(backend):
             },
         }
     }
-    hsc = shapesys_combined(
-        [
-            ('syst', 'shapesys'),
-        ],
-        mc,
-        mega_mods,
-    )
+    hsc = shapesys_combined([('syst', 'shapesys')], mc, mega_mods)
 
     mod = hsc.apply(pyhf.tensorlib.astensor([-10, 1.1, 1.2, 1.3, -20, -30]))
     shape = pyhf.tensorlib.shape(mod)
