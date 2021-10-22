@@ -194,7 +194,6 @@ class staterror_combined:
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
 
-
     def apply(self, pars):
         if not self.param_viewer.index_selection:
             return
