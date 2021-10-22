@@ -39,6 +39,7 @@ class numpy_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
     array_type = np.ndarray
+    array_subtype = np.number
 
     def __init__(self, **kwargs):
         self.name = 'numpy'
