@@ -13,7 +13,9 @@ class pytorch_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
     array_type = torch.Tensor
+    """The array type for pytorch"""
     array_subtype = torch.Tensor
+    """The array content type for pytorch"""
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'
