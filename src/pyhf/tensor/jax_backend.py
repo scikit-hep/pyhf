@@ -3,7 +3,7 @@ from jax.config import config
 config.update('jax_enable_x64', True)
 
 import jax.numpy as jnp
-from jax.scipy.special import gammaln
+from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
 from jax.scipy.stats import norm
 import numpy as np
@@ -368,13 +368,27 @@ class jax_backend:
     def poisson_logpdf(self, n, lam):
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return n * jnp.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
         The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
+
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
 
         Example:
 
@@ -398,7 +412,7 @@ class jax_backend:
         """
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
+        return jnp.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than

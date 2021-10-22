@@ -367,6 +367,20 @@ class pytorch_backend:
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
+
         Example:
 
             >>> import pyhf

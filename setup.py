@@ -3,10 +3,10 @@ from setuptools import setup
 extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
-        'tensorflow~=2.2,>=2.2.1,!=2.3.0',  # c.f. https://github.com/tensorflow/tensorflow/pull/40789
-        'tensorflow-probability~=0.10,>=0.10.1',
+        'tensorflow~=2.3,!=2.3.0',  # c.f. https://github.com/tensorflow/tensorflow/pull/40789
+        'tensorflow-probability~=0.11',
     ],
-    'torch': ['torch~=1.8'],
+    'torch': ['torch~=1.10'],
     'jax': ['jax~=0.2.8', 'jaxlib~=0.1.58,!=0.1.68'],  # c.f. Issue 1501
     'xmlio': ['uproot>=4.1.1'],
     'minuit': ['iminuit>=2.4'],
