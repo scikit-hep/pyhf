@@ -39,3 +39,49 @@ def load_schema(schema_id: str):
             schema = json.load(json_schema)
             variables.SCHEMA_CACHE[schema['$id']] = schema
         return variables.SCHEMA_CACHE[schema['$id']]
+
+
+def load_schema(schema_id, version=None):
+    """
+    Load a version of a schema, referenced by its identifier.
+
+    Args:
+        schema_id (:obj:`string`): The name of a schema to validate against.
+        version (:obj:`string`): The version of the schema to use. If not set, the default will be the latest and greatest schema supported by this library. Default: ``None``.
+
+    Raises:
+        FileNotFoundError: if the provided ``schema_id`` cannot be found.
+
+    Returns:
+        :obj:`dict`: The loaded schema.
+
+    Example:
+        >>> import pyhf
+        >>> schema = pyhf.utils.load_schema('defs.json')
+        >>> type(schema)
+        <class 'dict'>
+        >>> schema.keys()
+        dict_keys(['$schema', '$id', 'definitions'])
+        >>> pyhf.utils.load_schema('defs.json', version='0.0.0')
+        Traceback (most recent call last):
+            ...
+        FileNotFoundError: ...
+    """
+    global SCHEMA_CACHE
+    if not version:
+        version = SCHEMA_VERSION
+    try:
+        return SCHEMA_CACHE[f'{SCHEMA_BASE}{Path(version).joinpath(schema_id)}']
+    except KeyError:
+        pass
+
+    path = pkg_resources.resource_filename(
+        __name__, str(Path('schemas').joinpath(version, schema_id))
+    )
+    with open(path) as json_schema:
+        schema = json.load(json_schema)
+        SCHEMA_CACHE[schema['$id']] = schema
+    return SCHEMA_CACHE[schema['$id']]
+
+
+

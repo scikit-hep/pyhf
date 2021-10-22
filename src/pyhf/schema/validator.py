@@ -5,20 +5,29 @@ from pyhf.schema import variables
 from typing import Union
 
 
-def validate(spec: dict, schema_name: str, version: Union[str, None] = None):
+def validate(spec: dict, schema_name: str, version: Union[str, None] = None, allow_tensors: bool = True):
     """
-    Validate a provided specification against a schema.
+    Validate the provided instance, ``spec``, against the schema associated with ``schema_id``.
 
     Args:
-        spec (dict): The specification to validate.
-        schema_name (str): The name of the schema to use.
-        version (None or str): The version to use if not the default from :attr:`pyhf.schema.version`.
-
-    Returns:
-        None: schema validated fine
+        spec (:obj:`object`): An object instance to validate against a schema
+        schema_id (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.utils.load_schema` for more details.
+        version (:obj:`string`): The version of the schema to use. See :func:`pyhf.utils.load_schema` for more details.
+        allow_tensors (:obj:`bool`): A flag to enable or disable tensors as part of schema validation. If enabled, tensors in the ``spec`` will be treated like python :obj:`list`. Default: ``True``.
 
     Raises:
-        pyhf.exceptions.InvalidSpecification: the specification is invalid
+        ~pyhf.exceptions.InvalidSpecification: if the provided instance does not validate against the schema.
+
+    Returns:
+        None: if there are no errors with the provided instance
+
+    Example:
+        >>> import pyhf
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> pyhf.utils.validate(model.spec, 'model.json')
+        >>>
     """
 
     version = version or variables.SCHEMA_VERSION
