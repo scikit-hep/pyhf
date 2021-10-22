@@ -1,5 +1,4 @@
 from pyhf.tensor import BackendRetriever as tensor
-from pyhf.optimize import OptimizerRetriever as optimize
 from pyhf.tensor.manager import get_backend
 from pyhf.tensor.manager import set_backend
 from pyhf._version import version as __version__
@@ -23,7 +22,6 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
-    "optimize",
     "optimizer",
     "parameters",
     "patchset",
