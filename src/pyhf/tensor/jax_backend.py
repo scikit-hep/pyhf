@@ -379,8 +379,16 @@ class jax_backend:
         .. note::
 
             Though the p.m.f of the Poisson distribution is not defined for
-            :math:`\lambda = 0`, the limit :math:`\lambda \to 0` is still
-            defined and returns ``1.0`` in the case where ``n=0`` and ``lam=0``.
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
 
         Example:
 
