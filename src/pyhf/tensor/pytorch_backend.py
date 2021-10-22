@@ -12,6 +12,7 @@ class pytorch_backend:
     """PyTorch backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    array_type = torch.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'

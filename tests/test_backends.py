@@ -75,3 +75,12 @@ def test_diffable_backend_failure():
 
     with pytest.raises(jax._src.errors.TracerArrayConversionError):
         jax.jacrev(example_op2)(pyhf.tensorlib.astensor([2.0, 3.0]))
+
+
+def test_backend_array_type(backend):
+    assert backend[0].array_type is not None
+
+
+def test_tensor_array_types():
+    # can't really assert the content of them so easily
+    assert pyhf.tensor.array_types

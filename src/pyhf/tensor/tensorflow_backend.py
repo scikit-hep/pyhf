@@ -10,6 +10,7 @@ class tensorflow_backend:
     """TensorFlow backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    array_type = tf.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
