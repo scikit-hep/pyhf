@@ -119,7 +119,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 moddict[f"{x['type']}/{x['name']}"] = x
             helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
 
-    # 1. setupp nominal & modifier builders
+    # 1. setup nominal & modifier builders
     nominal = _nominal_builder(config)
 
     modifiers_builders = {}
@@ -140,13 +140,14 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 thismod = defined_mods.get(key) if defined_mods else None
                 modifiers_builders[mtype].append(key, c, s, thismod, defined_samp)
 
-    # 3. finalize nominal & modifierr builders
+    # 3. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
     finalizd_builder_data = {}
     for k, (builder, applier) in modifier_set.items():
         finalizd_builder_data[k] = modifiers_builders[k].finalize()
 
-    # 4. collect parameters from spec annd from user .. at this point we know all constraints and so forth
+    # 4. collect parameters from spec and from user.
+    # At this point we know all constraints and so forth
     _required_paramsets = {}
     for v in list(modifiers_builders.values()):
         for pname, req_list in v.required_parsets.items():
@@ -169,7 +170,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     config.set_parameters(_prameter_objects)
     config.set_auxinfo(_auxdata, _auxdata_order)
 
-    # 6. use finnaliized modifier data to build reparametization function for main lhood part
+    # 6. use finalized modifier data to build reparametrization function for main likelihood part
     the_modifiers = {}
     for k, (builder, applier) in modifier_set.items():
         the_modifiers[k] = applier(
