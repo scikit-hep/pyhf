@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  releasecandidates:
+  release-candidates:
 
     runs-on: ${{ matrix.os }}
     strategy:
