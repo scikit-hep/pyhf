@@ -161,6 +161,7 @@ class staterror_combined:
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _reindex_access_field(self, pdfconfig):
+        default_backend = pyhf.default_backend
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
