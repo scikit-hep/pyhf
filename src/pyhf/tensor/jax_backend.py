@@ -52,6 +52,7 @@ class jax_backend:
     """JAX backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    array_type = jnp.ndarray
 
     def __init__(self, **kwargs):
         self.name = 'jax'
