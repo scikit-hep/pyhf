@@ -1,4 +1,6 @@
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import (
     _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
@@ -15,7 +17,14 @@ def _tensorviewer_from_parmap(par_map, batch_size):
     names, slices, _ = list(
         zip(
             *sorted(
-                ((k, v['slice'], v['slice'].start) for k, v in par_map.items()),
+                (
+                    (
+                        paramset_name,
+                        paramset_spec['slice'],
+                        paramset_spec['slice'].start,
+                    )
+                    for paramset_name, paramset_spec in par_map.items()
+                ),
                 key=lambda x: x[2],
             )
         )
@@ -49,6 +58,8 @@ class ParamViewer:
     """
 
     def __init__(self, shape, par_map, par_selection):
+
+        default_backend = pyhf.default_backend
 
         batch_size = shape[0] if len(shape) > 1 else None
 

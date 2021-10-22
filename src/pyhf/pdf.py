@@ -4,7 +4,8 @@ import copy
 import logging
 
 import pyhf.parameters
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
 from pyhf import utils
 from pyhf import events
@@ -24,7 +25,7 @@ def __dir__():
     return __all__
 
 
-def _finalize_parameters(user_parameters, _paramsets_requirements):
+def _finalize_parameters_specs(user_parameters, _paramsets_requirements):
     # build up a dictionary of the parameter configurations provided by the user
     _paramsets_user_configs = {}
     for parameter in user_parameters:
@@ -36,13 +37,22 @@ def _finalize_parameters(user_parameters, _paramsets_requirements):
     _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
     )
+    return _reqs
+
+
+def _create_parameters_from_spec(_reqs):
     _sets = {}
+    auxdata = []
+    auxdata_order = []
     for param_name, paramset_requirements in _reqs.items():
         paramset_type = getattr(pyhf.parameters, paramset_requirements['paramset_type'])
         paramset = paramset_type(**paramset_requirements)
+        if paramset.constrained:  # is constrained
+            auxdata += paramset.auxdata
+            auxdata_order.append(param_name)
         _sets[param_name] = paramset
 
-    return _sets
+    return _sets, auxdata, auxdata_order
 
 
 class _nominal_builder:
@@ -64,6 +74,8 @@ class _nominal_builder:
         self.mega_samples[sample]['nom'].append(nom)
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         nominal_rates = default_backend.astensor(
             [
                 default_backend.concatenate(self.mega_samples[sample]['nom'])
@@ -107,12 +119,14 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 moddict[f"{x['type']}/{x['name']}"] = x
             helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
 
+    # 1. setup nominal & modifier builders
+    nominal = _nominal_builder(config)
+
     modifiers_builders = {}
     for k, (builder, applier) in modifier_set.items():
         modifiers_builders[k] = builder(config)
 
-    nominal = _nominal_builder(config)
-
+    # 2. walk spec and call builders
     for c in config.channels:
         for s in config.samples:
             helper_data = helper.get(c, {}).get(s)
@@ -125,10 +139,16 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 # this is None if modifier doesn't affect channel/sample.
                 thismod = defined_mods.get(key) if defined_mods else None
                 modifiers_builders[mtype].append(key, c, s, thismod, defined_samp)
+
+    # 3. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
+    finalizd_builder_data = {}
+    for k, (builder, applier) in modifier_set.items():
+        finalizd_builder_data[k] = modifiers_builders[k].finalize()
 
+    # 4. collect parameters from spec and from user.
+    # At this point we know all constraints and so forth
     _required_paramsets = {}
-
     for v in list(modifiers_builders.values()):
         for pname, req_list in v.required_parsets.items():
             _required_paramsets.setdefault(pname, [])
@@ -136,14 +156,21 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
     user_parameters = spec.get('parameters', [])
 
-    _required_paramsets = _finalize_parameters(
+    _required_paramsets = _finalize_parameters_specs(
         user_parameters,
         _required_paramsets,
     )
+    _prameter_objects, _auxdata, _auxdata_order = _create_parameters_from_spec(
+        _required_paramsets
+    )
+
     if not _required_paramsets:
         raise exceptions.InvalidModel('No parameters specified for the Model.')
 
-    config.set_parameters(_required_paramsets)
+    config.set_parameters(_prameter_objects)
+    config.set_auxinfo(_auxdata, _auxdata_order)
+
+    # 6. use finalized modifier data to build reparametrization function for main likelihood part
     the_modifiers = {}
     for k, (builder, applier) in modifier_set.items():
         the_modifiers[k] = applier(
@@ -151,9 +178,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 x for x in config.modifiers if x[1] == k
             ],  # filter modifier names for that mtype (x[1])
             pdfconfig=config,
-            builder_data=modifiers_builders[k].finalize()
-            if k in modifiers_builders
-            else None,
+            builder_data=finalizd_builder_data.get(k),
             batch_size=batch_size,
             **config.modifier_settings.get(k, {}),
         )
@@ -209,6 +234,14 @@ class _ModelConfig(_ChannelSummaryMixin):
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
         self.parameters = sorted(k for k in self.par_map.keys())
+
+    def set_auxinfo(self, auxdata, auxdata_order):
+        """
+        Sets a group of configuration data for the constraint terms.
+        """
+        self.auxdata = auxdata
+        self.auxdata_order = auxdata_order
+        self.nauxdata = len(self.auxdata)
 
     def suggested_init(self):
         """
@@ -344,7 +377,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         fixed = []
         for name in self.par_order:
             paramset = self.par_map[name]['paramset']
-            fixed = fixed + [paramset.suggested_fixed] * paramset.n_parameters
+            fixed += paramset.suggested_fixed
         return fixed
 
     def set_poi(self, name):
@@ -473,6 +506,8 @@ class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, modifiers, nominal_rates, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.config = config
 
         self._factor_mods = []
@@ -485,11 +520,11 @@ class _MainModel:
 
         self.modifiers_appliers = modifiers
 
-        for k, v in self.modifiers_appliers.items():
-            if v.op_code == 'addition':
-                self._delta_mods.append(v.name)
-            elif v.op_code == 'multiplication':
-                self._factor_mods.append(v.name)
+        for modifier_applier in self.modifiers_appliers.values():
+            if modifier_applier.op_code == "addition":
+                self._delta_mods.append(modifier_applier.name)
+            elif modifier_applier.op_code == "multiplication":
+                self._factor_mods.append(modifier_applier.name)
 
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
@@ -643,17 +678,7 @@ class Model:
             batch_size=self.batch_size,
         )
 
-        # this is tricky, must happen before constraint
-        # terms try to access auxdata but after
-        # combined mods have been created that
-        # set the aux data
-        for k in sorted(self.config.par_map.keys()):
-            parset = self.config.param_set(k)
-            if hasattr(parset, 'pdf_type'):  # is constrained
-                self.config.auxdata += parset.auxdata
-                self.config.auxdata_order.append(k)
-        self.config.nauxdata = len(self.config.auxdata)
-
+        # the below call needs auxdata order for example
         self.constraint_model = _ConstraintModel(
             config=self.config, batch_size=self.batch_size
         )

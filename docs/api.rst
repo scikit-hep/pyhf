@@ -10,8 +10,6 @@ Top-Level
    :toctree: _generated/
    :nosignatures:
 
-   default_backend
-   default_optimizer
    tensorlib
    optimizer
    get_backend

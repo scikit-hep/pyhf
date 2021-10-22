@@ -88,7 +88,9 @@ def fit(
         set_backend("jax")
     tensorlib, _ = get_backend()
 
-    optconf = {k: v for item in optconf for k, v in item.items()}
+    optconf = {
+        opt_name: opt_value for item in optconf for opt_name, opt_value in item.items()
+    }
 
     # set the new optimizer
     if optimizer:
@@ -112,7 +114,8 @@ def fit(
 
     _pars = fit_result if not value else fit_result[0]
     bestfit_pars = {
-        k: tensorlib.tolist(_pars[v["slice"]]) for k, v in model.config.par_map.items()
+        paramset_name: tensorlib.tolist(_pars[paramset_spec["slice"]])
+        for paramset_name, paramset_spec in model.config.par_map.items()
     }
 
     result = {"mle_parameters": bestfit_pars}
@@ -211,7 +214,9 @@ def cls(
         set_backend("jax")
     tensorlib, _ = get_backend()
 
-    optconf = {k: v for item in optconf for k, v in item.items()}
+    optconf = {
+        opt_name: opt_value for item in optconf for opt_name, opt_value in item.items()
+    }
 
     # set the new optimizer
     if optimizer:
