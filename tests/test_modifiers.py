@@ -101,7 +101,8 @@ def test_staterror_holes():
     assert (b[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 5.0, 6.0]).all()
 
     data = model.expected_data(model.config.suggested_init())
-    assert numpy.isfinite(model.logpdf(model.config.suggested_init(),data)).all()
+    assert numpy.isfinite(model.logpdf(model.config.suggested_init(), data)).all()
+
 
 def test_shapesys_holes():
     spec = {
