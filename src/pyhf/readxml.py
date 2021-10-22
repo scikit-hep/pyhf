@@ -354,8 +354,14 @@ def parse(configfile, rootdir, track_progress=False):
         'measurements': process_measurements(
             toplvl, other_parameter_configs=parameter_configs
         ),
-        'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
-        'observations': [{'name': k, 'data': v['data']} for k, v in channels.items()],
+        'channels': [
+            {'name': channel_name, 'samples': channel_spec['samples']}
+            for channel_name, channel_spec in channels.items()
+        ],
+        'observations': [
+            {'name': channel_name, 'data': channel_spec['data']}
+            for channel_name, channel_spec in channels.items()
+        ],
         'version': utils.SCHEMA_VERSION,
     }
     utils.validate(result, 'workspace.json')
