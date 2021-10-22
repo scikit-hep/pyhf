@@ -19,9 +19,16 @@ def _is_array_or_tensor(checker, instance):
 
 
 def _is_number_or_tensor_subtype(checker, instance):
-    # bool inherits from int, so ensure bools aren't reported as ints
-    if isinstance(instance, bool):
-        return False
+    """
+    A helper function for allowing the validation of tensor contents as number types in schema validation.
+
+    .. warning:
+
+        This will check for valid array subtypes using any backends that have been loaded so far.
+    """
+    is_number = jsonschema._types.is_number(checker, instance)
+    if is_number:
+        return True
     return isinstance(instance, (numbers.Number, *tensor.array_subtypes))
 
 
