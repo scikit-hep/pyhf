@@ -13,7 +13,7 @@ def test_paramset_unconstrained():
     )
     assert pset.suggested_init == [0, 1, 2, 3, 4]
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
-    assert not pset.suggested_fixed
+    assert pset.suggested_fixed == [False] * 5
     assert not pset.constrained
 
 
@@ -30,7 +30,7 @@ def test_paramset_constrained_custom_sigmas():
     )
     assert pset.suggested_init == [0, 1, 2, 3, 4]
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
-    assert not pset.suggested_fixed
+    assert pset.suggested_fixed == [False] * 5
     assert pset.constrained
     assert pset.width() == [1, 2, 3, 4, 5]
 
@@ -47,7 +47,7 @@ def test_paramset_constrained_default_sigmas():
     )
     assert pset.suggested_init == [0, 1, 2, 3, 4]
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
-    assert not pset.suggested_fixed
+    assert pset.suggested_fixed == [False] * 5
     assert pset.constrained
     assert pset.width() == [1, 1, 1, 1, 1]
 
@@ -65,7 +65,7 @@ def test_paramset_constrained_custom_factors():
     )
     assert pset.suggested_init == [0, 1, 2, 3, 4]
     assert pset.suggested_bounds == [(-1, 1), (-2, 2), (-3, 3), (-4, 4)]
-    assert not pset.suggested_fixed
+    assert pset.suggested_fixed == [False] * 5
     assert pset.constrained
     assert pset.width() == [1 / 10.0, 1 / 20.0, 1 / 30.0, 1 / 40.0, 1 / 50.0]
 
@@ -83,6 +83,59 @@ def test_paramset_constrained_missiing_factors():
     )
     with pytest.raises(RuntimeError):
         pset.width()
+
+
+def test_vector_fixed_set():
+    pset = paramsets.constrained_by_poisson(
+        name="foo",
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        fixed=False,
+        auxdata=[0, 0, 0, 0, 0],
+        factors=[1, 1, 1, 1, 1],
+    )
+    pset.suggested_fixed = True
+    assert pset.suggested_fixed == [True] * 5
+
+    pset.suggested_fixed = [False, True, False, True, False]
+    assert pset.suggested_fixed == [False, True, False, True, False]
+
+
+def test_bool_compression2():
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        factors=[1, 1, 1, 1, 1],
+        fixed=[False, True, False, True, False],
+        auxdata=[0, 0, 0, 0, 0],
+    )
+    assert pset.factors == [1] * 5
+    with pytest.raises(RuntimeError):
+        print(pset.suggested_fixed_as_bool)
+
+
+def test_bool_compression():
+    pset = paramsets.constrained_by_poisson(
+        name='foo',
+        is_scalar=False,
+        n_parameters=5,
+        inits=[0, 1, 2, 3, 4],
+        bounds=[(-1, 1), (-2, 2), (-3, 3), (-4, 4)],
+        factors=[1, 1, 1, 1, 1],
+        fixed=False,
+        auxdata=[0, 0, 0, 0, 0],
+    )
+
+    compressed = pset.suggested_fixed_as_bool
+
+    assert pset.suggested_fixed == [False] * 5
+    assert not compressed
+    assert pset.factors == [1] * 5
 
 
 def test_scalar_multiparam_failure():

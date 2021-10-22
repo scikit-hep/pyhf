@@ -255,11 +255,15 @@ def test_import_prepHistFactory():
         pyhf.tensorlib.astensor(pdf.config.suggested_init())
     ).tolist() == [120.0, 110.0]
 
-    assert pdf.config.auxdata_order == sorted(
-        ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
-    )
+    assert pdf.config.auxdata_order == [
+        'lumi',
+        'syst2',
+        'syst3',
+        'syst1',
+        'staterror_channel1',
+    ]
 
-    assert data == [122.0, 112.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]

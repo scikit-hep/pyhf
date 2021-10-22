@@ -82,7 +82,8 @@ def inspect(workspace, output_file, measurement):
     model = ws.model()
 
     result['parameters'] = sorted(
-        (k, parset_descr[type(v['paramset'])]) for k, v in model.config.par_map.items()
+        (parset_name, parset_descr[type(parset_spec['paramset'])])
+        for parset_name, parset_spec in model.config.par_map.items()
     )
     result['systematics'] = [
         (
