@@ -102,6 +102,7 @@ class staterror_builder:
                 modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
             fixed = [s == 0 for s in sigmas]
+            sigmas[fixed] = 1.0 # ensures non-Nan constrainnt terem.. but in a future PR we need to remove constraints for these
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
 
