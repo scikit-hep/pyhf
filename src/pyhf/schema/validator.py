@@ -20,15 +20,16 @@ def _is_array_or_tensor(checker, instance):
 def validate(
     spec: dict,
     schema_name: str,
+    *,
     version: Union[str, None] = None,
     allow_tensors: bool = True,
 ):
     """
-    Validate the provided instance, ``spec``, against the schema associated with ``schema_id``.
+    Validate the provided instance, ``spec``, against the schema associated with ``schema_name``.
 
     Args:
         spec (:obj:`object`): An object instance to validate against a schema
-        schema_id (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.utils.load_schema` for more details.
+        schema_name (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.utils.load_schema` for more details.
         version (:obj:`string`): The version of the schema to use. See :func:`pyhf.utils.load_schema` for more details.
         allow_tensors (:obj:`bool`): A flag to enable or disable tensors as part of schema validation. If enabled, tensors in the ``spec`` will be treated like python :obj:`list`. Default: ``True``.
 
