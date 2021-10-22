@@ -1,7 +1,7 @@
 """NumPy Tensor Library Module."""
 import numpy as np
 import logging
-from scipy.special import gammaln
+from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
@@ -349,13 +349,27 @@ class numpy_backend:
         return np.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        return n * np.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
         The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
+
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
 
         Example:
 
@@ -379,7 +393,7 @@ class numpy_backend:
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
+        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than

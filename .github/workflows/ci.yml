@@ -68,6 +68,7 @@ jobs:
         flags: contrib
 
     - name: Test docstring examples with doctest
+      if: matrix.python-version == 3.9
       run: pytest -r sx src/ README.rst
 
     - name: Report doctest coverage with Codecov
