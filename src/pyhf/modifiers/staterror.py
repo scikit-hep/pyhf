@@ -1,6 +1,8 @@
 import logging
 
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
@@ -49,6 +51,8 @@ class staterror_builder:
         self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         for modifier in self.builder_data.values():
             for sample in modifier.values():
                 sample["data"]["mask"] = default_backend.concatenate(
@@ -115,6 +119,7 @@ class staterror_combined:
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
 
+        default_backend = pyhf.default_backend
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
@@ -188,6 +193,7 @@ class staterror_combined:
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.staterror_mask)[1])
         self.staterror_default = tensorlib.ones(tensorlib.shape(self.staterror_mask))
+
 
     def apply(self, pars):
         if not self.param_viewer.index_selection:

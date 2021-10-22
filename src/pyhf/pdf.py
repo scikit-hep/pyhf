@@ -4,7 +4,8 @@ import copy
 import logging
 
 import pyhf.parameters
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
 from pyhf import utils
 from pyhf import events
@@ -73,6 +74,8 @@ class _nominal_builder:
         self.mega_samples[sample]['nom'].append(nom)
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         nominal_rates = default_backend.astensor(
             [
                 default_backend.concatenate(self.mega_samples[sample]['nom'])
@@ -502,6 +505,8 @@ class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
     def __init__(self, config, modifiers, nominal_rates, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.config = config
 
         self._factor_mods = []

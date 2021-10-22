@@ -1,4 +1,4 @@
-from pyhf import default_backend
+import pyhf
 
 __all__ = [
     "constrained_by_normal",
@@ -89,6 +89,7 @@ class constrained_by_poisson(constrained_paramset):
         self.factors = factors
 
     def width(self):
+        default_backend = pyhf.default_backend
         if not self.factors:
             raise RuntimeError
         return default_backend.sqrt(

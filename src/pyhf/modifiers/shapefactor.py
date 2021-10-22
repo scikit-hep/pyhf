@@ -1,6 +1,8 @@
 import logging
 
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
@@ -124,6 +126,7 @@ class shapefactor_combined:
         and at that point can be used to compute the effect of
         :class:`~pyhf.modifiers.shapefactor`.
         """
+        default_backend = pyhf.default_backend
 
         self.batch_size = batch_size
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]

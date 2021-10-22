@@ -69,9 +69,9 @@ def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
     """
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend('numpy', default=True)
     yield reset_backend
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend('numpy', default=True)
 
 
 @pytest.fixture(

@@ -1,6 +1,8 @@
 import logging
 
-from pyhf import get_backend, default_backend, events
+import pyhf
+from pyhf import events
+from pyhf.tensor.manager import get_backend
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
@@ -66,6 +68,8 @@ class shapesys_builder:
             )
 
     def finalize(self):
+        default_backend = pyhf.default_backend
+
         for modifier in self.builder_data.values():
             for sample in modifier.values():
                 sample["data"]["mask"] = default_backend.concatenate(
@@ -85,6 +89,7 @@ class shapesys_combined:
     op_code = 'multiplication'
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
+        default_backend = pyhf.default_backend
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
@@ -129,6 +134,8 @@ class shapesys_combined:
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _reindex_access_field(self, pdfconfig):
+        default_backend = pyhf.default_backend
+
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
