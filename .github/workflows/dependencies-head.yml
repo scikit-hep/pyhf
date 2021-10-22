@@ -7,6 +7,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  release-candidates:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip --no-cache-dir --quiet install --upgrade --pre .[test]
+        python -m pip list
+
+    - name: Test with pytest
+      run: |
+        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
   scipy:
 
     runs-on: ${{ matrix.os }}
