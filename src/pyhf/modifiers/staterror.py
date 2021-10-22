@@ -101,7 +101,6 @@ class staterror_builder:
                     else:
                         assert (mask_this_sample == masks[modname]).all()
 
-            # masks[modname] = (nomsall > 0) & masks[modname]
             for modifier_data in self.builder_data[modname].values():
                 modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
