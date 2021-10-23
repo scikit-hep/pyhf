@@ -18,5 +18,5 @@ torch==1.10.0
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
 --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
-jax==0.2.8
-jaxlib==0.1.58
+jax==0.2.10
+jaxlib==0.1.60  # jax v0.2.10 requires jaxlib>=0.1.60
