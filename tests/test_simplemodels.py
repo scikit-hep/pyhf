@@ -1,5 +1,3 @@
-import warnings
-
 import pytest
 import pyhf
 
@@ -76,17 +74,3 @@ def test_uncorrelated_background_default_backend(default_backend):
         'uncorr_bkguncrt[1]',
     ]
     assert model.config.suggested_init() == [1.0, 1.0, 1.0]
-
-
-# TODO: Remove when pyhf.simplemodels.hepdata_like is removed in pyhf v0.7.0
-def test_deprecated_apis():
-    with warnings.catch_warnings(record=True) as _warning:
-        # Cause all warnings to always be triggered
-        warnings.simplefilter("always")
-        pyhf.simplemodels.hepdata_like([12.0, 11.0], [50.0, 52.0], [3.0, 7.0])
-        assert len(_warning) == 1
-        assert issubclass(_warning[-1].category, DeprecationWarning)
-        assert (
-            "pyhf.simplemodels.hepdata_like is deprecated in favor of pyhf.simplemodels.uncorrelated_background"
-            in str(_warning[-1].message)
-        )
