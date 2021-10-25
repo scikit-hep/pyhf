@@ -151,20 +151,3 @@ def _deprecated_api_warning(
         DeprecationWarning,
         stacklevel=3,  # Raise to user level
     )
-
-
-def hepdata_like(signal_data, bkg_data, bkg_uncerts, batch_size=None):
-    """
-    .. note:: Deprecated API: Use :func:`~pyhf.simplemodels.uncorrelated_background`
-     instead.
-
-    .. warning:: :func:`~pyhf.simplemodels.hepdata_like` will be removed in
-     ``pyhf`` ``v0.7.0``.
-    """
-    _deprecated_api_warning(
-        "pyhf.simplemodels.hepdata_like",
-        "pyhf.simplemodels.uncorrelated_background",
-        "0.6.2",
-        "0.7.0",
-    )
-    return uncorrelated_background(signal_data, bkg_data, bkg_uncerts, batch_size)
