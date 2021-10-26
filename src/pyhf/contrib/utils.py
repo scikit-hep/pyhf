@@ -53,7 +53,6 @@ try:
                     + "To download an archive from this host use the --force option."
                 )
 
-        # _headers={"Accept": "application/x-tar"}
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar"}
         ) as response:
