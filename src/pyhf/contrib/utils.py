@@ -53,6 +53,12 @@ try:
                     + "To download an archive from this host use the --force option."
                 )
 
+        # c.f. https://github.com/scikit-hep/pyhf/issues/1491
+        # > Use content negotiation at the landing page for the resource that
+        # > the DOI resolves to. DataCite content negotiation is forwarding all
+        # > requests with unknown content types to the URL registered in the
+        # > handle system.
+        # c.f. https://blog.datacite.org/changes-to-doi-content-negotiation/
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar"}
         ) as response:
