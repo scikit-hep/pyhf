@@ -59,6 +59,9 @@ try:
         # > requests with unknown content types to the URL registered in the
         # > handle system.
         # c.f. https://blog.datacite.org/changes-to-doi-content-negotiation/
+        # The HEPData landing page for the resource file can check if the Accept
+        # request HTTP header matches the content type of the resource file and
+        # return the content directly if so.
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar"}
         ) as response:
