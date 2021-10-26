@@ -49,6 +49,6 @@ Updating list of HEPData entries for publications using ``HistFactory`` JSON sta
 
 .. note::
 
-   ATLAS maintains a public list of all published statistical models on the
-   `supersymmetry searches public results webpage
+   ATLAS maintains a public list of all published statistical models for supersymmetry
+   searches on the `supersymmetry searches public results webpage
    <https://twiki.cern.ch/twiki/bin/view/AtlasPublic/SupersymmetryPublicResults>`__.
