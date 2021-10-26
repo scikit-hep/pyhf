@@ -53,7 +53,10 @@ try:
                     + "To download an archive from this host use the --force option."
                 )
 
-        with requests.get(archive_url) as response:
+        # _headers={"Accept": "application/x-tar"}
+        with requests.get(
+            archive_url, headers={"Accept": "application/x-tar"}
+        ) as response:
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
