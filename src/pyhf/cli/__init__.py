@@ -1,5 +1,6 @@
 """The pyhf command line interface."""
-from pyhf.cli.cli import pyhf as cli
+# from pyhf.cli.cli import pyhf as cli
+from pyhf.cli.cli import typer_click_object as cli
 from pyhf.cli.rootio import cli as rootio
 from pyhf.cli.spec import cli as spec
 from pyhf.cli.infer import cli as infer

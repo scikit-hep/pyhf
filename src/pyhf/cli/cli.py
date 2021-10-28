@@ -2,6 +2,7 @@
 import logging
 
 import click
+import typer
 
 from pyhf import __version__
 from pyhf.cli import rootio, spec, infer, patchset, complete
@@ -10,6 +11,23 @@ from pyhf import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
+
+app = typer.Typer()
+
+
+@app.command()
+def top():
+    """
+    Top level command, form Typer
+    """
+    typer.echo("The Typer app is at the top level")
+
+
+@app.callback()
+def callback():
+    """
+    Typer app, including Click subapp
+    """
 
 
 def _print_citation(ctx, param, value):
@@ -56,3 +74,7 @@ pyhf.add_command(patchset.cli)
 pyhf.add_command(complete.cli)
 
 pyhf.add_command(contrib.cli)
+
+typer_click_object = typer.main.get_command(app)
+
+typer_click_object.add_command(pyhf, "pyhf")
