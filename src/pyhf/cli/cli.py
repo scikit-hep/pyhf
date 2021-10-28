@@ -30,11 +30,28 @@ def _version_callback(value: bool):
         raise typer.Exit()
 
 
+def _print_citation(ctx, value):
+    if not value or ctx.resilient_parsing:
+        return
+    typer.echo(utils.citation())
+    raise typer.Exit()
+
+
 @app.callback()
 def callback(
     version: Optional[bool] = typer.Option(
         None, "--version", callback=_version_callback, is_eager=True
-    )
+    ),
+    citation: Optional[bool] = typer.Option(
+        None,
+        "--cite",
+        "--citation",
+        help="Print the BibTeX citation for this software.",
+        callback=_print_citation,
+        is_eager=True,
+        is_flag=True,  # Needed?
+        expose_value=False,  # Needed?
+    ),
 ):
     """
     Typer app, including Click subapp
@@ -43,24 +60,7 @@ def callback(
     """
 
 
-def _print_citation(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo(utils.citation())
-    ctx.exit()
-
-
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
-@click.option(
-    "--cite",
-    "--citation",
-    help="Print the bibtex citation for this software",
-    default=False,
-    is_flag=True,
-    callback=_print_citation,
-    expose_value=False,
-    is_eager=True,
-)
 def pyhf():
     """Top-level CLI entrypoint."""
 
