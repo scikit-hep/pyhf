@@ -1,6 +1,6 @@
 # core
 scipy==1.1.0
-click==7.0
+typer==0.0.2
 tqdm==4.56.0
 jsonschema==3.0.0
 jsonpatch==1.15
