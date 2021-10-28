@@ -53,28 +53,28 @@ def pyhf():
     """Top-level CLI entrypoint."""
 
 
-# pyhf.add_command(rootio.cli)
-pyhf.add_command(rootio.json2xml)
-pyhf.add_command(rootio.xml2json)
-
-# pyhf.add_command(spec.cli)
-pyhf.add_command(spec.inspect)
-pyhf.add_command(spec.prune)
-pyhf.add_command(spec.rename)
-pyhf.add_command(spec.combine)
-pyhf.add_command(spec.digest)
-pyhf.add_command(spec.sort)
-
-# pyhf.add_command(infer.cli)
-pyhf.add_command(infer.fit)
-pyhf.add_command(infer.cls)
-
-pyhf.add_command(patchset.cli)
-
-pyhf.add_command(complete.cli)
-
-pyhf.add_command(contrib.cli)
-
 typer_click_object = typer.main.get_command(app)
 
-typer_click_object.add_command(pyhf, "pyhf")
+typer_click_object.add_command(pyhf)
+
+# typer_click_object.add_command(rootio.cli)
+typer_click_object.add_command(rootio.json2xml)
+typer_click_object.add_command(rootio.xml2json)
+
+# typer_click_object.add_command(spec.cli)
+typer_click_object.add_command(spec.inspect)
+typer_click_object.add_command(spec.prune)
+typer_click_object.add_command(spec.rename)
+typer_click_object.add_command(spec.combine)
+typer_click_object.add_command(spec.digest)
+typer_click_object.add_command(spec.sort)
+
+# typer_click_object.add_command(infer.cli)
+typer_click_object.add_command(infer.fit)
+typer_click_object.add_command(infer.cls)
+
+typer_click_object.add_command(patchset.cli)
+
+typer_click_object.add_command(complete.cli)
+
+typer_click_object.add_command(contrib.cli)
