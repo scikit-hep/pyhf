@@ -1,5 +1,6 @@
 """The pyhf Command Line Interface."""
 import logging
+from typing import Optional
 
 import click
 import typer
@@ -23,10 +24,22 @@ def top():
     typer.echo("The Typer app is at the top level")
 
 
+def _version_callback(value: bool):
+    if value:
+        typer.echo(f"pyhf, v{__version__}")
+        raise typer.Exit()
+
+
 @app.callback()
-def callback():
+def callback(
+    version: Optional[bool] = typer.Option(
+        None, "--version", callback=_version_callback, is_eager=True
+    )
+):
     """
     Typer app, including Click subapp
+
+    Top-level CLI entrypoint.
     """
 
 
@@ -38,7 +51,6 @@ def _print_citation(ctx, param, value):
 
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
-@click.version_option(version=__version__)
 @click.option(
     "--cite",
     "--citation",
