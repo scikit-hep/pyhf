@@ -6,7 +6,7 @@ import click
 import typer
 
 from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf.cli import rootio, spec, infer, patchset
 from pyhf.contrib import cli as contrib
 from pyhf import utils
 
@@ -87,7 +87,5 @@ typer_click_object.add_command(infer.fit)
 typer_click_object.add_command(infer.cls)
 
 typer_click_object.add_command(patchset.cli)
-
-typer_click_object.add_command(complete.cli)
 
 typer_click_object.add_command(contrib.cli)
