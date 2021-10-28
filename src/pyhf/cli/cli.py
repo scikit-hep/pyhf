@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 app = typer.Typer()
 
 
+# REMOVE THIS. CURRENTLY IN AS EXAMPLE
 @app.command()
 def top():
     """
