@@ -10,6 +10,7 @@ __all__ = ["gaussian_constraint_combined", "poisson_constraint_combined"]
 def __dir__():
     return __all__
 
+
 class gaussian_constraint_combined:
     def __init__(self, pdfconfig, batch_size=None):
         default_backend = pyhf.default_backend
@@ -44,9 +45,7 @@ class gaussian_constraint_combined:
             if not parset.pdf_type == 'normal':
                 continue
 
-            normal_constraint_data.append(
-                default_backend.astensor(thisauxdata)
-            )
+            normal_constraint_data.append(default_backend.astensor(thisauxdata))
 
             # many constraints are defined on a unit gaussian
             # but we reserved the possibility that a paramset
@@ -54,9 +53,7 @@ class gaussian_constraint_combined:
             # by the paramset associated to staterror modifiers.
             # Such parsets define a 'sigmas' attribute
             try:
-                normal_constraint_sigmas.append(
-                    default_backend.astensor(parset.sigmas)
-                )
+                normal_constraint_sigmas.append(default_backend.astensor(parset.sigmas))
             except AttributeError:
                 normal_constraint_sigmas.append(
                     default_backend.astensor([1.0] * len(thisauxdata))
