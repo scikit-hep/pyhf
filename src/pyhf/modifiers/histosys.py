@@ -39,8 +39,8 @@ class histosys_builder:
         return {
             'lo_data': default_backend.astensor(lo_data),
             'hi_data': default_backend.astensor(hi_data),
-            'mask': default_backend.astensor(mask, dtype = 'bool'),
-            'nom_data': default_backend.astensor(nom)
+            'mask': default_backend.astensor(mask, dtype='bool'),
+            'nom_data': default_backend.astensor(nom),
         }
 
     def append(self, key, channel, sample, thismod, defined_samp):
