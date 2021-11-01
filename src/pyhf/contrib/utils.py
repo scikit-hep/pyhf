@@ -53,7 +53,18 @@ try:
                     + "To download an archive from this host use the --force option."
                 )
 
-        with requests.get(archive_url) as response:
+        # c.f. https://github.com/scikit-hep/pyhf/issues/1491
+        # > Use content negotiation at the landing page for the resource that
+        # > the DOI resolves to. DataCite content negotiation is forwarding all
+        # > requests with unknown content types to the URL registered in the
+        # > handle system.
+        # c.f. https://blog.datacite.org/changes-to-doi-content-negotiation/
+        # The HEPData landing page for the resource file can check if the Accept
+        # request HTTP header matches the content type of the resource file and
+        # return the content directly if so.
+        with requests.get(
+            archive_url, headers={"Accept": "application/x-tar"}
+        ) as response:
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
