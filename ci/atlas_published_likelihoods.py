@@ -1,7 +1,11 @@
 from selenium import webdriver
+
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 url = 'https://twiki.cern.ch/twiki/bin/view/AtlasPublic'
+
+service = Service('/usr/bin/chromedriver')
 
 options = Options()
 options.add_argument("--headless")
@@ -11,9 +15,7 @@ options.add_argument('--disable-dev-shm-usage')
 options.add_argument('disable-infobars')
 options.add_argument("--disable-extensions")
 
-with webdriver.Chrome(
-    options=options, executable_path='/usr/bin/chromedriver'
-) as driver:
+with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
     driver.execute_script("addKeyword('Analysischaracteristics_Likelihood@available');")
     rows = driver.find_elements('css selector', '#paperListTbody tr')
