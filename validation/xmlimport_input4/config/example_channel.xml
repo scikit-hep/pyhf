@@ -1,0 +1,22 @@
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>
+
+  <Channel Name="channel1" InputFile="./data/example.root" >
+    <Data HistoName="data" HistoPath="" />
+
+    <!-- Set the StatError type to Poisson.  Can also be Gaussian -->
+    <StatErrorConfig RelErrorThreshold="0.05" ConstraintType="Poisson" />
+
+    <Sample Name="signal" HistoPath="/signal" HistoName="hsignal_channel1_obs_cuts">
+      <OverallSys Name="syst1" High="1.05" Low="0.95"/>
+      <NormFactor Name="SigXsecOverSM" Val="1" Low="0." High="3."  />
+    </Sample>
+    <Sample Name="background1" HistoPath="/background" NormalizeByTheory="True" HistoName="hbackground1_obs_cuts">
+      <StatError Activate="True" HistoName="hbackground1_statUncert" HistoPath="/background" />
+      <OverallSys Name="syst2" Low="0.95" High="1.05"/>
+    </Sample>
+    <Sample Name="background2" HistoPath="/background" NormalizeByTheory="True" HistoName="hbackground2_obs_cuts">
+      <StatError Activate="True" /> <!-- Use Default Histogram Errors as input to StatError -->
+      <OverallSys Name="syst3" Low="0.95" High="1.05"/>
+      <!-- <HistoSys Name="syst4" HistoNameHigh="HighHistForSyst4" HistoNameLow="LowHistForSyst4"/>-->
+    </Sample>
+  </Channel>

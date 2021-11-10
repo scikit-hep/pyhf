@@ -59,19 +59,21 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     fullpath = str(Path(rootdir).joinpath(filename))
     if fullpath not in filecache:
         f = uproot.open(fullpath)
-        filecache[fullpath] = f
+        keys = set(f.keys(cycle=False))
+        filecache[fullpath] = (f, keys)
     else:
-        f = filecache[fullpath]
-    try:
+        f, keys = filecache[fullpath]
+
+    fullname = "/".join([path, name])
+
+    if name in keys:
         hist = f[name]
-    except (KeyError, uproot.deserialization.DeserializationError):
-        fullname = "/".join([path, name])
-        try:
-            hist = f[fullname]
-        except KeyError:
-            raise KeyError(
-                f'Both {name} and {fullname} were tried and not found in {fullpath}'
-            )
+    elif fullname in keys:
+        hist = f[fullname]
+    else:
+        raise KeyError(
+            f'Both {name} and {fullname} were tried and not found in {fullpath}'
+        )
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
