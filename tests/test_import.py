@@ -201,10 +201,22 @@ def test_import_measurement_gamma_bins(const):
         pyhf.readxml.process_measurements(toplvl)
 
 
-def test_import_prepHistFactory():
-    parsed_xml = pyhf.readxml.parse(
-        'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
-    )
+@pytest.mark.parametrize(
+    "configfile,rootdir",
+    [
+        (
+            'validation/xmlimport_input/config/example.xml',
+            'validation/xmlimport_input/',
+        ),
+        (
+            'validation/xmlimport_input4/config/example.xml',
+            'validation/xmlimport_input4/',
+        ),
+    ],
+    ids=['xmlimport_input', 'xmlimport_input_histoPath'],
+)
+def test_import_prepHistFactory(configfile, rootdir):
+    parsed_xml = pyhf.readxml.parse(configfile, rootdir)
 
     # build the spec, strictly checks properties included
     spec = {
