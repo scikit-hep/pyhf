@@ -261,6 +261,44 @@ class numpy_backend:
     def exp(self, tensor_in):
         return np.exp(tensor_in)
 
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            3.5
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            array([7., 2.])
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
+
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
+
+                - ``'lower'``: ``i``.
+
+                - ``'higher'``: ``j``.
+
+                - ``'midpoint'``: ``(i + j) / 2``.
+
+                - ``'nearest'``: ``i`` or ``j``, whichever is nearest.
+
+        Returns:
+            NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
+
     def stack(self, sequence, axis=0):
         return np.stack(sequence, axis=axis)
 
