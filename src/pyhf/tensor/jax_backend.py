@@ -287,7 +287,7 @@ class jax_backend:
             >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
             >>> pyhf.tensorlib.percentile(a, 50)
-            DeviceArray(3.5, dtype=float64)
+            DeviceArray(3.499999..., dtype=float64)
             >>> pyhf.tensorlib.percentile(a, 50, axis=1)
             DeviceArray([7., 2.], dtype=float64)
 
