@@ -79,6 +79,12 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0
     assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
+    assert tb.tolist(tb.transpose(tb.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))) == [
+        [1.0, 4.0],
+        [2.0, 5.0],
+        [3.0, 6.0],
+    ]
+
 
 def test_tensor_where_scalar(backend):
     tb = pyhf.tensorlib
