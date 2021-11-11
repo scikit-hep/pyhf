@@ -686,3 +686,31 @@ class tensorflow_backend:
 
         """
         return tensor_in.numpy()
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> print(tensor)
+            tf.Tensor(
+            [[1. 2. 3.]
+             [4. 5. 6.]], shape=(2, 3), dtype=float64)
+            >>> tensor_T = pyhf.tensorlib.transpose(tensor)
+            >>> print(tensor_T)
+            tf.Tensor(
+            [[1. 4.]
+             [2. 5.]
+             [3. 6.]], shape=(3, 2), dtype=float64)
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            TensorFlow Tensor: The transpose of the input tensor.
+
+        """
+        return tf.transpose(tensor_in)
