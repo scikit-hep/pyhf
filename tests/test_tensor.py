@@ -374,8 +374,10 @@ def test_percentile(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
     assert tb.tolist(tb.percentile(a, 0)) == 1
-    assert tb.tolist(tb.percentile(a, 50)) == 3.5
-    assert tb.tolist(tb.percentile(a, 100)) == 10
+
+    # FIXME: (Only) JAX has floating point issues here
+    assert pytest.approx(tb.tolist(tb.percentile(a, 50)), rel=1e-6) == 3.5
+    assert pytest.approx(tb.tolist(tb.percentile(a, 100)), rel=1e-6) == 10
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
