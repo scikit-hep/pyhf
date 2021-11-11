@@ -925,11 +925,26 @@ class ToyCalculator:
         normal_percentiles = tb.astensor(
             [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
         )
+
+        # TODO: Add transpose to tensorlib
+        # pvalues_exp_band = tb.transpose(
+        #     tb.percentile(
+        #         pvalues,
+        #         normal_percentiles,
+        #         axis=0,
+        #     )
+        # )
         pvalues_exp_band = tb.percentile(
             pvalues,
             normal_percentiles,
             axis=0,
-        ).T.tolist()
+        )
+        if tb.name == "tensorflow":
+            import tensorflow as tf
+
+            pvalues_exp_band = tf.transpose(pvalues_exp_band)
+        else:
+            pvalues_exp_band = pvalues_exp_band.T
         return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
     def teststatistic(self, poi_test):
