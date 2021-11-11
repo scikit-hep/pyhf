@@ -403,7 +403,7 @@ def test_percentile_jax(backend):
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
     assert tb.tolist(tb.percentile(a, 0)) == 1
 
-    # FIXME: (Only) JAX has floating point issues here
+    # FIXME: JAX has floating point issues with "linear" interpolation method
     assert pytest.approx(tb.tolist(tb.percentile(a, 50)), rel=1e-6) == 3.5
     assert pytest.approx(tb.tolist(tb.percentile(a, 100)), rel=1e-6) == 10
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
@@ -414,7 +414,7 @@ def test_percentile_interpolation_jax(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
-    # FIXME: (Only) JAX has floating point issues here
+    # FIXME: JAX has floating point issues with "linear" interpolation method
     assert (
         pytest.approx(tb.tolist(tb.percentile(a, 50, interpolation="linear")), rel=1e-6)
         == 3.5
