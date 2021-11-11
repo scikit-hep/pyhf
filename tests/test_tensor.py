@@ -383,6 +383,7 @@ def test_percentile(backend):
 
 # FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
 # c.f. https://github.com/pytorch/pytorch/pull/59397
+# c.f. https://github.com/scikit-hep/pyhf/issues/1693
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
 @pytest.mark.skip_jax
@@ -404,7 +405,7 @@ def test_percentile_jax(backend):
     assert tb.tolist(tb.percentile(a, 0)) == 1
 
     # TODO: Monitor future JAX releases for changes to percentile dtype promotion
-    # c.f. https://github.com/google/jax/issues/8513
+    # c.f. https://github.com/scikit-hep/pyhf/issues/1693
     assert tb.tolist(tb.percentile(a, np.float64(50))) == 3.5
     assert tb.tolist(tb.percentile(a, np.float64(100))) == 10
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
@@ -416,7 +417,7 @@ def test_percentile_interpolation_jax(backend):
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
     # TODO: Monitor future JAX releases for changes to percentile dtype promotion
-    # c.f. https://github.com/google/jax/issues/8513
+    # c.f. https://github.com/scikit-hep/pyhf/issues/1693
     assert tb.tolist(tb.percentile(a, np.float64(50), interpolation="linear")) == 3.5
     assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
     assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
