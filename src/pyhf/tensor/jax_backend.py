@@ -284,10 +284,11 @@ class jax_backend:
         Example:
 
             >>> import pyhf
+            >>> import jax.numpy as jnp
             >>> pyhf.set_backend("jax")
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
-            >>> pyhf.tensorlib.percentile(a, 50)
-            DeviceArray(3.499999..., dtype=float64)
+            >>> pyhf.tensorlib.percentile(a, jnp.float64(50))
+            DeviceArray(3.5, dtype=float64)
             >>> pyhf.tensorlib.percentile(a, 50, axis=1)
             DeviceArray([7., 2.], dtype=float64)
 
@@ -313,6 +314,8 @@ class jax_backend:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
+        # TODO: Monitor future JAX releases for percentile dtype changes
+        # c.f. https://github.com/google/jax/issues/8513
         return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
     def stack(self, sequence, axis=0):
