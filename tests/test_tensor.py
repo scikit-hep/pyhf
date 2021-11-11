@@ -381,7 +381,10 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-# PyTorch doesn't yet support interpolation schemes other than "linear"
+# FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
+# c.f. https://github.com/pytorch/pytorch/pull/59397
+@pytest.mark.skip_pytorch
+@pytest.mark.skip_pytorch64
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
