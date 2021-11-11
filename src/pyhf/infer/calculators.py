@@ -913,9 +913,7 @@ class ToyCalculator:
         pvalues = tb.astensor(
             [
                 self.pvalues(
-                    test_stat,
-                    sig_plus_bkg_distribution,
-                    bkg_only_distribution,
+                    test_stat, sig_plus_bkg_distribution, bkg_only_distribution
                 )
                 for test_stat in bkg_only_distribution.samples
             ]
