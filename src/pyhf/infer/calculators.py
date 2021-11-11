@@ -665,10 +665,6 @@ class EmpiricalDistribution:
             Float: The expected value of the test statistic.
         """
         tensorlib, _ = get_backend()
-        # import numpy as np
-
-        # TODO: tensorlib.percentile function
-        # c.f. https://github.com/scikit-hep/pyhf/pull/817
         return tensorlib.percentile(
             self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
         )
@@ -922,9 +918,6 @@ class ToyCalculator:
             )
             for test_stat in bkg_only_distribution.samples
         ]
-        # TODO: Add percentile to tensorlib
-        # c.f. Issue #815, PR #817
-        # import numpy as np
 
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
         normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
