@@ -927,11 +927,7 @@ class ToyCalculator:
         )
 
         pvalues_exp_band = tb.transpose(
-            tb.percentile(
-                pvalues,
-                normal_percentiles,
-                axis=0,
-            )
+            tb.percentile(pvalues, normal_percentiles, axis=0)
         )
         return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
