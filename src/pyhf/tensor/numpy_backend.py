@@ -570,3 +570,28 @@ class numpy_backend:
 
         """
         return tensor_in
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> pyhf.tensorlib.transpose(tensor)
+            array([[1., 4.],
+                   [2., 5.],
+                   [3., 6.]])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The transpose of the input tensor.
+
+        """
+        return tensor_in.transpose()
