@@ -910,17 +910,21 @@ class ToyCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         tb, _ = get_backend()
-        pvalues = [
-            self.pvalues(
-                test_stat,
-                sig_plus_bkg_distribution,
-                bkg_only_distribution,
-            )
-            for test_stat in bkg_only_distribution.samples
-        ]
+        pvalues = tb.astensor(
+            [
+                self.pvalues(
+                    test_stat,
+                    sig_plus_bkg_distribution,
+                    bkg_only_distribution,
+                )
+                for test_stat in bkg_only_distribution.samples
+            ]
+        )
 
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
-        normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
+        normal_percentiles = tb.astensor(
+            [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
+        )
         pvalues_exp_band = tb.percentile(
             pvalues,
             normal_percentiles,
