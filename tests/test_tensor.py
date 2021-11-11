@@ -370,7 +370,35 @@ def test_boolean_mask(backend):
     )
 
 
+@pytest.mark.skip_jax
 def test_percentile(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+    assert tb.tolist(tb.percentile(a, 0)) == 1
+
+    assert tb.tolist(tb.percentile(a, 50)) == 3.5
+    assert tb.tolist(tb.percentile(a, 100)) == 10
+    assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
+
+
+# FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
+# c.f. https://github.com/pytorch/pytorch/pull/59397
+@pytest.mark.skip_pytorch
+@pytest.mark.skip_pytorch64
+@pytest.mark.skip_jax
+def test_percentile_interpolation(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+
+    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
+
+
+@pytest.mark.only_jax
+def test_percentile_jax(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
     assert tb.tolist(tb.percentile(a, 0)) == 1
@@ -381,15 +409,16 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-# FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
-# c.f. https://github.com/pytorch/pytorch/pull/59397
-@pytest.mark.skip_pytorch
-@pytest.mark.skip_pytorch64
-def test_percentile_interpolation(backend):
+@pytest.mark.only_jax
+def test_percentile_interpolation_jax(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
-    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+    # FIXME: (Only) JAX has floating point issues here
+    assert (
+        pytest.approx(tb.tolist(tb.percentile(a, 50, interpolation="linear")), rel=1e-6)
+        == 3.5
+    )
     assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
     assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
     assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
