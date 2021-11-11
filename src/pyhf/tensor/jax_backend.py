@@ -314,7 +314,7 @@ class jax_backend:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        # TODO: Monitor future JAX releases for percentile dtype changes
+        # TODO: Monitor future JAX releases for changes to percentile dtype promotion
         # c.f. https://github.com/google/jax/issues/8513
         return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
