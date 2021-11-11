@@ -485,11 +485,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         corresponding `observation`.
 
         Args:
-            prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
-            prune_modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
-            prune_samples: A :obj:`str` or a :obj:`list` of samples to prune.
-            prune_channels: A :obj:`str` or a :obj:`list` of channels to prune.
-            prune_measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            prune_modifiers: A :obj:`list` of modifiers to prune.
+            prune_modifier_types: A :obj:`list` of modifier types to prune.
+            prune_samples: A :obj:`list` of samples to prune.
+            prune_channels: A :obj:`list` of channels to prune.
+            prune_measurements: A :obj:`list` of measurements to prune.
             rename_modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
             rename_samples: A :obj:`dict` mapping old sample name to new sample name.
             rename_channels: A :obj:`dict` mapping old channel name to new channel name.
@@ -622,11 +622,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned workspace must also be a valid workspace.
 
         Args:
-            modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
-            modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
-            samples: A :obj:`str` or a :obj:`list` of samples to prune.
-            channels: A :obj:`str` or a :obj:`list` of channels to prune.
-            measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            modifiers: A :obj:`list` of modifiers to prune.
+            modifier_types: A :obj:`list` of modifier types to prune.
+            samples: A :obj:`list` of samples to prune.
+            channels: A :obj:`list` of channels to prune.
+            measurements: A :obj:`list` of measurements to prune.
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
