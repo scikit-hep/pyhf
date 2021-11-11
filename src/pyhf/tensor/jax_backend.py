@@ -567,7 +567,7 @@ class jax_backend:
 
     def to_numpy(self, tensor_in):
         """
-        Convert the TensorFlow tensor to a :class:`numpy.ndarray`.
+        Convert the JAX tensor to a :class:`numpy.ndarray`.
 
         Example:
             >>> import pyhf
@@ -591,3 +591,28 @@ class jax_backend:
 
         """
         return np.asarray(tensor_in, dtype=tensor_in.dtype)
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> pyhf.tensorlib.transpose(tensor)
+            DeviceArray([[1., 4.],
+                         [2., 5.],
+                         [3., 6.]], dtype=float64)
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            JAX ndarray: The transpose of the input tensor.
+
+        """
+        return tensor_in.transpose()
