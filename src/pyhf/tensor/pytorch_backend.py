@@ -300,20 +300,21 @@ class pytorch_backend:
 
         Args:
             tensor_in (`tensor`): The tensor containing the data
-            q (`float` or `tensor`): The :math:`q`-th percentile to compute
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            interpolation (`str`): The interpolation method to use when the desired
-                percentile lies between two data points ``i < j``:
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
 
-                - \\'linear\\': ``i + (j - i) * fraction``, where ``fraction`` is the fractional part of the index surrounded by ``i`` and ``j``
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
 
-                - \\'lower\\': Not yet implemented in PyTorch
+                - ``'lower'``: Not yet implemented in PyTorch.
 
-                - \\'higher\\': Not yet implemented in PyTorch
+                - ``'higher'``: Not yet implemented in PyTorch.
 
-                - \\'midpoint\\': Not yet implemented in PyTorch
+                - ``'midpoint'``: Not yet implemented in PyTorch.
 
-                - \\'nearest\\': Not yet implemented in PyTorch
+                - ``'nearest'``: Not yet implemented in PyTorch.
 
         Returns:
             PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.

@@ -277,20 +277,21 @@ class numpy_backend:
 
         Args:
             tensor_in (`tensor`): The tensor containing the data
-            q (`float` or `tensor`): The :math:`q`-th percentile to compute
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            interpolation (`str`): The interpolation method to use when the desired
-                percentile lies between two data points ``i < j``:
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
 
-                - \\'linear\\': ``i + (j - i) * fraction``, where ``fraction`` is the fractional part of the index surrounded by ``i`` and ``j``
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
 
-                - \\'lower\\': ``i``
+                - ``'lower'``: ``i``.
 
-                - \\'higher\\': ``j``
+                - ``'higher'``: ``j``.
 
-                - \\'midpoint\\': ``(i + j) / 2``
+                - ``'midpoint'``: ``(i + j) / 2``.
 
-                - \\'nearest\\': ``i`` or ``j``, whichever is nearest
+                - ``'nearest'``: ``i`` or ``j``, whichever is nearest.
 
         Returns:
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
