@@ -314,10 +314,10 @@ class tensorflow_backend:
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
             >>> t = pyhf.tensorlib.percentile(a, 50)
             >>> print(t)
-            tf.Tensor(3.5, shape=(), dtype=float32)
+            tf.Tensor(3.5, shape=(), dtype=float64)
             >>> t = pyhf.tensorlib.percentile(a, 50, axis=1)
             >>> print(t)
-            tf.Tensor([7. 2.], shape=(2,), dtype=float32)
+            tf.Tensor([7. 2.], shape=(2,), dtype=float64)
 
         Args:
             tensor_in (`tensor`): The tensor containing the data
