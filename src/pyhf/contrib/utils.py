@@ -65,6 +65,12 @@ try:
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar"}
         ) as response:
+            if response.status_code != 200:
+                raise exceptions.InvalidArchive(
+                    f"{archive_url} gives a response code of {response.status_code}.\n"
+                    + "There is either something temporarily wrong with the archive host"
+                    + f" or {archive_url} is an invalid URL."
+                )
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
