@@ -71,6 +71,11 @@ try:
                     + "There is either something temporarily wrong with the archive host"
                     + f" or {archive_url} is an invalid URL."
                 )
+            if not tarfile.is_tarfile(BytesIO(response.content)):
+                raise exceptions.InvalidArchive(
+                    f"The archive downloaded from {archive_url} is not a tarfile"
+                    + " and so can not be opened as one."
+                )
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
