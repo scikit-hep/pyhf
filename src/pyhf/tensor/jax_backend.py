@@ -179,8 +179,8 @@ class jax_backend:
 
     def tolist(self, tensor_in):
         try:
-            return np.asarray(tensor_in).tolist()
-        except AttributeError:
+            return jnp.asarray(tensor_in).tolist()
+        except TypeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
