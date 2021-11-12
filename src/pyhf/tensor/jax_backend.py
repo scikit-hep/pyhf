@@ -180,7 +180,7 @@ class jax_backend:
     def tolist(self, tensor_in):
         try:
             return jnp.asarray(tensor_in).tolist()
-        except AttributeError:
+        except TypeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
