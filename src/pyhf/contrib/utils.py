@@ -90,6 +90,7 @@ try:
                     archive.write(response.content)
             else:
                 if _format == "tar":
+                    # Use transparent compression to allow for .tar or .tar.gz
                     with tarfile.open(
                         mode="r:*", fileobj=BytesIO(response.content)
                     ) as archive:
