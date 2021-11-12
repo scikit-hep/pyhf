@@ -87,7 +87,6 @@ try:
                         + " or a zipfile and so can not be opened as one."
                     )
                 _format = "zip"
-            print(_format)
 
             if compress:
                 with open(output_directory, "wb") as archive:
