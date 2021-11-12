@@ -6,6 +6,7 @@ import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
 from jax.scipy.stats import norm
+import numpy as np
 import scipy.stats as osp_stats
 import logging
 
