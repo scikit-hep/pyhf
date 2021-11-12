@@ -1,9 +1,11 @@
 """Helper utilities for common tasks."""
 
-from urllib.parse import urlparse
-import tarfile
-from io import BytesIO
 import logging
+import tarfile
+import zipfile
+from io import BytesIO
+from urllib.parse import urlparse
+
 from pyhf import exceptions
 
 log = logging.getLogger(__name__)
@@ -71,19 +73,40 @@ try:
                     + "There is either something temporarily wrong with the archive host"
                     + f" or {archive_url} is an invalid URL."
                 )
+
+            _format = "tar"
             if not tarfile.is_tarfile(BytesIO(response.content)):
-                raise exceptions.InvalidArchive(
-                    f"The archive downloaded from {archive_url} is not a tarfile"
-                    + " and so can not be opened as one."
-                )
+                if not zipfile.is_zipfile(BytesIO(response.content)):
+                    raise exceptions.InvalidArchive(
+                        f"The archive downloaded from {archive_url} is not a tarfile"
+                        + " or a zipfile and so can not be opened as one."
+                    )
+                _format = "zip"
+            print(_format)
+
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                with tarfile.open(
-                    mode="r:*", fileobj=BytesIO(response.content)
-                ) as archive:
-                    archive.extractall(output_directory)
+                print(_format)
+                if _format == "tar":
+                    print("extracting tarfile")
+                    with tarfile.open(
+                        mode="r:*", fileobj=BytesIO(response.content)
+                    ) as archive:
+                        archive.extractall(output_directory)
+                else:
+                    print("extracting zipfile")
+                    with zipfile.ZipFile(BytesIO(response.content)) as archive:
+                        archive.extractall(output_directory)
+
+                    # with zipfile.open(
+                    #     mode="r:*", fileobj=BytesIO(response.content)
+                    # ) as archive:
+                    #     archive.extractall(output_directory)
+                # unpack_archive(
+                #     response_content_bytes, extract_dir=output_directory, format=_format
+                # )
 
 
 except ModuleNotFoundError:
