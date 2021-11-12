@@ -81,7 +81,7 @@ try:
                     archive.write(response.content)
             else:
                 with tarfile.open(
-                    mode="r|gz", fileobj=BytesIO(response.content)
+                    mode="r:*", fileobj=BytesIO(response.content)
                 ) as archive:
                     archive.extractall(output_directory)
 
