@@ -4,6 +4,7 @@ import logging
 import tarfile
 import zipfile
 from io import BytesIO
+from pathlib import Path
 from urllib.parse import urlparse
 
 from pyhf import exceptions
@@ -88,25 +89,24 @@ try:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                print(_format)
                 if _format == "tar":
-                    print("extracting tarfile")
                     with tarfile.open(
                         mode="r:*", fileobj=BytesIO(response.content)
                     ) as archive:
                         archive.extractall(output_directory)
                 else:
-                    print("extracting zipfile")
+                    output_directory = Path(output_directory)
                     with zipfile.ZipFile(BytesIO(response.content)) as archive:
                         archive.extractall(output_directory)
 
-                    # with zipfile.open(
-                    #     mode="r:*", fileobj=BytesIO(response.content)
-                    # ) as archive:
-                    #     archive.extractall(output_directory)
-                # unpack_archive(
-                #     response_content_bytes, extract_dir=output_directory, format=_format
-                # )
+                    # zipfile.ZipFile.extractall extracts to a directory below a
+                    # target directory, so to match the extraction path of
+                    # tarfile.TarFile.extractall move the extracted directory to a
+                    # temporary path and then replace the output directory target with
+                    # the temporary path.
+                    child_path = [child for child in output_directory.iterdir()][0]
+                    _tmp_path = Path(output_directory.name + "_tmp_")
+                    child_path.replace(_tmp_path).replace(output_directory)
 
 
 except ModuleNotFoundError:
