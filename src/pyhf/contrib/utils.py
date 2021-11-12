@@ -107,7 +107,7 @@ try:
                     # target directory, so to match the extraction path of
                     # tarfile.TarFile.extractall move the extracted directory to a
                     # temporary path and then replace the output directory target with
-                    # the temporary path.
+                    # the contents at the temporary path.
                     child_path = [child for child in output_directory.iterdir()][0]
                     _tmp_path = Path(output_directory.name + "_tmp_")
                     child_path.replace(_tmp_path).replace(output_directory)
