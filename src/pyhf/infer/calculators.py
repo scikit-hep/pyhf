@@ -665,11 +665,7 @@ class EmpiricalDistribution:
             Float: The expected value of the test statistic.
         """
         tensorlib, _ = get_backend()
-        import numpy as np
-
-        # TODO: tensorlib.percentile function
-        # c.f. https://github.com/scikit-hep/pyhf/pull/817
-        return np.percentile(
+        return tensorlib.percentile(
             self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
         )
 
@@ -914,25 +910,23 @@ class ToyCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         tb, _ = get_backend()
-        pvalues = [
-            self.pvalues(
-                test_stat,
-                sig_plus_bkg_distribution,
-                bkg_only_distribution,
-            )
-            for test_stat in bkg_only_distribution.samples
-        ]
-        # TODO: Add percentile to tensorlib
-        # c.f. Issue #815, PR #817
-        import numpy as np
+        pvalues = tb.astensor(
+            [
+                self.pvalues(
+                    test_stat, sig_plus_bkg_distribution, bkg_only_distribution
+                )
+                for test_stat in bkg_only_distribution.samples
+            ]
+        )
 
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
-        normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
-        pvalues_exp_band = np.percentile(
-            pvalues,
-            normal_percentiles,
-            axis=0,
-        ).T.tolist()
+        normal_percentiles = tb.astensor(
+            [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
+        )
+
+        pvalues_exp_band = tb.transpose(
+            tb.percentile(pvalues, normal_percentiles, axis=0)
+        )
         return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
     def teststatistic(self, poi_test):
