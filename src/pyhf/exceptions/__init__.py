@@ -70,6 +70,10 @@ class InvalidArchiveHost(Exception):
     """InvalidArchiveHost is raised when a given patchset archive url is not an approved host."""
 
 
+class InvalidArchive(Exception):
+    """InvalidArchive is raised when a given patchset archive url does not return a valid response."""
+
+
 class InvalidPatchSet(Exception):
     """InvalidPatchSet is raised when a given patchset object does not have the right configuration, even though it validates correctly against the schema."""
 
