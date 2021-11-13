@@ -80,45 +80,49 @@ try:
                     + f" or {archive_url} is an invalid URL."
                 )
 
-            _format = "tar"
-            if not tarfile.is_tarfile(BytesIO(response.content)):
-                if not zipfile.is_zipfile(BytesIO(response.content)):
-                    raise exceptions.InvalidArchive(
-                        f"The archive downloaded from {archive_url} is not a tarfile"
-                        + " or a zipfile and so can not be opened as one."
-                    )
-                _format = "zip"
-
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                if _format == "tar":
+                # Support for file-like objects for tarfile.is_tarfile was added
+                # in Python 3.9, so as can't do tarfile.is_tarfile(BytesIO(response.content))
+                # just use a 'try except' block to determine if archive is a
+                # valid tarfile.
+                # TODO: Simplify after pyhf is Python 3.9+ only
+                try:
                     # Use transparent compression to allow for .tar or .tar.gz
                     with tarfile.open(
                         mode="r:*", fileobj=BytesIO(response.content)
                     ) as archive:
                         archive.extractall(output_directory)
-                else:
+                except tarfile.ReadError:
+                    if not zipfile.is_zipfile(BytesIO(response.content)):
+                        raise exceptions.InvalidArchive(
+                            f"The archive downloaded from {archive_url} is not a tarfile"
+                            + " or a zipfile and so can not be opened as one."
+                        )
+
                     output_directory = Path(output_directory)
                     if output_directory.exists():
                         rmtree(output_directory)
                     with zipfile.ZipFile(BytesIO(response.content)) as archive:
                         archive.extractall(output_directory)
 
-                    # zipfile.ZipFile.extractall extracts to a directory below a
-                    # target directory, so to match the extraction path of
-                    # tarfile.TarFile.extractall move the extracted directory to a
-                    # temporary path and then replace the output directory target with
-                    # the contents at the temporary path.
-                    # The directory is moved instead of being extracted one directory
-                    # up and then renamed as the name of the zipfile directory is set
-                    # at zipfile creation time and isn't knowable in advance.
-                    child_path = [child for child in output_directory.iterdir()][0]
-                    _tmp_path = output_directory.parent.joinpath(
-                        Path(output_directory.name + "_tmp_")
-                    )
-                    child_path.replace(_tmp_path).replace(output_directory)
+                        # zipfile.ZipFile.extractall extracts to a directory
+                        # below a target directory, so to match the extraction
+                        # path of tarfile.TarFile.extractall move the extracted
+                        # directory to a temporary path and then replace the
+                        # output directory target with the contents at the
+                        # temporary path.
+                        # The directory is moved instead of being extracted one
+                        # directory up and then renamed as the name of the
+                        # zipfile directory is set at zipfile creation time and
+                        # isn't knowable in advance.
+                        child_path = [child for child in output_directory.iterdir()][0]
+                        _tmp_path = output_directory.parent.joinpath(
+                            Path(output_directory.name + "__tmp__")
+                        )
+                        child_path.replace(_tmp_path).replace(output_directory)
 
 
 except ModuleNotFoundError:
