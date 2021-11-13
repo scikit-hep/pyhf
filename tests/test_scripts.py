@@ -564,7 +564,7 @@ def test_patchset_download(tmpdir, script_runner, archive):
     command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
-    assert "tarfile.ReadError: not a gzip file" in ret.stderr
+    assert "gives a response code of 404" in ret.stderr
 
 
 def test_missing_contrib_extra(caplog):
