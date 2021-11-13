@@ -5,6 +5,7 @@ import tarfile
 import zipfile
 from io import BytesIO
 from pathlib import Path
+from shutil import rmtree
 from urllib.parse import urlparse
 
 from pyhf import exceptions
@@ -100,6 +101,8 @@ try:
                         archive.extractall(output_directory)
                 else:
                     output_directory = Path(output_directory)
+                    if output_directory.exists():
+                        rmtree(output_directory)
                     with zipfile.ZipFile(BytesIO(response.content)) as archive:
                         archive.extractall(output_directory)
 
@@ -109,7 +112,9 @@ try:
                     # temporary path and then replace the output directory target with
                     # the contents at the temporary path.
                     child_path = [child for child in output_directory.iterdir()][0]
-                    _tmp_path = Path(output_directory.name + "_tmp_")
+                    _tmp_path = output_directory.parent.joinpath(
+                        Path(output_directory.name + "_tmp_")
+                    )
                     child_path.replace(_tmp_path).replace(output_directory)
 
 
