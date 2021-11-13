@@ -111,6 +111,9 @@ try:
                     # tarfile.TarFile.extractall move the extracted directory to a
                     # temporary path and then replace the output directory target with
                     # the contents at the temporary path.
+                    # The directory is moved instead of being extracted one directory
+                    # up and then renamed as the name of the zipfile directory is set
+                    # at zipfile creation time and isn't knowable in advance.
                     child_path = [child for child in output_directory.iterdir()][0]
                     _tmp_path = output_directory.parent.joinpath(
                         Path(output_directory.name + "_tmp_")
