@@ -85,9 +85,10 @@ try:
                     archive.write(response.content)
             else:
                 # Support for file-like objects for tarfile.is_tarfile was added
-                # in Python 3.9, so as can't do tarfile.is_tarfile(BytesIO(response.content))
-                # just use a 'try except' block to determine if archive is a
-                # valid tarfile.
+                # in Python 3.9, so as pyhf is currently Python 3.7+ then can't
+                # do tarfile.is_tarfile(BytesIO(response.content)).
+                # Instead, just use a 'try except' block to determine if the
+                # archive is a valid tarfile.
                 # TODO: Simplify after pyhf is Python 3.9+ only
                 try:
                     # Use transparent compression to allow for .tar or .tar.gz
