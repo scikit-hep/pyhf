@@ -29,7 +29,7 @@ extras_require['test'] = sorted(
         + extras_require['contrib']
         + extras_require['shellcomplete']
         + [
-            'pytest~=6.0',
+            'pytest>=6.0',
             'pytest-cov>=2.5.1',
             'pytest-mock',
             'pytest-benchmark[histogram]',
