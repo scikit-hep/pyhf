@@ -4,12 +4,12 @@ extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
         'tensorflow>=2.3.1',  # c.f. https://github.com/tensorflow/tensorflow/pull/40789
-        'tensorflow-probability>=0.11.0',
+        'tensorflow-probability>=0.11.0',  # c.f. PR #1657
     ],
-    'torch': ['torch>=1.10.0'],
+    'torch': ['torch>=1.10.0'],  # c.f. PR #1657
     'jax': ['jax>=0.2.10', 'jaxlib>=0.1.60,!=0.1.68'],  # c.f. Issue 1501
-    'xmlio': ['uproot>=4.1.1'],
-    'minuit': ['iminuit>=2.4'],
+    'xmlio': ['uproot>=4.1.1'],  # c.f. PR #1567
+    'minuit': ['iminuit>=2.4.0'],  # c.f. PR #1306
 }
 extras_require['backends'] = sorted(
     set(
