@@ -123,7 +123,12 @@ try:
                         _tmp_path = output_directory.parent.joinpath(
                             Path(output_directory.name + "__tmp__")
                         )
-                        child_path.replace(_tmp_path).replace(output_directory)
+                        # TODO: Once Python 3.7 support is dropped these two lines can be
+                        # combined by chaining the replace calls. This won't work in
+                        # Python 3.7 as pathlib.Path.replace was:
+                        # > Changed in version 3.8: Added return value, return the new Path instance.
+                        child_path.replace(_tmp_path)
+                        _tmp_path.replace(output_directory)
 
 
 except ModuleNotFoundError:
