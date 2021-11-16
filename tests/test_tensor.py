@@ -267,8 +267,8 @@ def test_shape(backend):
         )
 
 
-@pytest.mark.skip_pytorch
-@pytest.mark.skip_pytorch64
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
