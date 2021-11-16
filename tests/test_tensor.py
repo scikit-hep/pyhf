@@ -267,8 +267,8 @@ def test_shape(backend):
         )
 
 
-@pytest.mark.skip_pytorch
-@pytest.mark.skip_pytorch64
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
@@ -376,7 +376,7 @@ def test_boolean_mask(backend):
     )
 
 
-@pytest.mark.skip_jax
+@pytest.mark.fail_jax
 def test_percentile(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
@@ -390,9 +390,9 @@ def test_percentile(backend):
 # FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
 # c.f. https://github.com/pytorch/pytorch/pull/59397
 # c.f. https://github.com/scikit-hep/pyhf/issues/1693
-@pytest.mark.skip_pytorch
-@pytest.mark.skip_pytorch64
-@pytest.mark.skip_jax
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
+@pytest.mark.fail_jax
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
