@@ -9,6 +9,24 @@ from pyhf.contrib.utils import download
 from pyhf.exceptions import InvalidArchive, InvalidArchiveHost
 
 
+@pytest.fixture(scope="function")
+def tarfile_path(tmpdir):
+    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+        write_file.write("test file")
+    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
+        archive.add(tmpdir.join("test_file.txt").strpath)
+    return Path(tmpdir.join("test_tar.tar.gz").strpath)
+
+
+@pytest.fixture(scope="function")
+def zipfile_path(tmpdir):
+    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+        write_file.write("test file")
+    with zipfile.ZipFile(tmpdir.join("test_zip.zip").strpath, "w") as archive:
+        archive.write(tmpdir.join("test_file.txt").strpath)
+    return Path(tmpdir.join("test_zip.zip").strpath)
+
+
 def test_download_untrusted_archive_host(tmpdir, requests_mock):
     archive_url = "https://www.pyhfthisdoesnotexist.org"
     requests_mock.get(archive_url)
@@ -32,31 +50,16 @@ def test_download_compress(tmpdir, requests_mock):
     download(archive_url, tmpdir.join("likelihoods").strpath, compress=True)
 
 
-def test_download_archive_type(tmpdir, mocker, requests_mock):
+def test_download_archive_type(
+    tmpdir, mocker, requests_mock, tarfile_path, zipfile_path
+):
     archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
-    # TODO: Make tarfile and zipfile bit fixtures
     # Give BytesIO a tarfile
-    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
-        with open(tmpdir.join("test_tar_file.txt").strpath, "wb") as write_file:
-            write_file.write(b"tarfile test")
-        archive.add(tmpdir.join("test_tar_file.txt").strpath)
-
-    requests_mock.get(
-        archive_url,
-        content=open(tmpdir.join("test_tar.tar.gz").strpath, "rb").read(),
-    )
+    requests_mock.get(archive_url, content=open(tarfile_path, "rb").read())
     download(archive_url, tmpdir.join("likelihoods").strpath)
 
     # Give BytesIO a zipfile
-    with zipfile.ZipFile(tmpdir.join("test_zip.zip").strpath, "w") as archive:
-        with open(tmpdir.join("test_zip_file.txt").strpath, "w") as write_file:
-            write_file.write("zipfile test")
-        archive.write(tmpdir.join("test_zip_file.txt").strpath)
-
-    requests_mock.get(
-        archive_url,
-        content=open(tmpdir.join("test_zip.zip").strpath, "rb").read(),
-    )
+    requests_mock.get(archive_url, content=open(zipfile_path, "rb").read())
     # Run without and with existing output_directory to cover both
     # cases of the shutil.rmtree logic
     rmtree(Path(tmpdir.join("likelihoods").strpath))
@@ -70,19 +73,13 @@ def test_download_archive_type(tmpdir, mocker, requests_mock):
         download(archive_url, tmpdir.join("likelihoods").strpath)
 
 
-def test_download_archive_force(tmpdir, requests_mock):
+def test_download_archive_force(tmpdir, requests_mock, tarfile_path):
     archive_url = "https://www.cern.ch/record/resource/123456789"
-    # Give BytesIO a tarfile
-    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
-        with open(tmpdir.join("test_tar_file.txt").strpath, "wb") as write_file:
-            write_file.write(b"tarfile test")
-        archive.add(tmpdir.join("test_tar_file.txt").strpath)
-
     requests_mock.get(
-        archive_url,
-        content=open(tmpdir.join("test_tar.tar.gz").strpath, "rb").read(),
-        status_code=200,
+        archive_url, content=open(tarfile_path, "rb").read(), status_code=200
     )
+
     with pytest.raises(InvalidArchiveHost):
         download(archive_url, tmpdir.join("likelihoods").strpath, force=False)
+
     download(archive_url, tmpdir.join("likelihoods").strpath, force=True)
