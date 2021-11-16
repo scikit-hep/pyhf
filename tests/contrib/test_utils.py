@@ -28,9 +28,13 @@ def test_download_invalid_archive(tmpdir, requests_mock, archive_url):
         download(archive_url, tmpdir.join("likelihoods").strpath)
 
 
-# @pytest.mark.parametrize(
-#     'compress', [True, False]
-# )
+def test_download_compress(tmpdir, requests_mock):
+    archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
+    requests_mock.get(archive_url)
+
+    download(archive_url, tmpdir.join("likelihoods").strpath, compress=True)
+
+
 @pytest.mark.parametrize(
     "archive_url",
     [
