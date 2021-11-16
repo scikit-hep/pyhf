@@ -38,6 +38,8 @@ ignore = [
     'AUTHORS',
 ]
 
+[tool.pytest]
+xfail_strict = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"
