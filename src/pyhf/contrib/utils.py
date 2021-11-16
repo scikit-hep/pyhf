@@ -122,7 +122,8 @@ try:
                             Path(output_directory.name + "__tmp__")
                         )
                         child_path.replace(_tmp_path)
-                        # the zipfile could contain remnant __MACOSX directories from creation time
+                        # the zipfile could contain remnant __MACOSX directories
+                        # from creation time
                         rmtree(output_directory)
                         _tmp_path.replace(output_directory)
 
