@@ -17,13 +17,8 @@ def test_download_untrusted_archive_host(tmpdir, requests_mock):
         download(archive_url, tmpdir.join("likelihoods").strpath)
 
 
-@pytest.mark.parametrize(
-    "archive_url",
-    [
-        "https://www.hepdata.net/record/resource/1408476?view=true",
-    ],
-)
-def test_download_invalid_archive(tmpdir, requests_mock, archive_url):
+def test_download_invalid_archive(tmpdir, requests_mock):
+    archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
     requests_mock.get(archive_url, status_code=404)
 
     with pytest.raises(InvalidArchive):
@@ -37,13 +32,9 @@ def test_download_compress(tmpdir, requests_mock):
     download(archive_url, tmpdir.join("likelihoods").strpath, compress=True)
 
 
-@pytest.mark.parametrize(
-    "archive_url",
-    [
-        "https://www.hepdata.net/record/resource/1408476?view=true",
-    ],
-)
-def test_download_archive_type(tmpdir, mocker, requests_mock, archive_url):
+def test_download_archive_type(tmpdir, mocker, requests_mock):
+    archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
+    # TODO: Make tarfile and zipfile bit fixtures
     # Give BytesIO a tarfile
     with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
         with open(tmpdir.join("test_tar_file.txt").strpath, "wb") as write_file:
@@ -77,3 +68,21 @@ def test_download_archive_type(tmpdir, mocker, requests_mock, archive_url):
     mocker.patch("zipfile.is_zipfile", return_value=False)
     with pytest.raises(InvalidArchive):
         download(archive_url, tmpdir.join("likelihoods").strpath)
+
+
+def test_download_archive_force(tmpdir, requests_mock):
+    archive_url = "https://www.cern.ch/record/resource/123456789"
+    # Give BytesIO a tarfile
+    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
+        with open(tmpdir.join("test_tar_file.txt").strpath, "wb") as write_file:
+            write_file.write(b"tarfile test")
+        archive.add(tmpdir.join("test_tar_file.txt").strpath)
+
+    requests_mock.get(
+        archive_url,
+        content=open(tmpdir.join("test_tar.tar.gz").strpath, "rb").read(),
+        status_code=200,
+    )
+    with pytest.raises(InvalidArchiveHost):
+        download(archive_url, tmpdir.join("likelihoods").strpath, force=False)
+    download(archive_url, tmpdir.join("likelihoods").strpath, force=True)
