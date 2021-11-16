@@ -121,11 +121,9 @@ try:
                         _tmp_path = output_directory.parent.joinpath(
                             Path(output_directory.name + "__tmp__")
                         )
-                        # TODO: Once Python 3.7 support is dropped these two lines can be
-                        # combined by chaining the replace calls. This won't work in
-                        # Python 3.7 as pathlib.Path.replace was:
-                        # > Changed in version 3.8: Added return value, return the new Path instance.
                         child_path.replace(_tmp_path)
+                        # the zipfile could contain remnant __MACOSX directories from creation time
+                        rmtree(output_directory)
                         _tmp_path.replace(output_directory)
 
 
