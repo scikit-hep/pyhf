@@ -376,7 +376,7 @@ def test_boolean_mask(backend):
     )
 
 
-@pytest.mark.skip_jax
+@pytest.mark.fail_jax
 def test_percentile(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
