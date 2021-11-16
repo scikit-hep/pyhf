@@ -19,6 +19,15 @@ def tarfile_path(tmpdir):
 
 
 @pytest.fixture(scope="function")
+def tarfile_uncompressed_path(tmpdir):
+    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+        write_file.write("test file")
+    with tarfile.open(tmpdir.join("test_tar.tar").strpath, mode="w") as archive:
+        archive.add(tmpdir.join("test_file.txt").strpath)
+    return Path(tmpdir.join("test_tar.tar").strpath)
+
+
+@pytest.fixture(scope="function")
 def zipfile_path(tmpdir):
     with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
         write_file.write("test file")
@@ -51,26 +60,31 @@ def test_download_compress(tmpdir, requests_mock):
 
 
 def test_download_archive_type(
-    tmpdir, mocker, requests_mock, tarfile_path, zipfile_path
+    tmpdir, mocker, requests_mock, tarfile_path, tarfile_uncompressed_path, zipfile_path
 ):
     archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
+    output_directory = tmpdir.join("likelihoods").strpath
     # Give BytesIO a tarfile
     requests_mock.get(archive_url, content=open(tarfile_path, "rb").read())
-    download(archive_url, tmpdir.join("likelihoods").strpath)
+    download(archive_url, output_directory)
+
+    # Give BytesIO an uncompressed tarfile
+    requests_mock.get(archive_url, content=open(tarfile_uncompressed_path, "rb").read())
+    download(archive_url, output_directory)
 
     # Give BytesIO a zipfile
     requests_mock.get(archive_url, content=open(zipfile_path, "rb").read())
     # Run without and with existing output_directory to cover both
     # cases of the shutil.rmtree logic
-    rmtree(Path(tmpdir.join("likelihoods").strpath))
-    download(archive_url, tmpdir.join("likelihoods").strpath)  # without
-    download(archive_url, tmpdir.join("likelihoods").strpath)  # with
+    rmtree(Path(output_directory))
+    download(archive_url, output_directory)  # without
+    download(archive_url, output_directory)  # with
 
     # Give BytesIO a zipfile (using same requests_mock as previous) but have
     # zipfile.is_zipfile reject it
     mocker.patch("zipfile.is_zipfile", return_value=False)
     with pytest.raises(InvalidArchive):
-        download(archive_url, tmpdir.join("likelihoods").strpath)
+        download(archive_url, output_directory)
 
 
 def test_download_archive_force(tmpdir, requests_mock, tarfile_path):
