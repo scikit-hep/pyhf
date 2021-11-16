@@ -1,5 +1,7 @@
 import tarfile
 import zipfile
+from pathlib import Path
+from shutil import rmtree
 
 import pytest
 
@@ -64,9 +66,11 @@ def test_download_archive_type(tmpdir, mocker, requests_mock, archive_url):
         archive_url,
         content=open(tmpdir.join("test_zip.zip").strpath, "rb").read(),
     )
-    download(archive_url, tmpdir.join("likelihoods").strpath)
-    # Run a second time to trigger shutil.rmtree of directory
-    download(archive_url, tmpdir.join("likelihoods").strpath)
+    # Run without and with existing output_directory to cover both
+    # cases of the shutil.rmtree logic
+    rmtree(Path(tmpdir.join("likelihoods").strpath))
+    download(archive_url, tmpdir.join("likelihoods").strpath)  # without
+    download(archive_url, tmpdir.join("likelihoods").strpath)  # with
 
     # Give BytesIO a zipfile (using same requests_mock as previous) but have
     # zipfile.is_zipfile reject it
