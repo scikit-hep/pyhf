@@ -34,7 +34,7 @@ def test_top_level_public_api():
 
 
 def test_cli_public_api():
-    assert dir(pyhf.cli) == ["cli", "complete", "contrib", "infer", "rootio", "spec"]
+    assert dir(pyhf.cli) == ["cli", "contrib", "infer", "rootio", "spec"]
 
 
 def test_compat_public_api():
