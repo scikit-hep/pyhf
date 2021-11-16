@@ -62,11 +62,8 @@ def test_download_archive_type(tmpdir, mocker, requests_mock, archive_url):
     )
     download(archive_url, tmpdir.join("likelihoods").strpath)
 
-    # TODO: This is hacky and ugly. Try to clean up with something else
-    requests_mock.get(archive_url)
-    mocker.patch(
-        "io.BytesIO",
-        return_value=open(tmpdir.join("test_tar.tar.gz").strpath, "rb"),
-    )
+    # Give BytesIO a zipfile (using same requests_mock as previous) but have
+    # zipfile.is_zipfile reject it
+    mocker.patch("zipfile.is_zipfile", return_value=False)
     with pytest.raises(InvalidArchive):
         download(archive_url, tmpdir.join("likelihoods").strpath)
