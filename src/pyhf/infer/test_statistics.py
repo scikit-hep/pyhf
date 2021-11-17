@@ -271,12 +271,13 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
@@ -298,8 +299,9 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
             - The calculated test statistic, :math:`t_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
