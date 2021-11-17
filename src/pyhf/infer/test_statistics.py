@@ -217,8 +217,9 @@ def qmu_tilde(
 
             - The calculated test statistic, :math:`\tilde{q}_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
