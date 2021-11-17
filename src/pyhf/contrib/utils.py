@@ -1,9 +1,13 @@
 """Helper utilities for common tasks."""
 
-from urllib.parse import urlparse
-import tarfile
-from io import BytesIO
 import logging
+import tarfile
+import zipfile
+from io import BytesIO
+from pathlib import Path
+from shutil import rmtree
+from urllib.parse import urlparse
+
 from pyhf import exceptions
 
 log = logging.getLogger(__name__)
@@ -62,17 +66,66 @@ try:
         # The HEPData landing page for the resource file can check if the Accept
         # request HTTP header matches the content type of the resource file and
         # return the content directly if so.
+        # TODO: Figure out how to accept headers of both application/x-tar and
+        # application/zip.
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar"}
         ) as response:
+            if response.status_code != 200:
+                raise exceptions.InvalidArchive(
+                    f"{archive_url} gives a response code of {response.status_code}.\n"
+                    + "There is either something temporarily wrong with the archive host"
+                    + f" or {archive_url} is an invalid URL."
+                )
+
             if compress:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                with tarfile.open(
-                    mode="r|gz", fileobj=BytesIO(response.content)
-                ) as archive:
-                    archive.extractall(output_directory)
+                # Support for file-like objects for tarfile.is_tarfile was added
+                # in Python 3.9, so as pyhf is currently Python 3.7+ then can't
+                # do tarfile.is_tarfile(BytesIO(response.content)).
+                # Instead, just use a 'try except' block to determine if the
+                # archive is a valid tarfile.
+                # TODO: Simplify after pyhf is Python 3.9+ only
+                try:
+                    # Use transparent compression to allow for .tar or .tar.gz
+                    with tarfile.open(
+                        mode="r:*", fileobj=BytesIO(response.content)
+                    ) as archive:
+                        archive.extractall(output_directory)
+                except tarfile.ReadError:
+                    if not zipfile.is_zipfile(BytesIO(response.content)):
+                        raise exceptions.InvalidArchive(
+                            f"The archive downloaded from {archive_url} is not a tarfile"
+                            + " or a zipfile and so can not be opened as one."
+                        )
+
+                    output_directory = Path(output_directory)
+                    if output_directory.exists():
+                        rmtree(output_directory)
+                    with zipfile.ZipFile(BytesIO(response.content)) as archive:
+                        archive.extractall(output_directory)
+
+                        # zipfile.ZipFile.extractall extracts to a directory
+                        # below a target directory, so to match the extraction
+                        # path of tarfile.TarFile.extractall move the extracted
+                        # directory to a temporary path and then replace the
+                        # output directory target with the contents at the
+                        # temporary path.
+                        # The directory is moved instead of being extracted one
+                        # directory up and then renamed as the name of the
+                        # zipfile directory is set at zipfile creation time and
+                        # isn't knowable in advance.
+                        child_path = [child for child in output_directory.iterdir()][0]
+                        _tmp_path = output_directory.parent.joinpath(
+                            Path(output_directory.name + "__tmp__")
+                        )
+                        child_path.replace(_tmp_path)
+                        # the zipfile could contain remnant __MACOSX directories
+                        # from creation time
+                        rmtree(output_directory)
+                        _tmp_path.replace(output_directory)
 
 
 except ModuleNotFoundError:

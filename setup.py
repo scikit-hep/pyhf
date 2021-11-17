@@ -32,6 +32,7 @@ extras_require['test'] = sorted(
             'pytest>=6.0',
             'pytest-cov>=2.5.1',
             'pytest-mock',
+            'requests-mock>=1.9.0',
             'pytest-benchmark[histogram]',
             'pytest-console-scripts',
             'pytest-mpl',
