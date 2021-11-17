@@ -48,12 +48,8 @@ def generate_asimov_data(
         >>> mu_test = 1.0
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
-
-        It is possible to access the Asimov parameters as well:
-
         >>> pyhf.infer.calculators.generate_asimov_data(
-        ...     mu_test, data, model, None, None, None,
-        ...     return_fitted_pars = True
+        ...     mu_test, data, model, None, None, None, return_fitted_pars=True
         ... )
         (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
 
