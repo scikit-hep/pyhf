@@ -66,8 +66,6 @@ try:
         # The HEPData landing page for the resource file can check if the Accept
         # request HTTP header matches the content type of the resource file and
         # return the content directly if so.
-        # TODO: Figure out how to accept headers of both application/x-tar and
-        # application/zip.
         with requests.get(
             archive_url, headers={"Accept": "application/x-tar, application/zip"}
         ) as response:
