@@ -95,12 +95,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
@@ -188,12 +189,13 @@ def qmu_tilde(
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
