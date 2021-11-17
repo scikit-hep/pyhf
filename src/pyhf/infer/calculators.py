@@ -48,12 +48,8 @@ def generate_asimov_data(
         >>> mu_test = 1.0
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
-
-        It is possible to access the Asimov parameters as well:
-
         >>> pyhf.infer.calculators.generate_asimov_data(
-        ...     mu_test, data, model, None, None, None,
-        ...     return_fitted_pars = True
+        ...     mu_test, data, model, None, None, None, return_fitted_pars=True
         ... )
         (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
 
@@ -335,8 +331,8 @@ class AsymptoticCalculator:
         r"""
         Compute the test statistic for the observed data under the studied model.
 
-        The fitted parameters of the five fits that are implicitly ran at every call
-        of this method are afterwards accessible through ``self.fitted_pars``,
+        The fitted parameters of the five fits that are implicitly run for each call
+        of this method are afterwards accessible through the ``fitted_pars`` attribute,
         which is a :py:class:`~pyhf.infer.calculators.HypoTestFitResults` instance.
 
         Example:
@@ -352,15 +348,9 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
             array(0.14043184)
-
-            Access the best-fit parameters afterwards:
-
             >>> asymptotic_calculator.fitted_pars
             HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
-
-            E.g. the :math:`\hat{\mu}` and :math:`\hat{\theta}` fitted to the asimov dataset:
-
-            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov
+            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov  # best-fit parameters to Asimov dataset
             array([0.        , 1.00304893, 0.96263365])
 
         Args:
