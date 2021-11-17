@@ -361,12 +361,13 @@ def tmu_tilde(
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
@@ -388,8 +389,9 @@ def tmu_tilde(
 
             - The calculated test statistic, :math:`\tilde{t}_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
