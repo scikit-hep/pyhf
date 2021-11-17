@@ -69,7 +69,7 @@ try:
         # TODO: Figure out how to accept headers of both application/x-tar and
         # application/zip.
         with requests.get(
-            archive_url, headers={"Accept": "application/x-tar"}
+            archive_url, headers={"Accept": "application/x-tar, application/zip"}
         ) as response:
             if response.status_code != 200:
                 raise exceptions.InvalidArchive(
