@@ -332,7 +332,7 @@ class AsymptoticCalculator:
         Compute the test statistic for the observed data under the studied model.
 
         The fitted parameters of the five fits that are implicitly run for each call
-        of this method are afterwards accessible through ``self.fitted_pars``,
+        of this method are afterwards accessible through the ``fitted_pars`` attribute,
         which is a :py:class:`~pyhf.infer.calculators.HypoTestFitResults` instance.
 
         Example:
