@@ -95,12 +95,13 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
@@ -188,12 +189,13 @@ def qmu_tilde(
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
@@ -215,8 +217,9 @@ def qmu_tilde(
 
             - The calculated test statistic, :math:`\tilde{q}_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
@@ -268,12 +271,13 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
@@ -295,8 +299,9 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
             - The calculated test statistic, :math:`t_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
@@ -356,12 +361,13 @@ def tmu_tilde(
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
@@ -383,8 +389,9 @@ def tmu_tilde(
 
             - The calculated test statistic, :math:`\tilde{t}_{\mu}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
@@ -436,10 +443,9 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
-
-        Access the best-fit parameter tensors:
-
-        >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars = True)
+        >>> pyhf.infer.test_statistics.q0(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
         (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
 
     Args:
@@ -461,8 +467,9 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
 
             - The calculated test statistic, :math:`q_{0}`
 
-            - The parameter tensors corresponding to the constrained and unconstrained best fit,
-              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
               Only returned if ``return_fitted_pars`` is ``True``.
     """
 
