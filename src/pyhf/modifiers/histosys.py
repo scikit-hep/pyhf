@@ -1,10 +1,10 @@
 import logging
 
 import pyhf
-from pyhf import events
-from pyhf.tensor.manager import get_backend
-from pyhf import interpolators
+from pyhf import events, interpolators
+from pyhf.exceptions import InvalidModifier
 from pyhf.parameters import ParamViewer
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -61,8 +61,8 @@ class histosys_builder:
     def finalize(self):
         default_backend = pyhf.default_backend
 
-        for modifier in self.builder_data.values():
-            for sample in modifier.values():
+        for modifier_name, modifier in self.builder_data.items():
+            for sample_name, sample in modifier.items():
                 sample["data"]["mask"] = default_backend.concatenate(
                     sample["data"]["mask"]
                 )
@@ -75,6 +75,21 @@ class histosys_builder:
                 sample["data"]["nom_data"] = default_backend.concatenate(
                     sample["data"]["nom_data"]
                 )
+                if (
+                    not len(sample["data"]["nom_data"])
+                    == len(sample["data"]["lo_data"])
+                    == len(sample["data"]["hi_data"])
+                ):
+                    _modifier_type, _modifier_name = modifier_name.split("/")
+                    _sample_data_len = len(sample["data"]["nom_data"])
+                    _lo_data_len = len(sample["data"]["lo_data"])
+                    _hi_data_len = len(sample["data"]["hi_data"])
+                    raise InvalidModifier(
+                        f"The '{sample_name}' sample {_modifier_type} modifier"
+                        + f" '{_modifier_name}' has data shape inconsistent with the sample."
+                        + f" {sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        + f" has 'lo_data' of length {_lo_data_len} and 'hi_data' of length {_hi_data_len}."
+                    )
         return self.builder_data
 
 
