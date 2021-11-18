@@ -27,6 +27,7 @@ Contributors include:
 - Mason Proffitt
 - Lars Henkelmann
 - Aryan Roy
+- Graeme Watt
 - Jerry Ling
 - Nathan Simpson
 - Beojan Stanislaus
