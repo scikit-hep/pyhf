@@ -106,7 +106,7 @@ class staterror_builder:
                 modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
             # list of bools, consistent with other modifiers (no numpy.bool_)
-            fixed = (sigmas == 0).tolist()
+            fixed = default_backend.tolist(sigmas == 0)
             # ensures non-Nan constraint term, but in a future PR we need to remove constraints for these
             sigmas[fixed] = 1.0
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
