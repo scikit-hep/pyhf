@@ -21,13 +21,11 @@ jobs:
       || (github.event_name == 'push' && github.ref != 'refs/heads/master' && contains(github.event.head_commit.message, '[ci all]'))
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ['3.7', '3.8', '3.9']
-        exclude:
+        include:
           - os: macos-latest
-            python-version: '3.7'
-          - os: macos-latest
-            python-version: '3.8'
+            python-version: '3.9'
 
     steps:
     - uses: actions/checkout@v2
