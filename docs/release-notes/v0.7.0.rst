@@ -1,0 +1,60 @@
+|release v0.7.0|_
+=================
+
+This is a minor release from ``v0.6.3`` → ``v0.7.0``.
+
+Important Notes
+---------------
+
+* NEW IMPORTANT STUFF GOES HERE
+* The minimum required backend versions have been updated to support added features:
+
+   - JAX backend requires ``jax>=0.2.10``
+   - PyTorch backend requires ``torch>=1.10.0``
+   - TensorFlow backend requires ``tensorflow>=2.3.1``
+
+Fixes
+-----
+
+* FIXES HERE
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* Supported options for :func:`pyhf.infer.hypotest` can now be passed as kwargs
+  through the :func:`pyhf.infer.intervals.upperlimit` API.
+  (PR :pr:`1613`)
+  This now enables things like using :class:`pyhf.infer.calculators.ToyCalculator`
+  as the calculator used for the hypothesis test scan:
+
+  .. code:: pycon
+
+      >>> import numpy as np
+      >>> import pyhf
+      >>> pyhf.set_backend("jax")
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+      ... )
+      >>> observations = [51, 48]
+      >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+      >>> scan = np.linspace(0, 5, 21)
+      >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+      ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
+      ... )
+
+Contributors
+------------
+
+``v0.7.0`` benefited from contributions from:
+
+* Alexander Held
+* Mason Proffitt
+* Lars Henkelmann
+* Aryan Roy
+* Graeme Watt
+
+.. |release v0.7.0| replace:: ``v0.7.0``
+.. _`release v0.7.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0
