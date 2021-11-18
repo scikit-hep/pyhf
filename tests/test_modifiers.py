@@ -1,15 +1,15 @@
 import pyhf
 import numpy
 
-modifiers_to_test = [
-    "histosys",
-    "normfactor",
-    "normsys",
-    "shapefactor",
-    "shapesys",
-    "staterror",
-]
-modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
+# modifiers_to_test = [
+#     "histosys",
+#     "normfactor",
+#     "normsys",
+#     "shapefactor",
+#     "shapesys",
+#     "staterror",
+# ]
+# modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
 
 
 def test_shapefactor_build():
