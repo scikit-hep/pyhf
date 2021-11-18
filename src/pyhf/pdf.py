@@ -2,6 +2,7 @@
 
 import copy
 import logging
+from typing import List
 
 import pyhf.parameters
 import pyhf
@@ -346,7 +347,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         return self.par_map[name]['paramset']
 
-    def suggested_fixed(self):
+    def suggested_fixed(self) -> List[bool]:
         """
         Identify the fixed parameters in the model.
 
