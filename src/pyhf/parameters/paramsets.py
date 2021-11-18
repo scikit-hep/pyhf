@@ -1,3 +1,5 @@
+from typing import List
+
 import pyhf
 
 __all__ = [
@@ -27,13 +29,13 @@ class paramset:
             )
 
     @property
-    def suggested_fixed(self):
+    def suggested_fixed(self) -> List[bool]:
         if type(self._suggested_fixed) == bool:
             return [self._suggested_fixed] * self.n_parameters
         return self._suggested_fixed
 
     @property
-    def suggested_fixed_as_bool(self):
+    def suggested_fixed_as_bool(self) -> bool:
         '''compresses list of same-value bools into single bool'''
         suggested_fixed = self.suggested_fixed
         first = suggested_fixed[0]

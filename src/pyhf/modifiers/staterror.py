@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 import pyhf
 from pyhf import events
@@ -8,7 +9,7 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas, fixed):
+def required_parset(sigmas, fixed: List[bool]):
     n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',
@@ -104,7 +105,8 @@ class staterror_builder:
             for modifier_data in self.builder_data[modname].values():
                 modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
-            fixed = [s == 0 for s in sigmas]
+            # list of bools, consistent with other modifiers (no numpy.bool_)
+            fixed = default_backend.tolist(sigmas == 0)
             # ensures non-Nan constraint term, but in a future PR we need to remove constraints for these
             sigmas[fixed] = 1.0
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
