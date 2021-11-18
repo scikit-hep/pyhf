@@ -91,12 +91,24 @@ def test_staterror_holes():
         True,
         False,
     ]
+    assert all(
+        [
+            isinstance(fixed, bool)
+            for fixed in model.config.param_set("staterror_1").suggested_fixed
+        ]
+    )
     assert model.config.param_set("staterror_2").suggested_fixed == [
         False,
         True,
         False,
         False,
     ]
+    assert all(
+        [
+            isinstance(fixed, bool)
+            for fixed in model.config.param_set("staterror_2").suggested_fixed
+        ]
+    )
     assert (factors[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
     assert (factors[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 5.0, 6.0]).all()
 
