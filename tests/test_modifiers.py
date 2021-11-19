@@ -1,4 +1,5 @@
 import numpy
+import pytest
 
 import pyhf
 
@@ -165,3 +166,67 @@ def test_shapesys_holes():
         True,
         False,
     ]
+
+
+def test_invalid_bin_wise_modifier():
+    """
+    Test that bin-wise modifiers will raise an exception if their data shape
+    differs from their sample's.
+    """
+    spec = {
+        "channels": [
+            {
+                "name": "channel_1",
+                "samples": [
+                    {
+                        "name": "sample_1",
+                        "data": [1, 2, 3, 4],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None},
+                        ],
+                    },
+                    {
+                        "name": "sample_2",
+                        "data": [2, 4, 6, 8],
+                        "modifiers": [],
+                    },
+                ],
+            }
+        ],
+    }
+
+    assert pyhf.Model(spec)
+
+    bad_histosys_modifier = [
+        {
+            "name": "histosys_bad",
+            "type": "histosys",
+            "data": {
+                "hi_data": [3, 6, 9],
+                "lo_data": [1, 2, 3],
+            },
+        }
+    ]
+    bad_shapesys_modifier = [
+        {
+            "name": "shapesys_bad",
+            "type": "shapesys",
+            "data": [1, 2, 3],
+        }
+    ]
+    bad_staterror_modifier = [
+        {
+            "name": "staterror_bad",
+            "type": "staterror",
+            "data": [1, 2, 3],
+        }
+    ]
+
+    for bad_modifier in [
+        bad_histosys_modifier,
+        bad_shapesys_modifier,
+        bad_staterror_modifier,
+    ]:
+        spec["channels"][0]["samples"][1]["modifiers"] = bad_modifier
+        with pytest.raises(pyhf.exceptions.InvalidModifier):
+            pyhf.Model(spec)
