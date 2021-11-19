@@ -88,8 +88,8 @@ class shapesys_builder:
                     _uncrt_len = len(sample["data"]["uncrt"])
                     raise InvalidModifier(
                         f"The '{sample_name}' sample {_modifier_type} modifier"
-                        + f" '{_modifier_name}' has data shape inconsistent with the sample."
-                        + f" {sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
                         + f" has 'data' of length {_uncrt_len}."
                     )
         return self.builder_data

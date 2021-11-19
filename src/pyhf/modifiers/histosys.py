@@ -86,8 +86,8 @@ class histosys_builder:
                     _hi_data_len = len(sample["data"]["hi_data"])
                     raise InvalidModifier(
                         f"The '{sample_name}' sample {_modifier_type} modifier"
-                        + f" '{_modifier_name}' has data shape inconsistent with the sample."
-                        + f" {sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
                         + f" has 'lo_data' of length {_lo_data_len} and 'hi_data' of length {_hi_data_len}."
                     )
         return self.builder_data
