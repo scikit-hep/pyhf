@@ -1,5 +1,8 @@
+import json
+
 import numpy
 import pytest
+from jsonpatch import JsonPatch
 
 import pyhf
 
@@ -168,65 +171,25 @@ def test_shapesys_holes():
     ]
 
 
-def test_invalid_bin_wise_modifier():
+@pytest.mark.parametrize(
+    "patch_file",
+    [
+        "bad_histosys_modifier_patch.json",
+        "bad_shapesys_modifier_patch.json",
+        "bad_staterror_modifier_patch.json",
+    ],
+)
+def test_invalid_bin_wise_modifier(datadir, patch_file):
     """
     Test that bin-wise modifiers will raise an exception if their data shape
     differs from their sample's.
     """
-    spec = {
-        "channels": [
-            {
-                "name": "channel_1",
-                "samples": [
-                    {
-                        "name": "sample_1",
-                        "data": [1, 2, 3, 4],
-                        "modifiers": [
-                            {"name": "mu", "type": "normfactor", "data": None},
-                        ],
-                    },
-                    {
-                        "name": "sample_2",
-                        "data": [2, 4, 6, 8],
-                        "modifiers": [],
-                    },
-                ],
-            }
-        ],
-    }
+    spec = json.load(open(datadir.join("spec.json")))
 
     assert pyhf.Model(spec)
 
-    bad_histosys_modifier = [
-        {
-            "name": "histosys_bad",
-            "type": "histosys",
-            "data": {
-                "hi_data": [3, 6, 9],
-                "lo_data": [1, 2, 3],
-            },
-        }
-    ]
-    bad_shapesys_modifier = [
-        {
-            "name": "shapesys_bad",
-            "type": "shapesys",
-            "data": [1, 2, 3],
-        }
-    ]
-    bad_staterror_modifier = [
-        {
-            "name": "staterror_bad",
-            "type": "staterror",
-            "data": [1, 2, 3],
-        }
-    ]
+    patch = JsonPatch.from_string(open(datadir.join(patch_file)).read())
+    bad_spec = patch.apply(spec)
 
-    for bad_modifier in [
-        bad_histosys_modifier,
-        bad_shapesys_modifier,
-        bad_staterror_modifier,
-    ]:
-        spec["channels"][0]["samples"][1]["modifiers"] = bad_modifier
-        with pytest.raises(pyhf.exceptions.InvalidModifier):
-            pyhf.Model(spec)
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        pyhf.Model(bad_spec)
