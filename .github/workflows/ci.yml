@@ -21,13 +21,11 @@ jobs:
       || (github.event_name == 'push' && github.ref != 'refs/heads/master' && contains(github.event.head_commit.message, '[ci all]'))
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
-        exclude:
+        os: [ubuntu-latest]
+        python-version: ['3.7', '3.8', '3.9']
+        include:
           - os: macos-latest
-            python-version: 3.7
-          - os: macos-latest
-            python-version: 3.8
+            python-version: '3.9'
 
     steps:
     - uses: actions/checkout@v2
@@ -50,7 +48,7 @@ jobs:
         pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
     - name: Report core project coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
@@ -61,24 +59,24 @@ jobs:
         pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
     - name: Report contrib coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
         flags: contrib
 
     - name: Test docstring examples with doctest
-      if: matrix.python-version == 3.9
+      if: matrix.python-version == '3.9'
       run: pytest -r sx src/ README.rst
 
     - name: Report doctest coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == 3.9 && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
         flags: doctest
 
     - name: Run benchmarks
-      if: github.event_name == 'schedule' && matrix.python-version == 3.9
+      if: github.event_name == 'schedule' && matrix.python-version == '3.9'
       run: |
         pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
