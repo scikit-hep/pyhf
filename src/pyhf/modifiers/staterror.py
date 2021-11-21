@@ -3,8 +3,9 @@ from typing import List
 
 import pyhf
 from pyhf import events
-from pyhf.tensor.manager import get_backend
+from pyhf.exceptions import InvalidModifier
 from pyhf.parameters import ParamViewer
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -54,8 +55,8 @@ class staterror_builder:
     def finalize(self):
         default_backend = pyhf.default_backend
 
-        for modifier in self.builder_data.values():
-            for sample in modifier.values():
+        for modifier_name, modifier in self.builder_data.items():
+            for sample_name, sample in modifier.items():
                 sample["data"]["mask"] = default_backend.concatenate(
                     sample["data"]["mask"]
                 )
@@ -65,6 +66,16 @@ class staterror_builder:
                 sample["data"]["nom_data"] = default_backend.concatenate(
                     sample["data"]["nom_data"]
                 )
+                if len(sample["data"]["nom_data"]) != len(sample["data"]["uncrt"]):
+                    _modifier_type, _modifier_name = modifier_name.split("/")
+                    _sample_data_len = len(sample["data"]["nom_data"])
+                    _uncrt_len = len(sample["data"]["uncrt"])
+                    raise InvalidModifier(
+                        f"The '{sample_name}' sample {_modifier_type} modifier"
+                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        + f" has 'data' of length {_uncrt_len}."
+                    )
 
         for modname in self.builder_data.keys():
             parname = modname.split('/')[1]

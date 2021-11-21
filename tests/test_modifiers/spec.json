@@ -1,0 +1,35 @@
+{
+    "channels": [
+        {
+            "name": "channel_1",
+            "samples": [
+                {
+                    "name": "sample_1",
+                    "data": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "modifiers": [
+                        {
+                            "name": "mu",
+                            "type": "normfactor",
+                            "data": null
+                        }
+                    ]
+                },
+                {
+                    "name": "sample_2",
+                    "data": [
+                        2,
+                        4,
+                        6,
+                        8
+                    ],
+                    "modifiers": []
+                }
+            ]
+        }
+    ]
+}

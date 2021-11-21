@@ -1,0 +1,17 @@
+[
+    {
+        "op": "add",
+        "path": "/channels/0/samples/1/modifiers",
+        "value": [
+            {
+                "name": "shapesys_bad",
+                "type": "shapesys",
+                "data": [
+                    1,
+                    2,
+                    3
+                ]
+            }
+        ]
+    }
+]

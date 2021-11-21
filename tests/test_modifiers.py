@@ -1,15 +1,10 @@
-import pyhf
-import numpy
+import json
 
-modifiers_to_test = [
-    "histosys",
-    "normfactor",
-    "normsys",
-    "shapefactor",
-    "shapesys",
-    "staterror",
-]
-modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
+import numpy
+import pytest
+from jsonpatch import JsonPatch
+
+import pyhf
 
 
 def test_shapefactor_build():
@@ -174,3 +169,27 @@ def test_shapesys_holes():
         True,
         False,
     ]
+
+
+@pytest.mark.parametrize(
+    "patch_file",
+    [
+        "bad_histosys_modifier_patch.json",
+        "bad_shapesys_modifier_patch.json",
+        "bad_staterror_modifier_patch.json",
+    ],
+)
+def test_invalid_bin_wise_modifier(datadir, patch_file):
+    """
+    Test that bin-wise modifiers will raise an exception if their data shape
+    differs from their sample's.
+    """
+    spec = json.load(open(datadir.join("spec.json")))
+
+    assert pyhf.Model(spec)
+
+    patch = JsonPatch.from_string(open(datadir.join(patch_file)).read())
+    bad_spec = patch.apply(spec)
+
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        pyhf.Model(bad_spec)
