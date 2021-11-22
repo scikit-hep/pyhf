@@ -785,7 +785,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         return cls(newspec)
 
     @classmethod
-    def build(cls, model, data, name='measurement'):
+    def build(cls, model, data, name='measurement', validate: bool = True):
         """
         Build a workspace from model and data.
 
@@ -793,6 +793,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             model (~pyhf.pdf.Model): A model to store into a workspace
             data (:obj:`tensor`): A array holding observations to store into a workspace
             name (:obj:`str`): The name of the workspace measurement
+            validate (:obj:`bool`): Whether to validate against a JSON schema
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object
@@ -824,4 +825,4 @@ class Workspace(_ChannelSummaryMixin, dict):
             {'name': k, 'data': list(data[model.config.channel_slices[k]])}
             for k in model.config.channels
         ]
-        return cls(workspace)
+        return cls(workspace, validate=validate)
