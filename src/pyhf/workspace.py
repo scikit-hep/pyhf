@@ -286,7 +286,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
 
-    def __init__(self, spec, **config_kwargs):
+    def __init__(self, spec, validate: bool = True, **config_kwargs):
         """Workspaces hold the model, data and measurements."""
         spec = copy.deepcopy(spec)
         super().__init__(spec, channels=spec['channels'])
@@ -295,7 +295,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema}")
-        utils.validate(self, self.schema, version=self.version)
+        if validate:
+            utils.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
