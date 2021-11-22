@@ -657,8 +657,8 @@ class Model:
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema:s}")
         if validate:
+            log.info(f"Validating spec against schema: {self.schema:s}")
             utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         poi_name = config_kwargs.pop('poi_name', 'mu')

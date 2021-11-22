@@ -294,8 +294,8 @@ class Workspace(_ChannelSummaryMixin, dict):
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema}")
         if validate:
+            log.info(f"Validating spec against schema: {self.schema}")
             utils.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
