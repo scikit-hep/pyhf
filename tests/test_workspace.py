@@ -898,3 +898,18 @@ def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
 
     with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.Workspace(spec, abc=True)
+
+
+def test_workspace_without_validation(mocker):
+    # TODO: refactor if #1709 is accepted / merged
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48]
+
+    mocker.patch('pyhf.utils.validate')
+    ws = pyhf.Workspace.build(model, data, validate=False)
+    assert pyhf.utils.validate.called is False
+
+    pyhf.Workspace(dict(ws), validate=False)
+    assert pyhf.utils.validate.called is False
