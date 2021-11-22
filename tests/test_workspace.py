@@ -36,6 +36,15 @@ def workspace_factory(workspace_xml):
     return lambda: pyhf.Workspace(workspace_xml)
 
 
+@pytest.fixture
+def simplemodels_model_data():
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48]
+    return model, data
+
+
 def test_build_workspace(workspace_factory):
     w = workspace_factory()
     assert w
@@ -835,11 +844,8 @@ def test_sorted(workspace_factory):
         assert channel['samples'][-1]['name'] == 'zzzzlast'
 
 
-def test_closure_over_workspace_build():
-    model = pyhf.simplemodels.uncorrelated_background(
-        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-    )
-    data = [51, 48]
+def test_closure_over_workspace_build(simplemodels_model_data):
+    model, data = simplemodels_model_data
     one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
 
     workspace = pyhf.Workspace.build(model, data)
@@ -857,11 +863,8 @@ def test_closure_over_workspace_build():
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
 
 
-def test_wspace_immutable():
-    model = pyhf.simplemodels.uncorrelated_background(
-        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-    )
-    data = [51, 48]
+def test_wspace_immutable(simplemodels_model_data):
+    model, data = simplemodels_model_data
     workspace = pyhf.Workspace.build(model, data)
 
     spec = json.loads(json.dumps(workspace))
@@ -887,3 +890,13 @@ def test_workspace_poiless(datadir):
 
     assert model.config.poi_name is None
     assert model.config.poi_index is None
+
+
+def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
+    model, data = simplemodels_model_data
+    workspace = pyhf.Workspace.build(model, data)
+
+    spec = json.loads(json.dumps(workspace))
+
+    with pytest.raises(pyhf.exceptions.Unsupported):
+        pyhf.Workspace(spec, abc=True)
