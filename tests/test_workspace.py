@@ -866,8 +866,7 @@ def test_closure_over_workspace_build(simplemodels_model_data):
 def test_wspace_immutable(simplemodels_model_data):
     model, data = simplemodels_model_data
     workspace = pyhf.Workspace.build(model, data)
-
-    spec = json.loads(json.dumps(workspace))
+    spec = dict(workspace)
 
     ws = pyhf.Workspace(spec)
     model = ws.model()
@@ -895,8 +894,7 @@ def test_workspace_poiless(datadir):
 def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
     model, data = simplemodels_model_data
     workspace = pyhf.Workspace.build(model, data)
-
-    spec = json.loads(json.dumps(workspace))
+    spec = dict(workspace)
 
     with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.Workspace(spec, abc=True)
