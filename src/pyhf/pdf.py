@@ -648,7 +648,7 @@ class Model:
         Args:
             spec (:obj:`jsonable`): The HistFactory JSON specification
             batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched)
-            Models to compute.
+             Models to compute.
             validate (:obj:`bool`): Whether to validate against a JSON schema
             config_kwargs: Possible keyword arguments for the model configuration
 
