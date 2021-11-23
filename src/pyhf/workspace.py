@@ -287,7 +287,18 @@ class Workspace(_ChannelSummaryMixin, dict):
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
 
     def __init__(self, spec, validate: bool = True, **config_kwargs):
-        """Workspaces hold the model, data and measurements."""
+        """
+        Workspaces hold the model, data and measurements.
+
+        Args:
+            spec (:obj:`jsonable`): The HistFactory JSON specification
+            validate (:obj:`bool`): Whether to validate against a JSON schema
+            config_kwargs: Possible keyword arguments for the workspace configuration
+
+        Returns:
+            model (:class:`~pyhf.workspace.Workspace`): The Workspace instance
+
+        """
         spec = copy.deepcopy(spec)
         super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
