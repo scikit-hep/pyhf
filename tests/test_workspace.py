@@ -36,7 +36,7 @@ def workspace_factory(workspace_xml):
     return lambda: pyhf.Workspace(workspace_xml)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def simplemodels_model_data():
     model = pyhf.simplemodels.uncorrelated_background(
         signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
