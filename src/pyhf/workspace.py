@@ -305,6 +305,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         for obs in self['observations']:
             self.observations[obs['name']] = obs['data']
 
+        if config_kwargs:
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
+            )
+
     def __eq__(self, other):
         """Equality is defined as equal dict representations."""
         if not isinstance(other, Workspace):
