@@ -130,6 +130,7 @@ def datadir(tmpdir, request):
     if test_dir.is_dir():
         distutils.dir_util.copy_tree(test_dir, tmpdir.strpath)
         # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
+        # Once pyhf is Python 3.8+ only then the below can be used.
         # shutil.copytree(test_dir, tmpdir)
 
     return tmpdir
