@@ -31,10 +31,11 @@ def sbottom_likelihoods_download():
 # Factory as fixture pattern
 @pytest.fixture
 def get_json_from_tarfile():
-    def _get_json_from_tarfile(tarfile, json_name):
-        json_file = (
-            tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
-        )
+    def _get_json_from_tarfile(archive_data_path, json_name):
+        with tarfile.open(archive_data_path, "r:gz") as archive:
+            json_file = (
+                archive.extractfile(archive.getmember(json_name)).read().decode("utf8")
+            )
         return json.loads(json_file)
 
     return _get_json_from_tarfile
