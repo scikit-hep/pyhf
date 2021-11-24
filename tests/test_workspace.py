@@ -900,12 +900,8 @@ def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
         pyhf.Workspace(spec, abc=True)
 
 
-def test_workspace_without_validation(mocker):
-    # TODO: refactor if #1709 is accepted / merged
-    model = pyhf.simplemodels.uncorrelated_background(
-        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-    )
-    data = [51, 48]
+def test_workspace_without_validation(mocker, simplemodels_model_data):
+    model, data = simplemodels_model_data
 
     mocker.patch('pyhf.utils.validate')
     ws = pyhf.Workspace.build(model, data, validate=False)
