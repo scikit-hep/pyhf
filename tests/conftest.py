@@ -1,40 +1,20 @@
 import pytest
 import pyhf
 import sys
-import requests
-import hashlib
 import tarfile
 import json
-import os
 import pathlib
 import distutils.dir_util
-
-
-@pytest.fixture(scope='module')
-def sbottom_likelihoods_download():
-    """Download the sbottom likelihoods tarball from HEPData"""
-    sbottom_HEPData_URL = "https://doi.org/10.17182/hepdata.89408.v1/r2"
-    targz_filename = "sbottom_workspaces.tar.gz"
-    response = requests.get(sbottom_HEPData_URL, stream=True)
-    assert response.status_code == 200
-    with open(targz_filename, "wb") as file:
-        file.write(response.content)
-    assert (
-        hashlib.sha256(open(targz_filename, "rb").read()).hexdigest()
-        == "9089b0e5fabba335bea4c94545ccca8ddd21289feeab2f85e5bcc8bada37be70"
-    )
-    # Open as a tarfile
-    yield tarfile.open(targz_filename, "r:gz")
-    os.remove(targz_filename)
 
 
 # Factory as fixture pattern
 @pytest.fixture
 def get_json_from_tarfile():
-    def _get_json_from_tarfile(tarfile, json_name):
-        json_file = (
-            tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
-        )
+    def _get_json_from_tarfile(archive_data_path, json_name):
+        with tarfile.open(archive_data_path, "r:gz") as archive:
+            json_file = (
+                archive.extractfile(archive.getmember(json_name)).read().decode("utf8")
+            )
         return json.loads(json_file)
 
     return _get_json_from_tarfile
@@ -150,6 +130,7 @@ def datadir(tmpdir, request):
     if test_dir.is_dir():
         distutils.dir_util.copy_tree(test_dir, tmpdir.strpath)
         # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
+        # Once pyhf is Python 3.8+ only then the below can be used.
         # shutil.copytree(test_dir, tmpdir)
 
     return tmpdir
