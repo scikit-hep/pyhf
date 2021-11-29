@@ -27,9 +27,7 @@ jobs:
     - name: Install dependencies and force lowest bound
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --constraint constraints.txt
-        python -m pip --no-cache-dir --quiet install .[test]
-        python -m pip install --constraint constraints.txt
+        python -m pip --no-cache-dir --quiet install --constraint constraints.txt .[test]
 
     - name: List installed Python packages
       run: python -m pip list
