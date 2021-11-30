@@ -30,7 +30,7 @@ try:
         Example:
 
             >>> from pyhf.contrib.utils import download
-            >>> download("https://doi.org/10.17182/hepdata.90607.v3/r3", "1Lbb-likelihoods")
+            >>> download("https://doi.org/10.17182/hepdata.90607.v3/r3", "1Lbb-likelihoods")  # doctest: +SKIP
             >>> import os
             >>> sorted(os.listdir("1Lbb-likelihoods"))
             ['BkgOnly.json', 'README.md', 'patchset.json']
