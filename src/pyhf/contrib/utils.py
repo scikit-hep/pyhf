@@ -125,7 +125,6 @@ try:
                         rmtree(output_directory)
                         _tmp_path.replace(output_directory)
 
-
 except ModuleNotFoundError:
     log.error(
         "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"

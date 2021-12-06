@@ -16,7 +16,6 @@ try:
         '''Generate shell completion code for various shells.'''
         click.echo(click_completion.core.get_code(shell, prog_name='pyhf'))
 
-
 except ImportError:
 
     @click.command(help='Generate shell completion code.', name='completions')
