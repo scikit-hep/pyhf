@@ -525,7 +525,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_logpdf(0.5, 0., 1.)
             >>> print(t) # doctest:+ELLIPSIS
-            tf.Tensor(-1.04393853, shape=(), dtype=float64)
+            tf.Tensor(-1.04393853..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
