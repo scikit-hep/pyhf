@@ -414,7 +414,7 @@ class numpy_backend:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            0.16062314104797995
+            0.16062314...
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)
@@ -457,7 +457,7 @@ class numpy_backend:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            0.3520653267642995
+            0.35206532...
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -483,7 +483,7 @@ class numpy_backend:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal_cdf(0.8)
-            0.7881446014166034
+            0.78814460...
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> pyhf.tensorlib.normal_cdf(values)
             array([0.7881446 , 0.97724987])

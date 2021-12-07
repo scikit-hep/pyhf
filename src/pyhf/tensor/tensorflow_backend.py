@@ -451,7 +451,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
             >>> print(t) # doctest:+ELLIPSIS
-            tf.Tensor(-1.8286943966417..., shape=(), dtype=float64)
+            tf.Tensor(-1.82869439..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
@@ -495,7 +495,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson(5., 6.)
             >>> print(t) # doctest:+ELLIPSIS
-            tf.Tensor(0.1606231410479..., shape=(), dtype=float64)
+            tf.Tensor(0.16062314..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
@@ -524,8 +524,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_logpdf(0.5, 0., 1.)
-            >>> print(t)
-            tf.Tensor(-1.0439385332046727, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(-1.04393853, shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -556,8 +556,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal(0.5, 0., 1.)
-            >>> print(t)
-            tf.Tensor(0.3520653267642995, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(0.35206532..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -586,8 +586,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_cdf(0.8)
-            >>> print(t)
-            tf.Tensor(0.7881446014166034, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(0.78814460..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> t = pyhf.tensorlib.normal_cdf(values)
             >>> print(t)
