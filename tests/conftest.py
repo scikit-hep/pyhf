@@ -99,7 +99,13 @@ def backend(request):
         )
 
     if fail_backend:
-        pytest.xfail(f"expect {func_name} to fail as specified")
+        # Mark the test as xfail to actually run it and ensure that it does
+        # fail. pytest.mark.xfail checks for failure, while pytest.xfail
+        # assumes failure and skips running the test.
+        # c.f. https://docs.pytest.org/en/6.2.x/skipping.html#xfail
+        request.node.add_marker(
+            pytest.mark.xfail(reason=f"expect {func_name} to fail as specified")
+        )
 
     # actual execution here, after all checks is done
     pyhf.set_backend(*request.param)
