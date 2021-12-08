@@ -85,9 +85,9 @@ jobs:
     - name: List contents of wheel
       run: python -m zipfile --list dist/pyhf-*.whl
 
-    # Compare to 'true' string as booleans get turned into strings in the console
     - name: Publish distribution 📦 to Test PyPI
-      # publish to TestPyPI on tag events of if manually triggered
+      # Publish to TestPyPI on tag events of if manually triggered
+      # Compare to 'true' string as booleans get turned into strings in the console
       if: >-
         (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
         || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
