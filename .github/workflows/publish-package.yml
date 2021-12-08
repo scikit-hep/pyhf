@@ -9,6 +9,10 @@ on:
     branches:
     - master
   workflow_dispatch:
+    inputs:
+      index:
+        description: 'Index type (testpypi | skip)'
+        required: true
 
 jobs:
   build-and-publish:
