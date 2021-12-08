@@ -83,8 +83,9 @@ jobs:
       run: python -m zipfile --list dist/pyhf-*.whl
 
     - name: Publish distribution 📦 to Test PyPI
-      # every PR will trigger a push event on master, so check the push event is actually coming from master
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
+      if: >-
+        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/pyhf')
+        || (github.event_name == 'workflow_dispatch' && ${{ github.event.inputs.part }} == 'testpypi' && github.repository == 'scikit-hep/pyhf')
       uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         password: ${{ secrets.test_pypi_password }}
