@@ -58,11 +58,11 @@ modifications made.
 TestPyPI
 ~~~~~~~~
 
-``pyhf`` tests packaging and distributing by publishing each commit to
-``master`` to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
-In addition, installation of the latest test release from TestPyPI can be tested
+``pyhf`` tests packaging and distributing by publishing in advance of releases
+to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
+Installation of the latest test release from TestPyPI can be tested
 by first installing ``pyhf`` normally, to ensure all dependencies are installed
-from PyPI, and then upgrading ``pyhf`` to a dev release from TestPyPI
+from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
 
 .. code-block:: bash
 
