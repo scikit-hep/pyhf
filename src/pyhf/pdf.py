@@ -635,14 +635,21 @@ class Model:
     """The main pyhf model class."""
 
     def __init__(
-        self, spec, modifier_set=None, batch_size=None, validate=True, **config_kwargs
+        self,
+        spec,
+        modifier_set=None,
+        batch_size=None,
+        validate: bool = True,
+        **config_kwargs,
     ):
         """
         Construct a HistFactory Model.
 
         Args:
             spec (:obj:`jsonable`): The HistFactory JSON specification
-            batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
+            batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched)
+             Models to compute.
+            validate (:obj:`bool`): Whether to validate against a JSON schema
             config_kwargs: Possible keyword arguments for the model configuration
 
         Returns:
@@ -657,8 +664,8 @@ class Model:
         self.schema = config_kwargs.pop('schema', 'model.json')
         self.version = config_kwargs.pop('version', None)
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema:s}")
         if validate:
+            log.info(f"Validating spec against schema: {self.schema:s}")
             utils.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         poi_name = config_kwargs.pop('poi_name', 'mu')

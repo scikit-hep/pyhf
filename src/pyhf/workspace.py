@@ -286,16 +286,28 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
 
-    def __init__(self, spec, **config_kwargs):
-        """Workspaces hold the model, data and measurements."""
+    def __init__(self, spec, validate: bool = True, **config_kwargs):
+        """
+        Workspaces hold the model, data and measurements.
+
+        Args:
+            spec (:obj:`jsonable`): The HistFactory JSON specification
+            validate (:obj:`bool`): Whether to validate against a JSON schema
+            config_kwargs: Possible keyword arguments for the workspace configuration
+
+        Returns:
+            model (:class:`~pyhf.workspace.Workspace`): The Workspace instance
+
+        """
         spec = copy.deepcopy(spec)
         super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema}")
-        utils.validate(self, self.schema, version=self.version)
+        if validate:
+            log.info(f"Validating spec against schema: {self.schema}")
+            utils.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
@@ -784,7 +796,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         return cls(newspec)
 
     @classmethod
-    def build(cls, model, data, name='measurement'):
+    def build(cls, model, data, name='measurement', validate: bool = True):
         """
         Build a workspace from model and data.
 
@@ -792,6 +804,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             model (~pyhf.pdf.Model): A model to store into a workspace
             data (:obj:`tensor`): A array holding observations to store into a workspace
             name (:obj:`str`): The name of the workspace measurement
+            validate (:obj:`bool`): Whether to validate against a JSON schema
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object
@@ -823,4 +836,4 @@ class Workspace(_ChannelSummaryMixin, dict):
             {'name': k, 'data': list(data[model.config.channel_slices[k]])}
             for k in model.config.channels
         ]
-        return cls(workspace)
+        return cls(workspace, validate=validate)
