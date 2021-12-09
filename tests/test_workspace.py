@@ -898,3 +898,14 @@ def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
 
     with pytest.raises(pyhf.exceptions.Unsupported):
         pyhf.Workspace(spec, abc=True)
+
+
+def test_workspace_without_validation(mocker, simplemodels_model_data):
+    model, data = simplemodels_model_data
+
+    mocker.patch('pyhf.utils.validate')
+    ws = pyhf.Workspace.build(model, data, validate=False)
+    assert pyhf.utils.validate.called is False
+
+    pyhf.Workspace(dict(ws), validate=False)
+    assert pyhf.utils.validate.called is False
