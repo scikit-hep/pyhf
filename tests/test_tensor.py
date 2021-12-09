@@ -465,7 +465,6 @@ def test_1D_gather(backend):
     ) == [[5, 1], [4, 3]]
 
 
-@pytest.mark.fail_pytorch
 def test_ND_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
