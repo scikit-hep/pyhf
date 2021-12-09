@@ -9,6 +9,13 @@ on:
     branches:
     - master
   workflow_dispatch:
+    inputs:
+      publish:
+        type: choice
+        description: 'Publish to TestPyPI?'
+        options:
+        - false
+        - true
 
 jobs:
   build-and-publish:
@@ -79,8 +86,11 @@ jobs:
       run: python -m zipfile --list dist/pyhf-*.whl
 
     - name: Publish distribution 📦 to Test PyPI
-      # every PR will trigger a push event on master, so check the push event is actually coming from master
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scikit-hep/pyhf'
+      # Publish to TestPyPI on tag events of if manually triggered
+      # Compare to 'true' string as booleans get turned into strings in the console
+      if: >-
+        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
+        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
       uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         password: ${{ secrets.test_pypi_password }}
