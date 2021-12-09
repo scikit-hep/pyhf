@@ -376,7 +376,6 @@ def test_boolean_mask(backend):
     )
 
 
-@pytest.mark.fail_jax
 def test_percentile(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
@@ -392,39 +391,11 @@ def test_percentile(backend):
 # c.f. https://github.com/scikit-hep/pyhf/issues/1693
 @pytest.mark.fail_pytorch
 @pytest.mark.fail_pytorch64
-@pytest.mark.fail_jax
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
     assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
-    assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
-    assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
-    assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
-    assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
-
-
-@pytest.mark.only_jax
-def test_percentile_jax(backend):
-    tb = pyhf.tensorlib
-    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
-    assert tb.tolist(tb.percentile(a, 0)) == 1
-
-    # TODO: Monitor future JAX releases for changes to percentile dtype promotion
-    # c.f. https://github.com/scikit-hep/pyhf/issues/1693
-    assert tb.tolist(tb.percentile(a, np.float64(50))) == 3.5
-    assert tb.tolist(tb.percentile(a, np.float64(100))) == 10
-    assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
-
-
-@pytest.mark.only_jax
-def test_percentile_interpolation_jax(backend):
-    tb = pyhf.tensorlib
-    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
-
-    # TODO: Monitor future JAX releases for changes to percentile dtype promotion
-    # c.f. https://github.com/scikit-hep/pyhf/issues/1693
-    assert tb.tolist(tb.percentile(a, np.float64(50), interpolation="linear")) == 3.5
     assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
     assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
     assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
@@ -465,7 +436,6 @@ def test_1D_gather(backend):
     ) == [[5, 1], [4, 3]]
 
 
-@pytest.mark.fail_pytorch
 def test_ND_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(

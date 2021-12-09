@@ -38,11 +38,9 @@ ignore = [
     'AUTHORS',
 ]
 
-[tool.pytest]
-xfail_strict = true
-
 [tool.pytest.ini_options]
 minversion = "6.0"
+xfail_strict = true
 addopts = [
     "--ignore=setup.py",
     "--ignore=validation/",
