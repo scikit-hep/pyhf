@@ -38,5 +38,5 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Make a release for the [`pyhf` tutorial](https://github.com/pyhf/pyhf-tutorial/releases) corresponding to the **previous release** number. This release represents the last version of the tutorial that is guaranteed to work with previous release API.
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
 * [ ] Make a PR to use the new release in the [CUDA enabled Docker images](https://github.com/pyhf/cuda-images).
-* [ ] If the release is a major or minor release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on.
+* [ ] If the release is a **major** or **minor** release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on GitHub's [Release Radar blog](https://github.blog/?s=release+radar).
 * [ ] Close the [release GitHub Project board](https://github.com/scikit-hep/pyhf/projects/).
