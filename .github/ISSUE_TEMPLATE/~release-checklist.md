@@ -14,11 +14,13 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/master/.github/ISSUE_TEMPLATE) directory if there are revisions.
 * [ ] Make a release to [TestPyPI][TestPyPI_pyhf] using the [workflow dispatch event trigger](https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml).
 * [ ] Verify that the project README is displaying correctly on [TestPyPI][TestPyPI_pyhf].
-* [ ] Add any new use citations or published statistical models to the [Use and Citations page](https://scikit-hep.org/pyhf/citations.html).
+* [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
+* [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record.
 * [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
 
 [TestPyPI_pyhf]: https://test.pypi.org/project/pyhf/
+[citations_page]: https://scikit-hep.org/pyhf/citations.html
 
 ## Once Release PR is Merged
 
