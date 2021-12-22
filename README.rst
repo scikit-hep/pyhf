@@ -321,6 +321,7 @@ Milestones
 ----------
 
 - 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
+- 2021-12-09: 1000 commits to the project.
 
 Acknowledgements
 ----------------
