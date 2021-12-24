@@ -217,7 +217,7 @@ shown below:
    For bins in the model where:
 
      * the samples nominal expected rate is zero, or
-     * the absolute uncertainty is zero.
+     * the scale factor is zero.
 
    nuisance parameters will be allocated, but will be fixed to ``1`` in the
    calculation (as staterror is a multiplicative modifier this results in
