@@ -334,15 +334,14 @@ as
 * **name**: the channel for which the observations are recorded
 * **data**: the bin-by-bin observations for the named channel
 
-An example of an observation is shown below:
+An example of an observation for a 2-bin channel ``channel1``, with values
+``110.0`` and ``120.0`` is shown below:
 
 .. code:: json
 
    {
        "name": "channel1", "data": [110.0, 120.0]
    }
-
-This observation recorded for a 2-bin channel ``channel1``, has values ``110.0`` and ``120.0``.
 
 Toy Example
 -----------
