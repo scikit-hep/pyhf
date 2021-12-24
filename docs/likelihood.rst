@@ -205,11 +205,23 @@ uncertainties of samples defined within the channel relative to the total event
 rate of all samples: :math:`\delta_{csb} = \sigma_{csb}/\sum_s \nu^0_{scb}`. As
 not all samples are within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
-An example of a statistical uncertainty modifier is shown below:
+An example of a statistical uncertainty modifier for a single bin channel is
+shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "staterror", "data": [0.1] }
+
+.. warning::
+
+   For bins in the model where:
+
+     * the samples nominal expected rate is zero, or
+     * the absolute uncertainty is zero.
+
+   nuisance parameters will be allocated, but will be fixed to ``1`` in the
+   calculation (as staterror is a multiplicative modifier this results in
+   multiplying by ``1``).
 
 Luminosity (lumi)
 ~~~~~~~~~~~~~~~~~
