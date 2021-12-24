@@ -138,18 +138,22 @@ terms for a 3-bin channel.
 
 .. warning::
 
-   Nuisance parameters will not be allocated for any bins where either
+   For bins in the model where:
 
      * the samples nominal expected rate is zero, or
      * the absolute uncertainty is zero.
+
+   nuisance parameters will be allocated, but will be fixed to ``1`` in the
+   calculation (as shapesys is a multiplicative modifier this results in
+   multiplying by ``1``).
 
    These values are, in the context of uncorrelated shape uncertainties,
    unphysical. If this situation occurs, one needs to go back and understand
    the inputs as this is undefined behavior in HistFactory.
 
 The previous example will allocate three nuisance parameters for ``mod_name``.
-The following example will allocate only two nuisance parameters for a 3-bin
-channel:
+The following example will also allocate three nuisance parameters for a 3-bin
+channel, with the second nuisance parameter fixed to ``1``:
 
 .. code:: json
 
