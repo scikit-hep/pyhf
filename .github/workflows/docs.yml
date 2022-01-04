@@ -31,13 +31,6 @@ jobs:
         python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
-
-    - name: Patch dependencies
-      run: |
-        python -m pip uninstall -y nbsphinx
-        python -m pip install --upgrade "git+https://github.com/mgeier/nbsphinx.git@protect-from-empty-text#egg=nbsphinx"
-        python -m pip list
-
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
