@@ -55,7 +55,7 @@ repos:
     rev: 1.2.2
     hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.29.1]
+      additional_dependencies: [pyupgrade==2.31.0]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
