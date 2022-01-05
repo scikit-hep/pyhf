@@ -17,6 +17,10 @@ on:
         - false
         - true
 
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-publish:
     name: Build and publish Python distro to (Test)PyPI
