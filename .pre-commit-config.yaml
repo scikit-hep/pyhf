@@ -4,7 +4,7 @@ ci:
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
     - id: check-added-large-files
     - id: check-case-conflict
@@ -25,7 +25,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.29.1
+    rev: v2.31.0
     hooks:
     - id: pyupgrade
       args: ["--py37-plus"]
@@ -55,7 +55,7 @@ repos:
     rev: 1.2.2
     hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.29.1]
+      additional_dependencies: [pyupgrade==2.31.0]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.1.0

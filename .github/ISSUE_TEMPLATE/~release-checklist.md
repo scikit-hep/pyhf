@@ -12,10 +12,15 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Verify that the release notes files correctly summarize all development changes since the last release.
 * [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
 * [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/master/.github/ISSUE_TEMPLATE) directory if there are revisions.
-* [ ] Verify that the project README is displaying correctly on [TestPyPI](https://test.pypi.org/project/pyhf/).
-* [ ] Add any new use citations or published statistical models to the [Use and Citations page](https://scikit-hep.org/pyhf/citations.html).
+* [ ] Make a release to [TestPyPI][TestPyPI_pyhf] using the [workflow dispatch event trigger](https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml).
+* [ ] Verify that the project README is displaying correctly on [TestPyPI][TestPyPI_pyhf].
+* [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
+* [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record.
 * [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
+
+[TestPyPI_pyhf]: https://test.pypi.org/project/pyhf/
+[citations_page]: https://scikit-hep.org/pyhf/citations.html
 
 ## Once Release PR is Merged
 
@@ -38,4 +43,5 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Make a release for the [`pyhf` tutorial](https://github.com/pyhf/pyhf-tutorial/releases) corresponding to the **previous release** number. This release represents the last version of the tutorial that is guaranteed to work with previous release API.
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
 * [ ] Make a PR to use the new release in the [CUDA enabled Docker images](https://github.com/pyhf/cuda-images).
+* [ ] If the release is a **major** or **minor** release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on GitHub's [Release Radar blog](https://github.blog/?s=release+radar).
 * [ ] Close the [release GitHub Project board](https://github.com/scikit-hep/pyhf/projects/).
