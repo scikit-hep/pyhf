@@ -126,30 +126,32 @@ Uncorrelated Shape (shapesys)
 To construct the constraint term, the relative uncertainties
 :math:`\sigma_b` are necessary for each bin. Therefore, we record the
 absolute uncertainty as an array of floats, which combined with the
-nominal sample data yield the desired :math:`\sigma_b`. An example is
-shown below:
+nominal sample data yield the desired :math:`\sigma_b`.
+An example of an uncorrelated shape modifier with three absolute uncertainty
+terms for a 3-bin channel is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "shapesys", "data": [1.0, 1.5, 2.0] }
 
-An example of an uncorrelated shape modifier with three absolute uncertainty
-terms for a 3-bin channel.
-
 .. warning::
 
-   Nuisance parameters will not be allocated for any bins where either
+   For bins in the model where:
 
      * the samples nominal expected rate is zero, or
      * the absolute uncertainty is zero.
+
+   nuisance parameters will be allocated, but will be fixed to ``1`` in the
+   calculation (as shapesys is a multiplicative modifier this results in
+   multiplying by ``1``).
 
    These values are, in the context of uncorrelated shape uncertainties,
    unphysical. If this situation occurs, one needs to go back and understand
    the inputs as this is undefined behavior in HistFactory.
 
 The previous example will allocate three nuisance parameters for ``mod_name``.
-The following example will allocate only two nuisance parameters for a 3-bin
-channel:
+The following example will also allocate three nuisance parameters for a 3-bin
+channel, with the second nuisance parameter fixed to ``1``:
 
 .. code:: json
 
@@ -163,14 +165,13 @@ different effect on the various sample shapes, hence a correlated shape.
 To implement an interpolation between sample distribution shapes, the
 distributions with a "downward variation" ("lo") associated with
 :math:`\alpha=-1` and an "upward variation" ("hi") associated with
-:math:`\alpha=+1` are provided as arrays of floats. An example is shown
-below:
+:math:`\alpha=+1` are provided as arrays of floats.
+An example of a correlated shape modifier with absolute shape variations
+for a 2-bin channel is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "histosys", "data": {"hi_data": [20,15], "lo_data": [10, 10]} }
-
-An example of a correlated shape modifier with absolute shape variations for a 2-bin channel.
 
 Normalisation Uncertainty (normsys)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,14 +181,13 @@ factor :math:`\kappa(\alpha)` constructed as the interpolation between
 downward ("lo") and upward ("hi") as well as the nominal setting, i.e.
 :math:`\kappa(-1) = \kappa_{\alpha=-1}`, :math:`\kappa(0) = 1` and
 :math:`\kappa(+1) = \kappa_{\alpha=+1}`. In the modifier definition we record
-:math:`\kappa_{\alpha=+1}` and :math:`\kappa_{\alpha=-1}` as floats. An
-example is shown below:
+:math:`\kappa_{\alpha=+1}` and :math:`\kappa_{\alpha=-1}` as floats.
+An example of a normalisation uncertainty modifier with scale factors recorded
+for the up/down variations of an :math:`n`-bin channel is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "normsys", "data": {"hi": 1.1, "lo": 0.9} }
-
-An example of a normalisation uncertainty modifier with scale factors recorded for the up/down variations of an :math:`n`-bin channel.
 
 MC Statistical Uncertainty (staterror)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -204,14 +204,24 @@ central value equal to unity for each bin in the channel. The scales
 uncertainties of samples defined within the channel relative to the total event
 rate of all samples: :math:`\delta_{csb} = \sigma_{csb}/\sum_s \nu^0_{scb}`. As
 not all samples are within a channel are estimated from MC simulations, only
-the samples with a declared statistical uncertainty modifier enter the sum. An
-example is shown below:
+the samples with a declared statistical uncertainty modifier enter the sum.
+An example of a statistical uncertainty modifier for a single bin channel is
+shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "staterror", "data": [0.1] }
 
-An example of a statistical uncertainty modifier.
+.. warning::
+
+   For bins in the model where:
+
+     * the samples nominal expected rate is zero, or
+     * the scale factor is zero.
+
+   nuisance parameters will be allocated, but will be fixed to ``1`` in the
+   calculation (as staterror is a multiplicative modifier this results in
+   multiplying by ``1``).
 
 Luminosity (lumi)
 ~~~~~~~~~~~~~~~~~
@@ -225,13 +235,12 @@ required and thus the data field is nulled. This uncertainty is relevant, in
 particular, when the parameter of interest is a signal cross-section. The
 luminosity uncertainty :math:`\sigma_\lambda` is provided as part of the
 parameter configuration included in the measurement specification discussed
-in :ref:`ssec:measurements`.  An example is shown below:
+in :ref:`ssec:measurements`.
+An example of a luminosity modifier is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "lumi", "data": null }
-
-An example of a luminosity modifier.
 
 Unconstrained Normalisation (normfactor)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,13 +250,12 @@ sample by a free parameter :math:`\mu`. Common use cases are the signal
 rate of a possible BSM signal or simultaneous in-situ measurements of
 background samples. Such parameters are frequently the parameters of
 interest of a given measurement. No additional per-sample data is
-required. An example is shown below:
+required.
+An example of a normalisation modifier is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "normfactor", "data": null }
-
-An example of a normalisation modifier.
 
 Data-driven Shape (shapefactor)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,14 +263,12 @@ Data-driven Shape (shapefactor)
 In order to support data-driven estimation of sample rates (e.g. for
 multijet backgrounds), the data-driven shape modifier adds free,
 bin-wise multiplicative parameters. Similarly to the normalisation
-factors, no additional data is required as no constraint is defined. An
-example is shown below:
+factors, no additional data is required as no constraint is defined.
+An example of an uncorrelated shape modifier is shown below:
 
 .. code:: json
 
    { "name": "mod_name", "type": "shapefactor", "data": null }
-
-An example of an uncorrelated shape modifier.
 
 Data
 ----
@@ -272,15 +278,14 @@ The data provided by the analysis are the observed data for each channel
 array of floats, which provide the observed rates in each bin of the
 channel. The auxiliary data is not included as it is an input to the
 likelihood that does not need to be archived and can be determined
-automatically from the specification. An example is shown below:
+automatically from the specification.
+An example of channel data is shown below:
 
 .. _lst:example:data:
 
 .. code:: json
 
    { "chan_name_one": [10, 20], "chan_name_two": [4, 0]}
-
-An example of channel data.
 
 .. _ssec:measurements:
 
@@ -299,7 +304,7 @@ modifiers, the default settings can be overridden where possible:
 * **auxdata**: Auxiliary data for the associated constraint term.
 * **sigmas**: Associated uncertainty of the parameter.
 
-An example is shown below:
+An example of a measurement is shown below:
 
 .. code:: json
 
@@ -314,7 +319,7 @@ An example is shown below:
        }
    }
 
-An example of a measurement. This measurement, which scans over the parameter of interest ``SignalCrossSection``, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named ``mu_ttbar``, and specifying that the modifier ``rw_1CR`` is held constant (``fixed``).
+This measurement, which scans over the parameter of interest ``SignalCrossSection``, is setting configurations for the luminosity modifier, changing the default bounds for the normfactor modifier named ``mu_ttbar``, and specifying that the modifier ``rw_1CR`` is held constant (``fixed``).
 
 .. _ssec:observations:
 
@@ -329,16 +334,14 @@ as
 * **name**: the channel for which the observations are recorded
 * **data**: the bin-by-bin observations for the named channel
 
-An example is shown below:
+An example of an observation for a 2-bin channel ``channel1``, with values
+``110.0`` and ``120.0`` is shown below:
 
 .. code:: json
 
    {
-       "name": "channel1",
-       "data": [110.0, 120.0]
+       "name": "channel1", "data": [110.0, 120.0]
    }
-
-An example of an observation. This observation recorded for a 2-bin channel ``channel1``, has values ``110.0`` and ``120.0``.
 
 Toy Example
 -----------
