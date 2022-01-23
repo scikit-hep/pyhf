@@ -334,7 +334,7 @@ class jax_backend:
             output: the concatenated tensor
 
         """
-        return jnp.concatenate(sequence, axis=axis)
+        return jnp.concatenate(jnp.asarray(sequence), axis=axis)
 
     def simple_broadcast(self, *args):
         """
