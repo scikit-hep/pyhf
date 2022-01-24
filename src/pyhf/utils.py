@@ -54,15 +54,17 @@ load_schema('defs.json')
 
 def validate(spec, schema_name, version=None):
     schema = load_schema(schema_name, version=version)
+
+    resolver = jsonschema.RefResolver(
+        base_uri=f"file://{resources.files('pyhf')/'schemas'}",
+        referrer=schema_name,
+        store=SCHEMA_CACHE,
+    )
+    validator = jsonschema.Draft6Validator(
+        schema, resolver=resolver, format_checker=None
+    )
+
     try:
-        resolver = jsonschema.RefResolver(
-            base_uri=f"file://{resources.files('pyhf')/'schemas'}",
-            referrer=schema_name,
-            store=SCHEMA_CACHE,
-        )
-        validator = jsonschema.Draft6Validator(
-            schema, resolver=resolver, format_checker=None
-        )
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise InvalidSpecification(err, schema_name)
