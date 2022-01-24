@@ -2,13 +2,13 @@ import logging
 
 from pathlib import Path
 import shutil
-import pkg_resources
 import xml.etree.ElementTree as ET
 import numpy as np
 
 import uproot
 
 from pyhf.mixins import _ChannelSummaryMixin
+from pyhf.utils import schemas
 
 _ROOT_DATA_FILE = None
 
@@ -276,7 +276,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
     shutil.copyfile(
-        pkg_resources.resource_filename(__name__, 'schemas/HistFactorySchema.dtd'),
+        schemas.joinpath('schemas/HistFactorySchema.dtd'),
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
