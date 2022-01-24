@@ -1,6 +1,5 @@
 import json
 import jsonschema
-import pkg_resources
 from pathlib import Path
 import yaml
 import click
@@ -145,14 +144,9 @@ def citation(oneline=False):
     Returns:
         citation (:obj:`str`): The citation for this software
     """
-    path = Path(
-        pkg_resources.resource_filename(
-            __name__, str(Path('data').joinpath('citation.bib'))
-        )
-    )
-    with path.open() as fp:
-        # remove end-of-file newline if there is one
-        data = fp.read().strip()
+    ref = resources.files('pyhf') / 'data' / 'citation.bib'
+    with resources.as_file(ref) as path:
+        data = path.read_text().strip()
 
     if oneline:
         data = ''.join(data.splitlines())
