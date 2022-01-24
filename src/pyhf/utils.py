@@ -4,7 +4,16 @@ from pathlib import Path
 import yaml
 import click
 import hashlib
+
 import sys
+
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
+schemas = resources.files('pyhf') / "schemas"
+
+import pyhf.exceptions
 
 if sys.version_info >= (3, 9):
     from importlib import resources
@@ -38,26 +47,36 @@ def load_schema(schema_id):
     except KeyError:
         pass
 
-    ref = resources.files('pyhf') / 'schemas' / schema_id
+    ref = schemas.joinpath(schema_id)
     with resources.as_file(ref) as path:
+        if not path.exists():
+            raise pyhf.exceptions.SchemaNotFound(
+                f'The schema {schema_id} was not found. Do you have the right version or the right path? {path}'
+            )
         with path.open() as json_schema:
             schema = json.load(json_schema)
             SCHEMA_CACHE[schema['$id']] = schema
         return SCHEMA_CACHE[schema['$id']]
 
 
-# load the defs.json as it is included by $ref
-# load_schema('defs.json')
+# preload the schemas
+load_schema(f'{SCHEMA_VERSION}/defs.json')
+load_schema(f'{SCHEMA_VERSION}/jsonpatch.json')
+load_schema(f'{SCHEMA_VERSION}/measurement.json')
+load_schema(f'{SCHEMA_VERSION}/model.json')
+load_schema(f'{SCHEMA_VERSION}/patchset.json')
+load_schema(f'{SCHEMA_VERSION}/workspace.json')
 
 
 def validate(spec, schema_name, version=None):
     version = version or SCHEMA_VERSION
+
     schema = load_schema(f'{version}/{schema_name}')
 
     # note: trailing slash needed for RefResolver to resolve correctly
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{resources.files('pyhf') / 'schemas' / version / schema_name}",
-        referrer=schema_name,
+        base_uri=f"file://{schemas}/",
+        referrer=f"{version}/{schema_name}",
         store=SCHEMA_CACHE,
     )
     validator = jsonschema.Draft6Validator(
