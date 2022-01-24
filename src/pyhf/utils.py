@@ -5,6 +5,12 @@ from pathlib import Path
 import yaml
 import click
 import hashlib
+import sys
+
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 from pyhf.exceptions import InvalidSpecification
 
@@ -35,13 +41,12 @@ def load_schema(schema_id, version=None):
     except KeyError:
         pass
 
-    path = pkg_resources.resource_filename(
-        __name__, str(Path('schemas').joinpath(version, schema_id))
-    )
-    with open(path) as json_schema:
-        schema = json.load(json_schema)
-        SCHEMA_CACHE[schema['$id']] = schema
-    return SCHEMA_CACHE[schema['$id']]
+    ref = resources.files('pyhf') / 'schemas' / version / schema_id
+    with resources.as_file(ref) as path:
+        with path.open() as json_schema:
+            schema = json.load(json_schema)
+            SCHEMA_CACHE[schema['$id']] = schema
+        return SCHEMA_CACHE[schema['$id']]
 
 
 # load the defs.json as it is included by $ref
@@ -52,7 +57,7 @@ def validate(spec, schema_name, version=None):
     schema = load_schema(schema_name, version=version)
     try:
         resolver = jsonschema.RefResolver(
-            base_uri=f"file://{pkg_resources.resource_filename(__name__, 'schemas/'):s}",
+            base_uri=f"file://{resources.files('pyhf')/'schemas'}",
             referrer=schema_name,
             store=SCHEMA_CACHE,
         )
