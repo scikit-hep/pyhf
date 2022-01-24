@@ -31,16 +31,14 @@ def __dir__():
     return __all__
 
 
-def load_schema(schema_id, version=None):
+def load_schema(schema_id):
     global SCHEMA_CACHE
-    if not version:
-        version = SCHEMA_VERSION
     try:
-        return SCHEMA_CACHE[f'{SCHEMA_BASE}{Path(version).joinpath(schema_id)}']
+        return SCHEMA_CACHE[f'{Path(SCHEMA_BASE).joinpath(schema_id)}']
     except KeyError:
         pass
 
-    ref = resources.files('pyhf') / 'schemas' / version / schema_id
+    ref = resources.files('pyhf') / 'schemas' / schema_id
     with resources.as_file(ref) as path:
         with path.open() as json_schema:
             schema = json.load(json_schema)
@@ -49,14 +47,17 @@ def load_schema(schema_id, version=None):
 
 
 # load the defs.json as it is included by $ref
-load_schema('defs.json')
+# load_schema('defs.json')
 
 
 def validate(spec, schema_name, version=None):
-    schema = load_schema(schema_name, version=version)
+    if not version:
+        version = SCHEMA_VERSION
+
+    schema = load_schema(f'{version}/{schema_name}')
 
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{resources.files('pyhf')/'schemas'}",
+        base_uri=f"file://{resources.files('pyhf') / 'schemas' / version}",
         referrer=schema_name,
         store=SCHEMA_CACHE,
     )
