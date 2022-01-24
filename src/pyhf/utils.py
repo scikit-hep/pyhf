@@ -56,8 +56,9 @@ def validate(spec, schema_name, version=None):
 
     schema = load_schema(f'{version}/{schema_name}')
 
+    # note: trailing slash needed for RefResolver to resolve correctly
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{resources.files('pyhf') / 'schemas' / version}",
+        base_uri=f"file://{resources.files('pyhf') / 'schemas' / version / schema_name}",
         referrer=schema_name,
         store=SCHEMA_CACHE,
     )
