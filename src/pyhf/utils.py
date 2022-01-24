@@ -51,9 +51,7 @@ def load_schema(schema_id):
 
 
 def validate(spec, schema_name, version=None):
-    if not version:
-        version = SCHEMA_VERSION
-
+    version = version or SCHEMA_VERSION
     schema = load_schema(f'{version}/{schema_name}')
 
     # note: trailing slash needed for RefResolver to resolve correctly
