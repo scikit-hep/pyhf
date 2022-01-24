@@ -276,7 +276,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
     shutil.copyfile(
-        schemas.joinpath('schemas/HistFactorySchema.dtd'),
+        schemas.joinpath('HistFactorySchema.dtd'),
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
