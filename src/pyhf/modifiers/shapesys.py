@@ -17,7 +17,7 @@ def required_parset(sample_data, modifier_data):
     ]
 
     factors = [
-        (nom_yield ** 2 / unc ** 2) if (is_valid) else 1.0
+        (nom_yield**2 / unc**2) if (is_valid) else 1.0
         for is_valid, nom_yield, unc in zip(valid_bins, sample_data, modifier_data)
     ]
     fixed = tuple(not is_valid for is_valid in valid_bins)

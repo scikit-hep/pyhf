@@ -93,16 +93,13 @@ def test_tensor_where_scalar(backend):
 
 def test_tensor_where_tensor(backend):
     tb = pyhf.tensorlib
-    assert (
-        tb.tolist(
-            tb.where(
-                tb.astensor([1, 0, 1], dtype="bool"),
-                tb.astensor([1, 1, 1]),
-                tb.astensor([2, 2, 2]),
-            )
+    assert tb.tolist(
+        tb.where(
+            tb.astensor([1, 0, 1], dtype="bool"),
+            tb.astensor([1, 1, 1]),
+            tb.astensor([2, 2, 2]),
         )
-        == [1, 2, 1]
-    )
+    ) == [1, 2, 1]
 
 
 def test_tensor_to_numpy(backend):
@@ -173,39 +170,30 @@ def test_zeros(backend):
 
 def test_broadcasting(backend):
     tb = pyhf.tensorlib
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
-                ),
-            )
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
+            ),
         )
-        == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
-    )
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
-                ),
-            )
+    ) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
         )
-        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    )
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
-                ),
-            )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
         )
-        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
     with pytest.raises(Exception):
         tb.simple_broadcast(
             tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
@@ -354,26 +342,18 @@ def test_pdf_calculations_pytorch(backend):
 
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
-    assert (
-        tb.tolist(
-            tb.boolean_mask(
-                tb.astensor([1, 2, 3, 4, 5, 6]),
-                tb.astensor([True, True, False, True, False, False], dtype='bool'),
-            )
+    assert tb.tolist(
+        tb.boolean_mask(
+            tb.astensor([1, 2, 3, 4, 5, 6]),
+            tb.astensor([True, True, False, True, False, False], dtype='bool'),
         )
-        == [1, 2, 4]
-    )
-    assert (
-        tb.tolist(
-            tb.boolean_mask(
-                tb.astensor([[1, 2], [3, 4], [5, 6]]),
-                tb.astensor(
-                    [[True, True], [False, True], [False, False]], dtype='bool'
-                ),
-            )
+    ) == [1, 2, 4]
+    assert tb.tolist(
+        tb.boolean_mask(
+            tb.astensor([[1, 2], [3, 4], [5, 6]]),
+            tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'),
         )
-        == [1, 2, 4]
-    )
+    ) == [1, 2, 4]
 
 
 def test_percentile(backend):

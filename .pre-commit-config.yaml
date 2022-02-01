@@ -36,15 +36,15 @@ repos:
     - id: absolufy-imports
 
 -   repo: https://github.com/psf/black
-    rev: 21.12b0
+    rev: 22.1.0
     hooks:
     - id: black-jupyter
 
 -   repo: https://github.com/asottile/blacken-docs
-    rev: v1.12.0
+    rev: v1.12.1
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==21.12b0]
+      additional_dependencies: [black==22.1.0]
 
 -   repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
