@@ -179,7 +179,7 @@ def test_code1_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor(
-        [[[[0.9 ** 2], [0.9], [1.0], [1.1], [1.1 ** 2]]]]
+        [[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]]
     )
 
     interpolator = pyhf.interpolators.get(1, do_tensorized_calc=do_tensorized_calc)(
