@@ -51,7 +51,10 @@ def test_simple_tensor_ops(backend):
         4,
     ]
     assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
-    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+    # c.f. Issue #1759
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == pytest.approx(
+        [2, 3, 4], 1e-9
+    )
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
     assert tb.tolist(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0]))) == pytest.approx(
         [
