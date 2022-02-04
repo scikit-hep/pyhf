@@ -1,3 +1,4 @@
+from sys import platform
 import pytest
 import logging
 import numpy as np
@@ -51,7 +52,10 @@ def test_simple_tensor_ops(backend):
         4,
     ]
     assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
-    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+    # c.f. Issue #1759
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == pytest.approx(
+        [2, 3, 4], 1e-9
+    )
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
     assert tb.tolist(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0]))) == pytest.approx(
         [
@@ -84,6 +88,17 @@ def test_simple_tensor_ops(backend):
         [2.0, 5.0],
         [3.0, 6.0],
     ]
+
+
+@pytest.mark.xfail(platform == "darwin", reason="c.f. Issue #1759")
+@pytest.mark.only_tensorflow
+def test_simple_tensor_ops_floating_point(backend):
+    """
+    xfail test to know if test_simple_tensor_ops stops failing for tensorflow
+    on macos
+    """
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
 
 
 def test_tensor_where_scalar(backend):
