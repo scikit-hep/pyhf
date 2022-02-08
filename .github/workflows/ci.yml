@@ -59,6 +59,7 @@ jobs:
       if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
+        files: ./coverage.xml
         flags: unittests
 
     - name: Test Contrib module with pytest
@@ -69,6 +70,7 @@ jobs:
       if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
+        files: ./coverage.xml
         flags: contrib
 
     - name: Test docstring examples with doctest
@@ -79,6 +81,7 @@ jobs:
       if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
+        files: ./coverage.xml
         flags: doctest
 
     - name: Run benchmarks
