@@ -49,7 +49,6 @@ addopts = [
     "--cov=pyhf",
     "--cov-report=term-missing",
     "--cov-config=.coveragerc",
-    "--cov-report=xml",
     "--doctest-modules",
     "--doctest-glob='*.rst'"
 ]
