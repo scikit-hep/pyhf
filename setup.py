@@ -68,7 +68,7 @@ extras_require['develop'] = sorted(
         + extras_require['test']
         + [
             'nbdime',
-            'bump2version',
+            'tbump>=6.7.0',
             'ipython',
             'pre-commit',
             'check-manifest',
