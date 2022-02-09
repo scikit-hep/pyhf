@@ -42,7 +42,8 @@ ignore = [
 minversion = "6.0"
 xfail_strict = true
 addopts = [
-    "-r a",
+    "-ra",
+    "-Wd",
     "--cov=pyhf",
     "--cov-branch",
     "--showlocals",
