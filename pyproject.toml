@@ -48,6 +48,7 @@ addopts = [
     "--ignore=docs/",
     "--cov=pyhf",
     "--cov-config=.coveragerc",
+    "--cov-branch",
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-report=html",
