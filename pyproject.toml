@@ -44,16 +44,15 @@ xfail_strict = true
 addopts = [
     "-r a",
     "--cov=pyhf",
-    "--cov-config=.coveragerc",
     "--cov-branch",
+    "--showlocals",
+    "--strict-markers",
+    "--strict-config",
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
-    "--showlocals",
-    "--strict-markers",
-    "--strict-config"
 ]
 log_cli_level = "info"
 testpaths = "tests"
