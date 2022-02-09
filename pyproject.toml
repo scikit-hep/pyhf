@@ -42,10 +42,6 @@ ignore = [
 minversion = "6.0"
 xfail_strict = true
 addopts = [
-    "--ignore=setup.py",
-    "--ignore=validation/",
-    "--ignore=binder/",
-    "--ignore=docs/",
     "--cov=pyhf",
     "--cov-config=.coveragerc",
     "--cov-branch",
