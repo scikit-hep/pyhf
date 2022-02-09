@@ -42,6 +42,7 @@ ignore = [
 minversion = "6.0"
 xfail_strict = true
 addopts = [
+    "-r a",
     "--cov=pyhf",
     "--cov-config=.coveragerc",
     "--cov-branch",
@@ -50,7 +51,6 @@ addopts = [
     "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
-    "-ra",
     "--showlocals",
     "--strict-markers",
     "--strict-config"
