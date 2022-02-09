@@ -78,11 +78,7 @@ markers = [
     "skip_tensorflow",
 ]
 
-[tool.nbqa.config]
-black = "pyproject.toml"
-
 [tool.nbqa.mutate]
-black = 1
 pyupgrade = 1
 
 [tool.nbqa.addopts]
