@@ -51,7 +51,6 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-report=html",
-    "--cov-report=annotate:coverage_annotate",
     "--doctest-modules",
     "--doctest-glob='*.rst'"
 ]
