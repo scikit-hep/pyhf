@@ -576,7 +576,9 @@ def test_bad_solver_options_scipy(mocker):
     model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
 
-    with pytest.warns(OptimizeWarning):
+    with pytest.warns(
+        OptimizeWarning, match="Unknown solver options: arbitrary_option"
+    ):
         assert pyhf.infer.mle.fit(data, model).tolist()
 
 
