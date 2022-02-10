@@ -82,6 +82,7 @@ filterwarnings = [
     'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
     'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
     "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
+    'ignore:Please use `OptimizeWarning` from the `scipy.optimize` namespace, the `scipy.optimize.optimize` namespace is deprecated.',  # Issue #1772, scipy v1.8.0+
     "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
     'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
     'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
