@@ -345,7 +345,7 @@ def test_pdf_calculations_pytorch(backend):
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
-    with pytest.warns(RuntimeWarning):
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
         assert tb.tolist(
             tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
         ) == pytest.approx(
