@@ -43,7 +43,6 @@ minversion = "6.0"
 xfail_strict = true
 addopts = [
     "-ra",
-    "-Wd",
     "--cov=pyhf",
     "--cov-branch",
     "--showlocals",
@@ -54,6 +53,19 @@ addopts = [
     "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
+]
+filterwarnings = [
+    "error",
+    'ignore:the imp module is deprecated:DeprecationWarning',  # tensorflow
+    'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
+    'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
+    "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
+    'ignore:invalid value encountered in true_divide:RuntimeWarning',  #FIXME
+    'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
+    "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME
+    "ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning",  #FIXME
+    'ignore:divide by zero encountered in log:RuntimeWarning',
+    'ignore:divide by zero encountered in true_divide:RuntimeWarning',
 ]
 log_cli_level = "info"
 testpaths = "tests"
