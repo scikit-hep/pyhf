@@ -37,5 +37,7 @@ jobs:
         # Disable error on filterwarnings as testing for oldest releases that work with latest API,
         # not the oldest releases that are warning free
         sed -i '/"error",/d' pyproject.toml
+        # Still show warnings though
+        export PYTHONWARNINGS='default'
         # Run on tests/ to skip doctests of src given examples are for latest APIs
         pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py tests/
