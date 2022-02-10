@@ -86,8 +86,7 @@ filterwarnings = [
     'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
     "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME
     "ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning",  #FIXME
-    'ignore:divide by zero encountered in log:RuntimeWarning',
-    'ignore:divide by zero encountered in true_divide:RuntimeWarning',
+    'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py -k test_pdf_calculations[numpy]
 ]
 
 [tool.nbqa.mutate]

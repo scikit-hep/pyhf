@@ -274,37 +274,39 @@ def test_shape(backend):
 @pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
-        [0.7881446014166034], 1e-07
-    )
-    assert tb.tolist(
-        tb.normal_logpdf(
-            tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
-            tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
-            tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
+    # FIXME
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
+        assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
+            [0.7881446014166034], 1e-07
         )
-    ) == pytest.approx(
-        [
-            np.nan,
-            np.nan,
-            np.nan,
-            np.nan,
-            -0.91893853,
-            -1.41893853,
-            -1.41893853,
-            -0.91893853,
-        ],
-        nan_ok=True,
-    )
-    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
-    assert tb.tolist(
-        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
-    assert tb.tolist(
-        tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
-    )
+        assert tb.tolist(
+            tb.normal_logpdf(
+                tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
+                tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
+                tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
+            )
+        ) == pytest.approx(
+            [
+                np.nan,
+                np.nan,
+                np.nan,
+                np.nan,
+                -0.91893853,
+                -1.41893853,
+                -1.41893853,
+                -0.91893853,
+            ],
+            nan_ok=True,
+        )
+        # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
+        assert tb.tolist(
+            tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
+        assert tb.tolist(
+            tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx(
+            np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
+        )
 
     # Ensure continuous approximation is valid
     assert tb.tolist(
@@ -343,11 +345,12 @@ def test_pdf_calculations_pytorch(backend):
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
     ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
-    assert tb.tolist(
-        tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
-    )
+    with pytest.warns(RuntimeWarning):
+        assert tb.tolist(
+            tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx(
+            np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
+        )
 
     # Ensure continuous approximation is valid
     assert tb.tolist(
