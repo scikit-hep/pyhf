@@ -42,18 +42,19 @@ ignore = [
 minversion = "6.0"
 xfail_strict = true
 addopts = [
-    "--ignore=setup.py",
-    "--ignore=validation/",
-    "--ignore=binder/",
-    "--ignore=docs/",
+    "-ra",
     "--cov=pyhf",
-    "--cov-config=.coveragerc",
+    "--cov-branch",
+    "--showlocals",
+    "--strict-markers",
+    "--strict-config",
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-report=html",
     "--doctest-modules",
-    "--doctest-glob='*.rst'"
+    "--doctest-glob='*.rst'",
 ]
+log_cli_level = "info"
 testpaths = "tests"
 markers = [
     "fail_jax",
@@ -75,12 +76,21 @@ markers = [
     "skip_pytorch64",
     "skip_tensorflow",
 ]
-
-[tool.nbqa.config]
-black = "pyproject.toml"
+filterwarnings = [
+    "error",
+    'ignore:the imp module is deprecated:DeprecationWarning',  # tensorflow
+    'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
+    'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
+    "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
+    'ignore: Exception ignored in:pytest.PytestUnraisableExceptionWarning',  #FIXME: Exception ignored in: <_io.FileIO [closed]>
+    'ignore:invalid value encountered in true_divide:RuntimeWarning',  #FIXME
+    'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
+    "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
+    'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
+    'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
+]
 
 [tool.nbqa.mutate]
-black = 1
 pyupgrade = 1
 
 [tool.nbqa.addopts]

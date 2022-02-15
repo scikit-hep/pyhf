@@ -31,7 +31,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   scipy:
 
@@ -61,7 +61,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   iminuit:
 
@@ -87,7 +87,7 @@ jobs:
         python -m pip list
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   uproot4:
 
@@ -112,7 +112,7 @@ jobs:
         python -m pip list
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
   pytest:
 
@@ -137,4 +137,4 @@ jobs:
         python -m pip list
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py

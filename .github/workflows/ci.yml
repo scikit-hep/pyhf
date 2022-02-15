@@ -49,7 +49,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
     - name: Launch a tmate session if tests fail
       if: failure() && github.event_name == 'workflow_dispatch'
@@ -64,7 +64,7 @@ jobs:
 
     - name: Test Contrib module with pytest
       run: |
-        pytest -r sx tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+        pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
@@ -75,7 +75,7 @@ jobs:
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.9'
-      run: pytest -r sx src/ README.rst
+      run: pytest src/ README.rst
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
@@ -87,4 +87,4 @@ jobs:
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == '3.9'
       run: |
-        pytest -r sx --benchmark-sort=mean tests/benchmarks/test_benchmark.py
+        pytest --benchmark-sort=mean tests/benchmarks/test_benchmark.py

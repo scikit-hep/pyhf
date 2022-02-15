@@ -352,17 +352,14 @@ def test_export_sample_zerodata(mocker, spec):
     sampledata = [0.0] * len(samplespec['data'])
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
-    # make sure no RuntimeWarning, https://stackoverflow.com/a/45671804
-    with pytest.warns(None) as record:
-        for modifierspec in samplespec['modifiers']:
-            pyhf.writexml.build_modifier(
-                {'measurements': [{'config': {'parameters': []}}]},
-                modifierspec,
-                channelname,
-                samplename,
-                sampledata,
-            )
-    assert not record.list
+    for modifierspec in samplespec['modifiers']:
+        pyhf.writexml.build_modifier(
+            {'measurements': [{'config': {'parameters': []}}]},
+            modifierspec,
+            channelname,
+            samplename,
+            sampledata,
+        )
 
 
 @pytest.mark.parametrize(
@@ -424,7 +421,8 @@ def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly
     """
-    spec = json.load(open(datadir.join("workspace_integer_data.json")))
+    with open(datadir.join("workspace_integer_data.json")) as spec_file:
+        spec = json.load(spec_file)
     channel_spec = spec["channels"][0]
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE")
 

@@ -4,6 +4,7 @@ from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
 from pyhf.tensor.common import _TensorViewer
 import pytest
 from scipy.optimize import minimize, OptimizeResult
+from scipy.optimize import OptimizeWarning
 import iminuit
 import itertools
 import numpy as np
@@ -563,7 +564,8 @@ def test_solver_options_scipy(mocker):
 
 
 # Note: in this case, scipy won't usually raise errors for arbitrary options
-# so this test exists as a sanity reminder that scipy is not perfect
+# so this test exists as a sanity reminder that scipy is not perfect.
+# It does raise a scipy.optimize.OptimizeWarning though.
 def test_bad_solver_options_scipy(mocker):
     optimizer = pyhf.optimize.scipy_optimizer(
         solver_options={'arbitrary_option': 'foobar'}
@@ -573,7 +575,11 @@ def test_bad_solver_options_scipy(mocker):
 
     model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
-    assert pyhf.infer.mle.fit(data, model).tolist()
+
+    with pytest.warns(
+        OptimizeWarning, match="Unknown solver options: arbitrary_option"
+    ):
+        assert pyhf.infer.mle.fit(data, model).tolist()
 
 
 def test_minuit_param_names(mocker):

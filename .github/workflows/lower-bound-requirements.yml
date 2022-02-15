@@ -34,5 +34,9 @@ jobs:
 
     - name: Test with pytest
       run: |
+        # Override the ini option for filterwarnings with an empty list to disable error on filterwarnings
+        # as testing for oldest releases that work with latest API, not the oldest releases that are warning
+        # free. Though still show warnings by setting warning control to 'default'.
+        export PYTHONWARNINGS='default'
         # Run on tests/ to skip doctests of src given examples are for latest APIs
-        pytest -r sx --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py tests/
+        pytest --override-ini filterwarnings= --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py tests/
