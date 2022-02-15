@@ -73,7 +73,7 @@ TRExFitter
 
 .. note::
 
-    For more details on this section, please refer to the ATLAS-internal `TRExFitter documentation <https://trexfitter-docs.web.cern.ch/trexfitter-docs/advanced_topics/pyhf/>`_.
+    For more details on this section, please refer to the ATLAS-internal `TRExFitter documentation <https://trexfitter-docs.web.cern.ch/trexfitter-docs/interfacing_tools/pyhf/>`_.
 
 In order to go from ``TRExFitter`` to ``pyhf``, the good news is that the ``RooWorkspace`` files (``XML`` and ``ROOT``) are already made for you. For a given configuration which looks like
 
