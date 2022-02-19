@@ -356,8 +356,8 @@ def test_pdf_integration_shapesys_zeros(backend):
 def test_pdf_integration_histosys(backend):
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
-    ) as spec_file:
-        source = json.load(spec_file)
+    ) as source_file:
+        source = json.load(source_file)
     spec = {
         'channels': [
             {
@@ -438,8 +438,8 @@ def test_pdf_integration_histosys(backend):
 def test_pdf_integration_normsys(backend):
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
-    ) as spec_file:
-        source = json.load(spec_file)
+    ) as source_file:
+        source = json.load(source_file)
     spec = {
         'channels': [
             {
@@ -502,8 +502,8 @@ def test_pdf_integration_normsys(backend):
 def test_pdf_integration_shapesys(backend):
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
-    ) as spec_file:
-        source = json.load(spec_file)
+    ) as source_file:
+        source = json.load(source_file)
     spec = {
         'channels': [
             {
@@ -628,8 +628,8 @@ def test_invalid_modifier_name_resuse():
 def test_override_paramset_defaults():
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
-    ) as spec_file:
-        source = json.load(spec_file)
+    ) as source_file:
+        source = json.load(source_file)
     spec = {
         'channels': [
             {
@@ -664,8 +664,8 @@ def test_override_paramset_defaults():
 def test_override_paramsets_incorrect_num_parameters():
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
-    ) as spec_file:
-        source = json.load(spec_file)
+    ) as source_file:
+        source = json.load(source_file)
     spec = {
         'channels': [
             {
