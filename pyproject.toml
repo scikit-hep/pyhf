@@ -78,7 +78,6 @@ filterwarnings = [
     'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
     'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
     "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
-    'ignore: Exception ignored in:pytest.PytestUnraisableExceptionWarning',  #FIXME: Exception ignored in: <_io.FileIO [closed]>
     'ignore:invalid value encountered in (true_)?divide:RuntimeWarning',  #FIXME
     'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
     "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
