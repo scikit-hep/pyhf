@@ -575,9 +575,9 @@ def test_jsonpatch_fail(patch):
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
-        patchset = json.load(patch_file)
-    pyhf.schema.validate(patchset, 'patchset.json')
+    with open(datadir.joinpath(patchset_file), encoding="utf-8") as read_file:
+        patchset = json.load(read_file)
+    pyhf.schema.validate(patchset, "patchset.json")
 
 
 @pytest.mark.parametrize(
@@ -596,10 +596,10 @@ def test_patchset(datadir, patchset_file):
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
-        patchset = json.load(patch_file)
+    with open(datadir.joinpath(patchset_file), encoding="utf-8") as read_file:
+        patchset = json.load(read_file)
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate(patchset, 'patchset.json')
+        pyhf.schema.validate(patchset, "patchset.json")
 
 
 def test_defs_always_cached(
