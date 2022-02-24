@@ -1,6 +1,6 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["wheel", "setuptools>=42.0.0", "attrs>=17.1", "setuptools_scm[toml]>=3.4"]
+requires = ["setuptools>=42.0.0", "setuptools_scm[toml]>=3.4"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
