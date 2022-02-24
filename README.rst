@@ -35,7 +35,7 @@ and GPU acceleration.
 User Guide
 ----------
 
-For a guided tour of usage of the latest release of ``pyhf`` visit the |pyhf tutorial|_.
+For an in depth walkthrough of usage of the latest release of ``pyhf`` visit the |pyhf tutorial|_.
 
 .. |pyhf tutorial| replace:: ``pyhf`` tutorial
 .. _pyhf tutorial: https://pyhf.github.io/pyhf-tutorial/
