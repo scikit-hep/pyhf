@@ -8,7 +8,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|Docs from latest| |Docs from master| |Binder|
+|Docs from latest| |Docs from master| |Jupyter Book tutorial| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
 
@@ -344,6 +344,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
+.. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
+   :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
