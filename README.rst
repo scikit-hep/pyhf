@@ -32,6 +32,14 @@ to support modern computational graph libraries such as PyTorch and
 TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
+User Guide
+----------
+
+For a guided tour of usage of the latest release of ``pyhf`` visit the |pyhf tutorial|_.
+
+.. |pyhf tutorial| replace:: ``pyhf`` tutorial
+.. _pyhf tutorial: https://pyhf.github.io/pyhf-tutorial/
+
 Hello World
 -----------
 
