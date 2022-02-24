@@ -1,4 +1,3 @@
-# Uncomment this if your project is hosted on GitHub:
 github_url = "https://github.com/scikit-hep/pyhf/"
 
 [version]
@@ -52,17 +51,3 @@ src = "CITATION.cff"
 name = "candidate"
 # the default value to use, if there is no match
 default = ""
-
-# You can specify a list of commands to
-# run after the files have been patched
-# and before the git commit is made
-
-#  [[before_commit]]
-#  name = "check changelog"
-#  cmd = "grep -q {new_version} Changelog.rst"
-
-# Or run some commands after the git tag and the branch
-# have been pushed:
-#  [[after_push]]
-#  name = "publish"
-#  cmd = "./publish.sh"
