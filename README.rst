@@ -8,7 +8,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|Docs from latest| |Docs from master| |Binder|
+|Docs from latest| |Docs from master| |Jupyter Book tutorial| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
 
@@ -31,6 +31,14 @@ tests of new physics”
 to support modern computational graph libraries such as PyTorch and
 TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
+
+User Guide
+----------
+
+For an in depth walkthrough of usage of the latest release of ``pyhf`` visit the |pyhf tutorial|_.
+
+.. |pyhf tutorial| replace:: ``pyhf`` tutorial
+.. _pyhf tutorial: https://pyhf.github.io/pyhf-tutorial/
 
 Hello World
 -----------
@@ -261,6 +269,14 @@ To uninstall run
 
    python -m pip uninstall pyhf
 
+Documentation
+-------------
+
+For model specification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
+
+.. |pyhf documentation| replace:: ``pyhf`` documentation
+.. _pyhf documentation: https://pyhf.readthedocs.io/
+
 Questions
 ---------
 
@@ -344,6 +360,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
+.. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
+   :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
