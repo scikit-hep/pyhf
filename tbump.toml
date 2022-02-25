@@ -30,6 +30,9 @@ src = "tbump.toml"
 
 [[file]]
 src = "src/pyhf/utils.py"
+# This search is just identifying the line to restrict the
+# regex to, but all matches in the line will get bumped
+search = "pyhf: v{current_version}"
 
 [[file]]
 src = "README.rst"
