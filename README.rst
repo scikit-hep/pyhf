@@ -272,7 +272,7 @@ To uninstall run
 Documentation
 -------------
 
-For model scpecification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
+For model specification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
 
 .. |pyhf documentation| replace:: ``pyhf`` documentation
 .. _pyhf documentation: https://pyhf.readthedocs.io/
