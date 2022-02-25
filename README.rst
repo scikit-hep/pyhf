@@ -269,6 +269,14 @@ To uninstall run
 
    python -m pip uninstall pyhf
 
+Documentation
+-------------
+
+For model scpecification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
+
+.. |pyhf documentation| replace:: ``pyhf`` documentation
+.. _pyhf documentation: https://pyhf.readthedocs.io/
+
 Questions
 ---------
 
