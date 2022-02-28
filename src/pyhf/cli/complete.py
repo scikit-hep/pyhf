@@ -1,5 +1,8 @@
 '''Shell completions for pyhf.'''
-import click
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
 
 try:
     import click_completion

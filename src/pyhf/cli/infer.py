@@ -1,7 +1,11 @@
 """The inference CLI group."""
 import logging
 
-import click
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
+
 import json
 
 from pyhf.utils import EqDelimStringParamType

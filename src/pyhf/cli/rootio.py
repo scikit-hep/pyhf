@@ -1,7 +1,11 @@
 """CLI subapps to handle conversion from ROOT."""
 import logging
 
-import click
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
+
 import json
 import os
 from pathlib import Path

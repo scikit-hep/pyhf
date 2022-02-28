@@ -1,7 +1,10 @@
 """The pyhf Command Line Interface."""
 import logging
 
-import click
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
 
 from pyhf import __version__
 from pyhf.cli import rootio, spec, infer, patchset, complete

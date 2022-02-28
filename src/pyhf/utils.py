@@ -3,8 +3,12 @@ import jsonschema
 import pkg_resources
 from pathlib import Path
 import yaml
-import click
 import hashlib
+
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
 
 from pyhf.exceptions import InvalidSpecification
 

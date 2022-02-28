@@ -1,6 +1,11 @@
 """CLI for functionality that will get migrated out eventually."""
 import logging
-import click
+
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
+
 from pathlib import Path
 
 logging.basicConfig()

@@ -1,7 +1,11 @@
 """The pyhf spec CLI subcommand."""
 import logging
 
-import click
+try:
+    import rich_click as click
+except ModuleNotFoundError:
+    import click
+
 import json
 
 from pyhf.workspace import Workspace
