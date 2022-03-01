@@ -8,6 +8,8 @@ from pyhf.utils import EqDelimStringParamType
 from pyhf.infer import hypotest
 from pyhf.infer import mle
 from pyhf.workspace import Workspace
+from pyhf.infer.test_statistics import q0
+
 from pyhf import get_backend, set_backend, optimize
 
 log = logging.getLogger(__name__)
@@ -248,5 +250,131 @@ def cls(
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
         with open(output_file, "w+", encoding="utf-8") as out_file:
+            json.dump(result, out_file, indent=4, sort_keys=True)
+        log.debug(f"Written to {output_file:s}")
+
+
+@cli.command()
+@click.argument("workspace", default="-")
+@click.option(
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
+    default=None,
+)
+@click.option("--measurement", default=None)
+@click.option("-p", "--patch", multiple=True)
+@click.option(
+    "--calctype", type=click.Choice(["asymptotics", "toybased"]), default="asymptotics"
+)
+@click.option(
+    "--backend",
+    type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
+    help="The tensor backend used for the calculation.",
+    default="numpy",
+)
+@click.option(
+    "--optimizer",
+    type=click.Choice(["scipy", "minuit"]),
+    help="The optimizer used for the calculation.",
+    default="scipy",
+)
+@click.option("--optconf", type=EqDelimStringParamType(), multiple=True)
+def discovery(
+    workspace,
+    output_file,
+    measurement,
+    patch,
+    backend,
+    optimizer,
+    calctype,
+    optconf,
+):
+    """
+    Compute the discovery test statistic for a positive signal for a given pyhf workspace.
+
+    Example:
+
+    .. code-block:: shell
+
+        $ curl -sL https://git.io/JJYDE | pyhf discovery
+
+        \b
+        {
+            "CLs_exp": [
+                0.07807427911686156,
+                0.17472571775474618,
+                0.35998495263681285,
+                0.6343568235898907,
+                0.8809947004472013
+            ],
+            "CLs_obs": 0.3599845631401915
+        }
+    """
+    with click.open_file(workspace, "r") as specstream:
+        spec = json.load(specstream)
+
+    ws = Workspace(spec)
+
+    patches = [json.loads(click.open_file(pfile, "r").read()) for pfile in patch]
+    model = ws.model(
+        measurement_name=measurement,
+        patches=patches,
+        modifier_settings={
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
+        },
+    )
+
+    # set the backend if not NumPy
+    if backend in ["pytorch", "torch"]:
+        set_backend("pytorch", precision="64b")
+    elif backend in ["tensorflow", "tf"]:
+        set_backend("tensorflow", precision="64b")
+    elif backend in ["jax"]:
+        set_backend("jax")
+    tensorlib, _ = get_backend()
+
+    optconf = {
+        opt_name: opt_value for item in optconf for opt_name, opt_value in item.items()
+    }
+
+    # set the new optimizer
+    if optimizer:
+        new_optimizer = getattr(optimize, optimizer) or getattr(
+            optimize, f"{optimizer}_optimizer"
+        )
+        set_backend(tensorlib, new_optimizer(**optconf))
+
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+    discovery_test_stat = q0(
+        0.0,
+        ws.data(model),
+        model,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        calctype=calctype,
+        return_expected_set=True,
+    )
+    # result = hypotest(
+    #     test_poi,
+    #     ws.data(model),
+    #     model,
+    #     test_stat=test_stat,
+    #     calctype=calctype,
+    #     return_expected_set=True,
+    # )
+    # result = {
+    #     "CLs_obs": tensorlib.tolist(result[0]),
+    #     "CLs_exp": [tensorlib.tolist(tensor) for tensor in result[-1]],
+    # }
+    result = {"q0": discovery_test_stat}
+
+    if output_file is None:
+        click.echo(json.dumps(result, indent=4, sort_keys=True))
+    else:
+        with open(output_file, "w+") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
