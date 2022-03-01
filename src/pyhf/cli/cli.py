@@ -50,6 +50,7 @@ pyhf.add_command(spec.sort)
 # pyhf.add_command(infer.cli)
 pyhf.add_command(infer.fit)
 pyhf.add_command(infer.cls)
+pyhf.add_command(infer.discovery)
 
 pyhf.add_command(patchset.cli)
 
