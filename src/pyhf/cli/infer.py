@@ -264,9 +264,6 @@ def cls(
 @click.option("--measurement", default=None)
 @click.option("-p", "--patch", multiple=True)
 @click.option(
-    "--calctype", type=click.Choice(["asymptotics", "toybased"]), default="asymptotics"
-)
-@click.option(
     "--backend",
     type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
     help="The tensor backend used for the calculation.",
@@ -286,11 +283,11 @@ def discovery(
     patch,
     backend,
     optimizer,
-    calctype,
     optconf,
 ):
-    """
-    Compute the discovery test statistic for a positive signal for a given pyhf workspace.
+    r"""
+    Compute the discovery test statistic and significance (:math:`Z`-score) for
+    a positive signal for a given pyhf workspace.
 
     Example:
 
@@ -300,14 +297,8 @@ def discovery(
 
         \b
         {
-            "CLs_exp": [
-                0.07807427911686156,
-                0.17472571775474618,
-                0.35998495263681285,
-                0.6343568235898907,
-                0.8809947004472013
-            ],
-            "CLs_obs": 0.3599845631401915
+            "q0": 0.33333,
+            "significance": 0.3599845631401915
         }
     """
     with click.open_file(workspace, "r") as specstream:
@@ -348,15 +339,17 @@ def discovery(
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
     fixed_params = model.config.suggested_fixed()
-    discovery_test_stat = q0(
-        0.0,
-        ws.data(model),
-        model,
-        init_pars,
-        par_bounds,
-        fixed_params,
-        calctype=calctype,
-        return_expected_set=True,
+    discovery_test_stat = tensorlib.tolist(
+        q0(
+            0.0,
+            ws.data(model),
+            model,
+            init_pars,
+            par_bounds,
+            fixed_params,
+            # calctype=calctype,
+            # return_expected_set=True,
+        )
     )
     # result = hypotest(
     #     test_poi,
@@ -370,7 +363,7 @@ def discovery(
     #     "CLs_obs": tensorlib.tolist(result[0]),
     #     "CLs_exp": [tensorlib.tolist(tensor) for tensor in result[-1]],
     # }
-    result = {"q0": discovery_test_stat}
+    result = {"q0": discovery_test_stat, "significance": discovery_test_stat**0.5}
 
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
