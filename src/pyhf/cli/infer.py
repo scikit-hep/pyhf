@@ -264,6 +264,9 @@ def cls(
 @click.option("--measurement", default=None)
 @click.option("-p", "--patch", multiple=True)
 @click.option(
+    "--calctype", type=click.Choice(["asymptotics", "toybased"]), default="asymptotics"
+)
+@click.option(
     "--backend",
     type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
     help="The tensor backend used for the calculation.",
@@ -281,11 +284,12 @@ def discovery(
     output_file,
     measurement,
     patch,
+    calctype,
     backend,
     optimizer,
     optconf,
 ):
-    r"""
+    """
     Compute the discovery test statistic and significance (:math:`Z`-score) for
     a positive signal for a given pyhf workspace.
 
@@ -336,13 +340,31 @@ def discovery(
         )
         set_backend(tensorlib, new_optimizer(**optconf))
 
+    import pyhf
+
+    model = pyhf.simplemodels.uncorrelated_background([25], [2500], [2.5])
+    data = [2525] + model.config.auxdata
+    # data = [2725] + model.config.auxdata
+
+    # calculator = pyhf.infer.utils.create_calculator(
+    #     calctype, ws.data(model), model, test_stat="q0", track_progress=False
+    # )
+    print(calctype)
+    calculator = pyhf.infer.utils.create_calculator(
+        calctype, data, model, test_stat="q0"
+    )
+    test_poi = 0.0
+    print(calculator.teststatistic(test_poi))
+    discovery_test_stat = tensorlib.tolist(calculator.teststatistic(test_poi))
+
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
     fixed_params = model.config.suggested_fixed()
     discovery_test_stat = tensorlib.tolist(
         q0(
             0.0,
-            ws.data(model),
+            # ws.data(model),
+            data,
             model,
             init_pars,
             par_bounds,
