@@ -46,7 +46,7 @@ references:
     - family-names: "Heinrich"
       given-names: "Lukas"
       orcid: "https://orcid.org/0000-0002-4048-7584"
-      affiliation: "Technical University of Munich"
+      affiliation: "CERN"
     - family-names: "Feickert"
       given-names: "Matthew"
       orcid: "https://orcid.org/0000-0003-4124-7862"
