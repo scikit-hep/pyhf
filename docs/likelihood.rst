@@ -198,7 +198,7 @@ As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertaint
 each sample would yield a very large number of nuisance parameters with limited
 utility. Therefore a set of bin-wise scale factors :math:`\gamma_b` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
-The constrained term is constructed as a set of Gaussian constraints with a
+The constraint term is constructed as a set of Gaussian constraints with a
 central value equal to unity for each bin in the channel. The scales
 :math:`\sigma_b` of the constraint are computed from the individual
 uncertainties of samples defined within the channel relative to the total event
