@@ -13,7 +13,7 @@ def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params
 
     if not utils.all_pois_floating(pdf, fixed_params):
         raise exceptions.InvalidModel(
-            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes inference impossible. Please unfix the POI to continue.'
+            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue.'
         )
 
 
