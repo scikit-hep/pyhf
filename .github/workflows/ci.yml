@@ -26,10 +26,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.7', '3.8', '3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
         include:
           - os: macos-latest
-            python-version: '3.9'
+            python-version: '3.10'
 
     steps:
     - uses: actions/checkout@v2
@@ -56,7 +56,7 @@ jobs:
       uses: mxschmitt/action-tmate@v3
 
     - name: Report core project coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
@@ -67,24 +67,24 @@ jobs:
         pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
     - name: Report contrib coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
         flags: contrib
 
     - name: Test docstring examples with doctest
-      if: matrix.python-version == '3.9'
+      if: matrix.python-version == '3.10'
       run: pytest src/ README.rst
 
     - name: Report doctest coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.9' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
         flags: doctest
 
     - name: Run benchmarks
-      if: github.event_name == 'schedule' && matrix.python-version == '3.9'
+      if: github.event_name == 'schedule' && matrix.python-version == '3.10'
       run: |
         pytest --benchmark-sort=mean tests/benchmarks/test_benchmark.py
