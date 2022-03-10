@@ -260,8 +260,6 @@ def test_shape(backend):
         )
 
 
-@pytest.mark.fail_pytorch
-@pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     # FIXME
