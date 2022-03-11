@@ -23,7 +23,7 @@ def _minimum_discovery_significance(
     calctype="asymptotics",
     return_expected=True,
     return_observed=False,
-    **hypotest_kwargs,
+    **calculator_kwargs,
 ):
     r"""
     Docstring this
@@ -42,7 +42,7 @@ def _minimum_discovery_significance(
         par_bounds,
         fixed_params,
         test_stat="q0",
-        **hypotest_kwargs,
+        **calculator_kwargs,
     )
 
     test_poi = 0.0  # discovery
