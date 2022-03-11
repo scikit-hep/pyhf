@@ -204,9 +204,18 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-from pyhf.infer import intervals
+from pyhf.infer import intervals  # noqa: F401
+from pyhf.infer import significance  # noqa: F401
 
-__all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
+__all__ = [
+    "hypotest",
+    "calculators",
+    "intervals",
+    "mle",
+    "significance",
+    "test_statistics",
+    "utils",
+]
 
 
 def __dir__():
