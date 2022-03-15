@@ -37,7 +37,11 @@ Try out now with JupyterLite
 
 .. raw:: html
 
-   <iframe src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&toolbar=1&code=import%20micropip%0Aawait%20micropip.install%28%5B%22pyhf%22%2C%20%22requests%22%5D%29%0Aimport%20pyhf" width="100%" height="500px"></iframe>
+   <iframe
+      src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&toolbar=1&code=import%20micropip%0Aawait%20micropip.install%28%5B%22pyhf%22%2C%20%22requests%22%5D%29%0Aimport%20pyhf"
+      width="100%"
+      height="500px"
+   ></iframe>
 
 User Guide
 ----------
