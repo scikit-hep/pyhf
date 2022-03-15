@@ -32,14 +32,12 @@ to support modern computational graph libraries such as PyTorch and
 TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
+Try out now with JupyterLite
+----------------------------
+
 .. raw:: html
 
-   <iframe
-     src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&toolbar=1"
-     width="100%"
-     height="500px"
-   >
-   </iframe>
+   <iframe src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&toolbar=1" width="100%" height="500px"></iframe>
 
 User Guide
 ----------
