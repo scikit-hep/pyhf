@@ -55,6 +55,8 @@ Example using jupyterlite-sphinx
 
     print('Hello from a JupyterLite console!')
     import micropip
+    await micropip.install(["pyhf==0.6.3", "requests"])
+    import pyhf
 
 User Guide
 ----------
