@@ -32,8 +32,8 @@ to support modern computational graph libraries such as PyTorch and
 TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
-Try out now with JupyterLite
-----------------------------
+Try out now with Pyolite
+------------------------
 
 .. raw:: html
 
