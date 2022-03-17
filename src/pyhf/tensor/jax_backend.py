@@ -477,7 +477,7 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            DeviceArray(0.35206533, dtype=float64)
+            DeviceArray(0.35206533, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
