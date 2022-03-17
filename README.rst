@@ -41,21 +41,6 @@ and GPU acceleration.
       height="500px"
    ></iframe>
 
-Example using jupyterlite-sphinx
---------------------------------
-
-.. replite::
-   :kernel: python
-   :toolbar: 1
-   :theme: JupyterLab Light
-   :width: 100%
-   :height: 600px
-
-    print('Hello from a JupyterLite console!')
-    import micropip
-    await micropip.install(["pyhf==0.6.3", "requests"])
-    import pyhf
-
 User Guide
 ----------
 
