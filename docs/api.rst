@@ -158,6 +158,22 @@ Fits and Tests
    intervals.upperlimit
    utils.all_pois_floating
 
+
+Schema
+------
+
+.. currentmodule:: pyhf.schema
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
+   load_schema
+   path
+   validate
+   version
+
+
 Exceptions
 ----------
 
@@ -194,8 +210,6 @@ Utilities
    :toctree: _generated/
    :nosignatures:
 
-   load_schema
-   validate
    options_from_eqdelimstring
    digest
    citation
