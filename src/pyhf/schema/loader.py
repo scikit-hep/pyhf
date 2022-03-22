@@ -10,14 +10,6 @@ if sys.version_info >= (3, 9):
 else:
     import importlib_resources as resources
 
-__all__ = [
-    "load_schema",
-]
-
-
-def __dir__():
-    return __all__
-
 
 def load_schema(schema_id):
     try:

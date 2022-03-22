@@ -3,14 +3,6 @@ import pyhf.exceptions
 from pyhf.schema.globals import SCHEMA_CACHE, SCHEMA_VERSION, schemas
 from pyhf.schema.loader import load_schema
 
-__all__ = [
-    "validate",
-]
-
-
-def __dir__():
-    return __all__
-
 
 def validate(spec, schema_name, version=None):
     version = version or SCHEMA_VERSION
