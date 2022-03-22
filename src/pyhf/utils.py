@@ -7,6 +7,7 @@ import hashlib
 
 import sys
 
+# importlib.resources.as_file wasn't added until Python 3.9?
 if sys.version_info >= (3, 9):
     from importlib import resources
 else:
@@ -14,13 +15,6 @@ else:
 schemas = resources.files('pyhf') / "schemas"
 
 import pyhf.exceptions
-
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
-
-from pyhf.exceptions import InvalidSpecification
 
 SCHEMA_CACHE = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
@@ -86,7 +80,7 @@ def validate(spec, schema_name, version=None):
     try:
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
-        raise InvalidSpecification(err, schema_name)
+        raise pyhf.exceptions.InvalidSpecification(err, schema_name)
 
 
 def options_from_eqdelimstring(opts):
