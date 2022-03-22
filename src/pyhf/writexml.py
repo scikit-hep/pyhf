@@ -8,7 +8,7 @@ import numpy as np
 import uproot
 
 from pyhf.mixins import _ChannelSummaryMixin
-from pyhf.utils import schemas
+from pyhf.schema import path as schema_path
 
 _ROOT_DATA_FILE = None
 
@@ -276,7 +276,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
     global _ROOT_DATA_FILE
 
     shutil.copyfile(
-        schemas.joinpath('HistFactorySchema.dtd'),
+        schema_path.joinpath('HistFactorySchema.dtd'),
         Path(specdir).parent.joinpath('HistFactorySchema.dtd'),
     )
     combination = ET.Element(
