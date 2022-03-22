@@ -6,6 +6,7 @@ from pyhf._version import version as __version__
 
 from pyhf.pdf import Model
 from pyhf.workspace import Workspace
+from pyhf import schema
 from pyhf import simplemodels
 from pyhf import infer
 from pyhf import compat
@@ -28,6 +29,7 @@ __all__ = [
     "patchset",
     "pdf",
     "probability",
+    "schema",
     "set_backend",
     "simplemodels",
     "tensor",

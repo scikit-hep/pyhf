@@ -444,7 +444,7 @@ def test_normsys_additional_properties():
     ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
 )
 def test_jsonpatch(patch):
-    pyhf.utils.validate([patch], 'jsonpatch.json')
+    pyhf.schema.validate([patch], 'jsonpatch.json')
 
 
 @pytest.mark.parametrize(
@@ -470,13 +470,13 @@ def test_jsonpatch(patch):
 )
 def test_jsonpatch_fail(patch):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.utils.validate([patch], 'jsonpatch.json')
+        pyhf.schema.validate([patch], 'jsonpatch.json')
 
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
     patchset = json.load(open(datadir.join(patchset_file)))
-    pyhf.utils.validate(patchset, 'patchset.json')
+    pyhf.schema.validate(patchset, 'patchset.json')
 
 
 @pytest.mark.parametrize(
@@ -497,4 +497,4 @@ def test_patchset(datadir, patchset_file):
 def test_patchset_fail(datadir, patchset_file):
     patchset = json.load(open(datadir.join(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.utils.validate(patchset, 'patchset.json')
+        pyhf.schema.validate(patchset, 'patchset.json')

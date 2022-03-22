@@ -6,6 +6,7 @@ import json
 import logging
 import pyhf.workspace
 import pyhf.utils
+import pyhf.schema
 import copy
 
 
@@ -112,14 +113,14 @@ def test_get_workspace_measurement_priority(workspace_factory):
 
 
 def test_get_measurement_schema_validation(mocker, workspace_factory):
-    mocker.patch('pyhf.utils.validate', return_value=None)
-    assert pyhf.utils.validate.called is False
+    mocker.patch('pyhf.schema.validate', return_value=None)
+    assert pyhf.schema.validate.called is False
     w = workspace_factory()
-    assert pyhf.utils.validate.call_count == 1
-    assert pyhf.utils.validate.call_args[0][1] == 'workspace.json'
+    assert pyhf.schema.validate.call_count == 1
+    assert pyhf.schema.validate.call_args[0][1] == 'workspace.json'
     w.get_measurement()
-    assert pyhf.utils.validate.call_count == 2
-    assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
+    assert pyhf.schema.validate.call_count == 2
+    assert pyhf.schema.validate.call_args[0][1] == 'measurement.json'
 
 
 def test_get_workspace_repr(workspace_factory):
@@ -903,9 +904,9 @@ def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
 def test_workspace_without_validation(mocker, simplemodels_model_data):
     model, data = simplemodels_model_data
 
-    mocker.patch('pyhf.utils.validate')
+    mocker.patch('pyhf.schema.validate')
     ws = pyhf.Workspace.build(model, data, validate=False)
-    assert pyhf.utils.validate.called is False
+    assert pyhf.schema.validate.called is False
 
     pyhf.Workspace(dict(ws), validate=False)
-    assert pyhf.utils.validate.called is False
+    assert pyhf.schema.validate.called is False

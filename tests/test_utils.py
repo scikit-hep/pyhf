@@ -7,12 +7,12 @@ import pyhf
     'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
 )
 def test_get_schema(version, schema):
-    assert pyhf.utils.load_schema(f'{version}/{schema}')
+    assert pyhf.schema.load_schema(f'{version}/{schema}')
 
 
 def test_load_missing_schema():
     with pytest.raises(IOError):
-        pyhf.utils.load_schema('fake_schema.json')
+        pyhf.schema.load_schema('fake_schema.json')
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,4 @@
 import json
-import jsonschema
-from pathlib import Path
 import yaml
 import click
 import hashlib
@@ -12,75 +10,17 @@ if sys.version_info >= (3, 9):
     from importlib import resources
 else:
     import importlib_resources as resources
-schemas = resources.files('pyhf') / "schemas"
-
-import pyhf.exceptions
-
-SCHEMA_CACHE = {}
-SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
-SCHEMA_VERSION = '1.0.0'
 
 __all__ = [
     "EqDelimStringParamType",
     "citation",
     "digest",
-    "load_schema",
     "options_from_eqdelimstring",
-    "validate",
 ]
 
 
 def __dir__():
     return __all__
-
-
-def load_schema(schema_id):
-    global SCHEMA_CACHE
-    try:
-        return SCHEMA_CACHE[f'{Path(SCHEMA_BASE).joinpath(schema_id)}']
-    except KeyError:
-        pass
-
-    ref = schemas.joinpath(schema_id)
-    with resources.as_file(ref) as path:
-        if not path.exists():
-            raise pyhf.exceptions.SchemaNotFound(
-                f'The schema {schema_id} was not found. Do you have the right version or the right path? {path}'
-            )
-        with path.open() as json_schema:
-            schema = json.load(json_schema)
-            SCHEMA_CACHE[schema['$id']] = schema
-        return SCHEMA_CACHE[schema['$id']]
-
-
-# preload the schemas
-load_schema(f'{SCHEMA_VERSION}/defs.json')
-load_schema(f'{SCHEMA_VERSION}/jsonpatch.json')
-load_schema(f'{SCHEMA_VERSION}/measurement.json')
-load_schema(f'{SCHEMA_VERSION}/model.json')
-load_schema(f'{SCHEMA_VERSION}/patchset.json')
-load_schema(f'{SCHEMA_VERSION}/workspace.json')
-
-
-def validate(spec, schema_name, version=None):
-    version = version or SCHEMA_VERSION
-
-    schema = load_schema(f'{version}/{schema_name}')
-
-    # note: trailing slash needed for RefResolver to resolve correctly
-    resolver = jsonschema.RefResolver(
-        base_uri=f"file://{schemas}/",
-        referrer=f"{version}/{schema_name}",
-        store=SCHEMA_CACHE,
-    )
-    validator = jsonschema.Draft6Validator(
-        schema, resolver=resolver, format_checker=None
-    )
-
-    try:
-        return validator.validate(spec)
-    except jsonschema.ValidationError as err:
-        raise pyhf.exceptions.InvalidSpecification(err, schema_name)
 
 
 def options_from_eqdelimstring(opts):
