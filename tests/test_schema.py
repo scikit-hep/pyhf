@@ -16,9 +16,27 @@ def test_load_missing_schema():
         pyhf.schema.load_schema('fake_schema.json')
 
 
+def test_schema_attributes():
+    assert hasattr(pyhf.schema, 'version')
+    assert hasattr(pyhf.schema, 'path')
+    assert pyhf.schema.version
+    assert pyhf.schema.path
+
+
 def test_schema_callable():
     assert callable(pyhf.schema)
-    assert pyhf.schema() == 42
+
+
+def test_schema_changeable(datadir):
+    with pytest.raises(pyhf.exceptions.SchemaNotFound):
+        pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+
+    old_path = pyhf.schema.path
+    pyhf.schema(datadir / 'customschema')
+    assert pyhf.schema.path != old_path
+    assert pyhf.schema.path == datadir / 'customschema'
+    assert pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+    pyhf.schema(old_path)
 
 
 def test_no_channels():
@@ -493,7 +511,7 @@ def test_jsonpatch_fail(patch):
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
-    patchset = json.load(open(datadir.join(patchset_file)))
+    patchset = json.load(open(datadir.joinpath(patchset_file)))
     pyhf.schema.validate(patchset, 'patchset.json')
 
 
@@ -513,6 +531,6 @@ def test_patchset(datadir, patchset_file):
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
-    patchset = json.load(open(datadir.join(patchset_file)))
+    patchset = json.load(open(datadir.joinpath(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')

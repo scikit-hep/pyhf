@@ -647,7 +647,9 @@ def test_missing_contrib_download(caplog):
 
 
 def test_patchset_inspect(datadir, script_runner):
-    command = f'pyhf patchset inspect {datadir.join("example_patchset.json").strpath}'
+    command = (
+        f'pyhf patchset inspect {datadir.joinpath("example_patchset.json").strpath}'
+    )
     ret = script_runner.run(*shlex.split(command))
     assert 'patch_channel1_signal_syst1' in ret.stdout
 
@@ -656,7 +658,7 @@ def test_patchset_inspect(datadir, script_runner):
 @pytest.mark.parametrize('with_metadata', [False, True])
 def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
     temp = tmpdir.join("extracted_output.json")
-    command = f'pyhf patchset extract {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    command = f'pyhf patchset extract {datadir.joinpath("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
     if output_file:
         command += f" --output-file {temp.strpath}"
     if with_metadata:
@@ -674,12 +676,14 @@ def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_meta
     else:
         assert (
             extracted_output
-            == json.load(datadir.join("example_patchset.json"))['patches'][0]['patch']
+            == json.load(datadir.joinpath("example_patchset.json"))['patches'][0][
+                'patch'
+            ]
         )
 
 
 def test_patchset_verify(datadir, script_runner):
-    command = f'pyhf patchset verify {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath}'
+    command = f'pyhf patchset verify {datadir.joinpath("example_bkgonly.json").strpath} {datadir.joinpath("example_patchset.json").strpath}'
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -689,7 +693,7 @@ def test_patchset_verify(datadir, script_runner):
 @pytest.mark.parametrize('output_file', [False, True])
 def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
     temp = tmpdir.join("patched_output.json")
-    command = f'pyhf patchset apply {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    command = f'pyhf patchset apply {datadir.joinpath("example_bkgonly.json").strpath} {datadir.joinpath("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
     if output_file:
         command += f" --output-file {temp.strpath}"
 

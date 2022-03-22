@@ -1,19 +1,19 @@
 import jsonschema
 import pyhf.exceptions
-from pyhf.schema.globals import SCHEMA_CACHE, SCHEMA_VERSION, schemas
 from pyhf.schema.loader import load_schema
+from pyhf.schema import variables
 
 
 def validate(spec, schema_name, version=None):
-    version = version or SCHEMA_VERSION
+    version = version or variables.SCHEMA_VERSION
 
     schema = load_schema(f'{version}/{schema_name}')
 
     # note: trailing slash needed for RefResolver to resolve correctly
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{schemas}/",
+        base_uri=f"file://{variables.schemas}/",
         referrer=f"{version}/{schema_name}",
-        store=SCHEMA_CACHE,
+        store=variables.SCHEMA_CACHE,
     )
     validator = jsonschema.Draft6Validator(
         schema, resolver=resolver, format_checker=None

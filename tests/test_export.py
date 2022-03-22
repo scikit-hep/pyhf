@@ -421,7 +421,7 @@ def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly
     """
-    with open(datadir.join("workspace_integer_data.json")) as spec_file:
+    with open(datadir.joinpath("workspace_integer_data.json")) as spec_file:
         spec = json.load(spec_file)
     channel_spec = spec["channels"][0]
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE")

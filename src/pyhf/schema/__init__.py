@@ -1,7 +1,8 @@
+import pathlib
 import sys
 from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
-from pyhf.schema.globals import schemas as path, SCHEMA_VERSION as version
+from pyhf.schema import variables
 
 __all__ = [
     "load_schema",
@@ -16,8 +17,16 @@ def __dir__():
 
 
 class Schema(sys.modules[__name__].__class__):
-    def __call__(self):
-        return 42
+    def __call__(self, new_path: pathlib.Path):
+        variables.schemas = new_path
+
+    @property
+    def path(self):
+        return variables.schemas
+
+    @property
+    def version(self):
+        return variables.SCHEMA_VERSION
 
 
 sys.modules[__name__].__class__ = Schema
