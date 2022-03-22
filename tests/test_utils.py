@@ -2,19 +2,6 @@ import pytest
 import pyhf
 
 
-@pytest.mark.parametrize('version', ['1.0.0'])
-@pytest.mark.parametrize(
-    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
-)
-def test_get_schema(version, schema):
-    assert pyhf.schema.load_schema(f'{version}/{schema}')
-
-
-def test_load_missing_schema():
-    with pytest.raises(IOError):
-        pyhf.schema.load_schema('fake_schema.json')
-
-
 @pytest.mark.parametrize(
     'opts,obj',
     [

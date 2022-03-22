@@ -3,6 +3,24 @@ import pytest
 import json
 
 
+@pytest.mark.parametrize('version', ['1.0.0'])
+@pytest.mark.parametrize(
+    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+)
+def test_get_schema(version, schema):
+    assert pyhf.schema.load_schema(f'{version}/{schema}')
+
+
+def test_load_missing_schema():
+    with pytest.raises(IOError):
+        pyhf.schema.load_schema('fake_schema.json')
+
+
+def test_schema_callable():
+    assert callable(pyhf.schema)
+    assert pyhf.schema() == 42
+
+
 def test_no_channels():
     spec = {'channels': []}
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
