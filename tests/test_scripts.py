@@ -674,9 +674,9 @@ def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_meta
     else:
         assert (
             extracted_output
-            == json.load(datadir.joinpath("example_patchset.json"))['patches'][0][
-                'patch'
-            ]
+            == json.load(datadir.joinpath("example_patchset.json").open())['patches'][
+                0
+            ]['patch']
         )
 
 
