@@ -32,11 +32,19 @@ def test_schema_changeable(datadir):
         pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
 
     old_path = pyhf.schema.path
-    pyhf.schema(datadir / 'customschema')
+    new_path = datadir / 'customschema'
+    pyhf.schema(new_path)
     assert pyhf.schema.path != old_path
-    assert pyhf.schema.path == datadir / 'customschema'
-    assert pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+    assert pyhf.schema.path == new_path
+    assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
     pyhf.schema(old_path)
+
+    assert pyhf.schema.path == old_path
+    with pyhf.schema(new_path):
+        assert pyhf.schema.path != old_path
+        assert pyhf.schema.path == new_path
+        assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+    assert pyhf.schema.path == old_path
 
 
 def test_no_channels():
