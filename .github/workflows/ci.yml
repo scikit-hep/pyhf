@@ -56,7 +56,10 @@ jobs:
       uses: mxschmitt/action-tmate@v3
 
     - name: Report core project coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
+      if: >-
+        github.event_name != 'schedule' &&
+        (matrix.python-version == '3.7' || matrix.python-version == '3.10') &&
+        matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
