@@ -168,11 +168,11 @@ Schema
    :toctree: _generated/
    :nosignatures:
 
+   Schema
    load_schema
    path
    validate
    version
-
 
 Exceptions
 ----------

@@ -11,7 +11,16 @@ else:
     import importlib_resources as resources
 
 
-def load_schema(schema_id):
+def load_schema(schema_id: str):
+    """
+    Get a schema by relative path from cache, or load it into the cache and return.
+
+    Args:
+        schema_id (str): Relative path to schema from :attr:`pyhf.schema.path`
+
+    Returns:
+        schema (dict): The loaded schema.
+    """
     try:
         return variables.SCHEMA_CACHE[
             f'{Path(variables.SCHEMA_BASE).joinpath(schema_id)}'
