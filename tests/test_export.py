@@ -452,6 +452,6 @@ def test_issue1814(datadir, mocker, fname, val, low, high):
     )
     assert modifier is not None
     assert sorted(modifier.keys()) == ['High', 'Low', 'Name', 'Val']
-    modifier.get('Val') == val
-    modifier.get('Low') == low
-    modifier.get('High') == high
+    assert modifier.get('Val') == val
+    assert modifier.get('Low') == low
+    assert modifier.get('High') == high
