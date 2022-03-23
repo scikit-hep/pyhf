@@ -5,7 +5,8 @@ import hashlib
 
 import sys
 
-# importlib.resources.as_file wasn't added until Python 3.9?
+# importlib.resources.as_file wasn't added until Python 3.9
+# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
 if sys.version_info >= (3, 9):
     from importlib import resources
 else:
