@@ -1,5 +1,13 @@
-Try out now with Pyolite
-------------------------
+Try out now with JupyterLite_
+-----------------------------
+
+.. admonition::
+ To try pyhf code in the browser with the Pyolite JupyterLite kernel:
+
+ #. Type (or copy and paste) code in the input cell.
+ #. To execute the code, press ``Shift + Enter`` or click on the (Run) ▶ button in the toolbar.
+
+ To get going try copying and pasting the "Hello World" example below!
 
 .. raw:: html
 
@@ -13,3 +21,5 @@ Try out now with Pyolite
   Comment: Add an extra blank line as a spacer
 
 |
+
+.. _JupyterLite: https://jupyterlite.readthedocs.io/
