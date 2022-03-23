@@ -55,7 +55,7 @@ src = "codemeta.json"
 src = "CITATION.cff"
 
 [[file]]
-src = "docs/pyolite.rst"
+src = "docs/jupyterlite.rst"
 
 [[field]]
 # the name of the field

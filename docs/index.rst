@@ -37,7 +37,7 @@
 .. include:: ../README.rst
     :end-before: Comment: Pyolite segment goes here in docs
 
-.. include:: pyolite.rst
+.. include:: jupyterlite.rst
 
 .. include:: ../README.rst
     :start-after: Comment: Pyolite segment goes here in docs
