@@ -68,7 +68,7 @@ def test_schema_changeable_context_error(datadir, monkeypatch):
 
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
-            1 / 0
+            raise ZeroDivisionError()
     assert old_path == pyhf.schema.path
 
 
