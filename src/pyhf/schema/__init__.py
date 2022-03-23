@@ -48,10 +48,10 @@ class Schema(sys.modules[__name__].__class__):
 
         >>> import pyhf.schema
         >>> import pathlib
-        >>> new_path = pathlib.Path("/home/root/my/new/path")
         >>> curr_path = pyhf.schema.path
         >>> curr_path  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
+        >>> new_path = pathlib.Path("/home/root/my/new/path")
         >>> with pyhf.schema(new_path):
         ...     print(repr(pyhf.schema.path))
         ...
