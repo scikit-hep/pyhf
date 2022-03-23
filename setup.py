@@ -59,6 +59,7 @@ extras_require['docs'] = sorted(
             'ipywidgets',
             'sphinx-issues',
             'sphinx-copybutton>=0.3.2',
+            'sphinx-togglebutton>=0.3.0',
         ]
     )
 )
