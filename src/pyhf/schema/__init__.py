@@ -46,9 +46,22 @@ class Schema(sys.modules[__name__].__class__):
             new_path (pathlib.Path): Path to folder containing the schemas
 
         Returns:
+            self (pyhf.schema.Schema): Returns itself (for contextlib management)
+        """
+        self.orig_path, variables.schemas = variables.schemas, new_path
+        return self
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args, **kwargs):
+        """
+        Reset the local search path for finding schemas locally.
+
+        Returns:
             None
         """
-        variables.schemas = new_path
+        variables.schemas = self.orig_path
 
     @property
     def path(self):
