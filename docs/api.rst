@@ -171,9 +171,7 @@ Schema
 
    Schema
    load_schema
-   path
    validate
-   version
 
 Exceptions
 ----------
