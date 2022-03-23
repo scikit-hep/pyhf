@@ -178,8 +178,8 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         high = 10
         for p in spec['measurements'][0]['config']['parameters']:
             if p['name'] == modifierspec['name']:
-                val = p['inits'][0]
-                low, high = p['bounds'][0]
+                val = p.get('inits', [val])[0]
+                low, high = p.get('bounds', [[low, high]])[0]
         attrs['Val'] = str(val)
         attrs['Low'] = str(low)
         attrs['High'] = str(high)
