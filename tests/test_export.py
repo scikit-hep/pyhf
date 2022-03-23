@@ -428,3 +428,30 @@ def test_integer_data(datadir, mocker):
 
     channel = pyhf.writexml.build_channel(spec, channel_spec, {})
     assert channel
+
+
+@pytest.mark.parametrize(
+    "fname,val,low,high",
+    [
+        ('workspace_no_parameter_inits.json', '1', '-5', '5'),
+        ('workspace_no_parameter_bounds.json', '5', '0', '10'),
+    ],
+    ids=['no_inits', 'no_bounds'],
+)
+def test_issue1814(datadir, mocker, fname, val, low, high):
+    with open(datadir / fname) as spec_file:
+        spec = json.load(spec_file)
+
+    modifierspec = {'data': None, 'name': 'mu_sig', 'type': 'normfactor'}
+    channelname = None
+    samplename = None
+    sampledata = None
+
+    modifier = pyhf.writexml.build_modifier(
+        spec, modifierspec, channelname, samplename, sampledata
+    )
+    assert modifier is not None
+    assert sorted(modifier.keys()) == ['High', 'Low', 'Name', 'Val']
+    modifier.get('Val') == val
+    modifier.get('Low') == low
+    modifier.get('High') == high
