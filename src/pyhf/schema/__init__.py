@@ -25,7 +25,7 @@ class Schema(sys.modules[__name__].__class__):
 
     .. rubric:: Example (callable)
 
-    .. doctest::
+    .. code-black:: pycon
 
         >>> import pyhf.schema
         >>> import pathlib
@@ -44,7 +44,7 @@ class Schema(sys.modules[__name__].__class__):
 
     .. rubric:: Example (context-manager)
 
-    .. doctest::
+    .. code-black:: pycon
 
         >>> import pyhf.schema
         >>> import pathlib
