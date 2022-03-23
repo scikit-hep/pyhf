@@ -1,12 +1,11 @@
+"""
+See :class:`~pyhf.schema.Schema` for documentation.
+"""
 import pathlib
 import sys
 from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
-
-"""
-See :class:`~pyhf.schema.Schema` for documentation.
-"""
 
 __all__ = [
     "load_schema",
@@ -22,7 +21,7 @@ def __dir__():
 
 class Schema(sys.modules[__name__].__class__):
     """
-    A module-level wrapper around :module:`pyhf.schema` which will provide additional functionality for interacting with schemas.
+    A module-level wrapper around :mod:`pyhf.schema` which will provide additional functionality for interacting with schemas.
 
     Example:
         >>> import pyhf.schema
