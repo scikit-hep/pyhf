@@ -17,6 +17,7 @@ Top-Level
    readxml
    writexml
    compat
+   schema
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
