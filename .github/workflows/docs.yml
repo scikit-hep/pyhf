@@ -51,7 +51,6 @@ jobs:
     - name: Verify CITATION.cff schema
       run: |
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
-
     - name: Test and build docs
       run: |
         python -m doctest README.rst
