@@ -64,7 +64,7 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         files: ./coverage.xml
-        flags: unittests
+        flags: unittests-${{ matrix.python-version }}
 
     - name: Test Contrib module with pytest
       run: |
