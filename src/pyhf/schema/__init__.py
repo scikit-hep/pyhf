@@ -23,17 +23,40 @@ class Schema(sys.modules[__name__].__class__):
     """
     A module-level wrapper around :mod:`pyhf.schema` which will provide additional functionality for interacting with schemas.
 
-    Example:
+    .. rubric:: Example (callable)
+
+    .. doctest::
+
         >>> import pyhf.schema
         >>> import pathlib
+        >>> new_path = pathlib.Path("/home/root/my/new/path")
         >>> curr_path = pyhf.schema.path
-        >>> curr_path # doctest: +ELLIPSIS
+        >>> curr_path  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
-        >>> pyhf.schema(pathlib.Path('/home/root/my/new/path'))
+        >>> pyhf.schema(new_path)  # doctest: +ELLIPSIS
+        <module 'pyhf.schema' from ...>
         >>> pyhf.schema.path
         PosixPath('/home/root/my/new/path')
-        >>> pyhf.schema(curr_path)
-        >>> pyhf.schema.path # doctest: +ELLIPSIS
+        >>> pyhf.schema(curr_path)  # doctest: +ELLIPSIS
+        <module 'pyhf.schema' from ...>
+        >>> pyhf.schema.path  # doctest: +ELLIPSIS
+        PosixPath('.../pyhf/schemas')
+
+    .. rubric:: Example (context-manager)
+
+    .. doctest::
+
+        >>> import pyhf.schema
+        >>> import pathlib
+        >>> new_path = pathlib.Path("/home/root/my/new/path")
+        >>> curr_path = pyhf.schema.path
+        >>> curr_path  # doctest: +ELLIPSIS
+        PosixPath('.../pyhf/schemas')
+        >>> with pyhf.schema(new_path):
+        ...     print(repr(pyhf.schema.path))
+        ...
+        PosixPath('/home/root/my/new/path')
+        >>> pyhf.schema.path  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
 
     """
