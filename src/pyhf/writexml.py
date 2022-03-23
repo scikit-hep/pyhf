@@ -188,6 +188,7 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         attrs['HistoName'] = _make_hist_name(
             channelname, samplename, modifierspec['name']
         )
+        # must be deleted, HiFa XML specification does not support 'Name'
         del attrs['Name']
         # need to make this a relative uncertainty stored in ROOT file
         _export_root_histogram(
