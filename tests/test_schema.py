@@ -27,7 +27,11 @@ def test_schema_callable():
     assert callable(pyhf.schema)
 
 
-def test_schema_changeable(datadir):
+def test_schema_changeable(datadir, monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
         pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
 
