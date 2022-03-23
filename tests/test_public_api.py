@@ -1,6 +1,7 @@
 import pytest
 import pyhf
 import numpy as np
+import pathlib
 
 
 @pytest.fixture(scope='function')
@@ -200,3 +201,23 @@ def test_pdf_batched(backend):
 
     model.pdf(pars, data)
     model.expected_data(pars)
+
+
+def test_set_schema_path(monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+
+    new_path = pathlib.Path('a/new/path')
+    pyhf.schema(new_path)
+    assert pyhf.schema.path == new_path
+
+
+def test_set_schema_path_context(monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+
+    new_path = pathlib.Path('a/new/path')
+    with pyhf.schema(new_path):
+        assert pyhf.schema.path == new_path

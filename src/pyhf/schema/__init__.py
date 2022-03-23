@@ -23,17 +23,40 @@ class Schema(sys.modules[__name__].__class__):
     """
     A module-level wrapper around :mod:`pyhf.schema` which will provide additional functionality for interacting with schemas.
 
-    Example:
+    .. rubric:: Example (callable)
+
+    .. code-block:: pycon
+
         >>> import pyhf.schema
         >>> import pathlib
         >>> curr_path = pyhf.schema.path
-        >>> curr_path # doctest: +ELLIPSIS
+        >>> curr_path  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
-        >>> pyhf.schema(pathlib.Path('/home/root/my/new/path'))
+        >>> new_path = pathlib.Path("/home/root/my/new/path")
+        >>> pyhf.schema(new_path)  # doctest: +ELLIPSIS
+        <module 'pyhf.schema' from ...>
         >>> pyhf.schema.path
         PosixPath('/home/root/my/new/path')
-        >>> pyhf.schema(curr_path)
-        >>> pyhf.schema.path # doctest: +ELLIPSIS
+        >>> pyhf.schema(curr_path)  # doctest: +ELLIPSIS
+        <module 'pyhf.schema' from ...>
+        >>> pyhf.schema.path  # doctest: +ELLIPSIS
+        PosixPath('.../pyhf/schemas')
+
+    .. rubric:: Example (context-manager)
+
+    .. code-block:: pycon
+
+        >>> import pyhf.schema
+        >>> import pathlib
+        >>> curr_path = pyhf.schema.path
+        >>> curr_path  # doctest: +ELLIPSIS
+        PosixPath('.../pyhf/schemas')
+        >>> new_path = pathlib.Path("/home/root/my/new/path")
+        >>> with pyhf.schema(new_path):
+        ...     print(repr(pyhf.schema.path))
+        ...
+        PosixPath('/home/root/my/new/path')
+        >>> pyhf.schema.path  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
 
     """
@@ -46,9 +69,22 @@ class Schema(sys.modules[__name__].__class__):
             new_path (pathlib.Path): Path to folder containing the schemas
 
         Returns:
+            self (pyhf.schema.Schema): Returns itself (for contextlib management)
+        """
+        self.orig_path, variables.schemas = variables.schemas, new_path
+        return self
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args, **kwargs):
+        """
+        Reset the local search path for finding schemas locally.
+
+        Returns:
             None
         """
-        variables.schemas = new_path
+        variables.schemas = self.orig_path
 
     @property
     def path(self):

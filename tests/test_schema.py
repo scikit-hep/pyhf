@@ -27,16 +27,49 @@ def test_schema_callable():
     assert callable(pyhf.schema)
 
 
-def test_schema_changeable(datadir):
+def test_schema_changeable(datadir, monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+    old_path = pyhf.schema.path
+    new_path = datadir / 'customschema'
+
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
         pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
 
-    old_path = pyhf.schema.path
-    pyhf.schema(datadir / 'customschema')
-    assert pyhf.schema.path != old_path
-    assert pyhf.schema.path == datadir / 'customschema'
-    assert pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+    pyhf.schema(new_path)
+    assert old_path != pyhf.schema.path
+    assert new_path == pyhf.schema.path
+    assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
     pyhf.schema(old_path)
+
+
+def test_schema_changeable_context(datadir, monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+    old_path = pyhf.schema.path
+    new_path = datadir / 'customschema'
+
+    assert old_path == pyhf.schema.path
+    with pyhf.schema(new_path):
+        assert old_path != pyhf.schema.path
+        assert new_path == pyhf.schema.path
+        assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+    assert old_path == pyhf.schema.path
+
+
+def test_schema_changeable_context_error(datadir, monkeypatch):
+    monkeypatch.setattr(
+        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+    )
+    old_path = pyhf.schema.path
+    new_path = datadir / 'customschema'
+
+    with pytest.raises(ZeroDivisionError):
+        with pyhf.schema(new_path):
+            raise ZeroDivisionError()
+    assert old_path == pyhf.schema.path
 
 
 def test_no_channels():
