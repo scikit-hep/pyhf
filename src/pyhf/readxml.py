@@ -1,4 +1,4 @@
-from pyhf import utils
+from pyhf import schema
 from pyhf import compat
 
 import logging
@@ -364,9 +364,9 @@ def parse(configfile, rootdir, track_progress=False):
             {'name': channel_name, 'data': channel_spec['data']}
             for channel_name, channel_spec in channels.items()
         ],
-        'version': utils.SCHEMA_VERSION,
+        'version': schema.version,
     }
-    utils.validate(result, 'workspace.json')
+    schema.validate(result, 'workspace.json')
 
     return result
 

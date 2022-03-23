@@ -1,67 +1,27 @@
 import json
-import jsonschema
-import pkg_resources
-from pathlib import Path
 import yaml
 import click
 import hashlib
 
-from pyhf.exceptions import InvalidSpecification
+import sys
 
-SCHEMA_CACHE = {}
-SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
-SCHEMA_VERSION = '1.0.0'
+# importlib.resources.as_file wasn't added until Python 3.9
+# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 __all__ = [
     "EqDelimStringParamType",
     "citation",
     "digest",
-    "load_schema",
     "options_from_eqdelimstring",
-    "validate",
 ]
 
 
 def __dir__():
     return __all__
-
-
-def load_schema(schema_id, version=None):
-    global SCHEMA_CACHE
-    if not version:
-        version = SCHEMA_VERSION
-    try:
-        return SCHEMA_CACHE[f'{SCHEMA_BASE}{Path(version).joinpath(schema_id)}']
-    except KeyError:
-        pass
-
-    path = pkg_resources.resource_filename(
-        __name__, str(Path('schemas').joinpath(version, schema_id))
-    )
-    with open(path) as json_schema:
-        schema = json.load(json_schema)
-        SCHEMA_CACHE[schema['$id']] = schema
-    return SCHEMA_CACHE[schema['$id']]
-
-
-# load the defs.json as it is included by $ref
-load_schema('defs.json')
-
-
-def validate(spec, schema_name, version=None):
-    schema = load_schema(schema_name, version=version)
-    try:
-        resolver = jsonschema.RefResolver(
-            base_uri=f"file://{pkg_resources.resource_filename(__name__, 'schemas/'):s}",
-            referrer=schema_name,
-            store=SCHEMA_CACHE,
-        )
-        validator = jsonschema.Draft6Validator(
-            schema, resolver=resolver, format_checker=None
-        )
-        return validator.validate(spec)
-    except jsonschema.ValidationError as err:
-        raise InvalidSpecification(err, schema_name)
 
 
 def options_from_eqdelimstring(opts):
@@ -140,14 +100,9 @@ def citation(oneline=False):
     Returns:
         citation (:obj:`str`): The citation for this software
     """
-    path = Path(
-        pkg_resources.resource_filename(
-            __name__, str(Path('data').joinpath('citation.bib'))
-        )
-    )
-    with path.open() as fp:
-        # remove end-of-file newline if there is one
-        data = fp.read().strip()
+    ref = resources.files('pyhf') / 'data' / 'citation.bib'
+    with resources.as_file(ref) as path:
+        data = path.read_text().strip()
 
     if oneline:
         data = ''.join(data.splitlines())

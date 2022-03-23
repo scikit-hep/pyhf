@@ -24,6 +24,7 @@ def test_top_level_public_api():
         "patchset",
         "pdf",
         "probability",
+        "schema",
         "set_backend",
         "simplemodels",
         "tensor",
@@ -243,9 +244,16 @@ def test_utils_public_api():
         "EqDelimStringParamType",
         "citation",
         "digest",
-        "load_schema",
         "options_from_eqdelimstring",
+    ]
+
+
+def test_schema_public_api():
+    assert dir(pyhf.schema) == [
+        "load_schema",
+        "path",
         "validate",
+        "version",
     ]
 
 

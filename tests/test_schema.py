@@ -3,6 +3,42 @@ import pytest
 import json
 
 
+@pytest.mark.parametrize('version', ['1.0.0'])
+@pytest.mark.parametrize(
+    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+)
+def test_get_schema(version, schema):
+    assert pyhf.schema.load_schema(f'{version}/{schema}')
+
+
+def test_load_missing_schema():
+    with pytest.raises(IOError):
+        pyhf.schema.load_schema('fake_schema.json')
+
+
+def test_schema_attributes():
+    assert hasattr(pyhf.schema, 'version')
+    assert hasattr(pyhf.schema, 'path')
+    assert pyhf.schema.version
+    assert pyhf.schema.path
+
+
+def test_schema_callable():
+    assert callable(pyhf.schema)
+
+
+def test_schema_changeable(datadir):
+    with pytest.raises(pyhf.exceptions.SchemaNotFound):
+        pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+
+    old_path = pyhf.schema.path
+    pyhf.schema(datadir / 'customschema')
+    assert pyhf.schema.path != old_path
+    assert pyhf.schema.path == datadir / 'customschema'
+    assert pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+    pyhf.schema(old_path)
+
+
 def test_no_channels():
     spec = {'channels': []}
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
@@ -444,7 +480,7 @@ def test_normsys_additional_properties():
     ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
 )
 def test_jsonpatch(patch):
-    pyhf.utils.validate([patch], 'jsonpatch.json')
+    pyhf.schema.validate([patch], 'jsonpatch.json')
 
 
 @pytest.mark.parametrize(
@@ -470,13 +506,13 @@ def test_jsonpatch(patch):
 )
 def test_jsonpatch_fail(patch):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.utils.validate([patch], 'jsonpatch.json')
+        pyhf.schema.validate([patch], 'jsonpatch.json')
 
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
-    patchset = json.load(open(datadir.join(patchset_file)))
-    pyhf.utils.validate(patchset, 'patchset.json')
+    patchset = json.load(open(datadir.joinpath(patchset_file)))
+    pyhf.schema.validate(patchset, 'patchset.json')
 
 
 @pytest.mark.parametrize(
@@ -495,6 +531,6 @@ def test_patchset(datadir, patchset_file):
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
-    patchset = json.load(open(datadir.join(patchset_file)))
+    patchset = json.load(open(datadir.joinpath(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.utils.validate(patchset, 'patchset.json')
+        pyhf.schema.validate(patchset, 'patchset.json')

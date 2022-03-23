@@ -10,7 +10,7 @@ import jsonpatch
 import copy
 import collections
 from pyhf import exceptions
-from pyhf import utils
+from pyhf import schema
 from pyhf.pdf import Model
 from pyhf.mixins import _ChannelSummaryMixin
 
@@ -307,7 +307,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
             log.info(f"Validating spec against schema: {self.schema}")
-            utils.validate(self, self.schema, version=self.version)
+            schema.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
@@ -386,7 +386,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         else:
             raise exceptions.InvalidMeasurement("No measurements have been defined.")
 
-        utils.validate(measurement, 'measurement.json', self.version)
+        schema.validate(measurement, 'measurement.json', self.version)
         return measurement
 
     def model(
@@ -811,7 +811,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         workspace = copy.deepcopy(dict(channels=model.spec['channels']))
-        workspace['version'] = utils.SCHEMA_VERSION
+        workspace['version'] = schema.version
         workspace['measurements'] = [
             {
                 'name': name,

@@ -123,7 +123,7 @@ def interpcode(request):
 
 
 @pytest.fixture(scope='function')
-def datadir(tmpdir, request):
+def datadir(tmp_path, request):
     """
     Fixture responsible for searching a folder with the same name of test
     module and, if available, moving all contents to a temporary directory so
@@ -134,9 +134,9 @@ def datadir(tmpdir, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        distutils.dir_util.copy_tree(test_dir, tmpdir.strpath)
+        distutils.dir_util.copy_tree(test_dir, str(tmp_path))
         # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
         # Once pyhf is Python 3.8+ only then the below can be used.
         # shutil.copytree(test_dir, tmpdir)
 
-    return tmpdir
+    return tmp_path

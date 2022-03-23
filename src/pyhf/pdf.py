@@ -8,7 +8,7 @@ import pyhf.parameters
 import pyhf
 from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
-from pyhf import utils
+from pyhf import schema
 from pyhf import events
 from pyhf import probability as prob
 from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
@@ -666,7 +666,7 @@ class Model:
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
             log.info(f"Validating spec against schema: {self.schema:s}")
-            utils.validate(self.spec, self.schema, version=self.version)
+            schema.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         poi_name = config_kwargs.pop('poi_name', 'mu')
         self.config = _ModelConfig(self.spec, **config_kwargs)
