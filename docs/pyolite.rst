@@ -1,12 +1,13 @@
 Try out now with JupyterLite_
 -----------------------------
 
-.. admonition:: To try pyhf code in the browser with the Pyolite JupyterLite kernel
+.. admonition:: To try pyhf code in the browser with the Pyolite JupyterLite kernel:
+    :class: dropdown
 
- #. Type (or copy and paste) code in the input cell.
- #. To execute the code, press ``Shift + Enter`` or click on the (Run) ▶ button in the toolbar.
+     #. Type (or copy and paste) code in the input cell.
+     #. To execute the code, press ``Shift + Enter`` or click on the (Run) ▶ button in the toolbar.
 
- To get going try copying and pasting the "Hello World" example below!
+     To get going try copying and pasting the "Hello World" example below!
 
 .. raw:: html
 
