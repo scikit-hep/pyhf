@@ -52,10 +52,16 @@ class jax_backend:
     """JAX backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
-    array_type = jnp.DeviceArray
-    """ The array type for jax"""
-    array_subtype = jnp.DeviceArray
-    """ The array content type for jax"""
+
+    @property
+    def array_type(self):
+        """The array type for jax"""
+        return jnp.DeviceArray
+
+    @property
+    def array_subtype(self):
+        """The array content type for jax"""
+        return jnp.DeviceArray
 
     def __init__(self, **kwargs):
         self.name = 'jax'

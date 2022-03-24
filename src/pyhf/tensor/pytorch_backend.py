@@ -12,10 +12,16 @@ class pytorch_backend:
     """PyTorch backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
-    array_type = torch.Tensor
-    """The array type for pytorch"""
-    array_subtype = torch.Tensor
-    """The array content type for pytorch"""
+
+    @property
+    def array_type(self):
+        """The array type for pytorch"""
+        return torch.Tensor
+
+    @property
+    def array_subtype(self):
+        """The array content type for pytorch"""
+        return torch.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'

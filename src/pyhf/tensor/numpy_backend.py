@@ -38,10 +38,16 @@ class numpy_backend:
     """NumPy backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
-    array_type = np.ndarray
-    """The array type for numpy"""
-    array_subtype = np.number
-    """The array content type for numpy"""
+
+    @property
+    def array_type(self):
+        """The array type for numpy"""
+        return np.ndarray
+
+    @property
+    def array_subtype(self):
+        """The array content type for numpy"""
+        return np.number
 
     def __init__(self, **kwargs):
         self.name = 'numpy'

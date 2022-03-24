@@ -10,10 +10,16 @@ class tensorflow_backend:
     """TensorFlow backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
-    array_type = tf.Tensor
-    """The array type for tensorflow"""
-    array_subtype = tf.Tensor
-    """The array content type for tensorflow"""
+
+    @property
+    def array_type(self):
+        """The array type for tensorflow"""
+        return tf.Tensor
+
+    @property
+    def array_subtype(self):
+        """The array content type for tensorflow"""
+        return tf.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
