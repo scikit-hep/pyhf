@@ -9,6 +9,12 @@ Try out now with JupyterLite_
 
      To get going try copying and pasting the "Hello World" example below!
 
+     .. admonition:: Kernel not loading?
+      :class: dropdown
+
+       If the kernel isn't loading and you just see a blank iframe, you will need your
+       browser to accept cookies from jupyterlite.github.io and then reload the page.
+
 .. raw:: html
 
    <iframe
