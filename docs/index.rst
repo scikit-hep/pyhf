@@ -32,15 +32,15 @@
    <p id="dev-version"><strong>Warning:</strong> This is a development version. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
 
 ..
-  Comment: Splice the Pyolite example into the README by looking for a particular comment
+  Comment: Splice the JupyterLite example into the README by looking for a particular comment
 
 .. include:: ../README.rst
-    :end-before: Comment: Pyolite segment goes here in docs
+    :end-before: Comment: JupyterLite segment goes here in docs
 
 .. include:: jupyterlite.rst
 
 .. include:: ../README.rst
-    :start-after: Comment: Pyolite segment goes here in docs
+    :start-after: Comment: JupyterLite segment goes here in docs
 
 Indices and tables
 ==================

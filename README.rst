@@ -33,7 +33,7 @@ TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
 ..
-  Comment: Pyolite segment goes here in docs
+  Comment: JupyterLite segment goes here in docs
 
 User Guide
 ----------
