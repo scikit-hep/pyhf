@@ -44,8 +44,8 @@ def validate(
 
     Args:
         spec (:obj:`object`): An object instance to validate against a schema
-        schema_name (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.utils.load_schema` for more details.
-        version (:obj:`string`): The version of the schema to use. See :func:`pyhf.utils.load_schema` for more details.
+        schema_name (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.schema.load_schema` for more details.
+        version (:obj:`string`): The version of the schema to use. See :func:`pyhf.schema.load_schema` for more details.
         allow_tensors (:obj:`bool`): A flag to enable or disable tensors as part of schema validation. If enabled, tensors in the ``spec`` will be treated like python :obj:`list`. Default: ``True``.
 
     Raises:
@@ -59,7 +59,7 @@ def validate(
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
-        >>> pyhf.utils.validate(model.spec, 'model.json')
+        >>> pyhf.schema.validate(model.spec, 'model.json')
         >>>
     """
 
