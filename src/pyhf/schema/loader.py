@@ -21,12 +21,12 @@ def load_schema(schema_id: str):
 
     Example:
         >>> import pyhf
-        >>> schema = pyhf.utils.load_schema('defs.json')
+        >>> schema = pyhf.schema.load_schema('defs.json')
         >>> type(schema)
         <class 'dict'>
         >>> schema.keys()
         dict_keys(['$schema', '$id', 'definitions'])
-        >>> pyhf.utils.load_schema('0.0.0/defs.json')
+        >>> pyhf.schema.load_schema('0.0.0/defs.json')
         Traceback (most recent call last):
             ...
         pyhf.exceptions.SchemaNotFound: ...
