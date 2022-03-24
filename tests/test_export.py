@@ -224,23 +224,25 @@ def test_export_measurement():
 
 
 @pytest.mark.parametrize(
-    "spec, has_root_data, attrs",
+    "spec, has_root_data, attrs, modtype",
     [
-        (spec_staterror(), True, ['Activate', 'HistoName']),
-        (spec_histosys(), True, ['HistoNameHigh', 'HistoNameLow']),
-        (spec_normsys(), False, ['High', 'Low']),
-        (spec_shapesys(), True, ['ConstraintType', 'HistoName']),
-        (spec_shapefactor(), False, []),
+        (spec_staterror(), True, ['Activate', 'HistoName'], 'staterror'),
+        (spec_histosys(), True, ['HistoNameHigh', 'HistoNameLow'], 'histosys'),
+        (spec_normsys(), False, ['High', 'Low'], 'normsys'),
+        (spec_shapesys(), True, ['ConstraintType', 'HistoName'], 'shapesys'),
+        (spec_shapefactor(), False, [], 'shapefactor'),
     ],
     ids=['staterror', 'histosys', 'normsys', 'shapesys', 'shapefactor'],
 )
-def test_export_modifier(mocker, caplog, spec, has_root_data, attrs):
+def test_export_modifier(mocker, caplog, spec, has_root_data, attrs, modtype):
     channelspec = spec['channels'][0]
     channelname = channelspec['name']
     samplespec = channelspec['samples'][1]
     samplename = samplespec['name']
     sampledata = samplespec['data']
     modifierspec = samplespec['modifiers'][0]
+
+    assert modifierspec['type'] == modtype
 
     mocker.patch('pyhf.writexml._ROOT_DATA_FILE')
 
@@ -255,7 +257,9 @@ def test_export_modifier(mocker, caplog, spec, has_root_data, attrs):
     assert "Skipping modifier" not in caplog.text
 
     # if the modifier is a staterror, it has no Name
-    if 'Name' in modifier.attrib:
+    if modtype == 'staterror':
+        assert 'Name' not in modifier.attrib
+    else:
         assert modifier.attrib['Name'] == modifierspec['name']
     assert all(attr in modifier.attrib for attr in attrs)
     assert pyhf.writexml._ROOT_DATA_FILE.__setitem__.called == has_root_data
