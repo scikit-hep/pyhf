@@ -13,15 +13,11 @@ class pytorch_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
-    @property
-    def array_type(self):
-        """The array type for pytorch"""
-        return torch.Tensor
+    #: The array type for pytorch
+    array_type = torch.Tensor
 
-    @property
-    def array_subtype(self):
-        """The array content type for pytorch"""
-        return torch.Tensor
+    #: The array content type for pytorch
+    array_subtype = torch.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'pytorch'

@@ -11,15 +11,11 @@ class tensorflow_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
-    @property
-    def array_type(self):
-        """The array type for tensorflow"""
-        return tf.Tensor
+    #: The array type for tensorflow
+    array_type = tf.Tensor
 
-    @property
-    def array_subtype(self):
-        """The array content type for tensorflow"""
-        return tf.Tensor
+    #: The array content type for tensorflow
+    array_subtype = tf.Tensor
 
     def __init__(self, **kwargs):
         self.name = 'tensorflow'
