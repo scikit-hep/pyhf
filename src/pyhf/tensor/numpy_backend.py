@@ -39,15 +39,11 @@ class numpy_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
-    @property
-    def array_type(self):
-        """The array type for numpy"""
-        return np.ndarray
+    #: The array type for numpy
+    array_type = np.ndarray
 
-    @property
-    def array_subtype(self):
-        """The array content type for numpy"""
-        return np.number
+    #: The array content type for numpy
+    array_subtype = np.number
 
     def __init__(self, **kwargs):
         self.name = 'numpy'
