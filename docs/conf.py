@@ -52,6 +52,7 @@ extensions = [
     'nbsphinx',
     'sphinx_issues',
     'sphinx_copybutton',
+    'sphinx_togglebutton',
     'xref',
 ]
 bibtex_bibfiles = [

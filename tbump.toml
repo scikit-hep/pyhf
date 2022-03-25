@@ -54,6 +54,12 @@ src = "codemeta.json"
 [[file]]
 src = "CITATION.cff"
 
+[[file]]
+src = "docs/generate_jupyterlite_iframe.py"
+
+[[file]]
+src = "docs/jupyterlite.rst"
+
 [[field]]
 # the name of the field
 name = "candidate"
