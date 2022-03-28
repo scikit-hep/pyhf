@@ -41,6 +41,12 @@
 
 .. include:: ../README.rst
     :start-after: Comment: JupyterLite segment goes here in docs
+    :end-before: Comment: JupyterLite Hello World start
+
+.. include:: jupyterlite/hello_world.rst
+
+.. include:: ../README.rst
+    :start-after: Comment: JupyterLite Hello World end
 
 Indices and tables
 ==================
