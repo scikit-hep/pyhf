@@ -47,6 +47,12 @@
 
 .. include:: ../README.rst
     :start-after: Comment: JupyterLite Hello World end
+    :end-before: Comment: JupyterLite Hello World JSON start
+
+.. include:: jupyterlite/hello_world_json.rst
+
+.. include:: ../README.rst
+    :start-after: Comment: JupyterLite Hello World JSON end
 
 Indices and tables
 ==================

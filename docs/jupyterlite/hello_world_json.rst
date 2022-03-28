@@ -6,16 +6,15 @@
 
          >>> import pyhf
          >>> pyhf.set_backend("numpy")
-         >>> model = pyhf.simplemodels.uncorrelated_background(
-         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-         ... )
-         >>> data = [51, 48] + model.config.auxdata
+         >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
+         >>> model = wspace.model()
+         >>> data = wspace.data(model)
          >>> test_mu = 1.0
          >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
          ...     test_mu, data, model, test_stat="qtilde", return_expected=True
          ... )
          >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
-         Observed: 0.05251497, Expected: 0.06445321
+         Observed: 0.35998409, Expected: 0.35998409
 
    .. tab:: JupyterLite
 
@@ -30,13 +29,15 @@
           await piplite.install(["pyhf==0.6.3", "requests"])
 
           %matplotlib inline
+          import pyodide
+          import json
           import pyhf
 
           pyhf.set_backend("numpy")
-          model = pyhf.simplemodels.uncorrelated_background(
-             signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-          )
-          data = [51, 48] + model.config.auxdata
+          spec = pyodide.open_url("https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json")
+          wspace = pyhf.Workspace(json.load(spec))
+          model = wspace.model()
+          data = wspace.data(model)
           test_mu = 1.0
           CLs_obs, CLs_exp = pyhf.infer.hypotest(
              test_mu, data, model, test_stat="qtilde", return_expected=True

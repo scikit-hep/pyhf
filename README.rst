@@ -71,6 +71,9 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
+..
+  Comment: JupyterLite Hello World JSON start
+
 .. code:: pycon
 
    >>> import pyhf
@@ -86,6 +89,8 @@ Alternatively the statistical model and observational data can be read from its 
    >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
    Observed: 0.35998409, Expected: 0.35998409
 
+..
+  Comment: JupyterLite Hello World JSON end
 
 Finally, you can also use the command line interface that ``pyhf`` provides
 
