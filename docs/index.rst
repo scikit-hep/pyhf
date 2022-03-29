@@ -59,6 +59,12 @@
 
 .. include:: ../README.rst
     :start-after: Comment: JupyterLite one bin example end
+    :end-before: Comment: JupyterLite two bin example start
+
+.. include:: jupyterlite/two_bin.rst
+
+.. include:: ../README.rst
+    :start-after: Comment: JupyterLite two bin example end
 
 Indices and tables
 ==================

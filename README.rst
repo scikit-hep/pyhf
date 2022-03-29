@@ -225,6 +225,9 @@ A one bin example
 A two bin example
 -----------------
 
+..
+  Comment: JupyterLite two bin example start
+
 .. code:: python
 
    import pyhf
@@ -251,6 +254,8 @@ A two bin example
    brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
 
+..
+  Comment: JupyterLite two bin example end
 
 **pyhf**
 
