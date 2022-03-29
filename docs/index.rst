@@ -53,6 +53,12 @@
 
 .. include:: ../README.rst
     :start-after: Comment: JupyterLite Hello World JSON end
+    :end-before: Comment: JupyterLite one bin example start
+
+.. include:: jupyterlite/one_bin.rst
+
+.. include:: ../README.rst
+    :start-after: Comment: JupyterLite one bin example end
 
 Indices and tables
 ==================

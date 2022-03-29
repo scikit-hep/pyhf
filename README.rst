@@ -176,6 +176,9 @@ from HistFactory workspaces
 A one bin example
 -----------------
 
+..
+  Comment: JupyterLite one bin example start
+
 .. code:: python
 
    import pyhf
@@ -201,6 +204,9 @@ A one bin example
    fig.set_size_inches(7, 5)
    brazil.plot_results(poi_vals, results, ax=ax)
    fig.show()
+
+..
+  Comment: JupyterLite one bin example end
 
 **pyhf**
 
