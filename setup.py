@@ -61,7 +61,7 @@ extras_require['docs'] = sorted(
             'sphinx-copybutton>=0.3.2',
             'sphinx-togglebutton>=0.3.0',
             'sphinx-tabs>=3.3.1',
-            'jupyterlite-sphinx>=0.4.5',
+            'jupyterlite-sphinx>=0.4.6',
         ]
     )
 )
