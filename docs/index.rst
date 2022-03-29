@@ -37,7 +37,7 @@
 .. include:: ../README.rst
     :end-before: Comment: JupyterLite segment goes here in docs
 
-.. include:: jupyterlite.rst
+.. include:: jupyterlite/jupyterlite.rst
 
 .. include:: ../README.rst
     :start-after: Comment: JupyterLite segment goes here in docs
