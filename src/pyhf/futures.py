@@ -12,7 +12,7 @@ class TrivialExecutor(futures.Executor):
     """
 
     def __repr__(self):
-        """ Representation of the object """
+        """Representation of the object"""
         module = type(self).__module__
         qualname = type(self).__qualname__
         return f"<{module}.{qualname} object at {hex(id(self))}>"
