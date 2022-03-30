@@ -10,7 +10,7 @@ import jsonpatch
 import copy
 import collections
 from pyhf import exceptions
-from pyhf import utils
+from pyhf import schema
 from pyhf.pdf import Model
 from pyhf.mixins import _ChannelSummaryMixin
 
@@ -286,16 +286,28 @@ class Workspace(_ChannelSummaryMixin, dict):
 
     valid_joins = ['none', 'outer', 'left outer', 'right outer']
 
-    def __init__(self, spec, **config_kwargs):
-        """Workspaces hold the model, data and measurements."""
+    def __init__(self, spec, validate: bool = True, **config_kwargs):
+        """
+        Workspaces hold the model, data and measurements.
+
+        Args:
+            spec (:obj:`jsonable`): The HistFactory JSON specification
+            validate (:obj:`bool`): Whether to validate against a JSON schema
+            config_kwargs: Possible keyword arguments for the workspace configuration
+
+        Returns:
+            model (:class:`~pyhf.workspace.Workspace`): The Workspace instance
+
+        """
         spec = copy.deepcopy(spec)
         super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema}")
-        utils.validate(self, self.schema, version=self.version)
+        if validate:
+            log.info(f"Validating spec against schema: {self.schema}")
+            schema.validate(self, self.schema, version=self.version)
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):
@@ -304,6 +316,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         self.observations = {}
         for obs in self['observations']:
             self.observations[obs['name']] = obs['data']
+
+        if config_kwargs:
+            raise exceptions.Unsupported(
+                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
+            )
 
     def __eq__(self, other):
         """Equality is defined as equal dict representations."""
@@ -319,24 +336,20 @@ class Workspace(_ChannelSummaryMixin, dict):
         """Representation of the Workspace."""
         return object.__repr__(self)
 
-    def get_measurement(
-        self, poi_name=None, measurement_name=None, measurement_index=None
-    ):
+    def get_measurement(self, measurement_name=None, measurement_index=None):
         """
-        Get (or create) a measurement object.
+        Get a measurement object.
 
         The following logic is used:
 
-          1. if the poi name is given, create a measurement object for that poi
-          2. if the measurement name is given, find the measurement for the given name
-          3. if the measurement index is given, return the measurement at that index
-          4. if there are measurements but none of the above have been specified, return the 0th measurement
+          1. if the measurement name is given, find the measurement for the given name
+          2. if the measurement index is given, return the measurement at that index
+          3. if there are measurements but none of the above have been specified, return the 0th measurement
 
         Raises:
           ~pyhf.exceptions.InvalidMeasurement: If the measurement was not found
 
         Args:
-            poi_name (:obj:`str`): The name of the parameter of interest to create a new measurement from
             measurement_name (:obj:`str`): The name of the measurement to use
             measurement_index (:obj:`int`): The index of the measurement to use
 
@@ -345,12 +358,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         measurement = None
-        if poi_name is not None:
-            measurement = {
-                'name': 'NormalMeasurement',
-                'config': {'poi': poi_name, 'parameters': []},
-            }
-        elif self.measurement_names:
+        if self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
                     log.debug(f"measurements defined: {self.measurement_names}")
@@ -378,46 +386,62 @@ class Workspace(_ChannelSummaryMixin, dict):
         else:
             raise exceptions.InvalidMeasurement("No measurements have been defined.")
 
-        utils.validate(measurement, 'measurement.json', self.version)
+        schema.validate(measurement, 'measurement.json', self.version)
         return measurement
 
-    def model(self, **config_kwargs):
+    def model(
+        self,
+        measurement_name=None,
+        measurement_index=None,
+        patches=None,
+        **config_kwargs,
+    ):
         """
         Create a model object with/without patches applied.
 
         See :func:`pyhf.workspace.Workspace.get_measurement` and :class:`pyhf.pdf.Model` for possible keyword arguments.
 
         Args:
-            patches: A list of JSON patches to apply to the model specification
-            config_kwargs: Possible keyword arguments for the measurement and model configuration
+            measurement_name (:obj:`str`): The name of the measurement to use
+             in :func:`~pyhf.workspace.Workspace.get_measurement`.
+            measurement_index (:obj:`int`): The index of the measurement to use
+             in :func:`~pyhf.workspace.Workspace.get_measurement`.
+            patches (:obj:`list` of :class:`jsonpatch.JsonPatch` or :class:`pyhf.patchset.Patch`):
+             A list of patches to apply to the model specification.
+            config_kwargs: Possible keyword arguments for the model
+             configuration.
+             See :class:`~pyhf.pdf.Model` for more details.
+            poi_name (:obj:`str` or :obj:`None`): Specify this keyword argument
+             to override the default parameter of interest specified in the
+             measurement.
+             Set to :obj:`None` for a POI-less model.
 
         Returns:
             ~pyhf.pdf.Model: A model object adhering to the schema model.json
 
         """
-
-        poi_name = config_kwargs.pop('poi_name', None)
-        measurement_name = config_kwargs.pop('measurement_name', None)
-        measurement_index = config_kwargs.pop('measurement_index', None)
         measurement = self.get_measurement(
-            poi_name=poi_name,
             measurement_name=measurement_name,
             measurement_index=measurement_index,
         )
-        log.debug(f"model being created for measurement {measurement['name']:s}")
 
-        patches = config_kwargs.pop('patches', [])
+        # set poi_name if the user does not provide it
+        config_kwargs.setdefault('poi_name', measurement['config']['poi'])
+
+        log.debug(f"model being created for measurement {measurement['name']:s}")
 
         modelspec = {
             'channels': self['channels'],
             'parameters': measurement['config']['parameters'],
         }
+
+        patches = patches or []
         for patch in patches:
             modelspec = jsonpatch.JsonPatch(patch).apply(modelspec)
 
-        return Model(modelspec, poi_name=measurement['config']['poi'], **config_kwargs)
+        return Model(modelspec, **config_kwargs)
 
-    def data(self, model, with_aux=True):
+    def data(self, model, include_auxdata=True):
         """
         Return the data for the supplied model with or without auxiliary data from the model.
 
@@ -428,7 +452,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         Args:
             model (~pyhf.pdf.Model): A model object adhering to the schema model.json
-            with_aux (:obj:`bool`): Whether to include auxiliary data from the model or not
+            include_auxdata (:obj:`bool`): Whether to include auxiliary data from the model or not
 
         Returns:
             :obj:`list`: data
@@ -444,7 +468,7 @@ class Workspace(_ChannelSummaryMixin, dict):
                 exc_info=True,
             )
             raise
-        if with_aux:
+        if include_auxdata:
             observed_data += model.config.auxdata
         return observed_data
 
@@ -478,11 +502,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         corresponding `observation`.
 
         Args:
-            prune_modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
-            prune_modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
-            prune_samples: A :obj:`str` or a :obj:`list` of samples to prune.
-            prune_channels: A :obj:`str` or a :obj:`list` of channels to prune.
-            prune_measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            prune_modifiers: A :obj:`list` of modifiers to prune.
+            prune_modifier_types: A :obj:`list` of modifier types to prune.
+            prune_samples: A :obj:`list` of samples to prune.
+            prune_channels: A :obj:`list` of channels to prune.
+            prune_measurements: A :obj:`list` of measurements to prune.
             rename_modifiers: A :obj:`dict` mapping old modifier name to new modifier name.
             rename_samples: A :obj:`dict` mapping old sample name to new sample name.
             rename_channels: A :obj:`dict` mapping old channel name to new channel name.
@@ -615,11 +639,11 @@ class Workspace(_ChannelSummaryMixin, dict):
         The pruned workspace must also be a valid workspace.
 
         Args:
-            modifiers: A :obj:`str` or a :obj:`list` of modifiers to prune.
-            modifier_types: A :obj:`str` or a :obj:`list` of modifier types to prune.
-            samples: A :obj:`str` or a :obj:`list` of samples to prune.
-            channels: A :obj:`str` or a :obj:`list` of channels to prune.
-            measurements: A :obj:`str` or a :obj:`list` of measurements to prune.
+            modifiers: A :obj:`list` of modifiers to prune.
+            modifier_types: A :obj:`list` of modifier types to prune.
+            samples: A :obj:`list` of samples to prune.
+            channels: A :obj:`list` of channels to prune.
+            measurements: A :obj:`list` of measurements to prune.
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object with the specified components removed
@@ -772,7 +796,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         return cls(newspec)
 
     @classmethod
-    def build(cls, model, data, name='measurement'):
+    def build(cls, model, data, name='measurement', validate: bool = True):
         """
         Build a workspace from model and data.
 
@@ -780,13 +804,14 @@ class Workspace(_ChannelSummaryMixin, dict):
             model (~pyhf.pdf.Model): A model to store into a workspace
             data (:obj:`tensor`): A array holding observations to store into a workspace
             name (:obj:`str`): The name of the workspace measurement
+            validate (:obj:`bool`): Whether to validate against a JSON schema
 
         Returns:
             ~pyhf.workspace.Workspace: A new workspace object
 
         """
         workspace = copy.deepcopy(dict(channels=model.spec['channels']))
-        workspace['version'] = utils.SCHEMA_VERSION
+        workspace['version'] = schema.version
         workspace['measurements'] = [
             {
                 'name': name,
@@ -794,12 +819,15 @@ class Workspace(_ChannelSummaryMixin, dict):
                     'poi': model.config.poi_name,
                     'parameters': [
                         {
-                            "bounds": [list(x) for x in v['paramset'].suggested_bounds],
-                            "inits": v['paramset'].suggested_init,
-                            "fixed": v['paramset'].suggested_fixed,
-                            "name": k,
+                            "bounds": [
+                                list(x)
+                                for x in parset_spec['paramset'].suggested_bounds
+                            ],
+                            "inits": parset_spec['paramset'].suggested_init,
+                            "fixed": parset_spec['paramset'].suggested_fixed_as_bool,
+                            "name": parset_name,
                         }
-                        for k, v in model.config.par_map.items()
+                        for parset_name, parset_spec in model.config.par_map.items()
                     ],
                 },
             }
@@ -808,4 +836,4 @@ class Workspace(_ChannelSummaryMixin, dict):
             {'name': k, 'data': list(data[model.config.channel_slices[k]])}
             for k in model.config.channels
         ]
-        return cls(workspace)
+        return cls(workspace, validate=validate)

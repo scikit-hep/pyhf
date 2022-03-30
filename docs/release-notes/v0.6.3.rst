@@ -1,0 +1,70 @@
+|release v0.6.3|_
+=================
+
+This is a patch release from ``v0.6.2`` → ``v0.6.3``.
+
+Important Notes
+---------------
+
+* With the addition of writing ROOT files in |uproot v4.1.0 release|_ the
+  ``xmlio`` extra no longer requires ``uproot3`` and all dependencies on
+  ``uproot3`` and ``uproot3-methods`` have been dropped.
+  (PR :pr:`1567`)
+  ``uproot4`` additionally brings large speedups to writing, which results in an
+  order of magnitude faster conversion time for most workspace conversions from
+  JSON back to XML + ROOT with ``pyhf json2xml``.
+* All backends are now fully compatible and tested with
+  `Python 3.9 <https://www.python.org/dev/peps/pep-0596/>`_.
+  (PR :pr:`1574`)
+* The TensorFlow backend now supports compatibility with TensorFlow ``v2.2.1``
+  and later and TensorFlow Probability ``v0.10.1`` and later.
+  (PR :pr:`1001`)
+* The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+  renamed to ``include_auxdata`` to improve API consistency.
+  (PR :pr:`1562`)
+
+.. |uproot v4.1.0 release| replace:: ``uproot`` ``v4.1.0``
+.. _`uproot v4.1.0 release`: https://github.com/scikit-hep/uproot4/releases/tag/4.1.0
+
+Fixes
+-----
+
+* The weakref bug with Click ``v8.0+`` was resolved.
+  ``pyhf`` is now fully compatible with Click ``v7`` and ``v8`` releases.
+  (PR :pr:`1530`)
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* Model parameter names are now propagated to optimizers through addition of the
+  :func:`pyhf.pdf._ModelConfig.par_names` API.
+  :func:`pyhf.pdf._ModelConfig.par_names` also handles non-scalar modifiers with
+  1 parameter.
+  (PRs :pr:`1536`, :pr:`1560`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+      ... )
+      >>> model.config.parameters
+      ['mu', 'uncorr_bkguncrt']
+      >>> model.config.npars
+      3
+      >>> model.config.par_names()
+      ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+
+* The :class:`pyhf.pdf._ModelConfig` ``channel_nbins`` dict is now sorted by
+  keys to match the order of the ``channels`` list.
+  (PR :pr:`1546`)
+
+* The :func:`pyhf.workspace.Workspace.data` ``with_aux`` keyword arg has been
+  renamed to ``include_auxdata`` to improve API consistency.
+  (PR :pr:`1562`)
+
+.. |release v0.6.3| replace:: ``v0.6.3``
+.. _`release v0.6.3`: https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3

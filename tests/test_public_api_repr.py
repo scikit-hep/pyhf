@@ -13,6 +13,7 @@ def test_top_level_public_api():
         "Workspace",
         "__version__",
         "compat",
+        "default_backend",
         "exceptions",
         "get_backend",
         "infer",
@@ -23,6 +24,7 @@ def test_top_level_public_api():
         "patchset",
         "pdf",
         "probability",
+        "schema",
         "set_backend",
         "simplemodels",
         "tensor",
@@ -67,7 +69,6 @@ def test_contrib_viz_public_api():
 def test_contrib_events_public_api():
     assert dir(pyhf.events) == [
         "Callables",
-        "WeakList",
         "disable",
         "enable",
         "noop",
@@ -151,20 +152,27 @@ def test_interpolators_public_api():
 
 def test_modifiers_public_api():
     assert dir(pyhf.modifiers) == [
-        "combined",
+        "histfactory_set",
         "histosys",
+        "histosys_builder",
         "histosys_combined",
         "lumi",
+        "lumi_builder",
         "lumi_combined",
         "normfactor",
+        "normfactor_builder",
         "normfactor_combined",
         "normsys",
+        "normsys_builder",
         "normsys_combined",
         "shapefactor",
+        "shapefactor_builder",
         "shapefactor_combined",
         "shapesys",
+        "shapesys_builder",
         "shapesys_combined",
         "staterror",
+        "staterror_builder",
         "staterror_combined",
     ]
 
@@ -236,9 +244,16 @@ def test_utils_public_api():
         "EqDelimStringParamType",
         "citation",
         "digest",
-        "load_schema",
         "options_from_eqdelimstring",
+    ]
+
+
+def test_schema_public_api():
+    assert dir(pyhf.schema) == [
+        "load_schema",
+        "path",
         "validate",
+        "version",
     ]
 
 

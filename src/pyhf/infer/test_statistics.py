@@ -13,21 +13,25 @@ def __dir__():
     return __all__
 
 
-def _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def _qmu_like(
+    mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     """
     Clipped version of _tmu_like where the returned test statistic
     is 0 if muhat > 0 else tmu_like_stat.
 
-    If the lower bound of the POI is 0 this automatically implments
+    If the lower bound of the POI is 0 this automatically implements
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
-    tmu_like_stat, (_, muhatbhat) = _tmu_like(
+    tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
     )
     qmu_like_stat = tensorlib.where(
         muhatbhat[pdf.config.poi_index] > mu, tensorlib.astensor(0.0), tmu_like_stat
     )
+    if return_fitted_pars:
+        return qmu_like_stat, (mubhathat, muhatbhat)
     return qmu_like_stat
 
 
@@ -37,7 +41,7 @@ def _tmu_like(
     """
     Basic Profile Likelihood test statistic.
 
-    If the lower bound of the POI is 0 this automatically implments
+    If the lower bound of the POI is 0 this automatically implements
     tmu_tilde. Otherwise this is tmu (no tilde).
     """
     tensorlib, optimizer = get_backend()
@@ -56,10 +60,10 @@ def _tmu_like(
     return tmu_like_stat
 
 
-def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False):
     r"""
     The test statistic, :math:`q_{\mu}`, for establishing an upper
-    limit on the strength parameter, :math:`\mu`, as defiend in
+    limit on the strength parameter, :math:`\mu`, as defined in
     Equation (14) in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -91,8 +95,14 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
+        >>> pyhf.infer.test_statistics.qmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
+        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -104,9 +114,18 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
+            the fixed-POI and unconstrained fits have converged on
+            (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{\mu}`
+        Tuple of a Float and a Tuple of Tensors:
+
+            - The calculated test statistic, :math:`q_{\mu}`
+
+            - The parameter tensors corresponding to the constrained and unconstrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`.
+              Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -117,14 +136,24 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
             'qmu test statistic used for fit configuration with POI bounded at zero.\n'
             + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
         )
-    return _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params)
+    return _qmu_like(
+        mu,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=return_fitted_pars,
+    )
 
 
-def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def qmu_tilde(
+    mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     r"""
     The "alternative" test statistic, :math:`\tilde{q}_{\mu}`, for establishing
     an upper limit on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (16) in :xref:`arXiv:1007.1727`
+    bounded POI, as defined in Equation (16) in :xref:`arXiv:1007.1727`
 
     .. math::
        :nowrap:
@@ -160,8 +189,14 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.qmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
+        >>> pyhf.infer.test_statistics.qmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
+        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -173,9 +208,19 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
+            the fixed-POI and unconstrained fits have converged on
+            (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-        Float: The calculated test statistic, :math:`\tilde{q}_{\mu}`
+        Tuple of a Float and a Tuple of Tensors:
+
+            - The calculated test statistic, :math:`\tilde{q}_{\mu}`
+
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
+              Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -186,13 +231,21 @@ def qmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
             'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
             + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
         )
-    return _qmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params)
+    return _qmu_like(
+        mu,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=return_fitted_pars,
+    )
 
 
-def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False):
     r"""
     The test statistic, :math:`t_{\mu}`, for establishing a two-sided
-    interval on the strength parameter, :math:`\mu`, as defiend in Equation (8)
+    interval on the strength parameter, :math:`\mu`, as defined in Equation (8)
     in :xref:`arXiv:1007.1727`
 
     .. math::
@@ -218,8 +271,14 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> par_bounds = model.config.suggested_bounds()
         >>> par_bounds[model.config.poi_index] = [-10.0, 10.0]
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.9549891)
+        >>> pyhf.infer.test_statistics.tmu(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
+        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -231,9 +290,19 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
+            the fixed-POI and unconstrained fits have converged on
+            (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-        Float: The calculated test statistic, :math:`t_{\mu}`
+        Tuple of a Float and a Tuple of Tensors:
+
+            - The calculated test statistic, :math:`t_{\mu}`
+
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
+              Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -244,14 +313,24 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params):
             'tmu test statistic used for fit configuration with POI bounded at zero.\n'
             + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.'
         )
-    return _tmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params)
+    return _tmu_like(
+        mu,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=return_fitted_pars,
+    )
 
 
-def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def tmu_tilde(
+    mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     r"""
     The test statistic, :math:`\tilde{t}_{\mu}`, for establishing a two-sided
     interval on the strength parameter, :math:`\mu`, for models with
-    bounded POI, as defiend in Equation (11) in :xref:`arXiv:1007.1727`
+    bounded POI, as defined in Equation (11) in :xref:`arXiv:1007.1727`
 
     .. math::
 
@@ -270,6 +349,7 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         \end{equation}
 
     Example:
+
         >>> import pyhf
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
@@ -281,8 +361,14 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> init_pars = model.config.suggested_init()
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
-        >>> pyhf.infer.test_statistics.tmu_tilde(test_mu, data, model, init_pars, par_bounds, fixed_params)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params
+        ... )
         array(3.93824492)
+        >>> pyhf.infer.test_statistics.tmu_tilde(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
+        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -294,9 +380,19 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
+            the fixed-POI and unconstrained fits have converged on
+            (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-        Float: The calculated test statistic, :math:`\tilde{t}_{\mu}`
+        Tuple of a Float and a Tuple of Tensors:
+
+            - The calculated test statistic, :math:`\tilde{t}_{\mu}`
+
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
+              Only returned if ``return_fitted_pars`` is ``True``.
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
@@ -307,10 +403,18 @@ def tmu_tilde(mu, data, pdf, init_pars, par_bounds, fixed_params):
             'tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
             + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
         )
-    return _tmu_like(mu, data, pdf, init_pars, par_bounds, fixed_params)
+    return _tmu_like(
+        mu,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_params,
+        return_fitted_pars=return_fitted_pars,
+    )
 
 
-def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
+def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False):
     r"""
     The test statistic, :math:`q_{0}`, for discovery of a positive signal
     as defined in Equation (12) in :xref:`arXiv:1007.1727`, for :math:`\mu=0`.
@@ -339,6 +443,10 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
+        >>> pyhf.infer.test_statistics.q0(
+        ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
+        ... )
+        (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter (must be set to zero)
@@ -350,9 +458,19 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
+            the fixed-POI and unconstrained fits have converged on
+            (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
 
     Returns:
-        Float: The calculated test statistic, :math:`q_{0}`
+        Tuple of a Float and a Tuple of Tensors:
+
+            - The calculated test statistic, :math:`q_{0}`
+
+            - The parameter tensors corresponding to the constrained best fit,
+              :math:`\mu, \hat{\hat{\theta}}`, and the unconstrained best fit,
+              :math:`\hat{\mu}, \hat{\theta}`.
+              Only returned if ``return_fitted_pars`` is ``True``.
     """
 
     if pdf.config.poi_index is None:
@@ -367,10 +485,12 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params):
 
     tensorlib, optimizer = get_backend()
 
-    tmu_like_stat, (_, muhatbhat) = _tmu_like(
+    tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
     )
     q0_stat = tensorlib.where(
         muhatbhat[pdf.config.poi_index] < 0, tensorlib.astensor(0.0), tmu_like_stat
     )
+    if return_fitted_pars:
+        return q0_stat, (mubhathat, muhatbhat)
     return q0_stat

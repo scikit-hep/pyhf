@@ -44,6 +44,12 @@ class InvalidNameReuse(Exception):
     pass
 
 
+class SchemaNotFound(FileNotFoundError):
+    """
+    SchemaNotFound is raised when a given schema does not exist in the local file system.
+    """
+
+
 class InvalidSpecification(Exception):
     """
     InvalidSpecification is raised when a specification does not validate against the given schema.
@@ -68,6 +74,10 @@ class InvalidSpecification(Exception):
 
 class InvalidArchiveHost(Exception):
     """InvalidArchiveHost is raised when a given patchset archive url is not an approved host."""
+
+
+class InvalidArchive(Exception):
+    """InvalidArchive is raised when a given patchset archive url does not return a valid response."""
 
 
 class InvalidPatchSet(Exception):

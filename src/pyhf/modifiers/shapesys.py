@@ -1,46 +1,110 @@
 import logging
 
-from pyhf.modifiers import modifier
-from pyhf import get_backend, default_backend, events
-from pyhf.parameters import constrained_by_poisson, ParamViewer
+import pyhf
+from pyhf import events
+from pyhf.exceptions import InvalidModifier
+from pyhf.parameters import ParamViewer
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
 
-@modifier(
-    name='shapesys', constrained=True, pdf_type='poisson', op_code='multiplication'
-)
-class shapesys:
-    @classmethod
-    def required_parset(cls, sample_data, modifier_data):
-        # count the number of bins with nonzero, positive yields
-        valid_bins = [
-            (sample_bin > 0 and modifier_bin > 0)
-            for sample_bin, modifier_bin in zip(modifier_data, sample_data)
-        ]
-        n_parameters = sum(valid_bins)
-        return {
-            'paramset_type': constrained_by_poisson,
-            'n_parameters': n_parameters,
-            'is_constrained': cls.is_constrained,
-            'is_shared': False,
-            'is_scalar': False,
-            'inits': (1.0,) * n_parameters,
-            'bounds': ((1e-10, 10.0),) * n_parameters,
-            'fixed': False,
-            # nb: auxdata/factors set by finalize. Set to non-numeric to crash
-            # if we fail to set auxdata/factors correctly
-            'auxdata': (None,) * n_parameters,
-            'factors': (None,) * n_parameters,
-        }
+def required_parset(sample_data, modifier_data):
+    # count the number of bins with nonzero, positive yields
+    valid_bins = [
+        (sample_bin > 0 and modifier_bin > 0)
+        for sample_bin, modifier_bin in zip(modifier_data, sample_data)
+    ]
+
+    factors = [
+        (nom_yield**2 / unc**2) if (is_valid) else 1.0
+        for is_valid, nom_yield, unc in zip(valid_bins, sample_data, modifier_data)
+    ]
+    fixed = tuple(not is_valid for is_valid in valid_bins)
+    n_parameters = len(factors)
+    return {
+        "paramset_type": "constrained_by_poisson",
+        "n_parameters": n_parameters,
+        "is_shared": False,
+        "is_scalar": False,
+        "inits": (1.0,) * n_parameters,
+        "bounds": ((1e-10, 10.0),) * n_parameters,
+        "fixed": fixed,
+        "auxdata": tuple(factors),
+        "factors": tuple(factors),
+    }
+
+
+class shapesys_builder:
+    """Builder class for collecting shapesys modifier data"""
+
+    def __init__(self, config):
+        self.builder_data = {}
+        self.config = config
+        self.required_parsets = {}
+
+    def collect(self, thismod, nom):
+        uncrt = thismod['data'] if thismod else [0.0] * len(nom)
+        mask = [True] * len(nom) if thismod else [False] * len(nom)
+        return {'mask': mask, 'nom_data': nom, 'uncrt': uncrt}
+
+    def append(self, key, channel, sample, thismod, defined_samp):
+        self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
+            'data', {'uncrt': [], 'nom_data': [], 'mask': []}
+        )
+        nom = (
+            defined_samp['data']
+            if defined_samp
+            else [0.0] * self.config.channel_nbins[channel]
+        )
+        moddata = self.collect(thismod, nom)
+        self.builder_data[key][sample]['data']['mask'].append(moddata['mask'])
+        self.builder_data[key][sample]['data']['uncrt'].append(moddata['uncrt'])
+        self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
+
+        if thismod:
+            self.required_parsets.setdefault(
+                thismod['name'],
+                [required_parset(defined_samp['data'], thismod['data'])],
+            )
+
+    def finalize(self):
+        default_backend = pyhf.default_backend
+
+        for modifier_name, modifier in self.builder_data.items():
+            for sample_name, sample in modifier.items():
+                sample["data"]["mask"] = default_backend.concatenate(
+                    sample["data"]["mask"]
+                )
+                sample["data"]["uncrt"] = default_backend.concatenate(
+                    sample["data"]["uncrt"]
+                )
+                sample["data"]["nom_data"] = default_backend.concatenate(
+                    sample["data"]["nom_data"]
+                )
+                if len(sample["data"]["nom_data"]) != len(sample["data"]["uncrt"]):
+                    _modifier_type, _modifier_name = modifier_name.split("/")
+                    _sample_data_len = len(sample["data"]["nom_data"])
+                    _uncrt_len = len(sample["data"]["uncrt"])
+                    raise InvalidModifier(
+                        f"The '{sample_name}' sample {_modifier_type} modifier"
+                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        + f" has 'data' of length {_uncrt_len}."
+                    )
+        return self.builder_data
 
 
 class shapesys_combined:
-    def __init__(self, shapesys_mods, pdfconfig, mega_mods, batch_size=None):
+    name = 'shapesys'
+    op_code = 'multiplication'
+
+    def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
+        default_backend = pyhf.default_backend
         self.batch_size = batch_size
 
-        keys = [f'{mtype}/{m}' for m, mtype in shapesys_mods]
-        self._shapesys_mods = [m for m, _ in shapesys_mods]
+        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        self._shapesys_mods = [m for m, _ in modifiers]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)
         self.param_viewer = ParamViewer(
@@ -48,30 +112,29 @@ class shapesys_combined:
         )
 
         self._shapesys_mask = [
-            [[mega_mods[m][s]['data']['mask']] for s in pdfconfig.samples] for m in keys
+            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            for m in keys
         ]
         self.__shapesys_info = default_backend.astensor(
             [
                 [
                     [
-                        mega_mods[m][s]['data']['mask'],
-                        mega_mods[m][s]['data']['nom_data'],
-                        mega_mods[m][s]['data']['uncrt'],
+                        builder_data[m][s]['data']['mask'],
+                        builder_data[m][s]['data']['nom_data'],
+                        builder_data[m][s]['data']['uncrt'],
                     ]
                     for s in pdfconfig.samples
                 ]
                 for m in keys
             ]
         )
-        self.finalize(pdfconfig)
-
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
 
         self._access_field = default_backend.tile(
             global_concatenated_bin_indices,
-            (len(shapesys_mods), self.batch_size or 1, 1),
+            (len(self._shapesys_mods), self.batch_size or 1, 1),
         )
         # access field is shape (sys, batch, globalbin)
 
@@ -82,11 +145,9 @@ class shapesys_combined:
         events.subscribe('tensorlib_changed')(self._precompute)
 
     def _reindex_access_field(self, pdfconfig):
-        for syst_index, syst_access in enumerate(self._access_field):
-            if not pdfconfig.param_set(self._shapesys_mods[syst_index]).n_parameters:
-                self._access_field[syst_index] = 0
-                continue
+        default_backend = pyhf.default_backend
 
+        for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
                 for idx, syst in enumerate(
@@ -118,40 +179,6 @@ class shapesys_combined:
         self.access_field = tensorlib.astensor(self._access_field, dtype='int')
         self.sample_ones = tensorlib.ones(tensorlib.shape(self.shapesys_mask)[1])
         self.shapesys_default = tensorlib.ones(tensorlib.shape(self.shapesys_mask))
-
-    def finalize(self, pdfconfig):
-        # self.__shapesys_info: (parameter, sample, [mask, nominal rate, uncertainty], bin)
-        for mod_uncert_info, pname in zip(self.__shapesys_info, self._shapesys_mods):
-            # skip cases where given shapesys modifier affects zero samples
-            if not pdfconfig.param_set(pname).n_parameters:
-                continue
-
-            # identify the information for the sample that the given parameter
-            # affects. shapesys is not shared, so there should only ever be at
-            # most one sample
-            # sample_uncert_info: ([mask, nominal rate, uncertainty], bin)
-            sample_uncert_info = mod_uncert_info[
-                default_backend.astensor(
-                    default_backend.sum(mod_uncert_info[:, 0] > 0, axis=1), dtype='bool'
-                )
-            ][0]
-
-            # bin_mask: ([mask], bin)
-            bin_mask = default_backend.astensor(sample_uncert_info[0], dtype='bool')
-            # nom_unc: ([nominal, uncertainty], bin)
-            nom_unc = sample_uncert_info[1:]
-
-            # compute gamma**2 and sigma**2
-            nom_unc_sq = default_backend.power(nom_unc, 2)
-            # when the nominal rate = 0 OR uncertainty = 0, set = 1
-            nom_unc_sq[nom_unc_sq == 0] = 1
-            # divide (gamma**2 / sigma**2) and mask to set factors for only the
-            # parameters we have allocated
-            factors = (nom_unc_sq[0] / nom_unc_sq[1])[bin_mask]
-            assert len(factors) == pdfconfig.param_set(pname).n_parameters
-
-            pdfconfig.param_set(pname).factors = default_backend.tolist(factors)
-            pdfconfig.param_set(pname).auxdata = default_backend.tolist(factors)
 
     def apply(self, pars):
         """

@@ -23,3 +23,7 @@ Contributors include:
 - Eric Schanet
 - Henry Schreiner
 - Saransh Chopra
+- Sviatoslav Sydorenko
+- Mason Proffitt
+- Lars Henkelmann
+- Aryan Roy

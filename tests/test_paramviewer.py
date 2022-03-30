@@ -1,3 +1,5 @@
+from skhep_testdata import data_path
+
 import pyhf
 from pyhf.parameters import ParamViewer
 
@@ -20,10 +22,11 @@ def test_paramviewer_simple_nonbatched(backend):
     assert pyhf.tensorlib.tolist(par_slice) == [6, 7, 1, 2]
 
 
-def test_paramviewer_order(sbottom_likelihoods_download, get_json_from_tarfile):
-    lhood = get_json_from_tarfile(sbottom_likelihoods_download, "RegionA/BkgOnly.json")
+def test_paramviewer_order(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
+    lhood = get_json_from_tarfile(sbottom_archive, "RegionA/BkgOnly.json")
     patch = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
+        sbottom_archive, "RegionA/patch.sbottom_1300_205_60.json"
     )
     workspace = pyhf.workspace.Workspace(lhood)
     model = workspace.model(patches=[patch])

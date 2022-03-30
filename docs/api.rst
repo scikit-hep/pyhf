@@ -10,8 +10,6 @@ Top-Level
    :toctree: _generated/
    :nosignatures:
 
-   default_backend
-   default_optimizer
    tensorlib
    optimizer
    get_backend
@@ -19,6 +17,7 @@ Top-Level
    readxml
    writexml
    compat
+   schema
 
 Probability Distribution Functions (PDFs)
 -----------------------------------------
@@ -50,7 +49,6 @@ Making Models from PDFs
    ~patchset.Patch
    simplemodels.uncorrelated_background
    simplemodels.correlated_background
-   simplemodels.hepdata_like
 
 Backends
 --------
@@ -140,6 +138,7 @@ Calculators
    :nosignatures:
 
    calculators.generate_asimov_data
+   calculators.HypoTestFitResults
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator
@@ -160,6 +159,20 @@ Fits and Tests
    intervals.upperlimit
    intervals.upperlimit_auto
    utils.all_pois_floating
+
+
+Schema
+------
+
+.. currentmodule:: pyhf.schema
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
+   Schema
+   load_schema
+   validate
 
 Exceptions
 ----------
@@ -197,8 +210,6 @@ Utilities
    :toctree: _generated/
    :nosignatures:
 
-   load_schema
-   validate
    options_from_eqdelimstring
    digest
    citation

@@ -1,7 +1,8 @@
 """Polynomial Interpolation (Code 4)."""
 import logging
 import math
-from pyhf import get_backend, default_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf.interpolators import _slow_interpolator_looper
 
@@ -32,11 +33,13 @@ class code4:
 
     def __init__(self, histogramssets, subscribe=True, alpha0=1):
         """Polynomial Interpolation."""
+        default_backend = pyhf.default_backend
+
         # alpha0 is assumed to be positive and non-zero. If alpha0 == 0, then
         # we cannot calculate the coefficients (e.g. determinant == 0)
         assert alpha0 > 0
         self.__alpha0 = alpha0
-        # nb: this should never be a tensor, store in default backend (e.g. numpy)
+
         self._histogramssets = default_backend.astensor(histogramssets)
         # initial shape will be (nsysts, 1)
         self.alphasets_shape = (self._histogramssets.shape[0], 1)

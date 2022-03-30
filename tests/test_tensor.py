@@ -1,3 +1,4 @@
+from sys import platform
 import pytest
 import logging
 import numpy as np
@@ -51,7 +52,10 @@ def test_simple_tensor_ops(backend):
         4,
     ]
     assert tb.tolist(tb.sqrt(tb.astensor([4, 9, 16]))) == [2, 3, 4]
-    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+    # c.f. Issue #1759
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == pytest.approx(
+        [2, 3, 4], 1e-9
+    )
     assert tb.tolist(tb.abs(tb.astensor([-1, -2]))) == [1, 2]
     assert tb.tolist(tb.erf(tb.astensor([-2.0, -1.0, 0.0, 1.0, 2.0]))) == pytest.approx(
         [
@@ -79,6 +83,23 @@ def test_simple_tensor_ops(backend):
     assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0
     assert tb.tolist(tb.conditional((a > b), lambda: a + b, lambda: a - b)) == -1.0
 
+    assert tb.tolist(tb.transpose(tb.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))) == [
+        [1.0, 4.0],
+        [2.0, 5.0],
+        [3.0, 6.0],
+    ]
+
+
+@pytest.mark.xfail(platform == "darwin", reason="c.f. Issue #1759")
+@pytest.mark.only_tensorflow
+def test_simple_tensor_ops_floating_point(backend):
+    """
+    xfail test to know if test_simple_tensor_ops stops failing for tensorflow
+    on macos
+    """
+    tb = pyhf.tensorlib
+    assert tb.tolist(tb.log(tb.exp(tb.astensor([2, 3, 4])))) == [2, 3, 4]
+
 
 def test_tensor_where_scalar(backend):
     tb = pyhf.tensorlib
@@ -87,16 +108,13 @@ def test_tensor_where_scalar(backend):
 
 def test_tensor_where_tensor(backend):
     tb = pyhf.tensorlib
-    assert (
-        tb.tolist(
-            tb.where(
-                tb.astensor([1, 0, 1], dtype="bool"),
-                tb.astensor([1, 1, 1]),
-                tb.astensor([2, 2, 2]),
-            )
+    assert tb.tolist(
+        tb.where(
+            tb.astensor([1, 0, 1], dtype="bool"),
+            tb.astensor([1, 1, 1]),
+            tb.astensor([2, 2, 2]),
         )
-        == [1, 2, 1]
-    )
+    ) == [1, 2, 1]
 
 
 def test_tensor_to_numpy(backend):
@@ -167,39 +185,30 @@ def test_zeros(backend):
 
 def test_broadcasting(backend):
     tb = pyhf.tensorlib
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
-                ),
-            )
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor([1, 1, 1]), tb.astensor([2]), tb.astensor([3, 3, 3])
+            ),
         )
-        == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
-    )
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
-                ),
-            )
+    ) == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor(1), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
         )
-        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    )
-    assert (
-        list(
-            map(
-                tb.tolist,
-                tb.simple_broadcast(
-                    tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
-                ),
-            )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
+    assert list(
+        map(
+            tb.tolist,
+            tb.simple_broadcast(
+                tb.astensor([1]), tb.astensor([2, 3, 4]), tb.astensor([5, 6, 7])
+            ),
         )
-        == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    )
+    ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
     with pytest.raises(Exception):
         tb.simple_broadcast(
             tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
@@ -261,44 +270,43 @@ def test_shape(backend):
         )
 
 
-@pytest.mark.skip_pytorch
-@pytest.mark.skip_pytorch64
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
-        [0.7881446014166034], 1e-07
-    )
-    assert tb.tolist(
-        tb.normal_logpdf(
-            tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
-            tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
-            tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
+    # FIXME
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
+        assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
+            [0.7881446014166034], 1e-07
         )
-    ) == pytest.approx(
-        [
-            np.nan,
-            np.nan,
-            np.nan,
-            np.nan,
-            -0.91893853,
-            -1.41893853,
-            -1.41893853,
-            -0.91893853,
-        ],
-        nan_ok=True,
-    )
-    # poisson(lambda=0) is not defined, should return NaN
-    assert tb.tolist(
-        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        [np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True
-    )
-    assert tb.tolist(
-        tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        np.log([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(),
-        nan_ok=True,
-    )
+        assert tb.tolist(
+            tb.normal_logpdf(
+                tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
+                tb.astensor([0, 1, 0, 1, 0, 1, 0, 1]),
+                tb.astensor([0, 0, 0, 0, 1, 1, 1, 1]),
+            )
+        ) == pytest.approx(
+            [
+                np.nan,
+                np.nan,
+                np.nan,
+                np.nan,
+                -0.91893853,
+                -1.41893853,
+                -1.41893853,
+                -0.91893853,
+            ],
+            nan_ok=True,
+        )
+        # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
+        assert tb.tolist(
+            tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
+        assert tb.tolist(
+            tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx(
+            np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
+        )
 
     # Ensure continuous approximation is valid
     assert tb.tolist(
@@ -333,18 +341,16 @@ def test_pdf_calculations_pytorch(backend):
         ],
     )
 
-    # poisson(lambda=0) is not defined, should return NaN
+    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
     assert tb.tolist(
         tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        [np.nan, 0.3678794503211975, 0.0, 0.3678794503211975], nan_ok=True
-    )
-    assert tb.tolist(
-        tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx(
-        np.log([np.nan, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist(),
-        nan_ok=True,
-    )
+    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
+        assert tb.tolist(
+            tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+        ) == pytest.approx(
+            np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
+        )
 
     # Ensure continuous approximation is valid
     assert tb.tolist(
@@ -354,26 +360,44 @@ def test_pdf_calculations_pytorch(backend):
 
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
-    assert (
-        tb.tolist(
-            tb.boolean_mask(
-                tb.astensor([1, 2, 3, 4, 5, 6]),
-                tb.astensor([True, True, False, True, False, False], dtype='bool'),
-            )
+    assert tb.tolist(
+        tb.boolean_mask(
+            tb.astensor([1, 2, 3, 4, 5, 6]),
+            tb.astensor([True, True, False, True, False, False], dtype='bool'),
         )
-        == [1, 2, 4]
-    )
-    assert (
-        tb.tolist(
-            tb.boolean_mask(
-                tb.astensor([[1, 2], [3, 4], [5, 6]]),
-                tb.astensor(
-                    [[True, True], [False, True], [False, False]], dtype='bool'
-                ),
-            )
+    ) == [1, 2, 4]
+    assert tb.tolist(
+        tb.boolean_mask(
+            tb.astensor([[1, 2], [3, 4], [5, 6]]),
+            tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'),
         )
-        == [1, 2, 4]
-    )
+    ) == [1, 2, 4]
+
+
+def test_percentile(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+    assert tb.tolist(tb.percentile(a, 0)) == 1
+
+    assert tb.tolist(tb.percentile(a, 50)) == 3.5
+    assert tb.tolist(tb.percentile(a, 100)) == 10
+    assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
+
+
+# FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
+# c.f. https://github.com/pytorch/pytorch/pull/59397
+# c.f. https://github.com/scikit-hep/pyhf/issues/1693
+@pytest.mark.fail_pytorch
+@pytest.mark.fail_pytorch64
+def test_percentile_interpolation(backend):
+    tb = pyhf.tensorlib
+    a = tb.astensor([[10, 7, 4], [3, 2, 1]])
+
+    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
 
 
 def test_tensor_tile(backend):
@@ -392,7 +416,7 @@ def test_tensor_tile(backend):
     ]
 
     if tb.name == 'tensorflow':
-        with pytest.raises(tf.python.framework.errors_impl.InvalidArgumentError):
+        with pytest.raises(tf.errors.InvalidArgumentError):
             tb.tile(tb.astensor([[[10, 20, 30]]]), (2, 1))
 
 
@@ -410,7 +434,6 @@ def test_1D_gather(backend):
     ) == [[5, 1], [4, 3]]
 
 
-@pytest.mark.fail_pytorch
 def test_ND_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(

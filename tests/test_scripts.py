@@ -1,14 +1,26 @@
 import json
-import shlex
-import pyhf
-import time
-import sys
 import logging
+import shlex
+import sys
+import tarfile
+import time
+from importlib import import_module, reload
+from pathlib import Path
+from unittest import mock
+
 import pytest
 from click.testing import CliRunner
-from unittest import mock
-from importlib import reload
-from importlib import import_module
+
+import pyhf
+
+
+@pytest.fixture(scope="function")
+def tarfile_path(tmpdir):
+    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+        write_file.write("test file")
+    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
+        archive.add(tmpdir.join("test_file.txt").strpath)
+    return Path(tmpdir.join("test_tar.tar.gz").strpath)
 
 
 def test_version(script_runner):
@@ -51,7 +63,7 @@ def test_import_prepHistFactory(tmpdir, script_runner):
 
     parsed_xml = json.loads(temp.read())
     spec = {'channels': parsed_xml['channels']}
-    pyhf.utils.validate(spec, 'model.json')
+    pyhf.schema.validate(spec, 'model.json')
 
 
 def test_import_prepHistFactory_withProgress(tmpdir, script_runner):
@@ -273,8 +285,9 @@ def test_testpoi(tmpdir, script_runner):
         results_exp.append(d['CLs_exp'])
         results_obs.append(d['CLs_obs'])
 
-    import numpy as np
     import itertools
+
+    import numpy as np
 
     for pair in itertools.combinations(results_exp, r=2):
         assert not np.array_equal(*pair)
@@ -376,11 +389,11 @@ def test_prune_outfile(tmpdir, script_runner):
     spec = json.loads(temp.read())
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
-    assert 'staterror_channel1' in ws.parameters
+    assert 'staterror_channel1' in ws.model().config.parameters
     pruned_spec = json.loads(tempout.read())
     pruned_ws = pyhf.Workspace(pruned_spec)
     assert 'GammaExample' not in pruned_ws.measurement_names
-    assert 'staterror_channel1' not in pruned_ws.parameters
+    assert 'staterror_channel1' not in pruned_ws.model().config.parameters
 
 
 def test_rename(tmpdir, script_runner):
@@ -407,14 +420,14 @@ def test_rename_outfile(tmpdir, script_runner):
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
     assert 'GamEx' not in ws.measurement_names
-    assert 'staterror_channel1' in ws.parameters
-    assert 'staterror_channelone' not in ws.parameters
+    assert 'staterror_channel1' in ws.model().config.parameters
+    assert 'staterror_channelone' not in ws.model().config.parameters
     renamed_spec = json.loads(tempout.read())
     renamed_ws = pyhf.Workspace(renamed_spec)
     assert 'GammaExample' not in renamed_ws.measurement_names
     assert 'GamEx' in renamed_ws.measurement_names
-    assert 'staterror_channel1' not in renamed_ws.parameters
-    assert 'staterror_channelone' in renamed_ws.parameters
+    assert 'staterror_channel1' not in renamed_ws.model().config.parameters
+    assert 'staterror_channelone' in renamed_ws.model().config.parameters
 
 
 def test_combine(tmpdir, script_runner):
@@ -543,7 +556,8 @@ def test_workspace_digest(tmpdir, script_runner, algorithms, do_json):
         "https://doi.org/10.17182/hepdata.89408.v1/r2",
     ],
 )
-def test_patchset_download(tmpdir, script_runner, archive):
+def test_patchset_download(tmpdir, script_runner, requests_mock, tarfile_path, archive):
+    requests_mock.get(archive, content=open(tarfile_path, "rb").read())
     command = f'pyhf contrib download {archive} {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
@@ -553,19 +567,25 @@ def test_patchset_download(tmpdir, script_runner, archive):
     ret = script_runner.run(*shlex.split(command))
     assert ret.success
 
-    command = f'pyhf contrib download --verbose https://www.fail.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
+    requests_mock.get(
+        "https://www.pyhfthisdoesnotexist.org/record/resource/1234567", status_code=200
+    )
+    command = f'pyhf contrib download --verbose https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
     assert (
-        "pyhf.exceptions.InvalidArchiveHost: www.fail.org is not an approved archive host"
+        "pyhf.exceptions.InvalidArchiveHost: www.pyhfthisdoesnotexist.org is not an approved archive host"
         in ret.stderr
     )
-    command = f'pyhf contrib download --verbose --force https://www.fail.org/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
+
+    # httpstat.us is a real wesite that can be used for testing responses
+    requests_mock.get(
+        "https://httpstat.us/404/record/resource/1234567", status_code=404
+    )
+    command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmpdir.join("likelihoods").strpath}'
     ret = script_runner.run(*shlex.split(command))
     assert not ret.success
-    assert (
-        "SSLCertificateError" and "hostname 'www.fail.org' doesn't match" in ret.stderr
-    )
+    assert "gives a response code of 404" in ret.stderr
 
 
 def test_missing_contrib_extra(caplog):
@@ -627,7 +647,7 @@ def test_missing_contrib_download(caplog):
 
 
 def test_patchset_inspect(datadir, script_runner):
-    command = f'pyhf patchset inspect {datadir.join("example_patchset.json").strpath}'
+    command = f'pyhf patchset inspect {datadir.joinpath("example_patchset.json")}'
     ret = script_runner.run(*shlex.split(command))
     assert 'patch_channel1_signal_syst1' in ret.stdout
 
@@ -636,7 +656,7 @@ def test_patchset_inspect(datadir, script_runner):
 @pytest.mark.parametrize('with_metadata', [False, True])
 def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_metadata):
     temp = tmpdir.join("extracted_output.json")
-    command = f'pyhf patchset extract {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    command = f'pyhf patchset extract {datadir.joinpath("example_patchset.json")} --name patch_channel1_signal_syst1'
     if output_file:
         command += f" --output-file {temp.strpath}"
     if with_metadata:
@@ -654,12 +674,14 @@ def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_meta
     else:
         assert (
             extracted_output
-            == json.load(datadir.join("example_patchset.json"))['patches'][0]['patch']
+            == json.load(datadir.joinpath("example_patchset.json").open())['patches'][
+                0
+            ]['patch']
         )
 
 
 def test_patchset_verify(datadir, script_runner):
-    command = f'pyhf patchset verify {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath}'
+    command = f'pyhf patchset verify {datadir.joinpath("example_bkgonly.json")} {datadir.joinpath("example_patchset.json")}'
     ret = script_runner.run(*shlex.split(command))
 
     assert ret.success
@@ -669,7 +691,7 @@ def test_patchset_verify(datadir, script_runner):
 @pytest.mark.parametrize('output_file', [False, True])
 def test_patchset_apply(datadir, tmpdir, script_runner, output_file):
     temp = tmpdir.join("patched_output.json")
-    command = f'pyhf patchset apply {datadir.join("example_bkgonly.json").strpath} {datadir.join("example_patchset.json").strpath} --name patch_channel1_signal_syst1'
+    command = f'pyhf patchset apply {datadir.joinpath("example_bkgonly.json")} {datadir.joinpath("example_patchset.json")} --name patch_channel1_signal_syst1'
     if output_file:
         command += f" --output-file {temp.strpath}"
 

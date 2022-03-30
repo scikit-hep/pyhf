@@ -119,7 +119,7 @@ class tensorflow_backend:
         """
         try:
             return tf.tile(tensor_in, repeats)
-        except tf.python.framework.errors_impl.InvalidArgumentError:
+        except tf.errors.InvalidArgumentError:
             shape = tf.shape(tensor_in).numpy().tolist()
             diff = len(repeats) - len(shape)
             if diff < 0:
@@ -128,7 +128,7 @@ class tensorflow_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
             >>> import pyhf
@@ -142,8 +142,8 @@ class tensorflow_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             TensorFlow Tensor: The output of the callable that was evaluated
@@ -303,6 +303,48 @@ class tensorflow_backend:
     def exp(self, tensor_in):
         return tf.exp(tensor_in)
 
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> t = pyhf.tensorlib.percentile(a, 50)
+            >>> print(t)
+            tf.Tensor(3.5, shape=(), dtype=float64)
+            >>> t = pyhf.tensorlib.percentile(a, 50, axis=1)
+            >>> print(t)
+            tf.Tensor([7. 2.], shape=(2,), dtype=float64)
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
+
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
+
+                - ``'lower'``: ``i``.
+
+                - ``'higher'``: ``j``.
+
+                - ``'midpoint'``: ``(i + j) / 2``.
+
+                - ``'nearest'``: ``i`` or ``j``, whichever is nearest.
+
+        Returns:
+            TensorFlow Tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return tfp.stats.percentile(
+            tensor_in, q, axis=axis, interpolation=interpolation
+        )
+
     def stack(self, sequence, axis=0):
         return tf.stack(sequence, axis=axis)
 
@@ -409,7 +451,7 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson_logpdf(5., 6.)
             >>> print(t) # doctest:+ELLIPSIS
-            tf.Tensor(-1.8286943966417..., shape=(), dtype=float64)
+            tf.Tensor(-1.82869439..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson_logpdf(values, rates)
@@ -426,7 +468,6 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to log(Poisson(n|lam))
         """
         lam = self.astensor(lam)
-
         return tfp.distributions.Poisson(lam).log_prob(n)
 
     def poisson(self, n, lam):
@@ -435,12 +476,26 @@ class tensorflow_backend:
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
+
         Example:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.poisson(5., 6.)
             >>> print(t) # doctest:+ELLIPSIS
-            tf.Tensor(0.1606231410479..., shape=(), dtype=float64)
+            tf.Tensor(0.16062314..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> t = pyhf.tensorlib.poisson(values, rates)
@@ -457,7 +512,6 @@ class tensorflow_backend:
             TensorFlow Tensor: Value of the continuous approximation to Poisson(n|lam)
         """
         lam = self.astensor(lam)
-
         return tf.exp(tfp.distributions.Poisson(lam).log_prob(n))
 
     def normal_logpdf(self, x, mu, sigma):
@@ -470,8 +524,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_logpdf(0.5, 0., 1.)
-            >>> print(t)
-            tf.Tensor(-1.0439385332046727, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(-1.04393853..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -502,8 +556,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal(0.5, 0., 1.)
-            >>> print(t)
-            tf.Tensor(0.3520653267642995, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(0.35206532..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -532,8 +586,8 @@ class tensorflow_backend:
             >>> import pyhf
             >>> pyhf.set_backend("tensorflow")
             >>> t = pyhf.tensorlib.normal_cdf(0.8)
-            >>> print(t)
-            tf.Tensor(0.7881446014166034, shape=(), dtype=float64)
+            >>> print(t) # doctest:+ELLIPSIS
+            tf.Tensor(0.78814460..., shape=(), dtype=float64)
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> t = pyhf.tensorlib.normal_cdf(values)
             >>> print(t)
@@ -632,3 +686,31 @@ class tensorflow_backend:
 
         """
         return tensor_in.numpy()
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> print(tensor)
+            tf.Tensor(
+            [[1. 2. 3.]
+             [4. 5. 6.]], shape=(2, 3), dtype=float64)
+            >>> tensor_T = pyhf.tensorlib.transpose(tensor)
+            >>> print(tensor_T)
+            tf.Tensor(
+            [[1. 4.]
+             [2. 5.]
+             [3. 6.]], shape=(3, 2), dtype=float64)
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            TensorFlow Tensor: The transpose of the input tensor.
+
+        """
+        return tf.transpose(tensor_in)

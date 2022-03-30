@@ -1,4 +1,4 @@
-from pyhf import utils
+from pyhf import schema
 from pyhf import compat
 
 import logging
@@ -59,19 +59,21 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
     fullpath = str(Path(rootdir).joinpath(filename))
     if fullpath not in filecache:
         f = uproot.open(fullpath)
-        filecache[fullpath] = f
+        keys = set(f.keys(cycle=False))
+        filecache[fullpath] = (f, keys)
     else:
-        f = filecache[fullpath]
-    try:
+        f, keys = filecache[fullpath]
+
+    fullname = "/".join([path, name])
+
+    if name in keys:
         hist = f[name]
-    except (KeyError, uproot.deserialization.DeserializationError):
-        fullname = "/".join([path, name])
-        try:
-            hist = f[fullname]
-        except KeyError:
-            raise KeyError(
-                f'Both {name} and {fullname} were tried and not found in {fullpath}'
-            )
+    elif fullname in keys:
+        hist = f[fullname]
+    else:
+        raise KeyError(
+            f'Both {name} and {fullname} were tried and not found in {fullpath}'
+        )
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
@@ -344,7 +346,7 @@ def parse(configfile, rootdir, track_progress=False):
     for inp in inputs:
         inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
-            ET.parse(str(Path(rootdir).joinpath(inp))), rootdir, track_progress
+            ET.parse(Path(rootdir).joinpath(inp)), rootdir, track_progress
         )
         channels[channel] = {'data': data, 'samples': samples}
         parameter_configs.extend(channel_parameter_configs)
@@ -354,11 +356,17 @@ def parse(configfile, rootdir, track_progress=False):
         'measurements': process_measurements(
             toplvl, other_parameter_configs=parameter_configs
         ),
-        'channels': [{'name': k, 'samples': v['samples']} for k, v in channels.items()],
-        'observations': [{'name': k, 'data': v['data']} for k, v in channels.items()],
-        'version': utils.SCHEMA_VERSION,
+        'channels': [
+            {'name': channel_name, 'samples': channel_spec['samples']}
+            for channel_name, channel_spec in channels.items()
+        ],
+        'observations': [
+            {'name': channel_name, 'data': channel_spec['data']}
+            for channel_name, channel_spec in channels.items()
+        ],
+        'version': schema.version,
     }
-    utils.validate(result, 'workspace.json')
+    schema.validate(result, 'workspace.json')
 
     return result
 

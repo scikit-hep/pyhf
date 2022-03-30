@@ -3,7 +3,7 @@ from jax.config import config
 config.update('jax_enable_x64', True)
 
 import jax.numpy as jnp
-from jax.scipy.special import gammaln
+from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
 from jax.scipy.stats import norm
 import numpy as np
@@ -155,7 +155,7 @@ class jax_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -169,8 +169,8 @@ class jax_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             JAX ndarray: The output of the callable that was evaluated
@@ -179,8 +179,8 @@ class jax_backend:
 
     def tolist(self, tensor_in):
         try:
-            return np.asarray(tensor_in).tolist()
-        except AttributeError:
+            return jnp.asarray(tensor_in).tolist()
+        except (TypeError, ValueError):
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
@@ -216,7 +216,7 @@ class jax_backend:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogenous array.
+            `jaxlib.xla_extension.DeviceArray`: A multi-dimensional, fixed-size homogeneous array.
         """
         # TODO: Remove doctest:+ELLIPSIS when JAX API stabilized
         try:
@@ -276,6 +276,45 @@ class jax_backend:
 
     def exp(self, tensor_in):
         return jnp.exp(tensor_in)
+
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> import jax.numpy as jnp
+            >>> pyhf.set_backend("jax")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            DeviceArray(3.5, dtype=float64)
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            DeviceArray([7., 2.], dtype=float64)
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
+
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
+
+                - ``'lower'``: ``i``.
+
+                - ``'higher'``: ``j``.
+
+                - ``'midpoint'``: ``(i + j) / 2``.
+
+                - ``'nearest'``: ``i`` or ``j``, whichever is nearest.
+
+        Returns:
+            JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)
@@ -368,7 +407,7 @@ class jax_backend:
     def poisson_logpdf(self, n, lam):
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return n * jnp.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -376,12 +415,26 @@ class jax_backend:
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
+
         Example:
 
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            DeviceArray(0.16062314, dtype=float64)
+            DeviceArray(0.16062314, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)
@@ -398,7 +451,7 @@ class jax_backend:
         """
         n = jnp.asarray(n)
         lam = jnp.asarray(lam)
-        return jnp.exp(n * jnp.log(lam) - lam - gammaln(n + 1.0))
+        return jnp.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
@@ -424,7 +477,7 @@ class jax_backend:
             >>> import pyhf
             >>> pyhf.set_backend("jax")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            DeviceArray(0.35206533, dtype=float64)
+            DeviceArray(0.35206533, dtype=float64, weak_type=True)
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -512,7 +565,7 @@ class jax_backend:
 
     def to_numpy(self, tensor_in):
         """
-        Convert the TensorFlow tensor to a :class:`numpy.ndarray`.
+        Convert the JAX tensor to a :class:`numpy.ndarray`.
 
         Example:
             >>> import pyhf
@@ -536,3 +589,28 @@ class jax_backend:
 
         """
         return np.asarray(tensor_in, dtype=tensor_in.dtype)
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            DeviceArray([[1., 2., 3.],
+                         [4., 5., 6.]], dtype=float64)
+            >>> pyhf.tensorlib.transpose(tensor)
+            DeviceArray([[1., 4.],
+                         [2., 5.],
+                         [3., 6.]], dtype=float64)
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            JAX ndarray: The transpose of the input tensor.
+
+        """
+        return tensor_in.transpose()

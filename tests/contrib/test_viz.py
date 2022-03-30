@@ -13,7 +13,7 @@ import pyhf.contrib.viz.brazil as brazil
 
 
 def test_brazil_band_collection(datadir):
-    data = json.load(open(datadir.join("hypotest_results.json")))
+    data = json.load(datadir.joinpath("hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -31,7 +31,7 @@ def test_brazil_band_collection(datadir):
     assert brazil_band_collection.clb is None
     assert brazil_band_collection.axes == ax
 
-    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+    data = json.load(datadir.joinpath("tail_probs_hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -52,7 +52,7 @@ def test_brazil_band_collection(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results(datadir):
-    data = json.load(open(datadir.join("hypotest_results.json")))
+    data = json.load(datadir.joinpath("hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -66,7 +66,7 @@ def test_plot_results(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_no_axis(datadir):
-    data = json.load(open(datadir.join("hypotest_results.json")))
+    data = json.load(datadir.joinpath("hypotest_results.json").open())
 
     matplotlib.use("agg")  # Use non-gui backend
     fig, ax = plt.subplots()
@@ -78,7 +78,7 @@ def test_plot_results_no_axis(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components(datadir):
-    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+    data = json.load(datadir.joinpath("tail_probs_hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -90,7 +90,7 @@ def test_plot_results_components(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_clb(datadir):
-    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+    data = json.load(datadir.joinpath("tail_probs_hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -110,7 +110,7 @@ def test_plot_results_components_no_clb(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_clsb(datadir):
-    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+    data = json.load(datadir.joinpath("tail_probs_hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -130,7 +130,7 @@ def test_plot_results_components_no_clsb(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_cls(datadir):
-    data = json.load(open(datadir.join("tail_probs_hypotest_results.json")))
+    data = json.load(datadir.joinpath("tail_probs_hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()
@@ -158,7 +158,7 @@ def test_plot_results_components_data_structure(datadir):
     """
     test results should have format of: [CLs_obs, [CLsb, CLb], [CLs_exp band]]
     """
-    data = json.load(open(datadir.join("hypotest_results.json")))
+    data = json.load(datadir.joinpath("hypotest_results.json").open())
 
     fig = Figure()
     ax = fig.subplots()

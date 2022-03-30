@@ -1,40 +1,20 @@
 import pytest
 import pyhf
 import sys
-import requests
-import hashlib
 import tarfile
 import json
-import os
 import pathlib
 import distutils.dir_util
-
-
-@pytest.fixture(scope='module')
-def sbottom_likelihoods_download():
-    """Download the sbottom likelihoods tarball from HEPData"""
-    sbottom_HEPData_URL = "https://doi.org/10.17182/hepdata.89408.v1/r2"
-    targz_filename = "sbottom_workspaces.tar.gz"
-    response = requests.get(sbottom_HEPData_URL, stream=True)
-    assert response.status_code == 200
-    with open(targz_filename, "wb") as file:
-        file.write(response.content)
-    assert (
-        hashlib.sha256(open(targz_filename, "rb").read()).hexdigest()
-        == "9089b0e5fabba335bea4c94545ccca8ddd21289feeab2f85e5bcc8bada37be70"
-    )
-    # Open as a tarfile
-    yield tarfile.open(targz_filename, "r:gz")
-    os.remove(targz_filename)
 
 
 # Factory as fixture pattern
 @pytest.fixture
 def get_json_from_tarfile():
-    def _get_json_from_tarfile(tarfile, json_name):
-        json_file = (
-            tarfile.extractfile(tarfile.getmember(json_name)).read().decode("utf8")
-        )
+    def _get_json_from_tarfile(archive_data_path, json_name):
+        with tarfile.open(archive_data_path, "r:gz") as archive:
+            json_file = (
+                archive.extractfile(archive.getmember(json_name)).read().decode("utf8")
+            )
         return json.loads(json_file)
 
     return _get_json_from_tarfile
@@ -69,9 +49,9 @@ def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
     """
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend('numpy', default=True)
     yield reset_backend
-    pyhf.set_backend(pyhf.default_backend)
+    pyhf.set_backend('numpy', default=True)
 
 
 @pytest.fixture(
@@ -119,7 +99,13 @@ def backend(request):
         )
 
     if fail_backend:
-        pytest.xfail(f"expect {func_name} to fail as specified")
+        # Mark the test as xfail to actually run it and ensure that it does
+        # fail. pytest.mark.xfail checks for failure, while pytest.xfail
+        # assumes failure and skips running the test.
+        # c.f. https://docs.pytest.org/en/6.2.x/skipping.html#xfail
+        request.node.add_marker(
+            pytest.mark.xfail(reason=f"expect {func_name} to fail as specified")
+        )
 
     # actual execution here, after all checks is done
     pyhf.set_backend(*request.param)
@@ -137,7 +123,7 @@ def interpcode(request):
 
 
 @pytest.fixture(scope='function')
-def datadir(tmpdir, request):
+def datadir(tmp_path, request):
     """
     Fixture responsible for searching a folder with the same name of test
     module and, if available, moving all contents to a temporary directory so
@@ -148,8 +134,9 @@ def datadir(tmpdir, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        distutils.dir_util.copy_tree(test_dir, tmpdir.strpath)
+        distutils.dir_util.copy_tree(test_dir, str(tmp_path))
         # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
+        # Once pyhf is Python 3.8+ only then the below can be used.
         # shutil.copytree(test_dir, tmpdir)
 
-    return tmpdir
+    return tmp_path

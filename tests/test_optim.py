@@ -4,12 +4,13 @@ from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
 from pyhf.tensor.common import _TensorViewer
 import pytest
 from scipy.optimize import minimize, OptimizeResult
+from scipy.optimize import OptimizeWarning
 import iminuit
 import itertools
 import numpy as np
 
 
-# from https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
+# from https://docs.scipy.org/doc/scipy/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
 @pytest.mark.skip_tensorflow
@@ -375,7 +376,7 @@ def test_optim_uncerts(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape == (2, 2)
-    assert pytest.approx([0.0, 0.26418431]) == pyhf.tensorlib.tolist(result[:, 1])
+    assert pytest.approx([0.26418431, 0.0]) == pyhf.tensorlib.tolist(result[:, 1])
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -405,7 +406,8 @@ def test_optim_correlations(backend, source, spec, mu):
     assert correlations.shape == (2, 2)
     assert pyhf.tensorlib.tolist(result)
     assert pyhf.tensorlib.tolist(correlations)
-    assert np.allclose([[0.0, 0.0], [0.0, 1.0]], pyhf.tensorlib.tolist(correlations))
+
+    assert np.allclose([[1.0, 0.0], [0.0, 0.0]], pyhf.tensorlib.tolist(correlations))
 
 
 @pytest.mark.parametrize(
@@ -562,7 +564,8 @@ def test_solver_options_scipy(mocker):
 
 
 # Note: in this case, scipy won't usually raise errors for arbitrary options
-# so this test exists as a sanity reminder that scipy is not perfect
+# so this test exists as a sanity reminder that scipy is not perfect.
+# It does raise a scipy.optimize.OptimizeWarning though.
 def test_bad_solver_options_scipy(mocker):
     optimizer = pyhf.optimize.scipy_optimizer(
         solver_options={'arbitrary_option': 'foobar'}
@@ -572,7 +575,11 @@ def test_bad_solver_options_scipy(mocker):
 
     model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
-    assert pyhf.infer.mle.fit(data, model).tolist()
+
+    with pytest.warns(
+        OptimizeWarning, match="Unknown solver options: arbitrary_option"
+    ):
+        assert pyhf.infer.mle.fit(data, model).tolist()
 
 
 def test_minuit_param_names(mocker):
@@ -581,7 +588,7 @@ def test_minuit_param_names(mocker):
     data = [10] + pdf.config.auxdata
     _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
     assert 'minuit' in result
-    assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt')
+    assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt[0]')
 
     pdf.config.par_names = mocker.Mock(return_value=None)
     _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)

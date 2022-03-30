@@ -84,6 +84,22 @@ def test_upperlimit(tmpdir, hypotest_args):
     )
 
 
+def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
+    """
+    Check that the default return structure of pyhf.infer.hypotest is as expected
+    """
+    _, data, model = hypotest_args
+    results = pyhf.infer.intervals.upperlimit(
+        data, model, scan=np.linspace(0, 5, 11), test_stat="qtilde"
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert expected_limits == pytest.approx(
+        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    )
+
+
 def test_mle_fit_default(tmpdir, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.mle.fit is as expected
@@ -164,7 +180,7 @@ def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
 def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected keyword arg is as expected
+    addition of the return_expected keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
@@ -186,7 +202,7 @@ def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
 def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected_set keyword arg is as expected
+    addition of the return_expected_set keyword arg is as expected
     """
     tb = pyhf.tensorlib
 
@@ -205,6 +221,59 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
     assert isinstance(result[2], type(tb.astensor(result[2])))
     assert len(result[3]) == 5
     assert check_uniform_type(result[3])
+
+
+@pytest.mark.parametrize(
+    'calctype,kwargs,expected_type',
+    [
+        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
+        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
+    ],
+)
+@pytest.mark.parametrize('return_tail_probs', [True, False])
+@pytest.mark.parametrize('return_expected', [True, False])
+@pytest.mark.parametrize('return_expected_set', [True, False])
+def test_hypotest_return_calculator(
+    tmpdir,
+    hypotest_args,
+    calctype,
+    kwargs,
+    expected_type,
+    return_tail_probs,
+    return_expected,
+    return_expected_set,
+):
+    """
+    Check that the return structure of pyhf.infer.hypotest with the
+    addition of the return_calculator keyword arg is as expected
+    """
+    *_, model = hypotest_args
+
+    # only those return flags where the toggled return value
+    # is placed in front of the calculator in the returned tuple
+    extra_returns = sum(
+        int(return_flag)
+        for return_flag in (
+            return_tail_probs,
+            return_expected,
+            return_expected_set,
+        )
+    )
+
+    result = pyhf.infer.hypotest(
+        *hypotest_args,
+        return_calculator=True,
+        return_tail_probs=return_tail_probs,
+        return_expected=return_expected,
+        return_expected_set=return_expected_set,
+        calctype=calctype,
+        **kwargs,
+    )
+
+    assert len(list(result)) == 2 + extra_returns
+    # not *_, calc = result b.c. in future, there could be additional optional returns
+    calc = result[1 + extra_returns]
+    assert isinstance(calc, expected_type)
 
 
 @pytest.mark.parametrize(
@@ -404,7 +473,7 @@ def test_emperical_distribution(tmpdir, hypotest_args):
 
 def test_toy_calculator(tmpdir, hypotest_args):
     """
-    Check that the toy calculator is peforming as expected
+    Check that the toy calculator is performing as expected
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
@@ -415,30 +484,30 @@ def test_toy_calculator(tmpdir, hypotest_args):
     assert qtilde_mu_sig.samples.tolist() == pytest.approx(
         [
             0.0,
-            0.13298492825293806,
+            0.017350013494649374,
             0.0,
-            0.7718560148925349,
-            1.814884694401428,
+            0.2338008822475217,
+            0.020328779776718875,
+            0.8911134903562186,
+            0.04408274703718007,
             0.0,
+            0.03977591672014569,
             0.0,
-            0.0,
-            0.0,
-            0.06586643485326249,
         ],
         1e-07,
     )
     assert qtilde_mu_bkg.samples.tolist() == pytest.approx(
         [
-            2.2664625749100082,
-            1.081660887453154,
-            2.7570218408936853,
-            1.3835691388297846,
-            0.4707467005909507,
-            0.0,
-            3.7166483705294127,
-            3.8021896732709592,
-            5.114135391143066,
-            1.3511153731000718,
+            5.642956861215396,
+            0.37581364290284114,
+            4.875367689039649,
+            3.4299006094989295,
+            1.0161021805475343,
+            0.03345317321810626,
+            0.21984803001140563,
+            1.274869119189077,
+            9.368264062021098,
+            3.0716486684082156,
         ],
         1e-07,
     )
@@ -450,7 +519,7 @@ def test_toy_calculator(tmpdir, hypotest_args):
 def test_fixed_poi(tmpdir, hypotest_args):
     """
     Check that the return structure of pyhf.infer.hypotest with the
-    additon of the return_expected keyword arg is as expected
+    addition of the return_expected keyword arg is as expected
     """
 
     _, _, pdf = hypotest_args

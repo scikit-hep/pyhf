@@ -6,6 +6,7 @@ import json
 import logging
 import pyhf.workspace
 import pyhf.utils
+import pyhf.schema
 import copy
 
 
@@ -34,6 +35,15 @@ def workspace_xml(request):
 @pytest.fixture(scope='function')
 def workspace_factory(workspace_xml):
     return lambda: pyhf.Workspace(workspace_xml)
+
+
+@pytest.fixture(scope="module")
+def simplemodels_model_data():
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48]
+    return model, data
 
 
 def test_build_workspace(workspace_factory):
@@ -67,12 +77,6 @@ def test_get_measurement(workspace_factory):
         assert m['name'] == w.measurement_names[measurement_idx]
 
 
-def test_get_measurement_fake(workspace_factory):
-    w = workspace_factory()
-    m = w.get_measurement(poi_name='fake_poi')
-    assert m
-
-
 def test_get_measurement_nonexist(workspace_factory):
     w = workspace_factory()
     with pytest.raises(pyhf.exceptions.InvalidMeasurement) as excinfo:
@@ -98,12 +102,6 @@ def test_get_measurement_no_measurements_defined(workspace_factory):
 def test_get_workspace_measurement_priority(workspace_factory):
     w = workspace_factory()
 
-    # does poi_name override all others?
-    m = w.get_measurement(
-        poi_name='fake_poi', measurement_name='FakeMeasurement', measurement_index=999
-    )
-    assert m['config']['poi'] == 'fake_poi'
-
     # does measurement_name override measurement_index?
     m = w.get_measurement(
         measurement_name=w.measurement_names[0], measurement_index=999
@@ -115,14 +113,14 @@ def test_get_workspace_measurement_priority(workspace_factory):
 
 
 def test_get_measurement_schema_validation(mocker, workspace_factory):
-    mocker.patch('pyhf.utils.validate', return_value=None)
-    assert pyhf.utils.validate.called is False
+    mocker.patch('pyhf.schema.validate', return_value=None)
+    assert pyhf.schema.validate.called is False
     w = workspace_factory()
-    assert pyhf.utils.validate.call_count == 1
-    assert pyhf.utils.validate.call_args[0][1] == 'workspace.json'
+    assert pyhf.schema.validate.call_count == 1
+    assert pyhf.schema.validate.call_args[0][1] == 'workspace.json'
     w.get_measurement()
-    assert pyhf.utils.validate.call_count == 2
-    assert pyhf.utils.validate.call_args[0][1] == 'measurement.json'
+    assert pyhf.schema.validate.call_count == 2
+    assert pyhf.schema.validate.call_args[0][1] == 'measurement.json'
 
 
 def test_get_workspace_repr(workspace_factory):
@@ -136,19 +134,40 @@ def test_get_workspace_model_default(workspace_factory):
     assert m
 
 
+def test_get_workspace_model_nopoi(workspace_factory):
+    w = workspace_factory()
+    m = w.model(poi_name=None)
+
+    assert m.config.poi_name is None
+    assert m.config.poi_index is None
+
+
+def test_get_workspace_model_overridepoi(workspace_factory):
+    w = workspace_factory()
+    m = w.model(poi_name='lumi')
+
+    assert m.config.poi_name == 'lumi'
+
+
+def test_get_workspace_model_fakepoi(workspace_factory):
+    w = workspace_factory()
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        w.model(poi_name='afakepoi')
+
+
 def test_workspace_observations(workspace_factory):
     w = workspace_factory()
     assert w.observations
 
 
 @pytest.mark.parametrize(
-    "with_aux",
+    "include_auxdata",
     [True, False],
 )
-def test_get_workspace_data(workspace_factory, with_aux):
+def test_get_workspace_data(workspace_factory, include_auxdata):
     w = workspace_factory()
     m = w.model()
-    assert w.data(m, with_aux=with_aux)
+    assert w.data(m, include_auxdata=include_auxdata)
 
 
 def test_get_workspace_data_bad_model(workspace_factory, caplog):
@@ -213,7 +232,7 @@ def test_prune_modifier(workspace_factory):
         ws.prune(modifiers=modifier)
 
     new_ws = ws.prune(modifiers=[modifier])
-    assert modifier not in new_ws.parameters
+    assert modifier not in new_ws.model().config.parameters
     assert modifier not in [
         p['name']
         for measurement in new_ws['measurements']
@@ -274,22 +293,22 @@ def test_rename_sample(workspace_factory):
 
 def test_rename_modifier(workspace_factory):
     ws = workspace_factory()
-    modifier = ws.parameters[0]
+    modifier = ws.model().config.parameters[0]
     renamed = 'renamedModifier'
-    assert renamed not in ws.parameters
+    assert renamed not in ws.model().config.parameters
     new_ws = ws.rename(modifiers={modifier: renamed})
-    assert modifier not in new_ws.parameters
-    assert renamed in new_ws.parameters
+    assert modifier not in new_ws.model().config.parameters
+    assert renamed in new_ws.model().config.parameters
 
 
 def test_rename_poi(workspace_factory):
     ws = workspace_factory()
     poi = ws.get_measurement()['config']['poi']
     renamed = 'renamedPoi'
-    assert renamed not in ws.parameters
+    assert renamed not in ws.model().config.parameters
     new_ws = ws.rename(modifiers={poi: renamed})
-    assert poi not in new_ws.parameters
-    assert renamed in new_ws.parameters
+    assert poi not in new_ws.model().config.parameters
+    assert renamed in new_ws.model().config.parameters
     assert new_ws.get_measurement()['config']['poi'] == renamed
 
 
@@ -761,7 +780,9 @@ def test_combine_workspace(workspace_factory, join):
     combined = pyhf.Workspace.combine(ws, new_ws, join=join)
     assert set(combined.channels) == set(ws.channels + new_ws.channels)
     assert set(combined.samples) == set(ws.samples + new_ws.samples)
-    assert set(combined.parameters) == set(ws.parameters + new_ws.parameters)
+    assert set(combined.model().config.parameters) == set(
+        ws.model().config.parameters + new_ws.model().config.parameters
+    )
 
 
 def test_workspace_equality(workspace_factory):
@@ -824,11 +845,8 @@ def test_sorted(workspace_factory):
         assert channel['samples'][-1]['name'] == 'zzzzlast'
 
 
-def test_closure_over_workspace_build():
-    model = pyhf.simplemodels.uncorrelated_background(
-        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-    )
-    data = [51, 48]
+def test_closure_over_workspace_build(simplemodels_model_data):
+    model, data = simplemodels_model_data
     one = pyhf.infer.hypotest(1.0, data + model.config.auxdata, model)
 
     workspace = pyhf.Workspace.build(model, data)
@@ -846,14 +864,10 @@ def test_closure_over_workspace_build():
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
 
 
-def test_wspace_immutable():
-    model = pyhf.simplemodels.uncorrelated_background(
-        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-    )
-    data = [51, 48]
+def test_wspace_immutable(simplemodels_model_data):
+    model, data = simplemodels_model_data
     workspace = pyhf.Workspace.build(model, data)
-
-    spec = json.loads(json.dumps(workspace))
+    spec = dict(workspace)
 
     ws = pyhf.Workspace(spec)
     model = ws.model()
@@ -864,3 +878,35 @@ def test_wspace_immutable():
     after = model.config.suggested_init()
 
     assert before == after
+
+
+def test_workspace_poiless(datadir):
+    """
+    Test that a workspace with a measurement with empty POI string is treated as POI-less
+    """
+    spec = json.load(open(datadir.joinpath("poiless.json")))
+    ws = pyhf.Workspace(spec)
+    model = ws.model()
+
+    assert model.config.poi_name is None
+    assert model.config.poi_index is None
+
+
+def test_wspace_unexpected_keyword_argument(simplemodels_model_data):
+    model, data = simplemodels_model_data
+    workspace = pyhf.Workspace.build(model, data)
+    spec = dict(workspace)
+
+    with pytest.raises(pyhf.exceptions.Unsupported):
+        pyhf.Workspace(spec, abc=True)
+
+
+def test_workspace_without_validation(mocker, simplemodels_model_data):
+    model, data = simplemodels_model_data
+
+    mocker.patch('pyhf.schema.validate')
+    ws = pyhf.Workspace.build(model, data, validate=False)
+    assert pyhf.schema.validate.called is False
+
+    pyhf.Workspace(dict(ws), validate=False)
+    assert pyhf.schema.validate.called is False

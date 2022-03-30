@@ -13,7 +13,7 @@ def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params
 
     if not utils.all_pois_floating(pdf, fixed_params):
         raise exceptions.InvalidModel(
-            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes inference impossible. Please unfix the POI to continue.'
+            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue.'
         )
 
 
@@ -28,6 +28,7 @@ def hypotest(
     return_tail_probs=False,
     return_expected=False,
     return_expected_set=False,
+    return_calculator=False,
     **kwargs,
 ):
     r"""
@@ -66,9 +67,12 @@ def hypotest(
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
         return_expected_set (:obj:`bool`): Bool for returning the :math:`(-2,-1,0,1,2)\sigma` :math:`\mathrm{CL}_{\mathrm{exp}}` --- the "Brazil band"
+        return_calculator (:obj:`bool`): Bool for returning calculator.
 
     Returns:
-        Tuple of Floats and lists of Floats:
+        Tuple of Floats and lists of Floats and
+        a :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
+        or :py:class:`~pyhf.infer.calculators.ToyCalculator` instance:
 
             - :math:`\mathrm{CL}_{s}`: The modified :math:`p`-value compared to
               the given threshold :math:`\alpha`, typically taken to be :math:`0.05`,
@@ -139,6 +143,12 @@ def hypotest(
             referred to as the "Brazil band".
             Only returned when ``return_expected_set`` is ``True``.
 
+            - a calculator: The calculator instance used in the computation of the :math:`p`-values.
+              Either an instance of :py:class:`~pyhf.infer.calculators.AsymptoticCalculator`
+              or :py:class:`~pyhf.infer.calculators.ToyCalculator`,
+              depending on the value of ``calctype``.
+              Only returned when ``return_calculator`` is ``True``.
+
     """
     init_pars = init_pars or pdf.config.suggested_init()
     par_bounds = par_bounds or pdf.config.suggested_bounds()
@@ -188,6 +198,8 @@ def hypotest(
         _returns.append(pvalues_exp_band)
     elif return_expected:
         _returns.append(tb.astensor(pvalues_exp_band[2]))
+    if return_calculator:
+        _returns.append(calc)
     # Enforce a consistent return type of the observed CLs
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 

@@ -55,11 +55,19 @@ def test_multibinpois(common_kwargs):
 
 
 def test_pullplot(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/pullplot.ipynb', **common_kwargs)
+    # Change directories to make users not have to worry about paths to follow example
+    cwd = os.getcwd()
+    os.chdir(os.path.join(cwd, "docs/examples/notebooks"))
+    pm.execute_notebook("pullplot.ipynb", **common_kwargs)
+    os.chdir(cwd)
 
 
 def test_impactplot(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/ImpactPlot.ipynb', **common_kwargs)
+    # Change directories to make users not have to worry about paths to follow example
+    cwd = os.getcwd()
+    os.chdir(os.path.join(cwd, "docs/examples/notebooks"))
+    pm.execute_notebook("ImpactPlot.ipynb", **common_kwargs)
+    os.chdir(cwd)
 
 
 def test_toys(common_kwargs):

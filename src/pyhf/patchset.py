@@ -5,6 +5,7 @@ import logging
 import jsonpatch
 from pyhf import exceptions
 from pyhf import utils
+from pyhf import schema
 from pyhf.workspace import Workspace
 
 log = logging.getLogger(__name__)
@@ -164,7 +165,7 @@ class PatchSet:
 
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema}")
-        utils.validate(spec, self.schema, version=self._version)
+        schema.validate(spec, self.schema, version=self._version)
 
         # set properties based on metadata
         self._metadata = spec['metadata']

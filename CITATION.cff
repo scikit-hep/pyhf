@@ -5,7 +5,7 @@ authors:
 - family-names: "Heinrich"
   given-names: "Lukas"
   orcid: "https://orcid.org/0000-0002-4048-7584"
-  affiliation: "CERN"
+  affiliation: "Technical University of Munich"
 - family-names: "Feickert"
   given-names: "Matthew"
   orcid: "https://orcid.org/0000-0003-4124-7862"
@@ -14,11 +14,11 @@ authors:
   given-names: "Giordon"
   orcid: "https://orcid.org/0000-0001-6616-3433"
   affiliation: "SCIPP, University of California, Santa Cruz"
-title: "pyhf: v0.6.2"
-version: 0.6.2
+title: "pyhf: v0.6.3"
+version: 0.6.3
 doi: 10.5281/zenodo.1169739
-repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2"
-url: "https://pyhf.readthedocs.io/en/v0.6.2/"
+repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3"
+url: "https://pyhf.readthedocs.io/en/v0.6.3/"
 keywords:
   - python
   - physics
@@ -54,7 +54,7 @@ references:
     - family-names: "Stark"
       given-names: "Giordon"
       orcid: "https://orcid.org/0000-0001-6616-3433"
-      affiliation: "University of Illinois at Urbana-Champaign"
+      affiliation: "SCIPP, University of California, Santa Cruz"
     - family-names: "Cranmer"
       given-names: "Kyle"
       orcid: "https://orcid.org/0000-0002-5769-7094"

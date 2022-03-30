@@ -52,6 +52,7 @@ extensions = [
     'nbsphinx',
     'sphinx_issues',
     'sphinx_copybutton',
+    'sphinx_togglebutton',
     'xref',
 ]
 bibtex_bibfiles = [
@@ -65,6 +66,7 @@ bibtex_bibfiles = [
     "bib/use_citations.bib",
     "bib/general_citations.bib",
 ]
+bibtex_default_style = "unsrt"
 
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
@@ -72,10 +74,11 @@ xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.172
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
     'matplotlib': ('https://matplotlib.org/stable/', None),
     'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
     'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
+    'jsonpatch': ('https://python-json-patch.readthedocs.io/en/latest/', None),
 }
 
 # GitHub repo
@@ -324,7 +327,9 @@ html_extra_path = ['_extras']
 htmlhelp_basename = 'pyhfdoc'
 
 # sphinx-copybutton configuration
-copybutton_prompt_text = ">>> "
+copybutton_prompt_text = r">>> |\.\.\. |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_here_doc_delimiter = "EOF"
 
 # -- Options for LaTeX output ---------------------------------------------
 

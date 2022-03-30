@@ -278,6 +278,39 @@ def test_poiless_model(backend):
         pyhf.infer.hypotest(1.0, data, model)
 
 
+def test_poiless_model_empty_string(backend):
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [10.0],
+                        'modifiers': [
+                            {
+                                'type': 'normsys',
+                                'name': 'shape',
+                                'data': {"hi": 0.5, "lo": 1.5},
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    model = pyhf.Model(spec, poi_name="")
+
+    data = [12] + model.config.auxdata
+    pyhf.infer.mle.fit(data, model)
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        pyhf.infer.mle.fixed_poi_fit(1.0, data, model)
+
+    with pytest.raises(pyhf.exceptions.UnspecifiedPOI):
+        pyhf.infer.hypotest(1.0, data, model)
+
+
 def test_pdf_integration_shapesys_zeros(backend):
     spec = {
         "channels": [
@@ -298,12 +331,7 @@ def test_pdf_integration_shapesys_zeros(backend):
                                 "data": [10, 9, 1, 0.0, 0.1, 5],
                                 "name": "syst",
                                 "type": "shapesys",
-                            },
-                            {
-                                "data": [0, 0, 0, 0, 0, 0],
-                                "name": "syst_lowstats",
-                                "type": "shapesys",
-                            },
+                            }
                         ],
                         "name": "background1",
                     },
@@ -313,19 +341,15 @@ def test_pdf_integration_shapesys_zeros(backend):
     }
     pdf = pyhf.Model(spec)
     par_set_syst = pdf.config.param_set('syst')
-    par_set_syst_lowstats = pdf.config.param_set('syst_lowstats')
 
-    assert par_set_syst.n_parameters == 4
-    assert par_set_syst_lowstats.n_parameters == 0
+    assert par_set_syst.n_parameters == 6
     tensorlib, _ = backend
-    nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 0.0, 70, 0.1, 50]), 2)
-    uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1, 0.0, 0.1, 5]), 2)
+    nominal_sq = tensorlib.power(tensorlib.astensor([100.0, 90, 1.0, 1.0, 0.1, 50]), 2)
+    uncerts_sq = tensorlib.power(tensorlib.astensor([10, 9, 1.0, 1.0, 0.1, 5]), 2)
     factors = tensorlib.divide(nominal_sq, uncerts_sq)
-    indices = tensorlib.astensor([0, 1, 4, 5], dtype='int')
     assert pytest.approx(tensorlib.tolist(par_set_syst.factors)) == tensorlib.tolist(
-        tensorlib.gather(factors, indices)
+        factors
     )
-    assert getattr(par_set_syst_lowstats, 'factors', None) is None
 
 
 @pytest.mark.only_numpy
@@ -557,7 +581,7 @@ def test_invalid_modifier():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidModifier):
-        pyhf.pdf._ModelConfig(spec)
+        pyhf.pdf.Model(spec, validate=False)  # don't validate to delay exception
 
 
 def test_invalid_modifier_name_resuse():
@@ -817,8 +841,7 @@ def test_model_integration_fixed_parameters():
         'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
     }
     model = pyhf.Model(spec, poi_name='mypoi')
-    assert model.config.suggested_fixed() == [False, True]
-    assert model.config.poi_index == 1
+    assert model.config.suggested_fixed()[model.config.par_slice('mypoi')] == [True]
 
 
 def test_model_integration_fixed_parameters_shapesys():
@@ -848,9 +871,11 @@ def test_model_integration_fixed_parameters_shapesys():
         'parameters': [{'name': 'uncorr', 'inits': [1.0, 2.0, 3.0], 'fixed': True}],
     }
     model = pyhf.Model(spec, poi_name='mypoi')
-    assert len(model.config.suggested_fixed()) == 5
-    assert model.config.suggested_fixed() == [False, True, True, True, False]
-    assert model.config.poi_index == 4
+    assert model.config.suggested_fixed()[model.config.par_slice('uncorr')] == [
+        True,
+        True,
+        True,
+    ]
 
 
 def test_reproducible_model_spec():
@@ -890,3 +915,158 @@ def test_reproducible_model_spec():
         {'bounds': [[0, 5]], 'inits': [1], 'name': 'mu'}
     ]
     assert pyhf.Model(model_from_ws.spec)
+
+
+def test_par_names_scalar_nonscalar():
+    """
+    Testing to ensure that nonscalar parameters are still indexed, even if
+    n_parameters==1.
+    """
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'goodsample',
+                        'data': [1.0],
+                        'modifiers': [
+                            {'type': 'normfactor', 'name': 'scalar', 'data': None},
+                            {'type': 'shapesys', 'name': 'nonscalar', 'data': [1.0]},
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+
+    model = pyhf.Model(spec, poi_name="scalar")
+    assert model.config.par_order == ["scalar", "nonscalar"]
+    assert model.config.par_names() == [
+        'scalar',
+        'nonscalar[0]',
+    ]
+
+
+def test_make_model_with_tensors():
+    def make_model(
+        nominal,
+        lumi_sigma,
+        corrup_data,
+        corrdn_data,
+        stater_data,
+        normsys_up,
+        normsys_dn,
+        uncorr_data,
+    ):
+        spec = {
+            "channels": [
+                {
+                    "name": "achannel",
+                    "samples": [
+                        {
+                            "name": "background",
+                            "data": nominal,
+                            "modifiers": [
+                                {"name": "mu", "type": "normfactor", "data": None},
+                                {"name": "lumi", "type": "lumi", "data": None},
+                                {
+                                    "name": "mod_name",
+                                    "type": "shapefactor",
+                                    "data": None,
+                                },
+                                {
+                                    "name": "corr_bkguncrt2",
+                                    "type": "histosys",
+                                    "data": {
+                                        'hi_data': corrup_data,
+                                        'lo_data': corrdn_data,
+                                    },
+                                },
+                                {
+                                    "name": "staterror2",
+                                    "type": "staterror",
+                                    "data": stater_data,
+                                },
+                                {
+                                    "name": "norm",
+                                    "type": "normsys",
+                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                },
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "name": "secondchannel",
+                    "samples": [
+                        {
+                            "name": "background",
+                            "data": nominal,
+                            "modifiers": [
+                                {"name": "mu", "type": "normfactor", "data": None},
+                                {"name": "lumi", "type": "lumi", "data": None},
+                                {
+                                    "name": "mod_name",
+                                    "type": "shapefactor",
+                                    "data": None,
+                                },
+                                {
+                                    "name": "uncorr_bkguncrt2",
+                                    "type": "shapesys",
+                                    "data": uncorr_data,
+                                },
+                                {
+                                    "name": "corr_bkguncrt2",
+                                    "type": "histosys",
+                                    "data": {
+                                        'hi_data': corrup_data,
+                                        'lo_data': corrdn_data,
+                                    },
+                                },
+                                {
+                                    "name": "staterror",
+                                    "type": "staterror",
+                                    "data": stater_data,
+                                },
+                                {
+                                    "name": "norm",
+                                    "type": "normsys",
+                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                },
+                            ],
+                        }
+                    ],
+                },
+            ],
+        }
+        model = pyhf.Model(
+            {
+                'channels': spec['channels'],
+                'parameters': [
+                    {
+                        'name': 'lumi',
+                        'auxdata': [1.0],
+                        'bounds': [[0.5, 1.5]],
+                        'inits': [1.0],
+                        "sigmas": [lumi_sigma],
+                    }
+                ],
+            },
+            validate=False,
+        )
+
+        pars = model.config.suggested_init()
+        exp_data = model.expected_data(pars)
+        assert exp_data is not None
+
+    make_model(
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor(0.2),
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor([60.0, 62.0]),
+        pyhf.tensorlib.astensor([5.0, 5.0]),
+        pyhf.tensorlib.astensor(0.95),
+        pyhf.tensorlib.astensor(1.05),
+        pyhf.tensorlib.astensor([5.0, 5.0]),
+    )

@@ -12,6 +12,7 @@ from pyhf import get_backend
 from pyhf.infer import utils
 import tqdm
 
+from dataclasses import dataclass
 import logging
 
 log = logging.getLogger(__name__)
@@ -29,7 +30,9 @@ def __dir__():
     return __all__
 
 
-def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_params):
+def generate_asimov_data(
+    asimov_mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=False
+):
     """
     Compute Asimov Dataset (expected yields at best-fit values) for a given POI value.
 
@@ -45,6 +48,10 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
         >>> mu_test = 1.0
         >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
+        >>> pyhf.infer.calculators.generate_asimov_data(
+        ...     mu_test, data, model, None, None, None, return_fitted_pars=True
+        ... )
+        (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
 
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
@@ -56,15 +63,23 @@ def generate_asimov_data(asimov_mu, data, pdf, init_pars, par_bounds, fixed_para
             The shape should be ``(n, 2)`` for ``n`` model parameters.
         fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
             value during minimization.
+        return_fitted_pars (:obj:`bool`): Return the best-fit parameter values for the given ``asimov_mu``.
+
 
     Returns:
-        Tensor: The Asimov dataset.
+        A Tensor or a Tuple of two Tensors:
 
+             - The Asimov dataset.
+
+             - The Asimov parameters. Only returned if ``return_fitted_pars`` is ``True``.
     """
     bestfit_nuisance_asimov = fixed_poi_fit(
         asimov_mu, data, pdf, init_pars, par_bounds, fixed_params
     )
-    return pdf.expected_data(bestfit_nuisance_asimov)
+    asimov_data = pdf.expected_data(bestfit_nuisance_asimov)
+    if return_fitted_pars:
+        return asimov_data, bestfit_nuisance_asimov
+    return asimov_data
 
 
 class AsymptoticTestStatDistribution:
@@ -188,6 +203,21 @@ class AsymptoticTestStatDistribution:
         )
 
 
+@dataclass(frozen=True)
+class HypoTestFitResults:
+    """
+    Fitted model parameters of the fits in
+    :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
+    """
+
+    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
+    asimov_pars: 'Tensor'  # noqa: F821
+    free_fit_to_data: 'Tensor'  # noqa: F821
+    free_fit_to_asimov: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_data: 'Tensor'  # noqa: F821
+    fixed_poi_fit_to_asimov: 'Tensor'  # noqa: F821
+
+
 class AsymptoticCalculator:
     """The Asymptotic Calculator."""
 
@@ -251,6 +281,7 @@ class AsymptoticCalculator:
         self.test_stat = test_stat
         self.calc_base_dist = calc_base_dist
         self.sqrtqmuA_v = None
+        self.fitted_pars = None
 
     def distributions(self, poi_test):
         r"""
@@ -297,8 +328,12 @@ class AsymptoticCalculator:
         return sb_dist, b_dist
 
     def teststatistic(self, poi_test):
-        """
+        r"""
         Compute the test statistic for the observed data under the studied model.
+
+        The fitted parameters of the five fits that are implicitly run for each call
+        of this method are afterwards accessible through the ``fitted_pars`` attribute,
+        which is a :py:class:`~pyhf.infer.calculators.HypoTestFitResults` instance.
 
         Example:
 
@@ -313,6 +348,10 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> asymptotic_calculator.teststatistic(mu_test)
             array(0.14043184)
+            >>> asymptotic_calculator.fitted_pars
+            HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
+            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov  # best-fit parameters to Asimov dataset
+            array([0.        , 1.00304893, 0.96263365])
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -325,35 +364,45 @@ class AsymptoticCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
-        qmu_v = teststat_func(
+        qmu_v, (mubhathat, muhatbhat) = teststat_func(
             poi_test,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
         asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
 
-        asimov_data = generate_asimov_data(
+        asimov_data, asimov_mubhathat = generate_asimov_data(
             asimov_mu,
             self.data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
-        qmuA_v = teststat_func(
+        qmuA_v, (mubhathat_A, muhatbhat_A) = teststat_func(
             poi_test,
             asimov_data,
             self.pdf,
             self.init_pars,
             self.par_bounds,
             self.fixed_params,
+            return_fitted_pars=True,
         )
         self.sqrtqmuA_v = tensorlib.sqrt(qmuA_v)
+        self.fitted_pars = HypoTestFitResults(
+            asimov_pars=asimov_mubhathat,
+            free_fit_to_data=muhatbhat,
+            free_fit_to_asimov=muhatbhat_A,
+            fixed_poi_fit_to_data=mubhathat,
+            fixed_poi_fit_to_asimov=mubhathat_A,
+        )
 
         if self.test_stat in ["q", "q0"]:  # qmu or q0
             teststat = sqrtqmu_v - self.sqrtqmuA_v
@@ -569,7 +618,7 @@ class EmpiricalDistribution:
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
             >>> dist.expected_value(nsigma=1)
-            6.15094381209505
+            6.15094381...
 
             >>> import pyhf
             >>> import numpy.random as random
@@ -606,11 +655,7 @@ class EmpiricalDistribution:
             Float: The expected value of the test statistic.
         """
         tensorlib, _ = get_backend()
-        import numpy as np
-
-        # TODO: tensorlib.percentile function
-        # c.f. https://github.com/scikit-hep/pyhf/pull/817
-        return np.percentile(
+        return tensorlib.percentile(
             self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
         )
 
@@ -647,7 +692,7 @@ class ToyCalculator:
               :math:`\tilde{q}_{\mu}`, as defined under the Wald approximation in Equation (62)
               of :xref:`arXiv:1007.1727` (:func:`~pyhf.infer.test_statistics.qmu_tilde`), ``'q'``
               performs the calculation using the test statistic :math:`q_{\mu}`
-              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` perfoms the calculation using
+              (:func:`~pyhf.infer.test_statistics.qmu`), and ``'q0'`` performs the calculation using
               the discovery test statistic :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
             track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).
@@ -667,7 +712,16 @@ class ToyCalculator:
 
     def distributions(self, poi_test, track_progress=None):
         """
-        Probability Distributions of the test statistic value under the signal + background and background-only hypothesis.
+        Probability distributions of the test statistic value under the signal + background and background-only hypotheses.
+
+        These distributions are produced by generating pseudo-data ("toys")
+        with the nuisance parameters set to their conditional maximum likelihood
+        estimators at the corresponding value of the parameter of interest for
+        each hypothesis, following the joint recommendations of the ATLAS and CMS
+        experiments in |LHC Higgs search combination procedure|_.
+
+        .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
+        .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
         Example:
 
@@ -686,7 +740,7 @@ class ToyCalculator:
             ... )
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> sig_plus_bkg_dist.pvalue(mu_test), bkg_dist.pvalue(mu_test)
-            (array(0.14), array(0.76))
+            (array(0.14), array(0.79))
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -699,14 +753,26 @@ class ToyCalculator:
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
-        signal_pars = self.pdf.config.suggested_init()
-        signal_pars[self.pdf.config.poi_index] = poi_test
-        signal_pdf = self.pdf.make_pdf(tensorlib.astensor(signal_pars))
+        signal_pars = fixed_poi_fit(
+            poi_test,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        signal_pdf = self.pdf.make_pdf(signal_pars)
         signal_sample = signal_pdf.sample(sample_shape)
 
-        bkg_pars = self.pdf.config.suggested_init()
-        bkg_pars[self.pdf.config.poi_index] = 1.0 if self.test_stat == 'q0' else 0.0
-        bkg_pdf = self.pdf.make_pdf(tensorlib.astensor(bkg_pars))
+        bkg_pars = fixed_poi_fit(
+            1.0 if self.test_stat == 'q0' else 0.0,
+            self.data,
+            self.pdf,
+            self.init_pars,
+            self.par_bounds,
+            self.fixed_params,
+        )
+        bkg_pdf = self.pdf.make_pdf(bkg_pars)
         bkg_sample = bkg_pdf.sample(sample_shape)
 
         teststat_func = utils.get_test_stat(self.test_stat)
@@ -774,7 +840,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = toy_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> CLsb, CLb, CLs
-            (array(0.01), array(0.41), array(0.02439024))
+            (array(0.03), array(0.37), array(0.08108108))
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -820,7 +886,7 @@ class ToyCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = toy_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> CLs_exp_band
-            [array(0.), array(0.), array(0.06186224), array(0.28450033), array(1.)]
+            [array(0.), array(0.), array(0.08403955), array(0.21892596), array(0.86072977)]
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.EmpiricalDistribution):
@@ -834,25 +900,23 @@ class ToyCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         tb, _ = get_backend()
-        pvalues = [
-            self.pvalues(
-                test_stat,
-                sig_plus_bkg_distribution,
-                bkg_only_distribution,
-            )
-            for test_stat in bkg_only_distribution.samples
-        ]
-        # TODO: Add percentile to tensorlib
-        # c.f. Issue #815, PR #817
-        import numpy as np
+        pvalues = tb.astensor(
+            [
+                self.pvalues(
+                    test_stat, sig_plus_bkg_distribution, bkg_only_distribution
+                )
+                for test_stat in bkg_only_distribution.samples
+            ]
+        )
 
         # percentiles for -2, -1, 0, 1, 2 standard deviations of the Normal distribution
-        normal_percentiles = [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
-        pvalues_exp_band = np.percentile(
-            pvalues,
-            normal_percentiles,
-            axis=0,
-        ).T.tolist()
+        normal_percentiles = tb.astensor(
+            [2.27501319, 15.86552539, 50.0, 84.13447461, 97.72498681]
+        )
+
+        pvalues_exp_band = tb.transpose(
+            tb.percentile(pvalues, normal_percentiles, axis=0)
+        )
         return [[tb.astensor(pvalue) for pvalue in band] for band in pvalues_exp_band]
 
     def teststatistic(self, poi_test):

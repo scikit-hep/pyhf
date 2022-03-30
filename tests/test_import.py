@@ -201,10 +201,22 @@ def test_import_measurement_gamma_bins(const):
         pyhf.readxml.process_measurements(toplvl)
 
 
-def test_import_prepHistFactory():
-    parsed_xml = pyhf.readxml.parse(
-        'validation/xmlimport_input/config/example.xml', 'validation/xmlimport_input/'
-    )
+@pytest.mark.parametrize(
+    "configfile,rootdir",
+    [
+        (
+            'validation/xmlimport_input/config/example.xml',
+            'validation/xmlimport_input/',
+        ),
+        (
+            'validation/xmlimport_input4/config/example.xml',
+            'validation/xmlimport_input4/',
+        ),
+    ],
+    ids=['xmlimport_input', 'xmlimport_input_histoPath'],
+)
+def test_import_prepHistFactory(configfile, rootdir):
+    parsed_xml = pyhf.readxml.parse(configfile, rootdir)
 
     # build the spec, strictly checks properties included
     spec = {
@@ -255,11 +267,15 @@ def test_import_prepHistFactory():
         pyhf.tensorlib.astensor(pdf.config.suggested_init())
     ).tolist() == [120.0, 110.0]
 
-    assert pdf.config.auxdata_order == sorted(
-        ['lumi', 'syst1', 'staterror_channel1', 'syst2', 'syst3']
-    )
+    assert pdf.config.auxdata_order == [
+        'lumi',
+        'syst2',
+        'syst3',
+        'syst1',
+        'staterror_channel1',
+    ]
 
-    assert data == [122.0, 112.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    assert data == [122.0, 112.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0]
 
     pars = pdf.config.suggested_init()
     pars[pdf.config.par_slice('SigXsecOverSM')] = [2.0]

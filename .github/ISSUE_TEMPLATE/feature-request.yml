@@ -1,0 +1,80 @@
+---
+name: ✨  Feature Request
+description: Suggest an idea for this project
+labels: ["feat/enhancement ", "needs-triage"]
+
+body:
+- type: markdown
+  attributes:
+    value: >
+      **Thank you for wanting to suggest a feature for pyhf!**
+
+
+      ⚠
+      Verify first that your issue is not [already reported on
+      GitHub][issue search].
+      Make sure to check the closed issues as well as it may
+      already be implemented in a development release.
+
+
+      [issue search]: https://github.com/scikit-hep/pyhf/issues?q=is%3Aopen+is%3Aissue+label%3Afeat%2Fenhancement
+
+
+- type: textarea
+  attributes:
+    label: Summary
+    description: >
+      Describe the new feature/improvement you would like briefly below.
+
+
+      What's the problem this feature will solve?
+      What are you trying to do, that you are unable to achieve
+      with the **latest** release of pyhf?
+
+
+      * Provide examples of real-world use cases that this would enable
+      and how it solves the problem you described.
+
+      * How do you solve this now?
+
+      * Have you tried to work around the problem?
+
+      * Could there be a different approach to solving this issue?
+
+
+      If there are external references or other GitHub Issues that are related
+      please link them here as well.
+    placeholder: >-
+      I am trying to do X with pyhf version x.y.z and I think that implementing
+      new feature Y would be very helpful for me and every other user because of Z.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Additional Information
+    description: |
+      If you can, describe how the feature would be used in a mock code example.
+
+      **HINT:** You can paste [GitHub Gist](https://gist.github.com) links for larger files.
+    value: |
+      <!--- Describe what you are showing in your example -->
+
+      <!--- and then paste your mock Python example code between the quotes below -->
+      ```python (paste below)
+
+      ```
+  validations:
+    required: false
+
+- type: checkboxes
+  attributes:
+    label: Code of Conduct
+    description: |
+      Read the [`pyhf` Code of Conduct][CoC] first.
+
+      [CoC]: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
+    options:
+    - label: I agree to follow the Code of Conduct
+      required: true
+...

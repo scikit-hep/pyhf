@@ -6,7 +6,7 @@
     "@type": "SoftwareSourceCode",
     "identifier": "pyhf",
     "name": "pyhf",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "description": "pure-Python HistFactory implementation with tensors and autodiff",
     "license": "Apache, OSI Approved :: Apache Software License",
     "author": [
@@ -129,5 +129,5 @@
     "keywords": "physics fitting numpy scipy tensorflow pytorch jax",
     "developmentStatus": "4 - Beta",
     "applicationCategory": "Scientific/Engineering, Scientific/Engineering :: Physics",
-    "programmingLanguage": "Python 3, Python 3.7, Python 3.8, Python Implementation CPython"
+    "programmingLanguage": "Python 3, Python 3.7, Python 3.8, Python 3.9, Python 3.10, Python Implementation CPython"
 }

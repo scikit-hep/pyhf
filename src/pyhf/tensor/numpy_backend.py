@@ -1,7 +1,7 @@
 """NumPy Tensor Library Module."""
 import numpy as np
 import logging
-from scipy.special import gammaln
+from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
@@ -140,7 +140,7 @@ class numpy_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -154,8 +154,8 @@ class numpy_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             NumPy ndarray: The output of the callable that was evaluated
@@ -201,7 +201,7 @@ class numpy_backend:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `numpy.ndarray`: A multi-dimensional, fixed-size homogenous array.
+            `numpy.ndarray`: A multi-dimensional, fixed-size homogeneous array.
         """
         try:
             dtype = self.dtypemap[dtype]
@@ -260,6 +260,44 @@ class numpy_backend:
 
     def exp(self, tensor_in):
         return np.exp(tensor_in)
+
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            3.5
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            array([7., 2.])
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
+
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
+
+                - ``'lower'``: ``i``.
+
+                - ``'higher'``: ``j``.
+
+                - ``'midpoint'``: ``(i + j) / 2``.
+
+                - ``'nearest'``: ``i`` or ``j``, whichever is nearest.
+
+        Returns:
+            NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
     def stack(self, sequence, axis=0):
         return np.stack(sequence, axis=axis)
@@ -349,7 +387,7 @@ class numpy_backend:
         return np.einsum(subscripts, *operands)
 
     def poisson_logpdf(self, n, lam):
-        return n * np.log(lam) - lam - gammaln(n + 1.0)
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)
 
     def poisson(self, n, lam):
         r"""
@@ -357,12 +395,26 @@ class numpy_backend:
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
 
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
+
         Example:
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.poisson(5., 6.)
-            0.16062314104797995
+            0.16062314...
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)
@@ -379,7 +431,7 @@ class numpy_backend:
         """
         n = np.asarray(n)
         lam = np.asarray(lam)
-        return np.exp(n * np.log(lam) - lam - gammaln(n + 1.0))
+        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def normal_logpdf(self, x, mu, sigma):
         # this is much faster than
@@ -405,7 +457,7 @@ class numpy_backend:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            0.3520653267642995
+            0.35206532...
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -431,7 +483,7 @@ class numpy_backend:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> pyhf.tensorlib.normal_cdf(0.8)
-            0.7881446014166034
+            0.78814460...
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> pyhf.tensorlib.normal_cdf(values)
             array([0.7881446 , 0.97724987])
@@ -518,3 +570,28 @@ class numpy_backend:
 
         """
         return tensor_in
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            array([[1., 2., 3.],
+                   [4., 5., 6.]])
+            >>> pyhf.tensorlib.transpose(tensor)
+            array([[1., 4.],
+                   [2., 5.],
+                   [3., 6.]])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The transpose of the input tensor.
+
+        """
+        return tensor_in.transpose()

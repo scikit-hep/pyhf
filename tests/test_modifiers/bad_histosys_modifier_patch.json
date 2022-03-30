@@ -1,0 +1,24 @@
+[
+    {
+        "op": "add",
+        "path": "/channels/0/samples/1/modifiers",
+        "value": [
+            {
+                "name": "histosys_bad",
+                "type": "histosys",
+                "data": {
+                    "hi_data": [
+                        3,
+                        6,
+                        9
+                    ],
+                    "lo_data": [
+                        1,
+                        2,
+                        3
+                    ]
+                }
+            }
+        ]
+    }
+]

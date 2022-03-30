@@ -1,151 +1,195 @@
+import json
+
+import numpy
 import pytest
-import inspect
+from jsonpatch import JsonPatch
 
 import pyhf
 
-modifiers_to_test = [
-    "histosys",
-    "normfactor",
-    "normsys",
-    "shapefactor",
-    "shapesys",
-    "staterror",
-]
-modifier_pdf_types = ["normal", None, "normal", None, "poisson", "normal"]
+
+def test_shapefactor_build():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel',
+                'samples': [
+                    {
+                        'name': 'sample',
+                        'data': [10.0] * 3,
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                        ],
+                    },
+                    {
+                        'name': 'another_sample',
+                        'data': [5.0] * 3,
+                        'modifiers': [
+                            {'name': 'freeshape', 'type': 'shapefactor', 'data': None}
+                        ],
+                    },
+                ],
+            }
+        ],
+    }
+
+    model = pyhf.Model(spec)
+    assert model
 
 
-# we make sure we can import all of our pre-defined modifiers correctly
+def test_staterror_holes():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel1',
+                'samples': [
+                    {
+                        'name': 'another_sample',
+                        'data': [50, 0, 0, 70],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                            {
+                                'name': 'staterror_1',
+                                'type': 'staterror',
+                                'data': [5, 0, 5, 5],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                'name': 'channel2',
+                'samples': [
+                    {
+                        'name': 'another_sample',
+                        'data': [50, 0, 10, 70],
+                        'modifiers': [
+                            {
+                                'name': 'staterror_2',
+                                'type': 'staterror',
+                                'data': [5, 0, 5, 5],
+                            }
+                        ],
+                    },
+                ],
+            },
+        ],
+    }
+
+    model = pyhf.Model(spec, poi_name="")
+    assert model.config.npars == 9
+    _, factors = model._modifications(
+        pyhf.tensorlib.astensor([2, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 5.0, 6.0])
+    )
+    assert model.config.param_set("staterror_1").suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
+    assert all(
+        [
+            isinstance(fixed, bool)
+            for fixed in model.config.param_set("staterror_1").suggested_fixed
+        ]
+    )
+    assert model.config.param_set("staterror_2").suggested_fixed == [
+        False,
+        True,
+        False,
+        False,
+    ]
+    assert all(
+        [
+            isinstance(fixed, bool)
+            for fixed in model.config.param_set("staterror_2").suggested_fixed
+        ]
+    )
+    assert (factors[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
+    assert (factors[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 5.0, 6.0]).all()
+
+    data = model.expected_data(model.config.suggested_init())
+    assert numpy.isfinite(model.logpdf(model.config.suggested_init(), data)).all()
+
+
+def test_shapesys_holes():
+    spec = {
+        'channels': [
+            {
+                'name': 'channel1',
+                'samples': [
+                    {
+                        'name': 'another_sample',
+                        'data': [50, 60, 0, 70],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                            {
+                                'name': 'freeshape1',
+                                'type': 'shapesys',
+                                'data': [5, 0, 5, 5],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                'name': 'channel2',
+                'samples': [
+                    {
+                        'name': 'another_sample',
+                        'data': [50, 60, 0, 70],
+                        'modifiers': [
+                            {
+                                'name': 'freeshape2',
+                                'type': 'shapesys',
+                                'data': [5, 0, 5, 5],
+                            }
+                        ],
+                    },
+                ],
+            },
+        ],
+    }
+
+    model = pyhf.Model(spec, poi_name="mu")
+    _, factors = model._modifications(
+        pyhf.tensorlib.astensor([1.0, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 1.0, 5.0])
+    )
+    assert (factors[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
+    assert (factors[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 1.0, 5.0]).all()
+
+    assert model.config.param_set("freeshape1").suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
+    assert model.config.param_set("freeshape2").suggested_fixed == [
+        False,
+        True,
+        True,
+        False,
+    ]
+
+
 @pytest.mark.parametrize(
-    "test_modifierPair", zip(modifiers_to_test, modifier_pdf_types)
+    "patch_file",
+    [
+        "bad_histosys_modifier_patch.json",
+        "bad_shapesys_modifier_patch.json",
+        "bad_staterror_modifier_patch.json",
+    ],
 )
-def test_import_default_modifiers(test_modifierPair):
-    test_modifier, test_mod_type = test_modifierPair
-    modifier = pyhf.modifiers.registry.get(test_modifier, None)
-    assert test_modifier in pyhf.modifiers.registry
-    assert modifier is not None
-    assert callable(modifier)
-    assert hasattr(modifier, 'is_constrained')
-    assert hasattr(modifier, 'pdf_type')
-    assert hasattr(modifier, 'op_code')
-    assert modifier.op_code in ['addition', 'multiplication']
+def test_invalid_bin_wise_modifier(datadir, patch_file):
+    """
+    Test that bin-wise modifiers will raise an exception if their data shape
+    differs from their sample's.
+    """
+    spec = json.load(open(datadir.joinpath("spec.json")))
 
+    assert pyhf.Model(spec)
 
-# we make sure modifiers have right structure
-def test_modifiers_structure():
-    from pyhf.modifiers import modifier
+    patch = JsonPatch.from_string(open(datadir.joinpath(patch_file)).read())
+    bad_spec = patch.apply(spec)
 
-    @modifier(name='myUnconstrainedModifier')
-    class myCustomModifier:
-        @classmethod
-        def required_parset(cls, sample_data, modifier_data):
-            pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myUnconstrainedModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['myUnconstrainedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['myUnconstrainedModifier'].is_constrained is False
-    del pyhf.modifiers.registry['myUnconstrainedModifier']
-
-    @modifier(name='myConstrainedModifier', constrained=True)
-    class myCustomModifier:
-        @classmethod
-        def required_parset(cls, sample_data, modifier_data):
-            pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myConstrainedModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['myConstrainedModifier'] == myCustomModifier
-    assert pyhf.modifiers.registry['myConstrainedModifier'].is_constrained is True
-    del pyhf.modifiers.registry['myConstrainedModifier']
-
-
-# we make sure decorate can use auto-naming
-def test_modifier_name_auto():
-    from pyhf.modifiers import modifier
-
-    @modifier
-    class myCustomModifier:
-        @classmethod
-        def required_parset(cls, sample_data, modifier_data):
-            pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myCustomModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
-    del pyhf.modifiers.registry['myCustomModifier']
-
-
-# we make sure decorate can use auto-naming with keyword arguments
-def test_modifier_name_auto_withkwargs():
-    from pyhf.modifiers import modifier
-
-    @modifier(name=None, constrained=False)
-    class myCustomModifier:
-        @classmethod
-        def required_parset(cls, sample_data, modifier_data):
-            pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myCustomModifier' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['myCustomModifier'] == myCustomModifier
-    del pyhf.modifiers.registry['myCustomModifier']
-
-
-# we make sure decorate allows for custom naming
-def test_modifier_name_custom():
-    from pyhf.modifiers import modifier
-
-    @modifier(name='myCustomName')
-    class myCustomModifier:
-        @classmethod
-        def required_parset(cls, sample_data, modifier_data):
-            pass
-
-    assert inspect.isclass(myCustomModifier)
-    assert 'myCustomModifier' not in pyhf.modifiers.registry
-    assert 'myCustomName' in pyhf.modifiers.registry
-    assert pyhf.modifiers.registry['myCustomName'] == myCustomModifier
-    del pyhf.modifiers.registry['myCustomName']
-
-
-# we make sure decorate raises errors if passed more than one argument, or not a string
-def test_decorate_with_wrong_values():
-    from pyhf.modifiers import modifier
-
-    with pytest.raises(ValueError):
-
-        @modifier('too', 'many', 'args')
-        class myCustomModifier:
-            pass
-
-    with pytest.raises(TypeError):
-
-        @modifier(name=1.5)
-        class myCustomModifierTypeError:
-            pass
-
-    with pytest.raises(ValueError):
-
-        @modifier(unused='arg')
-        class myCustomModifierValueError:
-            pass
-
-
-# we catch name clashes when adding duplicate names for modifiers
-def test_registry_name_clash():
-    from pyhf.modifiers import modifier
-
-    with pytest.raises(KeyError):
-
-        @modifier(name='histosys')
-        class myCustomModifierKeyError:
-            pass
-
-    with pytest.raises(KeyError):
-
-        class myCustomModifier:
-            @classmethod
-            def required_parset(cls, sample_data, modifier_data):
-                pass
-
-        pyhf.modifiers.add_to_registry(myCustomModifier, 'histosys')
+    with pytest.raises(pyhf.exceptions.InvalidModifier):
+        pyhf.Model(bad_spec)

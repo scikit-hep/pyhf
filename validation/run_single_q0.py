@@ -1,36 +1,38 @@
-if __name__ == "__main__":
-    import ROOT
-    import sys
-    import json
+import json
+import sys
 
+import ROOT
+
+if __name__ == "__main__":
     infile = sys.argv[1]
 
     infile = ROOT.TFile.Open(infile)
     workspace = infile.Get("combined")
     data = workspace.data("obsData")
 
-    sbModel = workspace.obj("ModelConfig")
-    poi = sbModel.GetParametersOfInterest().first()
+    sb_model = workspace.obj("ModelConfig")
+    poi = sb_model.GetParametersOfInterest().first()
     poi.setVal(1)
-    sbModel.SetSnapshot(ROOT.RooArgSet(poi))
+    sb_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    bModel = sbModel.Clone()
-    bModel.SetName("bonly")
+    bkg_model = sb_model.Clone()
+    bkg_model.SetName("bonly")
     poi.setVal(0)
-    bModel.SetSnapshot(ROOT.RooArgSet(poi))
+    bkg_model.SetSnapshot(ROOT.RooArgSet(poi))
 
-    ac = ROOT.RooStats.AsymptoticCalculator(data, sbModel, bModel)
-    ac.SetPrintLevel(10)
-    ac.SetOneSidedDiscovery(True)
+    calc = ROOT.RooStats.AsymptoticCalculator(data, sb_model, bkg_model)
+    calc.SetPrintLevel(10)
+    calc.SetOneSidedDiscovery(True)
 
-    result = ac.GetHypoTest()
+    result = calc.GetHypoTest()
     pnull_obs = result.NullPValue()
     palt_obs = result.AlternatePValue()
-    pnull_exp = []
-    for sigma in [-2, -1, 0, 1, 2]:
-        usecls = 0
-        pnull_exp.append(ac.GetExpectedPValues(pnull_obs, palt_obs, sigma, usecls))
+    usecls = 0
+    pnull_exp = [
+        calc.GetExpectedPValues(pnull_obs, palt_obs, sigma, usecls)
+        for sigma in [-2, -1, 0, 1, 2]
+    ]
 
     print(
-        json.dumps({'p0_obs': pnull_obs, 'p0_exp': pnull_exp}, sort_keys=True, indent=4)
+        json.dumps({"p0_obs": pnull_obs, "p0_exp": pnull_exp}, sort_keys=True, indent=4)
     )

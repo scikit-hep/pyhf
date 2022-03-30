@@ -17,23 +17,25 @@ archive and the `JOSS <https://joss.theoj.org/>`__ paper:
 Use in Publications
 -------------------
 
-Updating list of citations and use cases of :code:`pyhf`:
+The following is an updating list of citations and use cases of :code:`pyhf`.
+There is an incomplete but automatically updated `list of citations on INSPIRE
+<https://inspirehep.net/literature/1845084>`__ as well.
 
 Use Citations
 ~~~~~~~~~~~~~
 
 .. bibliography:: bib/use_citations.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 General Citations
 ~~~~~~~~~~~~~~~~~
 
 .. bibliography:: bib/general_citations.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
 
 Published Statistical Models
 ----------------------------
@@ -41,6 +43,12 @@ Published Statistical Models
 Updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models:
 
 .. bibliography:: bib/HEPData_likelihoods.bib
-   :list: bullet
+   :list: enumerated
    :all:
-   :style: plain
+   :style: unsrt
+
+.. note::
+
+   ATLAS maintains a public listing of all published statistical models on the `ATLAS public results
+   page <https://twiki.cern.ch/twiki/bin/view/AtlasPublic>`__ which can be found by filtering all
+   public results by the "Likelihood available" analysis characteristics keyword.

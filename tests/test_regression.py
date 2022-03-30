@@ -1,6 +1,8 @@
-import pytest
-import pyhf
 import numpy as np
+import pytest
+from skhep_testdata import data_path
+
+import pyhf
 
 
 def calculate_CLs(bkgonly_json, signal_patch_json):
@@ -31,14 +33,13 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     return result[0].tolist(), result[-1]
 
 
-def test_sbottom_regionA_1300_205_60(
-    sbottom_likelihoods_download, get_json_from_tarfile
-):
+def test_sbottom_regionA_1300_205_60(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
     sbottom_regionA_bkgonly_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+        sbottom_archive, "RegionA/BkgOnly.json"
     )
     sbottom_regionA_1300_205_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/patch.sbottom_1300_205_60.json"
+        sbottom_archive, "RegionA/patch.sbottom_1300_205_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1300_205_60_patch_json
@@ -61,19 +62,18 @@ def test_sbottom_regionA_1300_205_60(
     )
 
 
-def test_sbottom_regionA_1400_950_60(
-    sbottom_likelihoods_download, get_json_from_tarfile
-):
+def test_sbottom_regionA_1400_950_60(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
     sbottom_regionA_bkgonly_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+        sbottom_archive, "RegionA/BkgOnly.json"
     )
     sbottom_regionA_1400_950_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/patch.sbottom_1400_950_60.json"
+        sbottom_archive, "RegionA/patch.sbottom_1400_950_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1400_950_60_patch_json
     )
-    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1e-5)
+    assert CLs_obs == pytest.approx(0.021373283911064852, rel=1.5e-5)
     assert np.all(
         np.isclose(
             np.array(CLs_exp),
@@ -91,14 +91,13 @@ def test_sbottom_regionA_1400_950_60(
     )
 
 
-def test_sbottom_regionA_1500_850_60(
-    sbottom_likelihoods_download, get_json_from_tarfile
-):
+def test_sbottom_regionA_1500_850_60(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
     sbottom_regionA_bkgonly_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/BkgOnly.json"
+        sbottom_archive, "RegionA/BkgOnly.json"
     )
     sbottom_regionA_1500_850_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionA/patch.sbottom_1500_850_60.json"
+        sbottom_archive, "RegionA/patch.sbottom_1500_850_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionA_bkgonly_json, sbottom_regionA_1500_850_60_patch_json
@@ -121,14 +120,13 @@ def test_sbottom_regionA_1500_850_60(
     )
 
 
-def test_sbottom_regionB_1400_550_60(
-    sbottom_likelihoods_download, get_json_from_tarfile
-):
+def test_sbottom_regionB_1400_550_60(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
     sbottom_regionB_bkgonly_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionB/BkgOnly.json"
+        sbottom_archive, "RegionB/BkgOnly.json"
     )
     sbottom_regionB_1400_550_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionB/patch.sbottom_1400_550_60.json"
+        sbottom_archive, "RegionB/patch.sbottom_1400_550_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionB_bkgonly_json, sbottom_regionB_1400_550_60_patch_json
@@ -151,14 +149,13 @@ def test_sbottom_regionB_1400_550_60(
     )
 
 
-def test_sbottom_regionC_1600_850_60(
-    sbottom_likelihoods_download, get_json_from_tarfile
-):
+def test_sbottom_regionC_1600_850_60(get_json_from_tarfile):
+    sbottom_archive = data_path("pyhf-ins1748602-probability-models.tar.gz")
     sbottom_regionC_bkgonly_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionC/BkgOnly.json"
+        sbottom_archive, "RegionC/BkgOnly.json"
     )
     sbottom_regionC_1600_850_60_patch_json = get_json_from_tarfile(
-        sbottom_likelihoods_download, "RegionC/patch.sbottom_1600_850_60.json"
+        sbottom_archive, "RegionC/patch.sbottom_1600_850_60.json"
     )
     CLs_obs, CLs_exp = calculate_CLs(
         sbottom_regionC_bkgonly_json, sbottom_regionC_1600_850_60_patch_json

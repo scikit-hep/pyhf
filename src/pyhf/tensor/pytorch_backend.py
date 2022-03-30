@@ -93,7 +93,7 @@ class pytorch_backend:
 
     def conditional(self, predicate, true_callable, false_callable):
         """
-        Runs a callable conditional on the boolean value of the evaulation of a predicate
+        Runs a callable conditional on the boolean value of the evaluation of a predicate
 
         Example:
 
@@ -107,8 +107,8 @@ class pytorch_backend:
 
         Args:
             predicate (:obj:`scalar`): The logical condition that determines which callable to evaluate
-            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`true`
-            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evalutes to :code:`false`
+            true_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`true`
+            false_callable (:obj:`callable`): The callable that is evaluated when the :code:`predicate` evaluates to :code:`false`
 
         Returns:
             PyTorch Tensor: The output of the callable that was evaluated
@@ -284,6 +284,47 @@ class pytorch_backend:
     def exp(self, tensor_in):
         return torch.exp(tensor_in)
 
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+        r"""
+        Compute the :math:`q`-th percentile of the tensor along the specified axis.
+
+        Example:
+
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
+            >>> pyhf.tensorlib.percentile(a, 50)
+            tensor(3.5000)
+            >>> pyhf.tensorlib.percentile(a, 50, axis=1)
+            tensor([7., 2.])
+
+        Args:
+            tensor_in (`tensor`): The tensor containing the data
+            q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
+            axis (`number` or `tensor`): The dimensions along which to compute
+            interpolation (:obj:`str`): The interpolation method to use when the
+             desired percentile lies between two data points ``i < j``:
+
+                - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
+                  fractional part of the index surrounded by ``i`` and ``j``.
+
+                - ``'lower'``: Not yet implemented in PyTorch.
+
+                - ``'higher'``: Not yet implemented in PyTorch.
+
+                - ``'midpoint'``: Not yet implemented in PyTorch.
+
+                - ``'nearest'``: Not yet implemented in PyTorch.
+
+        Returns:
+            PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
+
+        """
+        # Interpolation options not yet supported
+        # c.f. https://github.com/pytorch/pytorch/pull/49267
+        # c.f. https://github.com/pytorch/pytorch/pull/59397
+        return torch.quantile(tensor_in, q / 100, dim=axis)
+
     def stack(self, sequence, axis=0):
         return torch.stack(sequence, dim=axis)
 
@@ -366,6 +407,20 @@ class pytorch_backend:
         The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
         at :code:`n` given the parameter :code:`lam`.
+
+        .. note::
+
+            Though the p.m.f of the Poisson distribution is not defined for
+            :math:`\lambda = 0`, the limit as :math:`\lambda \to 0` is still
+            defined, which gives a degenerate p.m.f. of
+
+            .. math::
+
+                \lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda) =
+                \left\{\begin{array}{ll}
+                1, & n = 0,\\
+                0, & n > 0
+                \end{array}\right.
 
         Example:
 
@@ -537,3 +592,28 @@ class pytorch_backend:
 
         """
         return tensor_in.numpy()
+
+    def transpose(self, tensor_in):
+        """
+        Transpose the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+            >>> tensor
+            tensor([[1., 2., 3.],
+                    [4., 5., 6.]])
+            >>> pyhf.tensorlib.transpose(tensor)
+            tensor([[1., 4.],
+                    [2., 5.],
+                    [3., 6.]])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            PyTorch FloatTensor: The transpose of the input tensor.
+
+        """
+        return tensor_in.transpose(0, 1)

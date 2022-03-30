@@ -8,7 +8,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|Docs from latest| |Docs from master| |Binder|
+|Docs from latest| |Docs from master| |Jupyter Book tutorial| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
 
@@ -32,6 +32,17 @@ to support modern computational graph libraries such as PyTorch and
 TensorFlow in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
+..
+  Comment: JupyterLite segment goes here in docs
+
+User Guide
+----------
+
+For an in depth walkthrough of usage of the latest release of ``pyhf`` visit the |pyhf tutorial|_.
+
+.. |pyhf tutorial| replace:: ``pyhf`` tutorial
+.. _pyhf tutorial: https://pyhf.github.io/pyhf-tutorial/
+
 Hello World
 -----------
 
@@ -40,6 +51,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
 .. code:: pycon
 
    >>> import pyhf
+   >>> pyhf.set_backend("numpy")
    >>> model = pyhf.simplemodels.uncorrelated_background(
    ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
    ... )
@@ -48,8 +60,8 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
-   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.05251497423736956, Expected: 0.06445320535890459
+   >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
+   Observed: 0.05251497, Expected: 0.06445321
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
@@ -57,6 +69,7 @@ Alternatively the statistical model and observational data can be read from its 
 
    >>> import pyhf
    >>> import requests
+   >>> pyhf.set_backend("numpy")
    >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
@@ -64,8 +77,8 @@ Alternatively the statistical model and observational data can be read from its 
    >>> CLs_obs, CLs_exp = pyhf.infer.hypotest(
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
-   >>> print(f"Observed: {CLs_obs}, Expected: {CLs_exp}")
-   Observed: 0.3599840922126626, Expected: 0.3599840922126626
+   >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
+   Observed: 0.35998409, Expected: 0.35998409
 
 
 Finally, you can also use the command line interface that ``pyhf`` provides
@@ -122,7 +135,7 @@ Implemented variations:
   - ☑ ShapeSys
   - ☑ NormFactor
   - ☑ Multiple Channels
-  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot>`__
+  - ☑ Import from XML + ROOT via `uproot <https://github.com/scikit-hep/uproot4>`__
   - ☑ ShapeFactor
   - ☑ StatError
   - ☑ Lumi Uncertainty
@@ -259,6 +272,14 @@ To uninstall run
 
    python -m pip uninstall pyhf
 
+Documentation
+-------------
+
+For model specification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
+
+.. |pyhf documentation| replace:: ``pyhf`` documentation
+.. _pyhf documentation: https://pyhf.readthedocs.io/
+
 Questions
 ---------
 
@@ -287,11 +308,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.6.2}",
-     version = {0.6.2},
+     title = "{pyhf: v0.6.3}",
+     version = {0.6.3},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.2}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3}
    }
 
    @article{pyhf_joss,
@@ -318,6 +339,7 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 Milestones
 ----------
 
+- 2021-12-09: 1000 commits to the project. (See PR `#1710 <https://github.com/scikit-hep/pyhf/pull/1710>`__)
 - 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
 
 Acknowledgements
@@ -337,10 +359,12 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.2-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.6.3-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
+.. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
+   :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
@@ -350,7 +374,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/conda-forge/pyhf-feedstock
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.2-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.6.3-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags

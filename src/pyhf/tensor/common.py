@@ -1,4 +1,5 @@
-from pyhf import default_backend, get_backend
+import pyhf
+from pyhf.tensor.manager import get_backend
 from pyhf import events
 
 
@@ -13,6 +14,8 @@ class _TensorViewer:
         # >>> target = np.asarray([2,1,3,0])
         # >>> source[target.argsort()]
         # array([6, 8, 9, 7])
+
+        default_backend = pyhf.default_backend
 
         self.batch_size = batch_size
         self.names = names
@@ -64,10 +67,10 @@ class _TensorViewer:
 
 
 def _tensorviewer_from_slices(target_slices, names, batch_size):
-    db = default_backend
+    default_backend = pyhf.default_backend
     ranges = []
     for sl in target_slices:
-        ranges.append(db.astensor(range(sl.start, sl.stop)))
+        ranges.append(default_backend.astensor(range(sl.start, sl.stop)))
     if not target_slices:
         return None
     return _TensorViewer(ranges, names=names, batch_size=batch_size)

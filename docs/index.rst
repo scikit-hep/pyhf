@@ -31,7 +31,16 @@
 
    <p id="dev-version"><strong>Warning:</strong> This is a development version. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
 
+..
+  Comment: Splice the JupyterLite example into the README by looking for a particular comment
+
 .. include:: ../README.rst
+    :end-before: Comment: JupyterLite segment goes here in docs
+
+.. include:: jupyterlite.rst
+
+.. include:: ../README.rst
+    :start-after: Comment: JupyterLite segment goes here in docs
 
 Indices and tables
 ==================
