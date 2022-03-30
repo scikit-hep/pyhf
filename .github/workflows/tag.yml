@@ -59,7 +59,7 @@ jobs:
         git merge --squash "origin/${GITHUB_HEAD_REF}"
         git commit -m "${PR_TITLE} (#${PR_NUMBER})"
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: '3.10'
     - name: Install bump2version
