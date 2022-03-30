@@ -140,8 +140,9 @@ def upperlimit_auto(
     return obs, exp
 
 
-
-def upperlimit_fixedscan(data, model, scan, level=0.05, return_results=False, **hypotest_kwargs):
+def upperlimit_fixedscan(
+    data, model, scan, level=0.05, return_results=False, **hypotest_kwargs
+):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
     Parameter of Interest (POI) using a fixed scan through POI-space.
