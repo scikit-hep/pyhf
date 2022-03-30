@@ -6,21 +6,24 @@ from pyhf import events
 from pyhf.exceptions import InvalidModifier
 from pyhf.parameters import ParamViewer
 from pyhf.tensor.manager import get_backend
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas, fixed: List[bool]):
+def required_parset(sigmas, fixed: List[bool], constraint: Optional[str] = "gaussian"):
     n_parameters = len(sigmas)
     return {
-        'paramset_type': 'constrained_by_normal',
+        'paramset_type': 'constrained_by_normal'
+        if constraint == "gaussian"
+        else 'constrained_by_poisson',
         'n_parameters': n_parameters,
         'is_scalar': False,
         'inits': (1.0,) * n_parameters,
         'bounds': ((1e-10, 10.0),) * n_parameters,
         'fixed': tuple(fixed),
         'auxdata': (1.0,) * n_parameters,
-        'sigmas': tuple(sigmas),
+        'sigmas' if constraint == "gaussian" else 'factors': tuple(sigmas),
     }
 
 
@@ -37,11 +40,12 @@ class staterror_builder:
     def collect(self, thismod, nom):
         uncrt = thismod['data'] if thismod else [0.0] * len(nom)
         mask = [True if thismod else False] * len(nom)
-        return {'mask': mask, 'nom_data': nom, 'uncrt': uncrt}
+        constraint = thismod.get('constraint', 'gaussian') if thismod else 'gaussian'
+        return {'mask': mask, 'nom_data': nom, 'uncrt': uncrt, 'constraint': constraint}
 
     def append(self, key, channel, sample, thismod, defined_samp):
         self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
-            'data', {'uncrt': [], 'nom_data': [], 'mask': []}
+            'data', {'uncrt': [], 'nom_data': [], 'mask': [], 'constraint': []}
         )
         nom = (
             defined_samp['data']
@@ -52,6 +56,9 @@ class staterror_builder:
         self.builder_data[key][sample]['data']['mask'].append(moddata['mask'])
         self.builder_data[key][sample]['data']['uncrt'].append(moddata['uncrt'])
         self.builder_data[key][sample]['data']['nom_data'].append(moddata['nom_data'])
+        self.builder_data[key][sample]['data']['constraint'].append(
+            moddata['constraint']
+        )
 
     def finalize(self):
         default_backend = pyhf.default_backend
@@ -118,6 +125,9 @@ class staterror_builder:
                     else:
                         assert (mask_this_sample == masks[modname]).all()
 
+            for modifier_data in self.builder_data[modname].values():
+                modifier_data['data']['mask'] = masks[modname]
+
             # extract sigmas using this modifiers mask
             sigmas = relerrs[masks[modname]]
 
@@ -127,7 +137,16 @@ class staterror_builder:
             # non-Nan constraint term, but in a future PR need to remove constraints
             # for these
             sigmas[fixed] = 1.0
-            self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
+
+            constraint = [
+                i
+                for i, v in zip(modifier_data['data']['constraint'], masks[modname])
+                if v
+            ]
+            assert all(constraint[0] == element for element in constraint)
+            self.required_parsets.setdefault(
+                parname, [required_parset(sigmas, fixed, constraint)]
+            )
         return self.builder_data
 
 
