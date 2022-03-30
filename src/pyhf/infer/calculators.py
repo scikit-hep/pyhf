@@ -803,7 +803,7 @@ class ToyCalculator:
                             poi_test,
                             sample,
                             self.pdf,
-                            signal_pars,
+                            self.init_pars,
                             self.par_bounds,
                             self.fixed_params,
                         )
@@ -820,7 +820,7 @@ class ToyCalculator:
                             poi_test,
                             sample,
                             self.pdf,
-                            bkg_pars,
+                            self.init_pars,
                             self.par_bounds,
                             self.fixed_params,
                         )
