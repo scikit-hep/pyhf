@@ -145,7 +145,7 @@ class staterror_builder:
             ]
             assert all(constraint[0] == element for element in constraint)
             self.required_parsets.setdefault(
-                parname, [required_parset(sigmas, fixed, constraint)]
+                parname, [required_parset(sigmas, fixed, constraint[0])]
             )
         return self.builder_data
 
