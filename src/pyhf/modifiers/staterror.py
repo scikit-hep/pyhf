@@ -22,7 +22,7 @@ def required_parset(sigmas, fixed: List[bool], constraint: Optional[str] = "gaus
         'inits': (1.0,) * n_parameters,
         'bounds': ((1e-10, 10.0),) * n_parameters,
         'fixed': tuple(fixed),
-        'auxdata': (1.0,) * n_parameters,
+        'auxdata': (1.0,) * n_parameters if constraint == "gaussian" else tuple(sigmas),
         'sigmas' if constraint == "gaussian" else 'factors': tuple(sigmas),
     }
 
