@@ -136,7 +136,9 @@ jobs:
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes matplotlib
         python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple matplotlib
-        python -m pip list
+
+    - name: List installed Python packages
+      run: python -m pip list
 
     - name: Test with pytest
       run: |
