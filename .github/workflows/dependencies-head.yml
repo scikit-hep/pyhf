@@ -150,9 +150,9 @@ jobs:
       run: |
         pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
-    - name: Test Contrib module with pytest
+    - name: Test Contrib module API with pytest
       run: |
-        pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+        pytest tests/contrib
 
   pytest:
 
