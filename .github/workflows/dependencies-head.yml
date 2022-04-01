@@ -146,11 +146,7 @@ jobs:
     - name: List installed Python packages
       run: python -m pip list
 
-    - name: Test with pytest
-      run: |
-        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
-
-    - name: Test Contrib module API with pytest
+    - name: Test contrib module API with pytest
       run: |
         pytest tests/contrib
 
