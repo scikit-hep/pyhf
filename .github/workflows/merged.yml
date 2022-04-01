@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Trigger Binder build
       run: |
         # Use Binder build API to trigger repo2docker to build image on Google Cloud and Turing Institute Binder Federation clusters
