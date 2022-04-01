@@ -33,6 +33,6 @@ jobs:
         black --check --diff --verbose .
 
     - name: Lint Dockerfile
-      uses: hadolint/hadolint-action@v1.5.0
+      uses: hadolint/hadolint-action@v2.1.0
       with:
         dockerfile: docker/Dockerfile
