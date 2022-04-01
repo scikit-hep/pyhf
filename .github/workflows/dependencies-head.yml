@@ -114,6 +114,42 @@ jobs:
       run: |
         pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
+  matplotlib:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.10']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip --no-cache-dir --quiet install --upgrade .[test]
+        python -m pip uninstall --yes matplotlib
+        # Need to use --extra-index-url as dependencies aren't on scipy-wheels-nightly package index.
+        # Need to use --pre as dev releases will need priority over stable releases.
+        python -m pip install \
+          --upgrade \
+          --pre \
+          --extra-index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple \
+          matplotlib
+
+    - name: List installed Python packages
+      run: python -m pip list
+
+    - name: Test contrib module API with pytest
+      run: |
+        pytest tests/contrib
+
   pytest:
 
     runs-on: ${{ matrix.os }}
