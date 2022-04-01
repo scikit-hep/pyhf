@@ -135,6 +135,8 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes matplotlib
+        # Need to use --extra-index-url as dependencies aren't on scipy-wheels-nightly package index.
+        # Need to use --pre as dev releases will need priority over stable releases.
         python -m pip install \
           --upgrade \
           --pre \
