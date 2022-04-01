@@ -135,7 +135,11 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes matplotlib
-        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple matplotlib
+        python -m pip install \
+          --upgrade \
+          --pre \
+          --extra-index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple \
+          matplotlib
 
     - name: List installed Python packages
       run: python -m pip list
