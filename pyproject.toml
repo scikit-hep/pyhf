@@ -90,6 +90,7 @@ filterwarnings = [
     'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:NEAREST is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
     'ignore:BILINEAR is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
+    'ignore:BICUBIC is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
 ]
 
 [tool.nbqa.mutate]
