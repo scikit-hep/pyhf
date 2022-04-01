@@ -91,6 +91,9 @@ filterwarnings = [
     'ignore:NEAREST is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
     'ignore:BILINEAR is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
     'ignore:BICUBIC is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
+    'ignore:HAMMING is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
+    'ignore:BOX is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
+    'ignore:LANCZOS is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
 ]
 
 [tool.nbqa.mutate]
