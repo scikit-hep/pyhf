@@ -88,7 +88,7 @@ filterwarnings = [
     "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
     'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
     'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
-    'ignore:NEAREST is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
+    'ignore:is deprecated and will be removed in Pillow 10:DeprecationWarning',  # matplotlib
 ]
 
 [tool.nbqa.mutate]
