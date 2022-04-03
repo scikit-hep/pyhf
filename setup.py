@@ -55,7 +55,6 @@ extras_require['docs'] = sorted(
             'sphinx-click',
             'sphinx_rtd_theme',
             'nbsphinx!=0.8.8',  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
-            'Jinja2!=3.1.0',  # c.f. https://github.com/spatialaudio/nbsphinx/issues/641
             'ipywidgets',
             'sphinx-issues',
             'sphinx-copybutton>=0.3.2',
