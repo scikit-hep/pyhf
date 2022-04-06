@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --quiet install --upgrade .[test]
+        python -m pip install --upgrade .[test]
 
     - name: List installed Python packages
       run: python -m pip list
