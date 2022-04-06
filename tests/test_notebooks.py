@@ -10,10 +10,9 @@ import scrapbook as sb
 def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
-        'output_path': Path(outputnb),
+        'output_path': str(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
         'progress_bar': False,
-        'start_timeout': 120,
     }
 
 
@@ -44,17 +43,15 @@ def test_shapefactor(common_kwargs):
 def test_multichannel_coupled_histos(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/multichannel-coupled-histo.ipynb',
-        parameters={'validation_datadir': 'validation/data'},
+        parameters={"validation_datadir": str(Path.cwd() / "validation" / "data")},
         **common_kwargs,
     )
 
 
 def test_multibinpois(common_kwargs):
-    execution_dir = Path.cwd() / "docs" / "examples"
     pm.execute_notebook(
-        execution_dir / "notebooks" / "multiBinPois.ipynb",
-        parameters={'validation_datadir': 'validation/data'},
-        cwd=execution_dir,
+        'docs/examples/notebooks/multiBinPois.ipynb',
+        parameters={"validation_datadir": str(Path.cwd() / "validation" / "data")},
         **common_kwargs,
     )
     nb = sb.read_notebook(common_kwargs['output_path'])
