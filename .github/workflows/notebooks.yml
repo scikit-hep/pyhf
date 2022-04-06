@@ -1,6 +1,8 @@
 name: Notebooks
 
 on:
+  # REMOVE
+  push:
   # Run daily at 0:01 UTC
   schedule:
   - cron:  '1 0 * * *'
