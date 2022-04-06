@@ -1,8 +1,9 @@
-# import sys
 import os
+import sys
+
 import papermill as pm
-import scrapbook as sb
 import pytest
+import scrapbook as sb
 
 
 @pytest.fixture()
@@ -10,7 +11,7 @@ def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
         'output_path': str(outputnb),
-        # 'kernel_name': f'python{sys.version_info.major}',
+        'kernel_name': f'python{sys.version_info.major}',
     }
 
 
