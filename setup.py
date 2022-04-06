@@ -38,8 +38,8 @@ extras_require['test'] = sorted(
             'pytest-console-scripts',
             'pytest-mpl',
             'pydocstyle',
-            'papermill~=2.0',
-            'nteract-scrapbook~=0.2',
+            'papermill~=2.3.4',
+            'scrapbook~=0.5.0',
             'jupyter',
             'graphviz',
         ]
