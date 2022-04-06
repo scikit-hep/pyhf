@@ -16,15 +16,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip --quiet install --upgrade .[complete]
-        python -m pip list
+        python -m pip --quiet install --upgrade .[test]
+
+    - name: List installed Python packages
+      run: python -m pip list
+
     - name: Test example notebooks
       run: |
         pytest tests/test_notebooks.py
