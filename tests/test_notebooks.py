@@ -13,6 +13,7 @@ def common_kwargs(tmpdir):
         'output_path': Path(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
         'progress_bar': False,
+        'start_timeout': 120,
     }
 
 
