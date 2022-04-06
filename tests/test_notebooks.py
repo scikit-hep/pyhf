@@ -10,7 +10,7 @@ import scrapbook as sb
 def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
-        'output_path': str(outputnb),
+        'output_path': Path(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
         'progress_bar': False,
     }
