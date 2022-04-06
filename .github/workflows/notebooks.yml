@@ -36,6 +36,11 @@ jobs:
     - name: List installed Python packages
       run: python -m pip list
 
+    - name: REMOVE test a failing test by self
+      run: |
+        export PYTHONWARNINGS='default'
+        pytest --override-ini filterwarnings= tests/test_notebooks.py -k test_xml_importexport
+
     - name: Test example notebooks
       run: |
         # Override the ini option for filterwarnings with an empty list to disable error
