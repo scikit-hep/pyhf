@@ -50,9 +50,11 @@ def test_multichannel_coupled_histos(common_kwargs):
 
 
 def test_multibinpois(common_kwargs):
+    execution_dir = Path.cwd() / "docs" / "examples"
     pm.execute_notebook(
-        'docs/examples/notebooks/multiBinPois.ipynb',
+        execution_dir / "notebooks" / "multiBinPois.ipynb",
         parameters={'validation_datadir': 'validation/data'},
+        cwd=execution_dir,
         **common_kwargs,
     )
     nb = sb.read_notebook(common_kwargs['output_path'])
@@ -60,7 +62,6 @@ def test_multibinpois(common_kwargs):
 
 
 def test_pullplot(common_kwargs):
-    # Change directories to make users not have to worry about paths to follow example
     execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
     pm.execute_notebook(
         execution_dir / "pullplot.ipynb", cwd=execution_dir, **common_kwargs
@@ -68,7 +69,6 @@ def test_pullplot(common_kwargs):
 
 
 def test_impactplot(common_kwargs):
-    # Change directories to make users not have to worry about paths to follow example
     execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
     pm.execute_notebook(
         execution_dir / "ImpactPlot.ipynb", cwd=execution_dir, **common_kwargs
