@@ -23,7 +23,9 @@ def test_hello_world(common_kwargs):
 
 def test_xml_importexport(common_kwargs):
     pm.execute_notebook(
-        'docs/examples/notebooks/XML_ImportExport.ipynb', **common_kwargs
+        'docs/examples/notebooks/XML_ImportExport.ipynb',
+        cwd=Path.cwd(),
+        **common_kwargs,
     )
 
 
