@@ -37,11 +37,13 @@ jobs:
       run: python -m pip list
 
     - name: REMOVE test a failing test by self
+      shell: bash
       run: |
         export PYTHONWARNINGS='default'
         pytest --override-ini filterwarnings= tests/test_notebooks.py -k test_xml_importexport
 
     - name: Test example notebooks
+      shell: bash
       run: |
         # Override the ini option for filterwarnings with an empty list to disable error
         # on filterwarnings as testing for notebooks to run with the latest API, not if
