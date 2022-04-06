@@ -39,7 +39,7 @@ extras_require['test'] = sorted(
             'pytest-mpl',
             'pydocstyle',
             'papermill~=2.0',
-            'scrapbook~=0.2',
+            'scrapbook~=0.5.0',
             'jupyter',
             'graphviz',
         ]
