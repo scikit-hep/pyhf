@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python 3.10
+    - name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
@@ -36,7 +36,7 @@ jobs:
       run: |
         # Override the ini option for filterwarnings with an empty list to disable error
         # on filterwarnings as testing for notebooks to run with the latest API, not if
-        # Jupyter infrastructure is warning free. Though still show warnings by setting
-        # warning control to 'default'.
+        # Jupyter infrastructure is warning free.
+        # Though still show warnings by setting warning control to 'default'.
         export PYTHONWARNINGS='default'
         pytest --override-ini filterwarnings= tests/test_notebooks.py
