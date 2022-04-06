@@ -12,6 +12,7 @@ def common_kwargs(tmpdir):
     return {
         'output_path': str(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
+        'progress_bar': False,
     }
 
 
