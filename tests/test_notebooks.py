@@ -1,4 +1,4 @@
-import sys
+# import sys
 import os
 import papermill as pm
 import scrapbook as sb
@@ -10,7 +10,7 @@ def common_kwargs(tmpdir):
     outputnb = tmpdir.join('output.ipynb')
     return {
         'output_path': str(outputnb),
-        'kernel_name': f'python{sys.version_info.major}',
+        # 'kernel_name': f'python{sys.version_info.major}',
     }
 
 
