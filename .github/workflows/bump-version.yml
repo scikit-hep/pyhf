@@ -197,7 +197,6 @@ jobs:
     - name: Bump version and push to GitHub
       if: >-
         github.event_name == 'workflow_dispatch'
-        && github.repository == 'scikit-hep/pyhf'
         && (
           github.event.sender.login == 'lukasheinrich' ||
           github.event.sender.login == 'matthewfeickert' ||
