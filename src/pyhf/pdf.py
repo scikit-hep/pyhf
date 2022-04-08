@@ -545,7 +545,9 @@ class _MainModel:
         return True
 
     def make_pdf(self, pars):
+        tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
+        lambdas_data = tensorlib.clip(lambdas_data, 1e-6, max_value=None)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
