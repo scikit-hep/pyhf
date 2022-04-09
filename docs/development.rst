@@ -17,20 +17,16 @@ and install all necessary packages for development
 
     python -m pip install --upgrade --editable .[complete]
 
-Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__  by running
+Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
 
 .. code-block:: console
 
     pre-commit install
 
-as the ``rev`` gets updated through time to track changes of different hooks,
-simply run
-
-.. code-block:: console
-
-    pre-commit autoupdate
-
-to have pre-commit install the new version.
+inside of the virtual environment.
+`pre-commit.ci <https://pre-commit.ci/>`__ keeps the pre-commit hooks updated
+through time, so pre-commit will automatically update itself when you run it
+locally after the hooks were updated.
 
 Testing
 -------
