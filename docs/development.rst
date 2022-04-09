@@ -5,7 +5,10 @@ Developing
 Developer Environment
 ---------------------
 
-To develop, we suggest using `virtual environments <https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__ together with ``pip`` or using `pipenv <https://pipenv.readthedocs.io/en/latest/>`__. Once the environment is activated, clone the repo from GitHub
+To develop, we suggest using `virtual environments
+<https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__
+together with ``pip``.
+Once the virtual environment is activated, clone the repo from GitHub
 
 .. code-block:: console
 
