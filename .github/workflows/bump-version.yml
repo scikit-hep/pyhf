@@ -191,8 +191,8 @@ jobs:
 
     - name: Setup Git user to push new tag
       run: |
-        git config --local user.email "matthew.feickert@cern.ch"
-        git config --local user.name "Matthew Feickert"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
 
     - name: Bump version and push to GitHub
       if: >-
