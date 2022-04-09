@@ -82,11 +82,10 @@ from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
 Publishing
 ----------
 
-Publishing to PyPI_ and TestPyPI_ is automated through the `PyPA's PyPI publish
+Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
 GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
 and the ``pyhf`` `Bump version GitHub Actions workflow
 <https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/bump-version.yml>`__.
-
 
 Release Checklist
 ~~~~~~~~~~~~~~~~~
