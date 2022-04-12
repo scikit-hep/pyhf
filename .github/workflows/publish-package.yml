@@ -102,7 +102,7 @@ jobs:
         print_hash: true
 
     - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/pyhf'
+      if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.5.0
       with:
         password: ${{ secrets.pypi_password }}
