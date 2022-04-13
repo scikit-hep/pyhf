@@ -144,7 +144,7 @@ Context Files and Archive Metadata
 ----------------------------------
 
 The ``.zenodo.json`` and ``codemeta.json`` files have the version number
-automatically updated through ``bump2version``, though their additional metadata
+automatically updated through ``tbump``, though their additional metadata
 should be checked periodically by the dev team (probably every release).
 The ``codemeta.json`` file can be generated automatically **from a PyPI install**
 of ``pyhf`` using ``codemetapy``
