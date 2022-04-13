@@ -5,14 +5,16 @@ Developing
 Developer Environment
 ---------------------
 
-To develop, we suggest using `virtual environments
+To develop, we suggest using Python `virtual environments
 <https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__
 together with ``pip``.
-Once the virtual environment is activated, clone the repo from GitHub
+Once the virtual environment is activated and you have `SSH keys setup with GitHub
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`__, clone the
+repo from GitHub
 
 .. code-block:: console
 
-    git clone https://github.com/scikit-hep/pyhf.git
+    git clone git@github.com:scikit-hep/pyhf.git
 
 and install all necessary packages for development
 
@@ -33,6 +35,41 @@ locally after the hooks were updated.
 
 Testing
 -------
+
+To run the test suite in full, from the top level of the repository run
+
+.. code-block:: console
+
+    pytest
+
+more practically for most local testing you will not want to test the benchmarks,
+contrib module, or notebooks, and so instead to test the core codebase can run
+
+.. code-block:: console
+
+    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
+Contrib module matplotlib image tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To run the visualization tests for the ``contrib`` module with the ``pytest-mpl``
+``pytest`` plugin run
+
+.. code-block:: console
+
+    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
+
+Doctest
+~~~~~~~
+
+``pyhf``'s configuration of ``pytest`` will automatically run ``doctest`` on all the
+modules when the full test suite is run.
+To run ``doctest`` on an individual module or file just run ``pytest`` on its path.
+For example, to run ``doctest`` on the JAX backend run
+
+.. code-block:: console
+
+    pytest src/pyhf/tensor/jax_backend.py
 
 Data Files
 ~~~~~~~~~~
