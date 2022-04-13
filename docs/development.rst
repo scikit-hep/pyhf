@@ -102,7 +102,7 @@ Publishing
 
 Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
 GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
-and the ``pyhf`` `Bump version GitHub Actions workflow
+and the ``pyhf`` `bump version GitHub Actions workflow
 <https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/bump-version.yml>`__.
 
 Release Checklist
