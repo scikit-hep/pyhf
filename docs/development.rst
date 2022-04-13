@@ -68,8 +68,8 @@ To run the test suite in full, from the top level of the repository run
 
     pytest
 
-more practically for most local testing you will not want to test the benchmarks,
-contrib module, or notebooks, and so instead to test the core codebase can run
+More practically for most local testing you will not want to test the benchmarks,
+contrib module, or notebooks, and so instead to test the core codebase a developer can run
 
 .. code-block:: console
 
@@ -144,13 +144,13 @@ the deployment of them to TestPyPI_.
 TestPyPI
 ^^^^^^^^
 
-``pyhf`` tests packaging and distributing by publishing in advance of releases
-to TestPyPI_.
+``pyhf`` tests packaging and distribution by publishing to TestPyPI_ in advance of
+releases.
 Installation of the latest test release from TestPyPI can be tested
 by first installing ``pyhf`` normally, to ensure all dependencies are installed
 from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
 
-.. code-block:: bash
+.. code-block:: console
 
   python -m pip install pyhf
   python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre pyhf
@@ -196,7 +196,7 @@ should be checked periodically by the dev team (probably every release).
 The ``codemeta.json`` file can be generated automatically **from a PyPI install**
 of ``pyhf`` using ``codemetapy``
 
-.. code-block:: bash
+.. code-block:: console
 
   codemetapy --no-extras pyhf > codemeta.json
 
