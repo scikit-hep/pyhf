@@ -36,43 +36,11 @@ locally after the hooks were updated.
 Testing
 -------
 
-To run the test suite in full, from the top level of the repository run
-
-.. code-block:: console
-
-    pytest
-
-more practically for most local testing you will not want to test the benchmarks,
-contrib module, or notebooks, and so instead to test the core codebase can run
-
-.. code-block:: console
-
-    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
-
-Contrib module matplotlib image tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To run the visualization tests for the ``contrib`` module with the ``pytest-mpl``
-``pytest`` plugin run
-
-.. code-block:: console
-
-    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
-
-Doctest
-~~~~~~~
-
-``pyhf``'s configuration of ``pytest`` will automatically run ``doctest`` on all the
-modules when the full test suite is run.
-To run ``doctest`` on an individual module or file just run ``pytest`` on its path.
-For example, to run ``doctest`` on the JAX backend run
-
-.. code-block:: console
-
-    pytest src/pyhf/tensor/jax_backend.py
+Writing tests
+~~~~~~~~~~~~~
 
 Data Files
-~~~~~~~~~~
+^^^^^^^^^^
 
 A function-scoped fixture called ``datadir`` exists for a given test module
 which will automatically copy files from the associated test modules data
@@ -90,6 +58,44 @@ available by the ``datadir`` fixture. Therefore, one can do:
 which will load the copy of ``text.txt`` in the temporary directory. This also
 works for parameterizations as this will effectively sandbox the file
 modifications made.
+
+Running with pytest
+~~~~~~~~~~~~~~~~~~~
+
+To run the test suite in full, from the top level of the repository run
+
+.. code-block:: console
+
+    pytest
+
+more practically for most local testing you will not want to test the benchmarks,
+contrib module, or notebooks, and so instead to test the core codebase can run
+
+.. code-block:: console
+
+    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
+Contrib module matplotlib image tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To run the visualization tests for the ``contrib`` module with the ``pytest-mpl``
+``pytest`` plugin run
+
+.. code-block:: console
+
+    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
+
+Doctest
+^^^^^^^
+
+``pyhf``'s configuration of ``pytest`` will automatically run ``doctest`` on all the
+modules when the full test suite is run.
+To run ``doctest`` on an individual module or file just run ``pytest`` on its path.
+For example, to run ``doctest`` on the JAX backend run
+
+.. code-block:: console
+
+    pytest src/pyhf/tensor/jax_backend.py
 
 Publishing
 ----------
