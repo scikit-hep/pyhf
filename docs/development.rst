@@ -175,7 +175,7 @@ final deployment to PyPI_ can be done by creating a GitHub Release:
    select the `"Draft a new release" <https://github.com/scikit-hep/pyhf/releases/new>`__
    button.
 #. Select the release tag that was just pushed, and set the release title to be the tag
-   (e.g. `v1.2.3`).
+   (e.g. ``v1.2.3``).
 #. Use the "Auto-generate release notes" button to generate a skeleton of the release
    notes and then augment them with the preprepared release notes the release maintainer
    has written.
