@@ -129,7 +129,8 @@ The maintainer needs to:
   release tags).
 
 The maintainer should do a dry run first to make sure everything looks reasonable.
-Once they have done that, they can run the bump version workflow which will produce
+Once they have done that, they can run the `bump version GitHub Actions workflow
+<https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml>`__ which will produce
 a new tag, bump the version of all files defined in `tbump.toml
 <https://github.com/scikit-hep/pyhf/blob/master/tbump.toml>`__, and then commit and
 push these changes and the tag back to the ``master`` branch.
@@ -168,22 +169,20 @@ from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
 PyPI
 ^^^^
 
-Once the deployment has been examined, installed, and tested locally by the maintainers
-final deployment to PyPI_ can be done.
+Once the TestPyPI deployment has been examined, installed, and tested locally by the maintainers
+final deployment to PyPI_ can be done by creating a GitHub Release:
 
-Releases are performed through GitHub Releases.
-
-* From the ``pyhf`` `GitHub releases page <https://github.com/scikit-hep/pyhf/releases>`__
-  select the `"Draft a new release" <https://github.com/scikit-hep/pyhf/releases/new>`__
-  button.
-* Select the release tag that was just pushed, and set the release title to be the tag
-  (e.g. `v1.2.3`).
-* Use the "Auto-generate release notes" button to generate a skeleton of the release
-  notes and then augment them with the preprepared release notes the release maintainer
-  has written.
-* Select "This is a pre-release" if the release is a release candidate.
-* Select "Create a discussion for this release" if the release is a stable release.
-* Select "Publish release".
+#. From the ``pyhf`` `GitHub releases page <https://github.com/scikit-hep/pyhf/releases>`__
+   select the `"Draft a new release" <https://github.com/scikit-hep/pyhf/releases/new>`__
+   button.
+#. Select the release tag that was just pushed, and set the release title to be the tag
+   (e.g. `v1.2.3`).
+#. Use the "Auto-generate release notes" button to generate a skeleton of the release
+   notes and then augment them with the preprepared release notes the release maintainer
+   has written.
+#. Select "This is a pre-release" if the release is a release candidate.
+#. Select "Create a discussion for this release" if the release is a stable release.
+#. Select "Publish release".
 
 Once the release has been published to GitHub, the publishing workflow will build a
 sdist and wheel, and then deploy them to PyPI_.
