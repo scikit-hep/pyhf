@@ -1,10 +1,12 @@
-import pytest
-import pyhf
-import sys
-import tarfile
 import json
 import pathlib
+import sys
+import tarfile
+
+import pytest
 from setuptools._distutils import dir_util
+
+import pyhf
 
 
 # Factory as fixture pattern
