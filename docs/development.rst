@@ -14,7 +14,7 @@ repo from GitHub
 
 .. code-block:: console
 
-    git clone git@github.com:scikit-hep/pyhf.git
+    git clone git@github.com:scikit-hep/pyhf
 
 and install all necessary packages for development
 
