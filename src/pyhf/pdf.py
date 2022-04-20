@@ -631,7 +631,7 @@ class _MainModel:
         allfac = tensorlib.concatenate(factors + [nom_plus_delta])
 
         newbysample = tensorlib.product(allfac, axis=0)
-        if self.clip_sample_data:
+        if self.clip_sample_data is not None:
             newbysample = tensorlib.clip(
                 newbysample, self.clip_sample_data, max_value=None
             )
@@ -643,7 +643,7 @@ class _MainModel:
             return batch_first
 
         newresults = tensorlib.sum(newbysample, axis=0)
-        if self.clip_bin_data:
+        if self.clip_bin_data is not None:
             newresults = tensorlib.clip(newresults, self.clip_bin_data, max_value=None)
 
         if self.batch_size is None:
