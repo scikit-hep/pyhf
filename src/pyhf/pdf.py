@@ -2,7 +2,7 @@
 
 import copy
 import logging
-from typing import List
+from typing import List, Union
 
 import pyhf.parameters
 import pyhf
@@ -506,7 +506,15 @@ class _ConstraintModel:
 class _MainModel:
     """Factory class to create pdfs for the main measurement."""
 
-    def __init__(self, config, modifiers, nominal_rates, batch_size=None):
+    def __init__(
+        self,
+        config,
+        modifiers,
+        nominal_rates,
+        batch_size=None,
+        clip_sample_data: Union[float, None] = None,
+        clip_bin_data: Union[float, None] = None,
+    ):
         default_backend = pyhf.default_backend
 
         self.config = config
@@ -514,6 +522,9 @@ class _MainModel:
         self._factor_mods = []
         self._delta_mods = []
         self.batch_size = batch_size
+
+        self.clip_sample_data = clip_sample_data
+        self.clip_bin_data = clip_bin_data
 
         self._nominal_rates = default_backend.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
@@ -547,7 +558,6 @@ class _MainModel:
     def make_pdf(self, pars):
         tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
-        lambdas_data = tensorlib.clip(lambdas_data, 1e-6, max_value=None)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
@@ -621,6 +631,11 @@ class _MainModel:
         allfac = tensorlib.concatenate(factors + [nom_plus_delta])
 
         newbysample = tensorlib.product(allfac, axis=0)
+        if self.clip_sample_data:
+            newbysample = tensorlib.clip(
+                newbysample, self.clip_sample_data, max_value=None
+            )
+
         if return_by_sample:
             batch_first = tensorlib.einsum('ij...->ji...', newbysample)
             if self.batch_size is None:
@@ -628,6 +643,9 @@ class _MainModel:
             return batch_first
 
         newresults = tensorlib.sum(newbysample, axis=0)
+        if self.clip_bin_data:
+            newresults = tensorlib.clip(newresults, self.clip_bin_data, max_value=None)
+
         if self.batch_size is None:
             return newresults[0]
         return newresults
@@ -642,6 +660,8 @@ class Model:
         modifier_set=None,
         batch_size=None,
         validate: bool = True,
+        clip_sample_data: Union[float, None] = None,
+        clip_bin_data: Union[float, None] = None,
         **config_kwargs,
     ):
         """
@@ -652,6 +672,8 @@ class Model:
             batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched)
              Models to compute.
             validate (:obj:`bool`): Whether to validate against a JSON schema
+            clip_sample_data (:obj:`None` or :obj:`float`): Clip the minimum value of expected data by-sample. Default is no clipping.
+            clip_bin_data (:obj:`None` or :obj:`float`): Clip the minimum value of expected data by-bin. Default is no clipping.
             config_kwargs: Possible keyword arguments for the model configuration
 
         Returns:
@@ -686,6 +708,8 @@ class Model:
             modifiers=modifiers,
             nominal_rates=_nominal_rates,
             batch_size=self.batch_size,
+            clip_sample_data=clip_sample_data,
+            clip_bin_data=clip_bin_data,
         )
 
         # the below call needs auxdata order for example
