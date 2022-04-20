@@ -556,7 +556,6 @@ class _MainModel:
         return True
 
     def make_pdf(self, pars):
-        tensorlib, _ = get_backend()
         lambdas_data = self.expected_data(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
 
@@ -820,8 +819,6 @@ class Model:
             pdf: A distribution object implementing the main measurement pdf of HistFactory
 
         """
-        tensorlib, _ = get_backend()
-
         pdfobjs = []
         mainpdf = self.main_model.make_pdf(pars)
         if mainpdf:
