@@ -70,7 +70,7 @@ Roadmap
       #502) and write submission to
       `pyOpenSci <https://www.pyopensci.org/>`__ [2019-Q4 → 2020-Q2]
    -  |check| Contribute to `IRIS-HEP Analysis Systems
-      Milestones <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
+      Milestones <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/>`__
       "`Initial roadmap for ecosystem
       coherency <https://github.com/iris-hep/project-milestones/issues/8>`__"
       and "`Initial roadmap for high-level cyberinfrastructure
@@ -127,7 +127,7 @@ Roadmap
    -  |uncheck| Attempt to use pyhf as fitting tool for full Analysis Systems
       pipeline test in early 2020 [2019-Q4 → 2020-Q1]
    -  |uncheck| pyhf should satisfy `IRIS-HEP Analysis Systems
-      Milestone <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/edit#gid=1864915304>`__
+      Milestone <https://docs.google.com/spreadsheets/d/1VKpHlQWXu_p8AUv5E5H_BzqF_i7hh2Z-Id0XPwNHu8o/>`__
       "`GPU/accelerator-based implementation of statistical and other
       appropriate
       components <https://github.com/iris-hep/project-milestones/issues/15>`__"
