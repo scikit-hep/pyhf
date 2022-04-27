@@ -63,7 +63,7 @@ def fit(
 
     .. code-block:: shell
 
-        $ curl -sL https://git.io/JJYDE | pyhf fit --value
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/HEAD/docs/examples/json/2-bin_1-channel.json | pyhf fit --value
 
         \b
         {
@@ -176,7 +176,7 @@ def cls(
 
     .. code-block:: shell
 
-        $ curl -sL https://git.io/JJYDE | pyhf cls
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/HEAD/docs/examples/json/2-bin_1-channel.json | pyhf cls
 
         \b
         {
