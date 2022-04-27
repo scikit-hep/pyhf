@@ -70,7 +70,8 @@ Alternatively the statistical model and observational data can be read from its 
    >>> import pyhf
    >>> import requests
    >>> pyhf.set_backend("numpy")
-   >>> wspace = pyhf.Workspace(requests.get("https://git.io/JJYDE").json())
+   >>> url = "https://raw.githubusercontent.com/scikit-hep/pyhf/HEAD/docs/examples/json/2-bin_1-channel.json"
+   >>> wspace = pyhf.Workspace(requests.get(url).json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
    >>> test_mu = 1.0
