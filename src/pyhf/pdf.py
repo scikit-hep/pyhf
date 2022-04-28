@@ -607,6 +607,12 @@ class _MainModel:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         deltas, factors = self._modifications(pars)
 
         allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
@@ -713,6 +719,12 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         return self.make_pdf(pars)[1].expected_data()
 
     def _modifications(self, pars):
@@ -736,6 +748,12 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         return self.make_pdf(pars)[0].expected_data()
 
     def expected_data(self, pars, include_auxdata=True):
@@ -751,6 +769,12 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         if not include_auxdata:
             return self.make_pdf(pars)[0].expected_data()
         return self.make_pdf(pars).expected_data()
