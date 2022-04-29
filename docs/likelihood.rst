@@ -199,11 +199,13 @@ each sample would yield a very large number of nuisance parameters with limited
 utility. Therefore a set of bin-wise scale factors :math:`\gamma_b` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
 The constraint term is constructed as a set of Gaussian constraints with a
-central value equal to unity for each bin in the channel. The scales
-:math:`\sigma_b` of the constraint are computed from the individual
+central value equal to unity (one Gaussian for each bin). The scales
+:math:`\sigma_b` of the Gaussian are computed from the individual
 uncertainties of samples defined within the channel relative to the total event
-rate of all samples: :math:`\delta_{csb} = \sigma_{csb}/\sum_s \nu^0_{scb}`. As
-not all samples are within a channel are estimated from MC simulations, only
+rate of all samples: :math:`\sigma_{csb} = \delta_{csb}/\sum_s \nu^0_{scb}`.
+Where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
+
+As not all samples are within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
 An example of a statistical uncertainty modifier for a single bin channel is
 shown below:
