@@ -202,8 +202,8 @@ The constraint term is constructed as a set of constraints with a
 central value equal to unity (e.g. `Gauss(:math:`\mu` = 1, :math:`\sigma_b`)` for each bin). The scales
 :math:`\sigma_b` of the constraints are computed from the individual
 uncertainties of samples defined within the channel relative to the total event
-rate of all samples: :math:`\sigma_{csb} = \delta_{csb}/\sum_s \nu^0_{scb}`.
-Where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
+rate of all samples: :math:`\sigma_{b} = \sqrt{\sum_s\delta_{sb}}/\sum_s \nu^0_{sb}`.
+Where :math:`\delta_{sb}` is the absolute yield uncertainty in each bin, each sample.
 
 As not all samples are within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
