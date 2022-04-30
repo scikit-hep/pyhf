@@ -462,3 +462,7 @@ mathjax3_config = {
         }
     },
 }
+
+# c.f. https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder
+linkcheck_ignore = ['cli.html#pyhf-xml2json']
+linkcheck_retries = 50
