@@ -1,10 +1,12 @@
-import pytest
-import pyhf
-import sys
-import tarfile
 import json
 import pathlib
-import distutils.dir_util
+import sys
+import tarfile
+
+import pytest
+from setuptools._distutils import dir_util
+
+import pyhf
 
 
 # Factory as fixture pattern
@@ -134,7 +136,7 @@ def datadir(tmp_path, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        distutils.dir_util.copy_tree(test_dir, str(tmp_path))
+        dir_util.copy_tree(test_dir, str(tmp_path))
         # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
         # Once pyhf is Python 3.8+ only then the below can be used.
         # shutil.copytree(test_dir, tmpdir)

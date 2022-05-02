@@ -18,10 +18,11 @@ class minuit_optimizer(OptimizerMixin):
 
         .. note::
 
-            ``errordef`` should be 1.0 for a least-squares cost function and 0.5
-            for negative log-likelihood function. See page 37 of
-            http://hep.fi.infn.it/minuit.pdf. This parameter is sometimes
-            called ``UP`` in the ``MINUIT`` docs.
+            ``errordef`` should be 1.0 for a least-squares cost function and 0.50
+            for negative log-likelihood function --- see `MINUIT: Function Minimization
+            and Error Analysis Reference Manual <https://cdsweb.cern.ch/record/2296388/>`_
+            Section 7.1: Function normalization and ERROR DEF.
+            This parameter is sometimes called ``UP`` in the ``MINUIT`` docs.
 
 
         Args:

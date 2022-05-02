@@ -5,11 +5,16 @@ Developing
 Developer Environment
 ---------------------
 
-To develop, we suggest using `virtual environments <https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__ together with ``pip`` or using `pipenv <https://pipenv.readthedocs.io/en/latest/>`__. Once the environment is activated, clone the repo from GitHub
+To develop, we suggest using Python `virtual environments
+<https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__
+together with ``pip``.
+Once the virtual environment is activated and you have `SSH keys setup with GitHub
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`__, clone the
+repo from GitHub
 
 .. code-block:: console
 
-    git clone https://github.com/scikit-hep/pyhf.git
+    git clone git@github.com:scikit-hep/pyhf
 
 and install all necessary packages for development
 
@@ -17,26 +22,25 @@ and install all necessary packages for development
 
     python -m pip install --upgrade --editable .[complete]
 
-Then setup the Git pre-commit hook for `Black <https://github.com/psf/black>`__  by running
+Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
 
 .. code-block:: console
 
     pre-commit install
 
-as the ``rev`` gets updated through time to track changes of different hooks,
-simply run
-
-.. code-block:: console
-
-    pre-commit autoupdate
-
-to have pre-commit install the new version.
+inside of the virtual environment.
+`pre-commit.ci <https://pre-commit.ci/>`__ keeps the pre-commit hooks updated
+through time, so pre-commit will automatically update itself when you run it
+locally after the hooks were updated.
 
 Testing
 -------
 
+Writing tests
+~~~~~~~~~~~~~
+
 Data Files
-~~~~~~~~~~
+^^^^^^^^^^
 
 A function-scoped fixture called ``datadir`` exists for a given test module
 which will automatically copy files from the associated test modules data
@@ -55,23 +59,105 @@ which will load the copy of ``text.txt`` in the temporary directory. This also
 works for parameterizations as this will effectively sandbox the file
 modifications made.
 
-TestPyPI
-~~~~~~~~
+Running with pytest
+~~~~~~~~~~~~~~~~~~~
 
-``pyhf`` tests packaging and distributing by publishing in advance of releases
-to `TestPyPI <https://test.pypi.org/project/pyhf/>`__.
+To run the test suite in full, from the top level of the repository run
+
+.. code-block:: console
+
+    pytest
+
+More practically for most local testing you will not want to test the benchmarks,
+contrib module, or notebooks, and so instead to test the core codebase a developer can run
+
+.. code-block:: console
+
+    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+
+Contrib module matplotlib image tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To run the visualization tests for the ``contrib`` module with the ``pytest-mpl``
+``pytest`` plugin run
+
+.. code-block:: console
+
+    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
+
+Doctest
+^^^^^^^
+
+``pyhf``'s configuration of ``pytest`` will automatically run ``doctest`` on all the
+modules when the full test suite is run.
+To run ``doctest`` on an individual module or file just run ``pytest`` on its path.
+For example, to run ``doctest`` on the JAX backend run
+
+.. code-block:: console
+
+    pytest src/pyhf/tensor/jax_backend.py
+
+Publishing
+----------
+
+Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
+GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
+and the ``pyhf`` `bump version GitHub Actions workflow
+<https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/bump-version.yml>`__.
+
+Release Checklist
+~~~~~~~~~~~~~~~~~
+
+As part of the release process a checklist is required to be completed to make
+sure steps aren't missed.
+There is a GitHub Issue template for this that the maintainer in charge of the
+release should step through and update if needed.
+
+Release Tags
+~~~~~~~~~~~~
+
+A release tag can be created by a maintainer by using the `bump version GitHub Actions
+workflow`_ through workflow dispatch.
+The maintainer needs to:
+
+* Select the semantic versioning (SemVer) type (major, minor, patch) of the release tag.
+* Select if the release tag is a release candidate or not.
+* Input the SemVer version number of the release tag.
+* Select if to override the SemVer compatibility of the previous options (default
+  is to run checks).
+* Select if a dry run should be performed (default is to do a dry run to avoid accidental
+  release tags).
+
+The maintainer **should do a dry run first to make sure everything looks reasonable**.
+Once they have done that, they can run the `bump version GitHub Actions workflow`_ which
+will produce a new tag, bump the version of all files defined in `tbump.toml
+<https://github.com/scikit-hep/pyhf/blob/master/tbump.toml>`__, and then commit and
+push these changes and the tag back to the ``master`` branch.
+
+Deployment
+~~~~~~~~~~
+
+The push of a tag to the repository will trigger a build of a sdist and wheel, and then
+the deployment of them to TestPyPI_.
+
+TestPyPI
+^^^^^^^^
+
+``pyhf`` tests packaging and distribution by publishing to TestPyPI_ in advance of
+releases.
 Installation of the latest test release from TestPyPI can be tested
 by first installing ``pyhf`` normally, to ensure all dependencies are installed
 from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
 
-.. code-block:: bash
+.. code-block:: console
 
   python -m pip install pyhf
   python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre pyhf
 
 .. note::
 
-  This adds TestPyPI as `an additional package index to search <https://pip.pypa.io/en/stable/reference/pip_install/#cmdoption-extra-index-url>`__
+  This adds TestPyPI as `an additional package index to search
+  <https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-extra-index-url>`__
   when installing.
   PyPI will still be the default package index ``pip`` will attempt to install
   from for all dependencies, but if a package has a release on TestPyPI that
@@ -79,32 +165,37 @@ from PyPI, and then upgrading ``pyhf`` to a test release from TestPyPI
   Note that dev releases are considered pre-releases, so ``0.1.2`` is a "newer"
   release than ``0.1.2.dev3``.
 
-Publishing
-----------
+PyPI
+^^^^
 
-Publishing to `PyPI <https://pypi.org/project/pyhf/>`__ and `TestPyPI <https://test.pypi.org/project/pyhf/>`__
-is automated through the `PyPA's PyPI publish GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
-and the ``pyhf`` `Tag Creator GitHub Actions workflow <https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/tag.yml>`__.
-A release can be created from any PR created by a core developer by adding a
-``bumpversion`` tag to it that corresponds to the release type:
-`major <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fmajor>`__,
-`minor <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fminor>`__,
-`patch <https://github.com/scikit-hep/pyhf/labels/bumpversion%2Fpatch>`__.
-Once the PR is tagged with the label, the GitHub Actions bot will post a comment
-with information on the actions it will take once the PR is merged. When the PR
-has been reviewed, approved, and merged, the Tag Creator workflow will automatically
-create a new release with ``bump2version`` and then deploy the release to PyPI.
+Once the TestPyPI deployment has been examined, installed, and tested locally by the maintainers
+final deployment to PyPI_ can be done by creating a GitHub Release:
+
+#. From the ``pyhf`` `GitHub releases page <https://github.com/scikit-hep/pyhf/releases>`__
+   select the `"Draft a new release" <https://github.com/scikit-hep/pyhf/releases/new>`__
+   button.
+#. Select the release tag that was just pushed, and set the release title to be the tag
+   (e.g. ``v1.2.3``).
+#. Use the "Auto-generate release notes" button to generate a skeleton of the release
+   notes and then augment them with the preprepared release notes the release maintainer
+   has written.
+#. Select "This is a pre-release" if the release is a release candidate.
+#. Select "Create a discussion for this release" if the release is a stable release.
+#. Select "Publish release".
+
+Once the release has been published to GitHub, the publishing workflow will build a
+sdist and wheel, and then deploy them to PyPI_.
 
 Context Files and Archive Metadata
 ----------------------------------
 
 The ``.zenodo.json`` and ``codemeta.json`` files have the version number
-automatically updated through ``bump2version``, though their additional metadata
+automatically updated through ``tbump``, though their additional metadata
 should be checked periodically by the dev team (probably every release).
 The ``codemeta.json`` file can be generated automatically **from a PyPI install**
 of ``pyhf`` using ``codemetapy``
 
-.. code-block:: bash
+.. code-block:: console
 
   codemetapy --no-extras pyhf > codemeta.json
 
@@ -112,10 +203,6 @@ though the ``author`` metadata will still need to be checked and revised by hand
 The ``.zenodo.json`` is currently generated by hand, so it is worth using
 ``codemeta.json`` as a guide to edit it.
 
-Release Checklist
------------------
-
-As part of the release process a checklist is required to be completed to make
-sure steps aren't missed.
-There is a GitHub Issue template for this that the developer in charge of the
-release should step through and update if needed.
+.. _bump version GitHub Actions workflow: https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml
+.. _PyPI: https://pypi.org/project/pyhf/
+.. _TestPyPI: https://test.pypi.org/project/pyhf/

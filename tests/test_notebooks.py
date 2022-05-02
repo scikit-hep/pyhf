@@ -1,8 +1,9 @@
 import sys
-import os
+from pathlib import Path
+
 import papermill as pm
-import scrapbook as sb
 import pytest
+import scrapbook as sb
 
 
 @pytest.fixture()
@@ -11,6 +12,7 @@ def common_kwargs(tmpdir):
     return {
         'output_path': str(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
+        'progress_bar': False,
     }
 
 
@@ -19,17 +21,19 @@ def test_hello_world(common_kwargs):
 
 
 def test_xml_importexport(common_kwargs):
+    # Change directories to make users not have to worry about paths to follow example
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
     pm.execute_notebook(
-        'docs/examples/notebooks/XML_ImportExport.ipynb', **common_kwargs
+        execution_dir / "XML_ImportExport.ipynb", cwd=execution_dir, **common_kwargs
     )
 
 
 def test_statisticalanalysis(common_kwargs):
     # The Binder example uses specific relative paths
-    cwd = os.getcwd()
-    os.chdir(os.path.join(cwd, 'docs/examples/notebooks/binderexample'))
-    pm.execute_notebook('StatisticalAnalysis.ipynb', **common_kwargs)
-    os.chdir(cwd)
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks" / "binderexample"
+    pm.execute_notebook(
+        execution_dir / "StatisticalAnalysis.ipynb", cwd=execution_dir, **common_kwargs
+    )
 
 
 def test_shapefactor(common_kwargs):
@@ -39,7 +43,7 @@ def test_shapefactor(common_kwargs):
 def test_multichannel_coupled_histos(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/multichannel-coupled-histo.ipynb',
-        parameters={'validation_datadir': 'validation/data'},
+        parameters={"validation_datadir": str(Path.cwd() / "validation" / "data")},
         **common_kwargs,
     )
 
@@ -47,7 +51,7 @@ def test_multichannel_coupled_histos(common_kwargs):
 def test_multibinpois(common_kwargs):
     pm.execute_notebook(
         'docs/examples/notebooks/multiBinPois.ipynb',
-        parameters={'validation_datadir': 'validation/data'},
+        parameters={"validation_datadir": str(Path.cwd() / "validation" / "data")},
         **common_kwargs,
     )
     nb = sb.read_notebook(common_kwargs['output_path'])
@@ -55,19 +59,17 @@ def test_multibinpois(common_kwargs):
 
 
 def test_pullplot(common_kwargs):
-    # Change directories to make users not have to worry about paths to follow example
-    cwd = os.getcwd()
-    os.chdir(os.path.join(cwd, "docs/examples/notebooks"))
-    pm.execute_notebook("pullplot.ipynb", **common_kwargs)
-    os.chdir(cwd)
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
+    pm.execute_notebook(
+        execution_dir / "pullplot.ipynb", cwd=execution_dir, **common_kwargs
+    )
 
 
 def test_impactplot(common_kwargs):
-    # Change directories to make users not have to worry about paths to follow example
-    cwd = os.getcwd()
-    os.chdir(os.path.join(cwd, "docs/examples/notebooks"))
-    pm.execute_notebook("ImpactPlot.ipynb", **common_kwargs)
-    os.chdir(cwd)
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
+    pm.execute_notebook(
+        execution_dir / "ImpactPlot.ipynb", cwd=execution_dir, **common_kwargs
+    )
 
 
 def test_toys(common_kwargs):
