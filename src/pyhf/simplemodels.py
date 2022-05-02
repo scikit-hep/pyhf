@@ -9,7 +9,7 @@ def __dir__():
     return __all__
 
 
-def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
+def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None, validate=True):
     r"""
     Construct a simple single channel :class:`~pyhf.pdf.Model` with a
     :class:`~pyhf.modifiers.histosys` modifier representing a background
@@ -23,6 +23,8 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
         bkg_down (:obj:`list`): The background sample under a downward variation
          corresponding to :math:`\alpha=-1`.
         batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute.
+        validate (:obj:`bool`): If :obj:`True`, validate the model before returning. 
+         Only set this to :obj:`False` if you have an experimental use case and know what you're doing.
 
     Returns:
         ~pyhf.pdf.Model: The statistical model adhering to the :obj:`model.json` schema.
@@ -75,10 +77,10 @@ def correlated_background(signal, bkg, bkg_up, bkg_down, batch_size=None):
             }
         ]
     }
-    return Model(spec, batch_size=batch_size)
+    return Model(spec, batch_size=batch_size, validate=validate)
 
 
-def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
+def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None, validate=True):
     """
     Construct a simple single channel :class:`~pyhf.pdf.Model` with a
     :class:`~pyhf.modifiers.shapesys` modifier representing an uncorrelated
@@ -106,6 +108,8 @@ def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
         bkg (:obj:`list`): The data in the background sample
         bkg_uncertainty (:obj:`list`): The statistical uncertainty on the background sample counts
         batch_size (:obj:`None` or :obj:`int`): Number of simultaneous (batched) Models to compute
+        validate (:obj:`bool`): If :obj:`True`, validate the model before returning.
+         Only set this to :obj:`False` if you have an experimental use case and know what you're doing.
 
     Returns:
         ~pyhf.pdf.Model: The statistical model adhering to the :obj:`model.json` schema
@@ -138,7 +142,7 @@ def uncorrelated_background(signal, bkg, bkg_uncertainty, batch_size=None):
             }
         ]
     }
-    return Model(spec, batch_size=batch_size)
+    return Model(spec, batch_size=batch_size, validate=validate)
 
 
 # Deprecated APIs
