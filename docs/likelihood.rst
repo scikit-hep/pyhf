@@ -194,7 +194,7 @@ MC Statistical Uncertainty (staterror)
 
 As the sample counts are often derived from Monte Carlo (MC) datasets, they
 necessarily carry an uncertainty due to the finite sample size of the datasets.
-As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
+As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
 each sample would yield a very large number of nuisance parameters with limited
 utility.
 Therefore a set of bin-wise scale factors :math:`\gamma_{cb}` is
