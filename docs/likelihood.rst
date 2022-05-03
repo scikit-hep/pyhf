@@ -200,7 +200,7 @@ utility.
 Therefore a set of bin-wise scale factors :math:`\gamma_{cb}` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
 The constraint term is constructed as a set of constraints with a
-central value equal to unity (e.g. Gauss(:math:`\mu` = 1, :math:`\sigma_{cb}`) for
+central value equal to unity (e.g. :math:`\mathrm{Gauss} (\mu = 1, \sigma_{cb}`) for
 each bin in the channel).
 The scales :math:`\sigma_{cb}` of the constraints are computed from the individual
 uncertainties of samples defined within the channel relative to the total event rate
