@@ -204,8 +204,8 @@ central value equal to unity, e.g. :math:`\mathrm{Gauss} (\mu = 1, \sigma_{cb})`
 each bin in the channel.
 The scales :math:`\sigma_{cb}` of the constraints are computed from the individual
 uncertainties of samples defined within the channel relative to the total event rate
-of all samples: :math:`\sigma_{cb} = \sqrt{\sum_s\delta_{csb}}/\sum_s \nu^0_{csb}`.
-Where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
+of all samples: :math:`\sigma_{cb} = \sqrt{\sum_s\delta_{csb}}/\sum_s \nu^0_{csb}`,
+where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
 
 As not all samples are within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
