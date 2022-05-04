@@ -207,7 +207,7 @@ uncertainties of samples defined within the channel relative to the total event 
 of all samples: :math:`\sigma_{cb} = \sqrt{\sum_s\delta_{csb}}/\sum_s \nu^0_{csb}`,
 where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
 
-As not all samples are within a channel are estimated from MC simulations, only
+As not all samples within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
 An example of a statistical uncertainty modifier for a single bin channel is
 shown below:
