@@ -1,5 +1,6 @@
 from pyhf import schema
 from pyhf import compat
+from pyhf import exceptions
 
 import logging
 
@@ -333,7 +334,7 @@ def dedupe_parameters(parameters):
     return list({v['name']: v for v in parameters}.values())
 
 
-def parse(configfile, rootdir, track_progress=False, skip_validation=False):
+def parse(configfile, rootdir, track_progress=False, validation_exception=True):
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
         [x.text for x in toplvl.findall('Input')],
@@ -366,9 +367,13 @@ def parse(configfile, rootdir, track_progress=False, skip_validation=False):
         ],
         'version': schema.version,
     }
-    if not skip_validation:
+    try:
         schema.validate(result, 'workspace.json')
-
+    except exceptions.InvalidSpecification as exc:
+        if validation_exception:
+            raise exc
+        else:
+            log.warning(exc)
     return result
 
 
