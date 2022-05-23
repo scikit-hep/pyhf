@@ -464,6 +464,6 @@ def test_import_validation_exception(mocker, caplog):
         pyhf.readxml.parse(
             'validation/xmlimport_input2/config/example.xml',
             'validation/xmlimport_input2',
-            validation_exception=False,
+            validation_as_error=False,
         )
         assert "this is an invalid specification" in caplog.text

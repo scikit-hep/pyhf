@@ -334,7 +334,7 @@ def dedupe_parameters(parameters):
     return list({v['name']: v for v in parameters}.values())
 
 
-def parse(configfile, rootdir, track_progress=False, validation_exception=True):
+def parse(configfile, rootdir, track_progress=False, validation_as_error=True):
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
         [x.text for x in toplvl.findall('Input')],
@@ -370,7 +370,7 @@ def parse(configfile, rootdir, track_progress=False, validation_exception=True):
     try:
         schema.validate(result, 'workspace.json')
     except exceptions.InvalidSpecification as exc:
-        if validation_exception:
+        if validation_as_error:
             raise exc
         else:
             log.warning(exc)
