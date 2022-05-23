@@ -333,7 +333,7 @@ def dedupe_parameters(parameters):
     return list({v['name']: v for v in parameters}.values())
 
 
-def parse(configfile, rootdir, track_progress=False):
+def parse(configfile, rootdir, track_progress=False, skip_validation=False):
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
         [x.text for x in toplvl.findall('Input')],
@@ -366,7 +366,8 @@ def parse(configfile, rootdir, track_progress=False):
         ],
         'version': schema.version,
     }
-    schema.validate(result, 'workspace.json')
+    if not skip_validation:
+        schema.validate(result, 'workspace.json')
 
     return result
 

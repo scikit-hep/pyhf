@@ -448,3 +448,22 @@ def test_process_modifiers(mocker, caplog):
     assert {'name': 'staterror_myChannel', 'type': 'staterror', 'data': _err} in result[
         'modifiers'
     ]
+
+
+def test_import_skip_validation(mocker):
+    spy = mocker.spy(pyhf.schema, 'validate')
+    assert spy.call_count == 0
+    pyhf.readxml.parse(
+        'validation/xmlimport_input2/config/example.xml',
+        'validation/xmlimport_input2',
+        skip_validation=False,
+    )
+    assert spy.call_count == 1
+    spy.reset_mock()
+
+    pyhf.readxml.parse(
+        'validation/xmlimport_input2/config/example.xml',
+        'validation/xmlimport_input2',
+        skip_validation=True,
+    )
+    assert spy.call_count == 0
