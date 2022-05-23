@@ -467,3 +467,10 @@ def test_import_validation_exception(mocker, caplog):
             validation_as_error=False,
         )
         assert "this is an invalid specification" in caplog.text
+
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.readxml.parse(
+            'validation/xmlimport_input2/config/example.xml',
+            'validation/xmlimport_input2',
+            validation_as_error=True,
+        )
