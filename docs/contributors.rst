@@ -27,3 +27,4 @@ Contributors include:
 - Mason Proffitt
 - Lars Henkelmann
 - Aryan Roy
+- Jerry Ling

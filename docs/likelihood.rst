@@ -194,16 +194,20 @@ MC Statistical Uncertainty (staterror)
 
 As the sample counts are often derived from Monte Carlo (MC) datasets, they
 necessarily carry an uncertainty due to the finite sample size of the datasets.
-As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
+As explained in detail in :cite:`likelihood-Cranmer:1456844`, adding uncertainties for
 each sample would yield a very large number of nuisance parameters with limited
-utility. Therefore a set of bin-wise scale factors :math:`\gamma_b` is
+utility.
+Therefore a set of bin-wise scale factors :math:`\gamma_{cb}` is
 introduced to model the overall uncertainty in the bin due to MC statistics.
-The constraint term is constructed as a set of Gaussian constraints with a
-central value equal to unity for each bin in the channel. The scales
-:math:`\sigma_b` of the constraint are computed from the individual
-uncertainties of samples defined within the channel relative to the total event
-rate of all samples: :math:`\delta_{csb} = \sigma_{csb}/\sum_s \nu^0_{scb}`. As
-not all samples are within a channel are estimated from MC simulations, only
+The constraint term is constructed as a set of constraints with a
+central value equal to unity, e.g. :math:`\mathrm{Gauss} (\mu = 1, \sigma_{cb})`, for
+each bin in the channel.
+The scales :math:`\sigma_{cb}` of the constraints are computed from the individual
+uncertainties of samples defined within the channel relative to the total event rate
+of all samples: :math:`\sigma_{cb} = \sqrt{\sum_s\delta_{csb}}/\sum_s \nu^0_{csb}`,
+where :math:`\delta_{csb}` is the absolute yield uncertainty in each bin.
+
+As not all samples within a channel are estimated from MC simulations, only
 the samples with a declared statistical uncertainty modifier enter the sum.
 An example of a statistical uncertainty modifier for a single bin channel is
 shown below:
