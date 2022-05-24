@@ -118,8 +118,8 @@ Roadmap
 
 4. **Research**
 
-   -  |uncheck| Add pyfitcore/Statisfactory integrations (Issue #344, `zfit
-      Issue 120 <https://github.com/zfit/zfit/issues/120>`__) [2019-Q4]
+   -  |uncheck| Add pyfitcore/Statisfactory integrations (Issue #344, `zfit-development
+      Issue 56 <https://github.com/zfit/zfit-development/issues/56>`__) [2019-Q4]
    -  |uncheck| Hardware acceleration scaling studies (Issues #93, #301)
       [2019-Q4 → 2020-Q1]
    -  |uncheck| Speedup through Numba (Issue #364) [2019-Q3 → 2019-Q4]
