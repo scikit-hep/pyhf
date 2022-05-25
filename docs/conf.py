@@ -464,5 +464,9 @@ mathjax3_config = {
 }
 
 # c.f. https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder
-linkcheck_ignore = ['cli.html#pyhf-xml2json']
+linkcheck_ignore = [
+    'cli.html#pyhf-xml2json',
+    # https://doi.org/10.31526/lhep.2020.158 is causing linkcheck connection timeouts in CI
+    r'https://doi\.org/10\.31526/.*',
+]
 linkcheck_retries = 50
