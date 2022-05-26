@@ -468,5 +468,6 @@ linkcheck_ignore = [
     'cli.html#pyhf-xml2json',
     # https://doi.org/10.31526/lhep.2020.158 is causing linkcheck connection timeouts in CI
     r'https://doi\.org/10\.31526/.*',
+    r'https://doi\.org/10\.1051/epjconf/.*',
 ]
 linkcheck_retries = 50
