@@ -11,8 +11,7 @@ uproot==4.1.1
 # minuit
 iminuit==2.4.0
 # tensorflow
-tensorflow==2.3.1  # tensorflow-probability v0.11.0 requires tensorflow>=2.3
-protobuf<=3.20.1  # protobuf v4.21.0 breaks ABI compatability
+tensorflow==2.6.5  # c.f. PR #1874
 tensorflow-probability==0.11.0  # c.f. PR #1657
 # torch
 torch==1.10.0
