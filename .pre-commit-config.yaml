@@ -20,6 +20,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.json$|\.xml$
     - id: mixed-line-ending
     - id: name-tests-test
+      args: ["--django"]
     - id: requirements-txt-fixer
     - id: trailing-whitespace
       # exclude generated files
