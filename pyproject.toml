@@ -234,8 +234,8 @@ source = "vcs"
 version-file = "src/pyhf/_version.py"
 
 [tool.hatch.build]
-sources = [
-    "src",
+packages = [
+    "src/pyhf"
 ]
 
 
