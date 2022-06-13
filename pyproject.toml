@@ -48,7 +48,7 @@ dynamic = [
 ]
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
-    { name = "Matthew Feickert", email = "matthew.feickert@cern.ch"}, 
+    { name = "Matthew Feickert", email = "matthew.feickert@cern.ch"},
     { name = "Giordon Stark", email = "gstark@cern.ch" }
 ]
 
