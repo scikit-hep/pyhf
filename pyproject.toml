@@ -63,7 +63,6 @@ backends = [
 ]
 complete = [
     "black>=22.1.0",
-    "check-manifest",
     "click_completion",
     "codemetapy>=0.3.4",
     "flake8",
@@ -110,7 +109,6 @@ contrib = [
 ]
 develop = [
     "black>=22.1.0",
-    "check-manifest",
     "click_completion",
     "codemetapy>=0.3.4",
     "flake8",
@@ -249,23 +247,6 @@ skip-string-normalization = true
 include = "\\.pyi?$"
 exclude = "/(\n    \\.git\n  | .eggs\n  | build\n)/\n"
 
-[tool.check-manifest]
-ignore = [
-    "docs*",
-    "validation*",
-    "examples*",
-    "tests*",
-    "docker*",
-    "binder*",
-    ".*",
-    "pyproject.toml",
-    "pytest.ini",
-    "codecov.yml",
-    "codemeta.json",
-    "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
-    "AUTHORS",
-]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
