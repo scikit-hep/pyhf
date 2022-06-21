@@ -526,6 +526,14 @@ class _MainModel:
         self.clip_sample_data = clip_sample_data
         self.clip_bin_data = clip_bin_data
 
+        if self.clip_sample_data is not None:
+            log.warning(
+                f"Clipping expected data per-bin for each sample below {self.clip_sample_data}"
+            )
+
+        if self.clip_bin_data is not None:
+            log.warning(f"Clipping expected data per-bin below {self.clip_bin_data}")
+
         self._nominal_rates = default_backend.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
         )
