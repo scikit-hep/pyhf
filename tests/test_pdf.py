@@ -1070,3 +1070,115 @@ def test_make_model_with_tensors():
         pyhf.tensorlib.astensor(1.05),
         pyhf.tensorlib.astensor([5.0, 5.0]),
     )
+
+
+def test_pdf_clipping(backend):
+    tensorlib, optimizer = pyhf.get_backend()
+
+    spec = {
+        "channels": [
+            {
+                "name": "ch1",
+                "samples": [
+                    {
+                        "data": [100.0, 100.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu_sig", "type": "normfactor"},
+                            {
+                                "data": {
+                                    "hi_data": [125.0, 75.0],
+                                    "lo_data": [175.0, 10.0],
+                                },
+                                "name": "np_1",
+                                "type": "histosys",
+                            },
+                            {
+                                "data": {
+                                    "hi_data": [125.0, 75.0],
+                                    "lo_data": [175.0, 10.0],
+                                },
+                                "name": "np_2",
+                                "type": "histosys",
+                            },
+                        ],
+                        "name": "signal",
+                    }
+                ],
+            },
+            {
+                "name": "ch2",
+                "samples": [
+                    {
+                        "data": [15000.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu_sig", "type": "normfactor"},
+                            {
+                                "data": {"hi_data": [15500.0], "lo_data": [1200.0]},
+                                "name": "np_1",
+                                "type": "histosys",
+                            },
+                            {
+                                "data": {"hi_data": [15500.0], "lo_data": [1200.0]},
+                                "name": "np_2",
+                                "type": "histosys",
+                            },
+                        ],
+                        "name": "signal",
+                    }
+                ],
+            },
+        ],
+        "measurements": [
+            {"config": {"parameters": [], "poi": "mu_sig"}, "name": "meas"}
+        ],
+        "observations": [
+            {"data": [100], "name": "ch1"},
+            {"data": [1000], "name": "ch2"},
+        ],
+        "version": "1.0.0",
+    }
+
+    par_values = []
+
+    ws = pyhf.Workspace(spec)
+    model = ws.model()
+    data = tensorlib.astensor([100.0, 100.0, 10.0, 0.0, 0.0])
+
+    for par_name in model.config.par_names():
+        if "np" in par_name:
+            par_values.append(-0.6)  # np_1 / np_2
+        else:
+            par_values.append(1.0)  # mu
+
+    pars = tensorlib.astensor(par_values)
+
+    # Check with no clipping
+    assert any(value < 0 for value in model.expected_actualdata(pars))
+    assert tensorlib.tolist(model.expected_actualdata(pars)) == pytest.approx(
+        [1.830496e02, -7.040000e-03, -6.355968e02], abs=1e-3
+    )
+
+    # Check with clipping by-sample
+    model_clip_sample = ws.model(clip_sample_data=0.0)
+    assert all(value >= 0 for value in model_clip_sample.expected_actualdata(pars))
+    assert tensorlib.tolist(
+        model_clip_sample.expected_actualdata(pars)
+    ) == pytest.approx([1.830496e02, 0.0, 0.0], abs=1e-3)
+
+    # Check with clipping by-bin
+    model_clip_bin = ws.model(clip_bin_data=0.0)
+    assert all(value >= 0 for value in model_clip_bin.expected_actualdata(pars))
+    assert tensorlib.tolist(model_clip_bin.expected_actualdata(pars)) == pytest.approx(
+        [1.830496e02, 0.0, 0.0], abs=1e-3
+    )
+
+    # Minuit cannot handle negative yields, confirm that MLE fails for minuit specifically
+    if optimizer.name == 'minuit':
+        with pytest.raises(pyhf.exceptions.FailedMinimization):
+            pyhf.infer.mle.fit(data, model)
+    else:
+        pyhf.infer.mle.fit(data, model)
+
+    # We should be able to converge when clipping is enabled
+    pyhf.infer.mle.fit(data, model_clip_sample)
+    pyhf.infer.mle.fit(data, model_clip_bin)
