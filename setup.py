@@ -9,7 +9,7 @@ extras_require = {
     'torch': ['torch>=1.10.0'],  # c.f. PR #1657
     'jax': ['jax>=0.2.10', 'jaxlib>=0.1.60,!=0.1.68'],  # c.f. Issue 1501
     'xmlio': ['uproot>=4.1.1'],  # c.f. PR #1567
-    'minuit': ['iminuit>=2.7.0'],  # c.f. PR #1893
+    'minuit': ['iminuit>=2.7.0'],  # c.f. PR #1895
 }
 extras_require['backends'] = sorted(
     set(
