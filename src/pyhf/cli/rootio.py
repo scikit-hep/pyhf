@@ -29,7 +29,8 @@ def cli():
     default=None,
 )
 @click.option('--track-progress/--hide-progress', default=True)
-def xml2json(entrypoint_xml, basedir, output_file, track_progress):
+@click.option('--validation-as-error/--validation-as-warning', default=True)
+def xml2json(entrypoint_xml, basedir, output_file, track_progress, validation_as_error):
     """Entrypoint XML: The top-level XML file for the PDF definition."""
     try:
         import uproot
@@ -43,7 +44,12 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress):
         )
     from pyhf import readxml
 
-    spec = readxml.parse(entrypoint_xml, basedir, track_progress=track_progress)
+    spec = readxml.parse(
+        entrypoint_xml,
+        basedir,
+        track_progress=track_progress,
+        validation_as_error=validation_as_error,
+    )
     if output_file is None:
         click.echo(json.dumps(spec, indent=4, sort_keys=True))
     else:

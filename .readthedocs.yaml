@@ -1,0 +1,35 @@
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Required
+version: 2
+
+# Set the version of Python and other tools you might need
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.10"
+  apt_packages:
+    - curl
+    - jq
+  # https://docs.readthedocs.io/en/latest/build-customization.html
+  jobs:
+    pre_build:
+      - python -m sphinx -b linkcheck docs/ _build/linkcheck
+
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+   configuration: docs/conf.py
+
+# If using Sphinx, optionally build your docs in additional formats such as PDF and ePub
+formats: all
+
+# python -m pip install .[docs]
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+  system_packages: true

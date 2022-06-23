@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import xml.etree.ElementTree as ET
 import logging
+from jsonschema import ValidationError
 
 
 def assert_equal_dictionary(d1, d2):
@@ -448,3 +449,28 @@ def test_process_modifiers(mocker, caplog):
     assert {'name': 'staterror_myChannel', 'type': 'staterror', 'data': _err} in result[
         'modifiers'
     ]
+
+
+def test_import_validation_exception(mocker, caplog):
+
+    mocker.patch(
+        'pyhf.schema.validate',
+        side_effect=pyhf.exceptions.InvalidSpecification(
+            ValidationError('this is an invalid specification')
+        ),
+    )
+
+    with caplog.at_level(logging.WARNING, "pyhf.readxml"):
+        pyhf.readxml.parse(
+            'validation/xmlimport_input2/config/example.xml',
+            'validation/xmlimport_input2',
+            validation_as_error=False,
+        )
+        assert "this is an invalid specification" in caplog.text
+
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.readxml.parse(
+            'validation/xmlimport_input2/config/example.xml',
+            'validation/xmlimport_input2',
+            validation_as_error=True,
+        )

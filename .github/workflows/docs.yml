@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: docs-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -51,6 +51,13 @@ jobs:
     - name: Verify CITATION.cff schema
       run: |
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
+    - name: Check for broken links
+      run: |
+        pushd docs
+        make linkcheck
+        # Don't ship the linkcheck
+        rm -r _build/linkcheck
+        popd
     - name: Test and build docs
       run: |
         python -m doctest README.rst
