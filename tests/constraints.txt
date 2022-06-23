@@ -9,7 +9,7 @@ importlib_resources==1.3.0
 # xmlio
 uproot==4.1.1
 # minuit
-iminuit==2.4.0
+iminuit==2.7.0
 # tensorflow
 tensorflow==2.6.5  # c.f. PR #1874
 tensorflow-probability==0.11.0  # c.f. PR #1657
