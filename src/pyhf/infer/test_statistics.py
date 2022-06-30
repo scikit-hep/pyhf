@@ -53,7 +53,7 @@ def _tmu_like(
     )
     log_likelihood_ratio = fixed_poi_fit_lhood_val - unconstrained_fit_lhood_val
     tmu_like_stat = tensorlib.astensor(
-        tensorlib.clip(log_likelihood_ratio, 0.0, max_value=None)
+        tensorlib.clip(2.0 * log_likelihood_ratio, 0.0, max_value=None)
     )
     if return_fitted_pars:
         return tmu_like_stat, (mubhathat, muhatbhat)
@@ -98,11 +98,11 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> pyhf.infer.test_statistics.qmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
-        array(3.9549891)
+        array(3.95498935)
         >>> pyhf.infer.test_statistics.qmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        (array(3.95498935), (array([1.        , 0.97226646, 0.87552889]), array([-0.06683199,  1.0055696 ,  0.96930613])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -192,11 +192,11 @@ def qmu_tilde(
         >>> pyhf.infer.test_statistics.qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
-        array(3.93824492)
+        array(3.93824506)
         >>> pyhf.infer.test_statistics.qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        (array(3.93824506), (array([1.        , 0.97226646, 0.87552889]), array([0.        , 1.00305155, 0.96267465])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -274,11 +274,11 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> pyhf.infer.test_statistics.tmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
-        array(3.9549891)
+        array(3.95498935)
         >>> pyhf.infer.test_statistics.tmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        (array(3.95498935), (array([1.        , 0.97226646, 0.87552889]), array([-0.06683199,  1.0055696 ,  0.96930613])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -364,11 +364,11 @@ def tmu_tilde(
         >>> pyhf.infer.test_statistics.tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
-        array(3.93824492)
+        array(3.93824506)
         >>> pyhf.infer.test_statistics.tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        (array(3.93824506), (array([1.        , 0.97226646, 0.87552889]), array([0.        , 1.00305155, 0.96267465])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -442,11 +442,11 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> par_bounds = model.config.suggested_bounds()
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
-        array(2.98339447)
+        array(2.98339481)
         >>> pyhf.infer.test_statistics.q0(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
+        (array(2.98339481), (array([0.        , 1.03050839, 1.12128782]), array([0.95242948, 0.99634986, 1.02137191])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter (must be set to zero)

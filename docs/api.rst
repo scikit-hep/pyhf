@@ -152,7 +152,7 @@ Fits and Tests
    :toctree: _generated/
    :nosignatures:
 
-   mle.twice_nll
+   mle.nll
    mle.fit
    mle.fixed_poi_fit
    hypotest
