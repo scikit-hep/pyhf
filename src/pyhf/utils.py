@@ -2,6 +2,7 @@ import json
 import yaml
 import click
 import hashlib
+from gettext import gettext
 
 import sys
 
@@ -39,6 +40,24 @@ class EqDelimStringParamType(click.ParamType):
             return options_from_eqdelimstring([value])
         except IndexError:
             self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
+
+
+class VolumeMountPath(click.Path):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = f'{self.name}:{gettext("path")}'
+
+    def convert(self, value, param, ctx):
+        try:
+            path_host, path_mount = value.split(':')
+        except ValueError:
+            # too many values to unpack / not enough values to unpack
+            self.fail(f"{value!r} is not a valid colon-separated option", param, ctx)
+
+        return (
+            super().convert(path_host, param, ctx),
+            self.coerce_path_result(path_mount),
+        )
 
 
 def digest(obj, algorithm='sha256'):
