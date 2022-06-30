@@ -43,6 +43,7 @@ def xml2json(
     entrypoint_xml, basedir, mount, output_file, track_progress, validation_as_error
 ):
     """Entrypoint XML: The top-level XML file for the PDF definition."""
+    print(mount)
     try:
         import uproot
 
