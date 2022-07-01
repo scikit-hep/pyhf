@@ -37,8 +37,15 @@ def __dir__():
     return __all__
 
 
-def resolver_factory(rootdir: Path, mounts: T.Iterable[tuple[Path, Path]]) -> Path:
-    def resolver(path):
+def resolver_factory(
+    rootdir: Path, mounts: T.Iterable[tuple[os.PathLike, os.PathLike]]
+) -> T.Callable:
+    def resolver(path: str | os.PathLike) -> os.PathLike:
+        path = Path(path)
+        for host_path, mount_path in mounts:
+            if mount_path in path.parents:
+                path = host_path.joinpath(path.relative_to(mount_path))
+                break
         return rootdir.joinpath(path)
 
     return resolver
@@ -359,7 +366,7 @@ def dedupe_parameters(parameters):
 def parse(
     configfile: str | os.PathLike | T.IO,
     rootdir: str | os.PathLike,
-    mounts: T.Optional[T.Iterable[tuple[Path, Path]]] = None,
+    mounts: T.Optional[T.Iterable[tuple[os.PathLike, os.PathLike]]] = None,
     track_progress=False,
     validation_as_error=True,
 ):
@@ -367,7 +374,7 @@ def parse(
     Parse the configfile with respect to the rootdir.
 
     Args:
-        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
+        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`os.PathLike` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
         track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
         validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
 
