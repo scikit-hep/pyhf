@@ -37,11 +37,12 @@ def __dir__():
     return __all__
 
 
-def resolver_factory(
-    rootdir: Path, mounts: T.Iterable[tuple[os.PathLike, os.PathLike]]
-) -> T.Callable:
-    def resolver(path: str | os.PathLike) -> os.PathLike:
-        path = Path(path)
+MountPathType = T.Iterable[tuple[Path, Path]]
+
+
+def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable:
+    def resolver(filename: str) -> Path:
+        path = Path(filename)
         for host_path, mount_path in mounts:
             if mount_path in path.parents:
                 path = host_path.joinpath(path.relative_to(mount_path))
@@ -70,7 +71,9 @@ def extract_error(hist):
     return np.sqrt(variance).tolist()
 
 
-def import_root_histogram(resolver, filename, path, name, filecache=None):
+def import_root_histogram(
+    resolver: T.Callable[[str], Path], filename, path, name, filecache=None
+):
     global __FILECACHE__
     filecache = filecache or __FILECACHE__
 
@@ -99,7 +102,12 @@ def import_root_histogram(resolver, filename, path, name, filecache=None):
 
 
 def process_sample(
-    sample, resolver, inputfile, histopath, channel_name, track_progress=False
+    sample,
+    resolver: T.Callable[[str], Path],
+    inputfile,
+    histopath,
+    channel_name,
+    track_progress=False,
 ):
     if 'InputFile' in sample.attrib:
         inputfile = sample.attrib.get('InputFile')
@@ -225,7 +233,7 @@ def process_sample(
     }
 
 
-def process_data(sample, resolver, inputfile, histopath):
+def process_data(sample, resolver: T.Callable[[str], Path], inputfile, histopath):
     if 'InputFile' in sample.attrib:
         inputfile = sample.attrib.get('InputFile')
     if 'HistoPath' in sample.attrib:
@@ -236,7 +244,9 @@ def process_data(sample, resolver, inputfile, histopath):
     return data
 
 
-def process_channel(channelxml, resolver, track_progress=False):
+def process_channel(
+    channelxml, resolver: T.Callable[[str], Path], track_progress=False
+):
     channel = channelxml.getroot()
 
     inputfile = channel.attrib.get('InputFile')
@@ -366,7 +376,7 @@ def dedupe_parameters(parameters):
 def parse(
     configfile: str | os.PathLike | T.IO,
     rootdir: str | os.PathLike,
-    mounts: T.Optional[T.Iterable[tuple[os.PathLike, os.PathLike]]] = None,
+    mounts: T.Optional[MountPathType] = None,
     track_progress=False,
     validation_as_error=True,
 ):
@@ -374,7 +384,7 @@ def parse(
     Parse the configfile with respect to the rootdir.
 
     Args:
-        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`os.PathLike` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
+        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
         track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
         validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
 
