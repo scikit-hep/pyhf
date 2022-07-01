@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union, IO
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union, IO, Any
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -21,8 +21,11 @@ if TYPE_CHECKING:
 else:
     PathOrStr = Union[str, "os.PathLike[str]"]
 
-__FILECACHE__ = {}
 MountPathType = Iterable[Tuple[Path, Path]]
+FileCacheType = dict[str, tuple[IO, set[str]]]
+ResolverType = Callable[[str], Path]
+
+__FILECACHE__: FileCacheType = {}
 
 __all__ = [
     "clear_filecache",
@@ -41,7 +44,7 @@ def __dir__():
     return __all__
 
 
-def resolver_factory(rootdir: Path, mounts: MountPathType) -> Callable[[str], Path]:
+def resolver_factory(rootdir: Path, mounts: MountPathType) -> ResolverType:
     def resolver(filename: str) -> Path:
         path = Path(filename)
         for host_path, mount_path in mounts:
@@ -55,7 +58,7 @@ def resolver_factory(rootdir: Path, mounts: MountPathType) -> Callable[[str], Pa
     return resolver
 
 
-def extract_error(hist):
+def extract_error(hist: uproot.behaviors.TH1.TH1):
     """
     Determine the bin uncertainties for a histogram.
 
@@ -75,7 +78,11 @@ def extract_error(hist):
 
 
 def import_root_histogram(
-    resolver: Callable[[str], Path], filename, path, name, filecache=None
+    resolver: ResolverType,
+    filename: str,
+    path: str,
+    name: str,
+    filecache: FileCacheType | None = None,
 ):
     global __FILECACHE__
     filecache = filecache or __FILECACHE__
@@ -105,23 +112,23 @@ def import_root_histogram(
 
 
 def process_sample(
-    sample,
-    resolver: Callable[[str], Path],
-    inputfile,
-    histopath,
-    channel_name,
+    sample: ET.Element,
+    resolver: ResolverType,
+    inputfile: str,
+    histopath: str,
+    channel_name: str,
     track_progress=False,
 ):
-    if 'InputFile' in sample.attrib:
-        inputfile = sample.attrib.get('InputFile')
-    if 'HistoPath' in sample.attrib:
-        histopath = sample.attrib.get('HistoPath')
+    inputfile = sample.attrib.get('InputFile', inputfile)
+    histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
 
     data, err = import_root_histogram(resolver, inputfile, histopath, histoname)
 
     parameter_configs = []
-    modifiers = []
+    modifiers: list[
+        dict[str, str | None | dict[str, float | list[float]] | list[float]]
+    ] = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
         modifiers.append({'name': 'lumi', 'type': 'lumi', 'data': None})
@@ -236,11 +243,14 @@ def process_sample(
     }
 
 
-def process_data(sample, resolver: Callable[[str], Path], inputfile, histopath):
-    if 'InputFile' in sample.attrib:
-        inputfile = sample.attrib.get('InputFile')
-    if 'HistoPath' in sample.attrib:
-        histopath = sample.attrib.get('HistoPath')
+def process_data(
+    sample: ET.Element,
+    resolver: ResolverType,
+    inputfile: str,
+    histopath: str,
+):
+    inputfile = sample.attrib.get('InputFile', inputfile)
+    histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
 
     data, _ = import_root_histogram(resolver, inputfile, histopath, histoname)
@@ -248,12 +258,12 @@ def process_data(sample, resolver: Callable[[str], Path], inputfile, histopath):
 
 
 def process_channel(
-    channelxml, resolver: Callable[[str], Path], track_progress=False
+    channelxml: ET.ElementTree, resolver: ResolverType, track_progress: bool = False
 ):
     channel = channelxml.getroot()
 
-    inputfile = channel.attrib.get('InputFile')
-    histopath = channel.attrib.get('HistoPath')
+    inputfile = channel.attrib.get('InputFile', '')
+    histopath = channel.attrib.get('HistoPath', '')
 
     samples = tqdm.tqdm(
         channel.findall('Sample'), unit='sample', disable=not (track_progress)
@@ -280,7 +290,10 @@ def process_channel(
     return channel_name, parsed_data, results, channel_parameter_configs
 
 
-def process_measurements(toplvl, other_parameter_configs=None):
+def process_measurements(
+    toplvl: ET.ElementTree,
+    other_parameter_configs: list[dict[str, Any]] | None = None,
+):
     """
     For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
 
@@ -308,7 +321,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
                 f"Measurement {measurement_name} is missing POI specification"
             )
 
-        result = {
+        result: dict[str, Any] = {
             'name': measurement_name,
             'config': {
                 'poi': poi.text.strip() if poi.text else '',
@@ -326,7 +339,7 @@ def process_measurements(toplvl, other_parameter_configs=None):
 
         for param in x.findall('ParamSetting'):
             # determine what all parameters in the paramsetting have in common
-            overall_param_obj = {}
+            overall_param_obj: dict[str, Any] = {}
             if param.attrib.get('Const'):
                 overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
             if param.attrib.get('Val'):
@@ -358,8 +371,8 @@ def process_measurements(toplvl, other_parameter_configs=None):
     return results
 
 
-def dedupe_parameters(parameters):
-    duplicates = {}
+def dedupe_parameters(parameters: list[dict[str, Any]]):
+    duplicates: dict[str, Any] = {}
     for p in parameters:
         duplicates.setdefault(p['name'], []).append(p)
     for parname in duplicates:
@@ -430,7 +443,7 @@ def parse(
             {'name': channel_name, 'data': channel_spec['data']}
             for channel_name, channel_spec in channels.items()
         ],
-        'version': schema.version,
+        'version': schema.version,  # type: ignore
     }
     try:
         schema.validate(result, 'workspace.json')
