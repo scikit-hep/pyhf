@@ -74,7 +74,9 @@ def extract_error(hist):
     return np.sqrt(variance).tolist()
 
 
-def import_root_histogram(resolver, filename, path, name, filecache=None):
+def import_root_histogram(
+    resolver: Callable[[str], Path], filename, path, name, filecache=None
+):
     global __FILECACHE__
     filecache = filecache or __FILECACHE__
 
@@ -103,7 +105,12 @@ def import_root_histogram(resolver, filename, path, name, filecache=None):
 
 
 def process_sample(
-    sample, resolver, inputfile, histopath, channel_name, track_progress=False
+    sample,
+    resolver: Callable[[str], Path],
+    inputfile,
+    histopath,
+    channel_name,
+    track_progress=False,
 ):
     if 'InputFile' in sample.attrib:
         inputfile = sample.attrib.get('InputFile')
@@ -229,7 +236,7 @@ def process_sample(
     }
 
 
-def process_data(sample, resolver, inputfile, histopath):
+def process_data(sample, resolver: Callable[[str], Path], inputfile, histopath):
     if 'InputFile' in sample.attrib:
         inputfile = sample.attrib.get('InputFile')
     if 'HistoPath' in sample.attrib:
@@ -240,7 +247,9 @@ def process_data(sample, resolver, inputfile, histopath):
     return data
 
 
-def process_channel(channelxml, resolver, track_progress=False):
+def process_channel(
+    channelxml, resolver: Callable[[str], Path], track_progress=False
+):
     channel = channelxml.getroot()
 
     inputfile = channel.attrib.get('InputFile')
