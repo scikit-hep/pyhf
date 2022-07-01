@@ -58,6 +58,7 @@ def xml2json(
     spec = readxml.parse(
         entrypoint_xml,
         basedir,
+        mounts=mount,
         track_progress=track_progress,
         validation_as_error=validation_as_error,
     )

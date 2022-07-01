@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import os
+
 from pyhf import schema
 from pyhf import compat
 from pyhf import exceptions
@@ -9,6 +13,8 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
+
+import typing as T
 
 log = logging.getLogger(__name__)
 
@@ -343,7 +349,25 @@ def dedupe_parameters(parameters):
     return list({v['name']: v for v in parameters}.values())
 
 
-def parse(configfile, rootdir, track_progress=False, validation_as_error=True):
+def parse(
+    configfile: str | os.PathLike | T.IO,
+    rootdir: str | os.PathLike,
+    mounts: T.Optional[T.Iterable[tuple[Path, Path]]] = None,
+    track_progress=False,
+    validation_as_error=True,
+):
+    """
+    Parse the configfile with respect to the rootdir.
+
+    Args:
+        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
+        track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
+        validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
+
+    Returns:
+        spec (:obj:`jsonable`): The newly built HistFactory JSON specification
+    """
+    mounts = mounts or []
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
         [x.text for x in toplvl.findall('Input')],
