@@ -111,7 +111,10 @@ def test_process_normfactor_configs():
 
 def test_import_histogram():
     data, uncert = pyhf.readxml.import_root_histogram(
-        "validation/xmlimport_input/data", "example.root", "", "data"
+        lambda x: Path("validation/xmlimport_input/data").joinpath(x),
+        "example.root",
+        "",
+        "data",
     )
     assert data == [122.0, 112.0]
     assert uncert == [11.045360565185547, 10.58300495147705]
@@ -120,7 +123,10 @@ def test_import_histogram():
 def test_import_histogram_KeyError():
     with pytest.raises(KeyError):
         pyhf.readxml.import_root_histogram(
-            "validation/xmlimport_input/data", "example.root", "", "invalid_key"
+            lambda x: Path("validation/xmlimport_input/data").joinpath(x),
+            "example.root",
+            "",
+            "invalid_key",
         )
 
 
