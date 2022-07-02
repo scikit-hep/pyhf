@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union, IO, Any
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union, IO, Literal
+from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
+
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -44,6 +46,110 @@ def __dir__():
     return __all__
 
 
+class ParameterBase(TypedDict, total=False):
+    auxdata: list[float]
+    bounds: list[list[float]]
+    inits: list[float]
+    sigmas: list[float]
+    fixed: bool
+
+
+class Parameter(ParameterBase):
+    name: str
+
+
+class Config(TypedDict):
+    poi: str
+    parameters: list[Parameter]
+
+
+class Measurement(TypedDict):
+    name: str
+    config: Config
+
+
+class ModifierBase(TypedDict):
+    name: str
+
+
+class NormSysData(TypedDict):
+    lo: float
+    hi: float
+
+
+class NormSys(ModifierBase):
+    type: Literal['normsys']
+    data: NormSysData
+
+
+class NormFactor(ModifierBase):
+    type: Literal['normfactor']
+    data: None
+
+
+class HistoSysData(TypedDict):
+    lo_data: list[float]
+    hi_data: list[float]
+
+
+class HistoSys(ModifierBase):
+    type: Literal['histosys']
+    data: HistoSysData
+
+
+class StatError(ModifierBase):
+    type: Literal['staterror']
+    data: list[float]
+
+
+class ShapeSys(ModifierBase):
+    type: Literal['shapesys']
+    data: list[float]
+
+
+class ShapeFactor(ModifierBase):
+    type: Literal['shapefactor']
+    data: None
+
+
+class LumiSys(TypedDict):
+    name: Literal['lumi']
+    type: Literal['lumi']
+    data: None
+
+
+Modifier = Union[
+    NormSys, NormFactor, HistoSys, StatError, ShapeSys, ShapeFactor, LumiSys
+]
+
+
+class SampleBase(TypedDict, total=False):
+    parameter_configs: list[Parameter]
+
+
+class Sample(SampleBase):
+    name: str
+    data: list[float]
+    modifiers: list[Modifier]
+
+
+class Channel(TypedDict):
+    name: str
+    samples: list[Sample]
+
+
+class Observation(TypedDict):
+    name: str
+    data: list[float]
+
+
+class Workspace(TypedDict):
+    measurements: list[Measurement]
+    channels: list[Channel]
+    observations: list[Observation]
+    version: str
+
+
 def resolver_factory(rootdir: Path, mounts: MountPathType) -> ResolverType:
     def resolver(filename: str) -> Path:
         path = Path(filename)
@@ -58,7 +164,7 @@ def resolver_factory(rootdir: Path, mounts: MountPathType) -> ResolverType:
     return resolver
 
 
-def extract_error(hist: uproot.behaviors.TH1.TH1):
+def extract_error(hist: uproot.behaviors.TH1.TH1) -> list[float]:
     """
     Determine the bin uncertainties for a histogram.
 
@@ -83,7 +189,7 @@ def import_root_histogram(
     path: str,
     name: str,
     filecache: FileCacheType | None = None,
-):
+) -> tuple[list[float], list[float]]:
     global __FILECACHE__
     filecache = filecache or __FILECACHE__
 
@@ -118,20 +224,19 @@ def process_sample(
     histopath: str,
     channel_name: str,
     track_progress=False,
-):
+) -> Sample:
     inputfile = sample.attrib.get('InputFile', inputfile)
     histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
 
     data, err = import_root_histogram(resolver, inputfile, histopath, histoname)
 
-    parameter_configs = []
-    modifiers: list[
-        dict[str, str | None | dict[str, float | list[float]] | list[float]]
-    ] = []
+    parameter_configs: list[Parameter] = []
+    modifiers: list[Modifier] = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
-        modifiers.append({'name': 'lumi', 'type': 'lumi', 'data': None})
+        modifier_lumi: LumiSys = {'name': 'lumi', 'type': 'lumi', 'data': None}
+        modifiers.append(modifier_lumi)
 
     modtags = tqdm.tqdm(
         sample.iter(), unit='modifier', disable=not (track_progress), total=len(sample)
@@ -144,21 +249,23 @@ def process_sample(
         if modtag == sample:
             continue
         if modtag.tag == 'OverallSys':
-            modifiers.append(
-                {
-                    'name': modtag.attrib['Name'],
-                    'type': 'normsys',
-                    'data': {
-                        'lo': float(modtag.attrib['Low']),
-                        'hi': float(modtag.attrib['High']),
-                    },
-                }
-            )
+            modifier_normsys: NormSys = {
+                'name': modtag.attrib['Name'],
+                'type': 'normsys',
+                'data': {
+                    'lo': float(modtag.attrib['Low']),
+                    'hi': float(modtag.attrib['High']),
+                },
+            }
+            modifiers.append(modifier_normsys)
         elif modtag.tag == 'NormFactor':
-            modifiers.append(
-                {'name': modtag.attrib['Name'], 'type': 'normfactor', 'data': None}
-            )
-            parameter_config = {
+            modifier_normfactor: NormFactor = {
+                'name': modtag.attrib['Name'],
+                'type': 'normfactor',
+                'data': None,
+            }
+            modifiers.append(modifier_normfactor)
+            parameter_config: Parameter = {
                 'name': modtag.attrib['Name'],
                 'bounds': [[float(modtag.attrib['Low']), float(modtag.attrib['High'])]],
                 'inits': [float(modtag.attrib['Val'])],
@@ -180,13 +287,12 @@ def process_sample(
                 modtag.attrib.get('HistoPathHigh', ''),
                 modtag.attrib['HistoNameHigh'],
             )
-            modifiers.append(
-                {
-                    'name': modtag.attrib['Name'],
-                    'type': 'histosys',
-                    'data': {'lo_data': lo, 'hi_data': hi},
-                }
-            )
+            modifier_histosys: HistoSys = {
+                'name': modtag.attrib['Name'],
+                'type': 'histosys',
+                'data': {'lo_data': lo, 'hi_data': hi},
+            }
+            modifiers.append(modifier_histosys)
         elif modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
             if modtag.attrib.get('HistoName', '') == '':
                 staterr = err
@@ -200,13 +306,12 @@ def process_sample(
                 staterr = np.multiply(extstat, data).tolist()
             if not staterr:
                 raise RuntimeError('cannot determine stat error.')
-            modifiers.append(
-                {
-                    'name': f'staterror_{channel_name}',
-                    'type': 'staterror',
-                    'data': staterr,
-                }
-            )
+            modifier_staterror: StatError = {
+                'name': f'staterror_{channel_name}',
+                'type': 'staterror',
+                'data': staterr,
+            }
+            modifiers.append(modifier_staterror)
         elif modtag.tag == 'ShapeSys':
             # NB: ConstraintType is ignored
             if modtag.attrib.get('ConstraintType', 'Poisson') != 'Poisson':
@@ -221,17 +326,19 @@ def process_sample(
                 modtag.attrib['HistoName'],
             )
             # NB: we convert relative uncertainty to absolute uncertainty
-            modifiers.append(
-                {
-                    'name': modtag.attrib['Name'],
-                    'type': 'shapesys',
-                    'data': [a * b for a, b in zip(data, shapesys_data)],
-                }
-            )
+            modifier_shapesys: ShapeSys = {
+                'name': modtag.attrib['Name'],
+                'type': 'shapesys',
+                'data': [a * b for a, b in zip(data, shapesys_data)],
+            }
+            modifiers.append(modifier_shapesys)
         elif modtag.tag == 'ShapeFactor':
-            modifiers.append(
-                {'name': modtag.attrib['Name'], 'type': 'shapefactor', 'data': None}
-            )
+            modifier_shapefactor: ShapeFactor = {
+                'name': modtag.attrib['Name'],
+                'type': 'shapefactor',
+                'data': None,
+            }
+            modifiers.append(modifier_shapefactor)
         else:
             log.warning('not considering modifier tag %s', modtag)
 
@@ -248,7 +355,7 @@ def process_data(
     resolver: ResolverType,
     inputfile: str,
     histopath: str,
-):
+) -> list[float]:
     inputfile = sample.attrib.get('InputFile', inputfile)
     histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
@@ -259,7 +366,7 @@ def process_data(
 
 def process_channel(
     channelxml: ET.ElementTree, resolver: ResolverType, track_progress: bool = False
-):
+) -> tuple[str, list[float], list[Sample], list[Parameter]]:
     channel = channelxml.getroot()
 
     inputfile = channel.attrib.get('InputFile', '')
@@ -292,8 +399,8 @@ def process_channel(
 
 def process_measurements(
     toplvl: ET.ElementTree,
-    other_parameter_configs: list[dict[str, Any]] | None = None,
-):
+    other_parameter_configs: list[Parameter] | None = None,
+) -> list[Measurement]:
     """
     For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
 
@@ -305,11 +412,11 @@ def process_measurements(
         :obj:`dict`: A measurement object.
 
     """
-    results = []
+    results: list[Measurement] = []
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
     for x in toplvl.findall('Measurement'):
-        parameter_configs_map = {k['name']: dict(**k) for k in other_parameter_configs}
+        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -321,7 +428,7 @@ def process_measurements(
                 f"Measurement {measurement_name} is missing POI specification"
             )
 
-        result: dict[str, Any] = {
+        result: Measurement = {
             'name': measurement_name,
             'config': {
                 'poi': poi.text.strip() if poi.text else '',
@@ -339,7 +446,7 @@ def process_measurements(
 
         for param in x.findall('ParamSetting'):
             # determine what all parameters in the paramsetting have in common
-            overall_param_obj: dict[str, Any] = {}
+            overall_param_obj: ParameterBase = {}
             if param.attrib.get('Const'):
                 overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
             if param.attrib.get('Val'):
@@ -354,15 +461,15 @@ def process_measurements(
                             f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
                         )
                     if param_interpretation['name'] == 'lumi':
-                        result['config']['parameters'][0].update(overall_param_obj)
+                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
-                        param_obj = parameter_configs_map.pop(
+                        param_obj: Parameter = parameter_configs_map.pop(
                             param_interpretation['name'],
                             {'name': param_interpretation['name']},
                         )
                         # ParamSetting will always take precedence
-                        param_obj.update(overall_param_obj)
+                        param_obj.update(overall_param_obj)  # type: ignore
                         # add it back in to the parameter_configs_map
                         parameter_configs_map[param_interpretation['name']] = param_obj
         result['config']['parameters'].extend(parameter_configs_map.values())
@@ -371,8 +478,8 @@ def process_measurements(
     return results
 
 
-def dedupe_parameters(parameters: list[dict[str, Any]]):
-    duplicates: dict[str, Any] = {}
+def dedupe_parameters(parameters: list[Parameter]) -> list[Parameter]:
+    duplicates: dict[str, list[Parameter]] = {}
     for p in parameters:
         duplicates.setdefault(p['name'], []).append(p)
     for parname in duplicates:
@@ -395,7 +502,7 @@ def parse(
     mounts: MountPathType | None = None,
     track_progress: bool = False,
     validation_as_error: bool = True,
-):
+) -> Workspace:
     """
     Parse the ``configfile`` with respect to the ``rootdir``.
 
@@ -420,29 +527,26 @@ def parse(
     # create a resolver for finding files
     resolver = resolver_factory(Path(rootdir), mounts)
 
-    channels = {}
+    channels: list[Channel] = []
+    observations: list[Observation] = []
     parameter_configs = []
     for inp in inputs:
         inputs.set_description(f'Processing {inp}')
         channel, data, samples, channel_parameter_configs = process_channel(
             ET.parse(resolver(inp)), resolver, track_progress
         )
-        channels[channel] = {'data': data, 'samples': samples}
+        channels.append({'name': channel, 'samples': samples})
+        observations.append({'name': channel, 'data': data})
         parameter_configs.extend(channel_parameter_configs)
 
     parameter_configs = dedupe_parameters(parameter_configs)
-    result = {
-        'measurements': process_measurements(
-            toplvl, other_parameter_configs=parameter_configs
-        ),
-        'channels': [
-            {'name': channel_name, 'samples': channel_spec['samples']}
-            for channel_name, channel_spec in channels.items()
-        ],
-        'observations': [
-            {'name': channel_name, 'data': channel_spec['data']}
-            for channel_name, channel_spec in channels.items()
-        ],
+    measurements = process_measurements(
+        toplvl, other_parameter_configs=parameter_configs
+    )
+    result: Workspace = {
+        'measurements': measurements,
+        'channels': channels,
+        'observations': observations,
         'version': schema.version,  # type: ignore
     }
     try:
