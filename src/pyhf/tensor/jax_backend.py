@@ -230,7 +230,7 @@ class jax_backend:
         return jnp.asarray(tensor_in, dtype=dtype)
 
     def sum(self, tensor_in, axis=None):
-        return jnp.sum(tensor_in, axis=axis)
+        return jnp.sum(jnp.asarray(tensor_in), axis=axis)
 
     def product(self, tensor_in, axis=None):
         return jnp.prod(tensor_in, axis=axis)
@@ -334,7 +334,7 @@ class jax_backend:
             output: the concatenated tensor
 
         """
-        return jnp.concatenate(sequence, axis=axis)
+        return jnp.concatenate([jnp.array(x) for x in sequence], axis=axis)
 
     def simple_broadcast(self, *args):
         """
