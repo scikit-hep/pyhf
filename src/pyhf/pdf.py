@@ -49,8 +49,10 @@ def _create_parameters_from_spec(_reqs):
         paramset_type = getattr(pyhf.parameters, paramset_requirements['paramset_type'])
         paramset = paramset_type(**paramset_requirements)
         if paramset.constrained:  # is constrained
-            auxdata += paramset.auxdata
-            auxdata_order.append(param_name)
+            print(paramset.auxdata)
+            if paramset.auxdata is not None:
+                auxdata += paramset.auxdata
+                auxdata_order.append(param_name)
         _sets[param_name] = paramset
 
     return _sets, auxdata, auxdata_order
@@ -261,7 +263,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['paramset'].suggested_init
+            if self.par_map[name]['paramset'].suggested_init is not None:
+                init = init + self.par_map[name]['paramset'].suggested_init
         return init
 
     def suggested_bounds(self):

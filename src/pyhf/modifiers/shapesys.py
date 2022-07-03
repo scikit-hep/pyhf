@@ -171,10 +171,12 @@ class shapesys_combined:
                 )
 
                 sample_mask = self._shapesys_mask[syst_index][singular_sample_index][0]
-                access_field_for_syst_and_batch[sample_mask] = selection
-                self._access_field[
-                    syst_index, batch_index
-                ] = access_field_for_syst_and_batch
+                access_field_for_syst_and_batch = access_field_for_syst_and_batch.at[
+                    sample_mask
+                ].set(selection)
+                self._access_field = self._access_field.at[syst_index, batch_index].set(
+                    access_field_for_syst_and_batch
+                )
 
     def _precompute(self):
         tensorlib, _ = get_backend()

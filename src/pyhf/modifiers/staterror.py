@@ -117,9 +117,9 @@ class staterror_builder:
                 modifier_data['data']['mask'] = masks[modname]
             sigmas = relerrs[masks[modname]]
             # list of bools, consistent with other modifiers (no numpy.bool_)
-            fixed = default_backend.tolist(sigmas == 0)
+            fixed = sigmas == 0
             # ensures non-Nan constraint term, but in a future PR we need to remove constraints for these
-            sigmas[fixed] = 1.0
+            sigmas = sigmas.at[fixed].set(1.0)
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
 
@@ -197,10 +197,12 @@ class staterror_combined:
                 )
 
                 sample_mask = self._staterror_mask[syst_index][singular_sample_index][0]
-                access_field_for_syst_and_batch[sample_mask] = selection
-                self._access_field[
-                    syst_index, batch_index
-                ] = access_field_for_syst_and_batch
+                access_field_for_syst_and_batch = access_field_for_syst_and_batch.at[
+                    sample_mask
+                ].set(selection)
+                self._access_field = self._access_field.at[syst_index, batch_index].set(
+                    access_field_for_syst_and_batch
+                )
 
     def _precompute(self):
         if not self.param_viewer.index_selection:

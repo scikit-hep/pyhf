@@ -37,7 +37,7 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
             for paramset_requirement in paramset_requirements:
                 # undefined: the modifier does not support configuring that property
                 v = paramset_requirement.get(k, 'undefined')
-                combined_paramset.setdefault(k, set()).add(v)
+                combined_paramset.setdefault(k, list()).append(v)
 
             if len(combined_paramset[k]) != 1:
                 raise exceptions.InvalidNameReuse(

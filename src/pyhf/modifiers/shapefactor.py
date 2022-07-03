@@ -182,8 +182,8 @@ class shapefactor_combined:
             for t, batch_access in enumerate(syst_access):
                 selection = self.param_viewer.index_selection[s][t]
                 for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
+                    self._access_field = self._access_field.at[s, t, b].set(
+                        selection[int(bin_access)] if bin_access < len(selection) else 0
                     )
 
         self._precompute()
