@@ -453,18 +453,18 @@ class jax_backend:
         lam = jnp.asarray(lam)
         return jnp.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
 
-    def normal_logpdf(self, x, mu, sigma):
-        # this is much faster than
-        # norm.logpdf(x, loc=mu, scale=sigma)
-        # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
-        root2 = jnp.sqrt(2)
-        root2pi = jnp.sqrt(2 * jnp.pi)
-        prefactor = -jnp.log(sigma * root2pi)
-        summand = -jnp.square(jnp.divide((x - mu), (root2 * sigma)))
-        return prefactor + summand
-
     # def normal_logpdf(self, x, mu, sigma):
-    #     return norm.logpdf(x, loc=mu, scale=sigma)
+    #     # this is much faster than
+    #     # norm.logpdf(x, loc=mu, scale=sigma)
+    #     # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
+    #     root2 = jnp.sqrt(2)
+    #     root2pi = jnp.sqrt(2 * jnp.pi)
+    #     prefactor = -jnp.log(sigma * root2pi)
+    #     summand = -jnp.square(jnp.divide((x - mu), (root2 * sigma)))
+    #     return prefactor + summand
+
+    def normal_logpdf(self, x, mu, sigma):
+        return norm.logpdf(x, loc=mu, scale=sigma)
 
     def normal(self, x, mu, sigma):
         r"""
