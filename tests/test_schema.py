@@ -1,6 +1,10 @@
 import pyhf
 import pytest
 import json
+import jsonschema
+from functools import partial
+import importlib
+import sys
 
 
 @pytest.mark.parametrize('version', ['1.0.0'])
@@ -567,3 +571,99 @@ def test_patchset_fail(datadir, patchset_file):
     patchset = json.load(open(datadir.joinpath(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')
+
+
+def make_asserting_handler(origin):
+    def asserting_handler(*args, **kwargs):
+        raise AssertionError(
+            f'called URL request handler from {origin} with args={args!r}, kwargs={kwargs!r} '
+            'when no call should have been needed'
+        )
+
+    return asserting_handler
+
+
+@pytest.fixture
+def no_http_jsonschema_ref_resolving(monkeypatch):
+    asserting_handler = make_asserting_handler('handlers')
+    handlers = {
+        'https': asserting_handler,
+        'http': asserting_handler,
+    }
+    WrappedResolver = partial(jsonschema.RefResolver, handlers=handlers)
+    monkeypatch.setattr('jsonschema.RefResolver', WrappedResolver, raising=True)
+
+
+@pytest.fixture
+def no_requests(monkeypatch):
+    monkeypatch.delattr('requests.sessions.Session.request', raising=True)
+    monkeypatch.setattr(
+        'requests.get', make_asserting_handler('requests.get'), raising=True
+    )
+
+
+@pytest.fixture
+def no_urllib(monkeypatch):
+    monkeypatch.setattr(
+        'urllib.request.urlopen',
+        make_asserting_handler('urllib.request.urlopen'),
+        raising=True,
+    )
+
+
+@pytest.fixture
+def no_sockets(monkeypatch):
+    monkeypatch.setattr(
+        'socket.socket', make_asserting_handler('socket.socket'), raising=True
+    )
+
+
+@pytest.fixture
+def refresh_pyhf(monkeypatch):
+    modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
+    for module_name in modules_to_clear:
+        monkeypatch.delitem(sys.modules, module_name)
+    importlib.import_module(pyhf.__name__)
+
+
+def test_defs_always_cached(
+    no_http_jsonschema_ref_resolving,  # this should catch the request and raise the error if it happens
+    no_requests,  # future jsonschema code may try to fall back to to explicit/default handlers
+    no_urllib,
+    no_sockets,
+    refresh_pyhf,  # ensure there is not a pre-existing cache hiding the issue
+):
+    """
+    Schema definitions should always be loaded from the local files and cached at first import.
+
+    Otherwise using pyhf in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id,
+    it will crash (e.g. a cluster node without network access).
+    """
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': [10],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': [20],
+                        'modifiers': [
+                            {
+                                'name': 'uncorr_bkguncrt',
+                                'type': 'shapesys',
+                                'data': [30],
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    pyhf.schema.validate(spec, 'model.json')  # may try to access network and fail
