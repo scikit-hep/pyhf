@@ -531,7 +531,7 @@ def test_step_sizes_fixed_parameters_minuit(mocker):
 
     assert minuit.called
     assert minimizer.fixed == [True, False, False]
-    # iminuit v2.12.1+ sets non-zero step sizes for all parameters including fixed parameters
+    # iminuit v2.12.2+ sets non-zero step sizes for all parameters including fixed parameters
     # c.f. https://github.com/scikit-hep/iminuit/issues/762
     assert minimizer.errors == [0.01, 0.01, 0.01]
 
