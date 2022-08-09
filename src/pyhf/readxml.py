@@ -13,21 +13,20 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import tqdm
 import uproot
-import sys
 
 import typing as T
 from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
 
 log = logging.getLogger(__name__)
 
-if sys.version_info >= (3, 9):
+if T.TYPE_CHECKING:
     FileCacheType = dict[str, tuple[T.IO, set[str]]]
     MountPathType = T.Iterable[tuple[Path, Path]]
     ResolverType = T.Callable[[str], Path]
 else:
-    FileCacheType = T.Dict[str, T.Tuple[T.IO, T.Set[str]]]
-    MountPathType = T.Iterable[T.Tuple[Path, Path]]
-    ResolverType = T.Callable[[str], Path]
+    FileCacheType = object
+    MountPathType = object
+    ResolverType = object
 
 __FILECACHE__: FileCacheType = {}
 
