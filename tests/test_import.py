@@ -474,3 +474,12 @@ def test_import_validation_exception(mocker, caplog):
             'validation/xmlimport_input2',
             validation_as_error=True,
         )
+
+
+def test_import_noChannelData(mocker, datadir):
+    mocker.patch('pyhf.readxml.process_data', return_value=[])
+
+    basedir = datadir.joinpath("xmlimport_noChannelData")
+    with pytest.raises(RuntimeError) as excinfo:
+        pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
+        assert 'Channel channel1 is missing data. See issue #1911' in str(excinfo.value)
