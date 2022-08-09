@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -10,8 +11,6 @@ from typing import (
     Union,
     IO,
     Literal,
-    Dict,
-    Set,
 )
 from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
 
@@ -21,7 +20,6 @@ from pathlib import Path
 import numpy as np
 import tqdm
 import uproot
-import sys
 
 from pyhf import compat
 from pyhf import exceptions
@@ -39,9 +37,9 @@ if sys.version_info >= (3, 9):
     FileCacheType = dict[str, tuple[IO, set[str]]]
     ResolverType = Callable[[str], Path]
 else:
-    FileCacheType = Dict[str, Tuple[IO, Set[str]]]
-    MountPathType = Iterable[Tuple[Path, Path]]
-    ResolverType = Callable[[str], Path]
+    FileCacheType = object
+    MountPathType = object
+    ResolverType = object
 
 __FILECACHE__: FileCacheType = {}
 
