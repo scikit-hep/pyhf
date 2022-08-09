@@ -19,14 +19,9 @@ from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.Typed
 
 log = logging.getLogger(__name__)
 
-if T.TYPE_CHECKING:
-    FileCacheType = dict[str, tuple[T.IO, set[str]]]
-    MountPathType = T.Iterable[tuple[Path, Path]]
-    ResolverType = T.Callable[[str], Path]
-else:
-    FileCacheType = object
-    MountPathType = object
-    ResolverType = object
+FileCacheType = T.Dict[str, T.Tuple[T.IO, T.Set[str]]]
+MountPathType = T.Iterable[T.Tuple[Path, Path]]
+ResolverType = T.Callable[[str], Path]
 
 __FILECACHE__: FileCacheType = {}
 
