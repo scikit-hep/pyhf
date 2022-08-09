@@ -504,3 +504,23 @@ def test_import_missingPOI(mocker, datadir):
         assert 'Measurement GaussExample is missing POI specification' in str(
             excinfo.value
         )
+
+
+def test_import_resolver(mocker):
+    rootdir = Path('/current/working/dir')
+    mounts = [(Path('/this/path/changed'), Path('/my/abs/path'))]
+    resolver = pyhf.readxml.resolver_factory(rootdir, mounts)
+
+    assert resolver('relative/path') == Path('/current/working/dir/relative/path')
+    assert resolver('relative/path/') == Path('/current/working/dir/relative/path')
+    assert resolver('relative/path/to/file.txt') == Path(
+        '/current/working/dir/relative/path/to/file.txt'
+    )
+    assert resolver('/absolute/path') == Path('/absolute/path')
+    assert resolver('/absolute/path/') == Path('/absolute/path')
+    assert resolver('/absolute/path/to/file.txt') == Path('/absolute/path/to/file.txt')
+    assert resolver('/my/abs/path') == Path('/this/path/changed')
+    assert resolver('/my/abs/path/') == Path('/this/path/changed')
+    assert resolver('/my/abs/path/to/file.txt') == Path(
+        '/this/path/changed/to/file.txt'
+    )
