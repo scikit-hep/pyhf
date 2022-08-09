@@ -179,6 +179,18 @@ def test_import_usingMounts(datadir, tmpdir, script_runner):
     pyhf.schema.validate(spec, 'model.json')
 
 
+def test_import_usingMounts_badDelimitedPaths(datadir, tmpdir, script_runner):
+    data = datadir.joinpath("xmlimport_absolutePaths")
+
+    temp = tmpdir.join("parsed_output.json")
+    command = f'pyhf xml2json --hide-progress -v {data}::/absolute/path/to -v {data}/another/absolute/path/to --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
+
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    assert ret.stdout == ''
+    assert 'is not a valid colon-separated option' in ret.stderr
+
+
 @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
 def test_fit_backend_option(tmpdir, script_runner, backend):
     temp = tmpdir.join("parsed_output.json")
