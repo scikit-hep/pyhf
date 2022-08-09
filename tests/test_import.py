@@ -482,6 +482,7 @@ def test_import_validation_exception(mocker, caplog):
         )
 
 
+<<<<<<< HEAD
 def test_import_noChannelData(mocker, datadir):
     _data = [0.0]
     _err = [1.0]
@@ -506,7 +507,7 @@ def test_import_missingPOI(mocker, datadir):
         )
 
 
-def test_import_resolver(mocker):
+def test_import_resolver():
     rootdir = Path('/current/working/dir')
     mounts = [(Path('/this/path/changed'), Path('/my/abs/path'))]
     resolver = pyhf.readxml.resolver_factory(rootdir, mounts)
