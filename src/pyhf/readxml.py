@@ -150,7 +150,9 @@ def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable:
     def resolver(filename: str) -> Path:
         path = Path(filename)
         for host_path, mount_path in mounts:
-            if mount_path in path.parents:
+            # NB: path.parents doesn't include the path itself, which might be
+            # a directory as well, so check that edge case
+            if mount_path == path or mount_path in path.parents:
                 path = host_path.joinpath(path.relative_to(mount_path))
                 break
         return rootdir.joinpath(path)
