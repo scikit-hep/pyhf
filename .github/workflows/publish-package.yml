@@ -47,7 +47,7 @@ jobs:
 
     - name: Build a wheel and a sdist
       run: |
-        PYTHONWARNINGS=error python -m build .
+        PYTHONWARNINGS=error,ignore::DeprecationWarning python -m build .
 
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
