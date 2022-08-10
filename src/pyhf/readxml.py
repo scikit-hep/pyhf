@@ -34,7 +34,7 @@ from pyhf.typing import (
 
 log = logging.getLogger(__name__)
 
-FileCacheType = T.Dict[str, T.Tuple[T.IO, T.Set[str]]]
+FileCacheType = T.Dict[str, T.Tuple[T.Union[T.IO[str], T.IO[bytes]], T.Set[str]]]
 MountPathType = T.Iterable[T.Tuple[Path, Path]]
 ResolverType = T.Callable[[str], Path]
 
@@ -53,11 +53,11 @@ __all__ = [
 ]
 
 
-def __dir__():
+def __dir__() -> list[str]:
     return __all__
 
 
-def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable:
+def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable[[str], Path]:
     def resolver(filename: str) -> Path:
         path = Path(filename)
         for host_path, mount_path in mounts:
@@ -87,7 +87,7 @@ def extract_error(hist: uproot.behaviors.TH1.TH1) -> list[float]:
     """
 
     variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
-    return np.sqrt(variance).tolist()
+    return T.cast(list[float], np.sqrt(variance).tolist())
 
 
 def import_root_histogram(
@@ -129,8 +129,8 @@ def process_sample(
     resolver: ResolverType,
     inputfile: str,
     histopath: str,
-    channel_name: str,
-    track_progress=False,
+    channelname: str,
+    track_progress: bool = False,
 ) -> Sample:
     inputfile = sample.attrib.get('InputFile', inputfile)
     histopath = sample.attrib.get('HistoPath', histopath)
@@ -323,7 +323,7 @@ def process_measurements(
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
     for x in toplvl.findall('Measurement'):
-        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore
+        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore[misc]
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -362,13 +362,13 @@ def process_measurements(
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
                 for param_name in param.text.strip().split(' '):
-                    param_interpretation = compat.interpret_rootname(param_name)
+                    param_interpretation = compat.interpret_rootname(param_name)  # type: ignore[no-untyped-call]
                     if not param_interpretation['is_scalar']:
                         raise ValueError(
                             f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
                         )
                     if param_interpretation['name'] == 'lumi':
-                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore
+                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore[typeddict-item]
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
                         param_obj: Parameter = parameter_configs_map.pop(
@@ -376,7 +376,7 @@ def process_measurements(
                             {'name': param_interpretation['name']},
                         )
                         # ParamSetting will always take precedence
-                        param_obj.update(overall_param_obj)  # type: ignore
+                        param_obj.update(overall_param_obj)  # type: ignore[typeddict-item]
                         # add it back in to the parameter_configs_map
                         parameter_configs_map[param_interpretation['name']] = param_obj
         result['config']['parameters'].extend(parameter_configs_map.values())
@@ -404,11 +404,11 @@ def dedupe_parameters(parameters: list[Parameter]) -> list[Parameter]:
 
 
 def parse(
-    configfile: PathOrStr | T.IO,
+    configfile: PathOrStr | T.IO[bytes] | T.IO[str],
     rootdir: PathOrStr,
     mounts: T.Optional[MountPathType] = None,
-    track_progress=False,
-    validation_as_error=True,
+    track_progress: bool = False,
+    validation_as_error: bool = True,
 ) -> Workspace:
     """
     Parse the configfile with respect to the rootdir.
@@ -452,7 +452,7 @@ def parse(
         'measurements': measurements,
         'channels': channels,
         'observations': observations,
-        'version': schema.version,  # type: ignore
+        'version': schema.version,  # type: ignore[typeddict-item]
     }
     try:
         schema.validate(result, 'workspace.json')
@@ -464,6 +464,6 @@ def parse(
     return result
 
 
-def clear_filecache():
+def clear_filecache() -> None:
     global __FILECACHE__
     __FILECACHE__ = {}
