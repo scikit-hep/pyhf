@@ -107,10 +107,6 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
 
 [[tool.mypy.overrides]]
-module = 'in_place'
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
 module = [
   'matplotlib.*',
   'jax.*',
