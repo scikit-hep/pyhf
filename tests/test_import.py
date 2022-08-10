@@ -485,3 +485,16 @@ def test_import_noChannelData(mocker, datadir):
     with pytest.raises(RuntimeError) as excinfo:
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
         assert 'Channel channel1 is missing data. See issue #1911' in str(excinfo.value)
+
+
+def test_import_missingPOI(mocker, datadir):
+    _data = [0.0]
+    _err = [1.0]
+    mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
+
+    basedir = datadir.joinpath("xmlimport_missingPOI")
+    with pytest.raises(RuntimeError) as excinfo:
+        pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
+        assert 'Measurement GaussExample is missing POI specification' in str(
+            excinfo.value
+        )
