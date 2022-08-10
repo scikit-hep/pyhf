@@ -79,7 +79,7 @@ def import_root_histogram(rootdir, filename, path, name, filecache=None):
 
 
 def process_sample(
-    sample, rootdir, inputfile, histopath, channelname, track_progress=False
+    sample, rootdir, inputfile, histopath, channel_name, track_progress=False
 ):
     if 'InputFile' in sample.attrib:
         inputfile = sample.attrib.get('InputFile')
@@ -164,7 +164,7 @@ def process_sample(
                 raise RuntimeError('cannot determine stat error.')
             modifiers.append(
                 {
-                    'name': f'staterror_{channelname}',
+                    'name': f'staterror_{channel_name}',
                     'type': 'staterror',
                     'data': staterr,
                 }
@@ -226,24 +226,25 @@ def process_channel(channelxml, rootdir, track_progress=False):
         channel.findall('Sample'), unit='sample', disable=not (track_progress)
     )
 
+    channel_name = channel.attrib['Name']
+
     data = channel.findall('Data')
     if data:
         parsed_data = process_data(data[0], rootdir, inputfile, histopath)
     else:
-        parsed_data = None
-    channelname = channel.attrib['Name']
+        raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
 
     results = []
     channel_parameter_configs = []
     for sample in samples:
         samples.set_description(f"  - sample {sample.attrib.get('Name')}")
         result = process_sample(
-            sample, rootdir, inputfile, histopath, channelname, track_progress
+            sample, rootdir, inputfile, histopath, channel_name, track_progress
         )
         channel_parameter_configs.extend(result.pop('parameter_configs'))
         results.append(result)
 
-    return channelname, parsed_data, results, channel_parameter_configs
+    return channel_name, parsed_data, results, channel_parameter_configs
 
 
 def process_measurements(toplvl, other_parameter_configs=None):
