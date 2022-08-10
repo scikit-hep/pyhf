@@ -18,7 +18,13 @@ import typing as T
 
 log = logging.getLogger(__name__)
 
+if T.TYPE_CHECKING:
+    PathOrStr = T.Union[str, os.PathLike[str]]
+else:
+    PathOrStr = T.Union[str, "os.PathLike[str]"]
+
 __FILECACHE__ = {}
+MountPathType = T.Iterable[T.Tuple[Path, Path]]
 
 __all__ = [
     "clear_filecache",
@@ -37,11 +43,9 @@ def __dir__():
     return __all__
 
 
-def resolver_factory(
-    rootdir: Path, mounts: T.Iterable[tuple[os.PathLike, os.PathLike]]
-) -> T.Callable:
-    def resolver(path: str | os.PathLike) -> os.PathLike:
-        path = Path(path)
+def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable[[str], Path]:
+    def resolver(filename: str) -> Path:
+        path = Path(filename)
         for host_path, mount_path in mounts:
             # NB: path.parents doesn't include the path itself, which might be
             # a directory as well, so check that edge case
@@ -366,17 +370,17 @@ def dedupe_parameters(parameters):
 
 
 def parse(
-    configfile: str | os.PathLike | T.IO,
-    rootdir: str | os.PathLike,
-    mounts: T.Optional[T.Iterable[tuple[os.PathLike, os.PathLike]]] = None,
-    track_progress=False,
-    validation_as_error=True,
+    configfile: PathOrStr | T.IO[bytes] | T.IO[str],
+    rootdir: PathOrStr,
+    mounts: T.Optional[MountPathType] = None,
+    track_progress: bool = False,
+    validation_as_error: bool = True,
 ):
     """
     Parse the configfile with respect to the rootdir.
 
     Args:
-        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`os.PathLike` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
+        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
         track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
         validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
 
