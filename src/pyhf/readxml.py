@@ -267,10 +267,18 @@ def process_measurements(toplvl, other_parameter_configs=None):
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
+        measurement_name = x.attrib['Name']
+
+        poi = x.find('POI')
+        if poi is None:
+            raise RuntimeError(
+                f"Measurement {measurement_name} is missing POI specification"
+            )
+
         result = {
-            'name': x.attrib['Name'],
+            'name': measurement_name,
             'config': {
-                'poi': x.findall('POI')[0].text.strip(),
+                'poi': poi.text.strip() if poi.text else '',
                 'parameters': [
                     {
                         'name': 'lumi',
