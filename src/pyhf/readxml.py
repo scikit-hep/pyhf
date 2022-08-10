@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-
 from pyhf import schema
 from pyhf import compat
 from pyhf import exceptions
@@ -15,7 +13,24 @@ import tqdm
 import uproot
 
 import typing as T
-from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
+from pyhf.typing import (
+    Sample,
+    Parameter,
+    Modifier,
+    LumiSys,
+    NormSys,
+    NormFactor,
+    HistoSys,
+    StatError,
+    ShapeSys,
+    ShapeFactor,
+    Measurement,
+    ParameterBase,
+    Channel,
+    Observation,
+    Workspace,
+    PathOrStr,
+)
 
 log = logging.getLogger(__name__)
 
@@ -40,110 +55,6 @@ __all__ = [
 
 def __dir__():
     return __all__
-
-
-class ParameterBase(TypedDict, total=False):
-    auxdata: list[float]
-    bounds: list[list[float]]
-    inits: list[float]
-    sigmas: list[float]
-    fixed: bool
-
-
-class Parameter(ParameterBase):
-    name: str
-
-
-class Config(TypedDict):
-    poi: str
-    parameters: list[Parameter]
-
-
-class Measurement(TypedDict):
-    name: str
-    config: Config
-
-
-class ModifierBase(TypedDict):
-    name: str
-
-
-class NormSysData(TypedDict):
-    lo: float
-    hi: float
-
-
-class NormSys(ModifierBase):
-    type: T.Literal['normsys']
-    data: NormSysData
-
-
-class NormFactor(ModifierBase):
-    type: T.Literal['normfactor']
-    data: None
-
-
-class HistoSysData(TypedDict):
-    lo_data: list[float]
-    hi_data: list[float]
-
-
-class HistoSys(ModifierBase):
-    type: T.Literal['histosys']
-    data: HistoSysData
-
-
-class StatError(ModifierBase):
-    type: T.Literal['staterror']
-    data: list[float]
-
-
-class ShapeSys(ModifierBase):
-    type: T.Literal['shapesys']
-    data: list[float]
-
-
-class ShapeFactor(ModifierBase):
-    type: T.Literal['shapefactor']
-    data: None
-
-
-class LumiSys(TypedDict):
-    name: T.Literal['lumi']
-    type: T.Literal['lumi']
-    data: None
-
-
-Modifier = T.Union[
-    NormSys, NormFactor, HistoSys, StatError, ShapeSys, ShapeFactor, LumiSys
-]
-
-
-class SampleBase(TypedDict, total=False):
-    parameter_configs: list[Parameter]
-
-
-class Sample(SampleBase):
-    name: str
-    data: list[float]
-    modifiers: list[Modifier]
-
-
-class Channel(TypedDict):
-    name: str
-    samples: list[Sample]
-
-
-class Observation(TypedDict):
-    name: str
-    data: list[float]
-
-
-class Workspace(TypedDict):
-    measurements: list[Measurement]
-    channels: list[Channel]
-    observations: list[Observation]
-    version: str
 
 
 def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable:
@@ -493,8 +404,8 @@ def dedupe_parameters(parameters: list[Parameter]) -> list[Parameter]:
 
 
 def parse(
-    configfile: str | os.PathLike | T.IO,
-    rootdir: str | os.PathLike,
+    configfile: PathOrStr | T.IO,
+    rootdir: PathOrStr,
     mounts: T.Optional[MountPathType] = None,
     track_progress=False,
     validation_as_error=True,
