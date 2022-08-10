@@ -57,6 +57,7 @@ repos:
     rev: 5.0.2
     hooks:
     - id: flake8
+      args: ["--count", "--statistics"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
     rev: 1.4.0
