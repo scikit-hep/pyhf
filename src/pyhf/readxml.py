@@ -8,6 +8,8 @@ from typing import (
     IO,
     Dict,
     Set,
+    Union,
+    cast,
 )
 
 import xml.etree.ElementTree as ET
@@ -41,7 +43,7 @@ from pyhf.typing import (
 
 log = logging.getLogger(__name__)
 
-FileCacheType = Dict[str, Tuple[IO, Set[str]]]
+FileCacheType = Dict[str, Tuple[Union[IO[str], IO[bytes]], Set[str]]]
 MountPathType = Iterable[Tuple[Path, Path]]
 ResolverType = Callable[[str], Path]
 
@@ -60,7 +62,7 @@ __all__ = [
 ]
 
 
-def __dir__():
+def __dir__() -> list[str]:
     return __all__
 
 
@@ -94,7 +96,7 @@ def extract_error(hist: uproot.behaviors.TH1.TH1) -> list[float]:
     """
 
     variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
-    return np.sqrt(variance).tolist()
+    return cast(list[float], np.sqrt(variance).tolist())
 
 
 def import_root_histogram(
@@ -137,7 +139,7 @@ def process_sample(
     inputfile: str,
     histopath: str,
     channel_name: str,
-    track_progress=False,
+    track_progress: bool = False,
 ) -> Sample:
     inputfile = sample.attrib.get('InputFile', inputfile)
     histopath = sample.attrib.get('HistoPath', histopath)
@@ -330,7 +332,7 @@ def process_measurements(
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
     for x in toplvl.findall('Measurement'):
-        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore
+        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore[misc]
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -369,13 +371,13 @@ def process_measurements(
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
                 for param_name in param.text.strip().split(' '):
-                    param_interpretation = compat.interpret_rootname(param_name)
+                    param_interpretation = compat.interpret_rootname(param_name)  # type: ignore[no-untyped-call]
                     if not param_interpretation['is_scalar']:
                         raise ValueError(
                             f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
                         )
                     if param_interpretation['name'] == 'lumi':
-                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore
+                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore[typeddict-item]
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
                         param_obj: Parameter = parameter_configs_map.pop(
@@ -383,7 +385,7 @@ def process_measurements(
                             {'name': param_interpretation['name']},
                         )
                         # ParamSetting will always take precedence
-                        param_obj.update(overall_param_obj)  # type: ignore
+                        param_obj.update(overall_param_obj)  # type: ignore[typeddict-item]
                         # add it back in to the parameter_configs_map
                         parameter_configs_map[param_interpretation['name']] = param_obj
         result['config']['parameters'].extend(parameter_configs_map.values())
@@ -461,7 +463,7 @@ def parse(
         'measurements': measurements,
         'channels': channels,
         'observations': observations,
-        'version': schema.version,  # type: ignore
+        'version': schema.version,  # type: ignore[typeddict-item]
     }
     try:
         schema.validate(result, 'workspace.json')
@@ -473,6 +475,6 @@ def parse(
     return result
 
 
-def clear_filecache():
+def clear_filecache() -> None:
     global __FILECACHE__
     __FILECACHE__ = {}
