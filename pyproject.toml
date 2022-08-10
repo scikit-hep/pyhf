@@ -96,3 +96,59 @@ pyupgrade = 1
 
 [tool.nbqa.addopts]
 pyupgrade = ["--py37-plus"]
+
+[tool.mypy]
+files = "src"
+python_version = "3.10"
+warn_unused_configs = true
+strict = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = 'in_place'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  'matplotlib.*',
+  'jax.*',
+  'click.*',
+  'click_completion.*',
+  'numpy.*',
+  'scipy.*',
+  'jsonpatch.*',
+  'uproot.*',
+  'yaml.*',
+  'jsonschema.*',
+  'tqdm.*',
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  'pyhf',
+  'pyhf.tensor.*',
+  'pyhf.optimize.*',
+  'pyhf.contrib.*',
+  'pyhf.infer.*',
+  'pyhf.interpolators.*',
+  'pyhf.cli.*',
+  'pyhf.modifiers.*',
+  'pyhf.exceptions.*',
+  'pyhf.parameters.*',
+  'pyhf.schema.*',
+  'pyhf.writexml',
+  'pyhf.workspace',
+  'pyhf.patchset',
+  'pyhf.compat',
+  'pyhf.events',
+  'pyhf.utils',
+  'pyhf.mixins',
+  'pyhf.constraints',
+  'pyhf.pdf',
+  'pyhf.simplemodels',
+  'pyhf.probability',
+]
+ignore_errors = true
