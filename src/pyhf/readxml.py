@@ -1,19 +1,14 @@
 from __future__ import annotations
 
 import logging
-import os
 from typing import (
-    TYPE_CHECKING,
     Callable,
     Iterable,
     Tuple,
-    Union,
     IO,
-    Literal,
     Dict,
     Set,
 )
-from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
 
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -25,13 +20,26 @@ import uproot
 from pyhf import compat
 from pyhf import exceptions
 from pyhf import schema
+from pyhf.typing import (
+    Sample,
+    Parameter,
+    Modifier,
+    LumiSys,
+    NormSys,
+    NormFactor,
+    HistoSys,
+    StatError,
+    ShapeSys,
+    ShapeFactor,
+    Measurement,
+    ParameterBase,
+    Channel,
+    Observation,
+    Workspace,
+    PathOrStr,
+)
 
 log = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    PathOrStr = Union[str, os.PathLike[str]]
-else:
-    PathOrStr = Union[str, "os.PathLike[str]"]
 
 FileCacheType = Dict[str, Tuple[IO, Set[str]]]
 MountPathType = Iterable[Tuple[Path, Path]]
@@ -54,110 +62,6 @@ __all__ = [
 
 def __dir__():
     return __all__
-
-
-class ParameterBase(TypedDict, total=False):
-    auxdata: list[float]
-    bounds: list[list[float]]
-    inits: list[float]
-    sigmas: list[float]
-    fixed: bool
-
-
-class Parameter(ParameterBase):
-    name: str
-
-
-class Config(TypedDict):
-    poi: str
-    parameters: list[Parameter]
-
-
-class Measurement(TypedDict):
-    name: str
-    config: Config
-
-
-class ModifierBase(TypedDict):
-    name: str
-
-
-class NormSysData(TypedDict):
-    lo: float
-    hi: float
-
-
-class NormSys(ModifierBase):
-    type: Literal['normsys']
-    data: NormSysData
-
-
-class NormFactor(ModifierBase):
-    type: Literal['normfactor']
-    data: None
-
-
-class HistoSysData(TypedDict):
-    lo_data: list[float]
-    hi_data: list[float]
-
-
-class HistoSys(ModifierBase):
-    type: Literal['histosys']
-    data: HistoSysData
-
-
-class StatError(ModifierBase):
-    type: Literal['staterror']
-    data: list[float]
-
-
-class ShapeSys(ModifierBase):
-    type: Literal['shapesys']
-    data: list[float]
-
-
-class ShapeFactor(ModifierBase):
-    type: Literal['shapefactor']
-    data: None
-
-
-class LumiSys(TypedDict):
-    name: Literal['lumi']
-    type: Literal['lumi']
-    data: None
-
-
-Modifier = Union[
-    NormSys, NormFactor, HistoSys, StatError, ShapeSys, ShapeFactor, LumiSys
-]
-
-
-class SampleBase(TypedDict, total=False):
-    parameter_configs: list[Parameter]
-
-
-class Sample(SampleBase):
-    name: str
-    data: list[float]
-    modifiers: list[Modifier]
-
-
-class Channel(TypedDict):
-    name: str
-    samples: list[Sample]
-
-
-class Observation(TypedDict):
-    name: str
-    data: list[float]
-
-
-class Workspace(TypedDict):
-    measurements: list[Measurement]
-    channels: list[Channel]
-    observations: list[Observation]
-    version: str
 
 
 def resolver_factory(rootdir: Path, mounts: MountPathType) -> ResolverType:
