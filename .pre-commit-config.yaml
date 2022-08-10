@@ -48,6 +48,11 @@ repos:
     - id: blacken-docs
       additional_dependencies: [black==22.6.0]
 
+-   repo: https://github.com/asottile/yesqa
+    rev: v1.4.0
+    hooks:
+    - id: yesqa
+
 -   repo: https://github.com/PyCQA/flake8
     rev: 5.0.2
     hooks:
