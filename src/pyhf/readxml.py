@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-import os
-
-from pyhf import schema
-from pyhf import compat
-from pyhf import exceptions
-
 import logging
-
-from pathlib import Path
+import os
+import typing as T
 import xml.etree.ElementTree as ET
+from pathlib import Path
+
 import numpy as np
 import tqdm
 import uproot
 
-import typing as T
+from pyhf import compat
+from pyhf import exceptions
+from pyhf import schema
 
 log = logging.getLogger(__name__)
 
