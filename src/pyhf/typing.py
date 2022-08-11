@@ -1,6 +1,7 @@
 import os
 import sys
-import typing as T
+
+from typing import TYPE_CHECKING, Union, Sequence, MutableSequence
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict, Literal
@@ -27,17 +28,17 @@ __all__ = (
     "Workspace",
 )
 
-if T.TYPE_CHECKING:
-    PathOrStr = T.Union[str, os.PathLike[str]]
+if TYPE_CHECKING:
+    PathOrStr = Union[str, os.PathLike[str]]
 else:
-    PathOrStr = T.Union[str, "os.PathLike[str]"]
+    PathOrStr = Union[str, "os.PathLike[str]"]
 
 
 class ParameterBase(TypedDict, total=False):
-    auxdata: T.Sequence[float]
-    bounds: T.Sequence[T.Sequence[float]]
-    inits: T.Sequence[float]
-    sigmas: T.Sequence[float]
+    auxdata: Sequence[float]
+    bounds: Sequence[Sequence[float]]
+    inits: Sequence[float]
+    sigmas: Sequence[float]
     fixed: bool
 
 
@@ -47,7 +48,7 @@ class Parameter(ParameterBase):
 
 class Config(TypedDict):
     poi: str
-    parameters: T.MutableSequence[Parameter]
+    parameters: MutableSequence[Parameter]
 
 
 class Measurement(TypedDict):
@@ -75,8 +76,8 @@ class NormFactor(ModifierBase):
 
 
 class HistoSysData(TypedDict):
-    lo_data: T.Sequence[float]
-    hi_data: T.Sequence[float]
+    lo_data: Sequence[float]
+    hi_data: Sequence[float]
 
 
 class HistoSys(ModifierBase):
@@ -86,12 +87,12 @@ class HistoSys(ModifierBase):
 
 class StatError(ModifierBase):
     type: Literal['staterror']
-    data: T.Sequence[float]
+    data: Sequence[float]
 
 
 class ShapeSys(ModifierBase):
     type: Literal['shapesys']
-    data: T.Sequence[float]
+    data: Sequence[float]
 
 
 class ShapeFactor(ModifierBase):
@@ -105,32 +106,32 @@ class LumiSys(TypedDict):
     data: None
 
 
-Modifier = T.Union[
+Modifier = Union[
     NormSys, NormFactor, HistoSys, StatError, ShapeSys, ShapeFactor, LumiSys
 ]
 
 
 class SampleBase(TypedDict, total=False):
-    parameter_configs: T.Sequence[Parameter]
+    parameter_configs: Sequence[Parameter]
 
 
 class Sample(SampleBase):
     name: str
-    data: T.Sequence[float]
-    modifiers: T.Sequence[Modifier]
+    data: Sequence[float]
+    modifiers: Sequence[Modifier]
 
 
 class Channel(TypedDict):
     name: str
-    samples: T.Sequence[Sample]
+    samples: Sequence[Sample]
 
 
 class Observation(TypedDict):
     name: str
-    data: T.Sequence[float]
+    data: Sequence[float]
 
 
 class Workspace(TypedDict):
-    measurements: T.Sequence[Measurement]
-    channels: T.Sequence[Channel]
-    observations: T.Sequence[Observation]
+    measurements: Sequence[Measurement]
+    channels: Sequence[Channel]
+    observations: Sequence[Observation]
