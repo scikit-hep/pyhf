@@ -96,7 +96,7 @@ def extract_error(hist: uproot.behaviors.TH1.TH1) -> list[float]:
     """
 
     variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
-    return cast(list[float], np.sqrt(variance).tolist())
+    return cast(List[float], np.sqrt(variance).tolist())
 
 
 def import_root_histogram(
@@ -301,7 +301,7 @@ def process_channel(
         raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
 
     results = []
-    channel_parameter_configs = []
+    channel_parameter_configs: List[Parameter] = []
     for sample in samples:
         samples.set_description(f"  - sample {sample.attrib.get('Name')}")
         result = process_sample(
