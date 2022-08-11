@@ -30,10 +30,10 @@ else:
 
 
 class ParameterBase(TypedDict, total=False):
-    auxdata: list[float]
-    bounds: list[list[float]]
-    inits: list[float]
-    sigmas: list[float]
+    auxdata: T.Sequence[float]
+    bounds: T.Sequence[T.Sequence[float]]
+    inits: T.Sequence[float]
+    sigmas: T.Sequence[float]
     fixed: bool
 
 
@@ -43,7 +43,7 @@ class Parameter(ParameterBase):
 
 class Config(TypedDict):
     poi: str
-    parameters: list[Parameter]
+    parameters: T.MutableSequence[Parameter]
 
 
 class Measurement(TypedDict):
@@ -71,8 +71,8 @@ class NormFactor(ModifierBase):
 
 
 class HistoSysData(TypedDict):
-    lo_data: list[float]
-    hi_data: list[float]
+    lo_data: T.Sequence[float]
+    hi_data: T.Sequence[float]
 
 
 class HistoSys(ModifierBase):
@@ -82,12 +82,12 @@ class HistoSys(ModifierBase):
 
 class StatError(ModifierBase):
     type: T.Literal['staterror']
-    data: list[float]
+    data: T.Sequence[float]
 
 
 class ShapeSys(ModifierBase):
     type: T.Literal['shapesys']
-    data: list[float]
+    data: T.Sequence[float]
 
 
 class ShapeFactor(ModifierBase):
@@ -107,26 +107,26 @@ Modifier = T.Union[
 
 
 class SampleBase(TypedDict, total=False):
-    parameter_configs: list[Parameter]
+    parameter_configs: T.Sequence[Parameter]
 
 
 class Sample(SampleBase):
     name: str
-    data: list[float]
-    modifiers: list[Modifier]
+    data: T.Sequence[float]
+    modifiers: T.Sequence[Modifier]
 
 
 class Channel(TypedDict):
     name: str
-    samples: list[Sample]
+    samples: T.Sequence[Sample]
 
 
 class Observation(TypedDict):
     name: str
-    data: list[float]
+    data: T.Sequence[float]
 
 
 class Workspace(TypedDict):
-    measurements: list[Measurement]
-    channels: list[Channel]
-    observations: list[Observation]
+    measurements: T.Sequence[Measurement]
+    channels: T.Sequence[Channel]
+    observations: T.Sequence[Observation]

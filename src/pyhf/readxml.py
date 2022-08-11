@@ -6,9 +6,12 @@ from typing import (
     Iterable,
     Tuple,
     IO,
-    Dict,
+    List,
     Set,
     Union,
+    Sequence,
+    MutableMapping,
+    MutableSequence,
     cast,
 )
 
@@ -43,7 +46,7 @@ from pyhf.typing import (
 
 log = logging.getLogger(__name__)
 
-FileCacheType = Dict[str, Tuple[Union[IO[str], IO[bytes]], Set[str]]]
+FileCacheType = MutableMapping[str, Tuple[Union[IO[str], IO[bytes]], Set[str]]]
 MountPathType = Iterable[Tuple[Path, Path]]
 ResolverType = Callable[[str], Path]
 
@@ -147,8 +150,8 @@ def process_sample(
 
     data, err = import_root_histogram(resolver, inputfile, histopath, histoname)
 
-    parameter_configs: list[Parameter] = []
-    modifiers: list[Modifier] = []
+    parameter_configs: MutableSequence[Parameter] = []
+    modifiers: MutableSequence[Modifier] = []
     # first check if we need to add lumi modifier for this sample
     if sample.attrib.get("NormalizeByTheory", "False") == 'True':
         modifier_lumi: LumiSys = {'name': 'lumi', 'type': 'lumi', 'data': None}
@@ -301,7 +304,7 @@ def process_channel(
         raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
 
     results = []
-    channel_parameter_configs: List[Parameter] = []
+    channel_parameter_configs: list[Parameter] = []
     for sample in samples:
         samples.set_description(f"  - sample {sample.attrib.get('Name')}")
         result = process_sample(
@@ -315,7 +318,7 @@ def process_channel(
 
 def process_measurements(
     toplvl: ET.ElementTree,
-    other_parameter_configs: list[Parameter] | None = None,
+    other_parameter_configs: Sequence[Parameter] | None = None,
 ) -> list[Measurement]:
     """
     For a given XML structure, provide a parsed dictionary adhering to defs.json/#definitions/measurement.
@@ -332,7 +335,7 @@ def process_measurements(
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
     for x in toplvl.findall('Measurement'):
-        parameter_configs_map: dict[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore[misc]
+        parameter_configs_map: MutableMapping[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore[misc]
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 
@@ -394,8 +397,8 @@ def process_measurements(
     return results
 
 
-def dedupe_parameters(parameters: list[Parameter]) -> list[Parameter]:
-    duplicates: dict[str, list[Parameter]] = {}
+def dedupe_parameters(parameters: Sequence[Parameter]) -> list[Parameter]:
+    duplicates: MutableMapping[str, MutableSequence[Parameter]] = {}
     for p in parameters:
         duplicates.setdefault(p['name'], []).append(p)
     for parname in duplicates:
@@ -443,8 +446,8 @@ def parse(
     # create a resolver for finding files
     resolver = resolver_factory(Path(rootdir), mounts)
 
-    channels: list[Channel] = []
-    observations: list[Observation] = []
+    channels: MutableSequence[Channel] = []
+    observations: MutableSequence[Observation] = []
     parameter_configs = []
     for inp in inputs:
         inputs.set_description(f'Processing {inp}')
