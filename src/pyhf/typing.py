@@ -1,7 +1,11 @@
 import os
-
+import sys
 import typing as T
-from typing_extensions import TypedDict  # for python 3.7 only (3.8+ has T.TypedDict)
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
 
 __all__ = (
     "PathOrStr",
