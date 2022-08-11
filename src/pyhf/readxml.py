@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-import typing as T
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
