@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union
+from typing import TYPE_CHECKING, Callable, Iterable, Tuple, Union, IO
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -16,13 +16,13 @@ from pyhf import schema
 
 log = logging.getLogger(__name__)
 
-if T.TYPE_CHECKING:
-    PathOrStr = T.Union[str, os.PathLike[str]]
+if TYPE_CHECKING:
+    PathOrStr = Union[str, os.PathLike[str]]
 else:
-    PathOrStr = T.Union[str, "os.PathLike[str]"]
+    PathOrStr = Union[str, "os.PathLike[str]"]
 
 __FILECACHE__ = {}
-MountPathType = T.Iterable[T.Tuple[Path, Path]]
+MountPathType = Iterable[Tuple[Path, Path]]
 
 __all__ = [
     "clear_filecache",
@@ -41,7 +41,7 @@ def __dir__():
     return __all__
 
 
-def resolver_factory(rootdir: Path, mounts: MountPathType) -> T.Callable[[str], Path]:
+def resolver_factory(rootdir: Path, mounts: MountPathType) -> Callable[[str], Path]:
     def resolver(filename: str) -> Path:
         path = Path(filename)
         for host_path, mount_path in mounts:
@@ -368,9 +368,9 @@ def dedupe_parameters(parameters):
 
 
 def parse(
-    configfile: PathOrStr | T.IO[bytes] | T.IO[str],
+    configfile: PathOrStr | IO[bytes] | IO[str],
     rootdir: PathOrStr,
-    mounts: T.Optional[MountPathType] = None,
+    mounts: MountPathType | None = None,
     track_progress: bool = False,
     validation_as_error: bool = True,
 ):
@@ -378,6 +378,8 @@ def parse(
     Parse the ``configfile`` with respect to the ``rootdir``.
 
     Args:
+        configfile (:class:`pathlib.Path` or :obj:`str` or file object): The top-level XML config file to parse.
+        rootdir (:class:`pathlib.Path` or :obj:`str`): The path to the working directory for interpreting relative paths in the configuration.
         mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker volume mounts. Default is ``None``.
         track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
         validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
