@@ -378,7 +378,7 @@ def parse(
     Parse the configfile with respect to the rootdir.
 
     Args:
-        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker. Default is ``None``.
+        mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker volume mounts. Default is ``None``.
         track_progress (:obj:`bool`): Show the progress bar. Default is to hide the progress bar.
         validation_as_error (:obj:`bool`): Throw an exception (``True``) or print a warning (``False``) if the resulting HistFactory JSON does not adhere to the schema. Default is to throw an exception.
 
