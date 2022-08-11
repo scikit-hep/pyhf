@@ -375,7 +375,7 @@ def parse(
     validation_as_error: bool = True,
 ):
     """
-    Parse the configfile with respect to the rootdir.
+    Parse the ``configfile`` with respect to the ``rootdir``.
 
     Args:
         mounts (:obj:`None` or :obj:`list` of 2-:obj:`tuple` of :class:`pathlib.Path` objects): The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker volume mounts. Default is ``None``.
