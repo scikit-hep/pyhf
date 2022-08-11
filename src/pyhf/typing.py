@@ -3,9 +3,9 @@ import sys
 import typing as T
 
 if sys.version_info >= (3, 8):
-    from typing import TypedDict
+    from typing import TypedDict, Literal
 else:
-    from typing_extensions import TypedDict
+    from typing_extensions import TypedDict, Literal
 
 __all__ = (
     "PathOrStr",
@@ -65,12 +65,12 @@ class NormSysData(TypedDict):
 
 
 class NormSys(ModifierBase):
-    type: T.Literal['normsys']
+    type: Literal['normsys']
     data: NormSysData
 
 
 class NormFactor(ModifierBase):
-    type: T.Literal['normfactor']
+    type: Literal['normfactor']
     data: None
 
 
@@ -80,28 +80,28 @@ class HistoSysData(TypedDict):
 
 
 class HistoSys(ModifierBase):
-    type: T.Literal['histosys']
+    type: Literal['histosys']
     data: HistoSysData
 
 
 class StatError(ModifierBase):
-    type: T.Literal['staterror']
+    type: Literal['staterror']
     data: T.Sequence[float]
 
 
 class ShapeSys(ModifierBase):
-    type: T.Literal['shapesys']
+    type: Literal['shapesys']
     data: T.Sequence[float]
 
 
 class ShapeFactor(ModifierBase):
-    type: T.Literal['shapefactor']
+    type: Literal['shapefactor']
     data: None
 
 
 class LumiSys(TypedDict):
-    name: T.Literal['lumi']
-    type: T.Literal['lumi']
+    name: Literal['lumi']
+    type: Literal['lumi']
     data: None
 
 
