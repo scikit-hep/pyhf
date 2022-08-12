@@ -2,10 +2,10 @@ import jsonschema
 import pyhf.exceptions
 from pyhf.schema.loader import load_schema
 from pyhf.schema import variables
-from typing import Union
+from typing import Union, Mapping
 
 
-def validate(spec: dict, schema_name: str, version: Union[str, None] = None):
+def validate(spec: Mapping, schema_name: str, version: Union[str, None] = None):
     """
     Validate a provided specification against a schema.
 
