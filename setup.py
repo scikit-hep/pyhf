@@ -20,8 +20,6 @@ extras_require['backends'] = sorted(
     )
 )
 extras_require['contrib'] = sorted({'matplotlib', 'requests'})
-extras_require['lint'] = sorted({'flake8', 'black>=22.1.0'})
-
 extras_require['test'] = sorted(
     set(
         extras_require['backends']
@@ -65,7 +63,6 @@ extras_require['docs'] = sorted(
 extras_require['develop'] = sorted(
     set(
         extras_require['docs']
-        + extras_require['lint']
         + extras_require['test']
         + [
             'nbdime',
