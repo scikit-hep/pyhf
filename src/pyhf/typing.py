@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import TYPE_CHECKING, MutableSequence, Sequence, Union
+from typing import MutableSequence, Sequence, Union
 
 if sys.version_info >= (3, 8):
     from typing import Literal, TypedDict
@@ -27,10 +27,8 @@ __all__ = (
     "Workspace",
 )
 
-if TYPE_CHECKING:
-    PathOrStr = Union[str, os.PathLike[str]]
-else:
-    PathOrStr = Union[str, "os.PathLike[str]"]
+# TODO: Switch to os.PathLike[str] once Python 3.7 dropped
+PathOrStr = Union[str, "os.PathLike[str]"]
 
 
 class ParameterBase(TypedDict, total=False):
