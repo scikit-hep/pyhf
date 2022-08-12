@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import logging
 from typing import (
+    IO,
     Callable,
     Iterable,
-    Tuple,
-    IO,
     List,
-    Set,
-    Union,
-    Sequence,
     MutableMapping,
     MutableSequence,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
     cast,
 )
 
