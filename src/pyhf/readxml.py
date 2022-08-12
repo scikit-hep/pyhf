@@ -26,22 +26,22 @@ from pyhf import compat
 from pyhf import exceptions
 from pyhf import schema
 from pyhf.typing import (
-    Sample,
-    Parameter,
-    Modifier,
-    LumiSys,
-    NormSys,
-    NormFactor,
-    HistoSys,
-    StatError,
-    ShapeSys,
-    ShapeFactor,
-    Measurement,
-    ParameterBase,
     Channel,
+    HistoSys,
+    LumiSys,
+    Measurement,
+    Modifier,
+    NormFactor,
+    NormSys,
     Observation,
-    Workspace,
+    Parameter,
+    ParameterBase,
     PathOrStr,
+    Sample,
+    ShapeFactor,
+    ShapeSys,
+    StatError,
+    Workspace,
 )
 
 log = logging.getLogger(__name__)
