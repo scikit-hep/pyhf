@@ -1,12 +1,11 @@
 import os
 import sys
-
-from typing import TYPE_CHECKING, Union, Sequence, MutableSequence
+from typing import TYPE_CHECKING, MutableSequence, Sequence, Union
 
 if sys.version_info >= (3, 8):
-    from typing import TypedDict, Literal
+    from typing import Literal, TypedDict
 else:
-    from typing_extensions import TypedDict, Literal
+    from typing_extensions import Literal, TypedDict
 
 __all__ = (
     "PathOrStr",
