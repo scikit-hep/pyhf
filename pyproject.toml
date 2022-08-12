@@ -108,10 +108,12 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module = [
+  'jax.*',
   'matplotlib.*',
   'scipy.*',
   'tensorflow.*',
   'tensorflow_probability.*',
+  'torch.*',
   'uproot.*',
 ]
 ignore_missing_imports = true
