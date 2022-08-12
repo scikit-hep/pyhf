@@ -27,7 +27,7 @@ __all__ = (
     "Workspace",
 )
 
-# TODO: Switch to os.PathLike[str] once Python 3.7 dropped
+# TODO: Switch to os.PathLike[str] once Python 3.8 support dropped
 PathOrStr = Union[str, "os.PathLike[str]"]
 
 
