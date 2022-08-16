@@ -620,10 +620,12 @@ def no_sockets(monkeypatch):
 
 @pytest.fixture
 def refresh_pyhf(monkeypatch):
+    global pyhf
     modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
     for module_name in modules_to_clear:
         monkeypatch.delitem(sys.modules, module_name)
-    importlib.import_module(pyhf.__name__)
+    pyhf = importlib.import_module(pyhf.__name__)
+    return pyhf
 
 
 def test_defs_always_cached(
@@ -639,6 +641,7 @@ def test_defs_always_cached(
     Otherwise using pyhf in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id,
     it will crash (e.g. a cluster node without network access).
     """
+    pyhf = refresh_pyhf
     spec = {
         'channels': [
             {
