@@ -7,7 +7,7 @@ from scipy.stats import norm, poisson
 
 from pyhf.typing import TensorBackend, Shape, PDF
 
-from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping, cast
+from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping
 from numpy.typing import (
     NDArray,
     NBitBase,
@@ -94,7 +94,7 @@ class numpy_backend(Generic[T], TensorBackend):
         Returns:
             NumPy ndarray: A clipped `tensor`
         """
-        return cast(Tensor[T], np.clip(tensor_in, min_value, max_value))
+        return np.clip(tensor_in, min_value, max_value)
 
     def erf(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
@@ -156,7 +156,7 @@ class numpy_backend(Generic[T], TensorBackend):
         Returns:
             NumPy ndarray: The tensor with repeated axes
         """
-        return cast(Tensor[T], np.tile(tensor_in, repeats))
+        return np.tile(tensor_in, repeats)
 
     def conditional(
         self,
@@ -189,7 +189,7 @@ class numpy_backend(Generic[T], TensorBackend):
 
     def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
         try:
-            return cast(list[T], tensor_in.tolist())  # type: ignore[union-attr]
+            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -429,7 +429,7 @@ class numpy_backend(Generic[T], TensorBackend):
         return np.einsum(subscripts, *operands)  # type: ignore[arg-type,no-any-return]
 
     def poisson_logpdf(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
-        return cast(ArrayLike, xlogy(n, lam) - lam - gammaln(n + 1.0))
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)  # type: ignore[no-any-return]
 
     def poisson(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
         r"""
