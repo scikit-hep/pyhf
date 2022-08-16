@@ -37,6 +37,7 @@ def test_schema_changeable(datadir, monkeypatch):
     )
     old_path = pyhf.schema.path
     new_path = datadir / 'customschema'
+    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
         pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
@@ -44,8 +45,12 @@ def test_schema_changeable(datadir, monkeypatch):
     pyhf.schema(new_path)
     assert old_path != pyhf.schema.path
     assert new_path == pyhf.schema.path
+    assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
+    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
     assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
     pyhf.schema(old_path)
+    pyhf.schema.variables.SCHEMA_CACHE = old_cache
 
 
 def test_schema_changeable_context(datadir, monkeypatch):
@@ -54,13 +59,18 @@ def test_schema_changeable_context(datadir, monkeypatch):
     )
     old_path = pyhf.schema.path
     new_path = datadir / 'customschema'
+    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     assert old_path == pyhf.schema.path
     with pyhf.schema(new_path):
         assert old_path != pyhf.schema.path
         assert new_path == pyhf.schema.path
+        assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
+        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
         assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
     assert old_path == pyhf.schema.path
+    assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
 
 def test_schema_changeable_context_error(datadir, monkeypatch):
@@ -69,11 +79,15 @@ def test_schema_changeable_context_error(datadir, monkeypatch):
     )
     old_path = pyhf.schema.path
     new_path = datadir / 'customschema'
+    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
+            # this populates the current cache
+            pyhf.Workspace(json.load(open(new_path / 'custom.json')))
             raise ZeroDivisionError()
     assert old_path == pyhf.schema.path
+    assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
 
 def test_no_channels():
