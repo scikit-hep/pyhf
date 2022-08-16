@@ -1,11 +1,12 @@
 import os
 import sys
-from typing import MutableSequence, Sequence, Union
+from typing import MutableSequence, Sequence, Union, Tuple, SupportsIndex, Any
+
 
 if sys.version_info >= (3, 8):
-    from typing import Literal, TypedDict
+    from typing import Literal, TypedDict, Protocol
 else:
-    from typing_extensions import Literal, TypedDict
+    from typing_extensions import Literal, TypedDict, Protocol
 
 __all__ = (
     "PathOrStr",
@@ -27,8 +28,12 @@ __all__ = (
     "Workspace",
 )
 
+
 # TODO: Switch to os.PathLike[str] once Python 3.8 support dropped
 PathOrStr = Union[str, "os.PathLike[str]"]
+
+Shape = Tuple[int, ...]
+ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
 class ParameterBase(TypedDict, total=False):
@@ -132,3 +137,15 @@ class Workspace(TypedDict):
     measurements: Sequence[Measurement]
     channels: Sequence[Channel]
     observations: Sequence[Observation]
+
+
+class TensorBackend(Protocol):
+    ...
+
+
+class PDF(Protocol):
+    def sample(self, sample_shape: Shape) -> Any:
+        ...
+
+    def log_prob(self, value: Any) -> Any:
+        ...
