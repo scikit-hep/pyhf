@@ -5,7 +5,7 @@ from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
-from pyhf.typing import TensorBackend, Shape, PDF
+from pyhf.typing import TensorBackend, Shape
 
 from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping
 from numpy.typing import (
@@ -21,7 +21,7 @@ Tensor = NDArray[np.number[T]] | NDArray[np.bool_]
 log = logging.getLogger(__name__)
 
 
-class _BasicPoisson(PDF):
+class _BasicPoisson:
     def __init__(self, rate: Tensor[T]):
         self.rate = rate
 
@@ -33,7 +33,7 @@ class _BasicPoisson(PDF):
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class _BasicNormal(PDF):
+class _BasicNormal:
     def __init__(self, loc: Tensor[T], scale: Tensor[T]):
         self.loc = loc
         self.scale = scale
@@ -542,7 +542,7 @@ class numpy_backend(Generic[T], TensorBackend):
         """
         return norm.cdf(x, loc=mu, scale=sigma)  # type: ignore[no-any-return]
 
-    def poisson_dist(self, rate: Tensor[T]) -> PDF:
+    def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson:
         r"""
         The Poisson distribution with rate parameter :code:`rate`.
 
@@ -563,7 +563,7 @@ class numpy_backend(Generic[T], TensorBackend):
         """
         return _BasicPoisson(rate)
 
-    def normal_dist(self, mu: Tensor[T], sigma: Tensor[T]) -> PDF:
+    def normal_dist(self, mu: Tensor[T], sigma: Tensor[T]) -> _BasicNormal:
         r"""
         The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
 
