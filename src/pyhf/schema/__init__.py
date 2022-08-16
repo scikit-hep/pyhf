@@ -72,6 +72,7 @@ class Schema(sys.modules[__name__].__class__):
             self (pyhf.schema.Schema): Returns itself (for contextlib management)
         """
         self.orig_path, variables.schemas = variables.schemas, new_path
+        variables.SCHEMA_CACHE.clear()
         return self
 
     def __enter__(self):
