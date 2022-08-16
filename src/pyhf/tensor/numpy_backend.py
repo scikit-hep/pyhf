@@ -7,7 +7,7 @@ from scipy.stats import norm, poisson
 
 from pyhf.typing import TensorBackend, Shape
 
-from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping
+from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping, Union
 from numpy.typing import (
     NDArray,
     NBitBase,
@@ -16,7 +16,7 @@ from numpy.typing import (
 )
 
 T = TypeVar("T", bound=NBitBase)
-Tensor = NDArray[np.number[T]] | NDArray[np.bool_]
+Tensor = Union[NDArray[np.number[T]], NDArray[np.bool_]]
 
 log = logging.getLogger(__name__)
 
