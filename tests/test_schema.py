@@ -31,13 +31,21 @@ def test_schema_callable():
     assert callable(pyhf.schema)
 
 
-def test_schema_changeable(datadir, monkeypatch):
+@pytest.fixture
+def self_restoring_schema_globals():
+    old_path = pyhf.schema.path
+    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+    yield old_path, old_cache
+    pyhf.schema(old_path)
+    pyhf.schema.variables.SCHEMA_CACHE = old_cache
+
+
+def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
-    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
         pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
@@ -49,17 +57,14 @@ def test_schema_changeable(datadir, monkeypatch):
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
     assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
-    pyhf.schema(old_path)
-    pyhf.schema.variables.SCHEMA_CACHE = old_cache
 
 
-def test_schema_changeable_context(datadir, monkeypatch):
+def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
-    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     assert old_path == pyhf.schema.path
     with pyhf.schema(new_path):
@@ -73,13 +78,14 @@ def test_schema_changeable_context(datadir, monkeypatch):
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
 
-def test_schema_changeable_context_error(datadir, monkeypatch):
+def test_schema_changeable_context_error(
+    datadir, monkeypatch, self_restoring_schema_globals
+):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
-    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
 
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
