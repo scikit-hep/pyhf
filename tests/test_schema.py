@@ -1,10 +1,9 @@
 import pyhf
 import pytest
 import json
-import jsonschema
-from functools import partial
 import importlib
 import sys
+from pytest_socket import socket_disabled  # noqa: F401
 
 
 @pytest.mark.parametrize('version', ['1.0.0'])
@@ -593,51 +592,6 @@ def test_patchset_fail(datadir, patchset_file):
         pyhf.schema.validate(patchset, 'patchset.json')
 
 
-def make_asserting_handler(origin):
-    def asserting_handler(*args, **kwargs):
-        raise AssertionError(
-            f'called URL request handler from {origin} with args={args!r}, kwargs={kwargs!r} '
-            'when no call should have been needed'
-        )
-
-    return asserting_handler
-
-
-@pytest.fixture
-def no_http_jsonschema_ref_resolving(monkeypatch):
-    asserting_handler = make_asserting_handler('handlers')
-    handlers = {
-        'https': asserting_handler,
-        'http': asserting_handler,
-    }
-    WrappedResolver = partial(jsonschema.RefResolver, handlers=handlers)
-    monkeypatch.setattr('jsonschema.RefResolver', WrappedResolver, raising=True)
-
-
-@pytest.fixture
-def no_requests(monkeypatch):
-    monkeypatch.delattr('requests.sessions.Session.request', raising=True)
-    monkeypatch.setattr(
-        'requests.get', make_asserting_handler('requests.get'), raising=True
-    )
-
-
-@pytest.fixture
-def no_urllib(monkeypatch):
-    monkeypatch.setattr(
-        'urllib.request.urlopen',
-        make_asserting_handler('urllib.request.urlopen'),
-        raising=True,
-    )
-
-
-@pytest.fixture
-def no_sockets(monkeypatch):
-    monkeypatch.setattr(
-        'socket.socket', make_asserting_handler('socket.socket'), raising=True
-    )
-
-
 @pytest.fixture
 def refresh_pyhf(monkeypatch):
     global pyhf
@@ -649,10 +603,7 @@ def refresh_pyhf(monkeypatch):
 
 
 def test_defs_always_cached(
-    no_http_jsonschema_ref_resolving,  # this should catch the request and raise the error if it happens
-    no_requests,  # future jsonschema code may try to fall back to to explicit/default handlers
-    no_urllib,
-    no_sockets,
+    socket_disabled,  # noqa: F811
     refresh_pyhf,  # ensure there is not a pre-existing cache hiding the issue
 ):
     """

@@ -40,6 +40,7 @@ extras_require['test'] = sorted(
             'scrapbook~=0.5.0',
             'jupyter',
             'graphviz',
+            'pytest-socket>=0.2',
         ]
     )
 )
