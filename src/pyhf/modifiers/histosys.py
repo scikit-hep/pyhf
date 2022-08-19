@@ -31,11 +31,17 @@ class histosys_builder:
         self.required_parsets = {}
 
     def collect(self, thismod, nom):
+        default_backend = pyhf.default_backend
         lo_data = thismod['data']['lo_data'] if thismod else nom
         hi_data = thismod['data']['hi_data'] if thismod else nom
         maskval = bool(thismod)
         mask = [maskval] * len(nom)
-        return {'lo_data': lo_data, 'hi_data': hi_data, 'mask': mask, 'nom_data': nom}
+        return {
+            'lo_data': default_backend.astensor(lo_data),
+            'hi_data': default_backend.astensor(hi_data),
+            'mask': default_backend.astensor(mask, dtype='bool'),
+            'nom_data': default_backend.astensor(nom),
+        }
 
     def append(self, key, channel, sample, thismod, defined_samp):
         self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
