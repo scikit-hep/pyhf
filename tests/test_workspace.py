@@ -910,3 +910,10 @@ def test_workspace_without_validation(mocker, simplemodels_model_data):
 
     pyhf.Workspace(dict(ws), validate=False)
     assert pyhf.schema.validate.called is False
+
+
+def test_workspace_invalid_specification():
+    spec = {"channels": [{"name": "SR", "samples_wrong_name": []}]}
+    # ensure that an invalid specifications gets caught as such
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Workspace(spec)
