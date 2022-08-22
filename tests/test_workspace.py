@@ -914,6 +914,7 @@ def test_workspace_without_validation(mocker, simplemodels_model_data):
 
 def test_workspace_invalid_specification():
     spec = {"channels": [{"name": "SR", "samples_wrong_name": []}]}
-    # ensure that an invalid specifications gets caught as such
+    # Ensure that an invalid specifications gets caught as such
+    # before a KeyError: 'samples' could be reached.
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Workspace(spec)
