@@ -81,7 +81,7 @@ jobs:
         echo "python-build named built distribution: ${wheel_name}"
 
     - name: Verify the distribution
-      run: twine check dist/*
+      run: twine check --strict dist/*
 
     - name: List contents of sdist
       run: python -m tarfile --list dist/pyhf-*.tar.gz
