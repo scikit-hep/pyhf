@@ -609,8 +609,8 @@ def test_defs_always_cached(
     """
     Schema definitions should always be loaded from the local files and cached at first import.
 
-    Otherwise using pyhf in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id,
-    it will crash (e.g. a cluster node without network access).
+    Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
+    (e.g. a cluster node without network access).
     """
     pyhf = refresh_pyhf
     spec = {
