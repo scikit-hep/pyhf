@@ -1,3 +1,5 @@
+name: List ATLAS Public Likelihoods
+
 on:
   push:
   pull_request:
