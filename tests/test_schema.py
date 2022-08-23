@@ -592,19 +592,9 @@ def test_patchset_fail(datadir, patchset_file):
         pyhf.schema.validate(patchset, 'patchset.json')
 
 
-@pytest.fixture
-def refresh_pyhf(monkeypatch):
-    global pyhf
-    modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
-    for module_name in modules_to_clear:
-        monkeypatch.delitem(sys.modules, module_name)
-    pyhf = importlib.import_module(pyhf.__name__)
-    return pyhf
-
-
 def test_defs_always_cached(
     socket_disabled,  # noqa: F811
-    refresh_pyhf,  # ensure there is not a pre-existing cache hiding the issue
+    monkeypatch,  # ensure there is not a pre-existing cache hiding the issue
 ):
     """
     Schema definitions should always be loaded from the local files and cached at first import.
@@ -612,7 +602,13 @@ def test_defs_always_cached(
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
     (e.g. a cluster node without network access).
     """
-    pyhf = refresh_pyhf
+
+    global pyhf
+    modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
+    for module_name in modules_to_clear:
+        monkeypatch.delitem(sys.modules, module_name)
+    pyhf = importlib.import_module(pyhf.__name__)
+
     spec = {
         'channels': [
             {
