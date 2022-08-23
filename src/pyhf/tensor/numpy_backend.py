@@ -1,4 +1,5 @@
 """NumPy Tensor Library Module."""
+from __future__ import annotations
 import numpy as np
 import logging
 from scipy.special import gammaln, xlogy
@@ -7,6 +8,7 @@ from scipy.stats import norm, poisson
 
 from pyhf.typing import Shape
 
+import sys
 from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping, Union
 from numpy.typing import (
     NDArray,
@@ -16,7 +18,11 @@ from numpy.typing import (
 )
 
 T = TypeVar("T", bound=NBitBase)
-Tensor = Union[NDArray[np.number[T]], NDArray[np.bool_]]
+
+if sys.version_info >= (3, 9):
+    Tensor = Union[NDArray[np.number[T]], NDArray[np.bool_]]
+else:
+    Tensor = NDArray
 
 log = logging.getLogger(__name__)
 
@@ -208,7 +214,7 @@ class numpy_backend(Generic[T]):
         return np.isfinite(tensor)
 
     def astensor(
-        self, tensor_in: ArrayLike, dtype_str: Literal['float'] = 'float'
+        self, tensor_in: ArrayLike, dtype: Literal['float'] = 'float'
     ) -> ArrayLike:
         """
         Convert to a NumPy array.
@@ -231,14 +237,14 @@ class numpy_backend(Generic[T]):
             `numpy.ndarray`: A multi-dimensional, fixed-size homogeneous array.
         """
         try:
-            dtype = self.dtypemap[dtype_str]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
             )
             raise
 
-        return np.asarray(tensor_in, dtype=dtype)
+        return np.asarray(tensor_in, dtype=dtype_obj)
 
     def sum(self, tensor_in: Tensor[T], axis: int | None = None) -> ArrayLike:
         return np.sum(tensor_in, axis=axis)
@@ -250,10 +256,10 @@ class numpy_backend(Generic[T]):
         return np.abs(tensor)
 
     def ones(
-        self, shape: Shape, dtype_str: Literal["float", "int", "bool"] = "float"
+        self, shape: Shape, dtype: Literal["float", "int", "bool"] = "float"
     ) -> ArrayLike:
         try:
-            dtype = self.dtypemap[dtype_str]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
@@ -261,13 +267,13 @@ class numpy_backend(Generic[T]):
             )
             raise
 
-        return np.ones(shape, dtype=dtype)
+        return np.ones(shape, dtype=dtype_obj)
 
     def zeros(
-        self, shape: Shape, dtype_str: Literal["float", "int", "bool"] = "float"
+        self, shape: Shape, dtype: Literal["float", "int", "bool"] = "float"
     ) -> ArrayLike:
         try:
-            dtype = self.dtypemap[dtype_str]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
@@ -275,7 +281,7 @@ class numpy_backend(Generic[T]):
             )
             raise
 
-        return np.zeros(shape, dtype=dtype)
+        return np.zeros(shape, dtype=dtype_obj)
 
     def power(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
         return np.power(tensor_in_1, tensor_in_2)
