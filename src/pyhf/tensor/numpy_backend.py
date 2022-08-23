@@ -5,7 +5,7 @@ from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
-from pyhf.typing import TensorBackend, Shape
+from pyhf.typing import Shape
 
 from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping, Union
 from numpy.typing import (
@@ -46,7 +46,7 @@ class _BasicNormal:
         return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
-class numpy_backend(Generic[T], TensorBackend):
+class numpy_backend(Generic[T]):
     """NumPy backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
