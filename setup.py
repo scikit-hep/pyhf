@@ -40,7 +40,7 @@ extras_require['test'] = sorted(
             'scrapbook~=0.5.0',
             'jupyter',
             'graphviz',
-            'pytest-socket>=0.2',
+            'pytest-socket>=0.2',  # 0.2 adds the socket_disabled fixture, cf. https://github.com/scikit-hep/pyhf/pull/1917#discussion_r951943084
         ]
     )
 )
