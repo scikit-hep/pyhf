@@ -594,7 +594,7 @@ def test_patchset_fail(datadir, patchset_file):
 
 def test_defs_always_cached(
     socket_disabled,  # noqa: F811
-    monkeypatch,  # ensure there is not a pre-existing cache hiding the issue
+    monkeypatch,
 ):
     """
     Schema definitions should always be loaded from the local files and cached at first import.
