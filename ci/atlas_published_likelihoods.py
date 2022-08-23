@@ -20,7 +20,7 @@ with webdriver.Chrome(options=options, service=service) as driver:
     driver.execute_script("addKeyword('Analysischaracteristics_Likelihood@available');")
     rows = driver.find_elements('css selector', '#paperListTbody tr')
 
-    for row in rows:
+    for index, row in enumerate(rows):
         elements = row.find_elements("css selector", "td")
         short_title = elements[0]
         links = elements[-1].find_elements("css selector", "a")
@@ -29,4 +29,6 @@ with webdriver.Chrome(options=options, service=service) as driver:
             for link in links
             if link.text.lower() == 'hepdata'
         ]
-        print(f'{short_title.text}\n  - {hepdata[0] if hepdata else "<missing link>"}')
+        print(
+            f'({index: 3d}) {short_title.text}\n  - {hepdata[0] if hepdata else "<missing link>"}'
+        )
