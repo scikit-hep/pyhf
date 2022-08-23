@@ -6,10 +6,9 @@ from scipy.special import gammaln, xlogy
 from scipy import special
 from scipy.stats import norm, poisson
 
-from pyhf.typing import Shape
+from pyhf.typing import Shape, Literal
 
-import sys
-from typing import TypeVar, Callable, Literal, Sequence, Generic, Mapping, Union
+from typing import TypeVar, Callable, Sequence, Generic, Mapping, Union, TYPE_CHECKING
 from numpy.typing import (
     NDArray,
     NBitBase,
@@ -19,10 +18,10 @@ from numpy.typing import (
 
 T = TypeVar("T", bound=NBitBase)
 
-if sys.version_info >= (3, 9):
+if TYPE_CHECKING:
     Tensor = Union[NDArray[np.number[T]], NDArray[np.bool_]]
 else:
-    Tensor = NDArray
+    Tensor = Generic
 
 log = logging.getLogger(__name__)
 

@@ -26,6 +26,7 @@ __all__ = (
     "Channel",
     "Observation",
     "Workspace",
+    "Literal",
 )
 
 
