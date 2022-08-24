@@ -23,9 +23,9 @@ with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
 
     # it's asynchronous so we force a wait
-    print(
-        WebDriverWait(driver, timeout=60).until(
-            lambda d: driver.find_element(By.CSS_SELECTOR, "#row_show_signature span")
+    WebDriverWait(driver, timeout=60).until(
+        lambda d: driver.find_element(
+            By.CSS_SELECTOR, 'select[name="publications_length"]'
         )
     )
 
