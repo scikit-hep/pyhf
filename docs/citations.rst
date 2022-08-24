@@ -46,7 +46,7 @@ The following is an updating list of HEPData entries for publications using ``Hi
 
    There is also an automatically generated list of statistical models that is updated
    nightly available at `pyhf.github.io/public-probability-models
-   <https://pyhf.github.io/public-probability-models>`.
+   <https://pyhf.github.io/public-probability-models>`__.
 
 .. bibliography:: bib/HEPData_likelihoods.bib
    :list: enumerated
