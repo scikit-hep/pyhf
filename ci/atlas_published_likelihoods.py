@@ -1,11 +1,12 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 url = 'https://twiki.cern.ch/twiki/bin/view/AtlasPublic'
 
-service = Service('/usr/bin/chromedriver')
+service = Service(ChromeDriverManager().install())
 
 options = Options()
 options.add_argument("--headless")
@@ -17,8 +18,13 @@ options.add_argument("--disable-extensions")
 
 with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
-    driver.execute_script("addKeyword('Analysischaracteristics_Likelihood@available');")
-    rows = driver.find_elements('css selector', '#paperListTbody tr')
+    driver.execute_script(
+        """addKeyword('Analysischaracteristics_Likelihood@available');
+    document.querySelector('select[name="publications_length"]').selectedIndex = document.querySelector('select[name="publications_length"]').length - 1;
+    document.querySelector('select[name="publications_length"]').dispatchEvent(new Event("change"));
+    """
+    )
+    rows = driver.find_elements('css selector', '#publications > tbody > tr')
 
     for index, row in enumerate(rows):
         elements = row.find_elements("css selector", "td")
