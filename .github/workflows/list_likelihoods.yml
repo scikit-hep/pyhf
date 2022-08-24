@@ -12,11 +12,12 @@ jobs:
   atlas:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.x"
     - name: Remove Chrome
       run: sudo apt purge google-chrome-stable
     - name: Install dependencies
