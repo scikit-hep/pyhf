@@ -19,8 +19,12 @@ concurrency:
 
 jobs:
   docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ['3.10']
@@ -87,13 +91,15 @@ jobs:
         # is not empty
         [ "$(ls -A docs/_build/html/schemas)" ]
 
-    - name: Deploy docs to GitHub Pages
+    - name: Setup Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: actions/configure-pages@v1
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html
-        force_orphan: true
-        user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@users.noreply.github.com'
-        commit_message: Deploy to GitHub pages
+        path: 'docs/_build/html'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
