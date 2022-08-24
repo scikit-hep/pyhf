@@ -4,7 +4,6 @@ import json
 import importlib
 import sys
 from pytest_socket import socket_disabled  # noqa: F401
-import unittest
 
 
 @pytest.mark.parametrize('version', ['1.0.0'])
@@ -593,15 +592,9 @@ def test_patchset_fail(datadir, patchset_file):
         pyhf.schema.validate(patchset, 'patchset.json')
 
 
-@pytest.fixture
-def monkeypatched_sys_modules():
-    with unittest.mock.patch.dict(sys.modules):
-        yield sys.modules
-
-
 def test_defs_always_cached(
     socket_disabled,  # noqa: F811
-    monkeypatched_sys_modules,
+    isolate_modules,
 ):
     """
     Schema definitions should always be loaded from the local files and cached at first import.
@@ -609,11 +602,10 @@ def test_defs_always_cached(
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
     (e.g. a cluster node without network access).
     """
-
     global pyhf
     modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
     for module_name in modules_to_clear:
-        del monkeypatched_sys_modules[module_name]
+        del sys.modules[module_name]
     pyhf = importlib.import_module(pyhf.__name__)
 
     spec = {
