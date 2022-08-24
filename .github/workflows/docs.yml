@@ -7,34 +7,46 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.10']
 
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Set up Python 3.10
+
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+        python-version: '3.10'
+
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --quiet install --upgrade .[docs,test]
         python -m pip install yq
         python -m pip list
+
+    - name: Install apt-get dependencies
+      run: |
         sudo apt-get update
         sudo apt-get -qq install pandoc
+
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
@@ -48,9 +60,11 @@ jobs:
                                src/pyhf/optimize \
                                src/pyhf/contrib \
                                src/pyhf/cli
+
     - name: Verify CITATION.cff schema
       run: |
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
+
     - name: Check for broken links
       run: |
         pushd docs
@@ -58,13 +72,13 @@ jobs:
         # Don't ship the linkcheck
         rm -r _build/linkcheck
         popd
+
     - name: Test and build docs
       run: |
         python -m doctest README.rst
         pushd docs
         make html
-        popd
-        touch docs/_build/html/.nojekyll
+
     - name: Check schemas are copied over
       run: |
         # is a directory
@@ -73,13 +87,16 @@ jobs:
         [ ! -L "docs/_build/html/schemas" ]
         # is not empty
         [ "$(ls -A docs/_build/html/schemas)" ]
-    - name: Deploy docs to GitHub Pages
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      uses: peaceiris/actions-gh-pages@v3
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v2
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html
-        force_orphan: true
-        user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@users.noreply.github.com'
-        commit_message: Deploy to GitHub pages
+        path: 'docs/_build/html'
+
+    - name: Deploy to GitHub Pages
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+      id: deployment
+      uses: actions/deploy-pages@v1
