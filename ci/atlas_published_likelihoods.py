@@ -20,6 +20,7 @@ options.add_argument("--disable-extensions")
 
 with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
+    print(driver.find_element(By.XPATH, "/html/body").get_attribute("innerHTML"))
     # click to expand other keywords
     driver.find_element(By.CSS_SELECTOR, "#row_show_signature span").click()
     # select the likelihood available keyword
