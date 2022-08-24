@@ -1,4 +1,4 @@
-name: List ATLAS Public Likelihoods
+name: List Public Likelihoods
 
 on:
   push:
