@@ -3,6 +3,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 
 url = 'https://twiki.cern.ch/twiki/bin/view/AtlasPublic'
 
@@ -18,14 +20,17 @@ options.add_argument("--disable-extensions")
 
 with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
-    driver.execute_script(
-        """addKeyword('Analysischaracteristics_Likelihood@available');
-    document.querySelector('select[name="publications_length"]').selectedIndex = document.querySelector('select[name="publications_length"]').length - 1;
-    document.querySelector('select[name="publications_length"]').dispatchEvent(new Event("change"));
-    """
-    )
+    # click to expand other keywords
+    driver.find_element(By.CSS_SELECTOR, "#row_show_signature span").click()
+    # select the likelihood available keyword
+    driver.find_element(By.ID, "Analysischaracteristics_Likelihood@available").click()
+    # show all publications
+    Select(
+        driver.find_element(By.CSS_SELECTOR, 'select[name="publications_length"]')
+    ).select_by_visible_text('All')
+    # get all publications visible / left in the table
     rows = driver.find_elements('css selector', '#publications > tbody > tr')
-
+    # iterate and print information
     for index, row in enumerate(rows):
         elements = row.find_elements("css selector", "td")
         short_title = elements[0]
