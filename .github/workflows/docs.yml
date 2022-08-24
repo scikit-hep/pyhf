@@ -78,8 +78,6 @@ jobs:
         python -m doctest README.rst
         pushd docs
         make html
-        popd
-        touch docs/_build/html/.nojekyll
 
     - name: Check schemas are copied over
       run: |
