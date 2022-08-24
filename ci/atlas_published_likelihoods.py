@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.wait import WebDriverWait
 
 url = 'https://twiki.cern.ch/twiki/bin/view/AtlasPublic'
 
@@ -20,7 +21,12 @@ options.add_argument("--disable-extensions")
 
 with webdriver.Chrome(options=options, service=service) as driver:
     driver.get(url)
-    print(driver.find_element(By.XPATH, "/html/body").get_attribute("innerHTML"))
+
+    # it's asynchronous so we force a wait
+    WebDriverWait(driver, timeout=60).until(
+        lambda d: driver.find_element(By.CSS_SELECTOR, "#row_show_signature span")
+    )
+
     # click to expand other keywords
     driver.find_element(By.CSS_SELECTOR, "#row_show_signature span").click()
     # select the likelihood available keyword
