@@ -90,7 +90,7 @@ jobs:
 
     - name: Setup Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      uses: actions/configure-pages@v1
+      uses: actions/configure-pages@v2
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
