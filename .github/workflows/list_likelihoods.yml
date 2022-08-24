@@ -2,6 +2,7 @@ name: List Public Likelihoods
 
 on:
   push:
+    branches: ["master"]
   pull_request:
   # Run daily at 0:01 UTC
   schedule:
