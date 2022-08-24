@@ -602,11 +602,10 @@ def test_defs_always_cached(
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
     (e.g. a cluster node without network access).
     """
-    global pyhf
     modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
     for module_name in modules_to_clear:
         del sys.modules[module_name]
-    pyhf = importlib.import_module(pyhf.__name__)
+    pyhf = importlib.import_module('pyhf')
 
     spec = {
         'channels': [
