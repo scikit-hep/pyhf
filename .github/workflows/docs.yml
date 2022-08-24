@@ -23,10 +23,12 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Set up Python 3.10
+
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
@@ -35,6 +37,7 @@ jobs:
         python -m pip list
         sudo apt-get update
         sudo apt-get -qq install pandoc
+
     - name: Check docstrings
       run: |
         # Group 1 is related to docstrings
@@ -48,9 +51,11 @@ jobs:
                                src/pyhf/optimize \
                                src/pyhf/contrib \
                                src/pyhf/cli
+
     - name: Verify CITATION.cff schema
       run: |
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
+
     - name: Check for broken links
       run: |
         pushd docs
@@ -58,6 +63,7 @@ jobs:
         # Don't ship the linkcheck
         rm -r _build/linkcheck
         popd
+
     - name: Test and build docs
       run: |
         python -m doctest README.rst
@@ -65,6 +71,7 @@ jobs:
         make html
         popd
         touch docs/_build/html/.nojekyll
+
     - name: Check schemas are copied over
       run: |
         # is a directory
@@ -73,6 +80,7 @@ jobs:
         [ ! -L "docs/_build/html/schemas" ]
         # is not empty
         [ "$(ls -A docs/_build/html/schemas)" ]
+
     - name: Deploy docs to GitHub Pages
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v3
