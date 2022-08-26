@@ -5,11 +5,7 @@ from pyhf.tensor import BackendRetriever
 from pyhf import exceptions
 from pyhf import events
 from pyhf.optimize import OptimizerRetriever
-from pyhf.typing import TensorBackend, Optimizer, TypedDict
-from types import ModuleType
-
-_default_backend: TensorBackend = BackendRetriever.numpy_backend()
-_default_optimizer: Optimizer = OptimizerRetriever.scipy_optimizer()  # type: ignore[no-untyped-call]
+from pyhf.typing import TensorBackend, Optimizer, TypedDict, Protocol
 
 
 class State(TypedDict):
@@ -17,14 +13,15 @@ class State(TypedDict):
     current: tuple[TensorBackend, Optimizer]
 
 
-class Module(ModuleType):
-    state: State = {
-        'default': (_default_backend, _default_optimizer),
-        'current': (_default_backend, _default_optimizer),
-    }
+class HasState(Protocol):
+    state: State
 
 
-this = Module(__name__)
+this: HasState = sys.modules[__name__]
+this.state = {
+    'default': (None, None),  # type: ignore[typeddict-item]
+    'current': (None, None),  # type: ignore[typeddict-item]
+}
 
 
 def get_backend(default: bool = False) -> tuple[TensorBackend, Optimizer]:
@@ -50,6 +47,13 @@ def get_backend(default: bool = False) -> tuple[TensorBackend, Optimizer]:
         return this.state['default']
 
     return this.state['current']
+
+
+_default_backend: TensorBackend = BackendRetriever.numpy_backend()
+_default_optimizer: Optimizer = OptimizerRetriever.scipy_optimizer()  # type: ignore[no-untyped-call]
+
+this.state['default'] = (_default_backend, _default_optimizer)
+this.state['current'] = this.state['default']
 
 
 @events.register('change_backend')
@@ -193,6 +197,3 @@ def set_backend(
         events.trigger("optimizer_changed")()
     # set up any other globals for backend
     new_backend._setup()
-
-
-sys.modules[__name__] = this

@@ -27,6 +27,7 @@ __all__ = (
     "Workspace",
     "Literal",
     "TypedDict",
+    "Protocol",
 )
 
 
