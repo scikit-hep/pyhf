@@ -21,4 +21,4 @@ torch==1.10.0
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
 --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
 jax==0.2.10
-jaxlib==0.1.60  # jax v0.2.10 requires jaxlib>=0.1.60
+jaxlib==0.1.61  # jax v0.2.10 requires jaxlib>=0.1.60
