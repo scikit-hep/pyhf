@@ -3,7 +3,7 @@ from setuptools import setup
 extras_require = {
     'shellcomplete': ['click_completion'],
     'tensorflow': [
-        'tensorflow>=2.6.5',  # c.f. PR #1874
+        'tensorflow>=2.7.0',  # c.f. PR #1874
         'tensorflow-probability>=0.11.0',  # c.f. PR #1657
     ],
     'torch': ['torch>=1.10.0'],  # c.f. PR #1657
