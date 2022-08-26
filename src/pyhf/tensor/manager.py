@@ -1,18 +1,33 @@
+from __future__ import annotations
 import sys
 
 from pyhf.tensor import BackendRetriever
 from pyhf import exceptions
 from pyhf import events
 from pyhf.optimize import OptimizerRetriever
+from pyhf.typing import TensorBackend, Optimizer, TypedDict
+from types import ModuleType
 
-this = sys.modules[__name__]
-this.state = {
-    'default': (None, None),
-    'current': (None, None),
-}
+_default_backend: TensorBackend = BackendRetriever.numpy_backend()
+_default_optimizer: Optimizer = OptimizerRetriever.scipy_optimizer()  # type: ignore[no-untyped-call]
 
 
-def get_backend(default=False):
+class State(TypedDict):
+    default: tuple[TensorBackend, Optimizer]
+    current: tuple[TensorBackend, Optimizer]
+
+
+class Module(ModuleType):
+    state: State = {
+        'default': (_default_backend, _default_optimizer),
+        'current': (_default_backend, _default_optimizer),
+    }
+
+
+this = Module(__name__)
+
+
+def get_backend(default: bool = False) -> tuple[TensorBackend, Optimizer]:
     """
     Get the current backend and the associated optimizer
 
@@ -31,18 +46,19 @@ def get_backend(default=False):
     Returns:
         backend, optimizer
     """
-    return this.state['default' if default else 'current']
+    if default:
+        return this.state['default']
 
-
-this.state['default'] = (
-    BackendRetriever.numpy_backend(),
-    OptimizerRetriever.scipy_optimizer(),
-)
-this.state['current'] = this.state['default']
+    return this.state['current']
 
 
 @events.register('change_backend')
-def set_backend(backend, custom_optimizer=None, precision=None, default=False):
+def set_backend(
+    backend: str | bytes | TensorBackend,
+    custom_optimizer: str | bytes | Optimizer | None = None,
+    precision: str | bytes | None = None,
+    default: bool = False,
+) -> None:
     """
     Set the backend and the associated optimizer
 
@@ -65,9 +81,9 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
         '64b'
 
     Args:
-        backend (:obj:`str` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
-        custom_optimizer (`pyhf.optimize` optimizer): Optional custom optimizer defined by the user
-        precision (:obj:`str`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
+        backend (:obj:`str` or :obj:`bytes` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
+        custom_optimizer (:obj:`str` or :obj:`bytes` or `pyhf.optimize` optimizer or :obj:`None`): Optional custom optimizer defined by the user
+        precision (:obj:`str` or :obj:`bytes` or :obj:`None`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
         default (:obj:`bool`): Set the backend as the default backend additionally
 
     Returns:
@@ -76,51 +92,58 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
     _supported_precisions = ["32b", "64b"]
     backend_kwargs = {}
 
-    if isinstance(precision, (str, bytes)):
+    if precision:
         if isinstance(precision, bytes):
             precision = precision.decode("utf-8")
-        precision = precision.lower()
 
-    if isinstance(backend, (str, bytes)):
-        if isinstance(backend, bytes):
-            backend = backend.decode("utf-8")
+        precision = precision.lower()
+        if precision not in _supported_precisions:
+            raise exceptions.Unsupported(
+                f"The backend precision provided is not supported: {precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
+            )
+
+        backend_kwargs["precision"] = precision
+
+    if isinstance(backend, bytes):
+        backend = backend.decode("utf-8")
+
+    if isinstance(backend, str):
         backend = backend.lower()
 
-        if precision is not None:
-            backend_kwargs["precision"] = precision
-
         try:
-            backend = getattr(BackendRetriever, f"{backend:s}_backend")(
-                **backend_kwargs
-            )
+            new_backend: TensorBackend = getattr(
+                BackendRetriever, f"{backend:s}_backend"
+            )(**backend_kwargs)
         except TypeError:
             raise exceptions.InvalidBackend(
                 f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
             )
+    else:
+        new_backend = backend
 
-    _name_supported = getattr(BackendRetriever, f"{backend.name:s}_backend")
+    _name_supported = getattr(BackendRetriever, f"{new_backend.name:s}_backend")
     if _name_supported:
-        if not isinstance(backend, _name_supported):
+        if not isinstance(new_backend, _name_supported):
             raise AttributeError(
-                f"'{backend.name:s}' is not a valid name attribute for backend type {type(backend)}\n                 Custom backends must have names unique from supported backends"
+                f"'{new_backend.name:s}' is not a valid name attribute for backend type {type(new_backend)}\n                 Custom backends must have names unique from supported backends"
             )
-        if backend.precision not in _supported_precisions:
-            raise exceptions.Unsupported(
-                f"The backend precision provided is not supported: {backend.precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
-            )
+
     # If "precision" arg passed, it should always win
     # If no "precision" arg, defer to tensor backend object API if set there
-    if precision is not None:
-        if backend.precision != precision:
-            backend_kwargs["precision"] = precision
-            backend = getattr(BackendRetriever, f"{backend.name:s}_backend")(
-                **backend_kwargs
-            )
+    if precision is not None and new_backend.precision != precision:
+        new_backend = getattr(BackendRetriever, f"{new_backend.name:s}_backend")(
+            **backend_kwargs
+        )
 
-    if custom_optimizer:
-        if isinstance(custom_optimizer, (str, bytes)):
-            if isinstance(custom_optimizer, bytes):
-                custom_optimizer = custom_optimizer.decode("utf-8")
+    if custom_optimizer is None:
+        new_optimizer: Optimizer = OptimizerRetriever.scipy_optimizer()  # type: ignore[no-untyped-call]
+    else:
+        if isinstance(custom_optimizer, bytes):
+            custom_optimizer = custom_optimizer.decode("utf-8")
+
+        if isinstance(custom_optimizer, str):
+            custom_optimizer = custom_optimizer.lower()
+
             try:
                 new_optimizer = getattr(
                     OptimizerRetriever, f"{custom_optimizer.lower()}_optimizer"
@@ -130,31 +153,29 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
                     f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
                 )
         else:
-            _name_supported = getattr(
-                OptimizerRetriever, f"{custom_optimizer.name:s}_optimizer"
-            )
-            if _name_supported:
-                if not isinstance(custom_optimizer, _name_supported):
-                    raise AttributeError(
-                        f"'{custom_optimizer.name}' is not a valid name attribute for optimizer type {type(custom_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
-                    )
             new_optimizer = custom_optimizer
 
-    else:
-        new_optimizer = OptimizerRetriever.scipy_optimizer()
+        _name_supported = getattr(
+            OptimizerRetriever, f"{new_optimizer.name:s}_optimizer"
+        )
+        if _name_supported:
+            if not isinstance(new_optimizer, _name_supported):
+                raise AttributeError(
+                    f"'{new_optimizer.name}' is not a valid name attribute for optimizer type {type(new_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
+                )
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
-        (backend.name != this.state['current'][0].name)
-        | (backend.precision != this.state['current'][0].precision)
+        (new_backend.name != this.state['current'][0].name)
+        | (new_backend.precision != this.state['current'][0].precision)
     )
     optimizer_changed = bool(this.state['current'][1] != new_optimizer)
     # set new backend
-    this.state['current'] = (backend, new_optimizer)
+    this.state['current'] = (new_backend, new_optimizer)
     if default:
         default_tensorlib_changed = bool(
-            (backend.name != this.state['default'][0].name)
-            | (backend.precision != this.state['default'][0].precision)
+            (new_backend.name != this.state['default'][0].name)
+            | (new_backend.precision != this.state['default'][0].precision)
         )
         default_optimizer_changed = bool(this.state['default'][1] != new_optimizer)
         # trigger events
@@ -171,4 +192,7 @@ def set_backend(backend, custom_optimizer=None, precision=None, default=False):
     if optimizer_changed:
         events.trigger("optimizer_changed")()
     # set up any other globals for backend
-    backend._setup()
+    new_backend._setup()
+
+
+sys.modules[__name__] = this

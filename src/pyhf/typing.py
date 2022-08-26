@@ -26,6 +26,7 @@ __all__ = (
     "Observation",
     "Workspace",
     "Literal",
+    "TypedDict",
 )
 
 
