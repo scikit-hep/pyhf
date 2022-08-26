@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import Callable, Generic, Mapping, Sequence, TypeVar, Union
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
@@ -14,10 +14,7 @@ from pyhf.typing import Literal, Shape
 
 T = TypeVar("T", bound=NBitBase)
 
-if TYPE_CHECKING:
-    Tensor = Union[NDArray[np.number[T]], NDArray[np.bool_]]
-else:
-    Tensor = Generic
+Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
 
 log = logging.getLogger(__name__)
 
