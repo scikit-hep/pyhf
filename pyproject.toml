@@ -108,24 +108,19 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module = [
-  'matplotlib.*',
   'jax.*',
-  'click.*',
-  'click_completion.*',
-  'numpy.*',
+  'matplotlib.*',
   'scipy.*',
-  'jsonpatch.*',
+  'tensorflow.*',
+  'tensorflow_probability.*',
+  'torch.*',
   'uproot.*',
-  'yaml.*',
-  'jsonschema.*',
-  'tqdm.*',
 ]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
   'pyhf',
-  'pyhf.tensor.*',
   'pyhf.optimize.*',
   'pyhf.contrib.*',
   'pyhf.infer.*',
@@ -146,5 +141,11 @@ module = [
   'pyhf.pdf',
   'pyhf.simplemodels',
   'pyhf.probability',
+  'pyhf.tensor.common.*',
+  'pyhf.tensor.manager.*',
+  'pyhf.tensor',
+  'pyhf.tensor.jax_backend.*',
+  'pyhf.tensor.tensorflow_backend.*',
+  'pyhf.tensor.pytorch_backend.*',
 ]
 ignore_errors = true
