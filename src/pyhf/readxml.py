@@ -438,7 +438,7 @@ def parse(
     mounts = mounts or []
     toplvl = ET.parse(configfile)
     inputs = tqdm.tqdm(
-        [x.text for x in toplvl.findall('Input')],
+        [x.text for x in toplvl.findall('Input') if x.text],
         unit='channel',
         disable=not (track_progress),
     )
