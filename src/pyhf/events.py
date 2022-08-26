@@ -1,5 +1,12 @@
+from __future__ import annotations
 import weakref
 from functools import wraps
+
+from typing import TypeVar, Callable, cast
+
+# see https://mypy.readthedocs.io/en/stable/generics.html#declaring-decorators
+TCallable = TypeVar("TCallable", bound=Callable)
+
 
 __events = {}
 __disabled_events = set()
@@ -85,7 +92,7 @@ class Callables:
         return f"Callables({self.callbacks})"
 
 
-def subscribe(event):
+def subscribe(event: str):
     """
     Subscribe a function or object method as a callback to an event.
 
@@ -112,14 +119,14 @@ def subscribe(event):
 
     global __events
 
-    def __decorator(func):
+    def __decorator(func: TCallable) -> TCallable:
         __events.setdefault(event, Callables()).append(func)
         return func
 
-    return __decorator
+    return cast(TCallable, __decorator)
 
 
-def register(event):
+def register(event: str) -> Callable[[TCallable], TCallable]:
     """
     Register a function or object method to trigger an event.  This creates two
     events: ``{event_name}::before`` and ``{event_name}::after``.
@@ -155,9 +162,9 @@ def register(event):
 
     """
 
-    def _register(func):
+    def _register(func: TCallable) -> TCallable:
         @wraps(func)
-        def register_wrapper(*args, **kwargs):
+        def register_wrapper(*args, **kwargs):  # type: ignore
             trigger(f"{event:s}::before")()
             result = func(*args, **kwargs)
             trigger(f"{event:s}::after")()
@@ -165,10 +172,10 @@ def register(event):
 
         return register_wrapper
 
-    return _register
+    return cast(TCallable, _register)
 
 
-def trigger(event):
+def trigger(event: str) -> Callables:
     """
     Trigger an event if not disabled.
     """
@@ -177,7 +184,7 @@ def trigger(event):
     return noop if is_noop else __events.get(event)
 
 
-def disable(event):
+def disable(event: str):
     """
     Disable an event from firing.
     """
@@ -185,7 +192,7 @@ def disable(event):
     __disabled_events.add(event)
 
 
-def enable(event):
+def enable(event: str):
     """
     Enable an event to be fired if disabled.
     """
