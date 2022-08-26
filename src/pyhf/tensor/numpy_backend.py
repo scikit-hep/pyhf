@@ -1,20 +1,16 @@
 """NumPy Tensor Library Module."""
 from __future__ import annotations
-import numpy as np
+
 import logging
-from scipy.special import gammaln, xlogy
+from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+
+import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 from scipy import special
+from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
-from pyhf.typing import Shape, Literal
-
-from typing import TypeVar, Callable, Sequence, Generic, Mapping, Union, TYPE_CHECKING
-from numpy.typing import (
-    NDArray,
-    NBitBase,
-    ArrayLike,
-    DTypeLike,
-)
+from pyhf.typing import Literal, Shape
 
 T = TypeVar("T", bound=NBitBase)
 
