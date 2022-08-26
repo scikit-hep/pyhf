@@ -49,9 +49,9 @@ class numpy_backend(Generic[T]):
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
-    def __init__(self, **kwargs: dict[str, str]):
-        self.name = 'numpy'
-        self.precision = kwargs.get('precision', '64b')
+    def __init__(self, **kwargs: str):
+        self.name: str = 'numpy'
+        self.precision: str = kwargs.get('precision', '64b')
         self.dtypemap: Mapping[
             FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
@@ -60,7 +60,7 @@ class numpy_backend(Generic[T]):
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
-        self.default_do_grad = False
+        self.default_do_grad: bool = False
 
     def _setup(self) -> None:
         """
