@@ -1,9 +1,11 @@
-import pyhf
-import pytest
-import json
 import importlib
+import json
 import sys
+
+import pytest
 from pytest_socket import socket_disabled  # noqa: F401
+
+import pyhf
 
 
 @pytest.mark.parametrize('version', ['1.0.0'])
