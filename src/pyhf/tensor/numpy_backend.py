@@ -337,7 +337,7 @@ class numpy_backend(Generic[T]):
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        # see numpy/numpy#22125
+        # see https://github.com/numpy/numpy/issues/22125
         return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)  # type: ignore[call-overload,no-any-return]
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
