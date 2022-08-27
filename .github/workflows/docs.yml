@@ -89,11 +89,9 @@ jobs:
         [ "$(ls -A docs/_build/html/schemas)" ]
 
     - name: Setup Pages
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: actions/configure-pages@v2
 
     - name: Upload artifact
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: actions/upload-pages-artifact@v1
       with:
         path: 'docs/_build/html'
