@@ -1,18 +1,18 @@
 # core
 scipy==1.1.0
-click==7.0
+click==8.0.0  # c.f. PR #1958, #1909
 tqdm==4.56.0
 jsonschema==3.0.0
 jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.3.0
-typing-extensions==3.7.4  # c.f. PR #1938
+typing-extensions==3.7.4.3  # c.f. PR #1961, #1940
 # xmlio
 uproot==4.1.1
 # minuit
 iminuit==2.7.0  # c.f. PR #1895
 # tensorflow
-tensorflow==2.6.5  # c.f. PR #1874
+tensorflow==2.7.0  # c.f. PR #1962
 tensorflow-probability==0.11.0  # c.f. PR #1657
 # torch
 torch==1.10.0
@@ -21,4 +21,4 @@ torch==1.10.0
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
 --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
 jax==0.2.10
-jaxlib==0.1.60  # jax v0.2.10 requires jaxlib>=0.1.60
+jaxlib==0.1.61  # c.f. PR #1962
