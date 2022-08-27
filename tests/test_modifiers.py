@@ -195,6 +195,36 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
         pyhf.Model(bad_spec)
 
 
+def test_issue1720_staterror_builder_mask(datadir):
+    spec = json.load(open(datadir.joinpath("issue1720_greedy_staterror.json")))
+
+    spec["channels"][0]["samples"][1]["modifiers"][0]["type"] = "staterror"
+    config = pyhf.pdf._ModelConfig(spec)
+    builder = pyhf.modifiers.staterror.staterror_builder(config)
+
+    channel = spec['channels'][0]
+    sigsample = channel['samples'][0]
+    bkgsample = channel['samples'][1]
+    modifier = bkgsample['modifiers'][0]
+
+    assert channel['name'] == 'channel'
+    assert sigsample['name'] == 'signal'
+    assert bkgsample['name'] == 'bkg'
+    assert modifier['type'] == 'staterror'
+
+    builder.append('staterror/NP', 'channel', 'bkg', modifier, bkgsample)
+    collected_bkg = builder.collect(modifier, bkgsample['data'])
+    assert collected_bkg == {'mask': [True], 'nom_data': [1], 'uncrt': [1.5]}
+
+    builder.append('staterror/NP', 'channel', 'signal', None, sigsample)
+    collected_sig = builder.collect(None, sigsample['data'])
+    assert collected_sig == {'mask': [False], 'nom_data': [5], 'uncrt': [0.0]}
+
+    finalized = builder.finalize()
+    assert finalized['staterror/NP']['bkg']['data']['mask'].tolist() == [True]
+    assert finalized['staterror/NP']['signal']['data']['mask'].tolist() == [False]
+
+
 @pytest.mark.parametrize(
     "inits",
     [[-2.0], [-1.0], [0.0], [1.0], [2.0]],
