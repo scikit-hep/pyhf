@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build docs
     runs-on: ubuntu-latest
 
     steps:
@@ -84,6 +85,7 @@ jobs:
         path: 'docs/_build/html'
 
   deploy:
+    name: Deploy docs to GitHub Pages
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: build
     # Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
