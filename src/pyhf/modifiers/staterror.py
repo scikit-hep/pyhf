@@ -100,8 +100,12 @@ class staterror_builder:
                 ],
                 axis=0,
             )
+            # here relerrs still has all the bins, while the staterror are usually per-channel
+            # so we need to pick out the masks for this modifier to extract the
+            # modifier configuration (sigmas, etc..)
+            # so loop over samples and extract the first mask
+            # while making sure any subsequent mask is consistent
             relerrs = default_backend.sqrt(relerrs)
-
             masks = {}
             for modifier_data in self.builder_data[modname].values():
                 mask_this_sample = default_backend.astensor(
@@ -113,12 +117,13 @@ class staterror_builder:
                     else:
                         assert (mask_this_sample == masks[modname]).all()
 
-            for modifier_data in self.builder_data[modname].values():
-                modifier_data['data']['mask'] = masks[modname]
+            #extract sigmas using this modifiers mask
             sigmas = relerrs[masks[modname]]
+
+            # sigmas that are zero will be fixed to 1.0 arbitrarily
             # list of bools, consistent with other modifiers (no numpy.bool_)
+            # to ensure non-Nan constraint term, but in a future PR we need to remove constraints for these
             fixed = default_backend.tolist(sigmas == 0)
-            # ensures non-Nan constraint term, but in a future PR we need to remove constraints for these
             sigmas[fixed] = 1.0
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
@@ -145,18 +150,6 @@ class staterror_combined:
             [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
             for m in keys
         ]
-        self.__staterror_uncrt = default_backend.astensor(
-            [
-                [
-                    [
-                        builder_data[m][s]['data']['uncrt'],
-                        builder_data[m][s]['data']['nom_data'],
-                    ]
-                    for s in pdfconfig.samples
-                ]
-                for m in keys
-            ]
-        )
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
