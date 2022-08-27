@@ -7,22 +7,13 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  docs:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+  build:
+    name: Build docs
     runs-on: ubuntu-latest
 
     steps:
@@ -88,15 +79,31 @@ jobs:
         # is not empty
         [ "$(ls -A docs/_build/html/schemas)" ]
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v2
-
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
       with:
         path: 'docs/_build/html'
 
+  deploy:
+    name: Deploy docs to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: build
+    # Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Pages
+      uses: actions/configure-pages@v2
+
     - name: Deploy to GitHub Pages
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
       id: deployment
       uses: actions/deploy-pages@v1
