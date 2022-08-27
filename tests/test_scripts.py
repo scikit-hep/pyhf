@@ -297,7 +297,7 @@ def test_testpoi(tmpdir, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    pois = [1.0, 0.5, 0.0]
+    pois = [1.0, 0.5, 0.001]
     results_exp = []
     results_obs = []
     for test_poi in pois:
