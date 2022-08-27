@@ -20,7 +20,7 @@
                 1.5
               ],
               "name": "NP",
-              "type": "staterror"
+              "type": "shapesys"
             }
           ],
           "name": "bkg"
