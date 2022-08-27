@@ -117,7 +117,7 @@ class staterror_builder:
                     else:
                         assert (mask_this_sample == masks[modname]).all()
 
-            #extract sigmas using this modifiers mask
+            # extract sigmas using this modifiers mask
             sigmas = relerrs[masks[modname]]
 
             # sigmas that are zero will be fixed to 1.0 arbitrarily
