@@ -1,0 +1,49 @@
+{
+  "channels": [
+    {
+      "name": "channel",
+      "samples": [
+        {
+          "data": [
+            5
+          ],
+          "modifiers": [],
+          "name": "signal"
+        },
+        {
+          "data": [
+            1
+          ],
+          "modifiers": [
+            {
+              "data": [
+                1.5
+              ],
+              "name": "NP",
+              "type": "staterror"
+            }
+          ],
+          "name": "bkg"
+        }
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "config": {
+        "parameters": [],
+        "poi": "NP"
+      },
+      "name": ""
+    }
+  ],
+  "observations": [
+    {
+      "data": [
+        0
+      ],
+      "name": "channel"
+    }
+  ],
+  "version": "1.0.0"
+}

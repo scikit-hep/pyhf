@@ -193,3 +193,23 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
 
     with pytest.raises(pyhf.exceptions.InvalidModifier):
         pyhf.Model(bad_spec)
+
+
+@pytest.mark.parametrize(
+    "inits",
+    [[-2.0], [-1.0], [0.0], [1.0], [2.0]],
+)
+def test_issue1720_greedy_staterror(datadir, inits):
+    """
+    Test that the staterror does not affect more samples than shapesys equivalently.
+    """
+    spec = json.load(open(datadir.joinpath("issue1720_greedy_staterror.json")))
+
+    model_shapesys = pyhf.Workspace(spec).model()
+    expected_shapesys = model_shapesys.expected_actualdata(inits)
+
+    spec["channels"][0]["samples"][1]["modifiers"][0]["type"] = "staterror"
+    model_staterror = pyhf.Workspace(spec).model()
+    expected_staterror = model_staterror.expected_actualdata(inits)
+
+    assert expected_staterror == expected_shapesys
