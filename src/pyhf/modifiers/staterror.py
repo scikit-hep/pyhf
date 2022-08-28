@@ -120,10 +120,11 @@ class staterror_builder:
             # extract sigmas using this modifiers mask
             sigmas = relerrs[masks[modname]]
 
-            # sigmas that are zero will be fixed to 1.0 arbitrarily
             # list of bools, consistent with other modifiers (no numpy.bool_)
-            # to ensure non-Nan constraint term, but in a future PR we need to remove constraints for these
             fixed = default_backend.tolist(sigmas == 0)
+            # FIXME: sigmas that are zero will be fixed to 1.0 arbitrarily to ensure
+            # non-Nan constraint term, but in a future PR need to remove constraints
+            # for these
             sigmas[fixed] = 1.0
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
