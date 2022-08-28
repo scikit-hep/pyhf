@@ -102,7 +102,8 @@ jobs:
         print_hash: true
 
     - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
+      # Run on releases or pre-release (release candidates)
+      if: github.event.action == 'published' && (github.event_name == 'release' || github.event.release.prerelease) && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.5.1
       with:
         password: ${{ secrets.pypi_password }}
