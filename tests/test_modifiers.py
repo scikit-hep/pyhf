@@ -204,21 +204,21 @@ def test_issue1720_staterror_builder_mask(datadir):
     builder = pyhf.modifiers.staterror.staterror_builder(config)
 
     channel = spec["channels"][0]
-    sigsample = channel["samples"][0]
-    bkgsample = channel["samples"][1]
-    modifier = bkgsample["modifiers"][0]
+    sig_sample = channel["samples"][0]
+    bkg_sample = channel["samples"][1]
+    modifier = bkg_sample["modifiers"][0]
 
     assert channel["name"] == "channel"
-    assert sigsample["name"] == "signal"
-    assert bkgsample["name"] == "bkg"
+    assert sig_sample["name"] == "signal"
+    assert bkg_sample["name"] == "bkg"
     assert modifier["type"] == "staterror"
 
-    builder.append("staterror/NP", "channel", "bkg", modifier, bkgsample)
-    collected_bkg = builder.collect(modifier, bkgsample["data"])
+    builder.append("staterror/NP", "channel", "bkg", modifier, bkg_sample)
+    collected_bkg = builder.collect(modifier, bkg_sample["data"])
     assert collected_bkg == {"mask": [True], "nom_data": [1], "uncrt": [1.5]}
 
-    builder.append("staterror/NP", "channel", "signal", None, sigsample)
-    collected_sig = builder.collect(None, sigsample["data"])
+    builder.append("staterror/NP", "channel", "signal", None, sig_sample)
+    collected_sig = builder.collect(None, sig_sample["data"])
     assert collected_sig == {"mask": [False], "nom_data": [5], "uncrt": [0.0]}
 
     finalized = builder.finalize()
