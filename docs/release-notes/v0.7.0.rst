@@ -7,11 +7,16 @@ Important Notes
 ---------------
 
 * NEW IMPORTANT STUFF GOES HERE
+* The minimum required dependencies have been updated to support added features:
+
+   - ``click>=8.0.0``
+
 * The minimum required backend versions have been updated to support added features:
 
-   - JAX backend requires ``jax>=0.2.10``
+   - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61``
    - PyTorch backend requires ``torch>=1.10.0``
-   - TensorFlow backend requires ``tensorflow>=2.3.1``
+   - TensorFlow backend requires ``tensorflow>=2.7.0``
+   - iminuit optimizer requires ``iminuit>=2.7.0``
 
 Fixes
 -----
