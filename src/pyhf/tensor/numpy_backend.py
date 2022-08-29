@@ -15,7 +15,7 @@ from pyhf.typing import Literal, Shape
 T = TypeVar("T", bound=NBitBase)
 
 Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
-
+FloatIntOrBool = Literal["float", "int", "bool"]
 log = logging.getLogger(__name__)
 
 
@@ -53,7 +53,7 @@ class numpy_backend(Generic[T]):
         self.name = 'numpy'
         self.precision = kwargs.get('precision', '64b')
         self.dtypemap: Mapping[
-            Literal['float', 'int', 'bool'],
+            FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
         ] = {
             'float': np.float64 if self.precision == '64b' else np.float32,
@@ -206,7 +206,7 @@ class numpy_backend(Generic[T]):
         return np.isfinite(tensor)
 
     def astensor(
-        self, tensor_in: ArrayLike, dtype: Literal['float'] = 'float'
+        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = 'float'
     ) -> ArrayLike:
         """
         Convert to a NumPy array.
@@ -247,9 +247,7 @@ class numpy_backend(Generic[T]):
     def abs(self, tensor: Tensor[T]) -> ArrayLike:
         return np.abs(tensor)
 
-    def ones(
-        self, shape: Shape, dtype: Literal["float", "int", "bool"] = "float"
-    ) -> ArrayLike:
+    def ones(self, shape: Shape, dtype: FloatIntOrBool = "float") -> ArrayLike:
         try:
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
@@ -261,9 +259,7 @@ class numpy_backend(Generic[T]):
 
         return np.ones(shape, dtype=dtype_obj)
 
-    def zeros(
-        self, shape: Shape, dtype: Literal["float", "int", "bool"] = "float"
-    ) -> ArrayLike:
+    def zeros(self, shape: Shape, dtype: FloatIntOrBool = "float") -> ArrayLike:
         try:
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
