@@ -141,6 +141,38 @@ autodoc_mock_imports = [
     'tensorflow_probability',
 ]
 
+
+_type_aliases_inverted = {
+    'pyhf.typing': [
+        'PathOrStr',
+        'ParameterBase',
+        'Parameter',
+        'Measurement',
+        'ModifierBase',
+        'NormSys',
+        'NormFactor',
+        'HistoSys',
+        'StatError',
+        'ShapeSys',
+        'ShapeFactor',
+        'LumiSys',
+        'Modifier',
+        'Sample',
+        'Channel',
+        'Observation',
+        'Workspace',
+        'Literal',
+    ],
+    'numpy.typing': ['ArrayLike', 'DTypeLike', 'NBitBase', 'NDArray'],
+}
+autodoc_type_aliases = {
+    item: f'{k}.{item}' for k, v in _type_aliases_inverted.items() for item in v
+}
+
+autodoc_typehints_format = 'fully-qualified'
+
+print(autodoc_type_aliases)
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
