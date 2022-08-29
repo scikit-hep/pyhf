@@ -501,6 +501,6 @@ linkcheck_ignore = [
     # https://doi.org/10.1051/epjconf/x DOI URLs will periodically generate 500 Server Error
     r'https://doi\.org/10\.1051/epjconf/.*',
     # tags for a release won't exist until it is made, but the release notes need to reference them
-    r' https://github.com/scikit-hep/pyhf/releases/tag/.*',
+    r'https://github.com/scikit-hep/pyhf/releases/tag/.*',
 ]
 linkcheck_retries = 50
