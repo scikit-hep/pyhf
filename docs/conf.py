@@ -171,8 +171,6 @@ autodoc_type_aliases = {
 
 autodoc_typehints_format = 'fully-qualified'
 
-print(autodoc_type_aliases)
-
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
