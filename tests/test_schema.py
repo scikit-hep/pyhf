@@ -593,6 +593,7 @@ def test_patchset_fail(datadir, patchset_file):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')
 
+
 def test_defs_always_cached(
     socket_disabled,  # noqa: F811
     isolate_modules,

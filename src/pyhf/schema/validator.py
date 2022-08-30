@@ -6,6 +6,7 @@ from pyhf.schema import variables
 from pyhf import tensor
 from typing import Union, Mapping
 
+
 def _is_array_or_tensor(checker, instance):
     """
     A helper function for allowing the validation of tensors as list types in schema validation.
