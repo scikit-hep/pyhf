@@ -1,6 +1,6 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["setuptools>=42.0.0", "setuptools_scm[toml]>=3.4"]
+requires = ["setuptools>=61.0.0", "setuptools_scm>=7.0.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
@@ -83,11 +83,11 @@ filterwarnings = [
     'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
     "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
     'ignore: Exception ignored in:pytest.PytestUnraisableExceptionWarning',  #FIXME: Exception ignored in: <_io.FileIO [closed]>
-    'ignore:invalid value encountered in true_divide:RuntimeWarning',  #FIXME
+    'ignore:invalid value encountered in (true_)?divide:RuntimeWarning',  #FIXME
     'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
     "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
     'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
-    'ignore:divide by zero encountered in true_divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
+    'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
 ]
 
@@ -96,3 +96,56 @@ pyupgrade = 1
 
 [tool.nbqa.addopts]
 pyupgrade = ["--py37-plus"]
+
+[tool.mypy]
+files = "src"
+python_version = "3.10"
+warn_unused_configs = true
+strict = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+  'jax.*',
+  'matplotlib.*',
+  'scipy.*',
+  'tensorflow.*',
+  'tensorflow_probability.*',
+  'torch.*',
+  'uproot.*',
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  'pyhf',
+  'pyhf.optimize.*',
+  'pyhf.contrib.*',
+  'pyhf.infer.*',
+  'pyhf.interpolators.*',
+  'pyhf.cli.*',
+  'pyhf.modifiers.*',
+  'pyhf.exceptions.*',
+  'pyhf.parameters.*',
+  'pyhf.schema.*',
+  'pyhf.writexml',
+  'pyhf.workspace',
+  'pyhf.patchset',
+  'pyhf.compat',
+  'pyhf.events',
+  'pyhf.utils',
+  'pyhf.mixins',
+  'pyhf.constraints',
+  'pyhf.pdf',
+  'pyhf.simplemodels',
+  'pyhf.probability',
+  'pyhf.tensor.common.*',
+  'pyhf.tensor.manager.*',
+  'pyhf.tensor',
+  'pyhf.tensor.jax_backend.*',
+  'pyhf.tensor.tensorflow_backend.*',
+  'pyhf.tensor.pytorch_backend.*',
+]
+ignore_errors = true

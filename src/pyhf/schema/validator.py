@@ -1,11 +1,10 @@
 import jsonschema
-from typing import Union
 import numbers
 import pyhf.exceptions
 from pyhf.schema.loader import load_schema
 from pyhf.schema import variables
 from pyhf import tensor
-
+from typing import Union, Mapping
 
 def _is_array_or_tensor(checker, instance):
     """
@@ -23,7 +22,6 @@ def _is_number_or_tensor_subtype(checker, instance):
     A helper function for allowing the validation of tensor contents as number types in schema validation.
 
     .. warning:
-
         This will check for valid array subtypes using any backends that have been loaded so far.
     """
     is_number = jsonschema._types.is_number(checker, instance)
@@ -33,7 +31,7 @@ def _is_number_or_tensor_subtype(checker, instance):
 
 
 def validate(
-    spec: dict,
+    spec: Mapping,
     schema_name: str,
     *,
     version: Union[str, None] = None,

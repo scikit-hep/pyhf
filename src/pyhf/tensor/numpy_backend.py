@@ -1,40 +1,50 @@
 """NumPy Tensor Library Module."""
-import numpy as np
+from __future__ import annotations
+
 import logging
-from scipy.special import gammaln, xlogy
+from typing import Callable, Generic, Mapping, Sequence, TypeVar, Union
+
+import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 from scipy import special
+from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
+from pyhf.typing import Literal, Shape
 
+T = TypeVar("T", bound=NBitBase)
+
+Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
+FloatIntOrBool = Literal["float", "int", "bool"]
 log = logging.getLogger(__name__)
 
 
 class _BasicPoisson:
-    def __init__(self, rate):
+    def __init__(self, rate: Tensor[T]):
         self.rate = rate
 
-    def sample(self, sample_shape):
-        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+    def sample(self, sample_shape: Shape) -> ArrayLike:
+        return poisson(self.rate).rvs(size=sample_shape + self.rate.shape)  # type: ignore[no-any-return]
 
-    def log_prob(self, value):
-        tensorlib = numpy_backend()
+    def log_prob(self, value: NDArray[np.number[T]]) -> ArrayLike:
+        tensorlib: numpy_backend[T] = numpy_backend()
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
 class _BasicNormal:
-    def __init__(self, loc, scale):
+    def __init__(self, loc: Tensor[T], scale: Tensor[T]):
         self.loc = loc
         self.scale = scale
 
-    def sample(self, sample_shape):
-        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)
+    def sample(self, sample_shape: Shape) -> ArrayLike:
+        return norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape)  # type: ignore[no-any-return]
 
-    def log_prob(self, value):
-        tensorlib = numpy_backend()
+    def log_prob(self, value: NDArray[np.number[T]]) -> ArrayLike:
+        tensorlib: numpy_backend[T] = numpy_backend()
         return tensorlib.normal_logpdf(value, self.loc, self.scale)
 
 
-class numpy_backend:
+class numpy_backend(Generic[T]):
     """NumPy backend for pyhf"""
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
@@ -45,22 +55,30 @@ class numpy_backend:
     #: The array content type for numpy
     array_subtype = np.number
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: str):
         self.name = 'numpy'
         self.precision = kwargs.get('precision', '64b')
-        self.dtypemap = {
+        self.dtypemap: Mapping[
+            FloatIntOrBool,
+            DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
+        ] = {
             'float': np.float64 if self.precision == '64b' else np.float32,
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
         self.default_do_grad = False
 
-    def _setup(self):
+    def _setup(self) -> None:
         """
         Run any global setups for the numpy lib.
         """
 
-    def clip(self, tensor_in, min_value, max_value):
+    def clip(
+        self,
+        tensor_in: Tensor[T],
+        min_value: np.integer[T] | np.floating[T],
+        max_value: np.integer[T] | np.floating[T],
+    ) -> ArrayLike:
         """
         Clips (limits) the tensor values to be within a specified min and max.
 
@@ -82,7 +100,7 @@ class numpy_backend:
         """
         return np.clip(tensor_in, min_value, max_value)
 
-    def erf(self, tensor_in):
+    def erf(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
         The error function of complex argument.
 
@@ -100,9 +118,9 @@ class numpy_backend:
         Returns:
             NumPy ndarray: The values of the error function at the given points.
         """
-        return special.erf(tensor_in)
+        return special.erf(tensor_in)  # type: ignore[no-any-return]
 
-    def erfinv(self, tensor_in):
+    def erfinv(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
         The inverse of the error function of complex argument.
 
@@ -120,9 +138,9 @@ class numpy_backend:
         Returns:
             NumPy ndarray: The values of the inverse of the error function at the given points.
         """
-        return special.erfinv(tensor_in)
+        return special.erfinv(tensor_in)  # type: ignore[no-any-return]
 
-    def tile(self, tensor_in, repeats):
+    def tile(self, tensor_in: Tensor[T], repeats: int | Sequence[int]) -> ArrayLike:
         """
         Repeat tensor data along a specific dimension
 
@@ -144,7 +162,12 @@ class numpy_backend:
         """
         return np.tile(tensor_in, repeats)
 
-    def conditional(self, predicate, true_callable, false_callable):
+    def conditional(
+        self,
+        predicate: NDArray[np.bool_],
+        true_callable: Callable[[], Tensor[T]],
+        false_callable: Callable[[], Tensor[T]],
+    ) -> ArrayLike:
         """
         Runs a callable conditional on the boolean value of the evaluation of a predicate
 
@@ -168,27 +191,29 @@ class numpy_backend:
         """
         return true_callable() if predicate else false_callable()
 
-    def tolist(self, tensor_in):
+    def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
         try:
-            return tensor_in.tolist()
+            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
             raise
 
-    def outer(self, tensor_in_1, tensor_in_2):
-        return np.outer(tensor_in_1, tensor_in_2)
+    def outer(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
+        return np.outer(tensor_in_1, tensor_in_2)  # type: ignore[arg-type]
 
-    def gather(self, tensor, indices):
-        return tensor[indices]
+    def gather(self, tensor: Tensor[T], indices: NDArray[np.integer[T]]) -> ArrayLike:
+        return tensor[indices]  # type: ignore[no-any-return]
 
-    def boolean_mask(self, tensor, mask):
-        return tensor[mask]
+    def boolean_mask(self, tensor: Tensor[T], mask: NDArray[np.bool_]) -> ArrayLike:
+        return tensor[mask]  # type: ignore[no-any-return]
 
-    def isfinite(self, tensor):
+    def isfinite(self, tensor: Tensor[T]) -> NDArray[np.bool_]:
         return np.isfinite(tensor)
 
-    def astensor(self, tensor_in, dtype='float'):
+    def astensor(
+        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = 'float'
+    ) -> ArrayLike:
         """
         Convert to a NumPy array.
 
@@ -210,27 +235,27 @@ class numpy_backend:
             `numpy.ndarray`: A multi-dimensional, fixed-size homogeneous array.
         """
         try:
-            dtype = self.dtypemap[dtype]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
             )
             raise
 
-        return np.asarray(tensor_in, dtype=dtype)
+        return np.asarray(tensor_in, dtype=dtype_obj)
 
-    def sum(self, tensor_in, axis=None):
+    def sum(self, tensor_in: Tensor[T], axis: int | None = None) -> ArrayLike:
         return np.sum(tensor_in, axis=axis)
 
-    def product(self, tensor_in, axis=None):
-        return np.product(tensor_in, axis=axis)
+    def product(self, tensor_in: Tensor[T], axis: Shape | None = None) -> ArrayLike:
+        return np.product(tensor_in, axis=axis)  # type: ignore[arg-type]
 
-    def abs(self, tensor):
+    def abs(self, tensor: Tensor[T]) -> ArrayLike:
         return np.abs(tensor)
 
-    def ones(self, shape, dtype="float"):
+    def ones(self, shape: Shape, dtype: FloatIntOrBool = "float") -> ArrayLike:
         try:
-            dtype = self.dtypemap[dtype]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
@@ -238,11 +263,11 @@ class numpy_backend:
             )
             raise
 
-        return np.ones(shape, dtype=dtype)
+        return np.ones(shape, dtype=dtype_obj)
 
-    def zeros(self, shape, dtype="float"):
+    def zeros(self, shape: Shape, dtype: FloatIntOrBool = "float") -> ArrayLike:
         try:
-            dtype = self.dtypemap[dtype]
+            dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
                 f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
@@ -250,24 +275,32 @@ class numpy_backend:
             )
             raise
 
-        return np.zeros(shape, dtype=dtype)
+        return np.zeros(shape, dtype=dtype_obj)
 
-    def power(self, tensor_in_1, tensor_in_2):
+    def power(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
         return np.power(tensor_in_1, tensor_in_2)
 
-    def sqrt(self, tensor_in):
+    def sqrt(self, tensor_in: Tensor[T]) -> ArrayLike:
         return np.sqrt(tensor_in)
 
-    def divide(self, tensor_in_1, tensor_in_2):
+    def divide(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
         return np.divide(tensor_in_1, tensor_in_2)
 
-    def log(self, tensor_in):
+    def log(self, tensor_in: Tensor[T]) -> ArrayLike:
         return np.log(tensor_in)
 
-    def exp(self, tensor_in):
+    def exp(self, tensor_in: Tensor[T]) -> ArrayLike:
         return np.exp(tensor_in)
 
-    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+    def percentile(
+        self,
+        tensor_in: Tensor[T],
+        q: Tensor[T],
+        axis: None | Shape = None,
+        interpolation: Literal[
+            "linear", "lower", "higher", "midpoint", "nearest"
+        ] = "linear",
+    ) -> ArrayLike:
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
 
@@ -303,15 +336,18 @@ class numpy_backend:
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         """
-        return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
+        # see https://github.com/numpy/numpy/issues/22125
+        return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)  # type: ignore[call-overload,no-any-return]
 
-    def stack(self, sequence, axis=0):
+    def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
 
-    def where(self, mask, tensor_in_1, tensor_in_2):
+    def where(
+        self, mask: NDArray[np.bool_], tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]
+    ) -> ArrayLike:
         return np.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence, axis=0):
+    def concatenate(self, sequence: Tensor[T], axis: None | int = 0) -> ArrayLike:
         """
         Join a sequence of arrays along an existing axis.
 
@@ -325,7 +361,7 @@ class numpy_backend:
         """
         return np.concatenate(sequence, axis=axis)
 
-    def simple_broadcast(self, *args):
+    def simple_broadcast(self, *args: Sequence[Tensor[T]]) -> Sequence[Tensor[T]]:
         """
         Broadcast a sequence of 1 dimensional arrays.
 
@@ -347,13 +383,13 @@ class numpy_backend:
         """
         return np.broadcast_arrays(*args)
 
-    def shape(self, tensor):
+    def shape(self, tensor: Tensor[T]) -> Shape:
         return tensor.shape
 
-    def reshape(self, tensor, newshape):
+    def reshape(self, tensor: Tensor[T], newshape: Shape) -> ArrayLike:
         return np.reshape(tensor, newshape)
 
-    def ravel(self, tensor):
+    def ravel(self, tensor: Tensor[T]) -> ArrayLike:
         """
         Return a flattened view of the tensor, not a copy.
 
@@ -373,7 +409,7 @@ class numpy_backend:
         """
         return np.ravel(tensor)
 
-    def einsum(self, subscripts, *operands):
+    def einsum(self, subscripts: str, *operands: Sequence[Tensor[T]]) -> ArrayLike:
         """
         Evaluates the Einstein summation convention on the operands.
 
@@ -390,12 +426,12 @@ class numpy_backend:
         Returns:
             tensor: the calculation based on the Einstein summation convention
         """
-        return np.einsum(subscripts, *operands)
+        return np.einsum(subscripts, *operands)  # type: ignore[arg-type,no-any-return]
 
-    def poisson_logpdf(self, n, lam):
-        return xlogy(n, lam) - lam - gammaln(n + 1.0)
+    def poisson_logpdf(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
+        return xlogy(n, lam) - lam - gammaln(n + 1.0)  # type: ignore[no-any-return]
 
-    def poisson(self, n, lam):
+    def poisson(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
         r"""
         The continuous approximation, using :math:`n! = \Gamma\left(n+1\right)`,
         to the probability mass function of the Poisson distribution evaluated
@@ -435,11 +471,11 @@ class numpy_backend:
         Returns:
             NumPy float: Value of the continuous approximation to Poisson(n|lam)
         """
-        n = np.asarray(n)
-        lam = np.asarray(lam)
-        return np.exp(xlogy(n, lam) - lam - gammaln(n + 1.0))
+        _n = np.asarray(n)
+        _lam = np.asarray(lam)
+        return np.exp(xlogy(_n, _lam) - _lam - gammaln(_n + 1.0))  # type: ignore[no-any-return,operator]
 
-    def normal_logpdf(self, x, mu, sigma):
+    def normal_logpdf(self, x: Tensor[T], mu: Tensor[T], sigma: Tensor[T]) -> ArrayLike:
         # this is much faster than
         # norm.logpdf(x, loc=mu, scale=sigma)
         # https://codereview.stackexchange.com/questions/69718/fastest-computation-of-n-likelihoods-on-normal-distributions
@@ -447,12 +483,12 @@ class numpy_backend:
         root2pi = np.sqrt(2 * np.pi)
         prefactor = -np.log(sigma * root2pi)
         summand = -np.square(np.divide((x - mu), (root2 * sigma)))
-        return prefactor + summand
+        return prefactor + summand  # type: ignore[no-any-return]
 
     # def normal_logpdf(self, x, mu, sigma):
     #     return norm.logpdf(x, loc=mu, scale=sigma)
 
-    def normal(self, x, mu, sigma):
+    def normal(self, x: Tensor[T], mu: Tensor[T], sigma: Tensor[T]) -> ArrayLike:
         r"""
         The probability density function of the Normal distribution evaluated
         at :code:`x` given parameters of mean of :code:`mu` and standard deviation
@@ -478,9 +514,11 @@ class numpy_backend:
         Returns:
             NumPy float: Value of Normal(x|mu, sigma)
         """
-        return norm.pdf(x, loc=mu, scale=sigma)
+        return norm.pdf(x, loc=mu, scale=sigma)  # type: ignore[no-any-return]
 
-    def normal_cdf(self, x, mu=0, sigma=1):
+    def normal_cdf(
+        self, x: Tensor[T], mu: float | Tensor[T] = 0, sigma: float | Tensor[T] = 1
+    ) -> ArrayLike:
         """
         The cumulative distribution function for the Normal distribution
 
@@ -502,9 +540,9 @@ class numpy_backend:
         Returns:
             NumPy float: The CDF
         """
-        return norm.cdf(x, loc=mu, scale=sigma)
+        return norm.cdf(x, loc=mu, scale=sigma)  # type: ignore[no-any-return]
 
-    def poisson_dist(self, rate):
+    def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson:
         r"""
         The Poisson distribution with rate parameter :code:`rate`.
 
@@ -525,7 +563,7 @@ class numpy_backend:
         """
         return _BasicPoisson(rate)
 
-    def normal_dist(self, mu, sigma):
+    def normal_dist(self, mu: Tensor[T], sigma: Tensor[T]) -> _BasicNormal:
         r"""
         The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
 
@@ -549,7 +587,7 @@ class numpy_backend:
         """
         return _BasicNormal(mu, sigma)
 
-    def to_numpy(self, tensor_in):
+    def to_numpy(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
         Return the input tensor as it already is a :class:`numpy.ndarray`.
         This API exists only for ``pyhf.tensorlib`` compatibility.
@@ -577,7 +615,7 @@ class numpy_backend:
         """
         return tensor_in
 
-    def transpose(self, tensor_in):
+    def transpose(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
         Transpose the tensor.
 

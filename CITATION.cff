@@ -9,16 +9,16 @@ authors:
 - family-names: "Feickert"
   given-names: "Matthew"
   orcid: "https://orcid.org/0000-0003-4124-7862"
-  affiliation: "University of Illinois at Urbana-Champaign"
+  affiliation: "University of Wisconsin-Madison"
 - family-names: "Stark"
   given-names: "Giordon"
   orcid: "https://orcid.org/0000-0001-6616-3433"
   affiliation: "SCIPP, University of California, Santa Cruz"
-title: "pyhf: v0.6.3"
-version: 0.6.3
+title: "pyhf: v0.7.0rc2"
+version: 0.7.0rc2
 doi: 10.5281/zenodo.1169739
-repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.6.3"
-url: "https://pyhf.readthedocs.io/en/v0.6.3/"
+repository-code: "https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0rc2"
+url: "https://pyhf.readthedocs.io/en/v0.7.0rc2/"
 keywords:
   - python
   - physics

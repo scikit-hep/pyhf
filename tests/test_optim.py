@@ -520,20 +520,6 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
     assert minimizer.fixed == [True, False, False]
 
 
-def test_step_sizes_fixed_parameters_minuit(mocker):
-    opt = pyhf.optimize.minuit_optimizer()
-
-    # patch all we need
-    from pyhf.optimize import opt_minuit
-
-    minuit = mocker.patch.object(getattr(opt_minuit, 'iminuit'), 'Minuit')
-    minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
-
-    assert minuit.called
-    assert minimizer.fixed == [True, False, False]
-    assert minimizer.errors == [0.0, 0.01, 0.01]
-
-
 def test_solver_options_behavior_scipy(mocker):
     opt = pyhf.optimize.scipy_optimizer(solver_options={'arbitrary_option': 'foobar'})
 

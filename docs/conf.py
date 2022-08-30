@@ -122,7 +122,7 @@ version = '.'.join(release.split('.')[:3])
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -140,6 +140,36 @@ autodoc_mock_imports = [
     'iminuit',
     'tensorflow_probability',
 ]
+
+
+_type_aliases_inverted = {
+    'pyhf.typing': [
+        'PathOrStr',
+        'ParameterBase',
+        'Parameter',
+        'Measurement',
+        'ModifierBase',
+        'NormSys',
+        'NormFactor',
+        'HistoSys',
+        'StatError',
+        'ShapeSys',
+        'ShapeFactor',
+        'LumiSys',
+        'Modifier',
+        'Sample',
+        'Channel',
+        'Observation',
+        'Workspace',
+        'Literal',
+    ],
+    'numpy.typing': ['ArrayLike', 'DTypeLike', 'NBitBase', 'NDArray'],
+}
+autodoc_type_aliases = {
+    item: f'{k}.{item}' for k, v in _type_aliases_inverted.items() for item in v
+}
+
+autodoc_typehints_format = 'fully-qualified'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -464,5 +494,11 @@ mathjax3_config = {
 }
 
 # c.f. https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder
-linkcheck_ignore = ['cli.html#pyhf-xml2json']
+linkcheck_ignore = [
+    'cli.html#pyhf-xml2json',
+    # https://doi.org/10.31526/lhep.2020.158 is causing linkcheck connection timeouts in CI
+    r'https://doi\.org/10\.31526/.*',
+    # https://doi.org/10.1051/epjconf/x DOI URLs will periodically generate 500 Server Error
+    r'https://doi\.org/10\.1051/epjconf/.*',
+]
 linkcheck_retries = 50

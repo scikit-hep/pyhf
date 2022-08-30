@@ -300,14 +300,15 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         spec = copy.deepcopy(spec)
-        super().__init__(spec, channels=spec['channels'])
         self.schema = config_kwargs.pop('schema', 'workspace.json')
         self.version = config_kwargs.pop('version', spec.get('version', None))
 
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
             log.info(f"Validating spec against schema: {self.schema}")
-            schema.validate(self, self.schema, version=self.version)
+            schema.validate(spec, self.schema, version=self.version)
+
+        super().__init__(spec, channels=spec['channels'])
 
         self.measurement_names = []
         for measurement in self.get('measurements', []):

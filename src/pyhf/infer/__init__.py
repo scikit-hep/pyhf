@@ -204,7 +204,7 @@ def hypotest(
     return tuple(_returns) if len(_returns) > 1 else _returns[0]
 
 
-from pyhf.infer import intervals  # noqa: F401
+from pyhf.infer import intervals
 
 __all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
 

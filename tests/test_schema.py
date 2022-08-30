@@ -1,6 +1,11 @@
-import pyhf
-import pytest
+import importlib
 import json
+import sys
+
+import pytest
+from pytest_socket import socket_disabled  # noqa: F401
+
+import pyhf
 
 
 @pytest.mark.parametrize('version', ['1.0.0'])
@@ -27,11 +32,20 @@ def test_schema_callable():
     assert callable(pyhf.schema)
 
 
-def test_schema_changeable(datadir, monkeypatch):
+@pytest.fixture
+def self_restoring_schema_globals():
+    old_path = pyhf.schema.path
+    old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+    yield old_path, old_cache
+    pyhf.schema(old_path)
+    pyhf.schema.variables.SCHEMA_CACHE = old_cache
+
+
+def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
 
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
@@ -40,36 +54,47 @@ def test_schema_changeable(datadir, monkeypatch):
     pyhf.schema(new_path)
     assert old_path != pyhf.schema.path
     assert new_path == pyhf.schema.path
+    assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
+    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
     assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
-    pyhf.schema(old_path)
+    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
 
 
-def test_schema_changeable_context(datadir, monkeypatch):
+def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
 
     assert old_path == pyhf.schema.path
     with pyhf.schema(new_path):
         assert old_path != pyhf.schema.path
         assert new_path == pyhf.schema.path
+        assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
+        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
         assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
     assert old_path == pyhf.schema.path
+    assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
 
-def test_schema_changeable_context_error(datadir, monkeypatch):
+def test_schema_changeable_context_error(
+    datadir, monkeypatch, self_restoring_schema_globals
+):
     monkeypatch.setattr(
         pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
     )
-    old_path = pyhf.schema.path
+    old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / 'customschema'
 
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
+            # this populates the current cache
+            pyhf.Workspace(json.load(open(new_path / 'custom.json')))
             raise ZeroDivisionError()
     assert old_path == pyhf.schema.path
+    assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
 
 def test_no_channels():
@@ -567,6 +592,49 @@ def test_patchset_fail(datadir, patchset_file):
     patchset = json.load(open(datadir.joinpath(patchset_file)))
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')
+
+def test_defs_always_cached(
+    socket_disabled,  # noqa: F811
+    isolate_modules,
+):
+    """
+    Schema definitions should always be loaded from the local files and cached at first import.
+    Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
+    (e.g. a cluster node without network access).
+    """
+    modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
+    for module_name in modules_to_clear:
+        del sys.modules[module_name]
+    pyhf = importlib.import_module('pyhf')
+
+    spec = {
+        'channels': [
+            {
+                'name': 'singlechannel',
+                'samples': [
+                    {
+                        'name': 'signal',
+                        'data': [10],
+                        'modifiers': [
+                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        ],
+                    },
+                    {
+                        'name': 'background',
+                        'data': [20],
+                        'modifiers': [
+                            {
+                                'name': 'uncorr_bkguncrt',
+                                'type': 'shapesys',
+                                'data': [30],
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    pyhf.schema.validate(spec, 'model.json')  # may try to access network and fail
 
 
 def test_schema_tensor_type_allowed(backend):

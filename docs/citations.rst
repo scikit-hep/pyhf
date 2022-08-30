@@ -40,7 +40,13 @@ General Citations
 Published Statistical Models
 ----------------------------
 
-Updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models:
+The following is an updating list of HEPData entries for publications using ``HistFactory`` JSON statistical models.
+
+.. note::
+
+   There is also an automatically generated list of statistical models that is updated
+   nightly available at `pyhf.github.io/public-probability-models
+   <https://pyhf.github.io/public-probability-models>`__.
 
 .. bibliography:: bib/HEPData_likelihoods.bib
    :list: enumerated

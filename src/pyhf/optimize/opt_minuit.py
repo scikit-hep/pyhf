@@ -50,14 +50,12 @@ class minuit_optimizer(OptimizerMixin):
         par_names=None,
     ):
 
-        step_sizes = [(b[1] - b[0]) / float(self.steps) for b in init_bounds]
         fixed_vals = fixed_vals or []
         # Minuit wants True/False for each parameter
         fixed_bools = [False] * len(init_pars)
         for index, val in fixed_vals:
             fixed_bools[index] = True
             init_pars[index] = val
-            step_sizes[index] = 0.0
 
         # Minuit requires jac=callable
         if do_grad:
@@ -68,7 +66,6 @@ class minuit_optimizer(OptimizerMixin):
             jac = None
 
         minuit = iminuit.Minuit(wrapped_objective, init_pars, grad=jac, name=par_names)
-        minuit.errors = step_sizes
         minuit.limits = init_bounds
         minuit.fixed = fixed_bools
         minuit.print_level = self.verbose
