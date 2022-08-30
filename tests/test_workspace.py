@@ -170,11 +170,16 @@ def test_get_workspace_data(workspace_factory, include_auxdata):
     assert w.data(m, include_auxdata=include_auxdata)
 
 
-def test_get_workspace_data_bad_model(workspace_factory, caplog):
+def test_get_workspace_data_bad_model(workspace_factory, caplog, mocker):
     w = workspace_factory()
     m = w.model()
     # the iconic fragrance of an expected failure
-    m.config.channels = [c.replace('channel', 'chanel') for c in m.config.channels]
+
+    mocker.patch(
+        'pyhf.mixins._ChannelSummaryMixin.channels',
+        new_callable=mocker.PropertyMock,
+        return_value=['chanel'],
+    )
     with caplog.at_level(logging.INFO, 'pyhf.pdf'):
         with pytest.raises(KeyError):
             assert w.data(m)
