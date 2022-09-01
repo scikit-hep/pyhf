@@ -8,6 +8,8 @@ on:
   pull_request:
     branches:
     - master
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       publish:
@@ -47,7 +49,7 @@ jobs:
 
     - name: Build a wheel and a sdist
       run: |
-        python -m build --outdir dist/ .
+        PYTHONWARNINGS=error,default::DeprecationWarning python -m build .
 
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
@@ -81,7 +83,7 @@ jobs:
         echo "python-build named built distribution: ${wheel_name}"
 
     - name: Verify the distribution
-      run: twine check dist/*
+      run: twine check --strict dist/*
 
     - name: List contents of sdist
       run: python -m tarfile --list dist/pyhf-*.tar.gz
@@ -95,7 +97,7 @@ jobs:
       if: >-
         (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
         || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-      uses: pypa/gh-action-pypi-publish@v1.5.0
+      uses: pypa/gh-action-pypi-publish@v1.5.1
       with:
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
@@ -103,7 +105,7 @@ jobs:
 
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
-      uses: pypa/gh-action-pypi-publish@v1.5.0
+      uses: pypa/gh-action-pypi-publish@v1.5.1
       with:
         password: ${{ secrets.pypi_password }}
         print_hash: true

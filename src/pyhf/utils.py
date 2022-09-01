@@ -2,6 +2,7 @@ import json
 import yaml
 import click
 import hashlib
+from gettext import gettext
 
 import sys
 
@@ -39,6 +40,24 @@ class EqDelimStringParamType(click.ParamType):
             return options_from_eqdelimstring([value])
         except IndexError:
             self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
+
+
+class VolumeMountPath(click.Path):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = f'{self.name}:{gettext("path")}'
+
+    def convert(self, value, param, ctx):
+        try:
+            path_host, path_mount = value.split(':')
+        except ValueError:
+            # too many values to unpack / not enough values to unpack
+            self.fail(f"{value!r} is not a valid colon-separated option", param, ctx)
+
+        return (
+            super().convert(path_host, param, ctx),
+            self.coerce_path_result(path_mount),
+        )
 
 
 def digest(obj, algorithm='sha256'):
@@ -92,7 +111,7 @@ def citation(oneline=False):
 
         >>> import pyhf
         >>> pyhf.utils.citation(oneline=True)
-        '@software{pyhf,  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},  title = "{pyhf: v0.7.0rc1}",  version = {0.7.0rc1},  doi = {10.5281/zenodo.1169739},  url = {https://doi.org/10.5281/zenodo.1169739},  note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0rc1}}@article{pyhf_joss,  doi = {10.21105/joss.02823},  url = {https://doi.org/10.21105/joss.02823},  year = {2021},  publisher = {The Open Journal},  volume = {6},  number = {58},  pages = {2823},  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},  title = {pyhf: pure-Python implementation of HistFactory statistical models},  journal = {Journal of Open Source Software}}'
+        '@software{pyhf,  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},  title = "{pyhf: v0.7.0rc2}",  version = {0.7.0rc2},  doi = {10.5281/zenodo.1169739},  url = {https://doi.org/10.5281/zenodo.1169739},  note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0rc2}}@article{pyhf_joss,  doi = {10.21105/joss.02823},  url = {https://doi.org/10.21105/joss.02823},  year = {2021},  publisher = {The Open Journal},  volume = {6},  number = {58},  pages = {2823},  author = {Lukas Heinrich and Matthew Feickert and Giordon Stark and Kyle Cranmer},  title = {pyhf: pure-Python implementation of HistFactory statistical models},  journal = {Journal of Open Source Software}}'
 
     Keyword Args:
         oneline (:obj:`bool`): Whether to provide citation with new lines (default) or as a one-liner.

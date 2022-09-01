@@ -1,9 +1,11 @@
 """Helper Classes for use of automatic differentiation."""
-from pyhf.tensor.manager import get_backend
+import logging
+
+import numpy as np
+
 from pyhf import exceptions
 from pyhf.optimize.common import shim
-
-import logging
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -82,6 +84,13 @@ class OptimizerMixin:
         if uncertainties is not None:
             # extract number of fixed parameters
             num_fixed_pars = len(fitted_pars) - len(fitresult.x)
+
+            # FIXME: Set uncertainties for fixed parameters to 0 manually
+            # https://github.com/scikit-hep/iminuit/issues/762
+            # https://github.com/scikit-hep/pyhf/issues/1918
+            # https://github.com/scikit-hep/cabinetry/pull/346
+            uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
+
             # stitch in zero-uncertainty for fixed values
             uncertainties = stitch_pars(
                 tensorlib.astensor(uncertainties),
