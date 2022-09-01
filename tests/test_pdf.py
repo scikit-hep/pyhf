@@ -1184,7 +1184,7 @@ def test_pdf_clipping(backend):
     pyhf.infer.mle.fit(data, model_clip_bin)
 
 
-def test_is_shared_paramset_shapesys_diff_sample():
+def test_is_shared_paramset_shapesys_diff_sample_diff_channel():
     spec = {
         "channels": [
             {
@@ -1227,7 +1227,52 @@ def test_is_shared_paramset_shapesys_diff_sample():
         pyhf.Workspace(spec).model()
 
 
-def test_is_shared_paramset_shapesys_same_sample():
+def test_is_shared_paramset_shapesys_diff_sample_same_channel():
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [50],
+                        "modifiers": [
+                            {
+                                "data": [9],
+                                "name": "abc",
+                                "type": "shapesys",
+                            },
+                            {
+                                "data": None,
+                                "name": "Signal strength",
+                                "type": "normfactor",
+                            },
+                        ],
+                        "name": "Signal",
+                    },
+                    {
+                        "data": [150],
+                        "modifiers": [
+                            {
+                                "data": [7],
+                                "name": "abc",
+                                "type": "shapesys",
+                            }
+                        ],
+                        "name": "Background",
+                    },
+                ],
+            }
+        ],
+        "measurements": [{"config": {"parameters": [], "poi": ""}, "name": "meas"}],
+        "observations": [{"data": [160], "name": "SR"}],
+        "version": "1.0.0",
+    }
+
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Workspace(spec).model()
+
+
+def test_is_shared_paramset_shapesys_same_sample_same_channel():
     spec = {
         "channels": [
             {
