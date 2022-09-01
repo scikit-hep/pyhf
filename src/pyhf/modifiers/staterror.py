@@ -153,18 +153,7 @@ class staterror_combined:
             for m in keys
         ]
 
-        self.__staterror_uncrt = default_backend.astensor(
-            [
-                [
-                    [
-                        builder_data[m][s]['data']['uncrt'],
-                        builder_data[m][s]['data']['nom_data'],
-                    ]
-                    for s in pdfconfig.samples
-                ]
-                for m in keys
-            ]
-        )
+       
         global_concatenated_bin_indices = default_backend.astensor(
             [
                 [
