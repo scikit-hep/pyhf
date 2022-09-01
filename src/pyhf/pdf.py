@@ -116,6 +116,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
     # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
     helper = {}
+    _keys_seen = set()
     for c in spec['channels']:
         for s in c['samples']:
             moddict = {}
@@ -126,13 +127,19 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                     )
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
-                if not modifiers_builders[x['type']].is_shared and key in moddict:
+                if (
+                    not modifiers_builders[x['type']].is_shared
+                    and key in moddict
+                    or key in _keys_seen
+                ):
                     raise exceptions.InvalidModel(
                         f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
                     )
 
                 moddict[key] = x
             helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
+            # add in all keys seen
+            _keys_seen.update(moddict)
 
     # 3. walk spec and call builders
     for c in config.channels:
