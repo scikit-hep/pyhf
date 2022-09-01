@@ -124,9 +124,8 @@ class staterror_builder:
             fixed = sigmas == 0
             # FIXME: sigmas that are zero will be fixed to 1.0 arbitrarily to ensure
             # non-Nan constraint term, but in a future PR need to remove constraints
-            # for these            
+            # for these
             sigmas = sigmas.at[fixed].set(1.0)
-
 
             self.required_parsets.setdefault(parname, [required_parset(sigmas, fixed)])
         return self.builder_data
@@ -177,7 +176,6 @@ class staterror_combined:
                 ]
             ]
         )
-
 
         self._access_field = default_backend.tile(
             global_concatenated_bin_indices,
