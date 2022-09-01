@@ -25,7 +25,6 @@ def required_parset(sample_data, modifier_data):
     return {
         "paramset_type": "constrained_by_poisson",
         "n_parameters": n_parameters,
-        "is_shared": False,
         "is_scalar": False,
         "inits": (1.0,) * n_parameters,
         "bounds": ((1e-10, 10.0),) * n_parameters,
@@ -37,6 +36,8 @@ def required_parset(sample_data, modifier_data):
 
 class shapesys_builder:
     """Builder class for collecting shapesys modifier data"""
+
+    is_shared = False
 
     def __init__(self, config):
         self.builder_data = {}

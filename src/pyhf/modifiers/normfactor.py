@@ -10,7 +10,6 @@ def required_parset(sample_data, modifier_data):
     return {
         'paramset_type': 'unconstrained',
         'n_parameters': 1,
-        'is_shared': True,
         'is_scalar': True,
         'inits': (1.0,),
         'bounds': ((0, 10),),
@@ -20,6 +19,8 @@ def required_parset(sample_data, modifier_data):
 
 class normfactor_builder:
     """Builder class for collecting normfactor modifier data"""
+
+    is_shared = True
 
     def __init__(self, config):
         self.builder_data = {}

@@ -15,7 +15,6 @@ def required_parset(sigmas, fixed: List[bool]):
     return {
         'paramset_type': 'constrained_by_normal',
         'n_parameters': n_parameters,
-        'is_shared': True,
         'is_scalar': False,
         'inits': (1.0,) * n_parameters,
         'bounds': ((1e-10, 10.0),) * n_parameters,
@@ -27,6 +26,8 @@ def required_parset(sigmas, fixed: List[bool]):
 
 class staterror_builder:
     """Builder class for collecting staterror modifier data"""
+
+    is_shared = True
 
     def __init__(self, config):
         self.builder_data = {}
