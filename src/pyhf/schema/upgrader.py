@@ -1,9 +1,9 @@
 from pyhf.schema import variables
-from typing import Mapping
+from pyhf.typing import Workspace, PatchSet
 import copy
 
 
-def upgrade_workspace(spec: Mapping) -> Mapping:
+def upgrade_workspace(spec: Workspace) -> Workspace:
     """
     Upgrade the provided workspace specification to latest version.
 
@@ -26,7 +26,7 @@ def upgrade_workspace(spec: Mapping) -> Mapping:
     return spec
 
 
-def upgrade_patchset(spec: Mapping) -> Mapping:
+def upgrade_patchset(spec: PatchSet) -> PatchSet:
     """
     Upgrade the provided patchset specification to latest version.
 

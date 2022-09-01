@@ -1,4 +1,6 @@
+from __future__ import annotations
 import sys
+from pyhf.typing import Schema, SchemaVersion
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -8,6 +10,6 @@ else:
     import importlib_resources as resources
 schemas = resources.files('pyhf') / "schemas"
 
-SCHEMA_CACHE = {}
+SCHEMA_CACHE: dict[str, Schema] = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
-SCHEMA_VERSION = '1.0.1'
+SCHEMA_VERSION: SchemaVersion = '1.0.1'

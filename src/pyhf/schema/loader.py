@@ -3,6 +3,7 @@ import sys
 import json
 import pyhf.exceptions
 from pyhf.schema import variables
+from pyhf.typing import Schema
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -12,7 +13,7 @@ else:
     import importlib_resources as resources
 
 
-def load_schema(schema_id: str):
+def load_schema(schema_id: str) -> Schema:
     """
     Get a schema by relative path from cache, or load it into the cache and return.
 
