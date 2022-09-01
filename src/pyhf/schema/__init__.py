@@ -10,9 +10,9 @@ from pyhf.schema import variables
 from pyhf.typing import Self
 
 if sys.version_info >= (3, 9):
-    from importlib import resources
+    from importlib.abc import Traversable
 else:
-    import importlib_resources as resources
+    from importlib_resources.abc import Traversable
 
 __all__ = [
     "load_schema",
@@ -69,7 +69,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
     """
 
     # type ignore below, see https://github.com/python/mypy/pull/11666
-    def __call__(self, new_path: resources.abc.Traversable) -> Self:  # type: ignore[valid-type]
+    def __call__(self, new_path: Traversable) -> Self:  # type: ignore[valid-type]
         """
         Change the local search path for finding schemas locally.
 
@@ -98,7 +98,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
         variables.SCHEMA_CACHE = self.orig_cache
 
     @property
-    def path(self) -> resources.abc.Traversable:
+    def path(self) -> Traversable:
         """
         The local path for schemas.
         """
