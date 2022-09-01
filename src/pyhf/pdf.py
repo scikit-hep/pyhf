@@ -126,7 +126,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                     )
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
-                if not modifiers_builders[k].is_shared and key in moddict:
+                if not modifiers_builders[x['type']].is_shared and key in moddict:
                     raise exceptions.InvalidModel(
                         f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
                     )
