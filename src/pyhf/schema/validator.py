@@ -83,7 +83,7 @@ def validate(
         store=variables.SCHEMA_CACHE,
     )
 
-    Validator = jsonschema.Draft6Validator
+    Validator = jsonschema.Draft202012Validator
 
     if allow_tensors:
         type_checker = Validator.TYPE_CHECKER.redefine(
