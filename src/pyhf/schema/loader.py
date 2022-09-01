@@ -54,9 +54,3 @@ def load_schema(schema_id: str):
             schema = json.load(json_schema)
             variables.SCHEMA_CACHE[schema['$id']] = schema
         return variables.SCHEMA_CACHE[schema['$id']]
-
-
-# pre-populate the cache to avoid network access
-# on first validation in standard usage
-# (not in pyhf.schema.variables to avoid circular imports)
-load_schema(f'{variables.SCHEMA_VERSION}/defs.json')
