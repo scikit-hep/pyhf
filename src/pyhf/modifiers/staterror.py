@@ -153,7 +153,6 @@ class staterror_combined:
             for m in keys
         ]
 
-       
         global_concatenated_bin_indices = default_backend.astensor(
             [
                 [
