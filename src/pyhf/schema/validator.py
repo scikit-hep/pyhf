@@ -3,11 +3,13 @@ from pathlib import Path
 from typing import Mapping, Union
 
 import jsonschema
-
+import logging
 import pyhf.exceptions
 from pyhf import tensor
 from pyhf.schema import variables
 from pyhf.schema.loader import load_schema
+
+log = logging.getLogger(__name__)
 
 
 def _is_array_or_tensor(checker, instance):
@@ -70,6 +72,10 @@ def validate(
     """
 
     version = version or variables.SCHEMA_VERSION
+    if version != variables.SCHEMA_VERSION:
+        log.warning(
+            f"Specification requested version {version} but latest is {variables.SCHEMA_VERSION}. Upgrade your specification or downgrade pyhf."
+        )
 
     schema = load_schema(str(Path(version).joinpath(schema_name)))
 
