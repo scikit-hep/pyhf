@@ -1,0 +1,5 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema#",
+    "$id": "https://scikit-hep.org/pyhf/schemas/1.0.1/patchset.json",
+    "$ref": "defs.json#/definitions/patchset"
+}
