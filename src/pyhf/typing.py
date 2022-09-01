@@ -143,6 +143,7 @@ class Workspace(TypedDict):
     measurements: Sequence[Measurement]
     channels: Sequence[Channel]
     observations: Sequence[Observation]
+    version: Literal['1.0.1', '1.0.0']
 
 
 class TensorBackend(Protocol):
