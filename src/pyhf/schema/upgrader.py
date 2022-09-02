@@ -23,7 +23,7 @@ def upgrade_workspace(spec: Workspace) -> Workspace:
     new_spec = copy.deepcopy(spec)
     if version == '1.0.0':
         new_spec['version'] = variables.SCHEMA_VERSION
-    return spec
+    return new_spec
 
 
 def upgrade_patchset(spec: PatchSet) -> PatchSet:
@@ -46,4 +46,4 @@ def upgrade_patchset(spec: PatchSet) -> PatchSet:
     new_spec = copy.deepcopy(spec)
     if version == '1.0.0':
         new_spec['version'] = variables.SCHEMA_VERSION
-    return spec
+    return new_spec
