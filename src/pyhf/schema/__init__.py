@@ -8,6 +8,7 @@ from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
 from pyhf.typing import Self
+from pyhf.schema.upgrader import upgrade_workspace, upgrade_patchset
 
 if sys.version_info >= (3, 9):
     from importlib.abc import Traversable
@@ -19,6 +20,8 @@ __all__ = [
     "validate",
     "path",
     "version",
+    "upgrade_workspace",
+    "upgrade_patchset",
 ]
 
 
