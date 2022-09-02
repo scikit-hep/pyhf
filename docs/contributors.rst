@@ -28,3 +28,4 @@ Contributors include:
 - Lars Henkelmann
 - Aryan Roy
 - Jerry Ling
+- Nathan Simpson
