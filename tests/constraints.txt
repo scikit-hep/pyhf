@@ -2,7 +2,7 @@
 scipy==1.1.0
 click==8.0.0  # c.f. PR #1958, #1909
 tqdm==4.56.0
-jsonschema==4.15.0
+jsonschema==4.14.0
 jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.4.0
