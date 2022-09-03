@@ -178,7 +178,7 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog, mocker):
     mocker.patch(
         "pyhf.mixins._ChannelSummaryMixin.channels",
         new_callable=mocker.PropertyMock,
-        return_value=["channel"],
+        return_value=["fakechannel"],
     )
     with caplog.at_level(logging.INFO, 'pyhf.pdf'):
         with pytest.raises(KeyError):
