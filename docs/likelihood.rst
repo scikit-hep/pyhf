@@ -173,6 +173,9 @@ for a 2-bin channel is shown below:
 
    { "name": "mod_name", "type": "histosys", "data": {"hi_data": [20,15], "lo_data": [10, 10]} }
 
+This example specifies the expected event rate for the high-variation of the ``histosys`` as ``[20, 15]`` (20 events in first bin, 15 events in second bin); for the low-variation as ``[10, 10]`` (10 events in first bin, 10 events in second bin).
+This variation is absolute (not relative!).
+
 Normalisation Uncertainty (normsys)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
