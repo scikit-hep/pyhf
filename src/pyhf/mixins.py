@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 import logging
-from typing import Sequence, Any
+from typing import Any, Sequence
+
 from pyhf.typing import Channel
 
 log = logging.getLogger(__name__)

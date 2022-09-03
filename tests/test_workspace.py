@@ -176,9 +176,9 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog, mocker):
     # the iconic fragrance of an expected failure
 
     mocker.patch(
-        'pyhf.mixins._ChannelSummaryMixin.channels',
+        "pyhf.mixins._ChannelSummaryMixin.channels",
         new_callable=mocker.PropertyMock,
-        return_value=['chanel'],
+        return_value=["chanel"],
     )
     with caplog.at_level(logging.INFO, 'pyhf.pdf'):
         with pytest.raises(KeyError):
