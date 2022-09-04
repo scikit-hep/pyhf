@@ -183,7 +183,7 @@ def test_get_workspace_data_bad_model(workspace_factory, caplog, mocker):
     with caplog.at_level(logging.INFO, 'pyhf.pdf'):
         with pytest.raises(KeyError):
             assert w.data(m)
-        assert 'Invalid channel' in caplog.text
+        assert "Invalid channel" in caplog.text
 
 
 def test_json_serializable(workspace_factory):
