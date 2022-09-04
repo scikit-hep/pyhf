@@ -220,13 +220,58 @@ class _ModelConfig(_ChannelSummaryMixin):
                 f"Unsupported options were passed in: {list(config_kwargs.keys())}."
             )
 
+        # prefixed with underscore are documented via @property
+        self._par_order = []
+        self._poi_name = None
+        self._poi_index = None
+        self._nmaindata = sum(self.channel_nbins.values())
+        self._auxdata = []
+
+        # these are not documented properties
         self.par_map = {}
-        self.par_order = []
-        self.poi_name = None
-        self.poi_index = None
-        self.auxdata = []
         self.auxdata_order = []
-        self.nmaindata = sum(self.channel_nbins.values())
+
+    @property
+    def par_order(self):
+        """
+        Return an ordered list of paramset names in the model.
+        """
+        return self._par_order
+
+    @property
+    def poi_name(self):
+        """
+        Return the name of the POI parameter in the model.
+        """
+        return self._poi_name
+
+    @property
+    def poi_index(self):
+        """
+        Return the index of the POI parameter in the model.
+        """
+        return self._poi_index
+
+    @property
+    def auxdata(self):
+        """
+        Return the auxiliary data in the model.
+        """
+        return self._auxdata
+
+    @property
+    def nmaindata(self):
+        """
+        Return the length of data in the main model.
+        """
+        return self._nmaindata
+
+    @property
+    def nauxdata(self):
+        """
+        Return the length of data in the constraint model.
+        """
+        return len(self._auxdata)
 
     def set_parameters(self, _required_paramsets):
         """
@@ -240,9 +285,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         Sets a group of configuration data for the constraint terms.
         """
-        self.auxdata = auxdata
+        self._auxdata = auxdata
         self.auxdata_order = auxdata_order
-        self.nauxdata = len(self.auxdata)
 
     def suggested_init(self):
         """
@@ -400,8 +444,8 @@ class _ModelConfig(_ChannelSummaryMixin):
             )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
-        self.poi_name = name
-        self.poi_index = s.start
+        self._poi_name = name
+        self._poi_index = s.start
 
     def _create_and_register_paramsets(self, required_paramsets):
         next_index = 0
@@ -415,7 +459,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             sl = slice(next_index, next_index + paramset.n_parameters)
             next_index = next_index + paramset.n_parameters
 
-            self.par_order.append(param_name)
+            self._par_order.append(param_name)
             self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
 
 
@@ -700,7 +744,7 @@ class Model:
             schema.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         poi_name = config_kwargs.pop('poi_name', 'mu')
-        self.config = _ModelConfig(self.spec, **config_kwargs)
+        self._config = _ModelConfig(self.spec, **config_kwargs)
 
         modifiers, _nominal_rates = _nominal_and_modifiers_from_spec(
             modifier_set, self.config, self.spec, self.batch_size
@@ -732,6 +776,13 @@ class Model:
         self.fullpdf_tv = _tensorviewer_from_sizes(
             sizes, ['main', 'aux'], self.batch_size
         )
+
+    @property
+    def config(self):
+        """
+        The :class:`_ModelConfig` instance for the model.
+        """
+        return self._config
 
     def expected_auxdata(self, pars):
         """
