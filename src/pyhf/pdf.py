@@ -429,7 +429,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         Set the model parameter of interest to be model parameter ``name``.
 
-        If ``name`` is ``None``, this will reset the parameter of interest.
+        If ``name`` is ``None``, this will unset the parameter of interest.
 
         Example:
             >>> import pyhf
