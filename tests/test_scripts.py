@@ -163,6 +163,34 @@ def test_import_prepHistFactory_and_cls(tmpdir, script_runner):
         assert 'CLs_exp' in d
 
 
+def test_import_usingMounts(datadir, tmpdir, script_runner):
+    data = datadir.joinpath("xmlimport_absolutePaths")
+
+    temp = tmpdir.join("parsed_output.json")
+    command = f'pyhf xml2json --hide-progress -v {data}:/absolute/path/to -v {data}:/another/absolute/path/to --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
+
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    assert ret.stdout == ''
+    assert ret.stderr == ''
+
+    parsed_xml = json.loads(temp.read())
+    spec = {'channels': parsed_xml['channels']}
+    pyhf.schema.validate(spec, 'model.json')
+
+
+def test_import_usingMounts_badDelimitedPaths(datadir, tmpdir, script_runner):
+    data = datadir.joinpath("xmlimport_absolutePaths")
+
+    temp = tmpdir.join("parsed_output.json")
+    command = f'pyhf xml2json --hide-progress -v {data}::/absolute/path/to -v {data}/another/absolute/path/to --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
+
+    ret = script_runner.run(*shlex.split(command))
+    assert not ret.success
+    assert ret.stdout == ''
+    assert 'is not a valid colon-separated option' in ret.stderr
+
+
 @pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
 def test_fit_backend_option(tmpdir, script_runner, backend):
     temp = tmpdir.join("parsed_output.json")
@@ -269,7 +297,7 @@ def test_testpoi(tmpdir, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath:s}'
     ret = script_runner.run(*shlex.split(command))
 
-    pois = [1.0, 0.5, 0.0]
+    pois = [1.0, 0.5, 0.001]
     results_exp = []
     results_obs = []
     for test_poi in pois:

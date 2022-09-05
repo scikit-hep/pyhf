@@ -6,7 +6,7 @@
     "@type": "SoftwareSourceCode",
     "identifier": "pyhf",
     "name": "pyhf",
-    "version": "0.6.3",
+    "version": "0.7.0rc3",
     "description": "pure-Python HistFactory implementation with tensors and autodiff",
     "license": "Apache, OSI Approved :: Apache Software License",
     "author": [

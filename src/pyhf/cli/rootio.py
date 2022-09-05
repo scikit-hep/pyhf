@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import jsonpatch
+from pyhf.utils import VolumeMountPath
 
 log = logging.getLogger(__name__)
 
@@ -24,13 +25,23 @@ def cli():
     default=Path.cwd(),
 )
 @click.option(
+    '-v',
+    '--mount',
+    help='Consists of two fields, separated by a colon character ( : ). The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker.',
+    type=VolumeMountPath(exists=True, resolve_path=True, path_type=Path),
+    default=None,
+    multiple=True,
+)
+@click.option(
     '--output-file',
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
 @click.option('--track-progress/--hide-progress', default=True)
 @click.option('--validation-as-error/--validation-as-warning', default=True)
-def xml2json(entrypoint_xml, basedir, output_file, track_progress, validation_as_error):
+def xml2json(
+    entrypoint_xml, basedir, mount, output_file, track_progress, validation_as_error
+):
     """Entrypoint XML: The top-level XML file for the PDF definition."""
     try:
         import uproot
@@ -47,6 +58,7 @@ def xml2json(entrypoint_xml, basedir, output_file, track_progress, validation_as
     spec = readxml.parse(
         entrypoint_xml,
         basedir,
+        mounts=mount,
         track_progress=track_progress,
         validation_as_error=validation_as_error,
     )

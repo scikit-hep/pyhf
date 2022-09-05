@@ -170,15 +170,20 @@ def test_get_workspace_data(workspace_factory, include_auxdata):
     assert w.data(m, include_auxdata=include_auxdata)
 
 
-def test_get_workspace_data_bad_model(workspace_factory, caplog):
+def test_get_workspace_data_bad_model(workspace_factory, caplog, mocker):
     w = workspace_factory()
     m = w.model()
     # the iconic fragrance of an expected failure
-    m.config.channels = [c.replace('channel', 'chanel') for c in m.config.channels]
+
+    mocker.patch(
+        "pyhf.mixins._ChannelSummaryMixin.channels",
+        new_callable=mocker.PropertyMock,
+        return_value=["fakechannel"],
+    )
     with caplog.at_level(logging.INFO, 'pyhf.pdf'):
         with pytest.raises(KeyError):
             assert w.data(m)
-            assert 'Invalid channel' in caplog.text
+        assert "Invalid channel" in caplog.text
 
 
 def test_json_serializable(workspace_factory):
@@ -910,3 +915,11 @@ def test_workspace_without_validation(mocker, simplemodels_model_data):
 
     pyhf.Workspace(dict(ws), validate=False)
     assert pyhf.schema.validate.called is False
+
+
+def test_workspace_invalid_specification():
+    spec = {"channels": [{"name": "SR", "samples_wrong_name": []}]}
+    # Ensure that an invalid specifications gets caught as such
+    # before a KeyError: 'samples' could be reached.
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.Workspace(spec)

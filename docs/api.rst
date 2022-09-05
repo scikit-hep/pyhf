@@ -44,6 +44,7 @@ Making Models from PDFs
 
    ~pdf.Model
    ~pdf._ModelConfig
+   ~mixins._ChannelSummaryMixin
    ~workspace.Workspace
    ~patchset.PatchSet
    ~patchset.Patch
