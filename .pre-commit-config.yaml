@@ -38,7 +38,7 @@ repos:
     - id: absolufy-imports
 
 -   repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 22.8.0
     hooks:
     - id: black-jupyter
 
@@ -54,7 +54,7 @@ repos:
     - id: yesqa
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 5.0.2
+    rev: 5.0.4
     hooks:
     - id: flake8
       args: ["--count", "--statistics"]
@@ -81,7 +81,7 @@ repos:
       additional_dependencies: [pyupgrade==2.37.3]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.1.0
+    rev: v2.2.1
     hooks:
     - id: codespell
       files: ^.*\.(py|md|rst)$
