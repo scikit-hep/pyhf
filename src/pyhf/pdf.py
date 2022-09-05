@@ -429,6 +429,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         Set the model parameter of interest to be model parameter ``name``.
 
+        If ``name`` is ``None``, this will reset the parameter of interest.
+
         Example:
             >>> import pyhf
             >>> model = pyhf.simplemodels.uncorrelated_background(
@@ -438,6 +440,11 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> model.config.poi_name
             'mu'
         """
+        if name is None:
+            self._poi_name = None
+            self._poi_index = None
+            return
+
         if name not in self.parameters:
             raise exceptions.InvalidModel(
                 f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
