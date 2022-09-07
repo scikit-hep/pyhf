@@ -1,11 +1,11 @@
 from __future__ import annotations
+
 import sys
 
-from pyhf.tensor import BackendRetriever
-from pyhf import exceptions
-from pyhf import events
+from pyhf import events, exceptions
 from pyhf.optimize import OptimizerRetriever
-from pyhf.typing import TensorBackend, Optimizer, TypedDict, Protocol
+from pyhf.tensor import BackendRetriever
+from pyhf.typing import Optimizer, Protocol, TensorBackend, TypedDict
 
 
 class State(TypedDict):

@@ -1,25 +1,17 @@
 from __future__ import annotations
+
 import weakref
 from functools import wraps
+from typing import Callable, TypeVar, cast
 
-from typing import TypeVar, Callable, cast
-
-# see https://mypy.readthedocs.io/en/stable/generics.html#declaring-decorators
+# See https://mypy.readthedocs.io/en/stable/generics.html#declaring-decorators
 TCallable = TypeVar("TCallable", bound=Callable)
 
 
 __events = {}
 __disabled_events = set()
 
-__all__ = [
-    "Callables",
-    "disable",
-    "enable",
-    "noop",
-    "register",
-    "subscribe",
-    "trigger",
-]
+__all__ = ["Callables", "disable", "enable", "noop", "register", "subscribe", "trigger"]
 
 
 def __dir__():
