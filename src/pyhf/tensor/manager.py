@@ -43,10 +43,7 @@ def get_backend(default: bool = False) -> tuple[TensorBackend, Optimizer]:
     Returns:
         backend, optimizer
     """
-    if default:
-        return this.state['default']
-
-    return this.state['current']
+    return this.state["default"] if default else this.state["current"]
 
 
 _default_backend: TensorBackend = BackendRetriever.numpy_backend()
