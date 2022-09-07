@@ -110,9 +110,9 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # 1. setup nominal & modifier builders
     nominal = _nominal_builder(config)
 
-    modifiers_builders = {}
-    for k, (builder, applier) in modifier_set.items():
-        modifiers_builders[k] = builder(config)
+    modifiers_builders = {
+        key: builder(config) for key, (builder, _) in modifier_set.items()
+    }
 
     # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
     helper = {}
