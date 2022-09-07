@@ -4,6 +4,8 @@ import pytest
 
 
 class custom_builder:
+    is_shared = True
+
     def __init__(self, pdfconfig):
         self.config = pdfconfig
         self.required_parsets = {
@@ -12,7 +14,6 @@ class custom_builder:
                     'paramset_type': 'unconstrained',
                     'n_parameters': 1,
                     'is_constrained': False,
-                    'is_shared': True,
                     'inits': (1.0,),
                     'bounds': ((-5, 5),),
                     'fixed': False,

@@ -1182,3 +1182,135 @@ def test_pdf_clipping(backend):
     # We should be able to converge when clipping is enabled
     pyhf.infer.mle.fit(data, model_clip_sample)
     pyhf.infer.mle.fit(data, model_clip_bin)
+
+
+def test_is_shared_paramset_shapesys_diff_sample_diff_channel():
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [24.0, 25.0],
+                        "modifiers": [
+                            {"data": [0.1, 0.2], "name": "par", "type": "shapesys"},
+                            {"data": None, "name": "mu", "type": "normfactor"},
+                        ],
+                        "name": "Signal",
+                    }
+                ],
+            },
+            {
+                "name": "CR",
+                "samples": [
+                    {
+                        "data": [10.0],
+                        "modifiers": [
+                            {"data": [0.1], "name": "par", "type": "shapesys"}
+                        ],
+                        "name": "Background",
+                    }
+                ],
+            },
+        ],
+        "measurements": [
+            {"config": {"parameters": [], "poi": "mu"}, "name": "minimal_example"}
+        ],
+        "observations": [
+            {"data": [24.0, 24.0], "name": "SR"},
+            {"data": [10.0], "name": "CR"},
+        ],
+        "version": "1.0.0",
+    }
+
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Workspace(spec).model()
+
+
+def test_is_shared_paramset_shapesys_diff_sample_same_channel():
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [50],
+                        "modifiers": [
+                            {
+                                "data": [9],
+                                "name": "abc",
+                                "type": "shapesys",
+                            },
+                            {
+                                "data": None,
+                                "name": "Signal strength",
+                                "type": "normfactor",
+                            },
+                        ],
+                        "name": "Signal",
+                    },
+                    {
+                        "data": [150],
+                        "modifiers": [
+                            {
+                                "data": [7],
+                                "name": "abc",
+                                "type": "shapesys",
+                            }
+                        ],
+                        "name": "Background",
+                    },
+                ],
+            }
+        ],
+        "measurements": [{"config": {"parameters": [], "poi": ""}, "name": "meas"}],
+        "observations": [{"data": [160], "name": "SR"}],
+        "version": "1.0.0",
+    }
+
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Workspace(spec).model()
+
+
+def test_is_shared_paramset_shapesys_same_sample_same_channel():
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [24.0, 25.0],
+                        "modifiers": [
+                            {"data": [0.1, 0.2], "name": "par2", "type": "shapesys"},
+                            {"data": None, "name": "mu", "type": "normfactor"},
+                        ],
+                        "name": "Signal",
+                    }
+                ],
+            },
+            {
+                "name": "CR",
+                "samples": [
+                    {
+                        "data": [10.0],
+                        "modifiers": [
+                            {"data": [0.1], "name": "par", "type": "shapesys"},
+                            {"data": [0.5], "name": "par", "type": "shapesys"},
+                        ],
+                        "name": "Background",
+                    }
+                ],
+            },
+        ],
+        "measurements": [
+            {"config": {"parameters": [], "poi": "mu"}, "name": "minimal_example"}
+        ],
+        "observations": [
+            {"data": [24.0, 24.0], "name": "SR"},
+            {"data": [10.0], "name": "CR"},
+        ],
+        "version": "1.0.0",
+    }
+
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Workspace(spec).model()

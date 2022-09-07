@@ -11,7 +11,6 @@ def required_parset(sample_data, modifier_data):
     return {
         'paramset_type': 'constrained_by_normal',
         'n_parameters': 1,
-        'is_shared': True,
         'is_scalar': True,
         'inits': (0.0,),
         'bounds': ((-5.0, 5.0),),
@@ -22,6 +21,8 @@ def required_parset(sample_data, modifier_data):
 
 class normsys_builder:
     """Builder class for collecting normsys modifier data"""
+
+    is_shared = True
 
     def __init__(self, config):
         self.builder_data = {}

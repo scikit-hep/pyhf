@@ -12,7 +12,6 @@ def required_parset(sample_data, modifier_data):
     return {
         'paramset_type': 'unconstrained',
         'n_parameters': len(sample_data),
-        'is_shared': True,
         'is_scalar': False,
         'inits': (1.0,) * len(sample_data),
         'bounds': ((0.0, 10.0),) * len(sample_data),
@@ -22,6 +21,8 @@ def required_parset(sample_data, modifier_data):
 
 class shapefactor_builder:
     """Builder class for collecting shapefactor modifier data"""
+
+    is_shared = True
 
     def __init__(self, config):
         self.builder_data = {}
