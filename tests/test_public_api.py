@@ -221,3 +221,15 @@ def test_set_schema_path_context(monkeypatch):
     new_path = pathlib.Path('a/new/path')
     with pyhf.schema(new_path):
         assert pyhf.schema.path == new_path
+
+
+def test_pdf_set_poi(backend):
+    model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [2.5])
+    assert model.config.poi_index == 0
+    assert model.config.poi_name == 'mu'
+    model.config.set_poi('uncorr_bkguncrt')
+    assert model.config.poi_index == 1
+    assert model.config.poi_name == 'uncorr_bkguncrt'
+    model.config.set_poi(None)
+    assert model.config.poi_index is None
+    assert model.config.poi_name is None

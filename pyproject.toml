@@ -136,7 +136,6 @@ module = [
   'pyhf.compat',
   'pyhf.events',
   'pyhf.utils',
-  'pyhf.mixins',
   'pyhf.constraints',
   'pyhf.pdf',
   'pyhf.simplemodels',
