@@ -42,6 +42,8 @@ def make_builder(
     funcname: str, deps: list[str], newparams: dict[str, dict[str, Sequence[float]]]
 ) -> BaseBuilder:
     class _builder(BaseBuilder):
+        is_shared = False
+
         def __init__(self, config):
             self.builder_data = {'funcs': {}}
             self.config = config
