@@ -141,7 +141,6 @@ module = [
   'pyhf.simplemodels',
   'pyhf.probability',
   'pyhf.tensor.common.*',
-  'pyhf.tensor.manager.*',
   'pyhf.tensor',
   'pyhf.tensor.jax_backend.*',
   'pyhf.tensor.tensorflow_backend.*',

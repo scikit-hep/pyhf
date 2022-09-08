@@ -31,7 +31,7 @@ Important Notes
 * The documentation will now be versioned with releases on ReadTheDocs.
   Please use `pyhf.readthedocs.io`_ to access the documentation for the latest
   stable release of ``pyhf``.
-* ``pyhf`` is transtioning away from Stack Overflow to `GitHub Discussions`_ for
+* ``pyhf`` is transitioning away from Stack Overflow to `GitHub Discussions`_ for
   resolving user questions not covered in the documentation.
   Please check the `GitHub Discussions`_ page to search for discussions addressing
   your questions and to open up a new discussion if your question is not covered.

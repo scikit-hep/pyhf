@@ -107,8 +107,16 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # We don't actually set up the modifier data here for no-ops, but we do
     # set up the entire structure
 
-    # helper maps channel-name/sample-name to pairs of channel-sample structs
+    # 1. setup nominal & modifier builders
+    nominal = _nominal_builder(config)
+
+    modifiers_builders = {
+        key: builder(config) for key, (builder, _) in modifier_set.items()
+    }
+
+    # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
     helper = {}
+    _keys_seen = set()
     for c in spec['channels']:
         for s in c['samples']:
             moddict = {}
@@ -117,17 +125,21 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                     raise exceptions.InvalidModifier(
                         f'{x["type"]} not among {list(modifier_set.keys())}'
                     )
-                moddict[f"{x['type']}/{x['name']}"] = x
+                key = f"{x['type']}/{x['name']}"
+                # check if the modifier to be built is allowed to be shared
+                if not modifiers_builders[x['type']].is_shared and (
+                    key in _keys_seen or key in moddict
+                ):
+                    raise exceptions.InvalidModel(
+                        f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
+                    )
+
+                moddict[key] = x
             helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
+            # add in all keys seen
+            _keys_seen.update(moddict)
 
-    # 1. setup nominal & modifier builders
-    nominal = _nominal_builder(config)
-
-    modifiers_builders = {}
-    for k, (builder, applier) in modifier_set.items():
-        modifiers_builders[k] = builder(config)
-
-    # 2. walk spec and call builders
+    # 3. walk spec and call builders
     for c in config.channels:
         for s in config.samples:
             helper_data = helper.get(c, {}).get(s)
@@ -141,13 +153,13 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 thismod = defined_mods.get(key) if defined_mods else None
                 modifiers_builders[mtype].append(key, c, s, thismod, defined_samp)
 
-    # 3. finalize nominal & modifier builders
+    # 4. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
     finalizd_builder_data = {}
     for k, (builder, applier) in modifier_set.items():
         finalizd_builder_data[k] = modifiers_builders[k].finalize()
 
-    # 4. collect parameters from spec and from user.
+    # 5. collect parameters from spec and from user.
     # At this point we know all constraints and so forth
     _required_paramsets = {}
     for v in list(modifiers_builders.values()):
