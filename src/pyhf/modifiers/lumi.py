@@ -10,7 +10,6 @@ def required_parset(sample_data, modifier_data):
     return {
         'paramset_type': 'constrained_by_normal',
         'n_parameters': 1,
-        'is_shared': True,
         'is_scalar': True,
         'inits': None,  # lumi
         'bounds': None,  # (0, 10*lumi)
@@ -22,6 +21,8 @@ def required_parset(sample_data, modifier_data):
 
 class lumi_builder:
     """Builder class for collecting lumi modiifier data"""
+
+    is_shared = True
 
     def __init__(self, config):
         self.builder_data = {}

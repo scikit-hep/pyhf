@@ -26,6 +26,8 @@ __all__ = (
     "Observation",
     "Workspace",
     "Literal",
+    "TypedDict",
+    "Protocol",
 )
 
 
@@ -140,7 +142,16 @@ class Workspace(TypedDict):
 
 
 class TensorBackend(Protocol):
-    ...
+    name: str
+    precision: str
+    default_do_grad: bool
+
+    def _setup(self) -> None:
+        ...
+
+
+class Optimizer(Protocol):
+    name: str
 
 
 class PDF(Protocol):

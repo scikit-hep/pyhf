@@ -66,7 +66,7 @@ class numpy_backend(Generic[T]):
             'int': np.int64 if self.precision == '64b' else np.int32,
             'bool': np.bool_,
         }
-        self.default_do_grad = False
+        self.default_do_grad: bool = False
 
     def _setup(self) -> None:
         """
