@@ -244,6 +244,7 @@ warn_unreachable = true
 module = [
   'jax.*',
   'matplotlib.*',
+  'numexpr.*',
   'scipy.*',
   'tensorflow.*',
   'tensorflow_probability.*',
@@ -262,6 +263,7 @@ module = [
   'pyhf.cli.*',
   'pyhf.modifiers.*',
   'pyhf.exceptions.*',
+  'pyhf.experimental.*',
   'pyhf.parameters.*',
   'pyhf.schema.*',
   'pyhf.writexml',
