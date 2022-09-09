@@ -6,7 +6,7 @@ import zipfile
 from io import BytesIO
 from pathlib import Path
 from shutil import rmtree
-from urllib.parse import urlparse
+from urllib.parse import urlsplit
 
 from pyhf import exceptions
 
@@ -50,7 +50,7 @@ try:
         """
         if not force:
             valid_hosts = ["www.hepdata.net", "doi.org"]
-            netloc = urlparse(archive_url).netloc
+            netloc = urlsplit(archive_url).netloc
             if netloc not in valid_hosts:
                 raise exceptions.InvalidArchiveHost(
                     f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
