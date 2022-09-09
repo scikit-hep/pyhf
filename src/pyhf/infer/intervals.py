@@ -122,11 +122,11 @@ def upperlimit_auto(
 
     # extend low and high if they don't bracket CLs level
     low_res = f_all(low)
-    while np.any(np.array(low_res[0] + low_res[1]) < 0.05):
+    while np.any(np.array(low_res[0] + low_res[1]) < level):
         low /= 2
         low_res = f_all(low)
     high_res = f_all(high)
-    while np.any(np.array(high_res[0] + high_res[1]) > 0.05):
+    while np.any(np.array(high_res[0] + high_res[1]) > level):
         high *= 2
         high_res = f_all(high)
 
