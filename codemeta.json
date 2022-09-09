@@ -44,7 +44,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": ">=1.4.1"
+            "version": ">=1.1.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -57,7 +57,7 @@
                 "url": "https://pypi.org"
             },
             "runtimePlatform": "Python 3",
-            "version": ">=7.0"
+            "version": ">=8.0.0"
         },
         {
             "@type": "SoftwareApplication",
@@ -110,6 +110,32 @@
             },
             "runtimePlatform": "Python 3",
             "version": ">=5.1"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "importlib-resources",
+            "name": "importlib-resources",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3",
+            "version": ">=1.3.0"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "typing-extensions",
+            "name": "typing-extensions",
+            "provider": {
+                "@id": "https://pypi.org",
+                "@type": "Organization",
+                "name": "The Python Package Index",
+                "url": "https://pypi.org"
+            },
+            "runtimePlatform": "Python 3",
+            "version": ">=3.7.4.3"
         }
     ],
     "audience": [
@@ -129,5 +155,5 @@
     "keywords": "physics fitting numpy scipy tensorflow pytorch jax",
     "developmentStatus": "4 - Beta",
     "applicationCategory": "Scientific/Engineering, Scientific/Engineering :: Physics",
-    "programmingLanguage": "Python 3, Python 3.7, Python 3.8, Python 3.9, Python 3.10, Python Implementation CPython"
+    "programmingLanguage": "Python 3, Python 3 Only, Python 3.7, Python 3.8, Python 3.9, Python 3.10, Python Implementation CPython"
 }
