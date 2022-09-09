@@ -27,8 +27,8 @@ def upperlimit_auto(
     level=0.05,
     atol=2e-12,
     rtol=None,
-    calctype='asymptotics',
-    test_stat='qtilde',
+    calctype="asymptotics",
+    test_stat="qtilde",
     from_upperlimit_fn=False,
 ):
     """
@@ -65,9 +65,9 @@ def upperlimit_auto(
         rtol (:obj:`float`): Relative tolerance. For optimal performance this argument should be set
                              to the highest acceptable relative tolerance, though it will default
                              to 1e-15 if not set.
-        calctype (:obj:`str`): Calculator to use for hypothesis tests. Choose 'asymptotics' (default)
-                               or 'toybased'.
-        test_stat (:obj:`str`): Test statistic to use. Choose 'qtilde' (default), 'q', or 'q0'.
+        calctype (:obj:`str`): Calculator to use for hypothesis tests. Choose "asymptotics" (default)
+                               or "toybased".
+        test_stat (:obj:`str`): Test statistic to use. Choose "qtilde" (default), "q", or "q0".
 
     Returns:
         Tuple of Tensors:
@@ -243,7 +243,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
     """
-    if isinstance(scan, str) and scan.lower() == 'auto':
+    if isinstance(scan, str) and scan.lower() == "auto":
         bounds = model.config.suggested_bounds()[
             model.config.par_slice(model.config.poi_name).start
         ]
