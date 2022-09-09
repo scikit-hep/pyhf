@@ -418,11 +418,9 @@ class AsymptoticCalculator:
                 teststat = (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
                 return teststat
 
-            # Use '>' rather than reverse condition with '<=' to avoid
-            # equating floating point numbers.
-            # This comparison is done to avoid Issue #1992.
+            # Use '<=' rather than '<' to avoid Issue #1992
             teststat = tensorlib.conditional(
-                (self.sqrtqmuA_v > sqrtqmu_v), _true_case, _false_case
+                (sqrtqmu_v <= self.sqrtqmuA_v), _true_case, _false_case
             )
         return tensorlib.astensor(teststat)
 
