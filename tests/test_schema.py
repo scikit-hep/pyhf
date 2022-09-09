@@ -641,25 +641,25 @@ def test_defs_always_cached(
 def test_schema_tensor_type_allowed(backend):
     tensorlib, _ = backend
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': tensorlib.astensor([10]),
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": tensorlib.astensor([10]),
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': tensorlib.astensor([15]),
-                        'modifiers': [
+                        "name": "background",
+                        "data": tensorlib.astensor([15]),
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': tensorlib.astensor([5]),
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": tensorlib.astensor([5]),
                             }
                         ],
                     },
@@ -667,36 +667,36 @@ def test_schema_tensor_type_allowed(backend):
             }
         ]
     }
-    assert pyhf.schema.validate(spec, 'model.json') is None
+    assert pyhf.schema.validate(spec, "model.json") is None
 
 
 def test_schema_tensor_type_disallowed(mocker, backend):
     tensorlib, _ = backend
     mocker.patch.object(
         pyhf.schema.validate,
-        '__kwdefaults__',
-        {'version': None, 'allow_tensors': False},
+        "__kwdefaults__",
+        {"version": None, "allow_tensors": False},
     )
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': tensorlib.astensor([10]),
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": tensorlib.astensor([10]),
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': tensorlib.astensor([15]),
-                        'modifiers': [
+                        "name": "background",
+                        "data": tensorlib.astensor([15]),
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': tensorlib.astensor([5]),
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": tensorlib.astensor([5]),
                             }
                         ],
                     },
@@ -705,4 +705,4 @@ def test_schema_tensor_type_disallowed(mocker, backend):
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate(spec, 'model.json')
+        pyhf.schema.validate(spec, "model.json")

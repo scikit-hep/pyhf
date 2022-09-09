@@ -56,8 +56,8 @@ class numpy_backend(Generic[T]):
     array_subtype = np.number
 
     def __init__(self, **kwargs: str):
-        self.name = 'numpy'
-        self.precision = kwargs.get('precision', '64b')
+        self.name = "numpy"
+        self.precision = kwargs.get("precision", "64b")
         self.dtypemap: Mapping[
             FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],

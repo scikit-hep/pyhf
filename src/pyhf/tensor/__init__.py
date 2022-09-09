@@ -3,12 +3,12 @@ from pyhf import exceptions
 
 class _BackendRetriever:
     __slots__ = [
-        '_array_types',
-        '_array_subtypes',
-        'numpy_backend',
-        'jax_backend',
-        'pytorch_backend',
-        'tensorflow_backend',
+        "_array_types",
+        "_array_subtypes",
+        "numpy_backend",
+        "jax_backend",
+        "pytorch_backend",
+        "tensorflow_backend",
     ]
 
     def __init__(self):

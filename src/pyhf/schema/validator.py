@@ -42,23 +42,27 @@ def validate(
     Validate the provided instance, ``spec``, against the schema associated with ``schema_name``.
 
     Args:
-        spec (:obj:`object`): An object instance to validate against a schema
-        schema_name (:obj:`string`): The name of a schema to validate against. See :func:`pyhf.schema.load_schema` for more details.
-        version (:obj:`string`): The version of the schema to use. See :func:`pyhf.schema.load_schema` for more details.
-        allow_tensors (:obj:`bool`): A flag to enable or disable tensors as part of schema validation. If enabled, tensors in the ``spec`` will be treated like python :obj:`list`. Default: ``True``.
+        spec (:obj:`object`): An object instance to validate against a schema.
+        schema_name (:obj:`string`): The name of a schema to validate against.
+         See :func:`pyhf.schema.load_schema` for more details.
+        version (:obj:`string`): The version of the schema to use.
+         See :func:`pyhf.schema.load_schema` for more details.
+        allow_tensors (:obj:`bool`): A flag to enable or disable tensors as part of schema validation.
+         If enabled, tensors in the ``spec`` will be treated like python :obj:`list`.
+         Default: ``True``.
 
     Raises:
         ~pyhf.exceptions.InvalidSpecification: if the provided instance does not validate against the schema.
 
     Returns:
-        None: if there are no errors with the provided instance
+        None: if there are no errors with the provided instance.
 
     Example:
         >>> import pyhf
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
         ... )
-        >>> pyhf.schema.validate(model.spec, 'model.json')
+        >>> pyhf.schema.validate(model.spec, "model.json")
         >>>
     """
 
@@ -77,8 +81,8 @@ def validate(
 
     if allow_tensors:
         type_checker = Validator.TYPE_CHECKER.redefine(
-            'array', _is_array_or_tensor
-        ).redefine('number', _is_number_or_tensor_subtype)
+            "array", _is_array_or_tensor
+        ).redefine("number", _is_number_or_tensor_subtype)
         Validator = jsonschema.validators.extend(Validator, type_checker=type_checker)
 
     validator = Validator(schema, resolver=resolver, format_checker=None)
