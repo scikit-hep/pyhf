@@ -53,6 +53,12 @@ class jax_backend:
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
+    #: The array type for jax
+    array_type = jnp.DeviceArray
+
+    #: The array content type for jax
+    array_subtype = jnp.DeviceArray
+
     def __init__(self, **kwargs):
         self.name = 'jax'
         self.precision = kwargs.get('precision', '64b')

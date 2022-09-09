@@ -600,7 +600,6 @@ def test_defs_always_cached(
 ):
     """
     Schema definitions should always be loaded from the local files and cached at first import.
-
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
     (e.g. a cluster node without network access).
     """
@@ -637,3 +636,73 @@ def test_defs_always_cached(
         ]
     }
     pyhf.schema.validate(spec, 'model.json')  # may try to access network and fail
+
+
+def test_schema_tensor_type_allowed(backend):
+    tensorlib, _ = backend
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": tensorlib.astensor([10]),
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": tensorlib.astensor([15]),
+                        "modifiers": [
+                            {
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": tensorlib.astensor([5]),
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    assert pyhf.schema.validate(spec, "model.json") is None
+
+
+def test_schema_tensor_type_disallowed(mocker, backend):
+    tensorlib, _ = backend
+    mocker.patch.object(
+        pyhf.schema.validate,
+        "__kwdefaults__",
+        {"version": None, "allow_tensors": False},
+    )
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": tensorlib.astensor([10]),
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": tensorlib.astensor([15]),
+                        "modifiers": [
+                            {
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": tensorlib.astensor([5]),
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+    with pytest.raises(pyhf.exceptions.InvalidSpecification):
+        pyhf.schema.validate(spec, "model.json")

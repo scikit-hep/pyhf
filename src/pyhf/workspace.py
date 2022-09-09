@@ -387,7 +387,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         else:
             raise exceptions.InvalidMeasurement("No measurements have been defined.")
 
-        schema.validate(measurement, 'measurement.json', self.version)
+        schema.validate(measurement, 'measurement.json', version=self.version)
         return measurement
 
     def model(
