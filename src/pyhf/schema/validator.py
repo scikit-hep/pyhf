@@ -1,10 +1,12 @@
-import jsonschema
 import numbers
+from typing import Mapping, Union
+
+import jsonschema
+
 import pyhf.exceptions
-from pyhf.schema.loader import load_schema
-from pyhf.schema import variables
 from pyhf import tensor
-from typing import Union, Mapping
+from pyhf.schema import variables
+from pyhf.schema.loader import load_schema
 
 
 def _is_array_or_tensor(checker, instance):
