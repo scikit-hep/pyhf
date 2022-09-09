@@ -85,6 +85,7 @@ def upperlimit_auto(
             f"upperlimit_auto: rtol not provided, defaulting to {rtol}. For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
 
+    # FIXME: Need to still take advantage of the lru_cache and migrate away from this cache approach.
     cache = {}
 
     @lru_cache(maxsize=None)
