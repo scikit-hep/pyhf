@@ -76,11 +76,10 @@ def upperlimit_auto(
             - Tensor: The expected upper limits on the POI.
     """
     if rtol is None:
-        warn(
-            "upperlimit_auto: rtol not provided, defaulting to 1e-15. "
-            "For optimal performance rtol should be set to the highest acceptable relative tolerance."
-        )
         rtol = 1e-15
+        warn(
+            f"upperlimit_auto: rtol not provided, defaulting to {rtol}. For optimal performance rtol should be set to the highest acceptable relative tolerance."
+        )
 
     cache = {}
 
