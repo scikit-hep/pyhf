@@ -42,8 +42,9 @@ jobs:
       run: |
         pytest tests/test_public_api.py
 
+      # FIXME: c.f. https://github.com/proycon/codemetapy/issues/24
     - name: Verify requirements in codemeta.json
       run: |
         python -m pip install jq "codemetapy==0.3.5"
         codemetapy --no-extras pyhf > codemeta_generated.json
-        diff <(jq -S .softwareRequirements codemeta_generated.json) <(jq -S .softwareRequirements codemeta.json)
+        diff <(jq -S .softwareRequirements codemeta.json) <(jq -S .softwareRequirements codemeta_generated.json)
