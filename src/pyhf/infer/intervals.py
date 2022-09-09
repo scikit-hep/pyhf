@@ -1,9 +1,11 @@
 """Interval estimation"""
-from pyhf.infer import hypotest
-from pyhf import get_backend
+from warnings import warn
+
 import numpy as np
-from scipy.optimize import toms748 as _toms748
-from warnings import warn as _warn
+from scipy.optimize import toms748
+
+from pyhf import get_backend
+from pyhf.infer import hypotest
 
 __all__ = ["upperlimit"]
 
@@ -74,7 +76,7 @@ def upperlimit_auto(
             - Tensor: The expected upper limits on the POI.
     """
     if rtol is None:
-        _warn(
+        warn(
             "upperlimit_auto: rtol not provided, defaulting to 1e-15. "
             "For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
@@ -130,9 +132,9 @@ def upperlimit_auto(
         high_res = f_all(high)
 
     tb, _ = get_backend()
-    obs = tb.astensor(_toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
+    obs = tb.astensor(toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
     exp = [
-        tb.astensor(_toms748(f, *best_bracket(i), args=(i), k=2, xtol=atol, rtol=rtol))
+        tb.astensor(toms748(f, *best_bracket(i), args=(i), k=2, xtol=atol, rtol=rtol))
         for i in range(1, 6)
     ]
     if from_upperlimit_fn:
