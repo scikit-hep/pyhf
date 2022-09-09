@@ -49,9 +49,15 @@ class numpy_backend(Generic[T]):
 
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
+    #: The array type for numpy
+    array_type = np.ndarray
+
+    #: The array content type for numpy
+    array_subtype = np.number
+
     def __init__(self, **kwargs: str):
-        self.name: str = 'numpy'
-        self.precision: str = kwargs.get('precision', '64b')
+        self.name = "numpy"
+        self.precision = kwargs.get("precision", "64b")
         self.dtypemap: Mapping[
             FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
