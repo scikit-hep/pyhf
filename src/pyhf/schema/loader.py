@@ -23,9 +23,9 @@ def load_schema(schema_id: str):
         >>> import pyhf
         >>> schema = pyhf.schema.load_schema("1.0.0/defs.json")
         >>> type(schema)
-        <class "dict">
+        <class 'dict'>
         >>> schema.keys()
-        dict_keys(["$schema", "$id", "definitions"])
+        dict_keys(['$schema', '$id', 'definitions'])
         >>> pyhf.schema.load_schema("0.0.0/defs.json")  # doctest: +ELLIPSIS
         Traceback (most recent call last):
             ...
