@@ -1,4 +1,7 @@
 """Interval estimation"""
+# TODO: Use functools.cache once Python 3.9+ only.
+# c.f. https://docs.python.org/3/library/functools.html#functools.cache
+from functools import lru_cache
 from warnings import warn
 
 import numpy as np
@@ -83,6 +86,7 @@ def upperlimit_auto(
 
     cache = {}
 
+    @lru_cache(maxsize=None)
     def f_all(mu):
         if mu in cache:
             return cache[mu]
