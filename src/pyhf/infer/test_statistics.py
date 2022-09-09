@@ -71,7 +71,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
        \begin{equation}
           q_{\mu} = \left\{\begin{array}{ll}
-          -2\ln\lambda\left(\mu\right), &\hat{\mu} < \mu,\\
+          -2\ln\lambda\left(\mu\right), &\hat{\mu} \leq \mu,\\
           0, & \hat{\mu} > \mu
           \end{array}\right.
         \end{equation}
@@ -160,7 +160,7 @@ def qmu_tilde(
 
        \begin{equation}
           \tilde{q}_{\mu} = \left\{\begin{array}{ll}
-          -2\ln\tilde{\lambda}\left(\mu\right), &\hat{\mu} < \mu,\\
+          -2\ln\tilde{\lambda}\left(\mu\right), &\hat{\mu} \leq \mu,\\
           0, & \hat{\mu} > \mu
           \end{array}\right.
         \end{equation}
