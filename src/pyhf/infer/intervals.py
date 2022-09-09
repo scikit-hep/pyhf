@@ -10,7 +10,7 @@ from scipy.optimize import toms748
 from pyhf import get_backend
 from pyhf.infer import hypotest
 
-__all__ = ["upperlimit"]
+__all__ = ["upperlimit", "upperlimit_auto", "upperlimit_fixed_scan"]
 
 
 def __dir__():
@@ -145,7 +145,7 @@ def upperlimit_auto(
     return obs, exp
 
 
-def upperlimit_fixedscan(
+def upperlimit_fixed_scan(
     data, model, scan, level=0.05, return_results=False, **hypotest_kwargs
 ):
     """
@@ -256,4 +256,4 @@ def upperlimit(data, model, scan, level=0.05, return_results=False):
         if return_results:
             return obs_limit, exp_limit, results
         return obs_limit, exp_limit
-    return upperlimit_fixedscan(data, model, scan, level, return_results)
+    return upperlimit_fixed_scan(data, model, scan, level, return_results)
