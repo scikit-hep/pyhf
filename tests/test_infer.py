@@ -476,3 +476,37 @@ def test_fixed_poi(tmpdir, hypotest_args):
     pdf.config.param_set('mu').suggested_fixed = [True]
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.infer.hypotest(*hypotest_args)
+
+
+def test_teststat_nan_guard():
+    # Example from Issue #1992
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[1.0], bkg=[1.0], bkg_uncertainty=[1.0]
+    )
+    observations = [2]
+    test_poi = 0.0
+    data = observations + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    fixed_params = model.config.suggested_fixed()
+
+    test_stat = pyhf.infer.test_statistics.qmu_tilde(
+        test_poi, data, model, init_pars, par_bounds, fixed_params
+    )
+    assert test_stat == pytest.approx(0.0)
+    asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(
+        data, model, test_stat="qtilde"
+    )
+    # ensure not nan
+    assert ~np.isnan(asymptotic_calculator.teststatistic(test_poi))
+    assert asymptotic_calculator.teststatistic(test_poi) == pytest.approx(0.0)
+
+    # Example from Issue #529
+    model = pyhf.simplemodels.uncorrelated_background([0.005], [28.0], [5.0])
+    test_poi = 1.0
+    data = [28.0] + model.config.auxdata
+
+    test_results = pyhf.infer.hypotest(
+        test_poi, data, model, test_stat="qtilde", return_expected=True
+    )
+    assert all(~np.isnan(result) for result in test_results)
