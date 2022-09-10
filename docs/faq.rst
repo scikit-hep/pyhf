@@ -30,8 +30,8 @@ Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backen
 The default backend is NumPy.
 For more information see :code:`pyhf cls --help`.
 
-I installed ``pyhf`` from PyPI, why am I getting an error from a dependency?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I installed an old ``pyhf`` release from PyPI, why am I getting an error from a dependency?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You might need to manually constrain the **upper bound** on a ``pyhf`` core
 dependency.
