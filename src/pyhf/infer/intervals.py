@@ -212,42 +212,42 @@ def upperlimit_fixed_scan(
 
 def upperlimit(data, model, scan, level=0.05, return_results=False, **hypotest_kwargs):
     """
-        Calculate an upper limit interval ``(0, poi_up)`` for a single
-        Parameter of Interest (POI) using root-finding or a fixed scan through POI-space.
+    Calculate an upper limit interval ``(0, poi_up)`` for a single Parameter of
+    Interest (POI) using root-finding or a fixed scan through POI-space.
 
-        Example:
-            >>> import numpy as np
-            >>> import pyhf
-            >>> pyhf.set_backend("numpy")
-            >>> model = pyhf.simplemodels.uncorrelated_background(
-            ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-            ... )
-            >>> observations = [51, 48]
-            >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-            >>> scan = np.linspace(0, 5, 21)
-            >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
-            ...     data, model, scan, return_results=True
-            ... )
-            >>> obs_limit
-            array(1.01764089)
-            >>> exp_limits
-            [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
-    return_results=False,
-        Args:
-            data (:obj:`tensor`): The observed data.
-            model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-            scan (:obj:`iterable` or "auto"): Iterable of POI values or "auto" to use ``upperlimit_auto``.
-            level (:obj:`float`): The threshold value to evaluate the interpolated results at.
-            return_results (:obj:`bool`): Whether to return the per-point results.
+    Example:
+        >>> import numpy as np
+        >>> import pyhf
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+        >>> scan = np.linspace(0, 5, 21)
+        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+        ...     data, model, scan, return_results=True
+        ... )
+        >>> obs_limit
+        array(1.01764089)
+        >>> exp_limits
+        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
 
-        Returns:
-            Tuple of Tensors:
+    Args:
+        data (:obj:`tensor`): The observed data.
+        model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
+        scan (:obj:`iterable` or "auto"): Iterable of POI values or "auto" to use ``upperlimit_auto``.
+        level (:obj:`float`): The threshold value to evaluate the interpolated results at.
+        return_results (:obj:`bool`): Whether to return the per-point results.
 
-                - Tensor: The observed upper limit on the POI.
-                - Tensor: The expected upper limits on the POI.
-                - Tuple of Tensors: The given ``scan`` along with the
-                  :class:`~pyhf.infer.hypotest` results at each test POI.
-                  Only returned when ``return_results`` is ``True``.
+    Returns:
+        Tuple of Tensors:
+
+            - Tensor: The observed upper limit on the POI.
+            - Tensor: The expected upper limits on the POI.
+            - Tuple of Tensors: The given ``scan`` along with the
+              :class:`~pyhf.infer.hypotest` results at each test POI.
+              Only returned when ``return_results`` is ``True``.
     """
     if isinstance(scan, str) and scan.lower() == "auto":
         bounds = model.config.suggested_bounds()[
