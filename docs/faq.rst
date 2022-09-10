@@ -33,35 +33,41 @@ For more information see :code:`pyhf cls --help`.
 I installed ``pyhf`` from PyPI, why am I getting an error from a dependency?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You might need to manually constrain the **upper bound** on ``pyhf``'s core
-dependencies.
+You might need to manually constrain the **upper bound** on a ``pyhf`` core
+dependency.
 
 We work hard to make sure that ``pyhf`` is well maintained so that it installs
 correctly "out of the box" and have tested all of ``pyhf``'s core dependencies
 to determine hard lower bounds for compatible dependency releases.
-However, as ``pyhf`` `is a Python library
-<https://caremad.io/posts/2013/07/setup-vs-requirement/>`__ we can only define
-lower bounds for its core dependencies, as defining upper bounds would make
-decisions for users on what versions of libraries they can use in Python
-applications they build around ``pyhf`` --- `that would be bad
-<https://hynek.me/articles/semver-will-not-save-you/>`__.
+However, as ``pyhf`` is |Henry Python library blog|_ we can only define lower
+bounds for its core dependencies, as defining upper bounds would make decisions
+for users on what versions of libraries they can use in Python applications they
+build with ``pyhf`` --- |Hynek SemVer blog|_.
 If ``pyhf`` were to define upper bounds we could create situations in which
 ``pyhf`` and other libraries defined in an environment file (i.e.,
 ``requirements.txt``) could have directly conflicting dependencies that would
 result in ``pip`` failing to be able to install ``pyhf``.
 
-To give an explicit example, changes in ``click``'s behavior between its
-``v7.X`` releases and ``v8.X`` resulted in a runtime ``TypeError`` if ``click``
-``v8.X`` was used with ``pyhf`` ``v0.6.2`` (c.f. Issue :issue:`1506`).
-The Issue was fixed in the next release of ``pyhf``, but the intermediate
-solution for users was to simply install an older version of ``click`` that was
-still compatible with ``pyhf``
+To give an explicit example, |jsonschema GitHub Discussion 995|_ resulted in a
+``KeyError`` if used with ``pyhf`` ``v0.6.3`` or older.
+This problem was fixed in the next release of ``pyhf`` (c.f. Pull Request :pr:`1979`),
+but the intermediate solution for users was to install an older version of
+``jsonschema`` that was still compatible with the ``pyhf`` release they were using:
 
     .. code-block::
 
         # requirements.txt
-        click<8.0.0
-        pyhf==0.6.2
+        pyhf==0.6.3
+        jsonschema<4.15.0
+
+.. |Henry Python library blog| replace:: a Python library
+.. _`Henry Python library blog`: https://iscinumpy.dev/post/app-vs-library/
+
+.. |Hynek SemVer blog| replace:: that would be bad
+.. _`Hynek SemVer blog`: https://hynek.me/articles/semver-will-not-save-you/
+
+.. |jsonschema GitHub Discussion 995| replace:: breaking changes in ``jsonschema`` ``v4.15.0``'s behavior
+.. _`jsonschema GitHub Discussion 995`: https://github.com/orgs/python-jsonschema/discussions/995
 
 Does ``pyhf`` support Python 2?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
