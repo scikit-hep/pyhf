@@ -50,12 +50,12 @@ def upperlimit_auto(
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> obs_limit, exp_limits = pyhf.infer.intervals.upperlimit_auto(
-        ...     data, model, 0., 5.
+        ...     data, model, 0., 5., rtol=0.01
         ... )
         >>> obs_limit
         array(1.01156939)
         >>> exp_limits
-        [array(0.55988001), array(0.75702336), array(1.06234693), array(1.50116923), array(2.05078596)]
+        [array(0.5600747), array(0.75702605), array(1.06234693), array(1.50116923), array(2.05078912)]
 
     Args:
         data (:obj:`tensor`): The observed data.
