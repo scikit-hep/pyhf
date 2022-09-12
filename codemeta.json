@@ -8,8 +8,8 @@
     "@id": "https://github.com/scikit-hep/pyhf",
     "@type": "SoftwareSourceCode",
     "applicationCategory": [
-        "Scientific/Engineering > Physics",
-        "Scientific/Engineering"
+        "Scientific/Engineering",
+        "Scientific/Engineering > Physics"
     ],
     "audience": {
         "@id": "/audience/science-research",
@@ -51,22 +51,38 @@
     "license": "http://spdx.org/licenses/Apache-2.0",
     "name": "pyhf",
     "runtimePlatform": [
-        "Python 3",
-        "Python 3.10",
-        "Python 3.7",
         "Python 3.9",
         "Python 3.8",
         "Python 3 Only",
-        "Python Implementation CPython"
+        "Python Implementation CPython",
+        "Python 3.10",
+        "Python 3",
+        "Python 3.7"
     ],
     "softwareRequirements": [
         {
-            "@id": "/dependency/jsonschema-ge-3.0.0",
+            "@id": "/dependency/click-ge-8.0.0",
+            "@type": "SoftwareApplication",
+            "identifier": "click",
+            "name": "click",
+            "runtimePlatform": "Python 3",
+            "version": ">=8.0.0"
+        },
+        {
+            "@id": "/dependency/jsonschema-ge-4.15.0",
             "@type": "SoftwareApplication",
             "identifier": "jsonschema",
             "name": "jsonschema",
             "runtimePlatform": "Python 3",
-            "version": ">=3.0.0"
+            "version": ">=4.15.0"
+        },
+        {
+            "@id": "/dependency/importlib-resources-ge-1.4.0",
+            "@type": "SoftwareApplication",
+            "identifier": "importlib-resources",
+            "name": "importlib-resources",
+            "runtimePlatform": "Python 3",
+            "version": ">=1.4.0"
         },
         {
             "@id": "/dependency/scipy-ge-1.1.0",
@@ -85,22 +101,6 @@
             "version": ">=3.7.4.3"
         },
         {
-            "@id": "/dependency/click-ge-8.0.0",
-            "@type": "SoftwareApplication",
-            "identifier": "click",
-            "name": "click",
-            "runtimePlatform": "Python 3",
-            "version": ">=8.0.0"
-        },
-        {
-            "@id": "/dependency/jsonpatch-ge-1.15",
-            "@type": "SoftwareApplication",
-            "identifier": "jsonpatch",
-            "name": "jsonpatch",
-            "runtimePlatform": "Python 3",
-            "version": ">=1.15"
-        },
-        {
             "@id": "/dependency/pyyaml-ge-5.1",
             "@type": "SoftwareApplication",
             "identifier": "pyyaml",
@@ -109,12 +109,12 @@
             "version": ">=5.1"
         },
         {
-            "@id": "/dependency/importlib-resources-ge-1.3.0",
+            "@id": "/dependency/jsonpatch-ge-1.15",
             "@type": "SoftwareApplication",
-            "identifier": "importlib-resources",
-            "name": "importlib-resources",
+            "identifier": "jsonpatch",
+            "name": "jsonpatch",
             "runtimePlatform": "Python 3",
-            "version": ">=1.3.0"
+            "version": ">=1.15"
         },
         {
             "@id": "/dependency/tqdm-ge-4.56.0",
