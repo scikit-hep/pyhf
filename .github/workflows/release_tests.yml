@@ -46,5 +46,5 @@ jobs:
     - name: Verify requirements in codemeta.json
       run: |
         python -m pip install jq "codemetapy>=2.2.1"
-        codemetapy --no-extras pyhf > codemeta_generated.json
+        codemetapy --inputtype python --no-extras pyhf > codemeta_generated.json
         diff <(jq -S .softwareRequirements codemeta.json) <(jq -S .softwareRequirements codemeta_generated.json)
