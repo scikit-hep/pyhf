@@ -340,6 +340,7 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 Milestones
 ----------
 
+- 2022-09-12: 2000 GitHub issues and pull requests. (See PR `#2000 <https://github.com/scikit-hep/pyhf/pull/2000>`__)
 - 2021-12-09: 1000 commits to the project. (See PR `#1710 <https://github.com/scikit-hep/pyhf/pull/1710>`__)
 - 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
 
