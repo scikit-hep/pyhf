@@ -47,7 +47,7 @@
     ],
     "codeRepository": "https://github.com/scikit-hep/pyhf",
     "description": "pure-Python HistFactory implementation with tensors and autodiff",
-    "developmentStatus": "https://www.repostatus.org/#wip",
+    "developmentStatus": "4 - Beta",
     "identifier": "pyhf",
     "issueTracker": "https://github.com/scikit-hep/pyhf/issues",
     "keywords": "physics fitting numpy scipy tensorflow pytorch jax",
