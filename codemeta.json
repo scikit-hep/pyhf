@@ -23,6 +23,7 @@
             "email": "lukas.heinrich@cern.ch",
             "familyName": "Heinrich",
             "givenName": "Lukas",
+            "identifier": "https://orcid.org/0000-0002-4048-7584",
             "position": 1
         },
         {
@@ -31,6 +32,7 @@
             "email": "matthew.feickert@cern.ch",
             "familyName": "Feickert",
             "givenName": "Matthew",
+            "identifier": "https://orcid.org/0000-0003-4124-7862",
             "position": 2
         },
         {
@@ -39,6 +41,7 @@
             "email": "gstark@cern.ch",
             "familyName": "Stark",
             "givenName": "Giordon",
+            "identifier": "https://orcid.org/0000-0001-6616-3433",
             "position": 3
         }
     ],
