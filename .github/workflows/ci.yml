@@ -14,10 +14,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# https://peps.python.org/pep-0597/
-env:
-  PYTHONWARNDEFAULTENCODING: 1
-
 jobs:
   test:
 
