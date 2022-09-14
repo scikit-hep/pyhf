@@ -77,7 +77,7 @@ try:
                 )
 
             if compress:
-                with open(output_directory, "wb", encoding="utf-8") as archive:
+                with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
                 # Support for file-like objects for tarfile.is_tarfile was added
