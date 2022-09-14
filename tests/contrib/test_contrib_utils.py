@@ -11,27 +11,39 @@ from pyhf.exceptions import InvalidArchive, InvalidArchiveHost
 
 @pytest.fixture(scope="function")
 def tarfile_path(tmpdir):
-    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+    with open(
+        tmpdir.join("test_file.txt").strpath, "w", encoding="utf-8"
+    ) as write_file:
         write_file.write("test file")
-    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
+    with tarfile.open(
+        tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz", encoding="utf-8"
+    ) as archive:
         archive.add(tmpdir.join("test_file.txt").strpath)
     return Path(tmpdir.join("test_tar.tar.gz").strpath)
 
 
 @pytest.fixture(scope="function")
 def tarfile_uncompressed_path(tmpdir):
-    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+    with open(
+        tmpdir.join("test_file.txt").strpath, "w", encoding="utf-8"
+    ) as write_file:
         write_file.write("test file")
-    with tarfile.open(tmpdir.join("test_tar.tar").strpath, mode="w") as archive:
+    with tarfile.open(
+        tmpdir.join("test_tar.tar").strpath, mode="w", encoding="utf-8"
+    ) as archive:
         archive.add(tmpdir.join("test_file.txt").strpath)
     return Path(tmpdir.join("test_tar.tar").strpath)
 
 
 @pytest.fixture(scope="function")
 def zipfile_path(tmpdir):
-    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+    with open(
+        tmpdir.join("test_file.txt").strpath, "w", encoding="utf-8"
+    ) as write_file:
         write_file.write("test file")
-    with zipfile.ZipFile(tmpdir.join("test_zip.zip").strpath, "w") as archive:
+    with zipfile.ZipFile(
+        tmpdir.join("test_zip.zip").strpath, "w", encoding="utf-8"
+    ) as archive:
         archive.write(tmpdir.join("test_file.txt").strpath)
     return Path(tmpdir.join("test_zip.zip").strpath)
 
