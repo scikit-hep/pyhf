@@ -10,7 +10,7 @@ import pyhf.writexml
 
 @pytest.fixture(scope='module')
 def source_1bin_shapesys():
-    with open('validation/data/1bin_example1.json') as read_json:
+    with open("validation/data/1bin_example1.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
@@ -64,7 +64,7 @@ def expected_result_1bin_shapesys():
 
 @pytest.fixture(scope='module')
 def source_1bin_shapesys_q0():
-    with open('validation/data/1bin_example1_q0.json') as read_json:
+    with open("validation/data/1bin_example1_q0.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
@@ -133,7 +133,7 @@ def expected_result_1bin_shapesys_q0_toys():
 
 @pytest.fixture(scope='module')
 def source_1bin_lumi():
-    with open('validation/data/1bin_lumi.json') as read_json:
+    with open("validation/data/1bin_lumi.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
@@ -195,7 +195,7 @@ def expected_result_1bin_lumi():
 
 @pytest.fixture(scope='module')
 def source_1bin_normsys():
-    with open('validation/data/1bin_normsys.json') as read_json:
+    with open("validation/data/1bin_normsys.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
@@ -249,7 +249,9 @@ def expected_result_1bin_normsys():
 
 @pytest.fixture(scope='module')
 def source_2bin_histosys():
-    with open('validation/data/2bin_histosys_example2.json') as read_json:
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
@@ -306,7 +308,9 @@ def expected_result_2bin_histosys():
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel():
-    with open('validation/data/2bin_2channel_example1.json') as read_json:
+    with open(
+        "validation/data/2bin_2channel_example1.json", encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
@@ -380,7 +384,9 @@ def expected_result_2bin_2channel():
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_couplednorm():
-    with open('validation/data/2bin_2channel_couplednorm.json') as read_json:
+    with open(
+        "validation/data/2bin_2channel_couplednorm.json", encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
@@ -465,7 +471,9 @@ def expected_result_2bin_2channel_couplednorm():
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_coupledhistosys():
-    with open('validation/data/2bin_2channel_coupledhisto.json') as read_json:
+    with open(
+        "validation/data/2bin_2channel_coupledhisto.json", encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
@@ -567,7 +575,9 @@ def expected_result_2bin_2channel_coupledhistosys():
 
 @pytest.fixture(scope='module')
 def source_2bin_2channel_coupledshapefactor():
-    with open('validation/data/2bin_2channel_coupledshapefactor.json') as read_json:
+    with open(
+        "validation/data/2bin_2channel_coupledshapefactor.json", encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
