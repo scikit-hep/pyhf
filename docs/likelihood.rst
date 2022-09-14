@@ -28,7 +28,8 @@ check that it conforms to the provided workspace specification as follows:
 
    import json, requests, jsonschema
 
-   workspace = json.load(open("/path/to/analysis_workspace.json"))
+   with open("/path/to/analysis_workspace.json", encoding="utf-8") as ws_file:
+       workspace = json.load(ws_file)
    # if no exception is raised, it found and parsed the schema
    schema = requests.get("https://scikit-hep.org/pyhf/schemas/1.0.0/workspace.json").json()
    # If no exception is raised by validate(), the instance is valid.
