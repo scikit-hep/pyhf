@@ -41,9 +41,7 @@ def zipfile_path(tmpdir):
         tmpdir.join("test_file.txt").strpath, "w", encoding="utf-8"
     ) as write_file:
         write_file.write("test file")
-    with zipfile.ZipFile(
-        tmpdir.join("test_zip.zip").strpath, "w", encoding="utf-8"
-    ) as archive:
+    with zipfile.ZipFile(tmpdir.join("test_zip.zip").strpath, "w") as archive:
         archive.write(tmpdir.join("test_file.txt").strpath)
     return Path(tmpdir.join("test_zip.zip").strpath)
 
