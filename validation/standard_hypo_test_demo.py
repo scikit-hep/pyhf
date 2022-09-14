@@ -75,7 +75,7 @@ def standard_hypo_test_demo(
 
 def pyhf_version(ntoys=5000, seed=0):
     np.random.seed(seed)
-    with open("validation/xmlimport_input_bkg.json") as ws_json:
+    with open("validation/xmlimport_input_bkg.json", encoding="utf-8") as ws_json:
         workspace = pyhf.Workspace(json.load(ws_json))
 
     model = workspace.model()
