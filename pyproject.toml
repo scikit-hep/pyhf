@@ -89,7 +89,7 @@ filterwarnings = [
     'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
-    'ignore:Call to deprecated create function FileDescriptor().:DeprecationWarning',  # protobuf via tensorflow
+    'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
 ]
 
 [tool.nbqa.mutate]
