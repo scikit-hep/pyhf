@@ -13,7 +13,7 @@ import pyhf
 @pytest.fixture
 def get_json_from_tarfile():
     def _get_json_from_tarfile(archive_data_path, json_name):
-        with tarfile.open(archive_data_path, "r:gz") as archive:
+        with tarfile.open(archive_data_path, "r:gz", encoding="utf-8") as archive:
             json_file = (
                 archive.extractfile(archive.getmember(json_name)).read().decode("utf8")
             )
