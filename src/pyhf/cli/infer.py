@@ -99,10 +99,13 @@ def fit(
         )
         set_backend(tensorlib, new_optimizer(**optconf))
 
-    with click.open_file(workspace, "r") as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
     ws = Workspace(spec)
-    patches = [json.loads(click.open_file(pfile, "r").read()) for pfile in patch]
+    patches = [
+        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
+        for pfile in patch
+    ]
 
     model = ws.model(
         measurement_name=measurement,
@@ -190,12 +193,15 @@ def cls(
             "CLs_obs": 0.3599845631401915
         }
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
 
-    patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
+    patches = [
+        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
+        for pfile in patch
+    ]
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
