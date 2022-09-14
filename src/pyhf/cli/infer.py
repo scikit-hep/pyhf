@@ -125,7 +125,7 @@ def fit(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+") as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -241,6 +241,6 @@ def cls(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
