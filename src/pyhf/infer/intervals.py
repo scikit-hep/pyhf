@@ -1,7 +1,4 @@
 """Interval estimation"""
-# TODO: Use functools.cache once Python 3.9+ only.
-# c.f. https://docs.python.org/3/library/functools.html#functools.cache
-from functools import lru_cache
 from warnings import warn
 
 import numpy as np
@@ -85,22 +82,19 @@ def upperlimit_auto(
             f"upperlimit_auto: rtol not provided, defaulting to {rtol}. For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
 
-    # FIXME: Need to still take advantage of the lru_cache and migrate away from this cache approach.
     cache = {}
 
-    @lru_cache(maxsize=None)
     def f_all(mu):
-        if mu in cache:
-            return cache[mu]
-        cache[mu] = hypotest(
-            mu,
-            data,
-            model,
-            test_stat=test_stat,
-            calctype=calctype,
-            return_expected_set=True,
-            **hypotest_kwargs,
-        )
+        if mu not in cache:
+            cache[mu] = hypotest(
+                mu,
+                data,
+                model,
+                test_stat=test_stat,
+                calctype=calctype,
+                return_expected_set=True,
+                **hypotest_kwargs,
+            )
         return cache[mu]
 
     def f(mu, limit=0):
@@ -117,8 +111,8 @@ def upperlimit_auto(
         ks = np.array(list(cache.keys()))
         vals = np.array(
             [
-                v[0] - level if limit == 0 else v[1][limit - 1] - level
-                for v in cache.values()
+                value[0] - level if limit == 0 else value[1][limit - 1] - level
+                for value in cache.values()
             ]
         )
         pos = vals >= 0
