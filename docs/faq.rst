@@ -33,8 +33,8 @@ For more information see :code:`pyhf cls --help`.
 I installed an old ``pyhf`` release from PyPI, why am I getting an error from a dependency?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You might need to manually constrain the **upper bound** on a ``pyhf`` core
-dependency.
+For old releases of ``pyhf`` that are not actively supported anymore you might
+need to manually constrain the **upper bound** of a dependency.
 
 We work hard to make sure that ``pyhf`` is well maintained so that it installs
 correctly "out of the box" and have tested all of ``pyhf``'s core dependencies
