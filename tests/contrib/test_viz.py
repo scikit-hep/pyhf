@@ -33,7 +33,9 @@ def test_brazil_band_collection(datadir):
     assert brazil_band_collection.clb is None
     assert brazil_band_collection.axes == ax
 
-    with open(datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8") as data_file:
+    with open(
+        datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8"
+    ) as data_file:
         data = json.load(data_file)
 
     fig = Figure()
@@ -87,7 +89,9 @@ def test_plot_results_no_axis(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components(datadir):
-    with open(datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8") as data_file:
+    with open(
+        datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8"
+    ) as data_file:
         data = json.load(data_file)
 
     fig = Figure()
@@ -100,7 +104,9 @@ def test_plot_results_components(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_clb(datadir):
-    with open(datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8") as data_file:
+    with open(
+        datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8"
+    ) as data_file:
         data = json.load(data_file)
 
     fig = Figure()
@@ -121,7 +127,9 @@ def test_plot_results_components_no_clb(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_clsb(datadir):
-    with open(datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8") as data_file:
+    with open(
+        datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8"
+    ) as data_file:
         data = json.load(data_file)
 
     fig = Figure()
@@ -142,7 +150,9 @@ def test_plot_results_components_no_clsb(datadir):
 
 @pytest.mark.mpl_image_compare
 def test_plot_results_components_no_cls(datadir):
-    with open(datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8") as data_file:
+    with open(
+        datadir.join("tail_probs_hypotest_results.json"), encoding="utf-8"
+    ) as data_file:
         data = json.load(data_file)
 
     fig = Figure()
