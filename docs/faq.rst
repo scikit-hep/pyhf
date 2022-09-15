@@ -30,6 +30,46 @@ Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backen
 The default backend is NumPy.
 For more information see :code:`pyhf cls --help`.
 
+I installed an old ``pyhf`` release from PyPI, why am I getting an error from a dependency?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For old releases of ``pyhf`` that are not actively supported anymore you might
+need to manually constrain the **upper bound** of a dependency.
+
+We work hard to make sure that ``pyhf`` is well maintained so that it installs
+correctly "out of the box" and have tested all of ``pyhf``'s core dependencies
+to determine hard lower bounds for compatible dependency releases.
+However, as ``pyhf`` is |Henry Python library blog|_ we can only define lower
+bounds for its core dependencies, as defining upper bounds would make decisions
+for users on what versions of libraries they can use in Python applications they
+build with ``pyhf`` --- |Hynek SemVer blog|_.
+If ``pyhf`` were to define upper bounds we could create situations in which
+``pyhf`` and other libraries defined in an environment file (i.e.,
+``requirements.txt``) could have directly conflicting dependencies that would
+result in ``pip`` failing to be able to install ``pyhf``.
+
+To give an explicit example, |jsonschema GitHub Discussion 995|_ resulted in a
+``KeyError`` if used with ``pyhf`` ``v0.6.3`` or older.
+This problem was fixed (c.f. Pull Request :pr:`1979`) in the next release with
+``pyhf`` ``v0.7.0``, but the intermediate solution for users was to install an
+older version of ``jsonschema`` that was still compatible with the ``pyhf``
+release they were using:
+
+    .. code-block::
+
+        # requirements.txt
+        pyhf==0.6.3
+        jsonschema<4.15.0
+
+.. |Henry Python library blog| replace:: a Python library
+.. _`Henry Python library blog`: https://iscinumpy.dev/post/app-vs-library/
+
+.. |Hynek SemVer blog| replace:: that would be bad
+.. _`Hynek SemVer blog`: https://hynek.me/articles/semver-will-not-save-you/
+
+.. |jsonschema GitHub Discussion 995| replace:: breaking changes in ``jsonschema`` ``v4.15.0``'s behavior
+.. _`jsonschema GitHub Discussion 995`: https://github.com/orgs/python-jsonschema/discussions/995
+
 Does ``pyhf`` support Python 2?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 No.
