@@ -289,7 +289,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
             channelfilename = str(
                 Path(specdir).joinpath(f'{resultprefix}_{channelspec["name"]}.xml')
             )
-            with open(channelfilename, 'w') as channelfile:
+            with open(channelfilename, "w", encoding="utf-8") as channelfile:
                 channel = build_channel(spec, channelspec, spec.get('observations'))
                 indent(channel)
                 channelfile.write(

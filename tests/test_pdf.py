@@ -354,7 +354,10 @@ def test_pdf_integration_shapesys_zeros(backend):
 
 @pytest.mark.only_numpy
 def test_pdf_integration_histosys(backend):
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -433,7 +436,10 @@ def test_pdf_integration_histosys(backend):
 
 
 def test_pdf_integration_normsys(backend):
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -494,7 +500,10 @@ def test_pdf_integration_normsys(backend):
 
 @pytest.mark.only_numpy
 def test_pdf_integration_shapesys(backend):
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -617,7 +626,10 @@ def test_invalid_modifier_name_resuse():
 
 
 def test_override_paramset_defaults():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -650,7 +662,10 @@ def test_override_paramset_defaults():
 
 
 def test_override_paramsets_incorrect_num_parameters():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {

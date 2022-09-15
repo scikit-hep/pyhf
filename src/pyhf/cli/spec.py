@@ -60,7 +60,7 @@ def inspect(workspace, output_file, measurement):
         (*) Measurement            mu            (none)
 
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
@@ -158,7 +158,7 @@ def inspect(workspace, output_file, measurement):
     click.echo()
 
     if output_file:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -189,7 +189,7 @@ def prune(
 
     See :func:`pyhf.workspace.Workspace.prune` for more information.
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
@@ -204,7 +204,7 @@ def prune(
     if output_file is None:
         click.echo(json.dumps(pruned_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(pruned_ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -253,7 +253,7 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
 
     See :func:`pyhf.workspace.Workspace.rename` for more information.
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
@@ -267,7 +267,7 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     if output_file is None:
         click.echo(json.dumps(renamed_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -298,10 +298,10 @@ def combine(workspace_one, workspace_two, join, output_file, merge_channels):
 
     See :func:`pyhf.workspace.Workspace.combine` for more information.
     """
-    with click.open_file(workspace_one, 'r') as specstream:
+    with click.open_file(workspace_one, "r", encoding="utf-8") as specstream:
         spec_one = json.load(specstream)
 
-    with click.open_file(workspace_two, 'r') as specstream:
+    with click.open_file(workspace_two, "r", encoding="utf-8") as specstream:
         spec_two = json.load(specstream)
 
     ws_one = Workspace(spec_one)
@@ -313,7 +313,7 @@ def combine(workspace_one, workspace_two, join, output_file, merge_channels):
     if output_file is None:
         click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(combined_ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -347,7 +347,7 @@ def digest(workspace, algorithm, output_json):
         $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf digest
         sha256:dad8822af55205d60152cbe4303929042dbd9d4839012e055e7c6b6459d68d73
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     workspace = Workspace(spec)
@@ -393,7 +393,7 @@ def sort(workspace, output_file):
 
 
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     workspace = Workspace(spec)
@@ -402,6 +402,6 @@ def sort(workspace, output_file):
     if output_file is None:
         click.echo(json.dumps(sorted_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(sorted_ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file}")

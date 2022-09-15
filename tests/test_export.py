@@ -53,7 +53,10 @@ def spec_staterror():
 
 
 def spec_histosys():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -88,7 +91,10 @@ def spec_histosys():
 
 
 def spec_normsys():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -120,7 +126,10 @@ def spec_normsys():
 
 
 def spec_shapesys():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -148,7 +157,10 @@ def spec_shapesys():
 
 
 def spec_shapefactor():
-    source = json.load(open('validation/data/2bin_histosys_example2.json'))
+    with open(
+        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    ) as spec_file:
+        source = json.load(spec_file)
     spec = {
         'channels': [
             {
@@ -408,7 +420,9 @@ def test_export_root_histogram(mocker, tmp_path):
     with uproot.recreate(tmp_path.joinpath("test_export_root_histogram.root")) as file:
         file["hist"] = pyhf.writexml._ROOT_DATA_FILE["hist"]
 
-    with uproot.open(tmp_path.joinpath("test_export_root_histogram.root")) as file:
+    with uproot.open(
+        tmp_path.joinpath("test_export_root_histogram.root"), encoding="utf-8"
+    ) as file:
         assert file["hist"].values().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
         assert file["hist"].axis().edges().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert file["hist"].name == "hist"
@@ -425,7 +439,9 @@ def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly
     """
-    with open(datadir.joinpath("workspace_integer_data.json")) as spec_file:
+    with open(
+        datadir.joinpath("workspace_integer_data.json"), encoding="utf-8"
+    ) as spec_file:
         spec = json.load(spec_file)
     channel_spec = spec["channels"][0]
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE")
@@ -443,7 +459,7 @@ def test_integer_data(datadir, mocker):
     ids=['no_inits', 'no_bounds'],
 )
 def test_issue1814(datadir, mocker, fname, val, low, high):
-    with open(datadir / fname) as spec_file:
+    with open(datadir / fname, encoding="utf-8") as spec_file:
         spec = json.load(spec_file)
 
     modifierspec = {'data': None, 'name': 'mu_sig', 'type': 'normfactor'}

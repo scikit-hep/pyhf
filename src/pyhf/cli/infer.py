@@ -99,10 +99,13 @@ def fit(
         )
         set_backend(tensorlib, new_optimizer(**optconf))
 
-    with click.open_file(workspace, "r") as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
     ws = Workspace(spec)
-    patches = [json.loads(click.open_file(pfile, "r").read()) for pfile in patch]
+    patches = [
+        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
+        for pfile in patch
+    ]
 
     model = ws.model(
         measurement_name=measurement,
@@ -125,7 +128,7 @@ def fit(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+") as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -190,12 +193,15 @@ def cls(
             "CLs_obs": 0.3599845631401915
         }
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
 
-    patches = [json.loads(click.open_file(pfile, 'r').read()) for pfile in patch]
+    patches = [
+        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
+        for pfile in patch
+    ]
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
@@ -241,6 +247,6 @@ def cls(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")

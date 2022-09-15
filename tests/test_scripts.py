@@ -16,9 +16,13 @@ import pyhf
 
 @pytest.fixture(scope="function")
 def tarfile_path(tmpdir):
-    with open(tmpdir.join("test_file.txt").strpath, "w") as write_file:
+    with open(
+        tmpdir.join("test_file.txt").strpath, "w", encoding="utf-8"
+    ) as write_file:
         write_file.write("test file")
-    with tarfile.open(tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz") as archive:
+    with tarfile.open(
+        tmpdir.join("test_tar.tar.gz").strpath, mode="w:gz", encoding="utf-8"
+    ) as archive:
         archive.add(tmpdir.join("test_file.txt").strpath)
     return Path(tmpdir.join("test_tar.tar.gz").strpath)
 
@@ -702,9 +706,9 @@ def test_patchset_extract(datadir, tmpdir, script_runner, output_file, with_meta
     else:
         assert (
             extracted_output
-            == json.load(datadir.joinpath("example_patchset.json").open())['patches'][
-                0
-            ]['patch']
+            == json.load(
+                datadir.joinpath("example_patchset.json").open(encoding="utf-8")
+            )["patches"][0]["patch"]
         )
 
 

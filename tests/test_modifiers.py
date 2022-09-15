@@ -184,11 +184,13 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
     Test that bin-wise modifiers will raise an exception if their data shape
     differs from their sample's.
     """
-    spec = json.load(open(datadir.joinpath("spec.json")))
+    with open(datadir.joinpath("spec.json"), encoding="utf-8") as spec_file:
+        spec = json.load(spec_file)
 
     assert pyhf.Model(spec)
 
-    patch = JsonPatch.from_string(open(datadir.joinpath(patch_file)).read())
+    with open(datadir.joinpath(patch_file), encoding="utf-8") as spec_file:
+        patch = JsonPatch.from_string(spec_file.read())
     bad_spec = patch.apply(spec)
 
     with pytest.raises(pyhf.exceptions.InvalidModifier):
@@ -196,7 +198,9 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
 
 
 def test_issue1720_staterror_builder_mask(datadir):
-    with open(datadir.joinpath("issue1720_greedy_staterror.json")) as spec_file:
+    with open(
+        datadir.joinpath("issue1720_greedy_staterror.json"), encoding="utf-8"
+    ) as spec_file:
         spec = json.load(spec_file)
 
     spec["channels"][0]["samples"][1]["modifiers"][0]["type"] = "staterror"
@@ -234,7 +238,9 @@ def test_issue1720_greedy_staterror(datadir, inits):
     """
     Test that the staterror does not affect more samples than shapesys equivalently.
     """
-    with open(datadir.joinpath("issue1720_greedy_staterror.json")) as spec_file:
+    with open(
+        datadir.joinpath("issue1720_greedy_staterror.json"), encoding="utf-8"
+    ) as spec_file:
         spec = json.load(spec_file)
 
     model_shapesys = pyhf.Workspace(spec).model()

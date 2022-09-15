@@ -309,11 +309,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.7.0rc3}",
-     version = {0.7.0rc3},
+     title = "{pyhf: v0.7.0rc4}",
+     version = {0.7.0rc4},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0rc3}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0rc4}
    }
 
    @article{pyhf_joss,
@@ -340,6 +340,7 @@ contributors <https://github.com/scikit-hep/pyhf/graphs/contributors>`__.
 Milestones
 ----------
 
+- 2022-09-12: 2000 GitHub issues and pull requests. (See PR `#2000 <https://github.com/scikit-hep/pyhf/pull/2000>`__)
 - 2021-12-09: 1000 commits to the project. (See PR `#1710 <https://github.com/scikit-hep/pyhf/pull/1710>`__)
 - 2020-07-28: 1000 GitHub issues and pull requests. (See PR `#1000 <https://github.com/scikit-hep/pyhf/pull/1000>`__)
 
@@ -360,7 +361,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.0rc3-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.0rc4-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
    :target: https://scikit-hep.github.io/pyhf
@@ -375,7 +376,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/conda-forge/pyhf-feedstock
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.0rc3-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.0rc4-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags
