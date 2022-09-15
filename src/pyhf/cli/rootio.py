@@ -65,7 +65,7 @@ def xml2json(
     if output_file is None:
         click.echo(json.dumps(spec, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(spec, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -92,15 +92,15 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     from pyhf import writexml
 
     os.makedirs(output_dir, exist_ok=True)
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
         for pfile in patch:
-            patch = json.loads(click.open_file(pfile, 'r').read())
+            patch = json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
             spec = jsonpatch.JsonPatch(patch).apply(spec)
         os.makedirs(Path(output_dir).joinpath(specroot), exist_ok=True)
         os.makedirs(Path(output_dir).joinpath(dataroot), exist_ok=True)
         with click.open_file(
-            Path(output_dir).joinpath(f'{resultprefix}.xml'), 'w'
+            Path(output_dir).joinpath(f"{resultprefix}.xml"), "w", encoding="utf-8"
         ) as outstream:
             outstream.write(
                 writexml.writexml(

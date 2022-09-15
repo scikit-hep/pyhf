@@ -4,7 +4,8 @@ import sys
 import ROOT
 
 if __name__ == "__main__":
-    source_data = json.load(open(sys.argv[1]))
+    with open(sys.argv[1], encoding="utf-8") as source_file:
+        source_data = json.load(source_file)
     root_file = sys.argv[2]
 
     binning = source_data["binning"]

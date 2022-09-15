@@ -53,7 +53,8 @@ def run_toys_ROOT(infile, ntoys):
         for idx in range(n_points)
     ]
 
-    json.dump(data, open("scan.json", "w"))
+    with open("scan.json", "w", encoding="utf-8") as write_file:
+        json.dump(data, write_file)
 
     canvas = ROOT.TCanvas()
     canvas.SetLogy(False)
@@ -69,7 +70,7 @@ def run_toys_ROOT(infile, ntoys):
 def run_toys_pyhf(ntoys=2_000, seed=0):
     np.random.seed(seed)
     # with open("validation/xmlimport_input_bkg.json") as ws_json:
-    with open("debug/issue_workpace/issue_ws.json") as ws_json:
+    with open("debug/issue_workpace/issue_ws.json", encoding="utf-8") as ws_json:
         workspace = pyhf.Workspace(json.load(ws_json))
 
     model = workspace.model()

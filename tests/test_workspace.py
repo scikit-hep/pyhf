@@ -889,7 +889,8 @@ def test_workspace_poiless(datadir):
     """
     Test that a workspace with a measurement with empty POI string is treated as POI-less
     """
-    spec = json.load(open(datadir.joinpath("poiless.json")))
+    with open(datadir.joinpath("poiless.json"), encoding="utf-8") as spec_file:
+        spec = json.load(spec_file)
     ws = pyhf.Workspace(spec)
     model = ws.model()
 

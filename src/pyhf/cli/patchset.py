@@ -39,7 +39,7 @@ def extract(patchset, name, output_file, with_metadata):
     Returns:
         jsonpatch (:obj:`list`): A list of jsonpatch operations to apply to a workspace.
     """
-    with click.open_file(patchset, 'r') as fstream:
+    with click.open_file(patchset, "r", encoding="utf-8") as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
@@ -52,7 +52,7 @@ def extract(patchset, name, output_file, with_metadata):
         result = patch.patch
 
     if output_file:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
     else:
@@ -79,19 +79,19 @@ def apply(background_only, patchset, name, output_file):
     Returns:
         workspace (:class:`~pyhf.workspace.Workspace`): The patched background-only workspace.
     """
-    with click.open_file(background_only, 'r') as specstream:
+    with click.open_file(background_only, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
 
-    with click.open_file(patchset, 'r') as fstream:
+    with click.open_file(patchset, "r", encoding="utf-8") as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
     patched_ws = patchset.apply(ws, name)
 
     if output_file:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(patched_ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
     else:
@@ -111,12 +111,12 @@ def verify(background_only, patchset):
     Returns:
         None
     """
-    with click.open_file(background_only, 'r') as specstream:
+    with click.open_file(background_only, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = Workspace(spec)
 
-    with click.open_file(patchset, 'r') as fstream:
+    with click.open_file(patchset, "r", encoding="utf-8") as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)
@@ -134,7 +134,7 @@ def inspect(patchset):
     Returns:
         None
     """
-    with click.open_file(patchset, 'r') as fstream:
+    with click.open_file(patchset, "r", encoding="utf-8") as fstream:
         patchset_spec = json.load(fstream)
 
     patchset = PatchSet(patchset_spec)

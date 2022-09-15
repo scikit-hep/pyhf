@@ -49,14 +49,18 @@ def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     new_path = datadir / 'customschema'
 
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
-        pyhf.Workspace(json.load(open(datadir / 'customschema' / 'custom.json')))
+        with open(
+            datadir / "customschema" / "custom.json", encoding="utf-8"
+        ) as spec_file:
+            pyhf.Workspace(json.load(spec_file))
 
     pyhf.schema(new_path)
     assert old_path != pyhf.schema.path
     assert new_path == pyhf.schema.path
     assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
-    assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+    with open(new_path / "custom.json", encoding="utf-8") as spec_file:
+        assert pyhf.Workspace(json.load(spec_file))
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
 
 
@@ -73,7 +77,8 @@ def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_g
         assert new_path == pyhf.schema.path
         assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
-        assert pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+        with open(new_path / "custom.json", encoding="utf-8") as spec_file:
+            assert pyhf.Workspace(json.load(spec_file))
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
@@ -91,7 +96,8 @@ def test_schema_changeable_context_error(
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
             # this populates the current cache
-            pyhf.Workspace(json.load(open(new_path / 'custom.json')))
+            with open(new_path / "custom.json", encoding="utf-8") as spec_file:
+                pyhf.Workspace(json.load(spec_file))
             raise ZeroDivisionError()
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
@@ -569,7 +575,8 @@ def test_jsonpatch_fail(patch):
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
 def test_patchset(datadir, patchset_file):
-    patchset = json.load(open(datadir.joinpath(patchset_file)))
+    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+        patchset = json.load(patch_file)
     pyhf.schema.validate(patchset, 'patchset.json')
 
 
@@ -589,7 +596,8 @@ def test_patchset(datadir, patchset_file):
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
-    patchset = json.load(open(datadir.joinpath(patchset_file)))
+    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+        patchset = json.load(patch_file)
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, 'patchset.json')
 

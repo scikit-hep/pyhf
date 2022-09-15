@@ -50,7 +50,7 @@ def load_schema(schema_id: str):
             raise pyhf.exceptions.SchemaNotFound(
                 f'The schema {schema_id} was not found. Do you have the right version or the right path? {path}'
             )
-        with path.open() as json_schema:
+        with path.open(encoding="utf-8") as json_schema:
             schema = json.load(json_schema)
             variables.SCHEMA_CACHE[schema['$id']] = schema
         return variables.SCHEMA_CACHE[schema['$id']]
