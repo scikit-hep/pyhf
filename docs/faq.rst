@@ -50,9 +50,10 @@ result in ``pip`` failing to be able to install ``pyhf``.
 
 To give an explicit example, |jsonschema GitHub Discussion 995|_ resulted in a
 ``KeyError`` if used with ``pyhf`` ``v0.6.3`` or older.
-This problem was fixed in the next release of ``pyhf`` (c.f. Pull Request :pr:`1979`),
-but the intermediate solution for users was to install an older version of
-``jsonschema`` that was still compatible with the ``pyhf`` release they were using:
+This problem was fixed (c.f. Pull Request :pr:`1979`) in the next release with
+``pyhf`` ``v0.7.0``, but the intermediate solution for users was to install an
+older version of ``jsonschema`` that was still compatible with the ``pyhf``
+release they were using:
 
     .. code-block::
 
