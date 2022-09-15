@@ -27,8 +27,6 @@ def upperlimit_auto(
     level=0.05,
     atol=2e-12,
     rtol=None,
-    calctype="asymptotics",
-    test_stat="qtilde",
     from_upperlimit_fn=False,
     **hypotest_kwargs,
 ):
@@ -66,9 +64,8 @@ def upperlimit_auto(
         rtol (:obj:`float`): Relative tolerance. For optimal performance this argument should be set
                              to the highest acceptable relative tolerance, though it will default
                              to 1e-15 if not set.
-        calctype (:obj:`str`): Calculator to use for hypothesis tests. Choose "asymptotics" (default)
-                               or "toybased".
-        test_stat (:obj:`str`): Test statistic to use. Choose "qtilde" (default), "q", or "q0".
+        hypotest_kwargs (:obj:`string`): Kwargs for the calls to
+         :class:`~pyhf.infer.hypotest` to configure the fits.
 
     Returns:
         Tuple of Tensors:
@@ -90,8 +87,6 @@ def upperlimit_auto(
                 mu,
                 data,
                 model,
-                test_stat=test_stat,
-                calctype=calctype,
                 return_expected_set=True,
                 **hypotest_kwargs,
             )
