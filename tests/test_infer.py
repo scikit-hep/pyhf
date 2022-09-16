@@ -52,6 +52,15 @@ def test_upperlimit_auto(tmpdir, hypotest_args):
     assert expected_cls == pytest.approx(0.05)
 
 
+def test_upperlimit_auto_rtol_warning(hypotest_args):
+    """
+    Test that the UserWarning is raised if no rtol is given.
+    """
+    _, data, model = hypotest_args
+    with pytest.raises(UserWarning):
+        pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5)
+
+
 def test_upperlimit_against_auto(tmpdir, hypotest_args):
     """
     Check that upperlimit and upperlimit_auto return similar results
