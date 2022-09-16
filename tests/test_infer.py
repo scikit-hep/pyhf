@@ -83,7 +83,7 @@ def test_upperlimit(tmpdir, hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
-    results = pyhf.infer.intervals.upperlimit(data, model, scan="auto")
+    results = pyhf.infer.intervals.upperlimit(data, model)
     assert len(results) == 2
     observed_limit, expected_limits = results
     assert observed_limit == pytest.approx(1.011569562113924)

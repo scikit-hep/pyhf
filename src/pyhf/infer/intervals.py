@@ -203,7 +203,9 @@ def upperlimit_fixed_scan(
     return obs_limit, exp_limits
 
 
-def upperlimit(data, model, scan, level=0.05, return_results=False, **hypotest_kwargs):
+def upperlimit(
+    data, model, scan=None, level=0.05, return_results=False, **hypotest_kwargs
+):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single Parameter of
     Interest (POI) using root-finding or a fixed scan through POI-space.
@@ -229,7 +231,7 @@ def upperlimit(data, model, scan, level=0.05, return_results=False, **hypotest_k
     Args:
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        scan (:obj:`iterable` or "auto"): Iterable of POI values or "auto" to use ``upperlimit_auto``.
+        scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use ``upperlimit_auto``.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
@@ -242,22 +244,23 @@ def upperlimit(data, model, scan, level=0.05, return_results=False, **hypotest_k
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
     """
-    if isinstance(scan, str) and scan.lower() == "auto":
-        bounds = model.config.suggested_bounds()[
-            model.config.par_slice(model.config.poi_name).start
-        ]
-        obs_limit, exp_limit, results = upperlimit_auto(
-            data,
-            model,
-            bounds[0],
-            bounds[1],
-            rtol=1e-3,
-            from_upperlimit_fn=True,
-            **hypotest_kwargs,
+    if scan is not None:
+        return upperlimit_fixed_scan(
+            data, model, scan, level, return_results, **hypotest_kwargs
         )
-        if return_results:
-            return obs_limit, exp_limit, results
-        return obs_limit, exp_limit
-    return upperlimit_fixed_scan(
-        data, model, scan, level, return_results, **hypotest_kwargs
+    # else:
+    bounds = model.config.suggested_bounds()[
+        model.config.par_slice(model.config.poi_name).start
+    ]
+    obs_limit, exp_limit, results = upperlimit_auto(
+        data,
+        model,
+        bounds[0],
+        bounds[1],
+        rtol=1e-3,
+        from_upperlimit_fn=True,
+        **hypotest_kwargs,
     )
+    if return_results:
+        return obs_limit, exp_limit, results
+    return obs_limit, exp_limit
