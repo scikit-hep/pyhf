@@ -122,14 +122,14 @@ def upperlimit_auto(
         return (lower, upper)
 
     # extend bounds_low and bounds_up if they don't bracket CLs level
-    low_res = f_cached(bounds_low)
-    while np.any(np.array(low_res[0] + low_res[1]) < level):
+    lower_results = f_cached(bounds_low)
+    while np.any(np.asarray(lower_results[0] + lower_results[1]) < level):
         bounds_low /= 2
-        low_res = f_cached(bounds_low)
-    up_res = f_cached(bounds_up)
-    while np.any(np.array(up_res[0] + up_res[1]) > level):
+        lower_results = f_cached(bounds_low)
+    upper_results = f_cached(bounds_up)
+    while np.any(np.asarray(upper_results[0] + upper_results[1]) > level):
         bounds_up *= 2
-        up_res = f_cached(bounds_up)
+        upper_results = f_cached(bounds_up)
 
     tb, _ = get_backend()
     obs = tb.astensor(
