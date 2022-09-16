@@ -1,4 +1,5 @@
 import json
+import sys
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -67,6 +68,10 @@ def test_plot_results(datadir):
 
 
 @pytest.mark.mpl_image_compare
+@pytest.mark.xfail(
+    sys.version_info < (3, 8),
+    reason="baseline image generated with matplotlib v3.6.0 which is Python 3.8+",
+)
 def test_plot_results_no_axis(datadir):
     data = json.load(datadir.joinpath("hypotest_results.json").open(encoding="utf-8"))
 
