@@ -107,8 +107,8 @@ def upperlimit_auto(
 
     def best_bracket(limit):
         # return best bracket
-        ks = np.array(list(cache.keys()))
-        vals = np.array(
+        ks = np.asarray(list(cache.keys()))
+        vals = np.asarray(
             [
                 value[0] - level if limit == 0 else value[1][limit - 1] - level
                 for value in cache.values()
