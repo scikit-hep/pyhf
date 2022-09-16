@@ -61,6 +61,30 @@ def test_upperlimit_auto_rtol_warning(hypotest_args):
         pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5)
 
 
+def test_upperlimit_auto_bounds_extension(hypotest_args):
+    """
+    Test the upper limit autoscan bounds can correctly extend to bracket the CLs level
+    """
+    _, data, model = hypotest_args
+    results_default = pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5, rtol=1e-8)
+    observed_limit_default, expected_limits_default = results_default
+
+    # Force bounds_low to expand
+    observed_limit, expected_limits = pyhf.infer.intervals.upperlimit_auto(
+        data, model, 3, 5, rtol=1e-8
+    )
+
+    assert observed_limit == pytest.approx(observed_limit_default)
+    assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
+
+    # Force bounds_up to expand
+    observed_limit, expected_limits = pyhf.infer.intervals.upperlimit_auto(
+        data, model, 0, 1, rtol=1e-8
+    )
+    assert observed_limit == pytest.approx(observed_limit_default)
+    assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
+
+
 def test_upperlimit_against_auto(hypotest_args):
     """
     Test upperlimit and upperlimit_auto return similar results

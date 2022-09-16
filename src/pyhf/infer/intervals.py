@@ -140,9 +140,9 @@ def upperlimit_auto(
     )
     exp = [
         tb.astensor(
-            toms748(f, *best_bracket(i), args=(level, i), k=2, xtol=atol, rtol=rtol)
+            toms748(f, *best_bracket(idx), args=(level, idx), k=2, xtol=atol, rtol=rtol)
         )
-        for i in range(1, 6)
+        for idx in range(1, 6)
     ]
     if from_upperlimit_fn:
         return obs, exp, (list(cache.keys()), list(cache.values()))
