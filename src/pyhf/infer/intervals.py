@@ -95,7 +95,7 @@ def upperlimit_auto(
             )
         return cache[poi]
 
-    def f(poi, limit=0):
+    def f(poi, level, limit=0):
         # Use integers for limit so we don't need a string comparison
         # limit == 0: Observed
         # else: expected
@@ -131,9 +131,11 @@ def upperlimit_auto(
         high_res = f_cached(high)
 
     tb, _ = get_backend()
-    obs = tb.astensor(toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
+    obs = tb.astensor(toms748(f, low, high, args=(level, 0), k=2, xtol=atol, rtol=rtol))
     exp = [
-        tb.astensor(toms748(f, *best_bracket(i), args=(i), k=2, xtol=atol, rtol=rtol))
+        tb.astensor(
+            toms748(f, *best_bracket(i), args=(level, i), k=2, xtol=atol, rtol=rtol)
+        )
         for i in range(1, 6)
     ]
     if from_upperlimit_fn:
@@ -192,10 +194,10 @@ def upperlimit_fixed_scan(
     obs = tb.astensor([[r[0]] for r in results])
     exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
 
-    result_arrary = tb.concatenate([obs, exp], axis=1).T
+    result_array = tb.concatenate([obs, exp], axis=1).T
 
     # observed limit and the (0, +-1, +-2)sigma expected limits
-    limits = [_interp(level, result_arrary[idx][::-1], scan[::-1]) for idx in range(6)]
+    limits = [_interp(level, result_array[idx][::-1], scan[::-1]) for idx in range(6)]
     obs_limit, exp_limits = limits[0], limits[1:]
 
     if return_results:
