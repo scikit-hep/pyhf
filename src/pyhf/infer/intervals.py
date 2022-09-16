@@ -79,7 +79,8 @@ def upperlimit_auto(
     if rtol is None:
         rtol = 1e-15
         warn(
-            f"upperlimit_auto: rtol not provided, defaulting to {rtol}. For optimal performance rtol should be set to the highest acceptable relative tolerance."
+            f"upperlimit_auto: rtol not provided, defaulting to {rtol}.\n"
+            "For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
 
     cache = {}
