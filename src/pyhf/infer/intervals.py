@@ -22,8 +22,8 @@ def _interp(x, xp, fp):
 def upperlimit_auto(
     data,
     model,
-    low,
-    high,
+    bounds_low,
+    bounds_up,
     level=0.05,
     atol=2e-12,
     rtol=None,
@@ -55,8 +55,8 @@ def upperlimit_auto(
     Args:
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        low (:obj:`float`): Lower boundary of search region
-        high (:obj:`float`): Higher boundary of search region
+        bounds_low (:obj:`float`): Lower boundary of search interval.
+        bounds_up (:obj:`float`): Upper boundary of search interval.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
                               Defaults to ``0.05``.
         atol (:obj:`float`): Absolute tolerance.
@@ -120,18 +120,20 @@ def upperlimit_auto(
         upper = ks[neg][np.argmax(vals[neg])]
         return (lower, upper)
 
-    # extend low and high if they don't bracket CLs level
-    low_res = f_cached(low)
+    # extend bounds_low and bounds_up if they don't bracket CLs level
+    low_res = f_cached(bounds_low)
     while np.any(np.array(low_res[0] + low_res[1]) < level):
-        low /= 2
-        low_res = f_cached(low)
-    high_res = f_cached(high)
-    while np.any(np.array(high_res[0] + high_res[1]) > level):
-        high *= 2
-        high_res = f_cached(high)
+        bounds_low /= 2
+        low_res = f_cached(bounds_low)
+    up_res = f_cached(bounds_up)
+    while np.any(np.array(up_res[0] + up_res[1]) > level):
+        bounds_up *= 2
+        up_res = f_cached(bounds_up)
 
     tb, _ = get_backend()
-    obs = tb.astensor(toms748(f, low, high, args=(level, 0), k=2, xtol=atol, rtol=rtol))
+    obs = tb.astensor(
+        toms748(f, bounds_low, bounds_up, args=(level, 0), k=2, xtol=atol, rtol=rtol)
+    )
     exp = [
         tb.astensor(
             toms748(f, *best_bracket(i), args=(level, i), k=2, xtol=atol, rtol=rtol)
