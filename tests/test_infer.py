@@ -61,7 +61,7 @@ def test_upperlimit_auto_rtol_warning(hypotest_args):
         pyhf.infer.intervals.upperlimit_auto(data, model, 0, 5)
 
 
-def test_upperlimit_against_auto(tmpdir, hypotest_args):
+def test_upperlimit_against_auto(hypotest_args):
     """
     Check that upperlimit and upperlimit_auto return similar results
     """
@@ -79,7 +79,7 @@ def test_upperlimit_against_auto(tmpdir, hypotest_args):
         assert exp_auto[i] == pytest.approx(exp_linear[i], abs=0.25)
 
 
-def test_upperlimit(tmpdir, hypotest_args):
+def test_upperlimit(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
