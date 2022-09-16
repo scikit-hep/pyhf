@@ -123,11 +123,14 @@ def upperlimit_auto(
 
     # extend bounds_low and bounds_up if they don't bracket CLs level
     lower_results = f_cached(bounds_low)
-    while np.any(np.asarray(lower_results[0] + lower_results[1]) < level):
+    # {lower,upper}_results[0] is an array and {lower,upper}_results[1] is a
+    # list of arrays so need to turn {lower,upper}_results[0] into list to
+    # concatenate them
+    while np.any(np.asarray([lower_results[0]] + lower_results[1]) < level):
         bounds_low /= 2
         lower_results = f_cached(bounds_low)
     upper_results = f_cached(bounds_up)
-    while np.any(np.asarray(upper_results[0] + upper_results[1]) > level):
+    while np.any(np.asarray([upper_results[0]] + upper_results[1]) > level):
         bounds_up *= 2
         upper_results = f_cached(bounds_up)
 
