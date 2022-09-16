@@ -84,22 +84,26 @@ def upperlimit_auto(
 
     cache = {}
 
-    def f_all(mu):
-        if mu not in cache:
-            cache[mu] = hypotest(
-                mu,
+    def f_cached(poi):
+        if poi not in cache:
+            cache[poi] = hypotest(
+                poi,
                 data,
                 model,
                 return_expected_set=True,
                 **hypotest_kwargs,
             )
-        return cache[mu]
+        return cache[poi]
 
-    def f(mu, limit=0):
+    def f(poi, limit=0):
         # Use integers for limit so we don't need a string comparison
         # limit == 0: Observed
         # else: expected
-        return f_all(mu)[0] - level if limit == 0 else f_all(mu)[1][limit - 1] - level
+        return (
+            f_cached(poi)[0] - level
+            if limit == 0
+            else f_cached(poi)[1][limit - 1] - level
+        )
 
     def best_bracket(limit):
         # return best bracket
@@ -117,14 +121,14 @@ def upperlimit_auto(
         return (lower, upper)
 
     # extend low and high if they don't bracket CLs level
-    low_res = f_all(low)
+    low_res = f_cached(low)
     while np.any(np.array(low_res[0] + low_res[1]) < level):
         low /= 2
-        low_res = f_all(low)
-    high_res = f_all(high)
+        low_res = f_cached(low)
+    high_res = f_cached(high)
     while np.any(np.array(high_res[0] + high_res[1]) > level):
         high *= 2
-        high_res = f_all(high)
+        high_res = f_cached(high)
 
     tb, _ = get_backend()
     obs = tb.astensor(toms748(f, low, high, args=(0), k=2, xtol=atol, rtol=rtol))
