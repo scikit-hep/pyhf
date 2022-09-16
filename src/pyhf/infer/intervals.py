@@ -97,12 +97,9 @@ def upperlimit_auto(
 
     def f(mu, limit=0):
         # Use integers for limit so we don't need a string comparison
-        if limit == 0:
-            # Obs
-            return f_all(mu)[0] - level
-        # Exp
-        # (These are in the order -2, -1, 0, 1, 2 sigma)
-        return f_all(mu)[1][limit - 1] - level
+        # limit == 0: Observed
+        # else: expected
+        return f_all(mu)[0] - level if limit == 0 else f_all(mu)[1][limit - 1] - level
 
     def best_bracket(limit):
         # return best bracket
