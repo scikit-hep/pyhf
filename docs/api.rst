@@ -159,6 +159,7 @@ Fits and Tests
    hypotest
    intervals.upperlimit
    intervals.upperlimit_auto
+   intervals.upperlimit_fixed_scan
    utils.all_pois_floating
 
 
