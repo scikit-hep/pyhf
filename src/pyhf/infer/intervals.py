@@ -58,12 +58,15 @@ def upperlimit_auto(
         low (:obj:`float`): Lower boundary of search region
         high (:obj:`float`): Higher boundary of search region
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
-                              Defaults to 0.05.
-        atol (:obj:`float`): Absolute tolerance. Defaults to 1e-12. The iteration will end when the
-                             result is within absolute *or* relative tolerance of the true limit.
-        rtol (:obj:`float`): Relative tolerance. For optimal performance this argument should be set
-                             to the highest acceptable relative tolerance, though it will default
-                             to 1e-15 if not set.
+                              Defaults to ``0.05``.
+        atol (:obj:`float`): Absolute tolerance.
+                             Defaults to ``1e-12``.
+                             The iteration will end when the result is within absolute
+                             *or* relative tolerance of the true limit.
+        rtol (:obj:`float`): Relative tolerance.
+                             For optimal performance this argument should be set
+                             to the highest acceptable relative tolerance, though
+                             it will default to ``1e-15`` if not set.
         hypotest_kwargs (:obj:`string`): Kwargs for the calls to
          :class:`~pyhf.infer.hypotest` to configure the fits.
 
