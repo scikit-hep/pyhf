@@ -5,3 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    labels:
+      - "github-actions"
+      - "dependencies"
+    reviewers:
+      - "matthewfeickert"
