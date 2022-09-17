@@ -89,7 +89,7 @@ def test_upperlimit_auto_scan_bounds_extension(hypotest_args):
 
 def test_upperlimit_against_auto(hypotest_args):
     """
-    Test upperlimit and upperlimit_auto_scan return similar results
+    Test upperlimit fixed scan and upperlimit_auto_scan return similar results
     """
     _, data, model = hypotest_args
     results_auto = pyhf.infer.intervals.upperlimit_auto_scan(
@@ -101,10 +101,8 @@ def test_upperlimit_against_auto(hypotest_args):
     )
     obs_linear, exp_linear = results_linear
     # Can't expect these to be much closer given the low granularity of the linear scan
-    assert obs_auto == pytest.approx(obs_linear, abs=0.25)
-    # For some reason, this isn't working with the full list at once
-    for i in range(5):
-        assert exp_auto[i] == pytest.approx(exp_linear[i], abs=0.25)
+    assert obs_auto == pytest.approx(obs_linear, abs=0.1)
+    assert np.allclose(exp_auto, exp_linear, atol=0.1)
 
 
 def test_upperlimit(hypotest_args):
