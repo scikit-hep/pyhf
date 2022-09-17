@@ -239,7 +239,8 @@ def upperlimit(
     Args:
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
-        scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use ``upperlimit_auto``.
+        scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use
+         :class:`~pyhf.infer.upperlimit_auto``.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
@@ -265,7 +266,7 @@ def upperlimit(
         model,
         bounds[0],
         bounds[1],
-        rtol=1e-3,
+        rtol=hypotest_kwargs.pop("rtol", 1e-8),
         from_upperlimit_fn=True,
         **hypotest_kwargs,
     )
