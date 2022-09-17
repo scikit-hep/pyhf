@@ -125,6 +125,23 @@ def test_upperlimit(hypotest_args):
         [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
     )
 
+
+def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
+    """
+    Check that the default return structure of pyhf.infer.hypotest is as expected
+    """
+    _, data, model = hypotest_args
+    scan = np.linspace(0, 5, 11)
+    results = pyhf.infer.intervals.upperlimit(
+        data, model, scan=scan, test_stat="qtilde"
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert expected_limits == pytest.approx(
+        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    )
+
     results = pyhf.infer.intervals.upperlimit(
         data, model, scan=scan, return_results=True
     )
@@ -143,22 +160,6 @@ def test_upperlimit(hypotest_args):
     assert observed_limit == pytest.approx(1.01156939)
     assert expected_limits == pytest.approx(
         [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
-    )
-
-
-def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
-    """
-    Check that the default return structure of pyhf.infer.hypotest is as expected
-    """
-    _, data, model = hypotest_args
-    results = pyhf.infer.intervals.upperlimit(
-        data, model, scan=np.linspace(0, 5, 11), test_stat="qtilde"
-    )
-    assert len(results) == 2
-    observed_limit, expected_limits = results
-    assert observed_limit == pytest.approx(1.0262704738584554)
-    assert expected_limits == pytest.approx(
-        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
 
