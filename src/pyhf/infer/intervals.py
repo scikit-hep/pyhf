@@ -261,12 +261,13 @@ def upperlimit(
     bounds = model.config.suggested_bounds()[
         model.config.par_slice(model.config.poi_name).start
     ]
+    relative_tolerance = hypotest_kwargs.pop("rtol", 1e-8)
     obs_limit, exp_limit, results = upperlimit_auto(
         data,
         model,
         bounds[0],
         bounds[1],
-        rtol=hypotest_kwargs.pop("rtol", 1e-8),
+        rtol=relative_tolerance,
         from_upperlimit_fn=True,
         **hypotest_kwargs,
     )
