@@ -142,6 +142,7 @@ def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
+    # upperlimit_fixed_scan
     results = pyhf.infer.intervals.upperlimit(
         data, model, scan=scan, return_results=True
     )
@@ -154,6 +155,7 @@ def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
     assert _scan.tolist() == scan.tolist()
     assert len(_scan) == len(point_results)
 
+    # upperlimit_auto
     results = pyhf.infer.intervals.upperlimit(data, model, return_results=True)
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
