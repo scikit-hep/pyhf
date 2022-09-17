@@ -240,7 +240,7 @@ def upperlimit(
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use
-         :class:`~pyhf.infer.upperlimit_auto_scan``.
+         :class:`~pyhf.infer.intervals.upperlimit_auto_scan`.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
