@@ -7,7 +7,7 @@ from scipy.optimize import toms748
 from pyhf import get_backend
 from pyhf.infer import hypotest
 
-__all__ = ["upperlimit", "upperlimit_auto", "upperlimit_fixed_scan"]
+__all__ = ["upperlimit", "upperlimit_auto_scan", "upperlimit_fixed_scan"]
 
 
 def __dir__():
@@ -19,7 +19,7 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit_auto(
+def upperlimit_auto_scan(
     data,
     model,
     bounds_low,
@@ -44,7 +44,7 @@ def upperlimit_auto(
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-        >>> obs_limit, exp_limits = pyhf.infer.intervals.upperlimit_auto(
+        >>> obs_limit, exp_limits = pyhf.infer.intervals.upperlimit_auto_scan(
         ...     data, model, 0., 5., rtol=0.01
         ... )
         >>> obs_limit
@@ -79,7 +79,7 @@ def upperlimit_auto(
     if rtol is None:
         rtol = 1e-15
         warn(
-            f"upperlimit_auto: rtol not provided, defaulting to {rtol}.\n"
+            f"upperlimit_auto_scan: rtol not provided, defaulting to {rtol}.\n"
             "For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
 
@@ -240,7 +240,7 @@ def upperlimit(
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use
-         :class:`~pyhf.infer.upperlimit_auto``.
+         :class:`~pyhf.infer.upperlimit_auto_scan``.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
@@ -262,7 +262,7 @@ def upperlimit(
         model.config.par_slice(model.config.poi_name).start
     ]
     relative_tolerance = hypotest_kwargs.pop("rtol", 1e-8)
-    obs_limit, exp_limit, results = upperlimit_auto(
+    obs_limit, exp_limit, results = upperlimit_auto_scan(
         data,
         model,
         bounds[0],
