@@ -10,3 +10,11 @@ updates:
       - "dependencies"
     reviewers:
       - "matthewfeickert"
+
+  # Ignore all pip dependencies to avoid PRs to update tests/constraints.txt
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
