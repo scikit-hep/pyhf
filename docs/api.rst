@@ -158,7 +158,7 @@ Fits and Tests
    mle.fixed_poi_fit
    hypotest
    intervals.upperlimit
-   intervals.upperlimit_auto_scan
+   intervals.upperlimit_toms748_scan
    intervals.upperlimit_fixed_scan
    utils.all_pois_floating
 
