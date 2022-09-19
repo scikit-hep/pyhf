@@ -159,7 +159,7 @@ Fits and Tests
    hypotest
    intervals.upperlimit
    intervals.upperlimit_toms748_scan
-   intervals.upperlimit_fixed_scan
+   intervals.upperlimit_linear_grid_scan
    utils.all_pois_floating
 
 

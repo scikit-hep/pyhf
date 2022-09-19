@@ -7,7 +7,7 @@ from scipy.optimize import toms748
 from pyhf import get_backend
 from pyhf.infer import hypotest
 
-__all__ = ["upperlimit", "upperlimit_toms748_scan", "upperlimit_fixed_scan"]
+__all__ = ["upperlimit", "upperlimit_linear_grid_scan", "upperlimit_toms748_scan"]
 
 
 def __dir__():
@@ -149,7 +149,7 @@ def upperlimit_toms748_scan(
     return obs, exp
 
 
-def upperlimit_fixed_scan(
+def upperlimit_linear_grid_scan(
     data, model, scan, level=0.05, return_results=False, **hypotest_kwargs
 ):
     """
@@ -254,7 +254,7 @@ def upperlimit(
               Only returned when ``return_results`` is ``True``.
     """
     if scan is not None:
-        return upperlimit_fixed_scan(
+        return upperlimit_linear_grid_scan(
             data, model, scan, level, return_results, **hypotest_kwargs
         )
     # else:

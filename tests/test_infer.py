@@ -144,7 +144,7 @@ def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
-    # upperlimit_fixed_scan
+    # upperlimit_linear_grid_scan
     results = pyhf.infer.intervals.upperlimit(
         data, model, scan=scan, return_results=True
     )
