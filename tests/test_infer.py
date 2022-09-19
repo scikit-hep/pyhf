@@ -1,7 +1,10 @@
-import pytest
-import pyhf
+import warnings
+
 import numpy as np
+import pytest
 import scipy.stats
+
+import pyhf
 
 
 @pytest.fixture(scope='module')
@@ -631,3 +634,19 @@ def test_teststat_nan_guard():
         test_poi, data, model, test_stat="qtilde", return_expected=True
     )
     assert all(~np.isnan(result) for result in test_results)
+
+
+# TODO: Remove after pyhf v0.9.0 is released
+def test_deprecated_apis(hypotest_args):
+    with warnings.catch_warnings(record=True) as _warning:
+        # Cause all warnings to always be triggered
+        warnings.simplefilter("always")
+
+        _, data, model = hypotest_args
+        pyhf.infer.intervals.upperlimit(data, model, scan=np.linspace(0, 5, 11))
+        assert len(_warning) == 1
+        assert issubclass(_warning[-1].category, DeprecationWarning)
+        assert (
+            "pyhf.infer.intervals.upperlimit is deprecated in favor of pyhf.infer.intervals.upper_limits.upper_limit"
+            in str(_warning[-1].message)
+        )
