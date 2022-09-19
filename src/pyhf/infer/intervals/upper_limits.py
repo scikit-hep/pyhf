@@ -7,7 +7,7 @@ from scipy.optimize import toms748
 from pyhf import get_backend
 from pyhf.infer import hypotest
 
-__all__ = ["upperlimit", "upperlimit_linear_grid_scan", "upperlimit_toms748_scan"]
+__all__ = ["upper_limit", "linear_grid_scan", "toms748_scan"]
 
 
 def __dir__():
@@ -19,7 +19,7 @@ def _interp(x, xp, fp):
     return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
 
 
-def upperlimit_toms748_scan(
+def toms748_scan(
     data,
     model,
     bounds_low,
@@ -27,7 +27,7 @@ def upperlimit_toms748_scan(
     level=0.05,
     atol=2e-12,
     rtol=None,
-    from_upperlimit_fn=False,
+    from_upper_limit_fn=False,
     **hypotest_kwargs,
 ):
     """
@@ -44,7 +44,7 @@ def upperlimit_toms748_scan(
         ... )
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
-        >>> obs_limit, exp_limits = pyhf.infer.intervals.upperlimit_toms748_scan(
+        >>> obs_limit, exp_limits = pyhf.infer.intervals.upper_limits.toms748_scan(
         ...     data, model, 0., 5., rtol=0.01
         ... )
         >>> obs_limit
@@ -79,7 +79,7 @@ def upperlimit_toms748_scan(
     if rtol is None:
         rtol = 1e-15
         warn(
-            f"upperlimit_toms748_scan: rtol not provided, defaulting to {rtol}.\n"
+            f"toms748_scan: rtol not provided, defaulting to {rtol}.\n"
             "For optimal performance rtol should be set to the highest acceptable relative tolerance."
         )
 
@@ -144,17 +144,17 @@ def upperlimit_toms748_scan(
         )
         for idx in range(1, 6)
     ]
-    if from_upperlimit_fn:
+    if from_upper_limit_fn:
         return obs, exp, (list(cache.keys()), list(cache.values()))
     return obs, exp
 
 
-def upperlimit_linear_grid_scan(
+def linear_grid_scan(
     data, model, scan, level=0.05, return_results=False, **hypotest_kwargs
 ):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single
-    Parameter of Interest (POI) using a fixed scan through POI-space.
+    Parameter of Interest (POI) using a linear scan through POI-space.
 
     Example:
         >>> import numpy as np
@@ -166,7 +166,7 @@ def upperlimit_linear_grid_scan(
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> scan = np.linspace(0, 5, 21)
-        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
         ...     data, model, scan, return_results=True
         ... )
         >>> obs_limit
@@ -211,12 +211,12 @@ def upperlimit_linear_grid_scan(
     return obs_limit, exp_limits
 
 
-def upperlimit(
+def upper_limit(
     data, model, scan=None, level=0.05, return_results=False, **hypotest_kwargs
 ):
     """
     Calculate an upper limit interval ``(0, poi_up)`` for a single Parameter of
-    Interest (POI) using root-finding or a fixed scan through POI-space.
+    Interest (POI) using root-finding or a linear scan through POI-space.
 
     Example:
         >>> import numpy as np
@@ -228,7 +228,7 @@ def upperlimit(
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> scan = np.linspace(0, 5, 21)
-        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+        >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
         ...     data, model, scan, return_results=True
         ... )
         >>> obs_limit
@@ -240,7 +240,7 @@ def upperlimit(
         data (:obj:`tensor`): The observed data.
         model (~pyhf.pdf.Model): The statistical model adhering to the schema ``model.json``.
         scan (:obj:`iterable` or ``None``): Iterable of POI values or ``None`` to use
-         :class:`~pyhf.infer.intervals.upperlimit_toms748_scan`.
+         :class:`~pyhf.infer.intervals.upper_limits.toms748_scan`.
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
         return_results (:obj:`bool`): Whether to return the per-point results.
 
@@ -254,7 +254,7 @@ def upperlimit(
               Only returned when ``return_results`` is ``True``.
     """
     if scan is not None:
-        return upperlimit_linear_grid_scan(
+        return linear_grid_scan(
             data, model, scan, level, return_results, **hypotest_kwargs
         )
     # else:
@@ -262,13 +262,13 @@ def upperlimit(
         model.config.par_slice(model.config.poi_name).start
     ]
     relative_tolerance = hypotest_kwargs.pop("rtol", 1e-8)
-    obs_limit, exp_limit, results = upperlimit_toms748_scan(
+    obs_limit, exp_limit, results = toms748_scan(
         data,
         model,
         bounds[0],
         bounds[1],
         rtol=relative_tolerance,
-        from_upperlimit_fn=True,
+        from_upper_limit_fn=True,
         **hypotest_kwargs,
     )
     if return_results:

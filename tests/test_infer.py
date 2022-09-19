@@ -20,12 +20,14 @@ def check_uniform_type(in_list):
     )
 
 
-def test_upperlimit_toms748_scan(tmpdir, hypotest_args):
+def test_toms748_scan(tmpdir, hypotest_args):
     """
     Test the upper limit toms748 scan returns the correct structure and values
     """
     _, data, model = hypotest_args
-    results = pyhf.infer.intervals.upperlimit_toms748_scan(data, model, 0, 5, rtol=1e-8)
+    results = pyhf.infer.intervals.upper_limits.toms748_scan(
+        data, model, 0, 5, rtol=1e-8
+    )
     assert len(results) == 2
     observed_limit, expected_limits = results
     observed_cls = pyhf.infer.hypotest(
@@ -52,27 +54,27 @@ def test_upperlimit_toms748_scan(tmpdir, hypotest_args):
     assert expected_cls == pytest.approx(0.05)
 
 
-def test_upperlimit_toms748_scan_rtol_warning(hypotest_args):
+def test_toms748_scan_rtol_warning(hypotest_args):
     """
     Test the UserWarning is raised if no rtol is given.
     """
     _, data, model = hypotest_args
     with pytest.raises(UserWarning):
-        pyhf.infer.intervals.upperlimit_toms748_scan(data, model, 0, 5)
+        pyhf.infer.intervals.upper_limits.toms748_scan(data, model, 0, 5)
 
 
-def test_upperlimit_toms748_scan_bounds_extension(hypotest_args):
+def test_toms748_scan_bounds_extension(hypotest_args):
     """
     Test the upper limit toms748 scan bounds can correctly extend to bracket the CLs level
     """
     _, data, model = hypotest_args
-    results_default = pyhf.infer.intervals.upperlimit_toms748_scan(
+    results_default = pyhf.infer.intervals.upper_limits.toms748_scan(
         data, model, 0, 5, rtol=1e-8
     )
     observed_limit_default, expected_limits_default = results_default
 
     # Force bounds_low to expand
-    observed_limit, expected_limits = pyhf.infer.intervals.upperlimit_toms748_scan(
+    observed_limit, expected_limits = pyhf.infer.intervals.upper_limits.toms748_scan(
         data, model, 3, 5, rtol=1e-8
     )
 
@@ -80,23 +82,23 @@ def test_upperlimit_toms748_scan_bounds_extension(hypotest_args):
     assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
 
     # Force bounds_up to expand
-    observed_limit, expected_limits = pyhf.infer.intervals.upperlimit_toms748_scan(
+    observed_limit, expected_limits = pyhf.infer.intervals.upper_limits.toms748_scan(
         data, model, 0, 1, rtol=1e-8
     )
     assert observed_limit == pytest.approx(observed_limit_default)
     assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
 
 
-def test_upperlimit_against_auto(hypotest_args):
+def test_upper_limit_against_auto(hypotest_args):
     """
-    Test upperlimit fixed scan and upperlimit_toms748_scan return similar results
+    Test upper_limit linear scan and toms748_scan return similar results
     """
     _, data, model = hypotest_args
-    results_auto = pyhf.infer.intervals.upperlimit_toms748_scan(
+    results_auto = pyhf.infer.intervals.upper_limits.toms748_scan(
         data, model, 0, 5, rtol=1e-3
     )
     obs_auto, exp_auto = results_auto
-    results_linear = pyhf.infer.intervals.upperlimit(
+    results_linear = pyhf.infer.intervals.upper_limits.upper_limit(
         data, model, scan=np.linspace(0, 5, 21)
     )
     obs_linear, exp_linear = results_linear
@@ -105,13 +107,13 @@ def test_upperlimit_against_auto(hypotest_args):
     assert np.allclose(exp_auto, exp_linear, atol=0.1)
 
 
-def test_upperlimit(hypotest_args):
+def test_upper_limit(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
     _, data, model = hypotest_args
     scan = np.linspace(0, 5, 11)
-    results = pyhf.infer.intervals.upperlimit(data, model, scan=scan)
+    results = pyhf.infer.intervals.upper_limits.upper_limit(data, model, scan=scan)
     assert len(results) == 2
     observed_limit, expected_limits = results
     assert observed_limit == pytest.approx(1.0262704738584554)
@@ -119,7 +121,7 @@ def test_upperlimit(hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
-    results = pyhf.infer.intervals.upperlimit(data, model)
+    results = pyhf.infer.intervals.upper_limits.upper_limit(data, model)
     assert len(results) == 2
     observed_limit, expected_limits = results
     assert observed_limit == pytest.approx(1.01156939)
@@ -128,13 +130,13 @@ def test_upperlimit(hypotest_args):
     )
 
 
-def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
+def test_upper_limit_with_kwargs(tmpdir, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
     _, data, model = hypotest_args
     scan = np.linspace(0, 5, 11)
-    results = pyhf.infer.intervals.upperlimit(
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
         data, model, scan=scan, test_stat="qtilde"
     )
     assert len(results) == 2
@@ -144,8 +146,8 @@ def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
-    # upperlimit_linear_grid_scan
-    results = pyhf.infer.intervals.upperlimit(
+    # linear_grid_scan
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
         data, model, scan=scan, return_results=True
     )
     assert len(results) == 3
@@ -157,8 +159,10 @@ def test_upperlimit_with_kwargs(tmpdir, hypotest_args):
     assert _scan.tolist() == scan.tolist()
     assert len(_scan) == len(point_results)
 
-    # upperlimit_toms748_scan
-    results = pyhf.infer.intervals.upperlimit(data, model, return_results=True)
+    # toms748_scan
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, return_results=True
+    )
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
     assert observed_limit == pytest.approx(1.01156939)
