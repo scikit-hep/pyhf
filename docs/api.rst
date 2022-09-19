@@ -161,6 +161,7 @@ Fits and Tests
    intervals.upper_limits.toms748_scan
    intervals.upper_limits.linear_grid_scan
    utils.all_pois_floating
+   intervals.upperlimit
 
 
 Schema
