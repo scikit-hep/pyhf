@@ -82,7 +82,9 @@ def toms748_scan(
         rtol = 1e-4
         warn(
             f"toms748_scan: rtol not provided, defaulting to {rtol}.\n"
-            "For optimal performance rtol should be set to the highest acceptable relative tolerance."
+            "For optimal performance rtol should be set to the highest acceptable relative tolerance.",
+            UserWarning,
+            stacklevel=3,  # Raise to user level
         )
 
     cache = {}
