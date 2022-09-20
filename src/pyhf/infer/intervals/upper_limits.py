@@ -75,6 +75,8 @@ def toms748_scan(
 
             - Tensor: The observed upper limit on the POI.
             - Tensor: The expected upper limits on the POI.
+
+    .. versionadded:: 0.7.0
     """
     if rtol is None:
         rtol = 1e-15
@@ -191,6 +193,8 @@ def linear_grid_scan(
             - Tuple of Tensors: The given ``scan`` along with the
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
+
+    .. versionadded:: 0.7.0
     """
     tb, _ = get_backend()
     results = [
@@ -252,6 +256,8 @@ def upper_limit(
             - Tuple of Tensors: The given ``scan`` along with the
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
+
+    .. versionadded:: 0.7.0
     """
     if scan is not None:
         return linear_grid_scan(
