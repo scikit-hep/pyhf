@@ -637,7 +637,7 @@ def test_teststat_nan_guard():
 
 
 # TODO: Remove after pyhf v0.9.0 is released
-def test_deprecated_apis(hypotest_args):
+def test_deprecated_upperlimit(hypotest_args):
     with warnings.catch_warnings(record=True) as _warning:
         # Cause all warnings to always be triggered
         warnings.simplefilter("always")
