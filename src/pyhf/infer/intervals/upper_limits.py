@@ -63,8 +63,7 @@ def toms748_scan(
                              *or* relative tolerance of the true limit.
         rtol (:obj:`float`): Relative tolerance.
                              For optimal performance this argument should be set
-                             to the highest acceptable relative tolerance, though
-                             it will default to ``1e-15`` if not set.
+                             to the highest acceptable relative tolerance.
         hypotest_kwargs (:obj:`string`): Kwargs for the calls to
          :class:`~pyhf.infer.hypotest` to configure the fits.
 
