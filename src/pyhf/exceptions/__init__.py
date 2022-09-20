@@ -1,4 +1,5 @@
 import sys
+from warnings import warn
 
 __all__ = [
     "FailedMinimization",
@@ -175,3 +176,15 @@ class FailedMinimization(Exception):
             result, 'message', "Unknown failure. See fit result for more details."
         )
         super().__init__(message)
+
+
+# Deprecated APIs
+def _deprecated_api_warning(
+    deprecated_api, new_api, deprecated_release, remove_release
+):
+    warn(
+        f"{deprecated_api} is deprecated in favor of {new_api} as of pyhf v{deprecated_release} and will be removed in pyhf {remove_release}."
+        + f" Please use {new_api}.",
+        DeprecationWarning,
+        stacklevel=3,  # Raise to user level
+    )
