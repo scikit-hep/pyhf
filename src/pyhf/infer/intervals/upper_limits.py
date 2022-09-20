@@ -1,6 +1,4 @@
 """Interval estimation"""
-from warnings import warn
-
 import numpy as np
 from scipy.optimize import toms748
 
@@ -26,7 +24,7 @@ def toms748_scan(
     bounds_up,
     level=0.05,
     atol=2e-12,
-    rtol=None,
+    rtol=1e-4,
     from_upper_limit_fn=False,
     **hypotest_kwargs,
 ):
@@ -78,15 +76,6 @@ def toms748_scan(
 
     .. versionadded:: 0.7.0
     """
-    if rtol is None:
-        rtol = 1e-4
-        warn(
-            f"toms748_scan: rtol not provided, defaulting to {rtol}.\n"
-            "For optimal performance rtol should be set to the highest acceptable relative tolerance.",
-            UserWarning,
-            stacklevel=3,  # Raise to user level
-        )
-
     cache = {}
 
     def f_cached(poi):
@@ -269,13 +258,11 @@ def upper_limit(
     bounds = model.config.suggested_bounds()[
         model.config.par_slice(model.config.poi_name).start
     ]
-    relative_tolerance = hypotest_kwargs.pop("rtol", 1e-4)
     obs_limit, exp_limit, results = toms748_scan(
         data,
         model,
         bounds[0],
         bounds[1],
-        rtol=relative_tolerance,
         from_upper_limit_fn=True,
         **hypotest_kwargs,
     )

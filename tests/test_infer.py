@@ -57,15 +57,6 @@ def test_toms748_scan(tmpdir, hypotest_args):
     assert expected_cls == pytest.approx(0.05)
 
 
-def test_toms748_scan_rtol_warning(hypotest_args):
-    """
-    Test the UserWarning is raised if no rtol is given.
-    """
-    _, data, model = hypotest_args
-    with pytest.raises(UserWarning):
-        pyhf.infer.intervals.upper_limits.toms748_scan(data, model, 0, 5)
-
-
 def test_toms748_scan_bounds_extension(hypotest_args):
     """
     Test the upper limit toms748 scan bounds can correctly extend to bracket the CLs level
@@ -164,7 +155,7 @@ def test_upper_limit_with_kwargs(tmpdir, hypotest_args):
 
     # toms748_scan
     results = pyhf.infer.intervals.upper_limits.upper_limit(
-        data, model, return_results=True
+        data, model, return_results=True, rtol=1e-5
     )
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
