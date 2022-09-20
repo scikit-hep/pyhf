@@ -4,7 +4,7 @@ import numpy as np
 import scipy.stats
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="function")
 def hypotest_args():
     pdf = pyhf.simplemodels.uncorrelated_background(
         signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -466,16 +466,16 @@ def test_toy_calculator(tmpdir, hypotest_args):
     )
 
 
-def test_fixed_poi(tmpdir, hypotest_args):
+def test_fixed_poi(hypotest_args):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected keyword arg is as expected
     """
 
-    _, _, pdf = hypotest_args
-    pdf.config.param_set('mu').suggested_fixed = [True]
+    test_poi, data, model = hypotest_args
+    model.config.param_set("mu").suggested_fixed = [True]
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.infer.hypotest(*hypotest_args)
+        pyhf.infer.hypotest(test_poi, data, model)
 
 
 def test_teststat_nan_guard():
