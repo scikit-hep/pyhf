@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pytest
 from skhep_testdata import data_path
@@ -176,3 +178,15 @@ def test_sbottom_regionC_1600_850_60(get_json_from_tarfile):
             rtol=1e-5,
         )
     )
+
+
+def test_deprecated_apis():
+    with warnings.catch_warnings(record=True) as _warning:
+        # Cause all warnings to always be triggered
+        warnings.simplefilter("always")
+
+        pyhf.exceptions._deprecated_api_warning(
+            "deprecated_api", "new_api", "v0.9.9", "v1.0.0"
+        )
+        assert len(_warning) == 1
+        assert issubclass(_warning[-1].category, DeprecationWarning)
