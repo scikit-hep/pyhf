@@ -186,7 +186,7 @@ def test_deprecated_apis():
         warnings.simplefilter("always")
 
         pyhf.exceptions._deprecated_api_warning(
-            "deprecated_api", "new_api", "v0.9.9", "v1.0.0"
+            "deprecated_api", "new_api", "0.9.9", "1.0.0"
         )
         assert len(_warning) == 1
         assert issubclass(_warning[-1].category, DeprecationWarning)

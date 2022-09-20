@@ -183,7 +183,7 @@ def _deprecated_api_warning(
     deprecated_api, new_api, deprecated_release, remove_release
 ):
     warn(
-        f"{deprecated_api} is deprecated in favor of {new_api} as of pyhf v{deprecated_release} and will be removed in pyhf {remove_release}."
+        f"{deprecated_api} is deprecated in favor of {new_api} as of pyhf v{deprecated_release} and will be removed in pyhf v{remove_release}."
         + f" Please use {new_api}.",
         DeprecationWarning,
         stacklevel=3,  # Raise to user level
