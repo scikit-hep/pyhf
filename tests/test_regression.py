@@ -180,7 +180,7 @@ def test_sbottom_regionC_1600_850_60(get_json_from_tarfile):
     )
 
 
-def test_deprecated_apis():
+def test_deprecated_api_warning():
     with warnings.catch_warnings(record=True) as _warning:
         # Cause all warnings to always be triggered
         warnings.simplefilter("always")
@@ -190,3 +190,7 @@ def test_deprecated_apis():
         )
         assert len(_warning) == 1
         assert issubclass(_warning[-1].category, DeprecationWarning)
+        assert (
+            "deprecated_api is deprecated in favor of new_api as of pyhf v0.9.9 and will be removed in pyhf v1.0.0."
+            in str(_warning[-1].message)
+        )
