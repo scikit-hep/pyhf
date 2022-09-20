@@ -1,7 +1,10 @@
-import pytest
-import pyhf
+from copy import deepcopy
+
 import numpy as np
+import pytest
 import scipy.stats
+
+import pyhf
 
 
 @pytest.fixture(scope='module')
@@ -466,16 +469,17 @@ def test_toy_calculator(tmpdir, hypotest_args):
     )
 
 
-def test_fixed_poi(tmpdir, hypotest_args):
+def test_fixed_poi(hypotest_args):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected keyword arg is as expected
     """
 
-    _, _, pdf = hypotest_args
-    pdf.config.param_set('mu').suggested_fixed = [True]
+    test_poi, data, pdf = hypotest_args
+    pdf = deepcopy(pdf)  # deepcopy to avoid altering hypotest_args fixture
+    pdf.config.param_set("mu").suggested_fixed = [True]
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.infer.hypotest(*hypotest_args)
+        pyhf.infer.hypotest(test_poi, data, pdf)
 
 
 def test_teststat_nan_guard():
