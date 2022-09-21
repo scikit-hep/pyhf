@@ -125,7 +125,15 @@ def test_infer_calculators_public_api():
 
 
 def test_infer_intervals_public_api():
-    assert dir(pyhf.infer.intervals) == ["upperlimit"]
+    assert dir(pyhf.infer.intervals) == ["upper_limits.upper_limit"]
+
+
+def test_infer_intervals_upper_limit_public_api():
+    assert dir(pyhf.infer.intervals.upper_limits) == [
+        "linear_grid_scan",
+        "toms748_scan",
+        "upper_limit",
+    ]
 
 
 def test_infer_mle_public_api():

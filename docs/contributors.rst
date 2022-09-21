@@ -29,3 +29,4 @@ Contributors include:
 - Aryan Roy
 - Jerry Ling
 - Nathan Simpson
+- Beojan Stanislaus
