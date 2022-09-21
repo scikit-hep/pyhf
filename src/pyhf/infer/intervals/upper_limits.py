@@ -58,7 +58,6 @@ def toms748_scan(
         level (:obj:`float`): The threshold value to evaluate the interpolated results at.
                               Defaults to ``0.05``.
         atol (:obj:`float`): Absolute tolerance.
-                             Defaults to ``1e-12``.
                              The iteration will end when the result is within absolute
                              *or* relative tolerance of the true limit.
         rtol (:obj:`float`): Relative tolerance.
