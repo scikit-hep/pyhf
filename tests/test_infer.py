@@ -115,7 +115,8 @@ def test_upper_limit(hypotest_args):
         [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
-    results = pyhf.infer.intervals.upper_limits.upper_limit(data, model)
+    # tighter relative tolerance needed for macos
+    results = pyhf.infer.intervals.upper_limits.upper_limit(data, model, rtol=1e-6)
     assert len(results) == 2
     observed_limit, expected_limits = results
     assert observed_limit == pytest.approx(1.01156939)
@@ -124,7 +125,7 @@ def test_upper_limit(hypotest_args):
     )
 
 
-def test_upper_limit_with_kwargs(tmpdir, hypotest_args):
+def test_upper_limit_with_kwargs(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
@@ -155,7 +156,7 @@ def test_upper_limit_with_kwargs(tmpdir, hypotest_args):
 
     # toms748_scan
     results = pyhf.infer.intervals.upper_limits.upper_limit(
-        data, model, return_results=True, rtol=1e-5
+        data, model, return_results=True, rtol=1e-6
     )
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
