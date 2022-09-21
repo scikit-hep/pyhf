@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/pyhf-logo-small.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/pyhf-logo-small.png
    :alt: pyhf logo
    :width: 320
    :align: center
@@ -8,7 +8,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
 
-|Docs from latest| |Docs from master| |Jupyter Book tutorial| |Binder|
+|Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
 
@@ -70,7 +70,7 @@ Alternatively the statistical model and observational data can be read from its 
    >>> import pyhf
    >>> import requests
    >>> pyhf.set_backend("numpy")
-   >>> url = "https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json"
+   >>> url = "https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/examples/json/2-bin_1-channel.json"
    >>> wspace = pyhf.Workspace(requests.get(url).json())
    >>> model = wspace.model()
    >>> data = wspace.data(model)
@@ -194,14 +194,14 @@ A one bin example
 
 **pyhf**
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_1bin_example.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/README_1bin_example.png
    :alt: manual
    :width: 500
    :align: center
 
 **ROOT**
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_1bin_55_50_7.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/hfh_1bin_55_50_7.png
    :alt: manual
    :width: 500
    :align: center
@@ -238,14 +238,14 @@ A two bin example
 
 **pyhf**
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/README_2bin_example.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/README_2bin_example.png
    :alt: manual
    :width: 500
    :align: center
 
 **ROOT**
 
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/hfh_2_bin_100.0_145.0_100.0_150.0_15.0_20.0_30.0_45.0.png
    :alt: manual
    :width: 500
    :align: center
@@ -363,12 +363,12 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
 .. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.0rc4-blue.svg
    :target: https://pyhf.readthedocs.io/
-.. |Docs from master| image:: https://img.shields.io/badge/docs-master-blue.svg
+.. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
    :target: https://scikit-hep.github.io/pyhf
 .. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
    :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/master?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
@@ -381,21 +381,21 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags
 
-.. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=master
-   :target: https://codecov.io/gh/scikit-hep/pyhf?branch=master
+.. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=main
+   :target: https://codecov.io/gh/scikit-hep/pyhf?branch=main
 .. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
    :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
-.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/master.svg
-  :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/master
+.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/main.svg
+  :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/main
   :alt: pre-commit.ci status
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
 
-.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amaster
-.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amaster
-.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amaster
-.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=master
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amaster
+.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=main
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amain
+.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=main
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amain
+.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=main
+   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amain
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=main
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain

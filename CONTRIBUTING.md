@@ -38,7 +38,7 @@ If you would like to make a pull request please:
 3. Commit your changes to a feature branch on your fork and push to your branch.
 4. Start a pull request to let the project maintainers know you're working on it.
 5. Test your changes with `pytest`.
-6. Update your fork to make sure your changes don't conflict with the current state of the master branch.
+6. Update your fork to make sure your changes don't conflict with the current state of the main branch.
 7. Make sure that you've added your name to `docs/contributors.rst`.
 If you haven't **please** do so by simply appending your name to the bottom of the list.
 We are thankful for and value your contributions to `pyhf`, not matter the size.
