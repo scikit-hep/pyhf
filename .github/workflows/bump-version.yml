@@ -240,5 +240,5 @@ jobs:
         if [ ${{ github.event.inputs.dry_run }} == 'true' ]; then
             echo "# DRY RUN"
         else
-            git push origin master --tags
+            git push origin main --tags
         fi

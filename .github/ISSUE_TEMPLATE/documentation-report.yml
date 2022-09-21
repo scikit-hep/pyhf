@@ -45,7 +45,7 @@ body:
     description: |
       Read the [`pyhf` Code of Conduct][CoC] first.
 
-      [CoC]: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
+      [CoC]: https://github.com/scikit-hep/pyhf/blob/main/CODE_OF_CONDUCT.md
     options:
     - label: I agree to follow the Code of Conduct
       required: true
