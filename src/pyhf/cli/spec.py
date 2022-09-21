@@ -33,7 +33,7 @@ def inspect(workspace, output_file, measurement):
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf inspect
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/examples/json/2-bin_1-channel.json | pyhf inspect
                   Summary
             ------------------
                channels  1
@@ -344,7 +344,7 @@ def digest(workspace, algorithm, output_json):
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf digest
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/examples/json/2-bin_1-channel.json | pyhf digest
         sha256:dad8822af55205d60152cbe4303929042dbd9d4839012e055e7c6b6459d68d73
     """
     with click.open_file(workspace, "r", encoding="utf-8") as specstream:
@@ -383,12 +383,12 @@ def sort(workspace, output_file):
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | pyhf sort | jq '.' | md5
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/examples/json/2-bin_1-channel.json | pyhf sort | jq '.' | md5
         8be5186ec249d2704e14dd29ef05ffb0
 
     .. code-block:: shell
 
-        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/master/docs/examples/json/2-bin_1-channel.json | jq -S '.channels|=sort_by(.name)|.channels[].samples|=sort_by(.name)|.channels[].samples[].modifiers|=sort_by(.name,.type)|.observations|=sort_by(.name)' | md5
+        $ curl -sL https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/examples/json/2-bin_1-channel.json | jq -S '.channels|=sort_by(.name)|.channels[].samples|=sort_by(.name)|.channels[].samples[].modifiers|=sort_by(.name,.type)|.observations|=sort_by(.name)' | md5
         8be5186ec249d2704e14dd29ef05ffb0
 
 
