@@ -1,5 +1,6 @@
 prune **
 graft src
+exclude src/conftest.py
 
 include setup.py
 include setup.cfg
