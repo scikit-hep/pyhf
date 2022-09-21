@@ -205,6 +205,8 @@ def linear_grid_scan(
     return obs_limit, exp_limits
 
 
+# FIXME: The final pyhf.set_backend("jax") in the docstring is to avoid Issue #2015.
+# This shouldn't be needed and is evidence of a bug.
 def upper_limit(
     data, model, scan=None, level=0.05, return_results=False, **hypotest_kwargs
 ):
