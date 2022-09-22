@@ -60,6 +60,9 @@ Contributors
 * Lars Henkelmann
 * Aryan Roy
 * Graeme Watt
+* Jerry Ling
+* Nathan Simpson
+* Beojan Stanislaus
 
 .. |release v0.7.0| replace:: ``v0.7.0``
 .. _`release v0.7.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0
