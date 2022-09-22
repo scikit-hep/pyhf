@@ -6,6 +6,9 @@ This is a minor release from ``v0.6.3`` → ``v0.7.0``.
 Important Notes
 ---------------
 
+* A `pyhf.default_backend` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
 * All backends are now fully compatible and tested with
   `Python 3.10 <https://peps.python.org/pep-0310/>`_.
   (PR :pr:`1809`)
@@ -59,6 +62,31 @@ Python API
       >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
       ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
       ... )
+
+* A ``pyhf.default_backend`` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
+  This allows setting setting the ``pyhf.default_backend`` to be different from the value of
+  ``pyhf.tensorlib`` returned by :func:`pyhf.get_backend`, which can be useful in situations where
+  a model construction is needed.
+
+  .. code:: pycon
+
+      >>> import jax
+      >>> import pyhf
+      >>> pyhf.set_backend("jax", default=True)
+      >>> pyhf.set_backend("numpy")
+      >>> pyhf.get_backend()
+      (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.scipy_optimizer object at 0x...>)
+      >>> pyhf.default_backend
+      <pyhf.tensor.jax_backend.jax_backend object at 0x...>
+      >>> def example_op(x):
+      ...     return 2 * pyhf.default_backend.power(pyhf.default_backend.astensor(x), 3)
+      ...
+      >>> example_op([2.0])
+      DeviceArray([16.], dtype=float64)
+      >>> jax.jacrev(jax.jit(example_op))([2.0])
+      [DeviceArray([24.], dtype=float64, weak_type=True)]
 
 Deprecations
 ------------
