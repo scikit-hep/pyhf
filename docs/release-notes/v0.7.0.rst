@@ -14,6 +14,9 @@ Important Notes
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
+* :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
+  To support this, ``pyhf xlm2json`` now has ``-v/--mount`` options.
+  (PR :pr:`1909`)
 * Performance in :class:`pyhf.readxml` is increased by improvements to
   :func:`pyhf.readxml.import_root_histogram`.
   (PR :pr:`1691`)
@@ -93,8 +96,8 @@ Python API
       >>> jax.jacrev(jax.jit(example_op))([2.0])
       [DeviceArray([24.], dtype=float64, weak_type=True)]
 
-* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` to allow
-  skipping validation.
+* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` and
+  :func:`pyhf.pdf.Model` to allow skipping validation.
   (PR :pr:`1646`)
   This should only be used by expert users who understand the risks.
 
@@ -105,6 +108,29 @@ Python API
      (PR :pr:`1696`)
    - :func:`pyhf.tensorlib.percentile`
      (PR :pr:`817`)
+
+* :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
+  (PR :pr:`1909`)
+
+CLI API
+~~~~~~~
+
+* The ``pyhf xlm2json`` CLI API now has a ``-v/--mount`` option to support reading
+  XML configurations with absolute paths.
+  (PR :pr:`1909`)
+  Similar to Docker volume mounts, the options allows a user to pass two fields
+  separated by a colon (``:``).
+  The first field is a local path and the second field is the absolute path specified
+  in the XML configuration to be substituted.
+  Without the ``-v/--mount`` option a user would have to manually edit the absolute
+  path in each XML file it appeared in!
+
+  .. code:: console
+
+      pyhf xml2json \
+          --mount /local/path/to/workspace:/absolute/path/to/replace/inside/xml \
+          --output-file workspace.json \
+          workspace/analysis_config.xml
 
 Deprecations
 ------------

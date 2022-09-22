@@ -27,7 +27,7 @@ def cli():
 @click.option(
     '-v',
     '--mount',
-    help='Consists of two fields, separated by a colon character ( : ). The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to docker.',
+    help='Consists of two fields, separated by a colon character ( : ). The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker.',
     type=VolumeMountPath(exists=True, resolve_path=True, path_type=Path),
     default=None,
     multiple=True,
