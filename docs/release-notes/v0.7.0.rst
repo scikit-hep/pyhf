@@ -35,7 +35,7 @@ Python API
 ~~~~~~~~~~
 
 * Supported options for :func:`pyhf.infer.hypotest` can now be passed as kwargs
-  through the :func:`pyhf.infer.intervals.upperlimit` API.
+  through the :func:`pyhf.infer.intervals.upper_limits.upper_limit` API.
   (PR :pr:`1613`)
   This now enables things like using :class:`pyhf.infer.calculators.ToyCalculator`
   as the calculator used for the hypothesis test scan:
@@ -51,7 +51,7 @@ Python API
       >>> observations = [51, 48]
       >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
       >>> scan = np.linspace(0, 5, 21)
-      >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+      >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
       ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
       ... )
 
