@@ -6,6 +6,8 @@ This is a minor release from ``v0.6.3`` → ``v0.7.0``.
 Important Notes
 ---------------
 
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.7.0`` API.
 * All backends are now fully compatible and tested with
   `Python 3.10 <https://peps.python.org/pep-0310/>`_.
   (PR :pr:`1809`)
@@ -95,6 +97,14 @@ Python API
   skipping validation.
   (PR :pr:`1646`)
   This should only be used by expert users who understand the risks.
+
+* The following functions have been added to the ``pyhf.tensorlib`` API:
+
+
+   - :func:`pyhf.tensorlib.transpose`
+     (PR :pr:`1696`)
+   - :func:`pyhf.tensorlib.percentile`
+     (PR :pr:`817`)
 
 Deprecations
 ------------
