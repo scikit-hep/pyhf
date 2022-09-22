@@ -11,5 +11,5 @@ contact_links:
     The pyhf tutorial is continually updated and provides an in depth walkthrough
     of how to use the latest release of pyhf.
 - name: 📝  pyhf Code of Conduct
-  url: https://github.com/scikit-hep/pyhf/blob/master/CODE_OF_CONDUCT.md
+  url: https://github.com/scikit-hep/pyhf/blob/main/CODE_OF_CONDUCT.md
   about: Expectations for how people will interact with each other on pyhf's GitHub.

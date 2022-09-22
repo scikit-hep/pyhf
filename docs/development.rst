@@ -103,7 +103,7 @@ Publishing
 Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
 GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
 and the ``pyhf`` `bump version GitHub Actions workflow
-<https://github.com/scikit-hep/pyhf/blob/master/.github/workflows/bump-version.yml>`__.
+<https://github.com/scikit-hep/pyhf/blob/main/.github/workflows/bump-version.yml>`__.
 
 Release Checklist
 ~~~~~~~~~~~~~~~~~
@@ -131,8 +131,8 @@ The maintainer needs to:
 The maintainer **should do a dry run first to make sure everything looks reasonable**.
 Once they have done that, they can run the `bump version GitHub Actions workflow`_ which
 will produce a new tag, bump the version of all files defined in `tbump.toml
-<https://github.com/scikit-hep/pyhf/blob/master/tbump.toml>`__, and then commit and
-push these changes and the tag back to the ``master`` branch.
+<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__, and then commit and
+push these changes and the tag back to the ``main`` branch.
 
 Deployment
 ~~~~~~~~~~

@@ -2,12 +2,12 @@ name: publish distributions
 on:
   push:
     branches:
-    - master
+    - main
     tags:
     - v*
   pull_request:
     branches:
-    - master
+    - main
   release:
     types: [published]
   workflow_dispatch:
@@ -56,9 +56,9 @@ jobs:
       run: |
         latest_tag=$(git describe --tags)
         latest_tag_revlist_SHA=$(git rev-list -n 1 ${latest_tag})
-        master_SHA="$(git rev-parse --verify origin/master)"
+        main_SHA="$(git rev-parse --verify origin/main)"
         wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
-        if [[ "${latest_tag_revlist_SHA}" != "${master_SHA}" ]]; then # don't check master push events coming from tags
+        if [[ "${latest_tag_revlist_SHA}" != "${main_SHA}" ]]; then # don't check main push events coming from tags
           if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
             echo "python-build incorrectly named built distribution: ${wheel_name}"
             echo "python-build is lacking the history and tags required to determine version number"
@@ -66,7 +66,7 @@ jobs:
             return 1
           fi
         else
-          echo "Push event to origin/master was triggered by push of tag ${latest_tag}"
+          echo "Push event to origin/main was triggered by push of tag ${latest_tag}"
         fi
         echo "python-build named built distribution: ${wheel_name}"
 
