@@ -55,6 +55,18 @@ Python API
       ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
       ... )
 
+Deprecations
+------------
+
+Python API
+~~~~~~~~~~
+
+* The :func:`pyhf.infer.intervals.upperlimit` API has been deprecated in favor of
+  :func:`pyhf.infer.intervals.upper_limits.upper_limit`.
+  The :func:`pyhf.infer.intervals.upperlimit` API will removed in ``pyhf`` ``v0.9.0``.
+  (PR :pr:`1274`)
+
+
 Contributors
 ------------
 
