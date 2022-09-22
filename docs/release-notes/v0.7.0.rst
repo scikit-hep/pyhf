@@ -30,7 +30,8 @@ Important Notes
 Fixes
 -----
 
-* FIXES HERE
+* Use improvements to `jsonschema.RefResolver` to avoid `jsonschema.exceptions.RefResolutionError`.
+  (PR :pr:`1976`)
 
 Features
 --------
@@ -70,6 +71,15 @@ Python API
   The :func:`pyhf.infer.intervals.upperlimit` API will removed in ``pyhf`` ``v0.9.0``.
   (PR :pr:`1274`)
 
+Removals
+--------
+
+Python API
+~~~~~~~~~~
+
+* The :func:`pyhf.simplemodels.hepdata_like` API, deprecated since ``pyhf``
+  ``v0.6.2``, has been removed.
+  (PR :pr:`1670`)
 
 Contributors
 ------------
