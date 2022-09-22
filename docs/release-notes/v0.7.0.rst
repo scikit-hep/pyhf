@@ -6,7 +6,7 @@ This is a minor release from ``v0.6.3`` → ``v0.7.0``.
 Important Notes
 ---------------
 
-* A `pyhf.default_backend` has been added that is configurable through a
+* A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
 * All backends are now fully compatible and tested with
@@ -33,7 +33,7 @@ Important Notes
 Fixes
 -----
 
-* Use improvements to `jsonschema.RefResolver` to avoid `jsonschema.exceptions.RefResolutionError`.
+* Use improvements to ``jsonschema.RefResolver`` to avoid ``jsonschema.exceptions.RefResolutionError``.
   (PR :pr:`1976`)
 
 Features
