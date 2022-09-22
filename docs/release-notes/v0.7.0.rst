@@ -70,8 +70,8 @@ Python API
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
   This allows setting setting the ``pyhf.default_backend`` to be different from the value of
-  ``pyhf.tensorlib`` returned by :func:`pyhf.get_backend`, which can be useful in situations where
-  a model construction is needed.
+  ``pyhf.tensorlib`` returned by :func:`pyhf.get_backend`, which can be useful in situations
+  where differentiable model construction is needed.
 
   .. code:: pycon
 
@@ -90,6 +90,11 @@ Python API
       DeviceArray([16.], dtype=float64)
       >>> jax.jacrev(jax.jit(example_op))([2.0])
       [DeviceArray([24.], dtype=float64, weak_type=True)]
+
+* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` to allow
+  skipping validation.
+  (PR :pr:`1646`)
+  This should only be used by expert users who understand the risks.
 
 Deprecations
 ------------
