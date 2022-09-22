@@ -6,7 +6,9 @@ This is a minor release from ``v0.6.3`` → ``v0.7.0``.
 Important Notes
 ---------------
 
-* NEW IMPORTANT STUFF GOES HERE
+* All backends are now fully compatible and tested with
+  `Python 3.10 <https://peps.python.org/pep-0310/>`_.
+  (PR :pr:`1809`)
 * The minimum required dependencies have been updated to support added features:
 
    - ``scipy>=1.2.0``
