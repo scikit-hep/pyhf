@@ -9,7 +9,11 @@ Important Notes
 * NEW IMPORTANT STUFF GOES HERE
 * The minimum required dependencies have been updated to support added features:
 
+   - ``scipy>=1.2.0``
    - ``click>=8.0.0``
+   - ``jsonschema>=4.15.0``
+   - ``importlib_resources>=1.4.0`` (for Python 3.7, 3.8)
+   - ``typing_extensions>=3.7.4.3`` (for Python 3.7 only)
 
 * The minimum required backend versions have been updated to support added features:
 
