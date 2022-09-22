@@ -19,8 +19,9 @@ Important Notes
 
    - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61``
    - PyTorch backend requires ``torch>=1.10.0``
-   - TensorFlow backend requires ``tensorflow>=2.7.0``
+   - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0``
    - iminuit optimizer requires ``iminuit>=2.7.0``
+   - xmlio extra requires ``uproot>=4.1.1``
 
 Fixes
 -----
