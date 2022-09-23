@@ -319,6 +319,7 @@ class jax_backend:
         Returns:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
+        .. versionadded:: 0.7.0
         """
         return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
 
@@ -618,5 +619,6 @@ class jax_backend:
         Returns:
             JAX ndarray: The transpose of the input tensor.
 
+        .. versionadded:: 0.7.0
         """
         return tensor_in.transpose()

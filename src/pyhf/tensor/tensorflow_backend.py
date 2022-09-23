@@ -346,6 +346,7 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
+        .. versionadded:: 0.7.0
         """
         return tfp.stats.percentile(
             tensor_in, q, axis=axis, interpolation=interpolation
@@ -718,5 +719,6 @@ class tensorflow_backend:
         Returns:
             TensorFlow Tensor: The transpose of the input tensor.
 
+        .. versionadded:: 0.7.0
         """
         return tf.transpose(tensor_in)
