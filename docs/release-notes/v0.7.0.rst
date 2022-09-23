@@ -68,6 +68,51 @@ Features
 Python API
 ~~~~~~~~~~
 
+* The following functions have been added to the ``pyhf.tensorlib`` API:
+
+
+   - ``pyhf.tensorlib.transpose``
+     (PR :pr:`1696`)
+   - ``pyhf.tensorlib.percentile``
+     (PR :pr:`817`)
+
+* :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
+  (PR :pr:`1909`)
+
+* Add support for overriding the paths for finding schemas, using the ``pyhf``
+  installed location as a base via ``pyhf.utils.schemas``.
+  (PRs :pr:`1753`, :pr:`1818`)
+
+  .. code:: pycon
+
+      >>> from pathlib import Path
+      >>> import pyhf.schema
+      >>> current_schema_path = pyhf.schema.path
+      >>> current_schema_path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+      >>> custom_schema_path = Path("/path/to/custom/pyhf/schema")
+      >>> with pyhf.schema(custom_schema_path):
+      ...     print(repr(pyhf.schema.path))
+      ...
+      PosixPath('/path/to/custom/pyhf/schema')
+      >>> pyhf.schema.path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+
+* In :func:`pyhf.workspace.Workspace.model` the parameter of interest specified
+  in the measurement may now be overridden using the added ``poi_name`` kwarg.
+  (PR :pr:`1636`)
+
+* Support for writing user custom modifiers is added.
+  (PRs :pr:`1625`, :pr:`1644`)
+
+* Add ``{modifier}_builder`` classes for all modifiers.
+  (PRs :pr:`1625`)
+  For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
+
+* When using ``pyhf.writexml`` and the ``normfactor`` parameter config is missing
+  ``inits`` or ``bounds``, fall back to using default values.
+  (PRs :pr:`1819`)
+
 * Supported options for :func:`pyhf.infer.hypotest` can now be passed as kwargs
   through the :func:`pyhf.infer.intervals.upper_limits.upper_limit` API.
   (PR :pr:`1613`)
@@ -89,45 +134,16 @@ Python API
       ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
       ... )
 
-* Add support for overriding the paths for finding schemas, using the ``pyhf``
-  installed location as a base via ``pyhf.utils.schemas``.
-  (PRs :pr:`1753`, :pr:`1818``)
-
-  .. code:: pycon
-
-      >>> from pathlib import Path
-      >>> import pyhf.schema
-      >>> current_schema_path = pyhf.schema.path
-      >>> current_schema_path
-      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
-      >>> custom_schema_path = Path("/path/to/custom/pyhf/schema")
-      >>> with pyhf.schema(custom_schema_path):
-      ...     print(repr(pyhf.schema.path))
-      ...
-      PosixPath('/path/to/custom/pyhf/schema')
-      >>> pyhf.schema.path
-      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
-
-* When using ``pyhf.writexml`` and the ``normfactor`` parameter config is missing
-  ``inits`` or ``bounds``, fall back to using default values.
-  (PRs :pr:`1819`)
-
-* Add ``{modifier}_builder`` classes for all modifiers.
-  (PRs :pr:`1625`)
-  For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
-
-* In :func:`pyhf.workspace.Workspace.model` the parameter of interest specified
-  in the measurement may now be overridden using the added ``poi_name`` kwarg.
-  (PR :pr:`1636`)
-
-* Support for writing user custom modifiers is added.
-  (PRs :pr:`1625`, :pr:`1644`)
-
 * Allow for fit parameter values from required fits in ``pyhf.infer.test_statistics``
   functions to be returned by use of ``return_fitted_pars`` kwarg with the
   ``pyhf.infer.test_statistics`` functions and ``return_calculator`` kwarg with
   :func:`pyhf.infer.hypotest`.
   (PR :pr:`1554`)
+
+* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` and
+  :func:`pyhf.pdf.Model` to allow skipping validation.
+  (PR :pr:`1646`)
+  This should only be used by expert users who understand the risks.
 
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
@@ -153,22 +169,6 @@ Python API
       DeviceArray([16.], dtype=float64)
       >>> jax.jacrev(jax.jit(example_op))([2.0])
       [DeviceArray([24.], dtype=float64, weak_type=True)]
-
-* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` and
-  :func:`pyhf.pdf.Model` to allow skipping validation.
-  (PR :pr:`1646`)
-  This should only be used by expert users who understand the risks.
-
-* The following functions have been added to the ``pyhf.tensorlib`` API:
-
-
-   - ``pyhf.tensorlib.transpose``
-     (PR :pr:`1696`)
-   - ``pyhf.tensorlib.percentile``
-     (PR :pr:`817`)
-
-* :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
-  (PR :pr:`1909`)
 
 * :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
   to exist in the ``spec``.
