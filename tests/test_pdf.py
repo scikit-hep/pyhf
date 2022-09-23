@@ -957,7 +957,7 @@ def test_par_names_scalar_nonscalar():
 
     model = pyhf.Model(spec, poi_name="scalar")
     assert model.config.par_order == ["scalar", "nonscalar"]
-    assert model.config.par_names() == [
+    assert model.config.par_names == [
         'scalar',
         'nonscalar[0]',
     ]
@@ -1159,7 +1159,7 @@ def test_pdf_clipping(backend):
     model = ws.model()
     data = tensorlib.astensor([100.0, 100.0, 10.0, 0.0, 0.0])
 
-    for par_name in model.config.par_names():
+    for par_name in model.config.par_names:
         if "np" in par_name:
             par_values.append(-0.6)  # np_1 / np_2
         else:
