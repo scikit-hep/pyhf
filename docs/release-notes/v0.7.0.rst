@@ -32,8 +32,8 @@ Important Notes
   (PR :pr:`1646`)
   This is as part of work to make ``pyhf`` fully automatic differentiable.
   (Issue :issue:`882`)
-* :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
-  to exist in the ``spec``.
+* Schema validation now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the model specification.
   (PR :pr:`1647`)
 * The minimum required dependencies have been updated to support added features:
 
@@ -171,8 +171,8 @@ Python API
       >>> jax.jacrev(jax.jit(example_op))([2.0])
       [DeviceArray([24.], dtype=float64, weak_type=True)]
 
-* :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
-  to exist in the ``spec``.
+* Schema validation now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the model specification.
   (PR :pr:`1647`)
 
   .. code:: pycon
