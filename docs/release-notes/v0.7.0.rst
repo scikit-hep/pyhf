@@ -47,7 +47,7 @@ Important Notes
    - PyTorch backend requires ``torch>=1.10.0`` (PR :pr:`1657`)
    - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0`` (PRs :pr:`1962`, :pr:`1657`)
    - iminuit optimizer requires ``iminuit>=2.7.0`` (PR :pr:`1895`)
-   - xmlio extra requires ``uproot>=4.1.1`` (PR :pr:`1567`)
+   - ``'xmlio'`` extra requires ``uproot>=4.1.1`` (PR :pr:`1567`)
 
 Fixes
 -----
