@@ -30,8 +30,8 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
    - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/main/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
-* [ ] Watch for a GitHub notification that there is an automatic PR to the
-  [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the Conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
+* [ ] Watch for a GitHub notification that there is an automatic PR to the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the Conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
+   - [ ] Check if any requirements need to be updated by commenting "@conda-grayskull show requirements" on the PR.
    - [ ] Verify the requirements in the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `setup.cfg` and `pyproject.toml`.
 
 ## After Release
@@ -43,5 +43,7 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Make a release for the [`pyhf` tutorial](https://github.com/pyhf/pyhf-tutorial/releases) corresponding to the **previous release** number. This release represents the last version of the tutorial that is guaranteed to work with previous release API.
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
 * [ ] Make a PR to use the new release in the [CUDA enabled Docker images](https://github.com/pyhf/cuda-images).
+* [ ] Open a ticket on the CERN [Software Process and Infrastructure JIRA](https://sft.its.cern.ch/jira/browse/SPI) to update the version of `pyhf` available in the next LCG release.
+   - c.f. the [`v0.6.3` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2086) as an example.
 * [ ] If the release is a **major** or **minor** release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on GitHub's [Release Radar blog](https://github.blog/?s=release+radar).
 * [ ] Close the [release GitHub Project board](https://github.com/scikit-hep/pyhf/projects/).
