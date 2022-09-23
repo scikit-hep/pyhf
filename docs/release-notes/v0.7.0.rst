@@ -24,6 +24,8 @@ Important Notes
   been updated.
   To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
   (PR :pr:`1639`)
+* ``pyhf.pdf._ModelConfig.par_names`` is changed to be a property attribute.
+  (PR :pr:`2027`)
 * The order of model parameters is now sorted by model parameter name.
   (PR :pr:`1625`)
 * Support for writing user custom modifiers is added.
@@ -114,6 +116,9 @@ Python API
   To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
   (PR :pr:`1639`)
 
+* ``pyhf.pdf._ModelConfig.par_names`` is changed to be a property attribute.
+  (PR :pr:`2027`)
+
 * The order of model parameters is now sorted by model parameter name.
   (PR :pr:`1625`)
 
@@ -128,7 +133,7 @@ Python API
       ... )
       >>> model.config.par_order
       ['correlated_bkg_uncertainty', 'mu']
-      >>> model.config.par_names()
+      >>> model.config.par_names
       ['correlated_bkg_uncertainty', 'mu']
 
 * Support for writing user custom modifiers is added.
