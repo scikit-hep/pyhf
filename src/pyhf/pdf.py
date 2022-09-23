@@ -358,6 +358,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         return self.par_map[name]['slice']
 
+    @property
     def par_names(self):
         """
         The names of the parameters in the model including binned-parameter indexing.
@@ -370,7 +371,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
             ... )
-            >>> model.config.par_names()
+            >>> model.config.par_names
             ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
         """
         _names = []

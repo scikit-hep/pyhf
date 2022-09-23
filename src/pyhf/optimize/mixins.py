@@ -181,7 +181,7 @@ class OptimizerMixin:
 
         # handle non-pyhf ModelConfigs
         try:
-            par_names = pdf.config.par_names()
+            par_names = pdf.config.par_names
         except AttributeError:
             par_names = None
 
