@@ -133,6 +133,8 @@ Python API
 
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
+  This is still in the stage where it is `targeted at expert users
+  <https://github.com/scikit-hep/pyhf/issues/850#issuecomment-1239975121>`_.
 
 * ``{modifier}_builder`` classes are added for all modifiers.
   (PRs :pr:`1625`)
