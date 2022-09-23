@@ -325,6 +325,7 @@ class pytorch_backend:
         Returns:
             PyTorch tensor: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
+        .. versionadded:: 0.7.0
         """
         # Interpolation options not yet supported
         # c.f. https://github.com/pytorch/pytorch/pull/49267
@@ -621,5 +622,6 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: The transpose of the input tensor.
 
+        .. versionadded:: 0.7.0
         """
         return tensor_in.transpose(0, 1)

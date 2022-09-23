@@ -335,6 +335,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
+        .. versionadded:: 0.7.0
         """
         # see https://github.com/numpy/numpy/issues/22125
         return np.percentile(tensor_in, q, axis=axis, interpolation=interpolation)  # type: ignore[call-overload,no-any-return]
@@ -637,5 +638,6 @@ class numpy_backend(Generic[T]):
         Returns:
             :class:`numpy.ndarray`: The transpose of the input tensor.
 
+        .. versionadded:: 0.7.0
         """
         return tensor_in.transpose()
