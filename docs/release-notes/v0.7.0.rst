@@ -23,6 +23,8 @@ Important Notes
 * Performance in :class:`pyhf.readxml` is increased by improvements to
   :func:`pyhf.readxml.import_root_histogram`.
   (PR :pr:`1691`)
+* Support for model specifications without a parameter of interest defined is added.
+  (PRs :pr:`1638`, :pr:`1636`)
 * :func:`pyhf.contrib.utils.download` is now more robust to different target file types.
   (PRs :pr:`1697`, :pr:`1704`)
 * A ``pyhf.default_backend`` has been added that is configurable through a
@@ -90,6 +92,10 @@ Python API
 * Add ``{modifier}_builder`` classes for all modifiers.
   (PRs :pr:`1625`)
   For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
+
+* In :func:`pyhf.workspace.Workspace.model` the parameter of interest specified
+  in the measurement may now be overridden using the added ``poi_name`` kwarg.
+  (PR :pr:`1636`)
 
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
@@ -195,6 +201,9 @@ Python API
 * :class:`pyhf.workspace.Workspace`'s ``parameters`` attribute is removed in favor of
   using :class:`pyhf.pdf._ModelConfig`'s ``parameters``.
   (PR :pr:`1625`)
+
+* :func:`pyhf.workspace.Workspace.get_measurement` has the ``poi_name`` kwarg removed.
+  (PR :pr:`1636`)
 
 Contributors
 ------------
