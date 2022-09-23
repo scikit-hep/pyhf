@@ -16,7 +16,7 @@ Important Notes
   that the limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
   (PR :pr:`1657`)
 * :func:`pyhf.readxml.parse` now supports reading of XML configurations with absolute paths.
-  To support this, ``pyhf xlm2json`` now has ``-v/--mount`` options.
+  To support this, ``pyhf xlm2json`` now has a ``-v/--mount`` option.
   (PR :pr:`1909`)
 * Support for model specifications without a parameter of interest defined is added.
   (PRs :pr:`1638`, :pr:`1636`)
@@ -78,7 +78,7 @@ Python API
   with the addition of the ``mounts`` optional argument.
   (PR :pr:`1909`)
 
-* Add support for overriding the paths for finding schemas, using the ``pyhf``
+* Support for overriding the paths for finding schemas is added, using the ``pyhf``
   installed location as a base via ``pyhf.utils.schemas``.
   (PRs :pr:`1753`, :pr:`1818`)
 
@@ -104,7 +104,7 @@ Python API
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
 
-* Add ``{modifier}_builder`` classes for all modifiers.
+* ``{modifier}_builder`` classes are added for all modifiers.
   (PRs :pr:`1625`)
   For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
 
@@ -147,7 +147,7 @@ Python API
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
-  This allows setting setting the ``pyhf.default_backend`` to be different from the value of
+  This allows setting the ``pyhf.default_backend`` to be different from the value of
   ``pyhf.tensorlib`` returned by :func:`pyhf.get_backend`, which can be useful in situations
   where differentiable model construction is needed.
 
