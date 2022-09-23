@@ -373,6 +373,8 @@ class _ModelConfig(_ChannelSummaryMixin):
             ... )
             >>> model.config.par_names
             ['mu', 'uncorr_bkguncrt[0]', 'uncorr_bkguncrt[1]']
+
+        .. versionchanged:: 0.7.0 Changed from method to property attribute.
         """
         _names = []
         for name in self.par_order:
