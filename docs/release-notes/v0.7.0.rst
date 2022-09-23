@@ -11,9 +11,6 @@ Important Notes
 * All backends are now fully compatible and tested with
   `Python 3.10 <https://peps.python.org/pep-0310/>`_.
   (PR :pr:`1809`)
-* A ``pyhf.default_backend`` has been added that is configurable through a
-  ``default`` kwarg in :func:`pyhf.set_backend`.
-  (PR :pr:`1646`)
 * The ``pyhf.tensorlib.poisson`` API now allows for the expected rate parameter
   ``lam`` to be ``0`` in the case that the observed events ``n`` is ``0`` given
   that the limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
@@ -26,6 +23,12 @@ Important Notes
   (PR :pr:`1691`)
 * :func:`pyhf.contrib.utils.download` is now more robust to different target file types.
   (PRs :pr:`1697`, :pr:`1704`)
+* A ``pyhf.default_backend`` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
+* :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the ``spec``.
+  (PR :pr:`1647`)
 * The minimum required dependencies have been updated to support added features:
 
    - ``scipy>=1.2.0``
@@ -115,6 +118,21 @@ Python API
 
 * :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
   (PR :pr:`1909`)
+
+* :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the ``spec``.
+  (PR :pr:`1647`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> signal = pyhf.tensorlib.astensor([12.0, 11.0])
+      >>> background = pyhf.tensorlib.astensor([50.0, 52.0])
+      >>> background_uncertainty = pyhf.tensorlib.astensor([3.0, 7.0])
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=signal, bkg=background, bkg_uncertainty=background_uncertainty
+      ... )
+
 
 CLI API
 ~~~~~~~
