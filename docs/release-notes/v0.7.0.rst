@@ -24,6 +24,8 @@ Important Notes
   been updated.
   To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
   (PR :pr:`1639`)
+* The order of model parameters is now sorted by model parameter name.
+  (PR :pr:`1625`)
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
 * Performance in :class:`pyhf.readxml` is increased by improvements to
@@ -111,6 +113,23 @@ Python API
   been updated to return a :class:`list` of :class:`bool` of length ``n_parameters``.
   To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
   (PR :pr:`1639`)
+
+* The order of model parameters is now sorted by model parameter name.
+  (PR :pr:`1625`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> model = pyhf.simplemodels.correlated_background(
+      ...     signal=[12.0, 11.0],
+      ...     bkg=[50.0, 52.0],
+      ...     bkg_up=[45.0, 57.0],
+      ...     bkg_down=[55.0, 47.0],
+      ... )
+      >>> model.config.par_order
+      ['correlated_bkg_uncertainty', 'mu']
+      >>> model.config.par_names()
+      ['correlated_bkg_uncertainty', 'mu']
 
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
