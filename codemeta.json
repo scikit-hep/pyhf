@@ -108,12 +108,12 @@
             "version": ">=5.1"
         },
         {
-            "@id": "/dependency/scipy-ge-1.1.0",
+            "@id": "/dependency/scipy-ge-1.2.0",
             "@type": "SoftwareApplication",
             "identifier": "scipy",
             "name": "scipy",
             "runtimePlatform": "Python 3",
-            "version": ">=1.1.0"
+            "version": ">=1.2.0"
         },
         {
             "@id": "/dependency/tqdm-ge-4.56.0",
