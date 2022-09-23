@@ -152,6 +152,7 @@ Python API
 * The :func:`pyhf.simplemodels.hepdata_like` API, deprecated since ``pyhf``
   ``v0.6.2``, has been removed.
   (PR :pr:`1670`)
+  Use the :func:`pyhf.simplemodels.uncorrelated_background` API instead.
 
 Contributors
 ------------
