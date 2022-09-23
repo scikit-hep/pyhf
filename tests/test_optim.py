@@ -1,3 +1,4 @@
+from unittest.mock import patch, PropertyMock
 import pyhf
 from pyhf.optimize.mixins import OptimizerMixin
 from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
@@ -576,7 +577,10 @@ def test_minuit_param_names(mocker):
     assert 'minuit' in result
     assert result.minuit.parameters == ('mu', 'uncorr_bkguncrt[0]')
 
-    pdf.config.par_names = mocker.Mock(return_value=None)
-    _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
-    assert 'minuit' in result
-    assert result.minuit.parameters == ('x0', 'x1')
+    with patch(
+        "pyhf.pdf._ModelConfig.par_names", new_callable=PropertyMock
+    ) as mock_par_names:
+        mock_par_names.return_value = None
+        _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
+        assert "minuit" in result
+        assert result.minuit.parameters == ("x0", "x1")
