@@ -30,6 +30,8 @@ Important Notes
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
+  This is as part of work to make ``pyhf`` fully automatic differentiable.
+  (Issue :issue:`882`)
 * :func:`pyhf.pdf.Model` now allows for both :class:`list` and ``pyhf.tensorlib`` objects
   to exist in the ``spec``.
   (PR :pr:`1647`)
