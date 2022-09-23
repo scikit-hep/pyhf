@@ -35,19 +35,19 @@ Important Notes
   (PR :pr:`1647`)
 * The minimum required dependencies have been updated to support added features:
 
-   - ``scipy>=1.2.0``
-   - ``click>=8.0.0``
-   - ``jsonschema>=4.15.0``
-   - ``importlib_resources>=1.4.0`` (for Python 3.7, 3.8)
-   - ``typing_extensions>=3.7.4.3`` (for Python 3.7 only)
+   - ``scipy>=1.2.0`` (PR :pr:`1274`)
+   - ``click>=8.0.0`` (PRs :pr:`1909`, :pr:`1958`)
+   - ``jsonschema>=4.15.0`` (PRs :pr:`1976`, :pr:`1979`)
+   - ``importlib_resources>=1.4.0`` (for Python 3.7, 3.8) (PR :pr:`1979`)
+   - ``typing_extensions>=3.7.4.3`` (for Python 3.7 only) (PRs :pr:`1940`, :pr:`1961`)
 
 * The minimum required backend versions have been updated to support added features:
 
-   - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61``
-   - PyTorch backend requires ``torch>=1.10.0``
-   - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0``
-   - iminuit optimizer requires ``iminuit>=2.7.0``
-   - xmlio extra requires ``uproot>=4.1.1``
+   - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61`` (PR :pr:`1962`)
+   - PyTorch backend requires ``torch>=1.10.0`` (PR :pr:`1657`)
+   - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0`` (PRs :pr:`1962`, :pr:`1657`)
+   - iminuit optimizer requires ``iminuit>=2.7.0`` (PR :pr:`1895`)
+   - xmlio extra requires ``uproot>=4.1.1`` (PR :pr:`1567`)
 
 Fixes
 -----
@@ -71,10 +71,8 @@ Python API
 * The following functions have been added to the ``pyhf.tensorlib`` API:
 
 
-   - ``pyhf.tensorlib.transpose``
-     (PR :pr:`1696`)
-   - ``pyhf.tensorlib.percentile``
-     (PR :pr:`817`)
+   - ``pyhf.tensorlib.transpose`` (PR :pr:`1696`)
+   - ``pyhf.tensorlib.percentile`` (PR :pr:`817`)
 
 * :func:`pyhf.readxml.parse` now supports reading of XML configurations with absolute paths
   with the addition of the ``mounts`` optional argument.
