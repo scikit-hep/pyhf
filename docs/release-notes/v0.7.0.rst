@@ -89,6 +89,25 @@ Python API
       ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
       ... )
 
+* Add support for overriding the paths for finding schemas, using the ``pyhf``
+  installed location as a base via ``pyhf.utils.schemas``.
+  (PRs :pr:`1753`, :pr:`1818``)
+
+  .. code:: pycon
+
+      >>> from pathlib import Path
+      >>> import pyhf.schema
+      >>> current_schema_path = pyhf.schema.path
+      >>> current_schema_path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+      >>> custom_schema_path = Path("/path/to/custom/pyhf/schema")
+      >>> with pyhf.schema(custom_schema_path):
+      ...     print(repr(pyhf.schema.path))
+      ...
+      PosixPath('/path/to/custom/pyhf/schema')
+      >>> pyhf.schema.path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+
 * Add ``{modifier}_builder`` classes for all modifiers.
   (PRs :pr:`1625`)
   For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
