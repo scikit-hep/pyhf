@@ -20,6 +20,10 @@ Important Notes
   (PR :pr:`1909`)
 * Support for model specifications without a parameter of interest defined is added.
   (PRs :pr:`1638`, :pr:`1636`)
+* The :class:`pyhf.parameters.paramsets` classes ``suggested_fixed`` attribute behavior has
+  been updated.
+  To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
+  (PR :pr:`1639`)
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
 * Performance in :class:`pyhf.readxml` is increased by improvements to
@@ -102,6 +106,11 @@ Python API
 * In :func:`pyhf.workspace.Workspace.model` the parameter of interest specified
   in the measurement may now be overridden using the added ``poi_name`` kwarg.
   (PR :pr:`1636`)
+
+* The :class:`pyhf.parameters.paramsets` classes ``suggested_fixed`` attribute behavior has
+  been updated to return a :class:`list` of :class:`bool` of length ``n_parameters``.
+  To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
+  (PR :pr:`1639`)
 
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
