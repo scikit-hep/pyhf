@@ -14,9 +14,9 @@ Important Notes
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
-* :func:`pyhf.tensorlib.poisson` now allows for the expected rate parameter ``lam``
-  to be ``0`` in the case that the observed events ``n`` is ``0`` given that the
-  limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
+* The ``pyhf.tensorlib.poisson`` API now allows for the expected rate parameter
+  ``lam`` to be ``0`` in the case that the observed events ``n`` is ``0`` given
+  that the limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
   (PR :pr:`1657`)
 * :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
   To support this, ``pyhf xlm2json`` now has ``-v/--mount`` options.
@@ -108,9 +108,9 @@ Python API
 * The following functions have been added to the ``pyhf.tensorlib`` API:
 
 
-   - :func:`pyhf.tensorlib.transpose`
+   - ``pyhf.tensorlib.transpose``
      (PR :pr:`1696`)
-   - :func:`pyhf.tensorlib.percentile`
+   - ``pyhf.tensorlib.percentile``
      (PR :pr:`817`)
 
 * :class:`pyhf.readxml` now supports reading of XML configurations with absolute paths.
