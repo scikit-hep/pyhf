@@ -108,6 +108,10 @@ Python API
       >>> pyhf.schema.path
       PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
 
+* When using ``pyhf.writexml`` and the ``normfactor`` parameter config is missing
+  ``inits`` or ``bounds``, fall back to using default values.
+  (PRs :pr:`1819`)
+
 * Add ``{modifier}_builder`` classes for all modifiers.
   (PRs :pr:`1625`)
   For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
