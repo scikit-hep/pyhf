@@ -100,6 +100,12 @@ Python API
 * Support for writing user custom modifiers is added.
   (PRs :pr:`1625`, :pr:`1644`)
 
+* Allow for fit parameter values from required fits in ``pyhf.infer.test_statistics``
+  functions to be returned by use of ``return_fitted_pars`` kwarg with the
+  ``pyhf.infer.test_statistics`` functions and ``return_calculator`` kwarg with
+  :func:`pyhf.infer.hypotest`.
+  (PR :pr:`1554`)
+
 * A ``pyhf.default_backend`` has been added that is configurable through a
   ``default`` kwarg in :func:`pyhf.set_backend`.
   (PR :pr:`1646`)
