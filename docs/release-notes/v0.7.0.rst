@@ -1,0 +1,291 @@
+|release v0.7.0|_
+=================
+
+This is a minor release from ``v0.6.3`` → ``v0.7.0``.
+
+Important Notes
+---------------
+
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.7.0`` API.
+* All backends are now fully compatible and tested with
+  `Python 3.10 <https://peps.python.org/pep-0310/>`_.
+  (PR :pr:`1809`)
+* The ``pyhf.tensorlib.poisson`` API now allows for the expected rate parameter
+  ``lam`` to be ``0`` in the case that the observed events ``n`` is ``0`` given
+  that the limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
+  (PR :pr:`1657`)
+* :func:`pyhf.readxml.parse` now supports reading of XML configurations with absolute paths.
+  To support this, ``pyhf xlm2json`` now has a ``-v/--mount`` option.
+  (PR :pr:`1909`)
+* Support for model specifications without a parameter of interest defined is added.
+  (PRs :pr:`1638`, :pr:`1636`)
+* The :class:`pyhf.parameters.paramsets` classes ``suggested_fixed`` attribute behavior has
+  been updated.
+  To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
+  (PR :pr:`1639`)
+* ``pyhf.pdf._ModelConfig.par_names`` is changed to be a property attribute.
+  (PR :pr:`2027`)
+* The order of model parameters is now sorted by model parameter name.
+  (PR :pr:`1625`)
+* Support for writing user custom modifiers is added.
+  (PRs :pr:`1625`, :pr:`1644`)
+* Performance in :class:`pyhf.readxml` is increased by improvements to
+  :func:`pyhf.readxml.import_root_histogram`.
+  (PR :pr:`1691`)
+* :func:`pyhf.contrib.utils.download` is now more robust to different target file types.
+  (PRs :pr:`1697`, :pr:`1704`)
+* A ``pyhf.default_backend`` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
+  This is part of work to make ``pyhf`` fully automatic differentiable.
+  (Issue :issue:`882`)
+* Schema validation now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the model specification.
+  (PR :pr:`1647`)
+* The minimum required dependencies have been updated to support added features:
+
+   - ``scipy>=1.2.0`` (PR :pr:`1274`)
+   - ``click>=8.0.0`` (PRs :pr:`1909`, :pr:`1958`)
+   - ``jsonschema>=4.15.0`` (PRs :pr:`1976`, :pr:`1979`)
+   - ``importlib_resources>=1.4.0`` (for Python 3.7, 3.8) (PR :pr:`1979`)
+   - ``typing_extensions>=3.7.4.3`` (for Python 3.7 only) (PRs :pr:`1940`, :pr:`1961`)
+
+* The minimum required backend versions have been updated to support added features:
+
+   - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61`` (PR :pr:`1962`)
+   - PyTorch backend requires ``torch>=1.10.0`` (PR :pr:`1657`)
+   - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0`` (PRs :pr:`1962`, :pr:`1657`)
+   - iminuit optimizer requires ``iminuit>=2.7.0`` (PR :pr:`1895`)
+   - ``'xmlio'`` extra requires ``uproot>=4.1.1`` (PR :pr:`1567`)
+
+Fixes
+-----
+
+* Use improvements to ``jsonschema.RefResolver`` to avoid
+  ``jsonschema.exceptions.RefResolutionError``.
+  (PR :pr:`1976`)
+
+* Use the conditional maximum likelihood estimators of the nuisance parameters
+  to create the sampling distributions for :class:`pyhf.infer.calculators.ToyCalculator`.
+  (PR :pr:`1610`)
+  This follows the joint recommendations of the ATLAS and CMS experiments in
+  |LHC Higgs search combination procedure|_.
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* The following functions have been added to the ``pyhf.tensorlib`` API:
+
+
+   - ``pyhf.tensorlib.transpose`` (PR :pr:`1696`)
+   - ``pyhf.tensorlib.percentile`` (PR :pr:`817`)
+
+* :func:`pyhf.readxml.parse` now supports reading of XML configurations with absolute paths
+  with the addition of the ``mounts`` optional argument.
+  (PR :pr:`1909`)
+
+* Support for overriding the paths for finding schemas is added, using the ``pyhf``
+  installed location as a base via ``pyhf.utils.schemas``.
+  (PRs :pr:`1753`, :pr:`1818`)
+
+  .. code:: pycon
+
+      >>> from pathlib import Path
+      >>> import pyhf.schema
+      >>> current_schema_path = pyhf.schema.path
+      >>> current_schema_path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+      >>> custom_schema_path = Path("/path/to/custom/pyhf/schema")
+      >>> with pyhf.schema(custom_schema_path):
+      ...     print(repr(pyhf.schema.path))
+      ...
+      PosixPath('/path/to/custom/pyhf/schema')
+      >>> pyhf.schema.path
+      PosixPath('/path/to/your/venv/lib/python3.X/site-packages/pyhf/schemas')
+
+* In :func:`pyhf.workspace.Workspace.model` the parameter of interest specified
+  in the measurement may now be overridden using the added ``poi_name`` kwarg.
+  (PR :pr:`1636`)
+
+* The :class:`pyhf.parameters.paramsets` classes ``suggested_fixed`` attribute behavior has
+  been updated to return a :class:`list` of :class:`bool` of length ``n_parameters``.
+  To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
+  (PR :pr:`1639`)
+
+* ``pyhf.pdf._ModelConfig.par_names`` is changed to be a property attribute.
+  (PR :pr:`2027`)
+
+* The order of model parameters is now sorted by model parameter name.
+  (PR :pr:`1625`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> model = pyhf.simplemodels.correlated_background(
+      ...     signal=[12.0, 11.0],
+      ...     bkg=[50.0, 52.0],
+      ...     bkg_up=[45.0, 57.0],
+      ...     bkg_down=[55.0, 47.0],
+      ... )
+      >>> model.config.par_order
+      ['correlated_bkg_uncertainty', 'mu']
+      >>> model.config.par_names
+      ['correlated_bkg_uncertainty', 'mu']
+
+* Support for writing user custom modifiers is added.
+  (PRs :pr:`1625`, :pr:`1644`)
+  This is still in the stage where it is `targeted at expert users
+  <https://github.com/scikit-hep/pyhf/issues/850#issuecomment-1239975121>`_.
+
+* ``{modifier}_builder`` classes are added for all modifiers.
+  (PRs :pr:`1625`)
+  For example, :class:`pyhf.modifiers.histosys.histosys_builder`.
+
+* When using ``pyhf.writexml`` and the ``normfactor`` parameter config is missing
+  ``inits`` or ``bounds``, fall back to using default values.
+  (PRs :pr:`1819`)
+
+* Supported options for :func:`pyhf.infer.hypotest` can now be passed as kwargs
+  through the :func:`pyhf.infer.intervals.upper_limits.upper_limit` API.
+  (PR :pr:`1613`)
+  This now enables things like using :class:`pyhf.infer.calculators.ToyCalculator`
+  as the calculator used for the hypothesis test scan:
+
+  .. code:: pycon
+
+      >>> import numpy as np
+      >>> import pyhf
+      >>> pyhf.set_backend("jax")
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+      ... )
+      >>> observations = [51, 48]
+      >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
+      >>> scan = np.linspace(0, 5, 21)
+      >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
+      ...     data, model, scan, return_results=True, calctype="toybased", ntoys=3000
+      ... )
+
+* Allow for fit parameter values from required fits in ``pyhf.infer.test_statistics``
+  functions to be returned by use of ``return_fitted_pars`` kwarg with the
+  ``pyhf.infer.test_statistics`` functions and ``return_calculator`` kwarg with
+  :func:`pyhf.infer.hypotest`.
+  (PR :pr:`1554`)
+
+* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace` and
+  :func:`pyhf.pdf.Model` to allow skipping validation.
+  (PR :pr:`1646`)
+  This should only be used by expert users who understand the risks.
+
+* A ``pyhf.default_backend`` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
+  This allows setting the ``pyhf.default_backend`` to be different from the value of
+  ``pyhf.tensorlib`` returned by :func:`pyhf.get_backend`, which can be useful in situations
+  where differentiable model construction is needed.
+
+  .. code:: pycon
+
+      >>> import jax
+      >>> import pyhf
+      >>> pyhf.set_backend("jax", default=True)
+      >>> pyhf.set_backend("numpy")
+      >>> pyhf.get_backend()
+      (<pyhf.tensor.numpy_backend.numpy_backend object at 0x...>, <pyhf.optimize.scipy_optimizer object at 0x...>)
+      >>> pyhf.default_backend
+      <pyhf.tensor.jax_backend.jax_backend object at 0x...>
+      >>> def example_op(x):
+      ...     return 2 * pyhf.default_backend.power(pyhf.default_backend.astensor(x), 3)
+      ...
+      >>> example_op([2.0])
+      DeviceArray([16.], dtype=float64)
+      >>> jax.jacrev(jax.jit(example_op))([2.0])
+      [DeviceArray([24.], dtype=float64, weak_type=True)]
+
+* Schema validation now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the model specification.
+  (PR :pr:`1647`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> signal = pyhf.tensorlib.astensor([12.0, 11.0])
+      >>> background = pyhf.tensorlib.astensor([50.0, 52.0])
+      >>> background_uncertainty = pyhf.tensorlib.astensor([3.0, 7.0])
+      >>> model = pyhf.simplemodels.uncorrelated_background(
+      ...     signal=signal, bkg=background, bkg_uncertainty=background_uncertainty
+      ... )
+
+
+CLI API
+~~~~~~~
+
+* The ``pyhf xlm2json`` CLI API now has a ``-v/--mount`` option to support reading
+  XML configurations with absolute paths.
+  (PR :pr:`1909`)
+  Similar to Docker volume mounts, the options allows a user to pass two fields
+  separated by a colon (``:``).
+  The first field is a local path and the second field is the absolute path specified
+  in the XML configuration to be substituted.
+  Without the ``-v/--mount`` option a user would have to manually edit the absolute
+  path in each XML file it appeared in!
+
+  .. code:: console
+
+      pyhf xml2json \
+          --mount /local/path/to/workspace:/absolute/path/to/replace/inside/xml \
+          --output-file workspace.json \
+          workspace/analysis_config.xml
+
+Deprecations
+------------
+
+Python API
+~~~~~~~~~~
+
+* The :func:`pyhf.infer.intervals.upperlimit` API has been deprecated in favor of
+  :func:`pyhf.infer.intervals.upper_limits.upper_limit`.
+  The :func:`pyhf.infer.intervals.upperlimit` API will removed in ``pyhf`` ``v0.9.0``.
+  (PR :pr:`1274`)
+
+Removals
+--------
+
+Python API
+~~~~~~~~~~
+
+* The :func:`pyhf.simplemodels.hepdata_like` API, deprecated since ``pyhf``
+  ``v0.6.2``, has been removed.
+  (PR :pr:`1670`)
+  Use the :func:`pyhf.simplemodels.uncorrelated_background` API instead.
+
+* :class:`pyhf.workspace.Workspace`'s ``parameters`` attribute is removed in favor of
+  using :class:`pyhf.pdf._ModelConfig`'s ``parameters``.
+  (PR :pr:`1625`)
+
+* :func:`pyhf.workspace.Workspace.get_measurement` has the ``poi_name`` kwarg removed.
+  (PR :pr:`1636`)
+
+Contributors
+------------
+
+``v0.7.0`` benefited from contributions from:
+
+* Alexander Held
+* Mason Proffitt
+* Lars Henkelmann
+* Aryan Roy
+* Graeme Watt
+* Jerry Ling
+* Nathan Simpson
+* Beojan Stanislaus
+
+.. |release v0.7.0| replace:: ``v0.7.0``
+.. _`release v0.7.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0
+
+.. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
+.. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
