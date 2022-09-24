@@ -13,10 +13,6 @@ build:
   apt_packages:
     - curl
     - jq
-  # https://docs.readthedocs.io/en/latest/build-customization.html
-  jobs:
-    pre_build:
-      - python -m sphinx -b linkcheck docs/ _build/linkcheck
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
