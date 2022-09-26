@@ -62,7 +62,7 @@ def test_diffable_backend_failure():
     with pytest.raises(
         (
             ValueError,
-            jax._src.errors.TracerArrayConversionError,
+            jax.errors.TracerArrayConversionError,
             jax.errors.ConcretizationTypeError,
         )
     ):
@@ -73,7 +73,7 @@ def test_diffable_backend_failure():
         z = pyhf.tensorlib.sum(y)
         return z
 
-    with pytest.raises(jax._src.errors.TracerArrayConversionError):
+    with pytest.raises(jax.errors.TracerArrayConversionError):
         jax.jacrev(example_op2)(pyhf.tensorlib.astensor([2.0, 3.0]))
 
 
