@@ -109,7 +109,7 @@ class minuit_optimizer(OptimizerMixin):
         tolerance = options.pop('tolerance', self.tolerance)
         if options:
             raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(options.keys())}."
+                f"Unsupported options were passed in: {list(options)}."
             )
 
         minimizer.strategy = strategy

@@ -248,7 +248,7 @@ class tensorflow_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
                 exc_info=True,
             )
             raise
@@ -260,7 +260,7 @@ class tensorflow_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap.keys())}.",
+                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
                 exc_info=True,
             )
             raise

@@ -99,7 +99,7 @@ def toms748_scan(
 
     def best_bracket(limit):
         # return best bracket
-        ks = np.asarray(list(cache.keys()))
+        ks = np.asarray(list(cache))
         vals = np.asarray(
             [
                 value[0] - level if limit == 0 else value[1][limit - 1] - level
@@ -136,7 +136,7 @@ def toms748_scan(
         for idx in range(1, 6)
     ]
     if from_upper_limit_fn:
-        return obs, exp, (list(cache.keys()), list(cache.values()))
+        return obs, exp, (list(cache), list(cache.values()))
     return obs, exp
 
 

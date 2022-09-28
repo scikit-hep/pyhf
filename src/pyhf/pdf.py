@@ -123,7 +123,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
             for x in s['modifiers']:
                 if x['type'] not in modifier_set:
                     raise exceptions.InvalidModifier(
-                        f'{x["type"]} not among {list(modifier_set.keys())}'
+                        f'{x["type"]} not among {list(modifier_set)}'
                     )
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
@@ -229,7 +229,7 @@ class _ModelConfig(_ChannelSummaryMixin):
 
         if config_kwargs:
             raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
+                f"Unsupported options were passed in: {list(config_kwargs)}."
             )
 
         # prefixed with underscore are documented via @property
@@ -291,7 +291,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         self._create_and_register_paramsets(_required_paramsets)
         self.npars = len(self.suggested_init())
-        self.parameters = sorted(k for k in self.par_map.keys())
+        self.parameters = sorted(k for k in self.par_map)
 
     def set_auxinfo(self, auxdata, auxdata_order):
         """

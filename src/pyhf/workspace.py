@@ -320,7 +320,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         if config_kwargs:
             raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(config_kwargs.keys())}."
+                f"Unsupported options were passed in: {list(config_kwargs)}."
             )
 
     def __eq__(self, other):

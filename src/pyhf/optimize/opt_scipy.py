@@ -76,7 +76,7 @@ class scipy_optimizer(OptimizerMixin):
         solver_options = options.pop('solver_options', self.solver_options)
         if options:
             raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(options.keys())}."
+                f"Unsupported options were passed in: {list(options)}."
             )
 
         fixed_vals = fixed_vals or []
