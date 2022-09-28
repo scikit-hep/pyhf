@@ -28,7 +28,7 @@ class OptimizerMixin:
 
         if kwargs:
             raise exceptions.Unsupported(
-                f"Unsupported kwargs were passed in: {list(kwargs.keys())}."
+                f"Unsupported kwargs were passed in: {list(kwargs)}."
             )
 
     def _internal_minimize(

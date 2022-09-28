@@ -44,4 +44,4 @@ def test_channel_nbins_sorted_as_channels(spec):
     spec["channels"][-1]["name"] = "a_make_first_in_sort_channel2"
     mixin = pyhf.mixins._ChannelSummaryMixin(channels=spec["channels"])
     assert mixin.channels == ["a_make_first_in_sort_channel2", "channel1"]
-    assert list(mixin.channel_nbins.keys()) == mixin.channels
+    assert list(mixin.channel_nbins) == mixin.channels

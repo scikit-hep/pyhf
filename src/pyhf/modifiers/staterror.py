@@ -78,7 +78,7 @@ class staterror_builder:
                         + f" has 'data' of length {_uncrt_len}."
                     )
 
-        for modname in self.builder_data.keys():
+        for modname in self.builder_data:
             parname = modname.split('/')[1]
 
             nomsall = default_backend.sum(

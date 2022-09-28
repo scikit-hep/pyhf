@@ -11,7 +11,7 @@ from jsonschema import ValidationError
 
 def assert_equal_dictionary(d1, d2):
     "recursively compare 2 dictionaries"
-    for k in d1.keys():
+    for k in d1:
         assert k in d2
         if isinstance(d1[k], dict):
             assert_equal_dictionary(d1[k], d2[k])
