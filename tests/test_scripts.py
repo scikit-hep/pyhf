@@ -387,7 +387,7 @@ def test_inspect_outfile(tmpdir, script_runner):
         'parameters',
         'samples',
         'systematics',
-    ] == sorted(summary.keys())
+    ] == sorted(summary)
     assert len(summary['channels']) == 1
     assert len(summary['measurements']) == 4
     assert len(summary['modifiers']) == 6
