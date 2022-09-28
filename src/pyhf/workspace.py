@@ -539,25 +539,25 @@ class Workspace(_ChannelSummaryMixin, dict):
                     f"{modifier_type} is not one of the modifier types in this workspace."
                 )
 
-        for modifier_name in (*prune_modifiers, *rename_modifiers.keys()):
+        for modifier_name in (*prune_modifiers, *rename_modifiers):
             if modifier_name not in dict(self.modifiers):
                 raise exceptions.InvalidWorkspaceOperation(
                     f"{modifier_name} is not one of the modifiers in this workspace."
                 )
 
-        for sample_name in (*prune_samples, *rename_samples.keys()):
+        for sample_name in (*prune_samples, *rename_samples):
             if sample_name not in self.samples:
                 raise exceptions.InvalidWorkspaceOperation(
                     f"{sample_name} is not one of the samples in this workspace."
                 )
 
-        for channel_name in (*prune_channels, *rename_channels.keys()):
+        for channel_name in (*prune_channels, *rename_channels):
             if channel_name not in self.channels:
                 raise exceptions.InvalidWorkspaceOperation(
                     f"{channel_name} is not one of the channels in this workspace."
                 )
 
-        for measurement_name in (*prune_measurements, *rename_measurements.keys()):
+        for measurement_name in (*prune_measurements, *rename_measurements):
             if measurement_name not in self.measurement_names:
                 raise exceptions.InvalidWorkspaceOperation(
                     f"{measurement_name} is not one of the measurements in this workspace."
