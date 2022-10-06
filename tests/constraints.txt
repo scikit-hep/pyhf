@@ -1,5 +1,5 @@
 # core
-scipy==1.2.0  # c.f. PR #1274
+scipy==1.3.2  # c.f. PR #???
 click==8.0.0  # c.f. PR #1958, #1909
 tqdm==4.56.0
 jsonschema==4.15.0  # c.f. PR #1979
