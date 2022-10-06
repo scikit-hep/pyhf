@@ -9,7 +9,7 @@ local_scheme = "no-local-version"
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38']
+target-version = ['py38', 'py39', 'py310']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''
@@ -96,7 +96,7 @@ filterwarnings = [
 pyupgrade = 1
 
 [tool.nbqa.addopts]
-pyupgrade = ["--py37-plus"]
+pyupgrade = ["--py38-plus"]
 
 [tool.mypy]
 files = "src"
