@@ -1,7 +1,15 @@
 import os
-from typing import Any, MutableSequence, Sequence, Tuple, Union
-
-from typing import Literal, Protocol, SupportsIndex, TypedDict
+from typing import (
+    Any,
+    Literal,
+    MutableSequence,
+    Protocol,
+    Sequence,
+    SupportsIndex,
+    Tuple,
+    TypedDict,
+    Union,
+)
 
 __all__ = (
     "PathOrStr",
