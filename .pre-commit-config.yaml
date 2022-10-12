@@ -30,7 +30,7 @@ repos:
     rev: v2.38.2
     hooks:
     - id: pyupgrade
-      args: ["--py37-plus"]
+      args: ["--py38-plus"]
 
 -   repo: https://github.com/MarcoGorelli/absolufy-imports
     rev: v0.3.1
@@ -66,11 +66,11 @@ repos:
     hooks:
       - &mypy
         id: mypy
-        name: mypy with Python 3.7
+        name: mypy with Python 3.8
         files: src
         additional_dependencies:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
-        args: ["--python-version=3.7"]
+        args: ["--python-version=3.8"]
       - <<: *mypy
         name: mypy with Python 3.10
         args: ["--python-version=3.10"]
