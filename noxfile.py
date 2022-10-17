@@ -22,14 +22,14 @@ def lint(session):
 
 
 @nox.session(python=ALL_PYTHONS, reuse_venv=True)
-def test(session):
+def tests(session):
     """
     Run the unit and regular tests.
     Specify a particular Python version with --python option.
 
     Example:
 
-        $ nox --session test --python 3.10
+        $ nox --session tests --python 3.10
     """
     session.install("-e", ".[backends,contrib,test]")
     args = ["--mpl"] if sys.platform.startswith("linux") else []
