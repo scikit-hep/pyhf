@@ -48,6 +48,10 @@ def regenerate(session):
 def docs(session):
     """
     Build the docs. Pass "serve" to serve.
+
+    Example:
+
+        $ nox -s docs -- serve
     """
 
     session.install("-e", ".[backends,contrib,docs]")
