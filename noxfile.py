@@ -72,9 +72,13 @@ def build(session):
     Build an SDist and wheel.
     """
 
+    # cleanup previous build and dist dirs
     build_path = DIR.joinpath("build")
     if build_path.exists():
         shutil.rmtree(build_path)
+    dist_path = DIR.joinpath("dist")
+    if dist_path.exists():
+        shutil.rmtree(dist_path)
 
     session.install("build")
     session.run("python", "-m", "build")
