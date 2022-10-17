@@ -25,6 +25,11 @@ def lint(session):
 def tests(session):
     """
     Run the unit and regular tests.
+    Specify a particular Python version with --python option.
+
+    Example:
+
+        $ nox -s tests --python 3.10
     """
     session.install("-e", ".[backends,contrib,test]")
     args = ["--mpl"] if sys.platform.startswith("linux") else []
@@ -47,7 +52,8 @@ def regenerate(session):
 @nox.session(reuse_venv=True)
 def docs(session):
     """
-    Build the docs. Pass "serve" to serve.
+    Build the docs.
+    Pass "serve" to serve.
 
     Example:
 
