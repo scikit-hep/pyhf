@@ -15,7 +15,7 @@ DIR = Path(__file__).parent.resolve()
 @nox.session(reuse_venv=True)
 def lint(session):
     """
-    Run the linter.
+    Lint with pre-commit.
     """
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files", *session.posargs)
@@ -29,7 +29,7 @@ def tests(session):
 
     Example:
 
-        $ nox -s tests --python 3.10
+        $ nox --session tests --python 3.10
     """
     session.install("-e", ".[backends,contrib,test]")
     args = ["--mpl"] if sys.platform.startswith("linux") else []
@@ -57,7 +57,7 @@ def docs(session):
 
     Example:
 
-        $ nox -s docs -- serve
+        $ nox --session docs -- serve
     """
 
     session.install("-e", ".[backends,contrib,docs]")
