@@ -17,7 +17,7 @@ def lint(session):
     """
     Lint with pre-commit.
     """
-    session.install("pre-commit")
+    session.install("--upgrade", "pre-commit")
     session.run("pre-commit", "run", "--all-files", *session.posargs)
 
 
@@ -31,7 +31,7 @@ def tests(session):
 
         $ nox --session tests --python 3.10
     """
-    session.install("-e", ".[test]")
+    session.install("--upgrade", "--editable", ".[test]")
     session.run(
         "pytest",
         "--ignore",
@@ -57,7 +57,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("-e", ".[test]")
+    session.install("--upgrade", "--editable", ".[test]")
     if not sys.platform.startswith("linux"):
         session.error(
             "Must be run from Linux, images will be slightly different on macOS"
@@ -78,7 +78,7 @@ def docs(session):
         $ nox --session docs -- serve
     """
 
-    session.install("-e", ".[backends,contrib,docs]")
+    session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
     session.chdir("docs")
     session.run("sphinx-build", "-M", "html", ".", "_build")
 
@@ -95,7 +95,7 @@ def notebooks(session: nox.Session):
     """
     Run the notebook tests.
     """
-    session.install("-e", ".[test]")
+    session.install("--upgrade", "--editable", ".[test]")
     session.run(
         "pytest",
         "--override-ini",
