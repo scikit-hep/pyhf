@@ -32,24 +32,31 @@ def tests(session):
         $ nox --session tests --python 3.10
     """
     session.install("--upgrade", "--editable", ".[test]")
-    session.run(
-        "pytest",
-        "--ignore",
-        "tests/benchmarks/",
-        "--ignore",
-        "tests/contrib",
-        "--ignore",
-        "tests/test_notebooks.py",
-        *session.posargs,
-    )
-    if sys.platform.startswith("linux"):
+
+    # Allow for running a pytest-style keywords selection of the tests
+    # c.f. https://docs.pytest.org/en/latest/how-to/usage.html#specifying-tests-selecting-tests
+    if session.posargs and "-k" in session.posargs:
+        session.posargs.pop(session.posargs.index("-k"))
+        session.run("pytest", *session.posargs)
+    else:
         session.run(
             "pytest",
+            "--ignore",
+            "tests/benchmarks/",
+            "--ignore",
             "tests/contrib",
-            "--mpl",
-            "--mpl-baseline-path",
-            "tests/contrib/baseline" * session.posargs,
+            "--ignore",
+            "tests/test_notebooks.py",
+            *session.posargs,
         )
+        if sys.platform.startswith("linux"):
+            session.run(
+                "pytest",
+                "tests/contrib",
+                "--mpl",
+                "--mpl-baseline-path",
+                "tests/contrib/baseline" * session.posargs,
+            )
 
 
 @nox.session(reuse_venv=True)
