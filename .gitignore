@@ -39,5 +39,8 @@ config.rst
 htmlcov
 .benchmarks
 
+# nox
+.nox/
+
 # text editors
 .vscode/
