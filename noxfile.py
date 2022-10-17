@@ -90,6 +90,21 @@ def docs(session):
             print("Unsupported argument to docs")
 
 
+@nox.session(reuse_venv=True)
+def notebooks(session: nox.Session):
+    """
+    Run the notebook tests.
+    """
+    session.install("-e", ".[test]")
+    session.run(
+        "pytest",
+        "--override-ini",
+        "filterwarnings=",
+        "tests/test_notebooks.py",
+        *session.posargs,
+    )
+
+
 @nox.session
 def build(session):
     """
