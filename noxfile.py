@@ -32,8 +32,24 @@ def tests(session):
         $ nox --session tests --python 3.10
     """
     session.install("-e", ".[backends,contrib,test]")
-    args = ["--mpl"] if sys.platform.startswith("linux") else []
-    session.run("pytest", *args, *session.posargs)
+    session.run(
+        "pytest",
+        "--ignore",
+        "tests/benchmarks/",
+        "--ignore",
+        "tests/contrib",
+        "--ignore",
+        "tests/test_notebooks.py",
+        *session.posargs,
+    )
+    if sys.platform.startswith("linux"):
+        session.run(
+            "pytest",
+            "tests/contrib",
+            "--mpl",
+            "--mpl-baseline-path",
+            "tests/contrib/baseline" * session.posargs,
+        )
 
 
 @nox.session(reuse_venv=True)
@@ -46,7 +62,9 @@ def regenerate(session):
         session.error(
             "Must be run from Linux, images will be slightly different on macOS"
         )
-    session.run("pytest", "--mpl-generate-path=tests/baseline", *session.posargs)
+    session.run(
+        "pytest", "--mpl-generate-path=tests/contrib/baseline", *session.posargs
+    )
 
 
 @nox.session(reuse_venv=True)
