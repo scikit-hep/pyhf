@@ -31,7 +31,7 @@ def tests(session):
 
         $ nox --session tests --python 3.10
     """
-    session.install("-e", ".[backends,contrib,test]")
+    session.install("-e", ".[test]")
     session.run(
         "pytest",
         "--ignore",
@@ -57,7 +57,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("-e", ".[contrib,test]")
+    session.install("-e", ".[test]")
     if not sys.platform.startswith("linux"):
         session.error(
             "Must be run from Linux, images will be slightly different on macOS"
