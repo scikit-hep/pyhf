@@ -121,7 +121,9 @@ def docs(session):
     if session.posargs:
         if "serve" in session.posargs:
             print("Launching docs at http://localhost:8001/ - use Ctrl-C to quit")
-            session.run("python", "-m", "http.server", "8001", "-d", "_build/html")
+            session.run(
+                "python", "-m", "http.server", "8001", "-d", str(build_path / "html")
+            )
         else:
             print("Unsupported argument to docs")
 
