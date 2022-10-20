@@ -119,10 +119,10 @@ def build(session):
     """
 
     # cleanup previous build and dist dirs
-    build_path = DIR.joinpath("build")
+    build_path = DIR / "build"
     if build_path.exists():
         shutil.rmtree(build_path)
-    dist_path = DIR.joinpath("dist")
+    dist_path = DIR / "dist"
     if dist_path.exists():
         shutil.rmtree(dist_path)
 
