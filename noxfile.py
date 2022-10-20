@@ -79,15 +79,46 @@ def docs(session):
     """
     Build the docs.
     Pass "serve" to serve.
+    Pass "clean" to delete the build tree prior to build.
 
     Example:
 
         $ nox --session docs -- serve
     """
-
     session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
+
+    build_path = DIR / "docs" / "_build"
+
+    if session.posargs and "clean" in session.posargs:
+        if build_path.exists():
+            session.log(f"Removing build tree: {build_path}")
+            shutil.rmtree(build_path)
+        session.posargs.pop(session.posargs.index("clean"))
+
     session.chdir("docs")
-    session.run("sphinx-build", "-M", "html", ".", "_build")
+    # https://www.sphinx-doc.org/en/master/man/sphinx-build.html
+    session.run(
+        "sphinx-build", "-M", "html", ".", build_path.name, "-W", "--keep-going"
+    )
+    session.log(
+        f"rsync -r {build_path / 'html' / '_static'} {build_path / 'html' / 'docs'}"
+    )
+    shutil.copytree(
+        build_path / "html" / "_static",
+        build_path / "html" / "docs" / "_static",
+        dirs_exist_ok=True,
+    )
+    session.log(
+        f"rsync -r {build_path.parent.parent / 'src' / 'pyhf' / 'schemas'} {build_path / 'html'}"
+    )
+    shutil.copytree(
+        build_path.parent.parent / "src" / "pyhf" / "schemas",
+        build_path / "html" / "schemas",
+        dirs_exist_ok=True,
+    )
+    session.log(
+        f"Build finished. The HTML pages are in {(build_path / 'html').resolve()}."
+    )
 
     if session.posargs:
         if "serve" in session.posargs:
