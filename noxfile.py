@@ -116,9 +116,7 @@ def docs(session):
         build_path / "html" / "schemas",
         dirs_exist_ok=True,
     )
-    session.log(
-        f"Build finished. The HTML pages are in {(build_path / 'html').resolve()}."
-    )
+    session.log(f"Build finished. The HTML pages are in {build_path / 'html'}.")
 
     if session.posargs:
         if "serve" in session.posargs:
