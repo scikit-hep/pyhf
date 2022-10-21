@@ -134,7 +134,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
             'qmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
+            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.',
+            stacklevel=2,
         )
     return _qmu_like(
         mu,
@@ -229,7 +230,8 @@ def qmu_tilde(
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
             'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
+            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.',
+            stacklevel=2,
         )
     return _qmu_like(
         mu,
@@ -311,7 +313,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
             'tmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.'
+            + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.',
+            stacklevel=2,
         )
     return _tmu_like(
         mu,
@@ -401,7 +404,8 @@ def tmu_tilde(
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
             'tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
+            + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.',
+            stacklevel=2,
         )
     return _tmu_like(
         mu,
@@ -479,7 +483,8 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         )
     if mu != 0.0:
         log.warning(
-            'q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.'
+            'q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.',
+            stacklevel=2,
         )
         mu = 0.0
 
