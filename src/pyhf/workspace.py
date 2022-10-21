@@ -362,7 +362,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         if self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
-                    log.debug(f"measurements defined: {self.measurement_names}")
+                    log.debug(
+                        f"measurements defined: {self.measurement_names}", stacklevel=2
+                    )
                     raise exceptions.InvalidMeasurement(
                         f'no measurement by name \'{measurement_name:s}\' was found in the workspace, pick from one of the valid ones above'
                     )
@@ -372,7 +374,8 @@ class Workspace(_ChannelSummaryMixin, dict):
             else:
                 if measurement_index is None and len(self.measurement_names) > 1:
                     log.warning(
-                        'multiple measurements defined. Taking the first measurement.'
+                        'multiple measurements defined. Taking the first measurement.',
+                        stacklevel=2,
                     )
 
                 measurement_index = (
@@ -746,7 +749,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         if join in ['left outer', 'right outer']:
             log.warning(
-                "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation."
+                "You are using an unsafe join operation. This will silence exceptions that might be raised during a normal 'outer' operation.",
+                stacklevel=2,
             )
 
         new_version = _join_versions(join, left['version'], right['version'])
