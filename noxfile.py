@@ -6,7 +6,8 @@ import nox
 
 ALL_PYTHONS = ["3.8", "3.9", "3.10"]
 
-nox.options.sessions = ["lint", "tests"]
+# Default sessions to run if no session handles are passed
+nox.options.sessions = ["lint", "tests-3.10"]
 
 
 DIR = Path(__file__).parent.resolve()
