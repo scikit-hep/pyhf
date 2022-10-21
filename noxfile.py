@@ -95,7 +95,7 @@ def docs(session):
             shutil.rmtree(build_path)
         session.posargs.pop(session.posargs.index("clean"))
 
-    session.chdir("docs")
+    session.chdir(build_path.parent)
     # https://www.sphinx-doc.org/en/master/man/sphinx-build.html
     session.run(
         "sphinx-build", "-M", "html", ".", build_path.name, "-W", "--keep-going"
