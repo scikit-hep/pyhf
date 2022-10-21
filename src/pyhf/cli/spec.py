@@ -160,7 +160,7 @@ def inspect(workspace, output_file, measurement):
     if output_file:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
 
 
 @cli.command()
@@ -206,7 +206,7 @@ def prune(
     else:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(pruned_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
 
 
 @cli.command()
@@ -269,7 +269,7 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     else:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
 
 
 @cli.command()
@@ -315,7 +315,7 @@ def combine(workspace_one, workspace_two, join, output_file, merge_channels):
     else:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(combined_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
 
 
 @cli.command()
@@ -404,4 +404,4 @@ def sort(workspace, output_file):
     else:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(sorted_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file}")
+        log.debug(f"Written to {output_file}", stacklevel=2)

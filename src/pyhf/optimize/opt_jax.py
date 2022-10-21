@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 def _final_objective(
     pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf
 ):
-    log.debug('jitting function')
+    log.debug('jitting function', stacklevel=2)
     tensorlib, _ = get_backend()
     pars = tensorlib.astensor(pars)
     if do_stitch:

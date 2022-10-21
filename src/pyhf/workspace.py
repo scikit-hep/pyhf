@@ -432,7 +432,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         # set poi_name if the user does not provide it
         config_kwargs.setdefault('poi_name', measurement['config']['poi'])
 
-        log.debug(f"model being created for measurement {measurement['name']:s}")
+        log.debug(
+            f"model being created for measurement {measurement['name']:s}", stacklevel=2
+        )
 
         modelspec = {
             'channels': self['channels'],

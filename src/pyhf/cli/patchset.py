@@ -54,7 +54,7 @@ def extract(patchset, name, output_file, with_metadata):
     if output_file:
         with open(output_file, "w", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
     else:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
 
@@ -93,7 +93,7 @@ def apply(background_only, patchset, name, output_file):
     if output_file:
         with open(output_file, "w+", encoding="utf-8") as out_file:
             json.dump(patched_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug(f"Written to {output_file:s}", stacklevel=2)
     else:
         click.echo(json.dumps(patched_ws, indent=4, sort_keys=True))
 
