@@ -237,6 +237,7 @@ def process_sample(
                 log.warning(
                     'shapesys modifier %s has a non-poisson constraint',
                     modtag.attrib['Name'],
+                    stacklevel=2,
                 )
             shapesys_data, _ = import_root_histogram(
                 resolver,
@@ -259,7 +260,7 @@ def process_sample(
             }
             modifiers.append(modifier_shapefactor)
         else:
-            log.warning('not considering modifier tag %s', modtag)
+            log.warning('not considering modifier tag %s', modtag, stacklevel=2)
 
     return {
         'name': sample.attrib['Name'],
@@ -407,7 +408,7 @@ def dedupe_parameters(parameters: Sequence[Parameter]) -> list[Parameter]:
             continue
         elif any(p != parameter_list[0] for p in parameter_list[1:]):
             for p in parameter_list:
-                log.warning(p)
+                log.warning(p, stacklevel=2)
             raise RuntimeError(
                 f'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
             )
@@ -474,7 +475,7 @@ def parse(
         if validation_as_error:
             raise exc
         else:
-            log.warning(exc)
+            log.warning(exc, stacklevel=2)
     return result
 
 
