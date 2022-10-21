@@ -33,6 +33,7 @@ def tests(session):
         $ nox --session tests --python 3.10
     """
     session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "pytest")
 
     # Allow for running a pytest-style keywords selection of the tests
     # c.f. https://docs.pytest.org/en/latest/how-to/usage.html#specifying-tests-selecting-tests
@@ -66,6 +67,7 @@ def regenerate(session):
     Regenerate Matplotlib images.
     """
     session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
             "Must be run from Linux, images will be slightly different on macOS"
@@ -87,6 +89,7 @@ def docs(session):
         $ nox --session docs -- serve
     """
     session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
+    session.install("--upgrade", "sphinx")
 
     build_path = DIR / "docs" / "_build"
 
@@ -147,7 +150,7 @@ def notebooks(session: nox.Session):
 @nox.session
 def build(session):
     """
-    Build an SDist and wheel.
+    Build a sdist and wheel.
     """
 
     # cleanup previous build and dist dirs
