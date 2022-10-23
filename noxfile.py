@@ -31,9 +31,30 @@ def tests(session):
     Example:
 
         $ nox --session tests --python 3.10
+        $ nox --session tests -- contrib
     """
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest")
+
+    def _contrib(session):
+        if sys.platform.startswith("linux"):
+            session.run(
+                "pytest",
+                "tests/contrib",
+                "--mpl",
+                "--mpl-baseline-path",
+                "tests/contrib/baseline",
+                "--mpl-generate-summary",
+                "html",
+                *session.posargs,
+            )
+
+    # Allow for running of contrib tests only
+    if session.posargs and "contrib" in session.posargs:
+        session.posargs.pop(session.posargs.index("contrib"))
+        session.install("--upgrade", "matplotlib")
+        _contrib(session)
+        return
 
     # Allow for running a pytest-style keywords selection of the tests
     # c.f. https://docs.pytest.org/en/latest/how-to/usage.html#specifying-tests-selecting-tests
@@ -51,14 +72,7 @@ def tests(session):
             "tests/test_notebooks.py",
             *session.posargs,
         )
-        if sys.platform.startswith("linux"):
-            session.run(
-                "pytest",
-                "tests/contrib",
-                "--mpl",
-                "--mpl-baseline-path",
-                "tests/contrib/baseline" * session.posargs,
-            )
+        _contrib(session)
 
 
 @nox.session(reuse_venv=True)
