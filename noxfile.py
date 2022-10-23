@@ -87,7 +87,15 @@ def regenerate(session):
             "Must be run from Linux, images will be slightly different on macOS"
         )
     session.run(
-        "pytest", "--mpl-generate-path=tests/contrib/baseline", *session.posargs
+        "pytest",
+        "--mpl-generate-path=tests/contrib/baseline",
+        "tests/contrib",
+        "--mpl",
+        "--mpl-baseline-path",
+        "tests/contrib/baseline",
+        "--mpl-generate-summary",
+        "html",
+        *session.posargs,
     )
 
 
