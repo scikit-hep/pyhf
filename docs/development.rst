@@ -130,7 +130,7 @@ To build the docs run
 
     nox --session docs
 
-To view the built docs locally open resulting ``docs/_build/html/index.html`` file
+To view the built docs locally, open the resulting ``docs/_build/html/index.html`` file
 in a web browser or run
 
 .. code-block:: console
