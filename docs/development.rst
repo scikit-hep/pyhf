@@ -109,6 +109,13 @@ To run the visualization tests for the ``contrib`` module with the ``pytest-mpl`
 
     nox --session tests --python 3.10 -- contrib
 
+If the image files need to be regenerated run the tests with the
+``--mpl-generate-path=tests/contrib/baseline`` option or just run
+
+.. code-block:: console
+
+    nox --session regenerate
+
 Doctest
 ^^^^^^^
 
