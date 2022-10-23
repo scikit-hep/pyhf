@@ -80,7 +80,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".")
+    session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
