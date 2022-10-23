@@ -20,7 +20,7 @@ and install all necessary packages for development
 
 .. code-block:: console
 
-    python -m pip install --upgrade --editable .[complete]
+    python -m pip install --upgrade --editable '.[complete]'
 
 Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
 
@@ -32,6 +32,14 @@ inside of the virtual environment.
 `pre-commit.ci <https://pre-commit.ci/>`__ keeps the pre-commit hooks updated
 through time, so pre-commit will automatically update itself when you run it
 locally after the hooks were updated.
+
+It is then suggested that you use ``nox`` to actually run all development operations
+in "sessions" defined in ``noxfile.py``.
+To list all of the available sessions run
+
+.. code-block:: console
+
+    nox --list
 
 Testing
 -------
@@ -73,7 +81,7 @@ contrib module, or notebooks, and so instead to test the core codebase a develop
 
 .. code-block:: console
 
-    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+    nox --session tests --python 3.10
 
 Contrib module matplotlib image tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -83,7 +91,7 @@ To run the visualization tests for the ``contrib`` module with the ``pytest-mpl`
 
 .. code-block:: console
 
-    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
+    nox --session tests --python 3.10 -- contrib
 
 Doctest
 ^^^^^^^
