@@ -80,8 +80,8 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".[test]")
-    session.install("--upgrade", "matplotlib")
+    session.install("--upgrade", "--editable", ".")
+    session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
             "Must be run from Linux, images will be slightly different on macOS"
@@ -89,12 +89,7 @@ def regenerate(session):
     session.run(
         "pytest",
         "--mpl-generate-path=tests/contrib/baseline",
-        "tests/contrib",
-        "--mpl",
-        "--mpl-baseline-path",
-        "tests/contrib/baseline",
-        "--mpl-generate-summary",
-        "html",
+        "tests/contrib/test_viz.py",
         *session.posargs,
     )
 
