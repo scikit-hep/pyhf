@@ -41,6 +41,22 @@ To list all of the available sessions run
 
     nox --list
 
+Linting
+-------
+
+Linting and code formatting is handled by ``pre-commit``.
+To run the linting either run ``pre-commit``
+
+.. code-block:: console
+
+    pre-commit run --all-files
+
+or use ``nox``
+
+.. code-block:: console
+
+    nox --session lint
+
 Testing
 -------
 
