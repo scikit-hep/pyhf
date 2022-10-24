@@ -28,10 +28,11 @@ def tests(session):
     Run the unit and regular tests.
     Specify a particular Python version with --python option.
 
-    Example:
+    Examples:
 
         $ nox --session tests --python 3.10
         $ nox --session tests -- contrib
+        $ nox --session tests -- tests/test_tensor.py
     """
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest")
@@ -56,12 +57,10 @@ def tests(session):
         _contrib(session)
         return
 
-    # Allow for running a pytest-style keywords selection of the tests
-    # c.f. https://docs.pytest.org/en/latest/how-to/usage.html#specifying-tests-selecting-tests
-    if session.posargs and "-k" in session.posargs:
-        session.posargs.pop(session.posargs.index("-k"))
+    if session.posargs:
         session.run("pytest", *session.posargs)
     else:
+        # defaults
         session.run(
             "pytest",
             "--ignore",
@@ -70,7 +69,6 @@ def tests(session):
             "tests/contrib",
             "--ignore",
             "tests/test_notebooks.py",
-            *session.posargs,
         )
         _contrib(session)
 
@@ -104,6 +102,7 @@ def docs(session):
     Example:
 
         $ nox --session docs -- serve
+        $ nox --session docs -- clean
     """
     session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
     session.install("--upgrade", "sphinx")
