@@ -31,8 +31,8 @@ def tests(session):
     Examples:
 
         $ nox --session tests --python 3.10
-        $ nox --session tests -- contrib
-        $ nox --session tests -- tests/test_tensor.py
+        $ nox --session tests --python 3.10 -- contrib
+        $ nox --session tests --python 3.10 -- tests/test_tensor.py
     """
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest")
