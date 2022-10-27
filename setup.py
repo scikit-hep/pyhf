@@ -70,6 +70,7 @@ extras_require['develop'] = sorted(
             'tbump>=6.7.0',
             'ipython',
             'pre-commit',
+            'nox',
             'check-manifest',
             'codemetapy>=2.3.0',
             'twine',
