@@ -74,6 +74,33 @@ def tests(session):
 
 
 @nox.session(reuse_venv=True)
+def coverage(session):
+    """
+    Generate coverage and report
+    """
+    session.install("--upgrade", "pip", "wheel")
+    session.install("--upgrade", ".[test]")
+    session.install("--upgrade", "pytest", "coverage")
+
+    session.run(
+        "coverage",
+        "run",
+        "-m",
+        "pytest",
+        "--ignore",
+        "tests/benchmarks/",
+        "--ignore",
+        "tests/test_notebooks.py",
+        "--mpl",
+        "--mpl-baseline-path",
+        "tests/contrib/baseline",
+    )
+
+    session.run("coverage", "report")
+    session.run("coverage", "xml")
+
+
+@nox.session(reuse_venv=True)
 def regenerate(session):
     """
     Regenerate Matplotlib images.
