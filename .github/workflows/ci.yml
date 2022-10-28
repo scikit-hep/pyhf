@@ -88,16 +88,18 @@ jobs:
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.10'
-      run: coverage run --module pytest src/ README.rst
+      run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
-      run: coverage report
+      run: |
+        coverage report --data-file=.coverage-doctest
+        coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v3
       with:
-        files: ./coverage.xml
+        files: doctest-coverage.xml
         flags: doctest
 
     - name: Run benchmarks
