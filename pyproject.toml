@@ -88,17 +88,16 @@ filterwarnings = [
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
 ]
 
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
 [tool.coverage.run]
-addopts = [
-    "--source=pyhf",
-    "--append",
-    "--branch",
-    "--showlocals",
-]
+source = ["pyhf"]
+append = true
+branch = true
+
 [tool.coverage.report]
-addopts = [
-    "--show-missing",
-]
+show-missing = true
 
 [tool.nbqa.mutate]
 pyupgrade = 1
