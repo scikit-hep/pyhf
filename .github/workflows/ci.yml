@@ -56,7 +56,9 @@ jobs:
       uses: mxschmitt/action-tmate@v3
 
     - name: Coverage report for core project
-      run: coverage report
+      run: |
+        coverage report
+        coverage xml
 
       # Report coverage for oldest and newest Python tested to deal with version differences
     - name: Report core project coverage with Codecov
@@ -73,7 +75,9 @@ jobs:
         coverage run --append --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
     - name: Coverage report with contrib
-      run: coverage report
+      run: |
+        coverage report
+        coverage xml
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
