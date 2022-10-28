@@ -43,7 +43,7 @@ def tests(session):
                 "coverage",
                 "run",
                 "--append",
-                "-m",
+                "--module",
                 "pytest",
                 "tests/contrib",
                 "--mpl",
@@ -62,13 +62,13 @@ def tests(session):
         return
 
     if session.posargs:
-        session.run("coverage", "run", "-m", "pytest", *session.posargs)
+        session.run("coverage", "run", "--module", "pytest", *session.posargs)
     else:
         # defaults
         session.run(
             "coverage",
             "run",
-            "-m",
+            "--module",
             "pytest",
             "--ignore",
             "tests/benchmarks/",
