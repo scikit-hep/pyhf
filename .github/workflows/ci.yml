@@ -47,7 +47,7 @@ jobs:
     - name: List installed Python packages
       run: python -m pip list
 
-    - name: Test with pytest
+    - name: Test with pytest and coverage
       run: |
         coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
