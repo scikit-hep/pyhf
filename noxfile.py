@@ -31,9 +31,9 @@ def tests(session):
     Examples:
 
         $ nox --session tests --python 3.10
-        $ nox --session tests --python 3.10 -- contrib
-        $ nox --session tests --python 3.10 -- tests/test_tensor.py
-        $ nox --session tests --python 3.10 -- nocov
+        $ nox --session tests --python 3.10 -- contrib  # run the contrib module tests
+        $ nox --session tests --python 3.10 -- tests/test_tensor.py  # run specific tests
+        $ nox --session tests --python 3.10 -- nocov  # run without coverage but faster
     """
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest", "coverage[toml]")
@@ -74,9 +74,9 @@ def tests(session):
         session.run(
             *runner_commands,
             "--ignore",
-            "tests/benchmarks/",
-            "--ignore",
             "tests/contrib",
+            "--ignore",
+            "tests/benchmarks",
             "--ignore",
             "tests/test_notebooks.py",
         )
