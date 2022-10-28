@@ -43,12 +43,10 @@ def tests(session):
         runner_commands = ["pytest"]
         session.posargs.pop(session.posargs.index("nocov"))
     else:
-        runner_commands = ["coverage", "run", "--module", "pytest"]
+        runner_commands = ["coverage", "run", "--append", "--module", "pytest"]
 
     def _contrib(session):
         if sys.platform.startswith("linux"):
-            if "coverage" in runner_commands:
-                runner_commands.insert(runner_commands.index("run") + 1, "--append")
             session.run(
                 *runner_commands,
                 "tests/contrib",
@@ -71,6 +69,7 @@ def tests(session):
         session.run(*runner_commands, *session.posargs)
     else:
         # defaults
+        runner_commands.pop(runner_commands.index("--append"))
         session.run(
             *runner_commands,
             "--ignore",
