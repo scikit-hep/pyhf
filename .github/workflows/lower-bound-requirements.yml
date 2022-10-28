@@ -39,4 +39,4 @@ jobs:
         # free. Though still show warnings by setting warning control to 'default'.
         export PYTHONWARNINGS='default'
         # Run on tests/ to skip doctests of src given examples are for latest APIs
-        pytest --override-ini filterwarnings= --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py tests/
+        pytest --override-ini filterwarnings= --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py tests/
