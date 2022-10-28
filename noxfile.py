@@ -35,11 +35,14 @@ def tests(session):
         $ nox --session tests --python 3.10 -- tests/test_tensor.py
     """
     session.install("--upgrade", "--editable", ".[test]")
-    session.install("--upgrade", "pytest")
+    session.install("--upgrade", "pytest", "coverage")
 
     def _contrib(session):
         if sys.platform.startswith("linux"):
             session.run(
+                "coverage",
+                "run",
+                "-m",
                 "pytest",
                 "tests/contrib",
                 "--mpl",
@@ -58,10 +61,13 @@ def tests(session):
         return
 
     if session.posargs:
-        session.run("pytest", *session.posargs)
+        session.run("coverage", "run", "-m", "pytest", *session.posargs)
     else:
         # defaults
         session.run(
+            "coverage",
+            "run",
+            "-m",
             "pytest",
             "--ignore",
             "tests/benchmarks/",
@@ -76,28 +82,28 @@ def tests(session):
 @nox.session(reuse_venv=True)
 def coverage(session):
     """
-    Generate coverage and report
+    Generate coverage report
     """
-    session.install("--upgrade", "pip", "wheel")
-    session.install("--upgrade", ".[test]")
-    session.install("--upgrade", "pytest", "coverage")
+    session.install("--upgrade", "pip")
+    session.install("--upgrade", "coverage")
 
-    session.run(
-        "coverage",
-        "run",
-        "-m",
-        "pytest",
-        "--ignore",
-        "tests/benchmarks/",
-        "--ignore",
-        "tests/test_notebooks.py",
-        "--mpl",
-        "--mpl-baseline-path",
-        "tests/contrib/baseline",
-    )
+    # session.run(
+    #     "coverage",
+    #     "run",
+    #     "-m",
+    #     "pytest",
+    #     "--ignore",
+    #     "tests/benchmarks/",
+    #     "--ignore",
+    #     "tests/test_notebooks.py",
+    #     "--mpl",
+    #     "--mpl-baseline-path",
+    #     "tests/contrib/baseline",
+    # )
 
     session.run("coverage", "report")
     session.run("coverage", "xml")
+    session.run("coverage", "html")
 
 
 @nox.session(reuse_venv=True)
