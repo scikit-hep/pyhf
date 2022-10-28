@@ -42,6 +42,7 @@ def tests(session):
             session.run(
                 "coverage",
                 "run",
+                "--append",
                 "-m",
                 "pytest",
                 "tests/contrib",
