@@ -88,20 +88,6 @@ def coverage(session):
     session.install("--upgrade", "pip")
     session.install("--upgrade", "coverage[toml]")
 
-    # session.run(
-    #     "coverage",
-    #     "run",
-    #     "-m",
-    #     "pytest",
-    #     "--ignore",
-    #     "tests/benchmarks/",
-    #     "--ignore",
-    #     "tests/test_notebooks.py",
-    #     "--mpl",
-    #     "--mpl-baseline-path",
-    #     "tests/contrib/baseline",
-    # )
-
     session.run("coverage", "report")
     session.run("coverage", "xml")
     htmlcov_path = DIR / "htmlcov"
