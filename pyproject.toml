@@ -96,8 +96,9 @@ source = ["pyhf"]
 branch = true
 
 [tool.coverage.report]
-show_missing = true
 precision = 1
+sort = "cover"
+show_missing = true
 
 [tool.nbqa.mutate]
 pyupgrade = 1
