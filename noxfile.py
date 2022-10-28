@@ -86,7 +86,7 @@ def coverage(session):
     Generate coverage report
     """
     session.install("--upgrade", "pip")
-    session.install("--upgrade", "coverage")
+    session.install("--upgrade", "coverage[toml]")
 
     # session.run(
     #     "coverage",
