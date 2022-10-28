@@ -104,6 +104,10 @@ def coverage(session):
 
     session.run("coverage", "report")
     session.run("coverage", "xml")
+    htmlcov_path = DIR / "htmlcov"
+    if htmlcov_path.exists():
+        session.log(f"rm -r {htmlcov_path}")
+        shutil.rmtree(htmlcov_path)
     session.run("coverage", "html")
 
 
