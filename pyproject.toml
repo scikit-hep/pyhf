@@ -44,14 +44,9 @@ minversion = "6.0"
 xfail_strict = true
 addopts = [
     "-ra",
-    "--cov=pyhf",
-    "--cov-branch",
     "--showlocals",
     "--strict-markers",
     "--strict-config",
-    "--cov-report=term-missing",
-    "--cov-report=xml",
-    "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
@@ -95,6 +90,7 @@ filterwarnings = [
 
 [tool.coverage.run]
 addopts = [
+    "--source=pyhf",
     "--append",
     "--branch",
     "--showlocals",
