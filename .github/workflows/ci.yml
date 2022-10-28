@@ -91,6 +91,7 @@ jobs:
       run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
+      if: matrix.python-version == '3.10'
       run: |
         coverage report --data-file=.coverage-doctest
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
