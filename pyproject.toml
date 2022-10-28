@@ -94,6 +94,7 @@ source = ["src", "*/site-packages"]
 [tool.coverage.run]
 source = ["pyhf"]
 branch = true
+omit = ["*/pyhf/typing.py"]
 
 [tool.coverage.report]
 precision = 1
