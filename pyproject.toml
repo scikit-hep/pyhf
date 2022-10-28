@@ -93,6 +93,17 @@ filterwarnings = [
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
 ]
 
+[tool.coverage.run]
+addopts = [
+    "--append",
+    "--branch",
+    "--showlocals",
+]
+[tool.coverage.report]
+addopts = [
+    "--show-missing",
+]
+
 [tool.nbqa.mutate]
 pyupgrade = 1
 
