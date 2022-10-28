@@ -84,9 +84,9 @@ jobs:
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.10'
-      run: coverage run --append --module pytest src/ README.rst
+      run: coverage run --module pytest src/ README.rst
 
-    - name: Coverage report with doctest
+    - name: Coverage report for doctest only
       run: coverage report
 
     - name: Report doctest coverage with Codecov
