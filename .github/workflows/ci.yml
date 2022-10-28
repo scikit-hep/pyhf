@@ -55,6 +55,9 @@ jobs:
       if: failure() && github.event_name == 'workflow_dispatch'
       uses: mxschmitt/action-tmate@v3
 
+    - name: Coverage report with default tests
+      run: coverage report
+
       # Report coverage for oldest and newest Python tested to deal with version differences
     - name: Report core project coverage with Codecov
       if: >-
@@ -69,6 +72,9 @@ jobs:
       run: |
         coverage run --append --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
 
+    - name: Coverage report with default tests and contrib
+      run: coverage report
+
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v3
@@ -79,6 +85,9 @@ jobs:
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.10'
       run: coverage run --append --module pytest src/ README.rst
+
+    - name: Coverage report with default tests, contrib, and doctest
+      run: coverage report
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
