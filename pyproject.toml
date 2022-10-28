@@ -93,11 +93,10 @@ source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 source = ["pyhf"]
-append = true
 branch = true
 
 [tool.coverage.report]
-show-missing = true
+show_missing = true
 
 [tool.nbqa.mutate]
 pyupgrade = 1
