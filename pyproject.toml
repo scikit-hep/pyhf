@@ -97,6 +97,7 @@ branch = true
 
 [tool.coverage.report]
 show_missing = true
+precision = 1
 
 [tool.nbqa.mutate]
 pyupgrade = 1
