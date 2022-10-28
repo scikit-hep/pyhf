@@ -69,9 +69,11 @@ def tests(session):
         session.run(*runner_commands, *session.posargs)
     else:
         # defaults
-        runner_commands.pop(runner_commands.index("--append"))
+        default_runner_commands = runner_commands.copy()
+        if "--append" in default_runner_commands:
+            default_runner_commands.pop(default_runner_commands.index("--append"))
         session.run(
-            *runner_commands,
+            *default_runner_commands,
             "--ignore",
             "tests/contrib",
             "--ignore",
