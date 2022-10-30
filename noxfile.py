@@ -33,17 +33,18 @@ def tests(session):
         $ nox --session tests --python 3.10
         $ nox --session tests --python 3.10 -- contrib  # run the contrib module tests
         $ nox --session tests --python 3.10 -- tests/test_tensor.py  # run specific tests
-        $ nox --session tests --python 3.10 -- nocov  # run without coverage but faster
+        $ nox --session tests --python 3.10 -- coverage  # run with coverage but slower
     """
     session.install("--upgrade", "--editable", ".[test]")
-    session.install("--upgrade", "pytest", "coverage[toml]")
+    session.install("--upgrade", "pytest")
 
     # Allow tests to be run without coverage
-    if "nocov" in session.posargs:
-        runner_commands = ["pytest"]
-        session.posargs.pop(session.posargs.index("nocov"))
-    else:
+    if "coverage" in session.posargs:
         runner_commands = ["coverage", "run", "--append", "--module", "pytest"]
+        session.posargs.pop(session.posargs.index("coverage"))
+        session.install("--upgrade", "coverage[toml]")
+    else:
+        runner_commands = ["pytest"]
 
     def _contrib(session):
         if sys.platform.startswith("linux"):
