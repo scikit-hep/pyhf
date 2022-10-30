@@ -128,6 +128,36 @@ For example, to run ``doctest`` on the JAX backend run
 
     pytest src/pyhf/tensor/jax_backend.py
 
+Coverage
+~~~~~~~~
+
+To measure coverage for the codebase run the tests under ``coverage`` with
+
+.. code-block:: console
+
+    coverage run --module pytest
+
+or pass ``coverage`` as a positional argument to the ``nox`` ``tests`` session
+
+.. code-block:: console
+
+    nox --session tests --python 3.10 -- coverage
+
+Coverage Report
+^^^^^^^^^^^^^^^
+
+To generate a coverage report after running the tests under ``coverage`` run
+
+.. code-block:: console
+
+    coverage
+
+or to also generate XML and HTML versions of the report run the coverage ``nox`` session
+
+.. code-block:: console
+
+    nox --session coverage
+
 Documentation
 -------------
 
