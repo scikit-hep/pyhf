@@ -88,9 +88,6 @@ filterwarnings = [
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
 ]
 
-[tool.coverage.paths]
-source = ["src", "*/site-packages"]
-
 [tool.coverage.run]
 source = ["pyhf"]
 branch = true
