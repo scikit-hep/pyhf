@@ -38,7 +38,7 @@ def tests(session):
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest")
 
-    # Allow tests to be run without coverage
+    # Allow tests to be run with coverage
     if "coverage" in session.posargs:
         runner_commands = ["coverage", "run", "--append", "--module", "pytest"]
         session.posargs.pop(session.posargs.index("coverage"))
