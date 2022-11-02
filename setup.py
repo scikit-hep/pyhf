@@ -29,7 +29,7 @@ extras_require['test'] = sorted(
         + [
             'scikit-hep-testdata>=0.4.11',
             'pytest>=6.0',
-            'pytest-cov>=2.5.1',
+            'coverage[toml]>=6.0.0',
             'pytest-mock',
             'requests-mock>=1.9.0',
             'pytest-benchmark[histogram]',

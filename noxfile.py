@@ -31,16 +31,25 @@ def tests(session):
     Examples:
 
         $ nox --session tests --python 3.10
-        $ nox --session tests --python 3.10 -- contrib
-        $ nox --session tests --python 3.10 -- tests/test_tensor.py
+        $ nox --session tests --python 3.10 -- contrib  # run the contrib module tests
+        $ nox --session tests --python 3.10 -- tests/test_tensor.py  # run specific tests
+        $ nox --session tests --python 3.10 -- coverage  # run with coverage but slower
     """
     session.install("--upgrade", "--editable", ".[test]")
     session.install("--upgrade", "pytest")
 
+    # Allow tests to be run with coverage
+    if "coverage" in session.posargs:
+        runner_commands = ["coverage", "run", "--append", "--module", "pytest"]
+        session.posargs.pop(session.posargs.index("coverage"))
+        session.install("--upgrade", "coverage[toml]")
+    else:
+        runner_commands = ["pytest"]
+
     def _contrib(session):
         if sys.platform.startswith("linux"):
             session.run(
-                "pytest",
+                *runner_commands,
                 "tests/contrib",
                 "--mpl",
                 "--mpl-baseline-path",
@@ -58,19 +67,39 @@ def tests(session):
         return
 
     if session.posargs:
-        session.run("pytest", *session.posargs)
+        session.run(*runner_commands, *session.posargs)
     else:
         # defaults
+        default_runner_commands = runner_commands.copy()
+        if "--append" in default_runner_commands:
+            default_runner_commands.pop(default_runner_commands.index("--append"))
         session.run(
-            "pytest",
-            "--ignore",
-            "tests/benchmarks/",
+            *default_runner_commands,
             "--ignore",
             "tests/contrib",
+            "--ignore",
+            "tests/benchmarks",
             "--ignore",
             "tests/test_notebooks.py",
         )
         _contrib(session)
+
+
+@nox.session(reuse_venv=True)
+def coverage(session):
+    """
+    Generate coverage report
+    """
+    session.install("--upgrade", "pip")
+    session.install("--upgrade", "coverage[toml]")
+
+    session.run("coverage", "report")
+    session.run("coverage", "xml")
+    htmlcov_path = DIR / "htmlcov"
+    if htmlcov_path.exists():
+        session.log(f"rm -r {htmlcov_path}")
+        shutil.rmtree(htmlcov_path)
+    session.run("coverage", "html")
 
 
 @nox.session(reuse_venv=True)

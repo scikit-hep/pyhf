@@ -47,13 +47,18 @@ jobs:
     - name: List installed Python packages
       run: python -m pip list
 
-    - name: Test with pytest
+    - name: Test with pytest and coverage
       run: |
-        pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+        coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
     - name: Launch a tmate session if tests fail
       if: failure() && github.event_name == 'workflow_dispatch'
       uses: mxschmitt/action-tmate@v3
+
+    - name: Coverage report for core project
+      run: |
+        coverage report
+        coverage xml
 
       # Report coverage for oldest and newest Python tested to deal with version differences
     - name: Report core project coverage with Codecov
@@ -67,7 +72,12 @@ jobs:
 
     - name: Test Contrib module with pytest
       run: |
-        pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+        coverage run --append --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+
+    - name: Coverage report with contrib
+      run: |
+        coverage report
+        coverage xml
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
@@ -78,13 +88,19 @@ jobs:
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.10'
-      run: pytest src/ README.rst
+      run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
+
+    - name: Coverage report for doctest only
+      if: matrix.python-version == '3.10'
+      run: |
+        coverage report --data-file=.coverage-doctest
+        coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v3
       with:
-        files: ./coverage.xml
+        files: doctest-coverage.xml
         flags: doctest
 
     - name: Run benchmarks
