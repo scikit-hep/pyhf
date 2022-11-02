@@ -93,7 +93,7 @@ jobs:
       run: |
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
-  uproot5:
+  uproot4:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -112,7 +112,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes uproot
-        python -m pip install --upgrade git+https://github.com/scikit-hep/uproot5.git
+        python -m pip install --upgrade git+https://github.com/scikit-hep/uproot4.git
         python -m pip list
     - name: Test with pytest
       run: |
