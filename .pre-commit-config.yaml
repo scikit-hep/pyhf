@@ -27,7 +27,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.38.2
+    rev: v3.2.0
     hooks:
     - id: pyupgrade
       args: ["--py38-plus"]
@@ -38,7 +38,7 @@ repos:
     - id: absolufy-imports
 
 -   repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 22.10.0
     hooks:
     - id: black-jupyter
 
@@ -46,7 +46,7 @@ repos:
     rev: v1.12.1
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==22.8.0]
+      additional_dependencies: [black==22.10.0]
 
 -   repo: https://github.com/asottile/yesqa
     rev: v1.4.0
@@ -61,7 +61,7 @@ repos:
       additional_dependencies: [flake8-encodings==0.5.0.post1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.971
+    rev: v0.982
     # check the oldest and newest supported Pythons
     hooks:
       - &mypy
@@ -70,19 +70,19 @@ repos:
         files: src
         additional_dependencies:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
-        args: ["--python-version=3.8"]
+        args: ["--python-version=3.8", "--enable-recursive-aliases"]
       - <<: *mypy
         name: mypy with Python 3.10
-        args: ["--python-version=3.10"]
+        args: ["--python-version=3.10", "--enable-recursive-aliases"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.5.2
+    rev: 1.5.3
     hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.38.2]
+      additional_dependencies: [pyupgrade==3.2.0]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.1
+    rev: v2.2.2
     hooks:
     - id: codespell
       files: ^.*\.(py|md|rst)$
