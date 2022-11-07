@@ -61,7 +61,7 @@ repos:
       additional_dependencies: [flake8-encodings==0.5.0.post1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.971
+    rev: v0.982
     # check the oldest and newest supported Pythons
     hooks:
       - &mypy
@@ -70,10 +70,10 @@ repos:
         files: src
         additional_dependencies:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
-        args: ["--python-version=3.8"]
+        args: ["--python-version=3.8", "--enable-recursive-aliases"]
       - <<: *mypy
         name: mypy with Python 3.10
-        args: ["--python-version=3.10"]
+        args: ["--python-version=3.10", "--enable-recursive-aliases"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
     rev: 1.5.3
