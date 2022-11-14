@@ -120,6 +120,7 @@ jobs:
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
           push: true
+          platforms: linux/amd64,linux/arm64
 
       - name: Build and publish to registry with release tag
         if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
@@ -134,3 +135,4 @@ jobs:
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
           push: true
+          platforms: linux/amd64,linux/arm64
