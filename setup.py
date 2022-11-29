@@ -58,6 +58,7 @@ extras_require['docs'] = sorted(
             'sphinx-issues',
             'sphinx-copybutton>=0.3.2',
             'sphinx-togglebutton>=0.3.0',
+            'ipython!=8.7.0',  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
         ]
     )
 )
