@@ -33,6 +33,10 @@ jobs:
         python -m pip --no-cache-dir --quiet install --upgrade --pre .[test]
         python -m pip list
 
+    - name: List release candidates, alpha, and beta releases
+      run: |
+        python -m pip list | egrep '[0-9](rc|[ab])[0-9]'
+
     - name: Test with pytest
       run: |
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
