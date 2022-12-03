@@ -86,6 +86,7 @@ filterwarnings = [
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
+    'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
 ]
 
 [tool.coverage.run]
