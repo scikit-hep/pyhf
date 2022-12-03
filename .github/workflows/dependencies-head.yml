@@ -33,9 +33,9 @@ jobs:
         python -m pip --no-cache-dir --quiet install --upgrade --pre .[test]
         python -m pip list
 
-    - name: List release candidates and alphas
+    - name: List release candidates, alpha, and beta releases
       run: |
-        python -m pip list | grep '[0-9]rc[0-9]\|[0-9]a[0-9]\|[0-9]b[0-9]'
+        python -m pip list | egrep '[0-9](rc|[ab])[0-9]'
 
     - name: Test with pytest
       run: |
