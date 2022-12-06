@@ -14,6 +14,11 @@ from typing import (
     Union,
 )
 
+if sys.version_info >= (3, 9):
+    from importlib.abc import Traversable
+else:
+    from importlib_resources.abc import Traversable
+
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Self
 else:
@@ -40,9 +45,10 @@ __all__ = (
     "PatchSet",
     "Workspace",
     "Literal",
-    "TypedDict",
     "Protocol",
     "Self",
+    "Traversable",
+    "TypedDict",
 )
 
 

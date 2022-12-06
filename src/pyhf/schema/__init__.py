@@ -7,13 +7,8 @@ from typing import Any
 from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
-from pyhf.typing import Self
+from pyhf.typing import Self, SchemaVersion, Traversable
 from pyhf.schema.upgrader import upgrade_workspace, upgrade_patchset
-
-if sys.version_info >= (3, 9):
-    from importlib.abc import Traversable
-else:
-    from importlib_resources.abc import Traversable
 
 __all__ = [
     "load_schema",
@@ -108,7 +103,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
         return variables.schemas
 
     @property
-    def version(self) -> str:
+    def versions(self) -> dict[str, SchemaVersion]:
         """
         The default version used for finding schemas.
         """
