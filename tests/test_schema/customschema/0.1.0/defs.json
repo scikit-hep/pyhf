@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "1.1.0/defs.json",
+    "$id": "https://scikit-hep.org/pyhf/schemas/0.1.0/defs.json",
     "definitions": {
         "workspace": {
           "type": "object",
@@ -8,7 +8,7 @@
               "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
               "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
               "observations": { "type": "array", "items": {"$ref": "#/definitions/observation" }, "minItems": 1 },
-              "version": { "const": "1.1.0" }
+              "version": { "const": "0.1.0" }
           },
           "additionalProperties": false,
           "required": ["channels", "measurements", "observations", "version"]
@@ -247,7 +247,7 @@
             "properties": {
                 "patches": { "$ref": "#/definitions/patchset/patches" },
                 "metadata": { "$ref": "#/definitions/patchset/metadata" },
-                "version": { "const": "1.1.0" }
+                "version": { "const": "0.1.0" }
             },
             "additionalProperties": false,
             "required": ["patches", "metadata", "version"],

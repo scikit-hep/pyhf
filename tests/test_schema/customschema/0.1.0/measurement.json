@@ -1,5 +1,5 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "1.1.0/measurement.json",
+    "$id": "https://scikit-hep.org/pyhf/schemas/0.1.0/measurement.json",
     "$ref": "defs.json#/definitions/measurement"
 }
