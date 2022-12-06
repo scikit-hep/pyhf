@@ -25,7 +25,7 @@ def workspace(workspace, output_file):
     """
     Upgrade a HistFactory JSON workspace.
     """
-    with click.open_file(workspace, 'r') as specstream:
+    with click.open_file(workspace, 'r', encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ws = upgrade_workspace(spec)
@@ -33,7 +33,7 @@ def workspace(workspace, output_file):
     if output_file is None:
         click.echo(json.dumps(ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, 'w+', encoding="utf-8") as out_file:
             json.dump(ws, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")
 
@@ -49,7 +49,7 @@ def patchset(patchset, output_file):
     """
     Upgrade a pyhf JSON PatchSet.
     """
-    with click.open_file(patchset, 'r') as specstream:
+    with click.open_file(patchset, 'r', encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
     ps = upgrade_patchset(spec)
@@ -57,6 +57,6 @@ def patchset(patchset, output_file):
     if output_file is None:
         click.echo(json.dumps(ps, indent=4, sort_keys=True))
     else:
-        with open(output_file, 'w+') as out_file:
+        with open(output_file, 'w+', encoding="utf-8") as out_file:
             json.dump(ps, out_file, indent=4, sort_keys=True)
         log.debug(f"Written to {output_file:s}")

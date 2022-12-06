@@ -8,7 +8,7 @@ def test_1_0_0_workspace(datadir, caplog):
     """
     Test upgrading a workspace from 1.0.0
     """
-    spec = json.load(open(datadir.joinpath("workspace_1.0.0.json")))
+    spec = json.load(open(datadir.joinpath("workspace_1.0.0.json"), encoding="utf-8"))
 
     with caplog.at_level(logging.INFO, 'pyhf.schema'):
         pyhf.schema.validate(spec, 'workspace.json', version='1.0.0')
@@ -27,7 +27,7 @@ def test_1_0_0_patchset(datadir, caplog):
     """
     Test upgrading a patchset from 1.0.0
     """
-    spec = json.load(open(datadir.joinpath("patchset_1.0.0.json")))
+    spec = json.load(open(datadir.joinpath("patchset_1.0.0.json"), encoding="utf-8"))
 
     with caplog.at_level(logging.INFO, 'pyhf.schema'):
         pyhf.schema.validate(spec, 'patchset.json', version='1.0.0')
