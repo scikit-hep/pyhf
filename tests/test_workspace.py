@@ -452,6 +452,7 @@ def test_combine_workspace_incompatible_poi(workspace_factory, join):
 def test_combine_workspace_diff_version(workspace_factory, join):
     ws = workspace_factory()
     ws.version = '1.0.0'
+    ws['version'] = '1.0.0'
     new_ws = ws.rename(
         channels={channel: f'renamed_{channel}' for channel in ws.channels},
         samples={sample: f'renamed_{sample}' for sample in ws.samples},
