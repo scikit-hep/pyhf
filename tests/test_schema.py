@@ -22,9 +22,9 @@ def test_load_missing_schema():
 
 
 def test_schema_attributes():
-    assert hasattr(pyhf.schema, 'version')
+    assert hasattr(pyhf.schema, 'versions')
     assert hasattr(pyhf.schema, 'path')
-    assert pyhf.schema.version
+    assert pyhf.schema.versions
     assert pyhf.schema.path
 
 
