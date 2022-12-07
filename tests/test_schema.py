@@ -8,12 +8,25 @@ from pytest_socket import socket_disabled  # noqa: F401
 import pyhf
 
 
-@pytest.mark.parametrize('version', ['1.0.0'])
 @pytest.mark.parametrize(
-    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+    'schema',
+    [
+        "1.0.0/model.json",
+        "1.0.0/workspace.json",
+        "1.0.0/defs.json",
+        "1.0.0/jsonpatch.json",
+        "1.0.0/measurement.json",
+        "1.0.0/patchset.json",
+        "1.1.0/model.json",
+        "1.1.0/workspace.json",
+        "1.1.0/defs.json",
+        "1.1.0/jsonpatch.json",
+        "1.1.0/measurement.json",
+        "1.1.0/patchset.json",
+    ],
 )
-def test_get_schema(version, schema):
-    assert pyhf.schema.load_schema(f'{version}/{schema}')
+def test_get_schema(schema):
+    assert pyhf.schema.load_schema(schema)
 
 
 def test_load_missing_schema():
@@ -551,8 +564,9 @@ def test_normsys_additional_properties():
     ],
     ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
 )
-def test_jsonpatch(patch):
-    pyhf.schema.validate([patch], 'jsonpatch.json', version='1.0.1')
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_jsonpatch(patch, version):
+    pyhf.schema.validate([patch], 'jsonpatch.json', version=version)
 
 
 @pytest.mark.parametrize(
@@ -576,16 +590,18 @@ def test_jsonpatch(patch):
         'move_nopath',
     ],
 )
-def test_jsonpatch_fail(patch):
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_jsonpatch_fail(patch, version):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate([patch], 'jsonpatch.json', version='1.0.1')
+        pyhf.schema.validate([patch], 'jsonpatch.json', version=version)
 
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
-def test_patchset(datadir, patchset_file):
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_patchset(datadir, patchset_file, version):
     with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
-    pyhf.schema.validate(patchset, 'patchset.json', version='1.0.0')
+    pyhf.schema.validate(patchset, 'patchset.json', version=version)
 
 
 @pytest.mark.parametrize(
