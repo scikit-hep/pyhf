@@ -1,4 +1,4 @@
-"""The pyhf spec CLI subcommand."""
+"""The pyhf upgrade CLI subcommand."""
 import logging
 
 import click

@@ -2,6 +2,20 @@ import pyhf
 import pyhf.schema
 import json
 import logging
+import pytest
+
+
+def test_upgrade_bad_version(datadir):
+    with pytest.raises(ValueError):
+        pyhf.schema.upgrade(to_version='0.9.0')
+
+
+def test_upgrade_to_latest(datadir):
+    ws = json.load(open(datadir.joinpath("workspace_1.0.0.json"), encoding="utf-8"))
+    pyhf.schema.upgrade().workspace(ws)
+
+    ps = json.load(open(datadir.joinpath("workspace_1.0.0.json"), encoding="utf-8"))
+    pyhf.schema.upgrade().patchset(ps)
 
 
 def test_1_0_0_workspace(datadir, caplog, monkeypatch):
