@@ -13,7 +13,7 @@ schemas: Traversable = resources.files('pyhf') / "schemas"
 SCHEMA_CACHE: dict[str, Schema] = {}
 SCHEMA_BASE = "https://scikit-hep.org/pyhf/schemas/"
 SCHEMA_VERSION: dict[str, SchemaVersion] = {
-    'model.json': '1.0.1',
-    'workspace.json': '1.0.1',
-    'patchset.json': '1.0.1',
+    'model.json': '1.0.0',
+    'workspace.json': '1.0.0',
+    'patchset.json': '1.0.0',
 }
