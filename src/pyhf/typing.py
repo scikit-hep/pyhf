@@ -210,3 +210,15 @@ class PDF(Protocol):
 
     def log_prob(self, value: Any) -> Any:
         ...
+
+
+class UpgradeProtocol(Protocol):
+    version: SchemaVersion
+
+    @classmethod
+    def workspace(cls, spec: Workspace) -> Workspace:
+        ...
+
+    @classmethod
+    def patchset(cls, spec: PatchSet) -> PatchSet:
+        ...

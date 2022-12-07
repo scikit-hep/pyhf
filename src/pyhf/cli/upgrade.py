@@ -4,7 +4,7 @@ import logging
 import click
 import json
 
-from pyhf.schema.upgrader import upgrade_workspace, upgrade_patchset
+from pyhf.schema.upgrader import upgrade
 
 log = logging.getLogger(__name__)
 
@@ -17,18 +17,23 @@ def cli():
 @cli.command()
 @click.argument('workspace', default='-')
 @click.option(
+    '--version',
+    help='The version to upgrade to',
+    default=None,
+)
+@click.option(
     '--output-file',
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-def workspace(workspace, output_file):
+def workspace(workspace, version, output_file):
     """
     Upgrade a HistFactory JSON workspace.
     """
     with click.open_file(workspace, 'r', encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
-    ws = upgrade_workspace(spec)
+    ws = upgrade(to_version=version).workspace(spec)
 
     if output_file is None:
         click.echo(json.dumps(ws, indent=4, sort_keys=True))
@@ -41,18 +46,23 @@ def workspace(workspace, output_file):
 @cli.command()
 @click.argument('patchset', default='-')
 @click.option(
+    '--version',
+    help='The version to upgrade to',
+    default=None,
+)
+@click.option(
     '--output-file',
     help='The location of the output json file. If not specified, prints to screen.',
     default=None,
 )
-def patchset(patchset, output_file):
+def patchset(patchset, version, output_file):
     """
     Upgrade a pyhf JSON PatchSet.
     """
     with click.open_file(patchset, 'r', encoding="utf-8") as specstream:
         spec = json.load(specstream)
 
-    ps = upgrade_patchset(spec)
+    ps = upgrade(to_version=version).patchset(spec)
 
     if output_file is None:
         click.echo(json.dumps(ps, indent=4, sort_keys=True))

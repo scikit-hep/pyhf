@@ -8,15 +8,14 @@ from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
 from pyhf.typing import Self, SchemaVersion, Traversable
-from pyhf.schema.upgrader import upgrade_workspace, upgrade_patchset
+from pyhf.schema.upgrader import upgrade
 
 __all__ = [
     "load_schema",
     "validate",
     "path",
     "version",
-    "upgrade_workspace",
-    "upgrade_patchset",
+    "upgrade",
 ]
 
 

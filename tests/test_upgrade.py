@@ -16,7 +16,7 @@ def test_1_0_0_workspace(datadir, caplog):
 
     caplog.clear()
 
-    new_spec = pyhf.schema.upgrade_workspace(spec)
+    new_spec = pyhf.schema.upgrade('1.0.1').workspace(spec)
     assert new_spec['version'] == '1.0.1'
     with caplog.at_level(logging.INFO, 'pyhf.schema'):
         pyhf.schema.validate(new_spec, 'workspace.json', version='1.0.1')
@@ -35,7 +35,7 @@ def test_1_0_0_patchset(datadir, caplog):
 
     caplog.clear()
 
-    new_spec = pyhf.schema.upgrade_patchset(spec)
+    new_spec = pyhf.schema.upgrade('1.0.1').patchset(spec)
     assert new_spec['version'] == '1.0.1'
     with caplog.at_level(logging.INFO, 'pyhf.schema'):
         pyhf.schema.validate(new_spec, 'patchset.json', version='1.0.1')

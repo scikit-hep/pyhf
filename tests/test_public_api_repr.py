@@ -260,8 +260,7 @@ def test_schema_public_api():
     assert dir(pyhf.schema) == [
         "load_schema",
         "path",
-        "upgrade_patchset",
-        "upgrade_workspace",
+        "upgrade",
         "validate",
         "version",
     ]
