@@ -6,6 +6,10 @@ import copy
 
 
 class Upgrade_1_0_1:
+    """
+    Used for testing functionality of upgrade.
+    """
+
     version: SchemaVersion = '1.0.1'
 
     @classmethod
