@@ -98,10 +98,6 @@ def validate(
 
     Validator = jsonschema.Draft202012Validator
 
-    # downgrade Validator for v1.0.0
-    if version == '1.0.0':
-        Validator = jsonschema.Draft6Validator  # type: ignore[assignment]
-
     if allow_tensors:
         type_checker = Validator.TYPE_CHECKER.redefine(
             "array", _is_array_or_tensor
