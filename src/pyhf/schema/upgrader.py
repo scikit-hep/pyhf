@@ -1,9 +1,9 @@
 from pyhf.schema import variables
-from pyhf.typing import Workspace, PatchSet
+from pyhf.typing import Workspace, PatchSet, SchemaVersion
 import copy
 
 
-def upgrade_workspace(spec: Workspace) -> Workspace:
+def upgrade_workspace(spec: Workspace, *, to_version: SchemaVersion) -> Workspace:
     """
     Upgrade the provided workspace specification to latest version.
 
@@ -19,6 +19,10 @@ def upgrade_workspace(spec: Workspace) -> Workspace:
     """
 
     version = spec['version']
+    latest_version = variables.SCHEMA_VERSION['workspace.json']
+
+    if version == latest_version:
+        return spec
 
     new_spec = copy.deepcopy(spec)
     if version == '1.0.0':
