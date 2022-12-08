@@ -20,7 +20,7 @@ def test_upgrade_to_latest(datadir):
 
 def test_1_0_0_workspace(datadir, caplog, monkeypatch):
     """
-    Test upgrading a workspace from 1.0.0
+    Test upgrading a workspace from 1.0.0 to 1.0.1
     """
     spec = json.load(open(datadir.joinpath("workspace_1.0.0.json"), encoding="utf-8"))
 
@@ -37,7 +37,7 @@ def test_1_0_0_workspace(datadir, caplog, monkeypatch):
 
 def test_1_0_0_patchset(datadir, caplog, monkeypatch):
     """
-    Test upgrading a patchset from 1.0.0
+    Test upgrading a patchset from 1.0.0 to 1.0.1
     """
     spec = json.load(open(datadir.joinpath("patchset_1.0.0.json"), encoding="utf-8"))
 
@@ -47,6 +47,26 @@ def test_1_0_0_patchset(datadir, caplog, monkeypatch):
         assert 'Specification requested version 1.0.0' in caplog.text
 
     caplog.clear()
+
+    new_spec = pyhf.schema.upgrade(to_version='1.0.1').patchset(spec)
+    assert new_spec['version'] == '1.0.1'
+
+
+def test_1_0_1_workspace(datadir):
+    """
+    Test upgrading a workspace from 1.0.1 to 1.0.1
+    """
+    spec = json.load(open(datadir.joinpath("workspace_1.0.1.json"), encoding="utf-8"))
+
+    new_spec = pyhf.schema.upgrade(to_version='1.0.1').workspace(spec)
+    assert new_spec['version'] == '1.0.1'
+
+
+def test_1_0_1_patchset(datadir):
+    """
+    Test upgrading a patchset from 1.0.1 to 1.0.1
+    """
+    spec = json.load(open(datadir.joinpath("patchset_1.0.1.json"), encoding="utf-8"))
 
     new_spec = pyhf.schema.upgrade(to_version='1.0.1').patchset(spec)
     assert new_spec['version'] == '1.0.1'
