@@ -2,6 +2,7 @@ from jax.config import config
 
 config.update('jax_enable_x64', True)
 
+from jax import Array
 import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
@@ -54,10 +55,10 @@ class jax_backend:
     __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
 
     #: The array type for jax
-    array_type = jnp.DeviceArray
+    array_type = Array
 
     #: The array content type for jax
-    array_subtype = jnp.DeviceArray
+    array_subtype = Array
 
     def __init__(self, **kwargs):
         self.name = 'jax'
