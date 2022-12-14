@@ -7,7 +7,7 @@ extras_require = {
         'tensorflow-probability>=0.11.0',  # c.f. PR #1657
     ],
     'torch': ['torch>=1.10.0'],  # c.f. PR #1657
-    'jax': ['jax>=0.2.10', 'jaxlib>=0.1.61,!=0.1.68'],  # c.f. PR #1962, Issue #1501
+    'jax': ['jax>=0.4.1', 'jaxlib>=0.4.1'],  # c.f. PR #2079
     'xmlio': ['uproot>=4.1.1'],  # c.f. PR #1567
     'minuit': ['iminuit>=2.7.0'],  # c.f. PR #1895
 }
