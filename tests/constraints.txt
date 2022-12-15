@@ -1,5 +1,5 @@
 # core
-scipy==1.3.2  # c.f. PR #2044
+scipy==1.5.0  # c.f. PR #2079
 click==8.0.0  # c.f. PR #1958, #1909
 tqdm==4.56.0
 jsonschema==4.15.0  # c.f. PR #1979
@@ -19,5 +19,5 @@ torch==1.10.0
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
 --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
-jax==0.2.10
-jaxlib==0.1.61  # c.f. PR #1962
+jax==0.4.1  # c.f. PR #2079
+jaxlib==0.4.1  # c.f. PR #2079
