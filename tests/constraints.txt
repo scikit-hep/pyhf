@@ -6,7 +6,7 @@ jsonschema==4.15.0  # c.f. PR #1979
 jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.4.0  # c.f. PR #1979
-numpy==1.20.1 # constrained by jax v0.4.1
+numpy==1.21.0 # constrained by jax v0.4.1
 # xmlio
 uproot==4.1.1
 # minuit

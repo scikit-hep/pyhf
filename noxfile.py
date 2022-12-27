@@ -208,26 +208,3 @@ def build(session):
 
     session.install("build")
     session.run("python", "-m", "build")
-
-
-@nox.session(python="3.8", reuse_venv=True)
-def minimum(session: nox.Session):
-    """
-    Run tests with minimum supported dependencies.
-    """
-    session.install("--upgrade", "pip", "setuptools", "wheel")
-    session.install("--constraint", "tests/constraints.txt", ".[test]")
-    session.run(
-        "PYTHONWARNINGS='default'",
-        "pytest",
-        "--override-ini",
-        "filterwarnings=",
-        "--ignore",
-        "tests/contrib",
-        "--ignore",
-        "tests/benchmarks",
-        "--ignore",
-        "tests/test_notebooks.py",
-        "tests/",
-        *session.posargs,
-    )
