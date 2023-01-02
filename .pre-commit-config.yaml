@@ -27,7 +27,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.0
+    rev: v3.3.1
     hooks:
     - id: pyupgrade
       args: ["--py38-plus"]
@@ -38,7 +38,7 @@ repos:
     - id: absolufy-imports
 
 -   repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 22.12.0
     hooks:
     - id: black-jupyter
 
@@ -76,7 +76,7 @@ repos:
         args: ["--python-version=3.10"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.5.3
+    rev: 1.6.0
     hooks:
     - id: nbqa-pyupgrade
       additional_dependencies: [pyupgrade==3.3.0]
