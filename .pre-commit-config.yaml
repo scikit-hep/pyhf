@@ -27,7 +27,7 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.0
+    rev: v3.3.1
     hooks:
     - id: pyupgrade
       args: ["--py38-plus"]
@@ -38,7 +38,7 @@ repos:
     - id: absolufy-imports
 
 -   repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 22.12.0
     hooks:
     - id: black-jupyter
 
@@ -46,7 +46,7 @@ repos:
     rev: v1.12.1
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==22.10.0]
+      additional_dependencies: [black==22.12.0]
 
 -   repo: https://github.com/asottile/yesqa
     rev: v1.4.0
@@ -76,10 +76,10 @@ repos:
         args: ["--python-version=3.10"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.5.3
+    rev: 1.6.0
     hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==3.3.0]
+      additional_dependencies: [pyupgrade==3.3.1]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
