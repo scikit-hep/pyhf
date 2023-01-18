@@ -80,6 +80,10 @@ backends = [
     "tensorflow>=2.7.0",
     "torch>=1.10.0",
 ]
+contrib = [
+    "matplotlib>=3.0.0",
+    "requests>=2.22.0",
+]
 complete = [
     "check-manifest",
     "click_completion",
@@ -123,10 +127,6 @@ complete = [
     "torch>=1.10.0",
     "twine",
     "uproot>=4.1.1",
-]
-contrib = [
-    "matplotlib",
-    "requests",
 ]
 develop = [
     "check-manifest",
