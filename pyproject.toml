@@ -58,6 +58,7 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 "Release Notes" = "https://pyhf.readthedocs.io/en/stable/release-notes.html"
 "Source Code" = "https://github.com/scikit-hep/pyhf"
 
+# FIXME: Make recursive
 [project.optional-dependencies]
 backends = [
     "iminuit>=2.7.0",
