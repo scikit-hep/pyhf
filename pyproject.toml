@@ -60,6 +60,18 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 
 # FIXME: Make recursive
 [project.optional-dependencies]
+shellcomplete = ["click_completion"]
+tensorflow = [
+    "tensorflow>=2.7.0",  # c.f. PR #1962
+    "tensorflow-probability>=0.11.0",  # c.f. PR #1657
+]
+torch = ["torch>=1.10.0"]  # c.f. PR #1657
+jax = [
+    "jax>=0.4.1",  # c.f. PR #2079
+    "jaxlib>=0.4.1",  # c.f. PR #2079
+]
+xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
+minuit = ["iminuit>=2.7.0"]  # c.f. PR #1895
 backends = [
     "iminuit>=2.7.0",
     "jax>=0.4.1",
@@ -175,20 +187,6 @@ docs = [
     "sphinxcontrib-bibtex~=2.1",
     "uproot>=4.1.1",
 ]
-jax = [
-    "jax>=0.4.1",
-    "jaxlib>=0.4.1",
-]
-minuit = [
-    "iminuit>=2.7.0",
-]
-shellcomplete = [
-    "click_completion",
-]
-tensorflow = [
-    "tensorflow-probability>=0.11.0",
-    "tensorflow>=2.7.0",
-]
 test = [
     "click_completion",
     "coverage[toml]>=6.0.0",
@@ -213,12 +211,6 @@ test = [
     "tensorflow-probability>=0.11.0",
     "tensorflow>=2.7.0",
     "torch>=1.10.0",
-    "uproot>=4.1.1",
-]
-torch = [
-    "torch>=1.10.0",
-]
-xmlio = [
     "uproot>=4.1.1",
 ]
 
